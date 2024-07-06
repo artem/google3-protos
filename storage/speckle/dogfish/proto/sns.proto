@@ -1,0 +1,240 @@
+syntax = "proto3";
+
+package speckle_dogfish.dogfish_proto;
+
+import "logs/proto/dogfish/build-info.proto";
+import "storage/datapol/annotations/proto/semantic_annotations.proto";
+import "storage/speckle/dogfish/controlplane/proto/storage.proto";
+import "storage/speckle/dogfish/proto/data-protection.proto";
+import "storage/speckle/dogfish/proto/database-type.proto";
+import "storage/speckle/dogfish/proto/dogfish.proto";
+import "storage/speckle/dogfish/proto/shard-configuration.proto";
+
+service ShardNameService {
+    rpc GetLpsDirectPathAddress(GetLpsDirectPathAddressRequest) returns (GetLpsDirectPathAddressResponse);
+    rpc GetLpsBorgInternalAddress(GetLpsBorgInternalAddressRequest) returns (GetLpsBorgInternalAddressResponse);
+    rpc GetLpsTaskDebugInfo(GetLpsTaskDebugInfoRequest) returns (GetLpsTaskDebugInfoResponse);
+    rpc GetSnsProperties(GetSnsPropertiesRequest) returns (GetSnsPropertiesResponse);
+    rpc GetShardReplicaInfo(GetShardReplicaInfoRequest) returns (GetShardReplicaInfoResponse);
+    rpc GetVolumeShardInfo(GetVolumeShardInfoRequest) returns (GetVolumeShardInfoResponse);
+    rpc FinalizeShardReconfiguration(FinalizeShardReconfigurationRequest) returns (FinalizeShardReconfigurationResponse);
+    rpc AdvanceShardConfiguration(AdvanceShardConfigurationRequest) returns (AdvanceShardConfigurationResponse);
+    rpc UpdateVolumeGarbageCollectionInfo(UpdateVolumeGarbageCollectionInfoRequest) returns (UpdateVolumeGarbageCollectionInfoResponse);
+    rpc GetVolumeDatabaseType(GetVolumeDatabaseTypeRequest) returns (GetVolumeDatabaseTypeResponse);
+    rpc UpdateVolumeDatabaseType(UpdateVolumeDatabaseTypeRequest) returns (UpdateVolumeDatabaseTypeResponse);
+    rpc GetVolumeSize(GetVolumeSizeRequest) returns (GetVolumeSizeResponse);
+}
+
+message GetLpsDirectPathAddressRequest {
+    string volume_name = 2;
+    int32 shard_id = 3;
+    int32 replica_id = 4;
+    BuildInfo client_build_info = 5;
+}
+
+message GetLpsDirectPathAddressResponse {
+    bytes ipv6 = 1;
+    int32 port = 2;
+    string debug_bns = 3;
+}
+
+message GetLpsBorgInternalAddressRequest {
+    string volume_name = 2;
+    int32 shard_id = 3;
+    int32 replica_id = 4;
+    BuildInfo client_build_info = 5;
+}
+
+message GetLpsBorgInternalAddressResponse {
+    bytes ip_addr = 1;
+    int32 port = 2;
+    string debug_bns = 3;
+}
+
+message ShardKey {
+    string volume_name = 1;
+    int32 shard_id = 2;
+    int32 replica_id = 3;
+}
+
+message EndpointAddress {
+    bytes ip_addr = 1;
+    int32 port = 2;
+}
+
+message LpsTaskInfo {
+    EndpointAddress borg_internal_address = 2;
+    EndpointAddress direct_path_address = 3;
+    string bns_name = 4;
+    string hostname = 5;
+}
+
+message ShardInfo {
+    ShardKey shard = 1;
+    LpsTaskInfo task_info = 2;
+}
+
+message GetLpsTaskDebugInfoRequest {
+    repeated ShardKey shards = 1;
+    BuildInfo client_build_info = 3;
+    
+    oneof _volume_name {
+        string volume_name = 2;
+    }
+}
+
+message GetLpsTaskDebugInfoResponse {
+    repeated ShardInfo shard_infos = 1;
+}
+
+message LPSZoneJobMap {
+    string zone = 1;
+    string lps_bns = 2;
+}
+
+message GetSnsPropertiesRequest {
+    BuildInfo build_info = 1;
+}
+
+message GetSnsPropertiesResponse {
+    string sns_hostname = 2;
+    string sns_bns = 3;
+    repeated LPSZoneJobMap lps_zone_map = 4;
+}
+
+message ShardReplicaInfo {
+    int32 replica_id = 1;
+    string zone = 5;
+    bytes ipv6 = 2;
+    int32 direct_path_port = 3;
+    string debug_bns = 4;
+}
+
+message GetShardReplicaInfoRequest {
+    string volume_name = 1;
+    int32 shard_id = 2;
+    bool include_direct_path_address = 3;
+    BuildInfo client_build_info = 4;
+}
+
+message GetShardReplicaInfoResponse {
+    repeated ShardReplicaInfo replica_infos = 1;
+    
+    oneof _configuration_state {
+        ShardConfigurationState configuration_state = 2;
+    }
+}
+
+message VolumeShardInfo {
+    int32 shard_id = 1;
+    repeated ShardReplicaInfo replica_infos = 2;
+    
+    oneof _configuration_state {
+        ShardConfigurationState configuration_state = 3;
+    }
+}
+
+message GetVolumeShardInfoRequest {
+    string volume_name = 1;
+    bool include_direct_path_address = 2;
+    BuildInfo client_build_info = 3;
+}
+
+message GetVolumeShardInfoResponse {
+    repeated VolumeShardInfo shard_infos = 2;
+    dcp.storage.VolumeSettings volume_settings = 3;
+    bool readonly = 4;
+    
+    reserved 1;
+}
+
+message ReplicaSetInfo {
+    repeated int32 replica_ids = 1;
+    uint64 quorum_lsn = 2;
+    ChecksummedLsn quorum_checksummed_lsn = 3;
+}
+
+message AdvanceShardConfigurationRequest {
+    string volume_name = 1;
+    int32 shard_id = 2;
+    repeated ReplicaSetInfo replica_set_infos = 3;
+    BuildInfo client_build_info = 4;
+    
+    oneof _emergency_skip_reconfiguration_finalization_delay {
+        bool emergency_skip_reconfiguration_finalization_delay = 5;
+    }
+}
+
+message AdvanceShardConfigurationResponse {
+    ShardConfigurationState configuration_state = 3;
+}
+
+message FinalizeShardReconfigurationRequest {
+    string volume_name = 1;
+    int32 shard_id = 2;
+    ShardConfigurationState configuration_state = 3;
+    BuildInfo client_build_info = 4;
+}
+
+message FinalizeShardReconfigurationResponse {
+    ShardConfigurationState configuration_state = 1;
+}
+
+message UpdateVolumeGarbageCollectionInfoRequest {
+    string volume_name = 1;
+    int64 input_buffer_trim_lsn = 2 [deprecated = true];
+    int64 low_watermark_lsn = 3;
+    int64 process_lsn = 4;
+    BuildInfo client_build_info = 5;
+    ShardInputBufferTrimLsns shard_input_buffer_trim_lsns = 6;
+}
+
+message UpdateVolumeGarbageCollectionInfoResponse {
+    
+}
+
+message GetVolumeDatabaseTypeRequest {
+    oneof _volume_name {
+        string volume_name = 1;
+    }
+    
+    oneof _client_build_info {
+        BuildInfo client_build_info = 2;
+    }
+}
+
+message GetVolumeDatabaseTypeResponse {
+    oneof _database_type {
+        DatabaseType database_type = 1;
+    }
+}
+
+message UpdateVolumeDatabaseTypeRequest {
+    oneof _volume_name {
+        string volume_name = 1;
+    }
+    
+    oneof _database_type {
+        DatabaseType database_type = 2;
+    }
+    
+    oneof _client_build_info {
+        BuildInfo client_build_info = 3;
+    }
+}
+
+message UpdateVolumeDatabaseTypeResponse {
+    
+}
+
+message GetVolumeSizeRequest {
+    oneof _volume_name {
+        string volume_name = 1;
+    }
+}
+
+message GetVolumeSizeResponse {
+    oneof _bytes {
+        int64 bytes = 1;
+    }
+}

@@ -1,0 +1,11 @@
+syntax = "proto2";
+
+package cloud_datastore.proto_checksum_plugin;
+
+import "net/proto2/proto/descriptor.proto";
+
+option java_multiple_files = true;
+
+extend .proto2.FieldOptions {
+    optional bool exclude_from_checksum = 535800969 [default = false];
+}

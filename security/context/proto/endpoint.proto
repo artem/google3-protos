@@ -1,0 +1,39 @@
+syntax = "proto2";
+
+package security.context;
+
+option java_outer_classname = "EndpointProto";
+option java_package = "com.google.security.context";
+
+message Endpoint {
+    optional EndpointType type = 1;
+    optional string action = 4;
+    optional string tenant = 7;
+    optional string label = 5;
+    optional string method_or_action = 6;
+    repeated string http_paths = 8;
+    
+    oneof logical_endpoint {
+        RpcInfo rpc = 2;
+        string http = 3;
+    }
+    
+    message RpcInfo {
+        optional string service = 1;
+        optional string command = 2;
+        optional string proto_package = 3;
+    }
+}
+
+enum EndpointType {
+    UNKNOWN = 0;
+    STUBBY = 1;
+    GRPC = 2;
+    ACTION = 3;
+    GLOBAL_WILDCARD = 4;
+    HTTP_PATH = 5;
+    STUBBY_WITH_ACTION = 6;
+    STUBBY_WITH_TENANT = 8;
+    HTTP_HANDLER = 7;
+    HTTP_SP_PATH = 9;
+}

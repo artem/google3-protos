@@ -1,0 +1,17 @@
+syntax = "proto2";
+
+package sherlog.core;
+
+import "java/com/google/apps/jspb/jspb.proto";
+
+option java_multiple_files = true;
+option java_package = "com.google.frameworks.debug.sherlog.core.proto";
+
+message TracerMetadata {
+    optional fixed64 trace_id = 1;
+    optional fixed64 span_id = 2;
+    optional fixed64 start_time_micro = 3;
+    optional fixed64 end_time_micro = 6;
+    optional string system = 4;
+    optional string name = 5;
+}

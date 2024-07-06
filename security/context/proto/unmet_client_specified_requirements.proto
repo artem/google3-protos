@@ -1,0 +1,14 @@
+syntax = "proto2";
+
+package security.context;
+
+import "security/context/proto/security_policy_requirements.proto";
+
+option java_multiple_files = true;
+option java_outer_classname = "UnmetClientSpecifiedRequirementsProto";
+option java_package = "com.google.security.context";
+
+message UnmetClientSpecifiedRequirements {
+    optional string explanation = 1;
+    optional SecurityPolicyRequirements requirements = 2;
+}

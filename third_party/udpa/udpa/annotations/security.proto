@@ -1,0 +1,17 @@
+syntax = "proto3";
+
+package udpa.annotations;
+
+import "third_party/udpa/udpa/annotations/status.proto";
+import "net/proto2/proto/descriptor.proto";
+
+option go_package = "github.com/cncf/xds/go/udpa/annotations";
+
+message FieldSecurityAnnotation {
+    bool configure_for_untrusted_downstream = 1;
+    bool configure_for_untrusted_upstream = 2;
+}
+
+extend .proto2.FieldOptions {
+    FieldSecurityAnnotation security = 11122993;
+}

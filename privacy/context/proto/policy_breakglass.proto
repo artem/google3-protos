@@ -1,0 +1,26 @@
+syntax = "proto2";
+
+package privacy.context;
+
+import "privacy/ptoken/public/core/logical_policy.proto";
+import "security/credentials/proto/authenticator.proto";
+
+option cc_enable_arenas = true;
+option java_multiple_files = true;
+option java_package = "com.google.privacy.context.proto";
+
+message PolicyBreakglass {
+    optional .ptoken.LogicalPolicy.Enum policy = 1;
+    optional security.credentials.DataAccessReason reason = 2 [deprecated = true];
+    repeated security.credentials.DataAccessReason reasons = 3;
+    optional bool evaluated = 4;
+}
+
+enum BreakglassSource {
+    BREAKGLASS_SOURCE_UNSPECIFIED = 0;
+    BREAKGLASS_DEFAULTS = 1;
+    BREAKGLASS_POLICY_ENFORCEMENT_SPEC = 2;
+    BREAKGLASS_API = 3;
+    BREAKGLASS_POLICY_DISABLEMENT_TOOL = 4;
+    BREAKGLASS_POLICY_ENGINE_API = 5;
+}

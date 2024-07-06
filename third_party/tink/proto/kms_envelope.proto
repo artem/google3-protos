@@ -1,0 +1,19 @@
+syntax = "proto3";
+
+package google.crypto.tink;
+
+import "third_party/tink/proto/tink.proto";
+
+option go_package = "github.com/tink-crypto/tink-go/v2/proto/kms_envelope_go_proto";
+option java_multiple_files = true;
+option java_package = "com.google.crypto.tink.proto";
+
+message KmsEnvelopeAeadKeyFormat {
+    string kek_uri = 1;
+    KeyTemplate dek_template = 2;
+}
+
+message KmsEnvelopeAeadKey {
+    uint32 version = 1;
+    KmsEnvelopeAeadKeyFormat params = 2;
+}

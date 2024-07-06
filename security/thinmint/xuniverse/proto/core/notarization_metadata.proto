@@ -1,0 +1,12 @@
+syntax = "proto2";
+
+package xuniverse;
+
+import "google/protobuf/timestamp.proto";
+
+message NotarizationMetadata {
+    optional string origin_universe_id = 1;
+    optional string principal = 2;
+    optional google.protobuf.Timestamp notarization_time = 3;
+    optional google.protobuf.Timestamp expiration_time = 4;
+}

@@ -1,0 +1,588 @@
+syntax = "proto2";
+
+package colossus;
+
+import "file/colossus/proto/cfs.proto";
+import "file/colossus/proto/config.proto";
+import "file/colossus/proto/disk_layer.proto";
+import "file/colossus/proto/public.proto";
+import "google/protobuf/timestamp.proto";
+import "storage/util/int128/int128.proto";
+import "tech/file/proto/types.proto";
+
+option java_package = "com.google.file.colossus";
+
+service StatsInterface {
+    rpc GetDiskStats(DiskStatsRequest) returns (DiskStatsResult);
+    rpc GetCellSummary(CellSummaryArg) returns (CellSummaryResult);
+    rpc GetRemovalSummary(GetRemovalSummaryRequest) returns (GetRemovalSummaryResult);
+    rpc GetSpreadStats(SpreadStatsRequest) returns (SpreadStatsResult);
+}
+
+message DiskStatsSummaryWide {
+    optional int64 num_disks = 1;
+    optional storage_util.Int128 bytes_used = 2;
+    optional storage_util.Int128 bytes_used_foreign = 3;
+    optional storage_util.Int128 bytes_available = 4;
+    optional storage_util.Int128 bytes_used_lame = 5;
+    optional storage_util.Int128 total_bytes_used = 6;
+    optional storage_util.Int128 total_bytes_available = 7;
+    optional storage_util.Int128 imbalanced_bytes = 8;
+}
+
+message DiskStatsSummaryByPartition {
+    optional string partition = 1;
+    optional DiskStatsSummaryWide disk_summary_wide = 3;
+    
+    reserved 2;
+}
+
+message CMetaStatsSummary {
+    required int64 num_files = 1;
+    required int64 num_stripes = 2;
+    required int64 num_chunks = 3;
+    required int32 num_curators = 4;
+    required int32 num_ranges = 5;
+}
+
+message CuratorIssuesSummary {
+    optional int64 num_missing_stripes = 1;
+    optional int64 num_unavailable_stripes = 14;
+    optional int64 num_stuck_stripe_closes = 2;
+    optional int64 num_deferred_stripe_closes = 10;
+    optional int64 num_corrupt_stripes = 11;
+    optional int32 num_instances_without_stats = 3;
+    optional int32 num_missing_ranges = 4;
+    optional int32 num_max_supported_protocol_version_errors = 5;
+    optional int32 num_min_supported_protocol_version_errors = 6;
+    optional double last_complete_range_stats_timestamp = 7;
+    optional int64 num_bad_file_descriptors = 8;
+    optional int32 ranges_without_quota = 9;
+    repeated string curators_with_issues = 12;
+    optional string temporary_removals_disabled = 13;
+    optional int64 num_live_chunks_on_removed_devices = 15;
+    optional int64 num_duplicate_files = 16;
+}
+
+message DiskServerIssuesSummary {
+    optional int32 num_missing_disks = 1;
+    optional double cell_fullness = 2;
+}
+
+message StuckStripeInfo {
+    optional int32 count = 1;
+}
+
+message MissingStripeInfo {
+    optional FileEncoding encoding = 1;
+    optional int32 count = 2;
+}
+
+message CuratorInstanceSummary {
+    required int64 num_missing_stripes = 1;
+    optional int64 num_unavailable_stripes = 11;
+    required int64 num_stuck_stripe_closes = 3;
+    optional int64 num_deferred_stripe_closes = 8;
+    optional int64 num_corrupt_stripes = 9;
+    repeated int64 total_recoveries_by_state = 2;
+    optional int32 num_instances_without_stats = 4;
+    optional int32 num_max_supported_protocol_version_errors = 5;
+    optional int32 num_min_supported_protocol_version_errors = 6;
+    repeated RecoveryStat recoveries_by_state_and_priority = 7;
+    repeated string curators_with_issues = 10;
+    map<string, StuckStripeInfo> stuck_stripe_closes_by_owner = 12;
+    optional int64 num_live_chunks_on_removed_devices = 13;
+    repeated MissingStripeInfo missing_stripes_info = 14;
+}
+
+message DiskStatsRequestSelector {
+    repeated int32 DEPRECATED_disk_config_states = 1 [deprecated = true];
+    repeated int32 DEPRECATED_disk_statuses = 2 [deprecated = true];
+    optional string server_name_regexp = 3;
+    repeated string server_names = 4;
+    repeated string versions = 5;
+    repeated int32 server_config_states = 6;
+    repeated int32 server_statuses = 7;
+    optional string disk_partition = 8;
+}
+
+message DiskStatsRequest {
+    optional DiskStatsRequestSelector selector = 1;
+    
+    optional AggregationDimension aggregator = 2 [default = SERVER];
+    enum AggregationDimension {
+        SERVER = 3;
+        SERVER_VERSION = 6;
+        SERVER_LAYERED_STATE = 9;
+    }
+    
+    optional bool want_aggregate_record = 3;
+}
+
+message DiskStatRecord {
+    option no_standard_descriptor_accessor = true;
+    required string descriptor = 1;
+    required int32 disk_count = 2;
+    optional int32 server_count = 3;
+    optional int32 server_ok_count = 13;
+    optional int32 server_config_state = 4;
+    optional string server_version = 12;
+    optional bool server_config_removable = 11;
+    map<int64, bool> disk_config_removable = 15;
+    optional FailureDomainServerState server_failure_domain_state = 14;
+    optional int32 server_dl_state = 5;
+    optional double cpu_load_minute = 7;
+    optional int32 num_cpus = 8;
+    optional DiskLayer_DiskStats disk_stats = 9;
+    
+    reserved 6, 10;
+}
+
+message DiskStatsResult {
+    repeated DiskStatRecord records = 1;
+    optional DiskStatRecord aggregate = 2;
+}
+
+message RiskDescription {
+    required string domain = 1;
+    repeated int64 effective_redundancy_delta = 2;
+    repeated int64 effective_redundancy = 3 [packed = true];
+    repeated int64 domain_spread = 4 [packed = true];
+    
+    enum FixedDomain {
+        OK = 0;
+        DRAIN = 1;
+        LAME = 2;
+        SERVER = 3;
+        ENCLOSURE = 4;
+        ENCLOSURE_GROUP = 5;
+        DATACENTER = 6;
+    }
+}
+
+message UsageEntryWide {
+    optional string name = 1;
+    optional string partition = 6;
+    optional storage_util.Int128 data_bytes = 2;
+    optional storage_util.Int128 disk_bytes = 3;
+    optional storage_util.Int128 overhead_delta_bytes = 7;
+    optional int64 files = 4;
+    optional int64 chunks = 5;
+    optional int64 folders = 8;
+    optional storage_util.Int128 spilled_over_bytes = 9;
+    optional storage_util.Int128 spilled_over_bytes_implicit = 12;
+    optional storage_util.Int128 spilled_over_bytes_explicit = 13;
+    optional int64 spilled_over_files = 10;
+    optional int64 empty_files = 11;
+}
+
+message StatsByEncodingWide {
+    optional FileEncoding encoding = 1;
+    optional int64 num_chunks = 2;
+    optional int64 num_stripes = 3;
+    optional int64 num_files = 4;
+    optional storage_util.Int128 used_bytes = 5;
+    repeated int64 stripe_counts_by_state = 6;
+    optional PlacementPolicy placement_policy = 8;
+    optional storage_util.Int128 used_data_bytes = 9;
+    
+    reserved 7;
+}
+
+message RiskStats {
+    required FileEncoding encoding = 1;
+    repeated RiskDescription domains = 2;
+    optional PlacementPolicy placement_policy = 3;
+}
+
+message SpreadDescription {
+    required int64 num_endangered_stripes = 1 [default = -1];
+    repeated string files_sample = 2;
+}
+
+message SpreadStats {
+    repeated FileEncoding enc = 1;
+    repeated PlacementPolicy placement_policy = 4;
+    
+    repeated NodeSpread node = 2;
+    message NodeSpread {
+        required string name = 1;
+        repeated SpreadDescription spread = 2;
+        optional bool is_machine = 3 [default = false];
+    }
+}
+
+message FileVersionStats {
+    required FileDescriptor.Version version = 1;
+    required int64 count = 2;
+}
+
+message ColossusFileStatsExtendedAttr {
+    optional bool ssd_autoplaced_file = 1;
+    optional google.protobuf.Timestamp autoplacement_expiration_time = 2;
+    optional bool autoplacement_policy_evicted = 3;
+}
+
+message UsageStatsWide {
+    optional UsageEntryWide global = 1;
+    repeated UsageEntryWide global_partitions = 6;
+    optional UsageEntryWide cumulative_users = 2;
+    repeated UsageEntryWide cumulative_users_partitions = 7;
+    repeated UsageEntryWide users = 3;
+    repeated UsageEntryWide groups = 4;
+    repeated UsageEntryWide auto_placement_groups = 9;
+    optional UsageEntryWide user_default = 5;
+    repeated UsageEntryWide user_default_partitions = 8;
+    map<int32, UsageEntryWide> sources = 15;
+    
+    reserved 10, 11, 12, 13, 14;
+}
+
+message RPCStat {
+    required string method = 1;
+    required int64 count = 2;
+    required int64 rpc_errors = 3;
+    required int64 app_errors = 4;
+    required double elapsed = 5;
+    required double max_elapsed = 6;
+    required int64 request_bytes = 7;
+    required int64 response_bytes = 8;
+    optional double period_secs = 9;
+}
+
+message CuratorRPCSummary {
+    required string type = 1;
+    repeated RPCStat periods = 2;
+}
+
+message RebalanceStat {
+    required int32 state = 1;
+    repeated RebalanceStatsEntry count = 2;
+}
+
+message RecoveryStat {
+    required int32 state = 1;
+    repeated RecoveryStatsEntry stats = 2;
+}
+
+message RecoverySummary {
+    required double secs = 1;
+    required RecoveryStat state_counts = 2;
+}
+
+message RebalanceSummary {
+    required double secs = 1;
+    required RebalanceStat state_counts = 2;
+}
+
+message MaintOpBusyStatus {
+    enum Type {
+        UNKNOWN_FAILURE = 0;
+        OK = 1;
+        BUSY_PULL_FILES = 2;
+        BUSY_WRITE_TOKENS = 3;
+        BUSY_READ_TOKENS = 4;
+        BUSY_OTHER = 5;
+        BUSY_RECONSTRUCTOR = 6;
+    }
+}
+
+message RebalanceStatsEntry {
+    required int32 type = 1;
+    optional FileEncoding encoding = 2;
+    required int64 count = 3;
+}
+
+message PreparePlansFailureReason {
+    enum Type {
+        UNKNOWN = 0;
+        INSUFFICIENT_PRIORITY = 1;
+        SELECT_DESTINATIONS = 2;
+        PULL_CHUNK_MAKE_PLANS = 3;
+        BUILD_CHUNK_MAKE_PLANS = 4;
+    }
+}
+
+message RecoveryPriority {
+    enum Priority {
+        WATCH = 0;
+        LOW = 1;
+        MEDIUM = 2;
+        HIGH = 3;
+        UNRECOVERABLE = 4;
+        OK = 5;
+    }
+}
+
+message RecoveryStatsEntry {
+    required int32 priority = 1;
+    optional FileEncoding encoding = 2;
+    required int64 count = 3;
+    optional bool feasible = 4;
+    optional Feasibility.Type feasibility = 5;
+    
+    message Feasibility {
+        enum Type {
+            UNKNOWN = 0;
+            FEASIBLE = 1;
+            FEASIBLE_WITH_CHECKERBOARD = 2;
+            NOT_FEASIBLE = 3;
+        }
+    }
+}
+
+message MaintenanceTraceType {
+    enum Type {
+        UNKNOWN = 0;
+        CUSTOM = 1;
+        DRAIN = 2;
+        LAME = 3;
+        OVER_FULL = 4;
+        RISK_DIVERSITY = 5;
+        PARTITION = 6;
+        USER = 7;
+        SOFT_OVERFULL = 9;
+        UNHEALTHY = 10;
+    }
+}
+
+message MaintenanceTraceOp {
+    enum Type {
+        UNKNOWN = 0;
+        CUSTOM = 1;
+        PREPARE_REBALANCE = 2;
+        REBALANCE_STRIPE = 3;
+        REBALANCE_OP = 4;
+    }
+}
+
+message RebalanceExecutionResult {
+    enum Type {
+        UNKNOWN = 0;
+        TRANSACTION_START_FAILED = 1;
+        SPACE_REBALANCE_NO_LONGER_NEEDED = 2;
+        REBALANCE_NO_LONGER_NEEDED = 3;
+        INVALID_TARGET = 4;
+        REPLACEMENT_INDEX_CHANGED = 5;
+        NO_PLAN_ON_REQUEST = 6;
+        RPC_OK = 7;
+        RPC_ERROR = 8;
+    }
+}
+
+message MrsDispatchLimit {
+    enum Type {
+        UNKNOWN = 0;
+        BANDWIDTH_LIMIT = 1;
+        MAX_INFLIGHT_LIMIT = 2;
+        NO_PLANS_TO_EXECUTE = 3;
+    }
+}
+
+message ChunkStateStats {
+    required int32 state = 1;
+    required int32 layer = 2;
+    required int64 count = 3;
+}
+
+message LabeledChunkStateStats {
+    optional int32 state = 1;
+    optional int32 layer = 2;
+    optional string d_partition = 3;
+    optional FileEncoding encoding = 4;
+    optional int64 count = 5;
+    optional storage_util.Int128 total_bytes_128 = 7;
+    
+    reserved 6;
+}
+
+message EncryptionMetadataClass {
+    optional int32 key_type = 1;
+    optional int32 keystore_config_id = 2;
+    optional tech.file.EncryptionMode encryption_mode = 5;
+    optional int32 encryption_key_length = 6;
+    optional bytes master_key_primary_version_hash = 17;
+    optional bytes master_key_hash = 21;
+    optional bytes double_wrapped_key_primary_version_hash = 20;
+    optional bytes double_wrapped_key_hash = 22;
+    
+    optional FileState file_state = 7;
+    enum FileState {
+        EMPTY = 1;
+        OPEN = 2;
+        CLOSED = 3;
+        FINALIZED = 4;
+        PARALLEL_OPEN = 5;
+        PARALLEL_CLOSED = 6;
+    }
+    
+    optional bool has_wrapped_key = 8;
+    optional bool has_wrapped_key_crc = 9;
+    optional bool has_owners = 10;
+    optional bool has_document_id = 11;
+    optional bool has_expiry = 13;
+    optional string problem = 18;
+    optional bool alert = 19;
+    
+    reserved 3, 4, 12, 14, 15, 16;
+}
+
+message StringSampleSet {
+    optional bool has_unset = 1;
+    repeated bytes samples = 2;
+}
+
+message EncryptionMetadataClassStat {
+    optional StringSampleSet master_key_names = 6;
+    optional int64 num_files = 1;
+    optional string sample_file = 2 [ctype = CORD];
+    
+    reserved 3, 7, 4, 5;
+}
+
+message EncryptionMetadataClassEntry {
+    optional EncryptionMetadataClass class = 1;
+    optional EncryptionMetadataClassStat stat = 2;
+}
+
+message EncryptionExemptionEntry {
+    optional EncryptionExemption exemption = 1;
+    optional string file_owner = 2;
+    optional int64 num_files = 3;
+}
+
+message EncryptionStats {
+    optional int64 num_files_lacking_encryption = 2;
+    optional int64 num_cns_files_lacking_encryption = 11;
+    optional int64 num_inconsistent_encryption_key_acls = 3;
+    optional int64 num_file_keys_exposing_plaintext_metadata = 4;
+    optional int64 num_file_keys_with_ciphertext_only = 5;
+    optional int64 num_default_encrypted_files = 6;
+    optional int64 num_files_with_inconsistent_metadata = 8;
+    optional int64 num_files_encrypted = 12;
+    optional int64 num_files_with_double_wrapped_keys = 13;
+    optional int64 num_files_with_single_and_double_wrapped_keys = 14;
+    
+    repeated ProblemCount num_files_metadata_consistency_problems = 10;
+    message ProblemCount {
+        optional Problem problem = 1;
+        optional int64 num_files = 2;
+    }
+    
+    repeated EncryptionMetadataClassEntry encryption_metadata_class_stats = 7;
+    repeated EncryptionExemptionEntry exemption_stats = 9;
+    
+    enum Problem {
+        UNKNOWN = 0;
+        INCORRECT_ENCRYPTION_DECISION = 1;
+        INCOMPATIBLE_ENCRYPTION_ALGORITHM = 2;
+        MISSING_MASTER_KEY_PROPERTIES = 3;
+        UNNEEDED_MASTER_KEY_PROPERTIES = 4;
+        MISSING_WRAPPED_KEY = 5;
+        MISSING_OWNERS = 6;
+        MISSING_KEY_TYPE = 7;
+        MISSING_KEY_LENGTH = 8;
+        DISALLOWED_KEY_LENGTH = 9;
+        MISMATCHED_KEY_OWNERS = 10;
+        MISMATCHED_FILE_ACLS = 11;
+        MISMATCHED_WRAPPED_KEY_CRC = 12;
+        MISSING_STRIPE_METADATA = 13;
+        MISSING_FILE_STATS = 14;
+        UNEXPECTED_ENCRYPTION_INFO = 15;
+        UNRECOGNIZED_RAW_CIPHERTEXT = 16;
+        UNEXPECTED_RAW_CIPHERTEXT = 17;
+        UNEXPECTED_OWNERS = 18;
+        NOT_ENCRYPTED = 19;
+        INCORRECT_STRIPE_REENCRYPT = 20;
+        MISSING_DOUBLE_WRAPPED_KEY = 21;
+        MISSING_DOUBLE_WRAPPED_CRC = 22;
+        MISMATCHED_DOUBLE_WRAPPED_CRC = 23;
+        INVALID_DOUBLE_WRAPPED_KEY_TYPE = 24;
+        MISMATCHED_DOUBLE_WRAPPED_KEY = 25;
+        UNWRAPPABLE_DOUBLE_WRAPPED_KEY = 26;
+        MISMATCHED_NON_KEYSTORE_WRAPPED_KEY_CRC = 27;
+    }
+}
+
+message SpreadStatsRequest {
+    repeated string nodes = 1;
+}
+
+message SpreadStatsResult {
+    required int64 timestamp = 1;
+    required SpreadStats spread_stats = 2;
+    optional int64 num_stripes_missing_spread_stats = 3;
+}
+
+message CellSummaryArg {
+    optional bool report_usage_from_d_manager = 1;
+}
+
+message CellSummaryResult {
+    repeated RiskStats risk_stats = 3;
+    repeated DiskStatRecord servers_by_state = 6;
+    repeated DiskStatRecord disks_by_state = 7;
+    repeated CuratorRPCSummary curator_rpc_summaries = 8;
+    repeated RebalanceSummary rebalance_summary = 9;
+    repeated RecoverySummary recovery_summary = 10;
+    optional SpreadStats spread_stats = 11;
+    optional int64 num_stripes_missing_risk_stats = 12 [default = 0];
+    optional DiskStatsSummaryWide cell_summary_wide = 13;
+    repeated StatsByEncodingWide file_encodings_wide = 14;
+    repeated DiskStatsSummaryByPartition cell_summary_by_partition = 17;
+    
+    reserved 1, 2, 4, 5, 15, 16;
+}
+
+message GetRemovalSummaryRequest {
+    repeated string servers = 1;
+}
+
+message StripeSample {
+    optional string filename = 1;
+    optional int64 file_id = 2;
+    optional int32 logical_stripe_index = 3;
+}
+
+message ServerRemovalSummary {
+    required ChunkserverInfo server = 1;
+    required int32 chunk_count = 2;
+    required int32 range_count = 3;
+    repeated StripeSample stripes_sample = 5;
+    optional int32 num_gaps = 6;
+    
+    reserved 4;
+}
+
+message GetRemovalSummaryResult {
+    required int32 total_ranges = 1;
+    required int32 num_gaps = 2;
+    repeated ServerRemovalSummary server_removal_summary = 3;
+}
+
+message LddStatsSummary {
+    optional int64 total_stripes = 1;
+    optional int64 num_stripes_on_ldd = 2;
+    optional int64 num_stripes_on_nonallocatable = 3;
+    optional int64 total_chunks = 4;
+    optional int64 num_chunks_on_ldd = 5;
+    optional int64 num_chunks_on_nonallocatable = 6;
+}
+
+enum FailureDomainServerState {
+    UNKNOWN = 0;
+    VALID = 1;
+    INVALID = 2;
+}
+
+enum QuotaSource {
+    UNKNOWN_QUOTA_SOURCE = 0;
+    DEFAULT_QUOTA_SOURCE = 1;
+    QUOTA_ACCOUNTING = 2;
+}
+
+enum MaintenanceState {
+    ACTIVE = 0;
+    PENDING = 1;
+    DEFERRED = 2;
+}

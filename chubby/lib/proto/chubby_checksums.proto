@@ -1,0 +1,18 @@
+syntax = "proto3";
+
+package chubby;
+
+message ChubbyChecksumData {
+    uint64 checksum = 1;
+    int32 checksum_version = 2;
+    
+    ChecksumType type = 3;
+    enum ChecksumType {
+        UNDEFINED = 0;
+        FULL_STAT = 1;
+        CONTENTS = 2;
+        LOCK = 3;
+        ACL = 4;
+        FILENAME = 6;
+    }
+}

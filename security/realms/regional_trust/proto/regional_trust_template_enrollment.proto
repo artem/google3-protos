@@ -1,0 +1,7 @@
+syntax = "proto2";
+
+package security_realms;
+
+message RegionalTrustTemplateEnrollment {
+    repeated string trust_all_tpc_universes = 1;
+}

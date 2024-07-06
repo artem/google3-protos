@@ -1,0 +1,12 @@
+syntax = "proto2";
+
+package monarch;
+
+import "monitoring/monarch/proto/data_model.proto";
+
+option java_multiple_files = true;
+option java_package = "com.google.monitoring.monarch.proto";
+
+message ExemplarDroppedFields {
+    repeated StreamProto.FieldIdentifier identifier = 1;
+}

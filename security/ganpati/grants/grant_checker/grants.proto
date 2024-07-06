@@ -1,0 +1,27 @@
+syntax = "proto2";
+
+package security.ganpati.grants.proto;
+
+import "net/proto2/proto/descriptor.proto";
+import "storage/datapol/annotations/proto/semantic_annotations.proto";
+
+message Grant {
+    optional string group = 1;
+    optional int64 valid_after = 2;
+    optional int64 valid_before = 3;
+    optional int64 intent_timestamp_usec = 4;
+    
+    reserved 5, 6;
+}
+
+message GrantsFile {
+    repeated Grant grants = 1;
+    optional int64 remove_all_grants_timestamp_usec = 5;
+    repeated int32 allowed_unknown_tags = 2;
+    repeated string locations = 3;
+    optional int64 location_expiry = 4;
+}
+
+extend .proto2.FieldOptions {
+    optional bool allow_unknown = 205227376;
+}

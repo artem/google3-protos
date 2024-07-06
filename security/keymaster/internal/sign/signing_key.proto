@@ -1,0 +1,13 @@
+syntax = "editions";
+
+package security;
+
+option java_multiple_files = true;
+option java_outer_classname = "SigningKeyProtoOuterClass";
+option java_package = "com.google.security.keymaster";
+
+message SigningKeyProto {
+    optional bytes key_hash = 1;
+    optional bytes private_key = 2;
+    optional bytes public_key = 3;
+}

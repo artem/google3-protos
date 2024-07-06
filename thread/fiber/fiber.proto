@@ -1,0 +1,14 @@
+syntax = "editions";
+
+package thread.fiber;
+
+enum FiberType {
+    FIBER_TYPE_UNKNOWN = 0;
+    FIBER_TYPE_NORMAL = 1;
+    FIBER_TYPE_DYNAMIC = 2;
+    FIBER_TYPE_ROOT = 3;
+    FIBER_TYPE_BUNDLE_ROOT = 4;
+    FIBER_TYPE_BUNDLE = 5;
+    FIBER_TYPE_BUNDLE_PROXY = 6;
+    FIBER_TYPE_ASYNC = 7;
+}

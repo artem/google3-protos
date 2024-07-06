@@ -1,0 +1,15 @@
+syntax = "proto2";
+
+package production.rpc.stubs;
+
+option java_outer_classname = "MethodTypeProto";
+option java_package = "com.google.prod.rpc.stubs.proto";
+
+enum MethodType {
+    METHOD_TYPE_UNSPECIFIED = 0;
+    UNARY = 1;
+    CLIENT_STREAMING = 2;
+    SERVER_STREAMING = 3;
+    BIDI_STREAMING = 4;
+    LEGACY_STREAMING = 5;
+}

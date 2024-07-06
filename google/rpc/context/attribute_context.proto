@@ -1,0 +1,92 @@
+syntax = "proto3";
+
+package google.rpc.context;
+
+import "google/protobuf/any.proto";
+import "google/protobuf/duration.proto";
+import "google/protobuf/struct.proto";
+import "google/protobuf/timestamp.proto";
+
+option cc_enable_arenas = true;
+option go_package = "google.golang.org/genproto/googleapis/rpc/context/attribute_context;attribute_context";
+option java_multiple_files = true;
+option java_outer_classname = "AttributeContextProto";
+option java_package = "com.google.rpc.context";
+
+message AttributeContext {
+    Peer origin = 7;
+    message Peer {
+        string ip = 1;
+        int64 port = 2;
+        map<string, string> labels = 6;
+        string principal = 7;
+        string region_code = 8;
+        
+        reserved 3, 4, 5;
+    }
+    
+    Peer source = 1;
+    Peer destination = 2;
+    
+    Request request = 3;
+    message Request {
+        string id = 1;
+        string method = 2;
+        map<string, string> headers = 3;
+        string path = 4;
+        string host = 5;
+        string scheme = 6;
+        string query = 7;
+        protobuf.Timestamp time = 9;
+        int64 size = 10;
+        string protocol = 11;
+        string reason = 12;
+        Auth auth = 13;
+        
+        reserved 8;
+    }
+    
+    Response response = 4;
+    message Response {
+        int64 code = 1;
+        int64 size = 2;
+        map<string, string> headers = 3;
+        protobuf.Timestamp time = 4;
+        protobuf.Duration backend_latency = 5;
+    }
+    
+    Resource resource = 5;
+    message Resource {
+        string service = 1;
+        string name = 2;
+        string type = 3;
+        map<string, string> labels = 4;
+        string uid = 5;
+        map<string, string> annotations = 6;
+        string display_name = 7;
+        protobuf.Timestamp create_time = 8;
+        protobuf.Timestamp update_time = 9;
+        protobuf.Timestamp delete_time = 10;
+        string etag = 11;
+        string location = 12;
+    }
+    
+    Api api = 6;
+    message Api {
+        string service = 1;
+        string operation = 2;
+        string protocol = 3;
+        string version = 4;
+    }
+    
+    repeated protobuf.Any extensions = 8;
+    
+    message Auth {
+        string principal = 1;
+        repeated string audiences = 2;
+        string presenter = 3;
+        protobuf.Struct claims = 4;
+        repeated string access_levels = 5;
+        string credential_id = 6;
+    }
+}

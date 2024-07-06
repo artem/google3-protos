@@ -1,0 +1,20 @@
+syntax = "proto2";
+
+package security.panoptikeys.crypto_key_params;
+
+import "net/proto2/proto/descriptor.proto";
+
+option java_multiple_files = true;
+
+enum CryptoKeyParam {
+    KEY_MATERIAL_NO_METADATA = 1;
+    IV = 2;
+    IV_SIZE_BITS = 3;
+    IV_SIZE_BYTES = 4;
+    KEY_SIZE_BITS = 5;
+    KEY_SIZE_BYTES = 6;
+}
+
+extend .proto2.FieldOptions {
+    optional CryptoKeyParam crypto_key_param = 343589823;
+}

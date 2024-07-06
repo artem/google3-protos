@@ -1,0 +1,21 @@
+syntax = "proto3";
+
+package google.cloud.audit;
+
+import "google/api/visibility.proto";
+import "storage/datapol/annotations/proto/semantic_annotations.proto";
+
+option java_multiple_files = true;
+option java_outer_classname = "AuditLogOptionsProto";
+option java_package = "com.google.cloud.audit";
+
+message AuthorizationLoggingOptions {
+    PermissionType permission_type = 1;
+    enum PermissionType {
+        PERMISSION_TYPE_UNSPECIFIED = 0;
+        ADMIN_READ = 1;
+        ADMIN_WRITE = 2;
+        DATA_READ = 3;
+        DATA_WRITE = 4;
+    }
+}

@@ -1,0 +1,18 @@
+syntax = "proto2";
+
+package net.rpc4;
+
+import "net/rpc2/envelope/proto/envelope_control_messages.proto";
+
+option java_package = "com.google.net.rpc4";
+
+service EnvelopeControlService {
+    rpc ConnectClient(stream ConnectClientRequest) returns (stream ConnectClientResponse);
+    rpc ResolveService(ResolveServiceRequest) returns (ResolveServiceResponse);
+    rpc ForwardService(ForwardServiceRequest) returns (ForwardServiceResponse);
+    rpc LoadExtension(LoadExtensionRequest) returns (LoadExtensionResponse);
+    rpc StartExtension(StartExtensionRequest) returns (StartExtensionResponse);
+    rpc ReloadExtension(ReloadExtensionRequest) returns (ReloadExtensionResponse);
+    rpc ShutdownExtension(ShutdownExtensionRequest) returns (ShutdownExtensionResponse);
+    rpc GetEnvelopeFlags(GetEnvelopeFlagsRequest) returns (GetEnvelopeFlagsResponse);
+}

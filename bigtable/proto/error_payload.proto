@@ -1,0 +1,55 @@
+syntax = "proto2";
+
+package bigtable;
+
+import "net/proto2/bridge/proto/message_set.proto";
+import "util/task/status.proto";
+
+message ResourceKeyCreationFailure {
+    optional util.StatusProto original_status = 1;
+    optional bool user_error = 2 [default = false];
+}
+
+message TableUnloadedInfo {
+    optional UnloadReason unload_reason = 1;
+    enum UnloadReason {
+        UNKNOWN = 0;
+        CLOUD_KMS_ERROR = 1;
+        INTERNAL_FAILED_PRECONDITION = 2;
+        USER_ERROR = 3;
+    }
+}
+
+message SkippedTabletOpStats {
+    optional SkipReason reason = 1;
+    enum SkipReason {
+        UNSPECIFIED = 0;
+        ACTIVE_HOLD = 1;
+        ACTIVE_OP = 2;
+        DUPLICATE_OP = 3;
+        CONFLICTING_TABLET_STATUS = 4;
+    }
+    
+    optional string op_or_status = 2;
+}
+
+message BigtableErrorPayload {
+    optional PayloadType payload_type = 1;
+    enum PayloadType {
+        UNSPECIFIED = 0;
+        RESOURCE_KEY_CREATION_FAILED = 1;
+        TABLE_UNLOADED = 2;
+        ROW_SIZE_EXCEEDED = 3;
+        TABLET_OP_SKIPPED = 4;
+        PERMISSION_DENIED_WITH_UNKNOWN_ACLREP_OUTCOME = 5;
+    }
+    
+    optional ResourceKeyCreationFailure resource_key_creation_failure = 2;
+    optional TableUnloadedInfo table_unloaded = 3;
+    optional bytes row_key = 4 [ctype = CORD];
+    optional SkippedTabletOpStats skipped_tablet_op_stats = 5;
+    
+    extend .proto2.bridge.MessageSet {
+        optional BigtableErrorPayload message_set_extension = 307483134;
+    }
+}

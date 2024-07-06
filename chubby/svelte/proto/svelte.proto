@@ -1,246 +1,299 @@
 syntax = "proto2";
 
+import public "chubby/svelte/proto/common.proto";
+import "chubby/lib/proto/client_library_name.proto";
 import "chubby/lib/proto/statinfo.proto";
 import "chubby/lib/proto/timestamp.proto";
+import "chubby/svelte/proto/common_interface.proto";
+import "chubby/svelte/proto/load_shedding.proto";
+import "frameworks/platform/endpoints/rpc/options/generic_services.proto";
+import "google/protobuf/duration.proto";
+import "google/protobuf/timestamp.proto";
 import "net/rpc/empty-message.proto";
+
 option java_package = "com.google.chubby.svelte.protocol";
 
-message SVFile {
-  enum RESULT {
-    RESULT_SUCCESS = 0;
-    RESULT_BAD_REQUEST = 1;
-    RESULT_UNKNOWN_CLIENT = 2;
-    RESULT_UPDATES_DISABLED = 3;
-    RESULT_SERVER_INITIALIZING = 4;
-    RESULT_SERVER_SHUTDOWN = 5;
-    RESULT_SERVER_SHEDDING_LOAD = 6;
-    RESULT_CLIENT_TIMEOUT = 7;
-    RESULT_CLIENT_END_SESSION = 8;
-    RESULT_MULTI_SERVER_BACKOFF = 9;
-  }
-  optional string Filename = 1;
-  optional bytes Contents = 2;
-  optional uint64 ClientID = 3;
-  optional int64 Sequence = 4;
-  repeated string Refused = 5;
-  optional int64 Generation = 6;
-  optional int32 Error = 7;
-  optional .LockServerWire_StatInfo Info = 8;
-  repeated .LockServerWire_StatInfo DirContents = 9;
-  optional int32 LastSeenError = 10;
-  optional bytes LastSeenContents = 11;
-  repeated string DirContentsDeleted = 12;
-  optional int64 DirContentsOldState = 16;
-  optional int64 DirContentsNewState = 17;
-  optional int32 Timeout = 18;
-  repeated .RedirectEntry redirect_map = 19;
-  optional int32 NumRedirects = 20;
-  repeated .LockServerWire_Timestamp lifetime_timestamp = 21;
-}
-
-message ServerGroup {
-  message Server {
-    optional string cell_name = 1;
-    optional string bns_name = 2;
-  }
-  repeated string server = 1;
-  repeated .ServerGroup.Server servers = 2;
-}
-
-message RedirectEntry {
-  enum STATUS {
-    NOERROR = 0;
-    ERROR = 1;
-    RETRY = 2;
-    QUOTA_EXCEEDED = 3;
-    BLACKLISTED = 4;
-    HERMETICALLY_SEALED = 5;
-  }
-  required string filename = 1;
-  required int32 status = 2;
-  repeated .ServerGroup server_group = 3;
-}
-
-message SVModifyRequest {
-  enum FLAGS {
-    FLAG_GZIP = 1;
-    FLAG_INCREMENTAL_DIRS = 2;
-    FLAG_SUGGEST_SERVER = 4;
-    FLAG_SVELTE_SERVER = 8;
-    FLAG_INTERDC = 16;
-    FLAG_VERBOSE_LOGGING = 32;
-    FLAG_CAN_REDIRECT = 64;
-    FLAG_PREFETCH = 128;
-  }
-  enum CLIENT_VERSION_BASE {
-    CLIENT_VERSION_BASE_CPP = 0;
-    CLIENT_VERSION_BASE_JAVA = 1000000;
-    CLIENT_VERSION_BASE_GO = 2000000;
-    CLIENT_VERSION_BASE_LAST = 3000000;
-  }
-  required fixed64 ClientID = 1;
-  repeated .SVFile ToDelete = 2;
-  repeated .SVFile ToAdd = 3;
-  optional string ClientDescription = 4;
-  optional int32 ClientFlags = 5;
-  optional string ClientHostname = 6;
-  optional int32 ClientVersion = 7;
-  optional string ForgeTestBinary = 8;
-  optional int32 ConnectionAttempts = 9;
-  optional int32 MultiServerPriority = 10;
-}
-
-message SVFiles {
-  repeated .SVFile Files = 1;
-  repeated bytes ZFiles = 2;
-  optional int32 Timeout = 3;
-  optional uint32 ThrottlingDelayMs = 4;
-}
-
-message SVFileInfo {
-  required string filename = 1;
-  required bytes z_svfile = 2;
-  required bool is_file = 3;
-  optional int64 uncompressed_size = 4;
-  optional int64 compressed_size = 5;
-  optional uint64 num_watching_clients = 6;
-  repeated uint64 watching_client_ids = 7;
-}
-
-message SVFileChecksums {
-  repeated group File = 1 {
-    required string Filename = 2;
-    optional string MD5 = 3;
-  }
-}
-
-message SVMultiServerUpdate {
-  required uint32 suggested_concurrency = 1;
-}
-
-message SVCellLocation {
-  required string cell = 1;
-  optional string location = 2;
-}
-
-message SVLoad {
-  required int32 NumClients = 1;
-  required int32 NumOutstandingWaits = 2;
-  optional int32 ActualNumClients = 3;
-  optional bool IsWarm = 4 [default = true];
-  repeated .SVCellLocation CellLocations = 5;
-}
-
-message EndSessionRequest {
-  required uint64 ClientID = 1;
-}
-
-message SVBlacklistRule {
-  optional string hostname_regex = 1 [default = ".*"];
-  optional string binary_regex = 2 [default = ".*"];
-  optional string username_regex = 3 [default = ".*"];
-  optional string borg_job_regex = 4 [default = ".*"];
-  optional string filename_regex = 5 [default = ".*"];
-  optional string forge_test_binary_regex = 6 [default = ".*"];
-}
-
-message SVBlacklistRules {
-  repeated .SVBlacklistRule rules = 1;
-  optional bool distribute_to_peers = 2 [default = false];
-}
-
-message SVClientInfo {
-  optional uint64 client_id = 1;
-  optional string hostname = 3;
-  optional string description = 4;
-  optional string ip_addr = 5;
-  optional string client_cell = 6;
-  optional string username = 7;
-  optional string binary = 8;
-  optional string flags = 9;
-  optional bool has_been_dropped = 10;
-  optional uint64 num_watched_files = 11;
-  repeated .SVFileInfo watched_files = 12;
-}
-
-message SVGetFileMapRequest {
-  optional bool include_gzipped_svfile = 1 [default = false];
-  optional bool include_watching_client_ids = 2 [default = false];
-}
-
-message SVGetFileMapResponse {
-}
-
-message SVGetClientMapRequest {
-  optional bool include_watched_files = 1 [default = false];
-}
-
-message SvelteCellInfo {
-  optional string address = 1;
-  optional string svelte_cell_name = 2;
-}
-
-message SvelteShardMap {
-  required string path_regex = 1;
-  repeated .ServerGroup server_group = 2;
-  repeated .ServerGroup backend_server_group = 3;
-  optional string prober_directory = 4;
-  optional .SvelteCellInfo svelte_cell_info = 5;
-}
-
-message SvelteUserLimits {
-  optional int64 space_limit_in_bytes_low_watermark = 1 [default = 314572800];
-  optional int64 space_limit_in_bytes_high_watermark = 2 [default = 1099511627776];
-  optional int32 session_limit_low_watermark = 3 [default = 1000];
-  optional int32 session_limit_high_watermark = 4 [default = 1000000];
-}
-
-message PerUserSvelteLimits {
-  required string user = 1;
-  required .SvelteUserLimits user_limits = 2;
-}
-
-message ClientVersionCheck {
-  enum CheckAction {
-    TRACK = 0;
-    REJECT = 1;
-  }
-  optional .ClientVersionCheck.CheckAction check_action = 1 [default = TRACK];
-  optional int32 min_cpp_version = 2;
-  optional int32 min_java_version = 3;
-  optional int32 min_go_version = 4;
-}
-
-message SvelteConfiguration {
-  repeated .SvelteShardMap svelte_shard = 1;
-  optional .SvelteUserLimits default_user_limits = 2;
-  repeated .PerUserSvelteLimits per_user_svelte_limits = 3;
-  repeated string dir_trees_to_warm = 4 [deprecated = true];
-  repeated string prefetch_trees = 5;
-  repeated .ClientVersionCheck version_checks = 6;
-}
-
 service SvelteClient {
-  rpc WatchMultiServerUpdates(.EmptyMessage) returns (.EmptyMessage);
-  rpc AwaitChange(.SVFile) returns (.SVFiles);
-  rpc ModifyWaitSet(.SVModifyRequest) returns (.SVFile);
-  rpc GetFileMap(.SVGetFileMapRequest) returns (.SVGetFileMapResponse);
-  rpc GetClientMap(.SVGetClientMapRequest) returns (.EmptyMessage);
-  rpc EndSession(.EndSessionRequest) returns (.EmptyMessage);
+    rpc AwaitChange(SVFile) returns (SVFiles);
+    rpc InitialModifyWaitSet(SVModifyRequest) returns (SVFile);
+    rpc ModifyWaitSet(SVModifyRequest) returns (SVFile);
+    rpc GetFileMap(SVGetFileMapRequest) returns (stream SVFileInfo);
+    rpc GetClientMap(SVGetClientMapRequest) returns (stream SVClientInfo);
+    rpc EndSession(EndSessionRequest) returns (EmptyMessage);
 }
 
 service SvelteAdmin {
-  rpc SetStagingBlacklist(.SVBlacklistRules) returns (.EmptyMessage);
-  rpc SetActiveBlacklist(.SVBlacklistRules) returns (.EmptyMessage);
-  rpc GetStagingBlacklist(.EmptyMessage) returns (.SVBlacklistRules);
-  rpc GetActiveBlacklist(.EmptyMessage) returns (.SVBlacklistRules);
-  rpc ClearStagingBlacklist(.EmptyMessage) returns (.EmptyMessage);
-  rpc ClearActiveBlacklist(.EmptyMessage) returns (.EmptyMessage);
+    rpc SetStagingBlacklist(SVBlacklistRules) returns (EmptyMessage);
+    rpc SetActiveBlacklist(SVBlacklistRules) returns (EmptyMessage);
+    rpc GetStagingBlacklist(EmptyMessage) returns (SVBlacklistRules);
+    rpc GetActiveBlacklist(EmptyMessage) returns (SVBlacklistRules);
+    rpc ClearStagingBlacklist(EmptyMessage) returns (EmptyMessage);
+    rpc ClearActiveBlacklist(EmptyMessage) returns (EmptyMessage);
+    rpc GetMetadata(EmptyMessage) returns (SVMetadata);
+    rpc ResetClients(ResetClientsRequest) returns (ResetClientsResponse);
 }
 
 service SveltePeer {
-  rpc GetLoad(.EmptyMessage) returns (.SVLoad);
-  rpc OpenFiles(.SVFiles) returns (.EmptyMessage);
+    rpc GetLoad(EmptyMessage) returns (SVLoad);
+    rpc OpenFiles(SVFiles) returns (EmptyMessage);
 }
 
+message SVFile {
+    optional string Filename = 1;
+    optional bytes Contents = 2;
+    optional uint64 ClientID = 3;
+    optional int64 Sequence = 4;
+    repeated string Refused = 5;
+    optional int64 Generation = 6;
+    optional int32 Error = 7;
+    optional LockServerWire_StatInfo Info = 8;
+    repeated LockServerWire_StatInfo DirContents = 9;
+    optional int32 LastSeenError = 10;
+    optional bytes LastSeenContents = 11;
+    repeated string DirContentsDeleted = 12;
+    optional int64 DirContentsOldState = 16;
+    optional int64 DirContentsNewState = 17;
+    optional int32 Timeout = 18;
+    repeated RedirectEntry redirect_map = 19;
+    optional int32 NumRedirects = 20;
+    repeated LockServerWire_Timestamp lifetime_timestamp = 21;
+    repeated LockServerWire_Timestamp registration_timestamp = 23;
+    optional bool is_full_dir_update = 22;
+    repeated LimitEntry limit_entry = 24;
+    optional string original_cell = 25;
+    repeated string event_tags = 26;
+    optional chubby.ModifyWaitSetResponseInfo mws_response_info = 27;
+    optional chubby.AwaitChangeRequestInfo await_change_request_info = 28;
+    
+    enum RESULT {
+        RESULT_SUCCESS = 0;
+        RESULT_BAD_REQUEST = 1;
+        RESULT_UNKNOWN_CLIENT = 2;
+        RESULT_UPDATES_DISABLED = 3;
+        RESULT_SERVER_INITIALIZING = 4;
+        RESULT_SERVER_SHUTDOWN = 5;
+        RESULT_SERVER_SHEDDING_LOAD = 6;
+        RESULT_CLIENT_TIMEOUT = 7;
+        RESULT_CLIENT_END_SESSION = 8;
+        RESULT_RESET_FILES_FROM_CELL = 10;
+        RESULT_REFUSED_DUE_TO_DRAIN = 11;
+        RESULT_CLIENT_THROTTLED = 12;
+        RESULT_CLIENT_DENIED = 13;
+    }
+}
 
+message RedirectEntry {
+    required string filename = 1;
+    required int32 status = 2;
+    repeated ServerGroup server_group = 3;
+    optional string original_cell = 4;
+    
+    enum STATUS {
+        NOERROR = 0;
+        ERROR = 1;
+        RETRY = 2;
+        QUOTA_EXCEEDED = 3;
+        BLACKLISTED = 4;
+        HERMETICALLY_SEALED = 5;
+    }
+}
+
+message LimitEntry {
+    optional string filename = 1;
+    
+    optional Status status = 2;
+    enum Status {
+        STATUS_UNSPECIFIED = 0;
+        OK = 1;
+        ADD_FAILED = 2 [deprecated = true];
+        CLIENT_ALREADY_WATCHING = 6;
+        CLIENT_BEING_DROPPED = 8;
+        FILE_BEING_DROPPED = 9;
+        LIMIT_EXCEEDED = 10;
+        UNIQUE_FILES_PER_USER = 3;
+        CLIENT_FILE_PAIRS_PER_USER = 4;
+        CLIENTS_PER_FILE_PER_USER = 5;
+        TOTAL_CLIENTS_PER_FILE = 7;
+        LOCAL_UNIQUE_FILES_PER_USER = 11;
+        REMOTE_UNIQUE_FILES_PER_USER = 12;
+    }
+    
+    optional string status_string = 3;
+}
+
+message SVModifyRequest {
+    required fixed64 ClientID = 1;
+    repeated SVFile ToDelete = 2;
+    repeated SVFile ToAdd = 3;
+    optional string ClientDescription = 4;
+    optional int32 ClientFlags = 5 [default = 66];
+    optional string ClientHostname = 6;
+    optional int32 ClientVersion = 7;
+    optional string ForgeTestBinary = 8;
+    optional int32 ConnectionAttempts = 9;
+    optional string svelte_cell = 11;
+    optional string client_cluster = 12;
+    optional bool is_envelope_client = 13;
+    optional string task_handle = 14;
+    optional string client_library = 15 [deprecated = true];
+    optional chubby.ClientLibraryName client_library_name = 16;
+    optional string lockservice_locality = 17;
+    optional string physical_cell = 18;
+    optional chubby.LoadShedding.Token load_shedding_token = 19;
+    
+    reserved 10;
+    
+    enum FLAGS {
+        FLAG_GZIP = 1;
+        FLAG_INCREMENTAL_DIRS_DEPRECATED = 2;
+        FLAG_SUGGEST_SERVER = 4;
+        FLAG_SVELTE_SERVER = 8;
+        FLAG_INTERDC = 16;
+        FLAG_VERBOSE_LOGGING = 32;
+        FLAG_CAN_REDIRECT_DEPRECATED = 64;
+        FLAG_PREFETCH_UNUSED = 128;
+        FLAG_USE_REMOTE_SVELTES = 256;
+        FLAG_CLIENT_WANTS_TIMESTAMPS_IN_REPLIES = 512;
+        FLAG_CAN_RESET = 1024;
+        FLAG_SUPPORTS_RPC_SPACE_ERRORS = 2048 [deprecated = true];
+        FLAG_CACHING_CLIENTS_ERRORLESS_ONLY = 4096;
+    }
+    
+    enum CLIENT_VERSION_BASE {
+        CLIENT_VERSION_BASE_CPP = 0;
+        CLIENT_VERSION_BASE_JAVA = 1000000;
+        CLIENT_VERSION_BASE_GO = 2000000;
+        CLIENT_VERSION_BASE_LAST = 3000000;
+    }
+}
+
+message TimestampVector {
+    repeated LockServerWire_Timestamp timestamps = 1;
+}
+
+message SVFilesTimestamps {
+    optional LockServerWire_Timestamp send_timestamp = 1;
+    repeated TimestampVector lifetime_timestamps = 2 [deprecated = true];
+    map<int32, TimestampVector> registration_timestamps = 3;
+    map<int32, TimestampVector> update_timestamps = 4;
+}
+
+message SVFiles {
+    repeated SVFile Files = 1;
+    repeated bytes ZFiles = 2;
+    optional int32 Timeout = 3;
+    optional uint32 ThrottlingDelayMs = 4;
+    optional SVFilesTimestamps extra_timestamps = 5;
+    optional chubby.AwaitChangeResponseInfo await_change_response_info = 6;
+}
+
+message SVFileInfo {
+    required string filename = 1;
+    required bytes z_svfile = 2;
+    required bool is_file = 3;
+    optional int64 uncompressed_size = 4;
+    optional int64 compressed_size = 5;
+    optional uint64 num_watching_clients = 6;
+    repeated uint64 watching_client_ids = 7;
+    optional bool is_reporting_children = 8 [default = false];
+    repeated LockServerWire_StatInfo child = 9;
+    optional int64 last_update_time_microseconds = 10;
+    optional float update_rate = 11;
+    optional int32 error = 12;
+}
+
+message SVSnapshotInfo {
+    option deprecated = true;
+}
+
+message SVSnapshotEntry {
+    option deprecated = true;
+    required bytes z_svfile = 1;
+    
+    repeated StatContents directory_stat_contents = 2;
+    message StatContents {
+        required string data = 1;
+        required string resume_marker = 2;
+    }
+}
+
+message SVFileChecksums {
+    repeated group File = 1 {
+        required string Filename = 2;
+        optional string MD5 = 3;
+    }
+}
+
+message SVMultiServerUpdate {
+    required uint32 suggested_concurrency = 1;
+}
+
+message SVCellLocation {
+    required string cell = 1;
+    optional string location = 2;
+}
+
+message SVLoad {
+    required int32 NumClients = 1;
+    required int32 NumOutstandingWaits = 2;
+    optional int32 ActualNumClients = 3;
+    optional bool IsWarm = 4 [default = true];
+    repeated SVCellLocation CellLocations = 5;
+    optional bool shutting_down = 6 [default = false];
+    optional google.protobuf.Duration remaining_shutdown_duration = 7;
+    optional int32 num_client_file_pairs = 8;
+    optional bool is_healthy = 9 [default = true];
+}
+
+message EndSessionRequest {
+    required uint64 ClientID = 1;
+}
+
+message ResetClientsRequest {
+    repeated uint64 client_ids = 1;
+    optional SVFile.RESULT application_error = 2;
+    optional string server_suggestion = 3;
+}
+
+message ResetClientsResponse {
+    repeated uint64 failed_client_ids = 1;
+}
+
+message SVClientInfo {
+    optional uint64 client_id = 1;
+    optional string hostname = 3;
+    optional string description = 4;
+    optional string ip_addr = 5;
+    optional string client_cell = 6;
+    optional string username = 7;
+    optional string binary = 8;
+    optional string flags = 9;
+    optional bool has_been_dropped = 10;
+    optional uint64 num_watched_files = 11;
+    repeated SVFileInfo watched_files = 12;
+    optional int32 version = 13;
+    optional bool client_is_envelope = 14;
+    optional string borg_task_handle = 15;
+    optional bool is_person_client = 16;
+    optional google.protobuf.Timestamp client_created_time = 17;
+}
+
+message SVGetFileMapRequest {
+    optional bool include_gzipped_svfile = 1 [default = false];
+    optional bool include_watching_client_ids = 2 [default = false];
+    optional bool send_only_active_file_names = 3 [default = false];
+    optional bool return_error_if_not_warm = 4 [default = false];
+}
+
+message SVGetFileMapResponse {
+    
+}
+
+message SVGetClientMapRequest {
+    optional bool include_watched_files = 1 [default = false];
+}
+
+message SVMetadata {
+    optional string svelte_cell = 1;
+    optional string svelte_locality = 2;
+}

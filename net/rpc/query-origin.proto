@@ -1,0 +1,16 @@
+syntax = "proto2";
+
+package rpc;
+
+import "net/proto2/bridge/proto/message_set.proto";
+
+option cc_enable_arenas = true;
+option java_package = "com.google.net.rpc.impl";
+
+message QueryOrigin {
+    required string query_origin = 1;
+    
+    extend .proto2.bridge.MessageSet {
+        optional QueryOrigin message_set_extension = 18466903;
+    }
+}

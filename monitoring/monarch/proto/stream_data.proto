@@ -1,0 +1,54 @@
+syntax = "proto2";
+
+package monarch;
+
+import "net/proto2/bridge/proto/message_set.proto";
+
+option cc_enable_arenas = true;
+option java_outer_classname = "StreamDataProto";
+
+message IntegerSequenceProto {
+    required bytes contents = 1 [ctype = STRING_PIECE];
+    required int32 size = 2;
+}
+
+message ValueSequenceProto {
+    required bytes contents = 1 [ctype = STRING_PIECE];
+    required IntegerSequenceProto tags = 2;
+    required int32 size = 3;
+    required int32 trailing_rle_count = 4;
+}
+
+message CompressedValueSequenceProto {
+    optional Algorithm algorithm = 1 [default = BROTLI];
+    enum Algorithm {
+        UNKNOWN = 0;
+        IDENTITY = 1;
+        BROTLI = 2;
+        ZIPPY = 3;
+        ZSTD = 4;
+    }
+    
+    optional bytes compressed_value_sequence = 2;
+}
+
+message TimestampSequenceProto {
+    repeated sfixed64 timestamp = 1 [packed = true];
+    repeated sint64 second_derivative_timestamp = 2 [packed = true];
+}
+
+message StreamData {
+    required ValueSequenceProto value_sequence = 1;
+    required TimestampSequenceProto timestamp_sequence = 2;
+    optional TimestampSequenceProto reset_timestamp_sequence = 3;
+    
+    optional Discarded discarded = 4;
+    message Discarded {
+        required sfixed64 oldest_timestamp = 1;
+        required sfixed64 youngest_timestamp = 2;
+    }
+    
+    extend .proto2.bridge.MessageSet {
+        optional StreamData message_set_extension = 90737533;
+    }
+}

@@ -1,0 +1,46 @@
+syntax = "proto3";
+
+package server_authz;
+
+import "google/protobuf/wrappers.proto";
+import "security/authorization/server_authorization/public/policy/target.proto";
+import "security/credentials/proto/principal.proto";
+import "storage/datapol/annotations/proto/semantic_annotations.proto";
+
+option java_multiple_files = true;
+option java_package = "com.google.security.authorization.serverauthorization.policy";
+
+message UnrestrictedClientPolicy {
+    ServiceCheckOptions service_check_options = 1;
+    UserConstraint user_constraint = 2;
+    RealmConstraint realm_constraint = 3;
+    HostnameConstraint hostname_constraint = 4;
+    TighteningOverrides tightening_overrides = 5;
+}
+
+message ServiceCheckOptions {
+    Target target_override = 1;
+}
+
+message UserConstraint {
+    repeated security.credentials.PrincipalProto whitelisted_users = 1;
+    repeated string allowed_focus_obfuscated_gaia_ids = 3;
+    
+    reserved 2;
+}
+
+message RealmConstraint {
+    RealmAclSet whitelisted_realm_acls = 1;
+}
+
+message RealmAclSet {
+    repeated string realm_acls = 1;
+}
+
+message HostnameConstraint {
+    google.protobuf.BoolValue require_hostname_to_match_host_port_address = 1;
+}
+
+message TighteningOverrides {
+    google.protobuf.BoolValue require_client_to_approve_server_user = 1;
+}

@@ -1,0 +1,32 @@
+syntax = "editions";
+
+package chubby;
+
+import "chubby/lib/proto/sharding_config_common.proto";
+import "chubby/svelte/proto/common.proto";
+
+option java_multiple_files = true;
+option java_package = "com.google.chubby.svelte.protocol";
+
+message ShardAssignmentRule {
+    optional string path_regex = 1;
+    repeated ServerGroup server_group = 2;
+    
+    optional AssignmentType assignment_type = 3 [default = SERVER_GROUP];
+    enum AssignmentType {
+        TYPE_UNSPECIFIED = 0;
+        SERVER_GROUP = 1;
+        DEFAULT_WAITER_GROUP = 2;
+        PHYSICAL_WAITER_GROUP = 3;
+        ERROR = 4;
+    }
+    
+    optional string error_message = 4;
+}
+
+message SvelteClientShardingConfig {
+    repeated PathTranslationRule path_translations = 4;
+    repeated ShardAssignmentRule shard_assignments = 5;
+    
+    reserved 1 to 3;
+}

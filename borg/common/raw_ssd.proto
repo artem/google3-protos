@@ -1,0 +1,26 @@
+syntax = "proto2";
+
+package borg;
+
+option cc_enable_arenas = true;
+option java_outer_classname = "RawSSDProto";
+option java_package = "com.google.borg.rpc";
+
+message RawSSDSpec {
+    optional int64 size = 1 [jstype = JS_STRING];
+    optional RawSSDSecurityMode security_mode = 2 [default = UNSPECIFIED_RAW_SSD_SECURITY];
+    optional string name = 3;
+}
+
+message RawSSDAlloc {
+    optional string name = 1;
+    optional int64 size = 2;
+    optional RawSSDSecurityMode security_mode = 3 [default = UNSPECIFIED_RAW_SSD_SECURITY];
+}
+
+enum RawSSDSecurityMode {
+    UNSPECIFIED_RAW_SSD_SECURITY = 0;
+    BORG_MANAGED_RAW_SSD_SECURITY = 1;
+    TASK_MANAGED_RAW_SSD_SECURITY = 2;
+    NO_RAW_SSD_SECURITY = 3;
+}

@@ -1,0 +1,460 @@
+syntax = "proto2";
+
+package speckle_dogfish.dogfish_proto;
+
+import "cloud/datastore/tools/proto_checksum_plugin/checksum_annotation.proto";
+import "google/protobuf/timestamp.proto";
+import "logs/proto/dogfish/build-info.proto";
+import "logs/proto/dogfish/vmclientinfo.proto";
+import "net/proto2/bridge/proto/message_set.proto";
+import "storage/datapol/annotations/proto/semantic_annotations.proto";
+import "storage/speckle/dogfish/proto/client-type.proto";
+import "storage/speckle/dogfish/proto/database-type.proto";
+import "storage/speckle/dogfish/proto/dogfish-checksum.proto";
+import "storage/speckle/dogfish/proto/shard-state.proto";
+
+service Dogfish {
+    rpc WriteLogRecord(WriteLogRecordRequest) returns (stream WriteLogRecordResponse);
+    rpc ControlInfo(ControlInfoRequest) returns (ControlInfoResponse);
+    rpc ReadBlock(ReadBlockRequest) returns (ReadBlockResponse);
+    rpc GetMultiNumBlocks(GetMultiNumBlocksRequest) returns (GetMultiNumBlocksResponse);
+    rpc ReadFile(ReadFileRequest) returns (ReadFileResponse);
+    rpc GetFileSize(GetFileSizeRequest) returns (GetFileSizeResponse);
+    rpc ReadDir(ReadDirRequest) returns (ReadDirResponse);
+    rpc ShardReplicaHeartbeat(ShardReplicaHeartbeatRequest) returns (ShardReplicaHeartbeatResponse);
+    rpc ShardReplicaPing(ShardReplicaPingRequest) returns (ShardReplicaPingResponse);
+    rpc FillGap(FillGapRequest) returns (FillGapResponse);
+    rpc NotifyGap(NotifyGapRequest) returns (NotifyGapResponse);
+    rpc GetShardReplicaState(GetShardReplicaStateRequest) returns (GetShardReplicaStateResponse);
+    rpc DirectObjectStorageRead(DirectObjectStorageReadRequest) returns (DirectObjectStorageReadResponse);
+    rpc DirectRocksDbRead(DirectRocksDbReadRequest) returns (DirectRocksDbReadResponse);
+    rpc SealWal(SealWalRequest) returns (SealWalResponse);
+}
+
+message ChecksummedLsn {
+    optional uint64 lsn = 1;
+    optional fixed32 checksum = 2;
+}
+
+message BlockInsertion {
+    optional RelFileId rnode = 1;
+    optional int64 block_no = 2;
+    optional bytes block = 3 [ctype = CORD];
+}
+
+message RelationFetch {
+    optional uint64 version_lsn = 1;
+    optional RelFileId source_rnode = 2;
+    repeated int64 source_blocks = 3 [packed = true];
+    optional int32 source_shard = 4;
+    optional uint32 target_database_id = 5;
+    optional int32 target_shard = 6;
+}
+
+message VisibilityMapClearForTruncate {
+    optional RelFileId rnode = 1;
+    optional int64 block_no = 2;
+    optional int64 nheapblocks = 3;
+}
+
+message RemoveDir {
+    optional string dir = 1;
+    optional bool binary_upgrade = 2;
+}
+
+message RelationMetadata {
+    optional RelFileId rnode = 1;
+    
+    optional Operation op = 2;
+    enum Operation {
+        UNKNOWN = 0;
+        CREATE = 1;
+        DELETE = 2;
+        TRUNCATE = 3;
+        EXTEND = 4;
+    }
+    
+    optional int64 nblocks = 3;
+    optional int64 block_pos = 4;
+}
+
+message FileWrite {
+    optional string filename = 1;
+    optional bytes data = 2 [ctype = CORD];
+    optional uint64 offset = 3;
+}
+
+message FileFetch {
+    optional uint64 version_lsn = 1;
+    optional string source_filename = 2;
+    optional string target_filename = 3;
+    optional int32 source_shard = 4;
+    optional int32 target_shard = 5;
+}
+
+message CopyDatabaseBoundary {
+    optional Operation op = 1;
+    enum Operation {
+        UNKNOWN = 0;
+        START = 1;
+        END = 2;
+    }
+    
+    optional uint32 source_database_id = 2;
+    optional uint32 target_database_id = 3;
+}
+
+message GenericLogRecord {
+    repeated BlockInsertion block_inserts = 1;
+    repeated VisibilityMapClearForTruncate visibility_map_clears = 6;
+    repeated RelationMetadata relation_metadata = 2;
+    repeated FileWrite file_writes = 3;
+    repeated RemoveDir remove_dirs = 4;
+    optional ControlInfo control_info = 5;
+    optional RelationFetch relation_fetch = 7;
+    optional FileFetch file_fetch = 8;
+    optional CopyDatabaseBoundary copy_database_boundary = 9;
+}
+
+message MultiShardRecord {
+    optional bytes postgres_record = 1 [ctype = CORD];
+    optional BackpointerMap backpointers = 2 [deprecated = true];
+}
+
+message LogRecord {
+    optional uint64 start_lsn = 1;
+    optional uint64 end_lsn = 2;
+    optional uint64 backpointer_lsn = 3;
+    optional bool switch_wal = 7;
+    optional bool has_timestamp = 9;
+    optional google.protobuf.Timestamp record_timestamp = 8;
+    optional Checksum checksum = 10;
+    optional DatabaseType postgres_version = 11;
+    
+    oneof record {
+        bytes postgres_record = 4 [ctype = CORD];
+        GenericLogRecord generic_record = 5;
+        MultiShardRecord multi_shard_record = 6;
+    }
+}
+
+message Checksum {
+    optional uint32 hash = 1;
+    optional string version = 2;
+}
+
+message BackpointerMap {
+    repeated int32 shards = 1;
+    repeated uint64 lsns = 2;
+}
+
+message Header {
+    optional string database = 1;
+    optional int32 shard = 2;
+    optional int32 replica_id = 3;
+    optional DatabaseType database_type = 4;
+    optional ClientType client_type = 5;
+    optional BuildInfo client_build_info = 6;
+    map<string, bool> ucp_experiments = 7;
+    optional VMClientInfo vm_client_info = 8;
+}
+
+message RiegeliLogRecordBatches {
+    optional int32 total_record_count_hint = 1;
+    repeated bytes batch = 2 [ctype = CORD];
+    optional int64 logical_lsn_bytes = 3;
+}
+
+message WriteLogRecordRequest {
+    optional Header header = 4;
+    optional int64 epoch = 6;
+    optional int32 timeline_id = 2;
+    repeated LogRecord record = 3;
+    optional RiegeliLogRecordBatches riegeli_records = 7;
+    
+    reserved 5;
+}
+
+message WriteLogRecordResponse {
+    optional uint64 max_accepted_for_replay_lsn = 1;
+    optional uint64 max_processable_lsn = 2;
+}
+
+message LogicalReplicationState {
+    optional uint32 roident = 1;
+    optional uint64 remote_lsn = 2;
+}
+
+message ControlInfo {
+    optional uint64 redo_rec_ptr = 1;
+    optional uint32 this_timeline_id = 2;
+    optional uint32 prev_timeline_id = 3;
+    optional bool full_page_writes = 4;
+    optional uint64 next_full_xid = 5;
+    optional uint64 next_oid = 6;
+    optional uint32 next_multi = 7;
+    optional uint32 next_multi_offset = 8;
+    optional uint32 oldest_xid = 9;
+    optional uint64 oldest_xid_db = 10;
+    optional uint32 oldest_multi = 11;
+    optional uint64 oldest_multi_db = 12;
+    optional int64 time = 13;
+    optional uint32 oldest_commit_ts_xid = 14;
+    optional uint32 newest_commit_ts_xid = 15;
+    optional uint32 oldest_active_xid = 17;
+    repeated LogicalReplicationState logical_replication_state = 18;
+}
+
+message ControlInfoRequest {
+    optional Header header = 1;
+    optional uint64 version_lsn = 2;
+}
+
+message ControlInfoResponse {
+    optional ControlInfo control_info = 1;
+    optional uint64 exact_lsn = 2;
+}
+
+message RelFileId {
+    optional uint32 tablespace_id = 1;
+    optional uint32 database_id = 2;
+    optional uint32 relation_id = 3;
+    optional int32 backend_id = 4;
+    optional int32 fork = 5;
+}
+
+message ReadBlockInfo {
+    optional RelFileId rel_file_id = 1;
+    optional uint32 block = 2;
+    optional uint32 rel_num_blocks = 3 [deprecated = true];
+    optional uint64 version_lsn = 4;
+}
+
+message ReadBlockRequest {
+    optional Header header = 1;
+    optional uint64 version_lsn = 2 [deprecated = true];
+    repeated ReadBlockInfo block_infos = 3;
+    
+    optional Priority priority = 4;
+    enum Priority {
+        UNKNOWN = 0;
+        SYNC = 1;
+        ASYNC = 2;
+        SYNC_LOW = 3;
+        SYNC_VERIFIER = 4;
+    }
+}
+
+message ReadBlockData {
+    optional ReadBlockInfo info = 1;
+    optional bytes data = 2 [ctype = CORD];
+    optional uint32 data_crc32c_scrambled = 3;
+    optional ChecksumProvenance data_checksum_provenance = 4;
+    optional uint64 last_applied_lsn = 5;
+    optional uint64 exact_lsn = 6;
+}
+
+message ReadBlockResponse {
+    repeated ReadBlockData block_data = 1;
+    optional int64 server_processing_time_us = 2;
+    optional uint64 applied_through_lsn = 3;
+}
+
+message GetMultiNumBlocksRequest {
+    optional Header header = 1;
+    optional BackpointerMap backpointer_map = 2;
+}
+
+message GetMultiNumBlocksResponse {
+    repeated RelFileId rel_file_id = 1;
+    repeated uint32 num_blocks = 2;
+}
+
+message ReadFileRequest {
+    optional Header header = 5;
+    repeated string filename = 1;
+    repeated int64 offset = 2;
+    repeated int64 count = 3;
+    repeated uint64 version_lsn = 4;
+    optional bool from_primary = 6;
+}
+
+message ReadFileResponse {
+    repeated bytes data = 1 [ctype = CORD];
+    repeated string filename = 2;
+}
+
+message GetFileSizeRequest {
+    optional Header header = 3;
+    optional string filename = 1;
+    optional uint64 version_lsn = 2;
+}
+
+message GetFileSizeResponse {
+    optional int64 size = 1;
+}
+
+message ReadDirRequest {
+    optional Header header = 3;
+    optional string dirname = 1;
+    optional uint64 version_lsn = 2;
+    optional bool recursive = 4;
+    optional bool from_primary = 5;
+}
+
+message ReadDirResponse {
+    repeated string dir_entry_names = 1;
+    repeated RelFileId block_relation = 2;
+    repeated uint32 block_numbers = 3;
+    repeated RelFileId existence_relation = 4;
+}
+
+message ShardReplicaHeartbeatRequest {
+    optional Header header = 1;
+    optional uint64 input_buffer_trim_lsn = 2;
+    optional uint64 low_watermark_lsn = 3;
+    optional uint64 max_seal_through_lsn = 4;
+    repeated uint64 shard_snapshot_lsns = 5 [packed = true];
+}
+
+message ShardReplicaHeartbeatResponse {
+    optional Header header = 1;
+    optional uint64 max_processable_lsn = 2;
+    optional uint64 first_buffered_backpointer_lsn = 3;
+    optional uint64 seal_through_lsn = 4;
+}
+
+message ShardReplicaPingResponse {
+    optional Header header = 1;
+}
+
+message ShardReplicaPingRequest {
+    optional Header header = 1;
+}
+
+message FillGapRequest {
+    optional Header header = 1;
+    optional uint64 first_backpointer_lsn = 2;
+    optional uint64 last_end_lsn = 3;
+    optional bool include_only_blocks = 4;
+}
+
+message NotifyGapRequest {
+    optional Header header = 1;
+    optional uint64 end_lsn = 2;
+}
+
+message NotifyGapResponse {
+    optional Header header = 1;
+}
+
+message ObjectPath {
+    repeated bytes path = 1 [ctype = CORD];
+}
+
+message ObjectData {
+    optional ObjectPath object_path = 1;
+    optional uint64 version_lsn = 2;
+    optional bytes data = 3 [ctype = CORD];
+    optional uint32 data_crc32c_scrambled = 4;
+    optional ChecksumProvenance data_checksum_provenance = 5;
+    optional uint32 canonical_data_crc32c_scrambled = 6;
+    optional string canonical_data_version = 7;
+}
+
+message BlockGap {
+    optional uint64 consistent_snapshot_lsn = 1;
+    repeated ObjectData object_data = 3;
+    optional uint64 source_purge_lsn = 4;
+    
+    reserved 2;
+}
+
+message FillGapResponse {
+    optional Header header = 1;
+    repeated LogRecord record = 2;
+    optional BlockGap block_gap = 3;
+}
+
+message GetShardReplicaStateRequest {
+    optional Header header = 1;
+}
+
+message GetShardReplicaStateResponse {
+    optional Header header = 1;
+    optional ReconstructionState reconstruction_state = 2;
+}
+
+message DirectRocksDbReadRequest {
+    optional Header header = 1;
+    optional bytes key = 2 [ctype = CORD];
+    
+    optional ColumnFamily column_family = 3;
+    enum ColumnFamily {
+        DEFAULT = 0;
+        METADATA = 1;
+    }
+    
+    optional bool return_value = 4;
+}
+
+message DirectRocksDbReadResponse {
+    optional Header header = 1;
+    optional bytes value = 2 [ctype = CORD];
+}
+
+message DirectObjectStorageReadRequest {
+    optional Header header = 1;
+    optional ObjectPath object_path = 2;
+    optional uint64 version_lsn = 3;
+    optional bool return_object_data = 4;
+}
+
+message DirectObjectStorageReadResponse {
+    optional Header header = 1;
+    optional ObjectData object_data = 2;
+}
+
+message SealWalRequest {
+    optional Header header = 1;
+    optional uint64 lsn = 2;
+}
+
+message SealWalResponse {
+    
+}
+
+message ShardLocationMetadata {
+    optional bool wrong_server = 1;
+    optional bool not_attached = 2;
+    
+    extend .proto2.bridge.MessageSet {
+        optional ShardLocationMetadata message_set_extension = 384704972;
+    }
+}
+
+message StatusCodeDetails {
+    optional bool retriable = 1;
+    
+    optional Source source = 2;
+    enum Source {
+        SOURCE_UNKNOWN = 0;
+        KEK = 1;
+    }
+    
+    extend .proto2.bridge.MessageSet {
+        optional StatusCodeDetails message_set_extension = 507561295;
+    }
+}
+
+message InputBufferEntry {
+    optional LogRecord record = 1;
+    optional google.protobuf.Timestamp insert_timestamp = 2;
+}
+
+message DogfishWrappedDataEncryptionKey {
+    optional bytes wrapped_key_data = 1;
+    optional string wrapping_kek_version = 2;
+    optional bool encrypted_with_keymaster_kek = 3 [default = false];
+    optional bool encrypted_with_rks_keymaster_kek = 4 [default = false];
+}

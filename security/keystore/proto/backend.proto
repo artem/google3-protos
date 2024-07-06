@@ -1,0 +1,44 @@
+syntax = "proto2";
+
+package security.keystore;
+
+import "storage/datapol/annotations/proto/semantic_annotations.proto";
+import "net/proto2/proto/descriptor.proto";
+
+option java_multiple_files = true;
+option java_outer_classname = "KeystoreBackendProtoFile";
+option java_package = "com.google.security.keystore.proto";
+
+message KeystoreBackendProto {
+    required Type type = 1 [default = DEFAULT];
+    enum Type {
+        option allow_alias = true;
+        REGIONAL = 16;
+        FASTCONFIGPUSH = 13;
+        CLUSTERLOCAL = 18;
+        DEV = 1;
+        GMAIL = 3;
+        INDEXING = 5;
+        INDEXING_LOWPRI = 7;
+        INDEXING_HIPRI = 8;
+        REGIONAL_EDGE = 17;
+        STAGING_BOOTSTRAP = 996;
+        STAGING_CLUSTERLOCAL = 997;
+        STAGING_DEV_BOOTSTRAP = 993;
+        LS_TEST_DEV = 998;
+        LITE = 9 [deprecated = true];
+        DEFAULT = 0 [deprecated = true];
+        LOWLATENCY = 2 [deprecated = true];
+        PROD = 4 [deprecated = true];
+        DEV_LITE = 12 [deprecated = true];
+        MAPREDUCE = 0 [deprecated = true];
+        MOONSHINE_MR = 11 [deprecated = true];
+        UNKNOWN = 999;
+    }
+}
+
+extend .proto2.EnumValueOptions {
+    optional bool is_prod_backend = 34577724;
+    optional string server_address = 32761152;
+    optional string data_access_blade_service = 63245569;
+}

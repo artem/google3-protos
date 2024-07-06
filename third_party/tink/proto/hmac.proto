@@ -1,0 +1,26 @@
+syntax = "proto3";
+
+package google.crypto.tink;
+
+import "third_party/tink/proto/common.proto";
+
+option go_package = "github.com/tink-crypto/tink-go/v2/proto/hmac_go_proto";
+option java_multiple_files = true;
+option java_package = "com.google.crypto.tink.proto";
+
+message HmacParams {
+    HashType hash = 1;
+    uint32 tag_size = 2;
+}
+
+message HmacKey {
+    uint32 version = 1;
+    HmacParams params = 2;
+    bytes key_value = 3 [ctype = STRING_PIECE];
+}
+
+message HmacKeyFormat {
+    HmacParams params = 1;
+    uint32 key_size = 2;
+    uint32 version = 3;
+}

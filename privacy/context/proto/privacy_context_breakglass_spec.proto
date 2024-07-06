@@ -1,0 +1,15 @@
+syntax = "proto2";
+
+package privacy.context;
+
+import "privacy/context/proto/policy_breakglass.proto";
+import "storage/datapol/annotations/proto/semantic_annotations.proto";
+
+option cc_enable_arenas = true;
+option java_multiple_files = true;
+option java_package = "com.google.privacy.context.proto";
+
+message PrivacyContextBreakglassSpec {
+    optional PolicyBreakglass policy_breakglass = 1;
+    optional string invoker_user = 2;
+}

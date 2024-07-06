@@ -1,0 +1,70 @@
+syntax = "proto2";
+
+package production.rpc.stubs.cache;
+
+import "net/proto2/contrib/validator/annotations.proto";
+import "production/rpc/stubs/cache/cache.proto";
+import "production/rpc/stubs/proto/stub_configuration.proto";
+import "util/task/status.proto";
+
+option java_package = "com.google.prod.rpc.stubs.cache.proto";
+
+message CacheBehavior {
+    optional Cache cache = 1;
+    optional double cache_expiration_seconds = 2 [deprecated = true];
+    
+    repeated PerResponsesPolicy policies = 3 [deprecated = true];
+    message PerResponsesPolicy {
+        repeated util.StatusProto statuses = 1;
+        optional double cache_expiration_seconds = 2;
+    }
+    
+    repeated CachePolicyEntry cache_policies = 4;
+    message CachePolicyEntry {
+        optional RequestPredicate request_predicate = 1;
+        optional CachePolicy policy = 2;
+    }
+    
+    optional CachePolicy default_policy = 5;
+    message CachePolicy {
+        repeated ResponsePolicyEntry response_policies = 1;
+        
+        optional SkipCachingMode skip_caching_mode = 2 [default = SKIP_CACHING_DISABLED];
+        enum SkipCachingMode {
+            SKIP_CACHING_UNSPECIFIED = 0;
+            SKIP_CACHING_DISABLED = 1;
+            SKIP_CACHING_RESPECT_TAG = 2;
+        }
+    }
+    
+    optional CachedResponseExtensions cached_response_extensions = 6;
+    message CachedResponseExtensions {
+        repeated int32 extension_ids = 1 [packed = true];
+    }
+    
+    message RequestPredicate {
+        repeated string request_identifiers = 1;
+    }
+    
+    message ResponsePolicyEntry {
+        optional ResponseStatusPredicate response_predicate = 1;
+        optional ResponseCachePolicy response_policy = 2;
+    }
+    
+    message ResponseStatusPredicate {
+        repeated util.StatusProto statuses = 1;
+    }
+    
+    message ResponseCachePolicy {
+        optional double cache_expiration_seconds = 1;
+        
+        optional AsyncRefresh async_refresh = 2;
+        message AsyncRefresh {
+            optional double async_refresh_eligible_after_seconds = 1 [default = inf];
+        }
+    }
+    
+    extend proto.CanonicalStubConfiguration {
+        optional CacheBehavior cache_extension = 220850046;
+    }
+}

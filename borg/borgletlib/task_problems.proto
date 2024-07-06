@@ -1,0 +1,29 @@
+syntax = "proto2";
+
+package borg;
+
+message TaskProblem {
+    optional Code code = 1;
+    enum Code {
+        CODE_UNSPECIFIED = 0;
+        TPU_SDC_LOCALIZED = 1;
+        TPU_SDC_NON_LOCALIZED = 2;
+    }
+    
+    optional string message = 2;
+    
+    repeated DeviceLocator devices = 3;
+    message DeviceLocator {
+        oneof locator {
+            string pci_sbdf = 1;
+            string device_devpath = 2;
+            string tray_devpath = 3;
+        }
+    }
+    
+    optional bool is_critical_problem = 4;
+}
+
+message TaskProblems {
+    repeated TaskProblem problems = 1;
+}

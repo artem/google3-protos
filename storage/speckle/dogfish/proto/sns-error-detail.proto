@@ -1,0 +1,14 @@
+syntax = "editions";
+
+package speckle_dogfish.dogfish_proto;
+
+import "net/proto2/bridge/proto/message_set.proto";
+import "storage/datapol/annotations/proto/semantic_annotations.proto";
+
+message SnsErrorDetail {
+    optional bool volume_has_been_deleted = 1;
+    
+    extend .proto2.bridge.MessageSet {
+        optional SnsErrorDetail message_set_extension = 384704973;
+    }
+}

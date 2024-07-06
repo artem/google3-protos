@@ -1,0 +1,195 @@
+syntax = "proto2";
+
+package storage_d;
+
+import "logs/eventid/eventid.proto";
+import "net/base/qos.proto";
+import "storage/d/proto/header.proto";
+import "storage/d/proto/storage-partition.proto";
+
+option cc_enable_arenas = true;
+
+message CollectSamplesRequest {
+    optional RequestHeader header = 1;
+    optional bool read_only = 2 [default = false];
+    optional bool verbose = 3 [default = false];
+}
+
+message CollectSamplesReply {
+    optional ReplyHeader header = 1;
+    optional RequestSample op_sample = 8;
+    optional RequestSample file_sample = 3;
+    optional RequestSample cfs_file_sample = 11;
+    optional int64 sequence_num = 5;
+    optional EventIdMessage event_id = 6;
+    optional string hostname = 7;
+    optional int32 d_changelist = 9;
+    optional string d_build_label = 10;
+    optional string collector_build_label = 13;
+    
+    reserved 2, 4, 12;
+}
+
+message RpcClientId {
+    optional string host = 1;
+    optional string jobname_chosen_by_user = 2;
+    optional int32 task_id = 3;
+    optional string username = 4;
+}
+
+message SampledOp {
+    optional double start_time = 3;
+    optional double latency = 4;
+    optional double netsched_queuing_latency = 19;
+    optional double cpusched_queuing_latency = 23;
+    optional double sio_cost = 24 [deprecated = true];
+    optional double abstract_cpu_cost = 25;
+    optional net_base.qos.TrafficClass ingress_traffic_class = 20;
+    optional net_base.qos.TrafficClass egress_traffic_class = 21;
+    optional int32 app_error_code = 5;
+    optional int64 fuzzy_atime = 8;
+    optional int64 mtime = 22;
+    optional RpcClientId client_id = 15;
+    optional double accumulated_cost = 10;
+    optional int64 accumulated_bytes = 11;
+    optional bool over_quota = 12;
+    optional double latency_prediction = 13;
+    optional RequestHeader.Priority priority = 14;
+    optional uint64 dapper_global_id = 17;
+    optional uint64 dapper_rpc_id = 18;
+    
+    reserved 16;
+}
+
+message SampledCensusData {
+    optional string originator = 1;
+    optional string caller = 2;
+    optional string tag = 3;
+    
+    reserved 4, 5;
+}
+
+message DerivedCID {
+    optional string user = 1;
+    optional string isolation_class = 2;
+    optional string service_class = 3;
+}
+
+message SampledRead {
+    optional string path = 1;
+    optional int64 offset = 2;
+    optional int64 length = 3;
+    optional bool cache_hit = 4;
+    optional int64 data_size = 5;
+    optional double soft_deadline_threshold = 6;
+    optional SampledEntry.Zone zone = 7 [default = UNKNOWN];
+}
+
+message SampledWrite {
+    optional string path = 1;
+    optional int64 offset = 2;
+    optional int64 length = 3;
+    optional int64 bytes_written = 4;
+    optional SampledEntry.Zone zone = 5 [default = UNKNOWN];
+    optional bool rmw = 6;
+}
+
+message SampledOpen {
+    optional int32 num_paths = 2;
+    optional string path = 3;
+    optional int32 error_code = 4;
+    optional double soft_deadline_threshold = 5;
+    
+    reserved 1;
+}
+
+message SampledWriteStat {
+    optional int32 num_paths = 1;
+    optional string path = 2;
+    optional bool immutable = 3;
+    optional int32 error_code = 4;
+    optional double soft_deadline_threshold = 5;
+}
+
+message SampledRemove {
+    optional int32 num_paths = 2;
+    optional string path = 3;
+    optional int32 bytes_removed = 4;
+    optional string remove_dir = 5;
+    
+    reserved 1;
+}
+
+message SampledVolumeDeviceInfo {
+    optional string populated_by = 1;
+    optional string volume_name = 2;
+    optional string device_name = 3;
+    optional uint64 volume_id = 4;
+    optional StoragePartition partition_type = 5;
+    optional bool is_colossus_volume = 6;
+}
+
+message SampledEntry {
+    optional RpcMethod method = 1;
+    enum RpcMethod {
+        RPC_READ = 7;
+        RPC_WRITE = 8;
+        RPC_OPEN = 6;
+        RPC_WRITE_STAT = 11;
+        RPC_REMOVE = 13;
+        RPC_NOOP = 18;
+        RPC_PULL_BLOCKS = 19;
+        RPC_SYNC = 16;
+    }
+    
+    optional RequestHeader d_header = 2;
+    optional SampledOp op = 3;
+    optional SampledCensusData census_data = 4;
+    optional SampledRead read = 5;
+    optional SampledWrite write = 6;
+    optional SampledOpen open = 7;
+    optional SampledWriteStat write_stat = 10;
+    optional SampledRemove remove = 8;
+    optional DerivedCID cid = 9;
+    optional double aio_cost = 11;
+    optional double transitional_aio_cost = 12;
+    optional double uncapped_aio_cost = 13;
+    optional uint64 original_rpc_id = 21;
+    optional SampledVolumeDeviceInfo volume_device_info = 22;
+    optional bool cfs_sampling_done_with_base_file_id = 23 [default = false];
+    
+    optional NumbersForSampling numbers_for_sampling = 24;
+    message NumbersForSampling {
+        optional double op_sample = 1;
+        optional double d_file_sample = 2;
+        optional double cfs_file_sample = 3;
+    }
+    
+    reserved 20;
+    
+    enum Zone {
+        UNKNOWN = 0;
+        WARM = 1;
+        COLD = 2;
+        SINGLE = 3;
+    }
+}
+
+message RequestSample {
+    repeated bytes raw_entry = 1;
+    repeated SampledEntry entry = 2;
+    optional int32 total = 3;
+    optional int64 reservoir_size = 10;
+    optional int64 collection_period_usec = 11;
+    repeated int32 space_used = 4 [packed = true];
+    repeated double raw_aio_cost = 5;
+    repeated double raw_transitional_aio_cost = 9;
+    optional double entry_weight = 7 [default = 1];
+    
+    reserved 6, 8;
+}
+
+message FileDict {
+    repeated string path = 1;
+    repeated int32 count = 2 [packed = true];
+}

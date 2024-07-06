@@ -1,0 +1,36 @@
+syntax = "proto2";
+
+package production.rpc.stubs.cachewise;
+
+option java_outer_classname = "CachewiseCommonDefinitionsProto";
+option java_package = "com.google.prod.rpc.stubs.cachewise.proto";
+
+enum AddFingerprintOutcome {
+    ADD_FINGERPRINT_OUTCOME_UNSPECIFIED = 0;
+    NOT_CACHEABLE = 1;
+    LOCAL_CACHE_HIT = 2;
+    LOCAL_CACHE_MISS_INSERTED = 3;
+    SKIPPED_MISSING_RPC_STATS = 4;
+    SKIPPED_REQUEST_PREFORMATTED = 5;
+    SKIPPED_REQUEST_LARGE_SIZE = 6;
+    SKIPPED_CACHE_KEY_COMPUTATION_FAILED = 7;
+    SKIPPED_RESPONSE_SIZE_ZERO = 8;
+}
+
+enum HllEntryType {
+    HLL_ENTRY_TYPE_UNSPECIFIED = 0;
+    CACHE = 1;
+    LOCAL_HITS = 2;
+}
+
+enum AnalysisMode {
+    ANALYSIS_MODE_UNSPECIFIED = 0;
+    ANALYSIS_MODE_LOCAL_ONLY = 1;
+    ANALYSIS_MODE_DISTRIBUTED = 2;
+}
+
+enum EvictionPolicy {
+    EVICTION_POLICY_UNSPECIFIED = 0;
+    MAX_BYTES_ONLY = 1;
+    MAX_BYTES_OR_NUMBER_OF_ITEMS = 2;
+}

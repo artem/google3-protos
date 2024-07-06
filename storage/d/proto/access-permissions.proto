@@ -1,0 +1,15 @@
+syntax = "proto2";
+
+package storage_d;
+
+import "security/credentials/proto/principal.proto";
+
+message AccessPermissions {
+    optional int32 mode = 1;
+    optional string owner = 3;
+    optional string group = 4;
+}
+
+message PrincipalAccessPermissions {
+    repeated security.credentials.PrincipalProto principal = 1;
+}

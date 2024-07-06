@@ -1,0 +1,39 @@
+syntax = "proto3";
+
+package google.crypto.tink;
+
+import "third_party/tink/proto/common.proto";
+
+option go_package = "github.com/tink-crypto/tink-go/v2/proto/ecdsa_go_proto";
+option java_multiple_files = true;
+option java_package = "com.google.crypto.tink.proto";
+
+message EcdsaParams {
+    HashType hash_type = 1;
+    EllipticCurveType curve = 2;
+    EcdsaSignatureEncoding encoding = 3;
+}
+
+message EcdsaPublicKey {
+    uint32 version = 1;
+    EcdsaParams params = 2;
+    bytes x = 3;
+    bytes y = 4;
+}
+
+message EcdsaPrivateKey {
+    uint32 version = 1;
+    EcdsaPublicKey public_key = 2;
+    bytes key_value = 3 [ctype = STRING_PIECE];
+}
+
+message EcdsaKeyFormat {
+    EcdsaParams params = 2;
+    uint32 version = 3;
+}
+
+enum EcdsaSignatureEncoding {
+    UNKNOWN_ENCODING = 0;
+    IEEE_P1363 = 1;
+    DER = 2;
+}

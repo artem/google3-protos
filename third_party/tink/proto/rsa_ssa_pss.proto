@@ -1,0 +1,39 @@
+syntax = "proto3";
+
+package google.crypto.tink;
+
+import "third_party/tink/proto/common.proto";
+
+option go_package = "github.com/tink-crypto/tink-go/v2/proto/rsa_ssa_pss_go_proto";
+option java_multiple_files = true;
+option java_package = "com.google.crypto.tink.proto";
+
+message RsaSsaPssParams {
+    HashType sig_hash = 1;
+    HashType mgf1_hash = 2;
+    int32 salt_length = 3;
+}
+
+message RsaSsaPssPublicKey {
+    uint32 version = 1;
+    RsaSsaPssParams params = 2;
+    bytes n = 3;
+    bytes e = 4;
+}
+
+message RsaSsaPssPrivateKey {
+    uint32 version = 1;
+    RsaSsaPssPublicKey public_key = 2;
+    bytes d = 3;
+    bytes p = 4;
+    bytes q = 5;
+    bytes dp = 6;
+    bytes dq = 7;
+    bytes crt = 8;
+}
+
+message RsaSsaPssKeyFormat {
+    RsaSsaPssParams params = 1;
+    uint32 modulus_size_in_bits = 2;
+    bytes public_exponent = 3;
+}

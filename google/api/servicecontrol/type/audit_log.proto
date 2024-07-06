@@ -1,0 +1,16 @@
+syntax = "proto3";
+
+package google.api.servicecontrol.type;
+
+import "logs/proto/data_access/data_access_log.proto";
+import "security/authorization/iam/cloud_audit_record.proto";
+
+option cc_enable_arenas = true;
+option java_multiple_files = true;
+option java_outer_classname = "AuditLogProto";
+option java_package = "google.api.servicecontrol.type";
+
+message AuditLog {
+    security_iam.CloudAuditRecordProto cloud_audit_log = 1;
+    security.data_access.DataAccessLogProto gin_audit_log = 2;
+}

@@ -1,0 +1,25 @@
+syntax = "proto2";
+
+package borg;
+
+option cc_enable_arenas = true;
+option java_outer_classname = "DiskAllocProto";
+option java_package = "com.google.borg.rpc";
+
+message DiskAlloc {
+    required int32 id = 3;
+    optional int32 storage_id = 12 [default = -1];
+    required int64 space = 2;
+    optional float time_fraction = 6;
+    optional bool priority = 7 [default = false];
+    optional int32 external_users = 4;
+    optional string path = 1;
+    optional int32 files = 5;
+    
+    enum ExternalUser {
+        SWAP = 1;
+        STORAGE = 2;
+        LOGS = 4;
+        ROOT = 8;
+    }
+}

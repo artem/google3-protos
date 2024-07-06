@@ -1,0 +1,13 @@
+syntax = "proto2";
+
+package colossus;
+
+option java_multiple_files = true;
+
+message RoutingConfig {
+    repeated Route routes = 2;
+    message Route {
+        optional string prefix = 1;
+        optional string cell = 2;
+    }
+}

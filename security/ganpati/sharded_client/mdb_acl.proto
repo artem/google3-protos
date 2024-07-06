@@ -1,24 +1,24 @@
 syntax = "proto2";
 
-import "security/credentials/proto/principal.proto";
 package security.ganpati.proto;
 
-option java_package = "com.google.security.ganpati.sharded_client";
-option java_outer_classname = "MdbAclProto";
+import "security/credentials/proto/principal.proto";
+
 option java_multiple_files = true;
+option java_outer_classname = "MdbAclProto";
+option java_package = "com.google.security.ganpati.sharded_client";
 
 message ShardProto {
-  required string name = 1;
-  required uint64 version = 2;
+    required string name = 1;
+    required uint64 version = 2;
 }
 
 message ShardSetProto {
-  repeated .security.ganpati.proto.ShardProto shard = 1;
+    repeated ShardProto shard = 1;
 }
 
 message MdbAclFileProto {
-  repeated .security.ganpati.proto.ShardSetProto shard_set = 1;
-  repeated .security.credentials.PrincipalProto principal = 2;
+    repeated ShardSetProto shard_set = 1;
+    repeated credentials.PrincipalProto principal = 2;
+    repeated credentials.PrincipalProto eligible_principal = 3;
 }
-
-

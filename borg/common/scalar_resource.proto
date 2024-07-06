@@ -1,0 +1,106 @@
+syntax = "proto2";
+
+package borg;
+
+option cc_enable_arenas = true;
+option java_outer_classname = "ScalarResourceProto";
+option java_package = "com.google.borg.rpc";
+
+message ScalarResource {
+    optional Key key = 1;
+    enum Key {
+        option allow_alias = true;
+        GPU = 0 [deprecated = true];
+        SEASTAR = 1;
+        PONYEXPRESS = 2;
+        JELLYFISH = 3;
+        JELLYDONUT = 27;
+        HOST_IPV4 = 4;
+        NVM = 5;
+        HPN_BANDWIDTH = 6;
+        SWINETREK = 7;
+        ARGOS = 8;
+        DIONYSUS = 44;
+        FAMA = 56;
+        GPU_GRID_K2 = 9;
+        GPU_FIREPRO_S9300X2 = 10;
+        GPU_TESLA_K20 = 11;
+        GPU_TESLA_K40 = 12;
+        GPU_TESLA_K80 = 13;
+        GPU_TESLA_P100 = 14;
+        GPU_TESLA_P100_16TH = 23;
+        GPU_TESLA_V100_16TH = 51;
+        GPU_MI25_16TH = 15;
+        DRAGONFISH = 16;
+        DRAGONDONUT = 28;
+        GPU_TESLA_V100 = 17;
+        GPU_TESLA_V100_32GIB = 32;
+        GPU_TESLA_A100_40GIB = 46;
+        GPU_TESLA_VNEXT_40GIB = 46;
+        GPU_TESLA_A100_80GIB = 66;
+        GPU_NVIDIA_H100 = 70;
+        GPU_NVIDIA_H200 = 86;
+        GPU_NVIDIA_B100 = 79 [deprecated = true];
+        GPU_NVIDIA_B200 = 87;
+        TIN_VP9 = 18;
+        CAVIUM_HSM = 19;
+        GNEISS = 20;
+        GPU_TESLA_P4 = 21;
+        GPU_TESLA_T4 = 22;
+        STARTREK = 24;
+        USPS_SLEDGE = 25;
+        USPS_ANDROMEDA = 26;
+        USPS_ANDROMEDA_CANARY = 33;
+        USPS_RDMA = 74;
+        EXPERIMENTAL_EXPLICIT_AEP = 29 [deprecated = true];
+        GPU_VEGA10_8GIB_16TH = 30;
+        GPU_NAVI12_8GIB_16TH = 45;
+        VARGOS_2MIB = 31;
+        PUFFERFISH = 34;
+        VIPERFISH = 59;
+        PUFFYLITE = 35;
+        XITRON_128GIB = 36 [deprecated = true];
+        XITRON_512GIB = 42 [deprecated = true];
+        HERMOSA = 50;
+        CPU_MILLICORES = 37;
+        CPU_MILLIGCUS = 38;
+        MEMORY = 39;
+        HUGETLBFS_1G = 43;
+        HUGETLBFS_2M = 52;
+        TASK_OR_ALLOC_INSTANCE_SLOT = 41;
+        MACHINE_RESERVATION_SLOT = 47;
+        NVME_VF_POOL = 53;
+        NIC_VF_POOL = 54;
+        TLP_VF_POOL = 57 [deprecated = true];
+        LCE_VF_POOL = 71;
+        SHARED_BORG_NIC_VF_POOL = 77;
+        BORG_USPS_NIC_VF_POOL = 78;
+        SHARED_BORG_CX_VF_POOL = 88;
+        CX_VF_POOL = 81;
+        CHAMPIGNON = 55;
+        VLC_256MIB = 58 [deprecated = true];
+        VIPERLITE = 60;
+        GBH52ZUVGZ_SCALAR_TYPE = 61;
+        VIPERLITE_POD = 62;
+        GHOSTLITE = 63;
+        ROBOT_ALOHA = 82;
+        ROBOT_ALPHAPET = 83;
+        ROBOT_BIMANUAL_IIWA = 84;
+        ROBOT_IIWA14 = 85;
+        ROBOT_META = 80;
+        ROBOT_PANDA = 65;
+        ROBOT_SAWYER = 64;
+        GPU_A10_24TH = 67 [deprecated = true];
+        GPU_L4_24TH = 68;
+        GPU_NAVI32_48TH = 69 [deprecated = true];
+        ANDROMEDA_ON_HOST_STACK = 72;
+        GRANITE = 73;
+        MILLIACU = 75;
+        ACU = 75;
+        GHOSTLITE_POD = 76;
+    }
+    
+    optional int64 value = 3 [jstype = JS_STRING];
+    
+    reserved 4;
+}

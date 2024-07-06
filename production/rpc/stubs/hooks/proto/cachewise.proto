@@ -1,0 +1,29 @@
+syntax = "proto2";
+
+package production.rpc.stubs.hooks.proto;
+
+import "production/rpc/stubs/cachewise/proto/cacheability_common_definitions.proto";
+import "production/rpc/stubs/proto/stub_configuration.proto";
+
+option java_package = "com.google.prod.rpc.stubs.hooks.proto";
+
+message Cachewise {
+    optional int64 max_cache_bytes = 1;
+    optional int32 expected_item_count = 2;
+    optional int64 max_request_size_bytes = 5;
+    optional cachewise.AnalysisMode analysis_mode = 3 [default = ANALYSIS_MODE_LOCAL_ONLY];
+    
+    optional CachewiseMode cachewise_mode = 4 [default = CACHEWISE_MODE_SYSTEM_DEFAULT];
+    enum CachewiseMode {
+        CACHEWISE_MODE_UNSPECIFIED = 0;
+        CACHEWISE_MODE_SYSTEM_DEFAULT = 1;
+        CACHEWISE_MODE_DISABLED = 2;
+        CACHEWISE_MODE_ENABLED = 3;
+    }
+    
+    repeated string analyze_methods = 6;
+    
+    extend stubs.proto.CanonicalStubConfiguration {
+        optional Cachewise cachewise_extension = 380642999;
+    }
+}

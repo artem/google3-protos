@@ -1,0 +1,16 @@
+syntax = "proto2";
+
+package production.rpc.stubs;
+
+import "net/proto2/proto/descriptor.proto";
+
+option java_outer_classname = "RestrictedMetadataProto";
+
+enum RestrictedMetadata {
+    UNSPECIFIED = 0;
+    EMBEDDED_ERROR_STATUS = 1;
+}
+
+extend .proto2.FieldOptions {
+    repeated RestrictedMetadata restricted_metadata = 377470342;
+}

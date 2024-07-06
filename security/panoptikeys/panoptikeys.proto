@@ -1,0 +1,56 @@
+syntax = "proto2";
+
+package security.panoptikeys;
+
+import "net/proto2/proto/descriptor.proto";
+import "security/keymaster/key_format.proto";
+import "security/panoptikeys/crypto_key_classes/crypto_key_classes_binding.proto";
+import "storage/datapol/annotations/proto/semantic_annotations.proto";
+import "third_party/tink/proto/tink.proto";
+
+option java_multiple_files = true;
+
+message KeymasterMetadataReference {
+    optional string piper_path_to_textproto = 1;
+    optional string name = 2;
+    optional string selector = 3;
+}
+
+message KeymasterKeyFormatReference {
+    optional string piper_path_to_textproto = 1;
+    optional string name = 2;
+    optional string selector = 3;
+}
+
+message EncryptionCiphertextFormats {
+    repeated keymaster.KeyFormat keymaster_format = 2;
+    repeated google.crypto.tink.KeyTemplate tink_format = 3;
+    repeated KeymasterMetadataReference keymaster_metadata_reference = 4 [deprecated = true];
+    optional string encrypted_but_no_representation_available_yet = 5;
+    repeated KeymasterKeyFormatReference keymaster_keyformat_reference = 6;
+    optional crypto_key_classes.CryptoBoundKeyClasses bound_crypto_key_classes = 7;
+}
+
+message EncryptionFormats {
+    optional PlaintextFormat plaintext_format = 1 [default = USASCIIBYTES];
+    enum PlaintextFormat {
+        USASCIIBYTES = 1;
+        RAWBYTES = 2;
+    }
+    
+    optional EncryptionCiphertextFormats ciphertext_formats = 2;
+    
+    optional Encoding encoding = 3;
+    enum Encoding {
+        UNKNOWN = 0;
+        NONE = 1;
+        BASE64 = 2;
+        WEBSAFE = 3;
+        BASE64_URL = 4;
+        WEBSAFE_BASE64_URL = 5;
+    }
+}
+
+extend .proto2.FieldOptions {
+    optional EncryptionFormats encryption_formats = 7114386;
+}

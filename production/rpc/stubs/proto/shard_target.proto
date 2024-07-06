@@ -1,0 +1,8 @@
+syntax = "proto2";
+
+package production.rpc.stubs.proto;
+
+message ShardTarget {
+    optional string shard_id = 1;
+    optional string target = 2;
+}

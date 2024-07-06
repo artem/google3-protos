@@ -1,0 +1,18 @@
+syntax = "editions";
+
+package fireaxe.filter_result;
+
+option java_multiple_files = true;
+option optimize_for = CODE_SIZE;
+option java_outer_classname = "FilterResultProto";
+option java_package = "com.google.protos.fireaxe.filterresult";
+
+enum FilterResult {
+    UNKNOWN = 0;
+    ACCEPT_NOMATCH = 1;
+    ACCEPT_EVAL_ERROR = 2;
+    ACCEPT_MATCH_BELOWLIMIT = 3;
+    ACCEPT_MATCH_PREVIEW = 4;
+    ACCEPT_MATCH_UNDRAIN = 5;
+    REJECT_MATCH = 6;
+}

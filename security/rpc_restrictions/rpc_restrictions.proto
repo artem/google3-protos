@@ -1,0 +1,20 @@
+syntax = "proto2";
+
+package security_rpc_restrictions;
+
+import "net/proto2/bridge/proto/message_set.proto";
+
+option java_multiple_files = true;
+option java_package = "com.google.net.security.rpcrestrictions.extensions";
+
+message RequireSameUserOverUDS {
+    extend .proto2.bridge.MessageSet {
+        optional RequireSameUserOverUDS message_set_extension = 525000517;
+    }
+}
+
+message RequireZammAcceptedCheck {
+    extend .proto2.bridge.MessageSet {
+        optional RequireZammAcceptedCheck message_set_extension = 525001140;
+    }
+}

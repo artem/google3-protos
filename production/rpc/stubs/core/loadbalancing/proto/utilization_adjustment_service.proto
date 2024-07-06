@@ -1,0 +1,47 @@
+syntax = "proto2";
+
+package production.rpc.stubs.loadbalancing;
+
+import "google/protobuf/duration.proto";
+import "google/protobuf/timestamp.proto";
+
+option java_multiple_files = true;
+
+service UtilizationAdjustmentService {
+    rpc ApplyUtilizationIntent(ApplyUtilizationIntentRequest) returns (ApplyUtilizationIntentResponse);
+    rpc ClearUtilizationIntent(ClearUtilizationIntentRequest) returns (ClearUtilizationIntentResponse);
+    rpc GetUtilizationIntent(GetUtilizationIntentRequest) returns (GetUtilizationIntentResponse);
+}
+
+message ApplyUtilizationIntentRequest {
+    optional google.protobuf.Duration expiration_timeout = 1;
+    optional double desired_utilization = 2;
+    map<string, string> adjustment_parameters = 3;
+}
+
+message UtilizationIntent {
+    optional google.protobuf.Timestamp expiration_deadline = 1;
+    optional double desired_utilization = 2;
+    map<string, string> adjustment_parameters = 3;
+}
+
+message ApplyUtilizationIntentResponse {
+    optional UtilizationIntent current_intent = 1;
+    optional UtilizationIntent replaced_intent = 2;
+}
+
+message ClearUtilizationIntentRequest {
+    
+}
+
+message ClearUtilizationIntentResponse {
+    optional UtilizationIntent cleared_intent = 1;
+}
+
+message GetUtilizationIntentRequest {
+    
+}
+
+message GetUtilizationIntentResponse {
+    optional UtilizationIntent current_intent = 1;
+}

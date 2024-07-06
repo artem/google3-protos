@@ -1,0 +1,14 @@
+syntax = "proto2";
+
+package thinmint;
+
+import "net/rpc/empty-message.proto";
+import "security/thinmint/proto/thinmint.proto";
+
+service ThinMintService {
+    rpc Mint(ThinMintDescription) returns (EmptyMessage);
+    rpc MintAs(ThinMintDescription) returns (EmptyMessage);
+    rpc Delegate(ThinMintDescription) returns (EmptyMessage);
+    rpc Renew(EmptyMessage) returns (EmptyMessage);
+    rpc ProxiedMint(ThinMintDescription) returns (EmptyMessage);
+}

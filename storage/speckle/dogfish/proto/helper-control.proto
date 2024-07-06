@@ -1,0 +1,40 @@
+syntax = "proto2";
+
+package speckle_dogfish.dogfish_proto;
+
+import "google/protobuf/timestamp.proto";
+import "storage/datapol/annotations/proto/semantic_annotations.proto";
+
+service HelperControl {
+    rpc RegisterBackup(RegisterBackupRequest) returns (RegisterBackupResponse);
+    rpc DeregisterBackup(DeregisterBackupRequest) returns (DeregisterBackupResponse);
+    rpc SealOutstandingWal(SealOutstandingWalRequest) returns (SealOutstandingWalResponse);
+}
+
+message RegisterBackupRequest {
+    optional string volume_name = 3;
+    optional string backup_id = 4;
+    optional google.protobuf.Timestamp deadline = 5;
+}
+
+message RegisterBackupResponse {
+    optional uint64 backup_lsn = 1;
+}
+
+message DeregisterBackupRequest {
+    optional string volume_name = 1;
+    optional string backup_id = 2;
+}
+
+message DeregisterBackupResponse {
+    
+}
+
+message SealOutstandingWalRequest {
+    optional string volume_name = 1;
+}
+
+message SealOutstandingWalResponse {
+    repeated int32 shards_with_outstanding_wal = 1 [packed = true];
+    optional int64 min_target_seal_through_lsn = 2;
+}

@@ -1,0 +1,31 @@
+syntax = "proto3";
+
+package google.rpc.context;
+
+import "storage/datapol/annotations/proto/semantic_annotations.proto";
+
+option objc_class_prefix = "RPC";
+option cc_enable_arenas = true;
+option java_multiple_files = true;
+option java_outer_classname = "CheckContextProto";
+option java_package = "com.google.rpc.context";
+
+message CheckContext {
+    string service_config_id = 1;
+    string service_rollout_id = 2;
+    repeated string restricted_containers = 3;
+    repeated string unrestricted_containers = 4;
+    
+    ConsumerType consumer_type = 5;
+    enum ConsumerType {
+        UNKNOWN = 0;
+        CLIENT_PROJECT = 1;
+        RESOURCE_CONTAINER = 2;
+        USER_PROJECT = 3;
+    }
+    
+    bool has_only_fail_open_errors = 6;
+    string principal_email = 7;
+    bool has_quota_unavailability_error = 8;
+    string iam_principal = 9;
+}

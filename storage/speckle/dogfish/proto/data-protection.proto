@@ -1,0 +1,285 @@
+syntax = "proto2";
+
+package speckle_dogfish.dogfish_proto;
+
+import "google/rpc/status.proto";
+import "logs/proto/dogfish/build-info.proto";
+import "logs/proto/logs_annotations/logs_annotations.proto";
+import "storage/datapol/annotations/proto/semantic_annotations.proto";
+import "storage/speckle/dogfish/proto/dogfish-checksum.proto";
+import "storage/speckle/dogfish/proto/dogfish.proto";
+
+service DataProtection {
+    rpc GetMaxProcessableLsn(GetMaxProcessableLsnRequest) returns (GetMaxProcessableLsnResponse);
+    rpc StartBackup(StartBackupRequest) returns (StartBackupResponse);
+    rpc GetBackupStatus(GetBackupStatusRequest) returns (GetBackupStatusResponse);
+    rpc CancelBackup(CancelBackupRequest) returns (CancelBackupResponse);
+    rpc StartRestore(StartRestoreRequest) returns (StartRestoreResponse);
+    rpc GetRestoreStatus(GetRestoreStatusRequest) returns (GetRestoreStatusResponse);
+    rpc CancelRestore(CancelRestoreRequest) returns (CancelRestoreResponse);
+    rpc ReplayWal(ReplayWalRequest) returns (ReplayWalResponse);
+    rpc GetReplayWalStatus(GetReplayWalStatusRequest) returns (GetReplayWalStatusResponse);
+    rpc CancelReplayWal(CancelReplayWalRequest) returns (CancelReplayWalResponse);
+    rpc VerifyShardReplica(VerifyShardReplicaRequest) returns (VerifyShardReplicaResponse);
+    rpc CancelVerifyShardReplica(CancelVerifyShardReplicaRequest) returns (CancelVerifyShardReplicaResponse);
+    rpc GetMultiNumBlocks(GetMultiNumBlocksRequest) returns (GetMultiNumBlocksResponse);
+}
+
+message GetMaxProcessableLsnRequest {
+    optional Header header = 1;
+}
+
+message GetMaxProcessableLsnResponse {
+    optional Header header = 1;
+    optional uint64 max_processable_lsn = 2;
+}
+
+message BackupFileInfo {
+    optional string file_path = 1;
+    optional uint64 file_size_bytes = 8;
+    optional uint64 logical_size_bytes = 12;
+    optional int32 replica_id = 9;
+    optional uint32 records_checksum = 2;
+    optional uint64 max_observed_lsn = 7;
+    optional ObjectAndLsn previous_end_object = 3;
+    optional ObjectAndLsn end_object = 4;
+    optional ObjectAndLsn last_object_read = 13;
+    optional ObjectAndLsn last_object_checksummed = 14;
+    optional BuildInfo lps_build_info = 5 [deprecated = true];
+    optional string lps_build_label = 6;
+    optional bool gcs_verified = 10;
+    optional uint32 total_key_value_checksum = 11;
+}
+
+message ObjectAndLsn {
+    optional ObjectPath object_path = 1;
+    optional uint64 lsn = 2;
+}
+
+message VerificationObjectRecord {
+    optional ObjectPath object_path = 1;
+    optional uint64 lsn = 2;
+    optional bool is_tombstone = 3;
+}
+
+message ChecksumInfo {
+    optional uint32 full_keys_checksum = 1;
+    optional uint32 incremental_keys_checksum = 2;
+    optional uint32 full_relational_blocks_checksum = 3;
+    optional uint32 incremental_relational_blocks_checksum = 4;
+    optional uint32 full_file_blocks_checksum = 5;
+    optional uint32 incremental_file_blocks_checksum = 6;
+    optional uint32 full_metadata_protos_checksum = 7;
+    optional uint32 incremental_metadata_protos_checksum = 8;
+}
+
+message ShardBackupMetadata {
+    optional int32 shard_id = 1;
+    optional uint64 shard_backup_lsn = 4;
+    optional uint32 keys_checksum = 5;
+    optional uint64 total_objects = 6;
+    optional uint32 incremental_keys_checksum = 8;
+    optional ChecksumInfo checksum_info = 9;
+    optional int64 latest_canonical_checksum_lsn = 10 [default = 0x7fffffffffffffff];
+    repeated BackupFileInfo objects = 2;
+    repeated BackupFileInfo log_records = 3;
+}
+
+message BackupEncryption {
+    optional string kms_service_account = 1;
+    optional string kms_key_reference = 2;
+    optional string kms_key_reference_version = 3;
+    optional string wrapped_backup_encryption_key = 4;
+    optional fixed32 wrapped_backup_encryption_key_crc32c = 5;
+}
+
+message BackupInfo {
+    optional uint64 backup_lsn = 1;
+    optional string backup_id = 2;
+    optional string backup_dir = 3;
+    optional string backup_staging_dir = 4;
+    optional bool report_cmek_versions_for_pitr = 6;
+    optional uint64 volume_backup_lsn = 7;
+    optional uint64 chunk_size_bytes = 8;
+    optional uint64 lower_bound_lsn = 9;
+    optional bool is_gapless = 10 [deprecated = true];
+    optional uint64 latest_canonical_checksum_lsn = 11;
+    
+    reserved 5;
+}
+
+message StartBackupRequest {
+    option deprecated = true;
+    optional Header header = 1;
+    optional BackupInfo backup_info = 2;
+}
+
+message StartBackupResponse {
+    option deprecated = true;
+}
+
+message RelationNumBlocks {
+    repeated RelFileId rel_file_id = 1;
+    repeated uint32 num_blocks = 2 [packed = true];
+}
+
+message GetBackupStatusRequest {
+    optional Header header = 1;
+    optional BackupInfo backup_info = 2;
+    optional RelationNumBlocks relation_num_blocks = 3;
+    
+    reserved 4;
+}
+
+message GetBackupStatusResponse {
+    optional bool done = 1;
+    optional google.rpc.Status status = 2;
+    optional ShardBackupMetadata backup_metadata = 3;
+}
+
+message CancelBackupRequest {
+    optional Header header = 1;
+    optional string backup_id = 2;
+}
+
+message CancelBackupResponse {
+    
+}
+
+message RestoreInfo {
+    optional string backup_id = 1;
+    optional ShardBackupMetadata backup_metadata = 2;
+}
+
+message StartRestoreRequest {
+    option deprecated = true;
+    optional Header header = 1;
+    optional RestoreInfo restore_info = 2;
+}
+
+message StartRestoreResponse {
+    option deprecated = true;
+}
+
+message GetRestoreStatusRequest {
+    optional Header header = 1;
+    optional RestoreInfo restore_info = 2 [deprecated = true];
+    repeated RestoreInfo restore_infos = 3;
+    
+    reserved 4;
+}
+
+message GetRestoreStatusResponse {
+    optional bool done = 1;
+    optional google.rpc.Status status = 2;
+    optional uint64 max_processable_lsn = 3;
+}
+
+message CancelRestoreRequest {
+    optional Header header = 1;
+    optional string backup_id = 2;
+}
+
+message CancelRestoreResponse {
+    
+}
+
+message ReplayWalRequest {
+    option deprecated = true;
+    optional Header header = 1;
+    optional uint64 from_lsn = 2;
+    optional uint64 to_lsn = 3;
+}
+
+message ReplayWalResponse {
+    option deprecated = true;
+}
+
+message GetReplayWalStatusRequest {
+    optional Header header = 1;
+    optional uint64 from_lsn = 2;
+    optional uint64 to_lsn = 3;
+}
+
+message GetReplayWalStatusResponse {
+    optional bool done = 1;
+    optional google.rpc.Status status = 2;
+    optional uint64 applied_through_lsn = 3;
+}
+
+message CancelReplayWalRequest {
+    optional Header header = 1;
+}
+
+message CancelReplayWalResponse {
+    
+}
+
+message VerifyShardReplicaRequest {
+    optional Header header = 1;
+    optional string backup_id = 2;
+    optional bool dump_verification_summary = 5;
+    optional string dump_verification_summary_dir = 6;
+    
+    oneof verification_info {
+        BackupVerificationInfo backup_verification_info = 3;
+        RestoreVerificationInfo restore_verification_info = 4;
+    }
+}
+
+message VerifyShardReplicaResponse {
+    optional bool done = 1;
+    optional google.rpc.Status status = 2;
+    optional string dump_verification_summary_path = 3;
+}
+
+message CancelVerifyShardReplicaRequest {
+    optional Header header = 1;
+    optional string backup_id = 2;
+    
+    optional CancelVerificationType cancel_verification_type = 3;
+    enum CancelVerificationType {
+        UNKNOWN = 0;
+        BACKUP = 1;
+        RESTORE = 2;
+    }
+}
+
+message CancelVerifyShardReplicaResponse {
+    
+}
+
+message BackupVerificationInfo {
+    optional uint64 backup_lsn = 1;
+    optional uint32 keys_checksum = 2;
+    optional uint64 lower_bound_lsn = 3;
+    optional uint32 incremental_keys_checksum = 4;
+    optional RelationNumBlocks relation_num_blocks = 5;
+    optional ChecksumInfo checksum_info = 6;
+    optional uint64 latest_canonical_checksum_lsn = 7;
+}
+
+message RestoreVerificationInfo {
+    optional uint32 keys_checksum = 1;
+    optional ChecksumInfo checksum_info = 2;
+    optional uint64 latest_canonical_checksum_lsn = 3;
+}
+
+message BackupObject {
+    optional bytes data = 1 [ctype = CORD];
+    optional ObjectPath object_id = 2;
+    optional uint64 valid_from_lsn = 3;
+    optional uint32 data_crc32c_scrambled = 4;
+    optional ChecksumProvenance data_checksum_provenance = 5;
+    optional uint32 canonical_data_crc32c_scrambled = 6;
+    optional string canonical_data_version = 7;
+}
+
+message ShardInputBufferTrimLsn {
+    optional int32 shard_id = 1;
+    optional uint64 trim_lsn = 2;
+}
+
+message ShardInputBufferTrimLsns {
+    repeated ShardInputBufferTrimLsn shard_input_buffer_trim_lsns = 1;
+}

@@ -1,0 +1,27 @@
+syntax = "proto2";
+
+package compliance_controls;
+
+import "net/proto2/bridge/proto/message_set.proto";
+import "privacy/compliance_controls/proto/compliance_controls.proto";
+import "storage/datapol/annotations/proto/semantic_annotations.proto";
+import "storage/datapol/annotations/proto/workspace_annotations.proto";
+
+option java_multiple_files = true;
+option java_package = "com.google.privacy.compliancecontrols";
+
+message GaiaComplianceControls {
+    optional int64 last_refresh_time_micros = 1;
+    optional int32 rollout_priority = 5;
+    
+    oneof dma52 {
+        Dma52Controls dma52_controls = 2;
+        Dma52DataSharingEnabledForAllCpsTag dma52_data_sharing_enabled_for_all_cps_tag = 4;
+    }
+    
+    reserved 3;
+    
+    extend .proto2.bridge.MessageSet {
+        optional GaiaComplianceControls message_set_extension = 528826515;
+    }
+}

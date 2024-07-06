@@ -1,0 +1,38 @@
+syntax = "proto2";
+
+package security.ganpati.sharded_client;
+
+import "production/resources/dataplatform/idx/time_series/public/proto/idx_time_series_record.proto";
+import "security/dataprotection/collection/public/collection_service.proto";
+import "storage/datapol/annotations/proto/semantic_annotations.proto";
+
+option java_multiple_files = true;
+option java_outer_classname = "IolarEventProto";
+option java_package = "com.google.security.dataprotection.collection.proto.iolar";
+
+message AclChecksReport {
+    optional secure_collection.MessageSource message_source = 1;
+    optional int64 event_timestamp_us = 2;
+    repeated PerAclReport acl_checks = 3;
+    optional .idx.time_series.ingestion.proto.IDXTimeSeriesMetadata idx_internal_metadata = 4;
+    
+    enum Namespace {
+        UNKNOWN = 0;
+        GANPATI_PROD = 1;
+        GANPATI_CORP = 2;
+    }
+}
+
+message PerAclReport {
+    optional string acl_name = 1;
+    optional AclChecksReport.Namespace ns = 3 [default = GANPATI_PROD];
+    repeated PerPrincipalReport per_principal_report = 2;
+}
+
+message PerPrincipalReport {
+    optional string principal_name = 1;
+    optional AclChecksReport.Namespace ns = 5 [default = GANPATI_PROD];
+    optional bool is_aod_eligible = 2;
+    optional int32 outcome = 3;
+    optional int32 count = 4;
+}

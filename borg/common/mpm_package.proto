@@ -1,0 +1,77 @@
+syntax = "proto2";
+
+package borg;
+
+import "borg/common/tos.proto";
+
+option cc_enable_arenas = true;
+option java_outer_classname = "MpmPackageProto";
+option java_package = "com.google.borg.rpc";
+
+message CpuArchitecture {
+    enum Type {
+        X86 = 1;
+        PPC = 2;
+        ARM = 3;
+        ANY = 4;
+        HASWELL = 5;
+        BROADWELL = 6;
+        DIORITE_IMC = 7;
+        DIORITE_ACC = 8;
+        RISCV = 9;
+    }
+}
+
+message MpmPackageTag {
+    optional string key = 1;
+    optional string value = 2;
+}
+
+message ByousMpmMetadata {
+    optional EnvironmentType environment_type = 1;
+    enum EnvironmentType {
+        UNKNOWN = 0;
+        NOT_FOUND = 1;
+        BYOUS_ENVIRONMENT_BINARYPB = 2;
+    }
+}
+
+message MpmAccessStyle {
+    enum Type {
+        UNSET_TREAT_AS_MOUNTED = 0;
+        MOUNTED = 1;
+        DIRECT_DEVICE = 2;
+    }
+}
+
+message MpmPackageSpec {
+    optional string pkg_name = 1;
+    optional string version = 2;
+    optional string label = 3;
+    repeated string filegroups = 4;
+    
+    optional MpmType mpm_type = 8 [default = UNSPECIFIED];
+    enum MpmType {
+        UNSPECIFIED = 0;
+        FETCH_ONLY = 1;
+        MOUNTABLE = 2;
+        MOUNTABLE_CONVERTED = 3 [deprecated = true];
+    }
+    
+    optional MpmAccessStyle.Type access_style = 16 [default = UNSET_TREAT_AS_MOUNTED];
+    repeated CpuArchitecture.Type cpu_architectures = 9;
+    optional bytes signed_build_provenance = 10;
+    optional bytes version_pb_hint = 18;
+    optional bytes version_pb = 17 [deprecated = true];
+    repeated MpmPackageTag tags = 11 [deprecated = true];
+    optional CpuArchitecture.Type architecture_override = 12;
+    optional TOS fetch_traffic_class = 14;
+    optional ByousMpmMetadata byous_meta = 15;
+    optional bool use_custom_install = 19;
+    
+    reserved 5, 7, 13;
+}
+
+message MpmPackageHints {
+    optional bytes version_pb = 1 [deprecated = true];
+}

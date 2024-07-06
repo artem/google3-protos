@@ -1,0 +1,26 @@
+syntax = "proto2";
+
+package compliance_controls;
+
+import "privacy/compliance_controls/proto/core_platform_service.proto";
+
+option java_multiple_files = true;
+option java_package = "com.google.privacy.compliancecontrols";
+
+message Dma52Controls {
+    repeated CorePlatformService data_sharing_enabled_cps = 2 [packed = true];
+    
+    reserved 1;
+}
+
+message Dma52DataSharingEnabledForAllCpsTag {
+    
+}
+
+enum ControlType {
+    CONTROL_TYPE_UNSPECIFIED = 0;
+    CONTROL_TYPE_GAIA = 1;
+    CONTROL_TYPE_ZWIEBACK = 2;
+    CONTROL_TYPE_YOUTUBEVISITOR = 3;
+    CONTROL_TYPE_ADS = 4;
+}

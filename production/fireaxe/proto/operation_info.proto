@@ -1,0 +1,17 @@
+syntax = "proto3";
+
+package fireaxe;
+
+import "google/protobuf/timestamp.proto";
+
+option java_multiple_files = true;
+option optimize_for = CODE_SIZE;
+option java_outer_classname = "OperationInfoPb";
+option java_package = "com.google.protos.fireaxe.operationinfo";
+
+message OperationInfoProto {
+    google.protobuf.Timestamp time = 1;
+    string user = 2;
+    string on_behalf_of = 3;
+    bool is_superuser = 4;
+}

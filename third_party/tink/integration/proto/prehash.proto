@@ -1,0 +1,18 @@
+syntax = "proto3";
+
+package google.crypto.tink;
+
+import "third_party/tink/proto/common.proto";
+
+message PrehashParams {
+    HashType hash_type = 1;
+}
+
+message PrehashKeyFormat {
+    PrehashParams params = 1;
+}
+
+message PrehashKey {
+    uint32 version = 1;
+    PrehashParams params = 2;
+}

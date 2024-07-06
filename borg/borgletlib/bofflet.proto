@@ -1,0 +1,50 @@
+syntax = "proto2";
+
+package borg;
+
+import "util/task/status.proto";
+
+option java_package = "com.google.protos.borg.proto1api";
+
+message StartTaskOnBltRequest {
+    optional string task_handle = 1;
+    repeated string argv = 2;
+    optional string blt_task_id = 3;
+    optional string dir_handle = 4;
+    optional string storage_path = 5;
+}
+
+message StartTaskOnBltResponse {
+    optional util.StatusProto start_status = 1;
+    optional string base_log_path = 2;
+}
+
+message StopTaskOnBltRequest {
+    optional string task_handle = 1;
+    optional string blt_task_id = 2;
+    optional string dir_handle = 4;
+}
+
+message StopTaskOnBltResponse {
+    optional util.StatusProto stop_status = 1;
+}
+
+message SetupBareMetalRequest {
+    optional string task_handle = 1;
+    optional string proxy_address = 2;
+    optional string dir_handle = 4;
+}
+
+message SetupBareMetalResponse {
+    
+}
+
+message GetTaskStatusOnBltRequest {
+    optional string task_handle = 1;
+    optional string blt_task_id = 2;
+    optional string dir_handle = 3;
+}
+
+message GetTaskStatusOnBltResponse {
+    optional string taskstate = 1;
+}

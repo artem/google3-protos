@@ -1,0 +1,60 @@
+syntax = "proto2";
+
+package production.dependency.rpc.outboundacl;
+
+import "production/dependency/layers/layers.proto";
+import "production/dependency/proto/dependencies.proto";
+import "production/dependency/rpc/config/dependencyconfiguration.proto";
+import "production/dependency/rpc/scopes/proto/authorization_model.proto";
+
+option java_outer_classname = "DependenciesProto";
+option java_package = "com.google.prod.dependency.rpc.outboundacl";
+
+message OutboundACL {
+    optional production_dependency_layers.Layer layer = 2 [default = UNKNOWN_LAYER];
+    repeated ScopeModel scope_models = 1;
+    optional PolicyID policy_id = 3;
+    repeated PolicyID assembled_policy_component_id = 8;
+    
+    optional AuthorizationMode authorization_mode = 4;
+    enum AuthorizationMode {
+        DEFAULT = 0;
+        RPC_DEPENDENCY_OVERRIDE = 1;
+        STRICT = 2;
+        REJECT_ALL = 3;
+    }
+    
+    optional ExemptMode exempt_mode = 5;
+    enum ExemptMode {
+        DEFAULT_EXEMPT_MODE = 0;
+        ALLOW_EXEMPT_RPCS = 1;
+    }
+    
+    optional NotificationReceiver notification_receiver = 6;
+    optional ExemptConfig exempt_config = 7;
+}
+
+message NotificationReceiver {
+    optional string mdb_group = 1;
+}
+
+message PolicyID {
+    optional string google3_path = 1;
+    optional int64 changelist = 2;
+}
+
+message ScopeModel {
+    optional string instance = 1 [deprecated = true];
+    optional string local_node = 3;
+    optional production_dependency_scopes.AuthorizationModel model = 2;
+}
+
+message ExemptConfig {
+    optional production_dependency_rpc.Constraint.Scope allowed_scope = 2;
+    
+    reserved 1;
+}
+
+extend dependency.proto.Dependencies {
+    optional OutboundACL policy = 210782701;
+}

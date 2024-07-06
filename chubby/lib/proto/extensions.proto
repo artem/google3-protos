@@ -1,0 +1,16 @@
+syntax = "editions";
+
+package chubby;
+
+import "google/protobuf/duration.proto";
+import "net/proto2/bridge/proto/message_set.proto";
+
+option java_package = "com.google.chubby.impl.chubbyprotos";
+
+message TelemetryResponseExtension {
+    optional google.protobuf.Duration client_wait_time = 1;
+    
+    extend .proto2.bridge.MessageSet {
+        optional TelemetryResponseExtension message_set_extension = 521745829;
+    }
+}

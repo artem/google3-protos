@@ -1,0 +1,19 @@
+syntax = "proto3";
+
+package production.machine_locality;
+
+import "google/protobuf/timestamp.proto";
+import "production/machine_locality/proto/machine_locality_public.proto";
+
+option java_package = "com.google.prod.machinelocality";
+
+message PrefixMap {
+    string prefix = 1;
+    Value value = 2;
+}
+
+message LocalityMap {
+    LocalityKind kind = 1;
+    google.protobuf.Timestamp generation_time = 2;
+    repeated PrefixMap entry = 3;
+}

@@ -1,0 +1,18 @@
+syntax = "proto2";
+
+package production.rpc.stubs.proto;
+
+import "net/proto2/contrib/validator/annotations.proto";
+import "production/rpc/stubs/proto/latency_based_deadline.proto";
+
+option java_outer_classname = "PerRequestDeadlineConfigurationProto";
+option java_package = "com.google.prod.rpc.stubs.proto";
+
+message PerRequestDeadlineConfiguration {
+    map<string, DeadlinePolicy> policies = 1;
+}
+
+message DeadlinePolicy {
+    optional double longest_allowed_deadline_seconds = 1;
+    optional LatencyBasedDeadlinePolicy latency_based_deadline_policy = 2;
+}

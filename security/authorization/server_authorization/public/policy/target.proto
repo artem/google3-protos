@@ -1,0 +1,31 @@
+syntax = "proto3";
+
+package server_authz;
+
+import "storage/datapol/annotations/proto/semantic_annotations.proto";
+
+option java_multiple_files = true;
+option java_package = "com.google.security.authorization.serverauthorization.policy";
+
+message Target {
+    TargetType type = 1;
+    string target = 2;
+}
+
+enum TargetType {
+    UNSPECIFIED_TARGET_TYPE = 0;
+    AUTODETECT = 1;
+    ABNS = 2;
+    ABNS_DNS = 3;
+    BNS = 4;
+    BNS_DNS = 5;
+    CHUBBY = 6;
+    GOOGLEAPIS = 7;
+    GRPCLB = 8;
+    GSLB = 9;
+    GSLB_DNS = 10;
+    IP_PORT_ADDRESS = 11;
+    HOST_PORT_ADDRESS = 12;
+    FLAG = 13;
+    UNSUPPORTED = 14;
+}

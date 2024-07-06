@@ -1,0 +1,17 @@
+syntax = "proto2";
+
+package production.rpc.stubs.redirection.proto;
+
+import "net/proto2/bridge/proto/message_set.proto";
+import "production/rpc/stubs/proto/stub_configuration.proto";
+import "storage/datapol/annotations/proto/semantic_annotations.proto";
+
+message Redirection {
+    optional stubs.proto.CanonicalStubConfiguration target = 1;
+    
+    extensions 1000 to max;
+    
+    extend .proto2.bridge.MessageSet {
+        optional Redirection extension = 461713282;
+    }
+}

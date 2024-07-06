@@ -1,0 +1,31 @@
+syntax = "editions";
+
+package speckle_dogfish.dogfish_proto;
+
+import "google/protobuf/empty.proto";
+import "storage/datapol/annotations/proto/semantic_annotations.proto";
+import "storage/speckle/dogfish/proto/dogfish-checksum.proto";
+
+message SmgrRelationMetadata {
+    oneof contents {
+        google.protobuf.Empty no_blocks = 3;
+        int64 max_block_id = 4;
+    }
+}
+
+message CompressedBlock {
+    optional int32 hole_offset = 1;
+    optional int32 hole_length = 2;
+    optional bytes lower = 3 [ctype = CORD];
+    optional bytes upper = 4 [ctype = CORD];
+}
+
+message BlockData {
+    optional uint32 uncompressed_crc32c_scrambled = 3;
+    optional ChecksumProvenance uncompressed_checksum_provenance = 4;
+    
+    oneof contents {
+        bytes uncompressed = 1 [ctype = CORD];
+        CompressedBlock compressed = 2;
+    }
+}

@@ -1,0 +1,47 @@
+syntax = "editions";
+
+package security_loas_l2;
+
+import "security/loas/l2/proto/common.proto";
+
+option java_multiple_files = true;
+
+message ConfigurationEntry {
+    optional string label = 8;
+    repeated HandshakeCipher ciphers = 1;
+    repeated HandshakeCipher client_ciphers = 5;
+    repeated HandshakeCipher server_ciphers = 6;
+    optional bool ignore_entry_if_unknown_fields_are_present = 4;
+    
+    optional ClusterCondition cluster_condition = 2;
+    message ClusterCondition {
+        repeated string clusters = 1;
+    }
+    
+    optional EnvironmentCondition environment_condition = 3;
+    message EnvironmentCondition {
+        repeated Environment environments = 1;
+    }
+    
+    optional LoasRoleCondition loas_role_condition = 7;
+    message LoasRoleCondition {
+        repeated string loas_roles = 1;
+    }
+    
+    enum Environment {
+        UNSPECIFIED = 0;
+        PROD = 1;
+        CORP = 2;
+    }
+}
+
+message Configuration {
+    repeated HandshakeCipher default_corp_ciphers = 1;
+    repeated HandshakeCipher default_corp_client_ciphers = 5;
+    repeated HandshakeCipher default_corp_server_ciphers = 6;
+    repeated HandshakeCipher default_prod_ciphers = 2;
+    repeated HandshakeCipher default_prod_client_ciphers = 7;
+    repeated HandshakeCipher default_prod_server_ciphers = 8;
+    repeated ConfigurationEntry configs = 3;
+    optional string cl_number = 4;
+}

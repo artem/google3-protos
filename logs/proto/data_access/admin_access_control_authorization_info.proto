@@ -1,0 +1,132 @@
+syntax = "proto2";
+
+package security.data_access;
+
+import "storage/datapol/annotations/proto/semantic_annotations.proto";
+import "util/task/status.proto";
+
+option java_multiple_files = true;
+option java_outer_classname = "AdminAccessControlAuthorizationInfoProto";
+option java_package = "com.google.logs.proto.data_access";
+
+message AuthDecision {
+    optional util.StatusProto outcome = 1;
+    optional string evaluation_id = 7;
+    
+    optional FailureType failure_type = 2;
+    enum FailureType {
+        FAILURE_TYPE_UNSPECIFIED = 0;
+        FAILURE_TYPE_AUTH = 1;
+        FAILURE_TYPE_ENVELOPE_RPC = 2;
+        FAILURE_TYPE_ENVELOPE_UNAVAILABLE = 3;
+        FAILURE_TYPE_CUSTOM_TARGET_EXTRACTION = 4;
+        FAILURE_TYPE_GIN_LOGGING = 5;
+    }
+    
+    optional UnenforcedInfo unenforced = 3;
+    message UnenforcedInfo {
+        optional UnenforcedReason reason = 1;
+        enum UnenforcedReason {
+            UNENFORCED_REASON_UNSPECIFIED = 0;
+            UNENFORCED_REASON_DRY_RUN = 1;
+        }
+        
+        optional EnforcementRemovedLocation enforcement_removed_location = 3;
+        enum EnforcementRemovedLocation {
+            ENFORCEMENT_REMOVED_LOCATION_UNSPECIFIED = 0;
+            ENVELOPE = 1;
+            CPP_CLIENT = 2;
+            JAVA_CLIENT = 3;
+            GO_CLIENT = 4;
+        }
+    }
+    
+    optional AuthCallerInfo caller_info = 4;
+    message AuthCallerInfo {
+        optional AuthCallerType type = 1;
+        enum AuthCallerType {
+            AUTH_CALLER_TYPE_UNSPECIFIED = 0;
+            MANUAL_AUTH = 1;
+            LOCAL_AUTH_ADMIN_API = 2;
+            LOCAL_AUTH_APPROVER = 3;
+            CLOUD_AUTH_CHECK = 4;
+            CLOUD_AUTH_BULK_CHECK = 5;
+            CLOUD_AUTH_SET_POLICY = 6;
+            CLOUD_AUTH_COMPILE_POLICY = 7;
+        }
+        
+        optional int32 unique_id = 2;
+    }
+    
+    optional AacEnvironment environment = 5;
+    enum AacEnvironment {
+        ENVIRONMENT_UNSPECIFIED = 0;
+        PROD = 1;
+        DEV = 2;
+    }
+    
+    optional LoggableAdministrativeAccessControl control = 6;
+    message LoggableAdministrativeAccessControl {
+        repeated string admins = 1;
+        repeated string emergency_admins = 2;
+        repeated string mpa_reviewers = 3;
+        repeated string mpa_emergency_reviewers = 4;
+        
+        optional RoleChecks role_checks = 5;
+        enum RoleChecks {
+            ROLE_CHECKS_DEFAULT = 0;
+            ROLE_CHECKS_ALL = 1;
+            ROLE_CHECKS_EMERGENCY_ONLY = 2;
+            ROLE_CHECKS_NONE = 3;
+        }
+        
+        optional EnforcementMode enforcement_mode = 6;
+        enum EnforcementMode {
+            ENFORCEMENT_MODE_DEFAULT = 0;
+            ENFORCEMENT_MODE_DARK_LAUNCH = 1;
+            ENFORCEMENT_MODE_METRICS_ONLY = 2;
+            ENFORCEMENT_MODE_DRY_RUN = 3;
+        }
+        
+        optional FailClosedGinLogBehavior fail_closed_gin_log_behavior = 7;
+        enum FailClosedGinLogBehavior {
+            FAIL_CLOSED_GIN_LOG_BEHAVIOR_UNSET = 0;
+            FAIL_CLOSED_GIN_LOG_BEHAVIOR_CLIENT_OBLIGATION = 1;
+            FAIL_CLOSED_GIN_LOG_BEHAVIOR_REQUIRED = 2;
+        }
+        
+        optional LoggableBreakGlassMpaConfig break_glass_require_mpa = 9;
+        message LoggableBreakGlassMpaConfig {
+            optional ReviewerCombinationLogic reviewer_combination_logic = 1;
+        }
+        
+        optional BaselineControls baseline_controls = 10;
+        enum BaselineControls {
+            BASELINE_CONTROLS_AUTOMATIC = 0;
+            BASELINE_CONTROLS_INPUT_PRESENCE = 1;
+            BASELINE_CONTROLS_BREAK_GLASS_ONLY = 2;
+        }
+        
+        oneof non_unilateral_requirement {
+            LoggableMpaConfig require_mpa = 8;
+        }
+        
+        message LoggableMpaConfig {
+            optional ReviewerCombinationLogic reviewer_combination_logic = 1;
+        }
+        
+        enum ReviewerCombinationLogic {
+            REVIEWER_COMBINATION_LOGIC_UNSET = 0;
+            APPROVAL_FROM_ANY = 1;
+            APPROVAL_FROM_EACH = 2;
+        }
+    }
+}
+
+message AdminAccessControlAuthorizationInfo {
+    optional AuthDecision decision = 3;
+    
+    extensions 1, 2, 4, 5;
+    
+    reserved 6;
+}

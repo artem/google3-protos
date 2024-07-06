@@ -1,16 +1,17 @@
 syntax = "proto2";
 
-import "tech/label/proto/label.proto";
 package tech.log;
 
-option java_package = "com.google.tech.log";
-option java_outer_classname = "EntityOuterClass";
-option java_multiple_files = true;
+import "tech/label/proto/label.proto";
+
 option cc_enable_arenas = true;
+option java_multiple_files = true;
+option java_outer_classname = "EntityOuterClass";
+option java_package = "com.google.tech.log";
 
 message Entity {
-  optional string uid = 1;
-  repeated .tech.label.Label label = 2;
+    optional string uid = 1;
+    repeated label.Label label = 2;
+    
+    extensions 1000 to 1010;
 }
-
-

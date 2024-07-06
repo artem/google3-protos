@@ -1,0 +1,118 @@
+syntax = "proto2";
+
+package sherlog.core;
+
+import "frameworks/debug/sherlog/core/proto/data_id.proto";
+import "frameworks/debug/sherlog/core/proto/label.proto";
+import "frameworks/debug/sherlog/core/proto/severity.proto";
+import "frameworks/debug/sherlog/core/proto/source_code_location.proto";
+import "frameworks/debug/sherlog/core/proto/trace_owner.proto";
+import "frameworks/debug/sherlog/core/proto/tracer_metadata.proto";
+import "security/credentials/proto/principal.proto";
+import "util/task/status.proto";
+
+option java_package = "com.google.frameworks.debug.sherlog.core.proto";
+
+message SherlogEntry {
+    optional TracerMetadata tracer_metadata = 1;
+    optional int64 micro_timestamp = 2;
+    optional EntryPayload payload = 3;
+    optional TracerConnection connection = 4;
+    optional DataIDConnections data_id_connections = 5;
+    optional TraceOwner owner = 6;
+    optional security.credentials.UserProto current_user = 7;
+}
+
+message EntryPayload {
+    repeated Log logs = 1;
+    optional RPCMetadata rpc_metadata = 2;
+    optional RPCPayload rpc_payload = 3;
+}
+
+message Log {
+    optional int64 micro_timestamp = 1;
+    optional string msg = 2;
+    optional ProtoPayload proto_payload = 3;
+    optional LogSeverity severity = 4;
+    repeated Label label = 5;
+    optional SourceCodeLocation source_code_location = 6;
+}
+
+message ProtoPayload {
+    optional bytes proto_bytes = 1 [ctype = CORD];
+    optional string proto_string = 2 [ctype = CORD];
+    optional string descriptor_name = 3;
+    optional int32 ms_extension = 4;
+}
+
+message TracerConnection {
+    oneof parent_info {
+        TracerMetadata parent = 1;
+        NoParent no_parent = 2;
+    }
+    
+    message NoParent {
+        
+    }
+}
+
+message RPCMetadata {
+    optional string bns_address = 1;
+    optional string peer_uri = 2;
+    optional string full_method_name = 3;
+    optional int64 elapsed_time_us = 4;
+    optional fixed64 dapper_trace_id = 5;
+    optional fixed64 dapper_span_id = 6;
+    optional int64 client_latency_us = 7;
+    optional int64 client_start_time_us = 8;
+    optional util.StatusProto status_proto = 9;
+    optional double deadline_sec = 10;
+    repeated CensusServiceTag census_tags = 11;
+    optional string stack_trace = 12;
+    optional string rpc_authority_debug_string = 13 [ctype = CORD];
+    
+    optional Type type = 14;
+    enum Type {
+        UNKNOWN = 0;
+        UNARY = 1;
+        BIDI_STREAMING = 2;
+        CLIENT_STREAMING = 3;
+        SERVER_STREAMING = 4;
+        INFER_UNARY = 5;
+        INFER_BIDI_STREAMING = 6;
+    }
+    
+    optional SecurityLevel requested_security_level = 15;
+    enum SecurityLevel {
+        NONE = 0;
+        INTEGRITY = 1;
+        PRIVACY_AND_INTEGRITY = 2;
+        STRONG_PRIVACY_AND_INTEGRITY = 3;
+    }
+    
+    optional Direction direction = 16;
+    enum Direction {
+        UNKNOWN_DIRECTION = 0;
+        INCOMING = 1;
+        OUTGOING = 2;
+    }
+}
+
+message RPCStream {
+    optional ProtoPayload payload = 1;
+    optional int64 micro_timestamp = 2;
+    optional int64 sequence = 3;
+}
+
+message RPCPayload {
+    optional string full_method_name = 1;
+    repeated ProtoPayload serialized_request_extension = 2;
+    repeated ProtoPayload serialized_response_extension = 3;
+    repeated RPCStream request_stream = 4;
+    repeated RPCStream response_stream = 5;
+}
+
+message CensusServiceTag {
+    optional string service_name = 1;
+    repeated string tags = 2;
+}

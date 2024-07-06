@@ -1,0 +1,14 @@
+syntax = "editions";
+
+package bigtable;
+
+import "net/proto2/bridge/proto/message_set.proto";
+
+message TransformedErrorInfo {
+    optional string original_space = 1;
+    optional string original_code_name = 2;
+    
+    extend .proto2.bridge.MessageSet {
+        optional TransformedErrorInfo message_set_extension = 159063738;
+    }
+}

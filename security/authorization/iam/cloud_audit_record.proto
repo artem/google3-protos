@@ -1,0 +1,44 @@
+syntax = "proto3";
+
+package security_iam;
+
+import "google/api/monitored_resource.proto";
+import "google/cloud/audit/audit_log.proto";
+import "google/cloud/audit/recipient.proto";
+import "google/logging/v2/log_entry.proto";
+import "google/protobuf/timestamp.proto";
+
+option java_multiple_files = true;
+option java_outer_classname = "CloudAuditRecordProtoFile";
+option java_package = "com.google.security.authorization.iam";
+
+message CloudAuditRecordProto {
+    google.cloud.audit.Recipient recipient = 6;
+    
+    LogStream log_stream = 2;
+    enum LogStream {
+        LOG_STREAM_UNSPECIFIED = 0;
+        ADMIN_ACTIVITY = 3;
+        SYSTEM_EVENT = 6;
+        DATA_ACCESS = 4;
+        POLICY = 5;
+        ACCESS_TRANSPARENCY = 7;
+    }
+    
+    google.api.MonitoredResource resource = 3;
+    google.cloud.audit.AuditLog log = 4;
+    google.logging.v2.LogEntryOperation operation = 5;
+    google.protobuf.Timestamp create_time = 7;
+    map<string, string> labels = 8;
+    bool is_external_audit = 9;
+    
+    IamWriteReason write_required_decision_reason = 10;
+    enum IamWriteReason {
+        IAM_WRITE_REASON_UNSPECIFIED = 0;
+        IAM_WRITE_REASON_REQUIRED_UNSPECIFIED = 1;
+        IAM_WRITE_REASON_NOT_REQUIRED_LOGS_DISABLED = 2;
+        IAM_WRITE_REASON_NOT_REQUIRED_UNSPECIFIED = 3;
+    }
+    
+    string insert_id = 11;
+}

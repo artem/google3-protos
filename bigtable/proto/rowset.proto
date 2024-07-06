@@ -1,0 +1,16 @@
+syntax = "proto2";
+
+package bigtable;
+
+option cc_enable_arenas = true;
+option java_package = "com.google.bigtable.protos";
+
+message BTI_RowSetProto {
+    repeated group Range = 1 {
+        required bytes start = 2 [ctype = CORD];
+        optional bytes limit = 3 [ctype = CORD];
+        optional bytes data = 4 [ctype = CORD];
+    }
+    
+    reserved 5, 6;
+}

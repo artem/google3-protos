@@ -1,0 +1,38 @@
+syntax = "proto2";
+
+package consensus;
+
+import "consensus/common/proto/event_tags.proto";
+import "google/protobuf/any.proto";
+import "google/protobuf/timestamp.proto";
+import "storage/datapol/annotations/proto/semantic_annotations.proto";
+
+option java_multiple_files = true;
+option java_package = "com.google.consensus.common.clienteventproto";
+
+service ConsensusEventRecorder {
+    rpc RecordClientEvent(RecordClientEventRequest) returns (RecordClientEventResponse);
+}
+
+message ClientEvent {
+    optional google.protobuf.Timestamp timestamp = 1;
+    optional EventTags event_tags = 2;
+    optional google.protobuf.Any payload = 3;
+    optional google.protobuf.Any session_info = 4;
+}
+
+message ClientEventSimpleSessionInfo {
+    optional uint64 session_id = 1;
+}
+
+message ClientEventSimplePayload {
+    optional string filename = 1;
+}
+
+message RecordClientEventRequest {
+    repeated ClientEvent events = 1;
+}
+
+message RecordClientEventResponse {
+    
+}

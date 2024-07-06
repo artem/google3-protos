@@ -1,0 +1,14 @@
+syntax = "proto2";
+
+package borg;
+
+option cc_enable_arenas = true;
+option java_outer_classname = "NumaAllocProto";
+option java_package = "com.google.borg.rpc";
+
+message NumaAlloc {
+    optional uint32 id = 1;
+    optional int32 reserved_cores = 2;
+    optional int64 memory = 3;
+    optional int64 millicores_limit = 4;
+}

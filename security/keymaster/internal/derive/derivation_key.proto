@@ -1,15 +1,15 @@
-syntax = "proto3";
+syntax = "editions";
 
-import "security/keymaster/key_format.proto";
 package security;
 
+import "security/keymaster/key_format.proto";
+
 message HkdfSha512DerivationProto {
-  bytes raw_key = 1;
-  bool can_derive_deriving_key = 2;
-  bool can_derive_raw_bytes = 3;
-  .security.keymaster.KeyFormat crypt_key_format = 4;
-  .security.keymaster.KeyFormat mac_key_format = 5;
-  .security.keymaster.KeyFormat asymmetric_sign_key_format = 6;
+    optional bytes raw_key = 1;
+    optional bool can_derive_deriving_key = 2;
+    optional bool can_derive_raw_bytes = 3;
+    optional keymaster.KeyFormat crypt_key_format = 4;
+    optional keymaster.KeyFormat mac_key_format = 5;
+    optional keymaster.KeyFormat asymmetric_sign_key_format = 6;
+    optional keymaster.KeyFormat deterministic_crypt_key_format = 7;
 }
-
-

@@ -1,0 +1,68 @@
+syntax = "proto2";
+
+package rpcreplay;
+
+import "logs/proto/logs_annotations/logs_annotations.proto";
+import "net/proto2/proto/descriptor.proto";
+
+option cc_enable_arenas = true;
+option java_package = "com.google.frameworks.testing.rpcreplay.processors";
+
+message RpcreplayFieldOptions {
+    optional RolloutState state = 7 [default = ROLLOUT_ENABLED_REMOVE_OVERRIDES];
+    optional ArrValidationFieldOption validation = 8;
+    
+    oneof annotation_oneof {
+        bool clear_field = 1;
+        bool reorder_repeated = 2;
+        TimeUnit rewrite_time = 3;
+        string set_to_value = 4;
+        string rewrite_identifier = 5;
+        SetRegexToValue set_regex_to_value = 6;
+    }
+}
+
+message ArrValidationFieldOption {
+    optional ArrFieldOverrideOption field_override_option = 3;
+    message ArrFieldOverrideOption {
+        repeated string source_key = 1;
+        repeated string destination_key = 2;
+    }
+    
+    oneof arr_annotation_oneof {
+        bool save_to_metadata = 1;
+        bool save_to_metadata_reorder_repeated = 2;
+    }
+}
+
+message SetRegexToValue {
+    optional string regex = 1;
+    optional string value = 2;
+}
+
+enum RolloutState {
+    ROLLOUT_STATE_UNKNOWN = 0;
+    ROLLOUT_DISABLED_KEEP_OVERRIDES = 1;
+    ROLLOUT_ENABLED_KEEP_OVERRIDES = 2;
+    ROLLOUT_ENABLED_REMOVE_OVERRIDES = 3;
+    ROLLOUT_DISABLED_REMOVE_OVERRIDES = 4;
+}
+
+enum TimeUnit {
+    NONE = 0;
+    NANOSECONDS = 1;
+    MICROSECONDS = 2;
+    MILLISECONDS = 3;
+    SECONDS = 4;
+    MINUTES = 5;
+    HOURS = 6;
+    DAYS = 7;
+    GOOGLE_TIMESTAMP = 8;
+    STRING = 9;
+    GOOGLE_INTERVAL = 10;
+    GOOGLE_DATE = 11;
+}
+
+extend .proto2.FieldOptions {
+    optional RpcreplayFieldOptions processing = 198108359;
+}

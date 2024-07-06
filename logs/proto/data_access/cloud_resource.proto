@@ -1,0 +1,62 @@
+syntax = "proto2";
+
+package security.data_access.asr;
+
+import "net/proto2/proto/descriptor.proto";
+import "storage/datapol/annotations/proto/semantic_annotations.proto";
+
+option java_multiple_files = true;
+option java_outer_classname = "CloudResourceProtoFile";
+option java_package = "com.google.security.data_access.asr.proto";
+
+message CloudResource {
+    optional int64 project_number = 3;
+    optional string project_id = 7;
+    optional string app_engine_app_id = 9;
+    optional string gce_resource_id = 4;
+    optional GCSResource gcs_resource_id = 5;
+    optional BillingResource billing_resource = 6;
+    optional OrganizationResource organization_resource = 8;
+    optional FolderResource folder_resource = 10;
+    optional SpeckleResource speckle_resource_id = 11;
+    optional string resource_name = 12;
+    repeated ResourceAlias resource_alias = 13;
+    
+    reserved 14;
+    
+    extend .proto2.FieldOptions {
+        optional string path = 390276077;
+    }
+}
+
+message GCSResource {
+    optional string bucket = 1;
+    optional string object = 2;
+    optional uint64 generation = 3;
+    optional string managed_folder = 4;
+    optional string folder = 5;
+}
+
+message BillingResource {
+    oneof billing_reference {
+        string billing_account_id = 1;
+        string organization_id = 2;
+    }
+}
+
+message OrganizationResource {
+    optional string organization_id = 1;
+}
+
+message FolderResource {
+    optional string folder_id = 1;
+}
+
+message SpeckleResource {
+    optional string instance_name = 1;
+    optional string effective_database_user = 2;
+}
+
+message ResourceAlias {
+    optional string resource_name = 1;
+}

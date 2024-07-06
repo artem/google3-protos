@@ -1,0 +1,32 @@
+syntax = "editions";
+
+package storage_d;
+
+import "net/proto2/bridge/proto/message_set.proto";
+
+message PullBlocksError {
+    enum Reason {
+        REASON_UNSPECIFIED = 0;
+        REASON_FREE_SPACE_THRESHOLD = 1;
+        REASON_PULL_BLOCKS_MEM_LIMIT = 2;
+        REASON_REMOTE_OPS_MEM_LIMIT_PER_USER = 3;
+        REASON_REMOTE_OPS_MEM_LIMIT_PER_SERVER = 4;
+        REASON_REQUEST_LIMIT_PER_USER = 5;
+        REASON_REQUEST_LIMIT_PER_SERVER = 6;
+        REASON_SOURCE_READ_FAILURE = 7;
+    }
+}
+
+message PullBlocksErrorDetails {
+    optional PullBlocksError.Reason error_reason = 6;
+    optional bool error_occurred_on_source = 2 [deprecated = true];
+    optional bool free_space_threshold = 3 [deprecated = true];
+    optional bool in_flight_memory_limit = 4 [deprecated = true];
+    optional bool in_flight_request_limit = 5 [deprecated = true];
+    
+    reserved 1;
+    
+    extend .proto2.bridge.MessageSet {
+        optional PullBlocksErrorDetails message_set_extension = 221535979;
+    }
+}

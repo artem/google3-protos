@@ -1,0 +1,18 @@
+syntax = "proto2";
+
+package util.error;
+
+import "net/proto2/proto/descriptor.proto";
+import "util/task/codes.proto";
+
+option objc_class_prefix = "GERR";
+option cc_enable_arenas = true;
+option java_package = "com.google.net.util.contrib.proto_status";
+
+extend .proto2.EnumValueOptions {
+    optional Code canonical = 51971066 [default = UNKNOWN];
+}
+
+extend .proto2.EnumOptions {
+    optional string space_name = 51865664;
+}

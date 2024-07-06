@@ -1,0 +1,25 @@
+syntax = "proto2";
+
+package security.context;
+
+import "google/protobuf/empty.proto";
+import "net/proto2/bridge/proto/message_set.proto";
+
+option java_multiple_files = true;
+option java_outer_classname = "SecurityPolicyRequirementsProto";
+option java_package = "com.google.security.context";
+
+message SecurityPolicyRequirements {
+    repeated SecurityPolicyRequirement requirements = 1;
+    
+    extend .proto2.bridge.MessageSet {
+        optional SecurityPolicyRequirements message_set_extension = 525000824;
+    }
+}
+
+message SecurityPolicyRequirement {
+    oneof kind {
+        google.protobuf.Empty use_rpcsp = 1;
+        google.protobuf.Empty use_central_repo_rpcsp = 2;
+    }
+}

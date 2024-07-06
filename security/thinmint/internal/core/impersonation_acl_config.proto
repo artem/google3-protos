@@ -1,0 +1,14 @@
+syntax = "proto2";
+
+package thinmint;
+
+message ImpersonationEntry {
+    optional string name = 3;
+    optional string requester = 1;
+    repeated int32 required_restrictions = 2;
+    optional bool allows_arbitrary_impersonation = 4 [default = true];
+}
+
+message ImpersonationPolicy {
+    repeated ImpersonationEntry entry = 1;
+}

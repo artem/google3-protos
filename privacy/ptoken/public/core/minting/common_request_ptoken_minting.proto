@@ -1,0 +1,27 @@
+syntax = "proto2";
+
+package ptoken;
+
+import "privacy/ptoken/public/core/ptoken_type.proto";
+import "privacy/ptoken/public/core/request_context_defs.proto";
+
+option java_multiple_files = true;
+option java_package = "com.google.privacy.ptoken.proto.minting";
+
+message CommonRequestPTokenForMinting {
+    optional ScalarPTokenV2 scalar_ptoken = 6;
+    message ScalarPTokenV2 {
+        optional BasicAttributes basic_attributes = 7;
+        message BasicAttributes {
+            optional Attributes attributes = 1;
+            message Attributes {
+                optional PTokenType.Enum ptoken_type = 5;
+                optional EssentialUseConsentState essential_use_consent_state = 272;
+                optional UserSignInState user_sign_in_state = 307;
+                optional bool is_dark_launch_request = 331;
+                optional int32 origin_associated_product_id = 371;
+                optional bool vertex_traffic_for_grounding = 571;
+            }
+        }
+    }
+}

@@ -1,0 +1,983 @@
+syntax = "proto2";
+
+package bigtable;
+
+import "bigtable/proto/cache_sizer_params.proto";
+import "bigtable/proto/change_data_capture.proto";
+import "bigtable/proto/dma_rollout.proto";
+import "bigtable/proto/privacy_attributes.proto";
+import "bigtable/proto/rowset.proto";
+import "bigtable/proto/schema_validator_spec.proto";
+import "google/protobuf/timestamp.proto";
+import "net/proto2/bridge/proto/message_set.proto";
+import "security/context/proto/audit_requirements.proto";
+import "storage/datapol/annotations/proto/semantic_annotations.proto";
+
+option cc_enable_arenas = true;
+option java_package = "com.google.bigtable.protos";
+
+message PropertyMap {
+    repeated group Property = 1 {
+        required string key = 2;
+        required bytes value = 3;
+    }
+}
+
+message SecurityRealmSet {
+    repeated string administrator_realm = 1;
+    repeated string writer_realm = 2;
+    repeated string reader_realm = 3;
+    
+    optional SecurityRealmPolicy policy = 4 [default = AUDIT_DEFAULT];
+    enum SecurityRealmPolicy {
+        AUDIT_DEFAULT = 0;
+        ACTIVE = 1;
+    }
+    
+    optional EmptyRealmSetPolicy empty_set_policy = 5 [default = ALLOW_ALL_TRAFFIC];
+    enum EmptyRealmSetPolicy {
+        ALLOW_ALL_TRAFFIC = 0;
+        ALLOW_SELF = 1;
+    }
+}
+
+message Type {
+    oneof type {
+        Opaque opaque_type = 1;
+        Protobuf protobuf_type = 2;
+    }
+    
+    message Opaque {
+        optional string type = 1;
+    }
+    
+    message Protobuf {
+        optional string identifier = 1;
+        optional string fully_qualified_name = 2;
+    }
+}
+
+message FamilyDescription {
+    required string name = 1;
+    optional string locality_group = 3;
+    repeated string administrator = 4;
+    repeated string writer = 5;
+    repeated string reader = 6;
+    repeated SecurityRealmSet security_realms = 21;
+    
+    optional CredentialPolicy credential_policy = 11 [default = LOAS_ONLY];
+    enum CredentialPolicy {
+        LOAS_ONLY = 0;
+        LOAS_WITH_OPTIONAL_EUC = 1;
+        LOAS_WITH_REQUIRED_EUC = 2;
+    }
+    
+    repeated int32 credential_scope = 14;
+    repeated string optional_euc_whitelist = 12;
+    optional string acl_group = 13 [default = "default"];
+    optional security.context.AuditRequirements audit_requirements = 15;
+    optional bool opt_out_of_auditing = 16 [default = false];
+    optional string description = 7;
+    optional string type = 8;
+    optional Type data_type = 25;
+    optional bool stores_proto = 23;
+    optional bool always_mint_ptoken = 24;
+    optional int32 gclimit = 9 [default = -1];
+    optional int64 gclife_micros = 10 [default = -1];
+    optional string gcexpr = 18;
+    optional int64 gcoffset_micros = 20;
+    optional string owner = 17;
+    optional PropertyMap userdata = 19;
+    optional PrivacyAttributes privacy_attributes = 22;
+}
+
+message BloomFilterSettings {
+    optional float bloomfilter_bits = 1;
+    
+    optional BloomfilterMode bloomfilter_mode = 3 [default = BLOOMFILTER_LEGACY];
+    enum BloomfilterMode {
+        BLOOMFILTER_LEGACY = 0;
+        BLOOMFILTER_SHARDED = 1;
+    }
+    
+    optional string row_prefix_sep = 5;
+    
+    reserved 2, 4;
+}
+
+message AgeGroup {
+    required string expr = 2;
+    optional string config_name = 3;
+    optional string expr_major = 4;
+}
+
+message LocalityGroupAgeSettings {
+    repeated AgeGroup group = 1;
+    optional bool ignore_on_major_compact = 2;
+    optional bool ignore_on_non_major_compact = 3;
+    optional int32 max_compaction_groups = 4 [default = -1];
+    optional int32 target_compaction_groups = 5;
+}
+
+message FileStoragePolicy {
+    optional Placement default_placement = 1 [default = PLACEMENT_DEFAULT];
+    enum Placement {
+        PLACEMENT_DEFAULT = 0;
+        PLACEMENT_HDD = 1;
+        PLACEMENT_SSD = 2;
+        PLACEMENT_SSD_DATA = 12;
+        PLACEMENT_SSD_DATA_COLUMN = 13;
+    }
+    
+    map<string, Placement> overrides = 2;
+    optional bool ssd_to_ssd_data_column_override_opt_out = 3 [default = false];
+}
+
+message LocalityGroup {
+    required string name = 1;
+    optional int32 max_sstables = 3 [default = 0];
+    
+    optional BloomfilterType bloomfilter = 4 [default = BLOOMFILTER_ALL];
+    enum BloomfilterType {
+        BLOOMFILTER_ALL = 0;
+        BLOOMFILTER_NOBASE = 1;
+        BLOOMFILTER_NONE = 2;
+    }
+    
+    optional BloomfilterKey bloomfilterkey = 5 [default = BLOOMFILTER_COLUMN];
+    enum BloomfilterKey {
+        BLOOMFILTER_COLUMN = 0;
+        BLOOMFILTER_FAMILY = 1;
+        BLOOMFILTER_HYBRID = 2;
+    }
+    
+    optional BloomFilterSettings bloom_settings = 85;
+    optional string sstable_options = 31;
+    
+    optional group PrefixCompressed = 16 {
+        required int32 block_size = 17;
+    }
+    
+    optional group LZOCompressed = 18 {
+        required int32 block_size = 19 [deprecated = true];
+    }
+    
+    optional group ZippyCompressed = 29 {
+        required int32 block_size = 30;
+        optional int32 level = 95 [default = 1];
+    }
+    
+    optional group BMDiffCompressed = 20 {
+        required int32 block_size = 21;
+        optional int32 window_size = 22 [default = 32];
+        optional float max_size_blowup = 23 [default = 4];
+        optional int32 level = 94 [default = 1];
+    }
+    
+    optional bool use_two_level_index = 74 [default = true];
+    optional int32 row_samples = 75 [default = 64];
+    optional string major_sstable_cfs_params = 77;
+    optional string minor_sstable_cfs_params = 78;
+    
+    optional LoadMode load_mode = 79 [default = LOAD_NONE];
+    enum LoadMode {
+        LOAD_NONE = 0;
+        LOAD_INMEMORY = 1;
+        LOAD_MINOR_INMEMORY = 3;
+        LOAD_DCACHE = 6;
+        LOAD_L4CACHE = 11;
+    }
+    
+    optional int32 fs_root_id = 80;
+    optional int32 backup_fs_root_id = 90 [deprecated = true];
+    optional int32 num_unsafe_import_protects = 81 [default = 0];
+    optional LocalityGroupAgeSettings age_settings = 86;
+    optional bool opt_out_of_encryption = 88 [default = false, deprecated = true];
+    repeated string offline_access_reader = 92;
+    optional int32 target_sstables = 89;
+    optional FileStoragePolicy file_storage_policy = 93;
+    optional PropertyMap userdata = 91;
+    
+    reserved 6, 7, 24 to 28, 73, 76, 82 to 84, 87;
+}
+
+message PolicyCreator {
+    repeated string schedule_names = 1;
+    optional double creation_time = 2;
+    optional double expected_gc_time = 3;
+}
+
+message ClientCreator {
+    optional string secure_userid = 1;
+    optional string insecure_userid = 2;
+}
+
+message RemoteCreator {
+    optional string source_cell_name = 1;
+    optional string source_table_name = 2;
+    optional int64 source_table_version = 3;
+}
+
+message PerCfsPartitionSnapshotUsage {
+    map<string, int64> disk_size_by_cfs_partition = 1;
+}
+
+message SnapshotMetadata {
+    optional string name = 1;
+    optional uint64 version = 2;
+    optional TableMetadata source_metadata = 3;
+    optional int32 num_shards = 14;
+    optional PerCfsPartitionSnapshotUsage per_cfs_partition_usage = 13;
+    optional int64 logical_clock = 10;
+    optional bool has_offline_manifest = 11 [default = false];
+    optional int64 death_epoch_seconds = 12;
+    optional string cloud_kms_key_reference_version = 15;
+    optional int64 mutation_end_time_epoch_ns = 16;
+    
+    oneof creator {
+        PolicyCreator policy = 4;
+        ClientCreator client = 5;
+        RemoteCreator remote = 8;
+    }
+    
+    reserved 6, 7, 9;
+}
+
+message FsReroot {
+    optional int32 from_root_id = 1;
+    optional int32 to_root_id = 2;
+    optional string to_file_prefix = 3 [ctype = CORD];
+    optional bool deflash_only = 4;
+}
+
+message FsReroots {
+    repeated FsReroot reroot = 1;
+}
+
+message SnapshotPolicy {
+    repeated group Schedule = 1 {
+        required string name = 2;
+        required float period_hours = 3;
+        required int32 max_snapshots_kept = 4;
+        optional FsReroots fs_reroots = 6;
+    }
+    
+    optional float max_quota_fraction = 5;
+}
+
+message RowPrefixList {
+    repeated bytes row_prefixes = 1;
+}
+
+message BackupPolicy {
+    optional bool include_range = 4 [default = true];
+    
+    repeated Tier tiers = 1;
+    message Tier {
+        required string name = 1;
+        required int32 period_hours = 4;
+        optional int32 offset_hours = 5;
+        
+        oneof destination {
+            SnapshotDestination snapshot_destination = 2;
+            ChronicleDestination chronicle_destination = 3;
+        }
+    }
+    
+    optional bool deprecated = 2;
+    
+    oneof partial_coverage {
+        BTI_RowSetProto rowset = 3;
+        RowPrefixList row_prefix_list = 5;
+    }
+    
+    message SnapshotDestination {
+        required int32 lifetime_hours = 4;
+    }
+    
+    message ChronicleDestination {
+        required string archive = 1;
+    }
+}
+
+message BackupPolicies {
+    map<string, BackupPolicy> policies = 1;
+    optional string default_policy_name = 2;
+}
+
+message BorgResourceSetProto {
+    repeated double value = 1;
+    
+    enum Type {
+        MEM_BYTES = 0;
+        DISK_BYTES = 1;
+        CPU_RATE = 2;
+        RES_TYPES = 3;
+    }
+}
+
+message CoprocessorSpec {
+    required string name = 1;
+    
+    optional group UserManaged = 17 {
+        required string cp_key = 18;
+        optional PropertyMap properties = 19;
+    }
+    
+    optional group Remote = 20 {
+        required string cp_key = 21;
+        optional PropertyMap properties = 22;
+    }
+    
+    optional group Internal = 23 {
+        optional PropertyMap properties = 24;
+    }
+    
+    reserved 2 to 16, 100, 101;
+}
+
+message BandwidthLimit {
+    repeated group Puller = 1 {
+        required string cellname = 2;
+        required uint64 table_version = 3;
+        required double bandwidth_limit = 4;
+    }
+    
+    optional double default_bandwidth_limit = 5;
+    
+    reserved 6;
+}
+
+message MergeManagerParams {
+    optional double auto_merge_rate_per_server = 1;
+    optional double auto_merge_active_limit_per_server = 2;
+}
+
+message RebalancerParams {
+    optional int32 rebalance_interval_secs = 2;
+    optional double move_record_lifetime_secs = 3 [default = 60];
+    optional int64 unleased_server_wait_interval_ms = 4 [default = 1500];
+    optional double rebalancing_rate = 5 [default = 1];
+    optional int32 rebalancing_delay = 6 [default = 30];
+    optional int32 min_load_rebalancing_delay = 7 [default = 10];
+    optional bool unniced_servers_are_slow = 9 [default = false];
+    optional bool reset_load_urgent_servers = 10 [default = false];
+    optional int32 max_concurrent_rebalancer_loads_per_server = 11 [default = 2];
+    optional int32 max_concurrent_rebalancer_unloads_per_server = 12 [default = 2];
+    optional double move_cap_as_server_percent = 29 [default = 0.01];
+    optional bool unlimited_move_caps_for_aggressive_rebalancing = 55 [default = false];
+    
+    optional group LevelMoveRates = 13 {
+        optional double urgent = 14 [default = -1];
+        optional double fast = 15 [default = 0.25];
+        optional double slow = 16 [default = 0.01];
+        optional double good = 17 [default = 0.01];
+    }
+    
+    repeated group ResourceLevelMoveRates = 20 {
+        required int32 reason = 21;
+        optional double urgent = 22 [default = -1];
+        optional double fast = 23 [default = 0.25];
+        optional double slow = 24 [default = 0.01];
+        optional double good = 25 [default = 0.01];
+    }
+    
+    optional int32 max_concurrent_loads = 1;
+    optional int32 max_additional_md1_loads = 18 [default = 5];
+    optional bool unleased_loads_skip_servers_in_pushback = 19 [default = true];
+    
+    optional group CustomRebalancerParams = 26 {
+        optional string rebalancer_type = 27;
+        optional string rebalancer_cfg = 28;
+    }
+    
+    optional group NewParams = 30 {
+        optional double unload_fraction = 31;
+        optional double placement_weight = 39;
+        optional double placement_decay = 44;
+        optional double placement_cpu_multiple = 45;
+        optional double stats_weight = 32;
+        optional double unleased_multiple = 40;
+        optional double cpu_margin = 33;
+        optional double urgent_cpu_threshold = 34;
+        optional double low_cpu_margin = 41;
+        optional double memory_margin = 35;
+        optional double urgent_memory_threshold = 36;
+        optional double low_memory_margin = 54;
+        optional double urgent_queue_multiple = 49;
+        optional double queue_multiple = 37;
+        optional double idle_tablets_multiple = 38;
+        optional int32 placement_server_limit = 50;
+        optional double pushback_fraction = 51;
+        optional bool use_mean_instead_of_median = 52 [deprecated = true];
+        optional double mean_outlier_bound = 53;
+        optional double stat_window_secs = 56;
+        optional double delta_half_life_secs = 57;
+        optional double urgent_to_shed_frac = 58;
+        
+        optional CenterType center_type = 59;
+        enum CenterType {
+            TRIMMED_MEAN = 0;
+            MEAN = 1;
+            MEDIAN = 2;
+            RIGHT_TRIMMED_MEAN = 3;
+        }
+        
+        reserved 42, 43, 46, 47, 48;
+    }
+    
+    reserved 8;
+}
+
+message ServerResources {
+    optional int64 milligcu_limit = 1 [default = 0];
+}
+
+message SubpartitionMetadata {
+    required string name = 1;
+    required double server_tickets = 2;
+    optional int32 max_servers = 8 [default = 0x7fffffff];
+    optional ServerResources target_server_shape = 10;
+    repeated string table_name = 3;
+    repeated string table_name_prefix = 4;
+    repeated string table_owner = 7;
+    optional bool low_priority = 5 [default = false];
+    optional bool donor = 9;
+    optional string notes = 6;
+}
+
+message PartitionMetadata {
+    required string name = 1;
+    repeated string creator = 2;
+    
+    repeated group OwnerClass = 3 {
+        required string owner = 4;
+        required string owner_class = 5;
+    }
+    
+    optional Quota memory_quota = 6;
+    optional Quota disk_quota = 7 [deprecated = true];
+    optional Quota file_quota = 8;
+    optional Quota ticket_quota = 9;
+    repeated string closed_quota_class = 30 [deprecated = true];
+    repeated string coprocessor_starter = 27;
+    optional int32 fs_root_id = 28;
+    optional string major_sstable_cfs_params = 34;
+    optional string minor_sstable_cfs_params = 35;
+    optional string sharedlog_cfs_params = 36;
+    optional RebalancerParams rebalancer = 29;
+    optional bool is_pantry = 42;
+    optional double server_tickets = 31;
+    repeated SubpartitionMetadata subpartition = 32;
+    optional EncryptionSettings encryption_settings = 33;
+    optional bool disable_sharedlog_encryption = 37;
+    
+    optional TableEncryptionPolicy table_encryption_policy = 41 [default = ENCRYPTION_OPT_IN];
+    enum TableEncryptionPolicy {
+        ENCRYPTION_OPT_IN = 0;
+        ENCRYPTION_OPT_OUT = 1;
+        ENCRYPTION_ALL_TABLES = 2;
+    }
+    
+    optional string remote_cache_name = 38;
+    optional double l4_coa_path_fraction = 50 [default = 0];
+    optional MergeManagerParams merge_manager_params = 39;
+    repeated string administrator = 40;
+    optional AutosizerParams autosizer_params = 43;
+    optional CacheSizerParams cachesizer_params = 55;
+    optional double server_cache_limit_gib = 56 [default = -1];
+    optional google.protobuf.Timestamp server_cache_limit_expiration = 59;
+    optional BTPilotParams btpilot_params = 44;
+    optional bool disallow_in_memory_lg = 45;
+    optional security.context.AuditRequirements audit_requirements = 46;
+    repeated SecurityRealmSet security_realms = 47;
+    
+    optional ServiceMetadata service_metadata = 48;
+    message ServiceMetadata {
+        optional string shape = 1;
+        optional double incremental_metadata_servers_tax = 2;
+        optional double base_metadata_servers_tax = 3;
+        optional string partition_owner = 4;
+        optional string accounting_user = 5;
+        optional SsdOpsState ssd_ops_state = 6;
+        optional bool ssd_ops_migration_active = 7;
+    }
+    
+    optional bool cloud_kms_encryption_enabled = 49 [default = false];
+    optional string cloud_service_name = 51;
+    optional string cloud_resource_type = 52;
+    optional ServerResources assigner_unit_shape = 53;
+    
+    repeated CmekCreators cmek_creators = 54;
+    message CmekCreators {
+        optional string service_account_handle = 1;
+        repeated string creators = 2;
+    }
+    
+    optional bool ssd_to_ssd_data_column_override = 57 [default = false];
+    optional DefaultPtokenFilterPolicy default_ptoken_filter_policy = 58 [default = FAMILY_POLICY_FAIL_REQUEST];
+    
+    reserved 10 to 12, 20 to 26;
+    
+    enum SsdOpsState {
+        SSD_OPS_STATE_UNSPECIFIED = 0;
+        INVISIBLE = 1;
+        DERIVED = 2;
+        DERIVED_ROUND_UP = 3;
+    }
+}
+
+message AutosizerParams {
+    optional string slack_subpartition = 1;
+    optional int32 max_slack = 3;
+    optional int32 min_base = 13;
+    optional int32 max_base = 21;
+    optional int32 low_rounds = 6;
+    optional int32 high_rounds = 8;
+    optional double gcu_percentile = 4;
+    optional double low_gcu_fraction = 9;
+    optional double high_gcu_fraction = 10;
+    optional double min_cache_fraction = 11;
+    optional double min_availability_fraction = 12;
+    optional double max_server_increase_fraction = 14;
+    optional int32 max_server_increase_absolute = 15;
+    optional double max_server_decrease_fraction = 16;
+    optional int32 max_server_decrease_absolute = 17;
+    optional string gcu_add_servers_alg = 18;
+    optional double target_gcu_fraction = 19;
+    repeated string low_utilization_brackets = 20;
+    optional int32 min_base_storage = 22;
+    optional string cache_add_servers_alg = 23;
+    
+    reserved 2, 5, 7;
+}
+
+message BTPilotParams {
+    optional int32 target_server_count = 1;
+    optional int64 target_milligcu = 3;
+    optional int64 target_ram = 4;
+    
+    reserved 2;
+}
+
+message TableMetadata {
+    required string name = 1;
+    repeated string administrator = 5;
+    repeated string creator = 6;
+    repeated string delegator = 24;
+    repeated string resource_delegator = 30;
+    repeated SecurityRealmSet security_realms = 53;
+    repeated FamilyDescription family = 3;
+    optional string description = 7;
+    optional string row_format = 14;
+    repeated LocalityGroup locality_group = 4;
+    repeated AclGroup acl_group = 35;
+    optional security.context.AuditRequirements audit_requirements = 39;
+    optional float tablet_split_size = 9 [default = 1.0737418e+09];
+    optional float tablet_soft_split_size = 38 [default = -1];
+    optional float tablet_ssd_split_size = 64 [default = -1];
+    optional int32 load_priority = 31 [default = 2];
+    optional int32 snapshot_load_priority = 32 [default = 2];
+    optional bool auto_merge = 2;
+    optional float major_compaction_cycle_days = 10;
+    optional SnapshotPolicy snapshot_policy = 22 [deprecated = true];
+    optional string backup_policy = 41;
+    repeated CoprocessorSpec coprocessor = 12;
+    repeated string remote_coprocessor_starter = 56;
+    optional PropertyMap userdata = 13;
+    optional string default_owner = 15;
+    optional bool is_index = 16 [default = false];
+    optional int32 index_hit_shard_bits = 19 [default = 15];
+    optional bool enable_index_gc = 26 [default = true];
+    optional BandwidthLimit bandwidth_limit = 18;
+    optional int32 fs_root_id = 23;
+    optional string replication_puller_qos = 20;
+    optional string partition = 21 [default = "default"];
+    optional int64 death_epoch_seconds = 28;
+    optional bool do_not_delete = 29 [default = false];
+    optional EncryptionSettings encryption_settings = 33;
+    optional TableEncryptionSettings table_encryption_settings = 52;
+    optional bool encrypt_table = 36;
+    optional bool do_not_encrypt_sharedlogs = 34 [default = false, deprecated = true];
+    optional int64 encryption_key_rotation_interval_sec = 42;
+    optional bool load_based_splitting = 40 [default = true];
+    
+    optional AllowRebalancePolicy allow_rebalance = 43 [default = ALWAYS];
+    enum AllowRebalancePolicy {
+        ALWAYS = 0;
+        URGENT_ONLY = 1;
+        NEVER = 2;
+    }
+    
+    repeated string offline_access_reader = 44;
+    repeated string backup_and_snapshot_administrator = 57;
+    repeated string backup_and_snapshot_restorer = 58;
+    optional bool offline_access_can_snapshot_table = 45 [default = false];
+    optional bool disable_adaptive_stack_depth = 46 [default = false];
+    optional int32 max_boa_ttl_hours = 47 [default = 336];
+    optional string bandwidth_delegated_user = 48;
+    optional int64 max_row_size = 49;
+    
+    optional SharedlogStoragePlacement sharedlog_placement = 50 [default = SHAREDLOG_PLACEMENT_DEFAULT];
+    enum SharedlogStoragePlacement {
+        SHAREDLOG_PLACEMENT_DEFAULT = 0;
+        SHAREDLOG_PLACEMENT_HDD = 1;
+        SHAREDLOG_PLACEMENT_SSD = 2;
+    }
+    
+    optional ChangeDataCaptureConfig change_data_capture = 54;
+    repeated SchemaValidatorSpec schema_validator = 55;
+    repeated string debug_acl = 59;
+    optional DmaRolloutConfig dma_rollout_config = 62;
+    optional int32 min_num_tablets = 27 [deprecated = true];
+    optional bool ssd_to_ssd_data_column_override_opt_out = 63 [default = false];
+    
+    oneof crn_oneof {
+        string cloud_resource_name = 51;
+        uint64 cloud_resource_name_fingerprint = 60;
+    }
+    
+    reserved 11, 25, 37, 61;
+}
+
+message Quota {
+    optional double default_value = 1 [default = -1];
+    
+    repeated group Entry = 2 {
+        required string name = 3;
+        required double value = 4;
+    }
+}
+
+message ChubbyCompressed {
+    required int32 type = 1 [default = 0];
+    required bytes value = 2;
+}
+
+message KeystoreConfig {
+    required int32 config_id = 1;
+    optional string key_name = 2;
+    optional string backend = 3 [default = "DEFAULT"];
+}
+
+message ActiveArchive {
+    required string name = 1;
+    optional bool use_by_default = 2 [default = false];
+}
+
+message ReadOnlyArchive {
+    required string name = 1;
+    required double demotion_time = 2;
+}
+
+message ChronicleConfig {
+    required string universe = 1;
+    optional string site = 4;
+    repeated ActiveArchive archives = 2;
+    repeated ReadOnlyArchive ro_archives = 3;
+}
+
+message CellLocationProxyConfig {
+    optional string location_cache_proxy_address = 1;
+    map<string, RolloutConfig> rollout_group_to_config = 2;
+    
+    message RolloutConfig {
+        optional int32 rollout_percentage = 2 [default = 0];
+    }
+}
+
+message CellMetadata {
+    optional int32 version = 31 [default = 0];
+    repeated string administrator = 1;
+    repeated string creator = 2;
+    repeated SecurityRealmSet security_realms = 64;
+    optional DmaRolloutConfig dma_rollout_config = 66;
+    repeated string coprocessor_administrator = 30;
+    repeated string quota_administrator = 49;
+    repeated string tablet_mover = 55;
+    optional uint64 cell_unique_id = 40;
+    optional string description = 3;
+    
+    repeated group FSRoot = 19 {
+        optional FSRootType fsroot_type = 46 [default = FSROOT_NORMAL];
+        required int32 id = 20;
+        required string label = 21;
+        required string dir = 22;
+        required bool valid = 23;
+        optional bool import_valid = 47;
+        required bool primary = 25;
+        optional string major_sstable_cfs_params = 37;
+        optional string minor_sstable_cfs_params = 38;
+        optional string sharedlog_cfs_params = 39;
+        
+        repeated group OwnerClass = 41 {
+            required string owner = 42;
+            required string owner_class = 43;
+        }
+        
+        optional Quota disk_quota = 44 [deprecated = true];
+        optional Quota file_quota = 45 [deprecated = true];
+        
+        reserved 54;
+    }
+    
+    optional int32 next_fsroot_id = 24 [default = 1];
+    
+    repeated group OwnerClass = 15 {
+        required string owner = 16;
+        required string owner_class = 17;
+    }
+    
+    optional Quota memory_quota = 6;
+    optional Quota disk_quota = 7 [deprecated = true];
+    optional Quota file_quota = 18 [deprecated = true];
+    optional Quota ticket_quota = 33;
+    optional SnapshotPolicy default_snapshot_policy = 26 [deprecated = true];
+    
+    repeated group Snapshot = 27 {
+        required string owner = 28;
+        required SnapshotPolicy policy = 29 [deprecated = true];
+    }
+    
+    optional BackupPolicies backup_policies = 56;
+    
+    repeated group PartitionForOwner = 34 {
+        required string owner = 35;
+        required string partition = 36;
+    }
+    
+    optional string default_snapshot_owner = 48;
+    
+    optional AllowedCommands mts_commands_allowed_while_frozen = 50 [default = NONE];
+    enum AllowedCommands {
+        NONE = 0;
+        METADATA = 1;
+        METADATA_AND_ALL_LOADS_UNLOADS = 2;
+        ALL = 3;
+    }
+    
+    optional MergeManagerParams merge_manager_params = 51;
+    optional ChubbyCompressed chubby_compressed = 52;
+    optional fixed32 _checksum = 53;
+    optional fixed32 _crc_checksum = 67;
+    map<int32, KeystoreConfig> OBSOLETE_keystore_configs = 57;
+    optional ChronicleConfig chronicle_config = 58;
+    
+    repeated CfsPartitionQuota cfs_partition_quota = 59;
+    message CfsPartitionQuota {
+        optional CfsPartition partition = 1;
+        optional Quota quota = 3;
+        
+        reserved 2;
+    }
+    
+    optional QuotaPolicy quota_enforcement = 60 [default = QUOTA_FLAG_ENFORCED];
+    enum QuotaPolicy {
+        QUOTA_FLAG_ENFORCED = 0;
+        QUOTA_ENABLED = 1;
+        QUOTA_DISABLED = 2;
+    }
+    
+    optional ServiceMetadata service_metadata = 62;
+    message ServiceMetadata {
+        optional CellType cell_type = 5;
+        message CellType {
+            optional Family family = 1;
+            enum Family {
+                UNKNOWN = 0;
+                MIX = 1;
+                SRV = 2;
+                TMP = 3;
+            }
+            
+            optional string service_type = 2;
+            
+            optional RolloutCategory rollout_category = 3 [default = NORMAL];
+            enum RolloutCategory {
+                NORMAL = 0;
+                ALPHA = 1;
+                CANARY = 2;
+                STAGING = 3;
+            }
+        }
+        
+        optional CellState cell_state = 6;
+        enum CellState {
+            UNKNOWN = 0;
+            ACTIVE = 1;
+            INACTIVE = 2;
+            TURNUP = 3;
+            TURNDOWN = 4;
+        }
+        
+        optional string accounting_user = 7;
+        optional string intended_version = 8;
+        optional bool allow_auto_rollout = 9 [default = true];
+        optional string storage_cell = 15;
+        optional string borg_cell = 16;
+        optional string cluster = 17;
+        optional string borg_user = 18;
+        optional bool cell_has_metadata_partition = 20 [default = true];
+        optional double incremental_metadata_servers_tax = 21;
+        
+        optional PodMigrationInfo pod_migration_info = 22;
+        message PodMigrationInfo {
+            optional MigrationState autosizer = 5 [default = BORG];
+            enum MigrationState {
+                UNKNOWN = 0;
+                BORG = 1;
+                POD = 2;
+                FAILED = 3;
+            }
+            
+            optional MigrationState backup_prober = 3 [default = BORG];
+            optional MigrationState decrypt_server = 8 [default = BORG];
+            optional MigrationState location_proxy = 7 [default = BORG];
+            optional MigrationState quartermaster = 4 [default = BORG];
+            optional MigrationState quota_server = 1 [default = BORG];
+            optional MigrationState ranger = 2 [default = BORG];
+            optional MigrationState replication_monitoring = 9 [default = BORG];
+            optional MigrationState sinbin = 6 [default = BORG];
+            optional MigrationState slowpoke = 10 [default = BORG];
+        }
+        
+        reserved 19;
+    }
+    
+    optional CellLocationProxyConfig location_proxy_config = 65;
+    
+    reserved 4, 5, 8 to 14, 32, 61, 63;
+    
+    enum Version {
+        BASE = 0;
+        COPROCESSOR_ADMINISTRATOR = 1;
+        DELEGATOR = 2;
+        CELL_UNIQUE_ID = 3;
+    }
+    
+    enum FSRootType {
+        FSROOT_NORMAL = 0;
+        FSROOT_SAFE_BULKIMPORT = 1;
+    }
+    
+    enum KeystoreConfigType {
+        MINT_ATTENUATION = 0;
+    }
+    
+    enum CfsPartition {
+        HDD = 0;
+        SSD = 1;
+    }
+}
+
+message SetTableArgs {
+    repeated string administrator = 2;
+    repeated string creator = 3;
+    repeated string delegator = 5;
+    repeated string resource_delegator = 6;
+    optional string description = 4;
+}
+
+message CreateColumnFamilyArgs {
+    repeated FamilyDescription family = 1;
+}
+
+message SetColumnFamilyArgs {
+    repeated FamilyDescription family = 1;
+}
+
+message DeleteColumnFamilyArgs {
+    repeated string family = 1;
+}
+
+message InternalRetryPayload {
+    optional bool backoff = 1 [default = true];
+    
+    extend .proto2.bridge.MessageSet {
+        optional InternalRetryPayload message_set_extension = 11493101;
+    }
+}
+
+message SetArgs {
+    required bytes row = 1;
+    
+    repeated group Column = 2 {
+        required bytes name = 3;
+        required bytes value = 4;
+        optional bool replace = 10;
+        optional bool delete_older = 5;
+        optional int64 micro_timestamp = 9;
+    }
+    
+    optional int64 micro_timestamp = 8;
+    
+    reserved 6, 7, 16, 17;
+}
+
+message SetResult {
+    optional int64 micro_timestamp = 2;
+    
+    reserved 1, 3;
+}
+
+message EncryptionMasterKey {
+    optional string label = 1 [default = "encryptedfile_dev"];
+    optional int32 keystore_config_id = 2;
+}
+
+message EncryptionSettings {
+    optional EncryptionMasterKey master_key = 1;
+    optional EncryptionType encryption_type = 2 [default = ENCRYPTEDFILE];
+    optional EncryptionType sharedlog_encryption_type = 4 [default = ENCRYPTEDFILE];
+    optional int64 max_encryption_key_rotation_interval_sec = 3 [default = 0x278d00];
+}
+
+message AclGroup {
+    required string name = 1;
+    optional bool enforce_acl = 2 [default = true];
+    
+    optional GaiaIdFromRowKey gaiaid_from_row_key = 3;
+    message GaiaIdFromRowKey {
+        optional bytes prefix = 1;
+        optional bytes prefix_separator = 4;
+        
+        optional Format format = 2 [default = GAIAID_HEX];
+        enum Format {
+            GAIAID_HEX = 1;
+            GAIAID_HEX_WEBSAFEBASE64 = 2;
+        }
+    }
+}
+
+message GlobalSequencerProto {
+    required int64 timestamp = 1;
+    required int64 tiebreaker = 2;
+}
+
+message DiffItemProto {
+    optional bytes row = 1 [ctype = CORD];
+    optional bytes column = 2;
+    optional int64 micro_timestamp = 3;
+    optional uint64 value_hash = 4;
+    optional string table_spec = 5;
+}
+
+message TableEncryptionSettings {
+    optional CloudKMSEncryptionSettings cloud_kms_encryption_settings = 2;
+    
+    reserved 1;
+}
+
+message CloudKMSEncryptionSettings {
+    optional string kms_key_reference = 1;
+    optional string cloud_service_account = 3;
+    optional int64 delegator_service_account = 4;
+    
+    reserved 2;
+}
+
+enum EncryptionType {
+    ENCRYPTEDFILE = 0;
+    CFS_ENCRYPTION = 1;
+    SSTABLE_ENCRYPTION = 2;
+}

@@ -1,0 +1,18 @@
+syntax = "proto3";
+
+package google.rpc.context;
+
+import "google/protobuf/struct.proto";
+
+option cc_enable_arenas = true;
+option java_multiple_files = true;
+option java_outer_classname = "AuditContextProto";
+option java_package = "com.google.rpc.context";
+
+message AuditContext {
+    bytes audit_log = 1;
+    protobuf.Struct scrubbed_request = 2;
+    protobuf.Struct scrubbed_response = 3;
+    int32 scrubbed_response_item_count = 4;
+    string target_resource = 5;
+}

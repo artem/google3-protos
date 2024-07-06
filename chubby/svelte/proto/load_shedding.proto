@@ -1,0 +1,49 @@
+syntax = "proto2";
+
+package chubby;
+
+import "chubby/svelte/proto/common.proto";
+import "google/protobuf/any.proto";
+import "google/protobuf/duration.proto";
+
+option java_multiple_files = true;
+option java_package = "com.google.chubby.svelte.protocol";
+
+message LoadSheddingMode {
+    oneof mode {
+        LoadShedding load_shedding = 1;
+        NoLoadShedding no_load_shedding = 2;
+    }
+}
+
+message LoadShedding {
+    optional google.protobuf.Duration token_ttl = 1;
+    
+    optional Token token = 2;
+    message Token {
+        optional google.protobuf.Any token_data = 1;
+    }
+    
+    oneof instruction {
+        HoldOn hold_on = 3;
+        TryAnotherTask another_task = 4;
+        TryAnotherShard another_shard = 5;
+    }
+    
+    message HoldOn {
+        optional google.protobuf.Duration hold_on_period = 1;
+    }
+    
+    message TryAnotherTask {
+        
+    }
+    
+    message TryAnotherShard {
+        optional google.protobuf.Duration another_shard_period = 1;
+        repeated ServerGroup server_groups = 2;
+    }
+}
+
+message NoLoadShedding {
+    
+}

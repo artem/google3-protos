@@ -1,0 +1,13 @@
+syntax = "proto2";
+
+package production.rpc.stubs.proto;
+
+option java_outer_classname = "ValidationProto";
+option java_package = "com.google.prod.rpc.stubs.proto";
+
+enum Validation {
+    VALIDATION_UNSPECIFIED = 0;
+    BATCH_RETRIES_WITHOUT_CLIENT_SIDE_THROTTLING = 1;
+    GATING_CACHING_HOOK_ORDERING = 2;
+    START_REACHABLE_ENABLED = 3;
+}

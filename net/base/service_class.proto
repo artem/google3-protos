@@ -1,0 +1,16 @@
+syntax = "proto3";
+
+package net_base.nsc;
+
+enum ServiceClass {
+    UNSPECIFIED = 0;
+    NONE = 1;
+    TRANSFER_PROTECTED = 2;
+    TRANSFER_UNPROTECTED = 3;
+    STREAMING_PROTECTED = 4;
+    USER_FACING_HIGH = 6;
+    USER_FACING_NORMAL = 8;
+    NETWORK_CONTROL_NORMAL = 9;
+    MAXIMUM_VALID = 15;
+    STREAMING_UNPROTECTED = 5 [deprecated = true];
+}

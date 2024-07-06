@@ -1,0 +1,38 @@
+syntax = "proto2";
+
+package production.rpc.stubs.proto;
+
+import "net/proto2/bridge/proto/message_set.proto";
+import "util/task/contrib/proto_status/proto_status.proto";
+
+option java_outer_classname = "ExtensibleStubsInternalProto";
+option java_package = "com.google.prod.rpc.stubs.proto";
+
+message CanonicalStubExtension {
+    extend .proto2.bridge.MessageSet {
+        optional CanonicalStubExtension message_set_extension = 208477678;
+    }
+}
+
+message HotspotErrorExtension {
+    extend .proto2.bridge.MessageSet {
+        optional HotspotErrorExtension message_set_extension = 262160989;
+    }
+}
+
+message NonRetryableErrorExtension {
+    extend .proto2.bridge.MessageSet {
+        optional NonRetryableErrorExtension message_set_extension = 382633033;
+    }
+}
+
+enum InternalErrorCode {
+    INTERNAL_ERROR_CODE_UNDEFINED = 0;
+    STREAM_ALREADY_FINISHED = 1;
+}
+
+enum ReceiveFinalMetadataSource {
+    RECEIVE_FINAL_METADATA_SOURCE_UNSPECIFIED = 0;
+    LOCAL = 1;
+    BACKEND = 2;
+}

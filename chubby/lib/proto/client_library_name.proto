@@ -1,0 +1,18 @@
+syntax = "proto3";
+
+package chubby;
+
+option java_package = "com.google.chubby.impl.chubbyprotos";
+
+enum ClientLibraryName {
+    NAME_UNSPECIFIED = 0;
+    NAME_UNKNOWN = 1;
+    LOCKSERVICE = 2;
+    SVELTE_WATCHER = 3;
+    PYWRAPLOCKSERVICE = 4;
+    PYWRAPWATCHER = 5;
+    LAMPREY = 6;
+    WATCH_CACHE = 7;
+    JAVA_SVELTE_WATCHER = 8;
+    JAVA_LOCKSERVICE = 9;
+}

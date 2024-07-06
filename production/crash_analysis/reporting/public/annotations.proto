@@ -1,0 +1,16 @@
+syntax = "proto2";
+
+package coroner.collection;
+
+import "storage/datapol/annotations/proto/semantic_annotations.proto";
+
+message AnnotationKeyValue {
+    optional string key = 1 [ctype = STRING_PIECE];
+    optional string value = 2 [ctype = STRING_PIECE];
+}
+
+message CrashAnnotations {
+    repeated AnnotationKeyValue kv = 1;
+    
+    extensions 10000 to max;
+}

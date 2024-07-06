@@ -1,108 +1,192 @@
 syntax = "proto2";
 
-import "net/base/qos.proto";
-import "production/rpc/stubs/proto/canonical_stub.proto";
 package rpc2.contrib;
 
-option java_package = "com.google.rpc2.contrib";
-option java_outer_classname = "SmartServiceProtoHolder";
+import "net/base/qos.proto";
+import "net/proto2/bridge/proto/message_set.proto";
+import "net/proto2/contrib/proto_builder/proto/proto_builder.proto";
+import "net/proto2/contrib/validator/annotations.proto";
+import "production/rpc/stubs/proto/canonical_stub.proto";
+import "security/authorization/server_authorization/public/policy/client_policy.proto";
+import "security/loas/l2/internal/securewrapper/loas2_crypto.proto";
+import "storage/datapol/annotations/proto/semantic_annotations.proto";
+
 option cc_enable_arenas = true;
+option java_outer_classname = "SmartServiceProtoHolder";
+option java_package = "com.google.rpc2.contrib.proto1api";
 
 message SmartService {
-  message StubOptions {
-    optional string service_name = 1;
-    optional .production.rpc.stubs.proto.CanonicalStub extensible_stub = 2;
-  }
-  message RpcSecurityOptions {
-    required string protocol = 1;
-    optional string requested_role = 2;
-    optional int32 min_security_level = 3;
-    optional string server_username = 4;
-    optional bool server_full_authentication = 5;
-  }
-  message SocketOptions {
-    enum LatencyMode {
-      AUTOMATIC = 0;
-      LATENCY = 1;
-      THROUGHPUT = 2;
+    repeated string target = 1;
+    
+    optional StubOptions stub_options = 2;
+    message StubOptions {
+        optional string service_name = 1;
+        optional production.rpc.stubs.proto.CanonicalStub extensible_stub = 2 [deprecated = true];
+        optional bool use_always_fail_channel_on_error = 3;
     }
-    optional .net_base.qos.TrafficClass traffic_class = 1;
-    optional uint32 min_rto_time_ms = 2;
-    optional int32 send_window_size = 3;
-    optional int32 recv_window_size = 4;
-    optional .rpc2.contrib.SmartService.SocketOptions.LatencyMode latency_mode = 5 [default = AUTOMATIC];
-    optional int32 max_pacing_rate = 6;
-    optional int32 tcp_minrtt_interval = 7;
-  }
-  message ClientChannelOptions {
-    enum ChannelType {
-      GNS_CHANNEL = 0;
-      BNS_CHANNEL = 1;
-      AUTO_CHANNEL = 2;
+    
+    optional ClientChannelOptions client_channel_options = 3;
+    message ClientChannelOptions {
+        optional RpcSecurityOptions security_options = 1;
+        optional double failure_detection_delay = 2;
+        optional double max_idle_failure_detection_delay = 3;
+        optional bool start_in_idle_failure_detection_delay = 24;
+        optional double idle_shutdown_delay = 4;
+        optional double connection_timeout_delay = 20;
+        optional double health_check_response_wait_time = 21;
+        optional bool start_reachable = 5;
+        optional bool can_use_udp = 6;
+        optional bool ignore_lameduck_mode = 22;
+        optional int32 max_outstanding_rpcs = 7;
+        optional string load_balancing_policy = 9;
+        optional string target_selection_policy = 10;
+        optional bool backend_subset = 11;
+        
+        optional BackendSubsetAlgorithm subset_algorithm = 23 [default = SUBSET_ALGORITHM_UNSPECIFIED];
+        enum BackendSubsetAlgorithm {
+            SUBSET_ALGORITHM_UNSPECIFIED = 0;
+            DETERMINISTIC_SUBSET = 1;
+            ROCKSTEADIER_SUBSET = 2;
+            RANDOM_SUBSET = 3;
+        }
+        
+        optional int32 subset_size = 12;
+        optional net_base.qos.TrafficClass traffic_class = 13 [deprecated = true];
+        optional uint32 min_rto_time_ms = 14 [deprecated = true];
+        optional SocketOptions socket_options = 15;
+        optional string load_balancing_policy_metric_export_name = 16;
+        
+        optional ChannelType channel_type = 18 [default = BNS_CHANNEL, deprecated = true];
+        enum ChannelType {
+            option allow_alias = true;
+            DEFAULT_CHANNEL = 0;
+            BNS_CHANNEL = 1;
+            AUTO_CHANNEL = 0;
+        }
+        
+        optional bool allow_direct_channels = 26 [default = true];
+        optional bool is_compression_passthrough = 19;
+        optional int32 response_proto_recursion_limit = 25;
+        
+        extensions 1000 to 524999999, 525000000 to max;
+        
+        reserved 8, 17;
     }
-    optional .rpc2.contrib.SmartService.RpcSecurityOptions security_options = 1;
-    optional double failure_detection_delay = 2;
-    optional double max_idle_failure_detection_delay = 3;
-    optional double idle_shutdown_delay = 4;
-    optional double connection_timeout_delay = 20;
-    optional double health_check_response_wait_time = 21;
-    optional bool start_reachable = 5;
-    optional bool can_use_udp = 6;
-    optional int32 max_outstanding_rpcs = 7;
-    optional string load_balancing_policy = 9;
-    optional string target_selection_policy = 10;
-    optional bool backend_subset = 11;
-    optional int32 subset_size = 12;
-    optional .net_base.qos.TrafficClass traffic_class = 13 [deprecated = true];
-    optional uint32 min_rto_time_ms = 14 [deprecated = true];
-    optional .rpc2.contrib.SmartService.SocketOptions socket_options = 15;
-    optional string load_balancing_policy_metric_export_name = 16;
-    optional .rpc2.contrib.SmartService.ClientChannelOptions.ChannelType channel_type = 18 [default = AUTO_CHANNEL];
-    optional bool is_compression_passthrough = 19;
-    extensions 1000 to 536870911;
-  }
-  message GslbChannelOptions {
-    enum ClusterSelectionMode {
-      DEFAULT_CLUSTER_SELECTION = 0;
-      AFFINITY_CLUSTER_SELECTION = 1;
+    
+    optional GslbChannelOptions gslb_channel_options = 4;
+    message GslbChannelOptions {
+        optional ClientChannelOptions fallback_channel_options = 1;
+        optional int32 client_id = 2;
+        optional string client_namespace = 3;
+        
+        optional ClusterSelectionMode cluster_selection_mode = 5 [default = DEFAULT_CLUSTER_SELECTION];
+        enum ClusterSelectionMode {
+            DEFAULT_CLUSTER_SELECTION = 0;
+            AFFINITY_CLUSTER_SELECTION = 1;
+        }
+        
+        optional bool use_session_balancing = 6;
+        optional string balancer_requested_role = 7;
+        optional string balancer_bns_name = 13;
+        
+        optional ThermostatFailureMode thermostat_failure_mode = 8 [default = PICK_RANDOM];
+        enum ThermostatFailureMode {
+            PICK_RANDOM = 0;
+            PICK_RANDOM_UNDRAINED = 1;
+            DROP = 2;
+        }
+        
+        optional bool use_target_selection_policy = 10;
+        optional string gslb_fallback_balancing_channel_policy = 11;
+        optional bool use_gslb_fallback_channel = 9 [default = true];
+        optional bool always_permit_fallback_channel = 12;
+        
+        reserved 4;
     }
-    enum ThermostatFailureMode {
-      PICK_RANDOM = 0;
-      PICK_RANDOM_UNDRAINED = 1;
-      DROP = 2;
+    
+    optional LoadBalancingPolicyOptions load_balancing_policy_options = 6;
+    message LoadBalancingPolicyOptions {
+        optional float error_ratio_threshold = 1;
+        optional uint32 max_channels_to_consider = 2;
+        optional float weight_update_interval_sec = 4;
+        optional float error_utilization_penalty = 5;
+        optional float sliding_window_size_sec = 6;
+        optional string bns_job_name = 8;
+        optional string slicer_target_suffix = 9 [deprecated = true];
+        optional string slicer_env_override = 12;
+        optional string slicer_fallback_policy = 10;
+        optional string slicer_replica_selection_policy = 11;
+        
+        optional SlicerChildPolicySubsetSelectionPolicy slicer_child_policy_subset_selection_policy = 14;
+        message SlicerChildPolicySubsetSelectionPolicy {
+            oneof policy {
+                NoSubsetting no_subsetting = 1;
+                RandomSubset random_subset = 2;
+            }
+            
+            message NoSubsetting {
+                
+            }
+            
+            message RandomSubset {
+                optional int32 subset_size = 1;
+            }
+        }
+        
+        map<string, string> options = 13;
+        
+        reserved 3, 7;
     }
-    optional .rpc2.contrib.SmartService.ClientChannelOptions fallback_channel_options = 1;
-    optional int64 client_id = 2;
-    optional string client_namespace = 3;
-    optional .rpc2.contrib.SmartService.GslbChannelOptions.ClusterSelectionMode cluster_selection_mode = 5 [default = DEFAULT_CLUSTER_SELECTION];
-    optional bool use_session_balancing = 6;
-    optional string balancer_requested_role = 7;
-    optional .rpc2.contrib.SmartService.GslbChannelOptions.ThermostatFailureMode thermostat_failure_mode = 8 [default = PICK_RANDOM];
-    optional bool use_gslb_fallback_channel = 9 [default = true];
-    optional bool use_target_selection_policy = 10;
-  }
-  message LoadBalancingPolicyOptions {
-    optional float error_ratio_threshold = 1;
-    optional uint32 max_channels_to_consider = 2;
-    optional float weight_update_interval_sec = 4;
-    optional float error_utilization_penalty = 5;
-    optional float sliding_window_size_sec = 6;
-    optional string bns_job_name = 8;
-    optional string slicer_target_suffix = 9;
-    optional string slicer_fallback_policy = 10;
-    reserved 3, 7;
-  }
-  enum CheckChannelMode {
-    CHECK_CHANNEL_DISABLED = 0;
-    CHECK_CHANNEL_NON_EMPTY = 1;
-  }
-  repeated string target = 1;
-  optional .rpc2.contrib.SmartService.StubOptions stub_options = 2;
-  optional .rpc2.contrib.SmartService.ClientChannelOptions client_channel_options = 3;
-  optional .rpc2.contrib.SmartService.GslbChannelOptions gslb_channel_options = 4;
-  optional double wait_sec = 5;
-  optional .rpc2.contrib.SmartService.CheckChannelMode check_channel = 7 [default = CHECK_CHANNEL_DISABLED];
-  optional .rpc2.contrib.SmartService.LoadBalancingPolicyOptions load_balancing_policy_options = 6;
+    
+    optional double wait_sec = 5;
+    
+    optional CheckChannelMode check_channel = 7 [default = CHECK_CHANNEL_DISABLED];
+    enum CheckChannelMode {
+        CHECK_CHANNEL_DISABLED = 0;
+        CHECK_CHANNEL_NON_EMPTY = 1;
+        CHECK_CHANNEL_REACHABLE = 2;
+        CHECK_CHANNEL_CAN_ACCEPT = 3;
+    }
+    
+    optional bool allow_no_target = 8 [default = false, deprecated = true];
+    optional bool disable_channel_cache = 9;
+    
+    message RpcSecurityOptions {
+        optional string protocol = 1;
+        optional string requested_role = 2;
+        optional int32 min_security_level = 3;
+        optional string server_username = 4 [deprecated = true];
+        repeated string server_security_realm = 6 [deprecated = true];
+        optional bool check_server_security_realms = 7 [deprecated = true];
+        optional bool instance_info_required = 8;
+        optional server_authz.UnrestrictedClientPolicy server_authorization_policy = 10;
+        optional security_loas_l2.SecureWrapperCryptoOptions securewrapper_crypto_options = 11;
+        
+        reserved 5, 9, "server_full_authentication", "check_server_hostname";
+    }
+    
+    message SocketOptions {
+        optional net_base.qos.TrafficClass traffic_class = 1;
+        optional int64 min_rto_time_ms = 2 [deprecated = true];
+        optional int32 send_window_size = 3;
+        optional int32 recv_window_size = 4;
+        
+        optional LatencyMode latency_mode = 5 [default = AUTOMATIC];
+        enum LatencyMode {
+            AUTOMATIC = 0;
+            LATENCY = 1;
+            THROUGHPUT = 2;
+        }
+        
+        optional int64 max_pacing_rate = 6;
+        optional int32 tcp_minrtt_interval = 7;
+        optional bool gtos_opportunistic = 8;
+        optional string local_address = 9;
+        optional string tcp_congestion_control = 10;
+        optional uint32 mark = 11;
+    }
+    
+    extend .proto2.bridge.MessageSet {
+        optional SmartService message_set_extension = 172355362;
+    }
 }
-
-

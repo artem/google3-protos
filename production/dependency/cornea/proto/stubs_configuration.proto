@@ -1,0 +1,24 @@
+syntax = "proto2";
+
+package production.dependency.proto;
+
+import "production/dependency/proto/dependencies.proto";
+import "production/rpc/stubs/proto/stub_configuration.proto";
+import "storage/datapol/annotations/proto/semantic_annotations.proto";
+
+option java_outer_classname = "StubsConfigurationProto";
+option java_package = "com.google.prod.dependency.proto";
+
+message StubsFilters {
+    optional string rpc_service = 1;
+    optional string rpc_method = 2;
+    optional string request_key = 3;
+}
+
+extend Configuration {
+    optional rpc.stubs.proto.CanonicalStubConfiguration canonical_stub = 124746555;
+}
+
+extend Filters {
+    optional StubsFilters stubs_filters = 106153781;
+}

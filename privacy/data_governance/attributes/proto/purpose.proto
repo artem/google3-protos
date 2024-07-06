@@ -1,0 +1,51 @@
+syntax = "proto3";
+
+package privacy.data_governance.attributes;
+
+import "logs/proto/logs_annotations/logs_annotations.proto";
+import "privacy/ads/user_data_enforcement/data-usage.proto";
+import "privacy/data_governance/attributes/proto/classification.proto";
+
+option java_multiple_files = true;
+option java_package = "com.google.privacy.datagovernance.attributes.proto1api";
+
+message ProcessingPurpose {
+    classification.Category.HasCategory cross_product_processing = 1;
+    classification.Category.HasCategory cross_use_offered_together = 4;
+    
+    Purpose purpose = 2;
+    enum Purpose {
+        PROCESSING_PURPOSE_UNSPECIFIED = 0;
+        PROCESSING_PURPOSE_NOTHING = 21;
+        PROVISION_OF_SERVICE = 1;
+        PROVISION_OF_SERVICE_INFRASTRUCTURE = 18;
+        ADS_RELATED_PROVISION_OF_SERVICE = 2;
+        PRODUCT_PERSONALIZATION = 3;
+        CONTEXTUALIZATION = 23;
+        REVENUE_GENERATION = 4;
+        USER_SUPPORT = 5;
+        CLOUD_PROCESSING_INFRASTRUCTURE = 22;
+        ACCOUNT_MANAGEMENT = 24;
+        USER_COMMUNICATIONS = 25;
+        VERIFICATION_TESTING_VALIDATION = 6;
+        DEBUGGING_AND_MONITORING = 7;
+        INFRASTRUCTURE_METRICS = 8;
+        DATA_RECOVERY = 26;
+        BUSINESS_ANALYSIS = 9;
+        MARKET_RESEARCH = 10;
+        RESEARCH_EXPERIMENTATION = 11;
+        TRUST_SAFETY = 12;
+        TRUST_SAFETY_ANTI_FRAUD = 15;
+        TRUST_SAFETY_ANTI_SPAM = 16 [deprecated = true];
+        TRUST_SAFETY_SECURITY = 17;
+        TRUST_SAFETY_ANTI_ABUSE = 19;
+        COMPLIANCE_LEGAL_SUPPORT = 13;
+        LIMITED_MANUAL_ACCESS = 14;
+        COMPLIANCE_LEGAL_SUPPORT_TAKEOUT = 20;
+        COMPLIANCE_LEGAL_SUPPORT_TAKEOUT_LEGAL = 27;
+        COMPLIANCE_LEGAL_SUPPORT_TAKEOUT_CONSUMER = 28;
+        COMPLIANCE_LEGAL_SUPPORT_ELI = 29;
+    }
+    
+    repeated ads.user_data_enforcement.DataUsage ads_processing_purpose = 3;
+}

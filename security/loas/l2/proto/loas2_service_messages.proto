@@ -1,0 +1,103 @@
+syntax = "proto2";
+
+package security_loas_l2;
+
+import "security/authorization/server_authorization/arbiter/api/arbiter_types.proto";
+import "security/authorization/server_authorization/public/policy/target.proto";
+import "security/loas/l2/internal/certs/loas2_policy.proto";
+import "security/loas/l2/proto/crl_messages.proto";
+import "security/thinmint/proto/core/thinmint_core.proto";
+
+option java_package = "com.google.net.loas.l2.genfiles";
+
+message GenerateKeypairReq {
+    optional int32 rsa_key_length_bits = 1;
+}
+
+message GenerateKeypairResp {
+    optional bytes rsa_public_key = 1;
+}
+
+message InstallMachineCertReq {
+    optional .thinmint.ThinMint cert = 1;
+    
+    optional BootType boot_type = 2;
+    enum BootType {
+        BOOT_TYPE_UNSPECIFIED = 0;
+        BOOT_TYPE_DISK = 1;
+        BOOT_TYPE_NET = 2;
+    }
+    
+    optional bool skip_loading_cert = 3;
+}
+
+message InstallMachineCertResp {
+    optional bool activated = 1 [deprecated = true];
+}
+
+message GetMachineCertReq {
+    
+}
+
+message GetMachineCertResp {
+    optional .thinmint.ThinMint cert = 1;
+}
+
+message Loas2RevocationId {
+    optional string realm = 1;
+    optional uint64 serial = 2;
+}
+
+message GetRevocationStatusReq {
+    repeated uint64 serials = 1;
+    repeated uint64 own_serials = 2;
+    repeated Loas2RevocationId revocation_ids = 3;
+    repeated Loas2RevocationId own_revocation_ids = 4;
+}
+
+message GetRevocationStatusResp {
+    repeated bool is_revoked = 1;
+    repeated bool is_enforced = 2;
+    optional CrlState crl_state = 3;
+}
+
+message GetLoas2PolicyReq {
+    
+}
+
+message GetLoas2PolicyResp {
+    optional LOAS2Policy policy = 1;
+}
+
+message RecordServerAuthorizationDenialReq {
+    optional server_authz.TargetType target_type = 1;
+    optional server_authz.Reason denial_reason = 2;
+}
+
+message RecordServerAuthorizationDenialResp {
+    
+}
+
+message StoreAttestationPolicyRequest {
+    optional bytes policy = 1;
+}
+
+message StoreAttestationPolicyResponse {
+    
+}
+
+message RemoveAttestationPolicyRequest {
+    
+}
+
+message RemoveAttestationPolicyResponse {
+    
+}
+
+message GetAttestationPolicyRequest {
+    
+}
+
+message GetAttestationPolicyResponse {
+    optional bytes policy = 1;
+}

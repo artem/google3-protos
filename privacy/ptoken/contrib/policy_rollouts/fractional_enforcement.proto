@@ -1,0 +1,20 @@
+syntax = "proto2";
+
+package ptoken.policy_rollouts;
+
+import "privacy/ptoken/public/core/logical_policy.proto";
+
+option java_multiple_files = true;
+option java_package = "com.google.privacy.ptoken.policyrollouts";
+
+message FractionalRolloutConfigurationProto {
+    optional int32 rollout_bucket_enforcement_threshold = 2;
+    optional int32 online_enforcement_bucket_limit = 4;
+    optional LogicalPolicy.Enum logical_policy = 3 [default = UNSPECIFIED];
+    
+    reserved 1;
+}
+
+message FractionalRolloutOptionsProto {
+    optional int64 external_gaia_id = 1;
+}

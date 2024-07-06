@@ -1,0 +1,7 @@
+syntax = "proto2";
+
+package logging.proto;
+
+message CppStack {
+    repeated uint64 pc = 1 [packed = true];
+}

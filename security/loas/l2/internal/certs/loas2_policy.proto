@@ -1,34 +1,43 @@
 syntax = "proto2";
 
-import "net/proto2/bridge/proto/message_set.proto";
-import "security/credentials/proto/principal.proto";
-import "security/util/proto/permission.proto";
 package security_loas_l2;
 
+import "net/proto2/bridge/proto/message_set.proto";
+import "security/credentials/proto/principal.proto";
+import "security/loas/l2/proto/usertype.proto";
+import "security/util/proto/permission.proto";
+import "storage/datapol/annotations/proto/semantic_annotations.proto";
+
 message LOAS2Policy {
-  repeated .security_loas_l2.MasterPolicy whitelisted_master = 1;
-  repeated .security.credentials.PrincipalProto blacklisted_role = 2;
-  repeated .security_loas_l2.LOAS2PolicyCustomization customization = 3;
-  extend .proto2.bridge.MessageSet {
-    optional .security_loas_l2.LOAS2Policy message_set_extension = 44581891;
-  }
+    repeated MasterPolicy whitelisted_master = 1;
+    repeated security.credentials.PrincipalProto blacklisted_role = 2;
+    repeated LOAS2PolicyCustomization customization = 3;
+    optional int64 serial_no = 4;
+    optional int64 last_update_timestamp_secs = 5;
+    
+    extend .proto2.bridge.MessageSet {
+        optional LOAS2Policy message_set_extension = 44581891;
+    }
 }
 
 message LOAS2PolicyCustomization {
-  optional .security.credentials.PrincipalProto policy_decision_point = 1;
-  repeated .security_loas_l2.MasterPolicy whitelisted_master = 2;
+    optional security.credentials.PrincipalProto policy_decision_point = 1;
+    repeated MasterPolicy whitelisted_master = 2;
 }
 
 message MasterPolicy {
-  optional .security.credentials.PrincipalProto master = 1;
-  optional .proto2.bridge.MessageSet expected_assertions = 2;
-  optional .AcctRestrictions most_permissive_restrictions = 3;
-  repeated .security.credentials.PrincipalProto.PrincipalScope whitelisted_scope = 4;
-  repeated .security.credentials.PrincipalProto whitelisted_role = 5;
-  repeated string whitelisted_mdb_role_prefix = 6;
-  repeated .security.credentials.PrincipalProto blacklisted_role = 7;
-  optional .security.credentials.PrincipalProto fallback_role = 9;
-  extensions 8 to 8;
+    optional security.credentials.PrincipalProto master = 1;
+    optional .proto2.bridge.MessageSet expected_assertions = 2;
+    optional AcctRestrictions most_permissive_restrictions = 3;
+    repeated security.credentials.PrincipalProto.PrincipalScope whitelisted_scope = 4;
+    repeated security.credentials.PrincipalProto whitelisted_role = 5;
+    repeated string whitelisted_mdb_role_prefix = 6;
+    repeated security.credentials.PrincipalProto blacklisted_role = 7;
+    optional security.credentials.PrincipalProto fallback_role = 9;
+    optional bool allowed_to_set_user_type = 11;
+    optional bool allowed_to_set_instance_info = 12;
+    repeated UserType allowed_user_type_assertions = 13 [packed = true];
+    optional bool allowed_to_set_is_person = 10;
+    
+    extensions 8;
 }
-
-

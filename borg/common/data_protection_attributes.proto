@@ -1,0 +1,26 @@
+syntax = "proto2";
+
+package borg;
+
+import "privacy/ads/user_data_enforcement/data-usage.proto";
+import "privacy/context/proto/policy_breakglass.proto";
+import "privacy/data_governance/attributes/proto/purpose.proto";
+import "privacy/ptoken/public/core/logical_policy.proto";
+import "privacy/ptoken/public/core/request_context_defs.proto";
+
+option cc_enable_arenas = true;
+
+message DataProtectionAttributes {
+    optional int32 default_product_id = 1;
+    repeated privacy.data_governance.attributes.ProcessingPurpose.Purpose processing_purpose = 2 [packed = true];
+    optional bool dma52_cross_use_offered_together = 3;
+    repeated .ptoken.LogicalPolicy.Enum request_policy_enforcement = 4 [packed = true];
+    optional .ptoken.Dma52ProcessingType dma52_processing_type = 5;
+    repeated privacy.ads.user_data_enforcement.DataUsage ads_processing_purpose = 6 [packed = true];
+    repeated .ptoken.LogicalPolicy.Enum request_policy_global_rampup = 12 [packed = true];
+    repeated .ptoken.LogicalPolicy.Enum request_policy_enforcement_optout = 7 [packed = true];
+    repeated .ptoken.LogicalPolicy.Enum request_policy_enforcement_optout_from_filtering = 8 [packed = true];
+    optional int32 dma52_post_access_filtering_approval_id = 9;
+    repeated privacy.context.PolicyBreakglass policies_breakglass = 10;
+    repeated .ptoken.LogicalPolicy.Enum request_policy_enforcement_discovery_opt_in = 11 [packed = true];
+}

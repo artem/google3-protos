@@ -1,0 +1,40 @@
+syntax = "proto3";
+
+package udpa.annotations;
+
+import "net/proto2/proto/descriptor.proto";
+
+option go_package = "github.com/cncf/xds/go/udpa/annotations";
+
+message MigrateAnnotation {
+    string rename = 1;
+}
+
+message FieldMigrateAnnotation {
+    string rename = 1;
+    string oneof_promotion = 2;
+}
+
+message FileMigrateAnnotation {
+    string move_to_package = 2;
+}
+
+extend .proto2.MessageOptions {
+    MigrateAnnotation message_migrate = 171962766;
+}
+
+extend .proto2.FieldOptions {
+    FieldMigrateAnnotation field_migrate = 171962766;
+}
+
+extend .proto2.EnumOptions {
+    MigrateAnnotation enum_migrate = 171962766;
+}
+
+extend .proto2.EnumValueOptions {
+    MigrateAnnotation enum_value_migrate = 171962766;
+}
+
+extend .proto2.FileOptions {
+    FileMigrateAnnotation file_migrate = 171962766;
+}

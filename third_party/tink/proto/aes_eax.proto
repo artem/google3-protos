@@ -1,0 +1,22 @@
+syntax = "proto3";
+
+package google.crypto.tink;
+
+option go_package = "github.com/tink-crypto/tink-go/v2/proto/aes_eax_go_proto";
+option java_multiple_files = true;
+option java_package = "com.google.crypto.tink.proto";
+
+message AesEaxParams {
+    uint32 iv_size = 1;
+}
+
+message AesEaxKeyFormat {
+    AesEaxParams params = 1;
+    uint32 key_size = 2;
+}
+
+message AesEaxKey {
+    uint32 version = 1;
+    AesEaxParams params = 2;
+    bytes key_value = 3 [ctype = STRING_PIECE];
+}

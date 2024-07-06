@@ -1,0 +1,31 @@
+syntax = "proto3";
+
+package security.data_access;
+
+import "privacy/data_governance/attributes/proto/classification.proto";
+import "privacy/data_governance/attributes/proto/identifiers.proto";
+import "storage/datapol/annotations/proto/semantic_annotations.proto";
+
+option java_multiple_files = true;
+
+message LoggableDataGovernanceAnnotations {
+    Data data = 1;
+    message Data {
+        repeated privacy.data_governance.attributes.classification.Source source = 1;
+        privacy.data_governance.attributes.classification.SemanticContext semantic_context = 2;
+        privacy.data_governance.attributes.classification.Confidentiality confidentiality = 3;
+        privacy.data_governance.attributes.classification.Category category = 5;
+        repeated privacy.data_governance.attributes.classification.Identifiers identifiers = 6;
+        privacy.data_governance.attributes.classification.Identifiability identifiability = 7;
+    }
+    
+    oneof family_specific_annotations {
+        Rpc rpc = 3;
+    }
+    
+    message Rpc {
+        Data writes = 2;
+        Data returns = 3;
+        Data reads = 4;
+    }
+}

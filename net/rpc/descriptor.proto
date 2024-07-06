@@ -1,16 +1,15 @@
 syntax = "proto2";
 
-import "net/proto2/proto/descriptor.proto";
 package rpc;
+
+import "net/proto2/proto/descriptor.proto";
 
 option java_package = "com.google.net.rpc.proto";
 
 message FileDescriptorProtoResponse {
-  optional .proto2.FileDescriptorProto file_descriptor_proto = 1;
+    optional .proto2.FileDescriptorProto file_descriptor_proto = 1;
 }
 
 message FileDescriptorSetResponse {
-  optional .proto2.FileDescriptorSet file_descriptor_set = 1;
+    optional .proto2.FileDescriptorSet file_descriptor_set = 1;
 }
-
-

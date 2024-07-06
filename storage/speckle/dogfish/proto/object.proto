@@ -1,0 +1,54 @@
+syntax = "editions";
+
+package speckle_dogfish.dogfish_proto;
+
+import "google/protobuf/empty.proto";
+import "storage/datapol/annotations/proto/semantic_annotations.proto";
+import "storage/speckle/dogfish/proto/dogfish-checksum.proto";
+
+message VersionCollection {
+    repeated bytes data = 1 [ctype = CORD];
+    repeated uint64 valid_from_lsn = 2;
+    repeated uint32 data_crc32c_scrambled = 3;
+    repeated ChecksumProvenance data_checksum_provenance = 4;
+    repeated uint32 canonical_data_crc32c_scrambled = 5;
+}
+
+message VersionCollectionMetadata {
+    optional bool max_lsn_pointer = 1 [default = false];
+    optional uint64 min_lsn_version = 2;
+}
+
+message CompressedWrapper {
+    optional bytes compressed_data = 1 [ctype = CORD];
+    optional CompressionType type = 2;
+    optional uint32 compressed_data_crc32c_scrambled = 3;
+}
+
+message BlobPointer {
+    optional bytes opaque_key = 1;
+    optional CompressionType type = 2;
+    
+    oneof metadata {
+        VersionCollectionMetadata version_md = 3;
+    }
+}
+
+message Object {
+    optional uint64 valid_from_lsn = 3;
+    optional uint32 data_crc32c_scrambled = 5;
+    optional ChecksumProvenance data_checksum_provenance = 6;
+    optional uint32 canonical_data_crc32c_scrambled = 7;
+    optional string canonical_data_version = 8;
+    
+    oneof contents {
+        bytes data = 1 [ctype = CORD];
+        google.protobuf.Empty tombstone = 2;
+        BlobPointer pointer = 4;
+    }
+}
+
+enum CompressionType {
+    COMPRESSION_UNSPECIFIED = 0;
+    BLOCK_VERSIONS = 1;
+}

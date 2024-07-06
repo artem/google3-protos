@@ -1,0 +1,334 @@
+syntax = "proto2";
+
+package speckle_dogfish.diagnostics;
+
+import "google/api/servicecontrol/v1/metric_value.proto";
+import "google/protobuf/timestamp.proto";
+import "perftools/profiles/proto/profile.proto";
+import "stats/histogram/proto/histogram.proto";
+import "storage/datapol/annotations/proto/semantic_annotations.proto";
+import "storage/speckle/dogfish/proto/shard-configuration.proto";
+
+service HelperDiagnostics {
+    rpc GetThreadz(GetThreadzRequest) returns (GetThreadzResponse);
+    rpc GetStreamz(GetStreamzRequest) returns (GetStreamzResponse);
+    rpc ExportStreamz(ExportStreamzRequest) returns (ExportStreamzResponse);
+    rpc GetMallocz(GetMalloczRequest) returns (GetMalloczResponse);
+    rpc CollectProfile(CollectProfileRequest) returns (CollectProfileResponse);
+    rpc ListLogFiles(ListLogFilesRequest) returns (ListLogFilesResponse);
+    rpc FetchLogFile(FetchLogFileRequest) returns (FetchLogFileResponse);
+    rpc GetRPCStats(GetRPCStatsRequest) returns (GetRPCStatsResponse);
+    rpc GetPrefetchCacheDiagnostics(GetPrefetchCacheDiagnosticsRequest) returns (GetPrefetchCacheDiagnosticsResponse);
+    rpc ObserveState(ObserveStateRequest) returns (ObserveStateResponse);
+    rpc SetFlag(SetFlagRequest) returns (SetFlagResponse);
+    rpc GetFlags(GetFlagsRequest) returns (GetFlagsResponse);
+}
+
+message ResponseHeader {
+    optional string volume_name = 1;
+}
+
+message GetThreadzRequest {
+    
+}
+
+message GetThreadzResponse {
+    optional ResponseHeader header = 2;
+    optional string payload = 1;
+}
+
+message BuildInfo {
+    optional string changelist = 1;
+    optional string client_info = 2;
+    optional string label = 3;
+    optional int64 timestamp = 4;
+}
+
+message ShardStatus {
+    optional int32 shard_id = 1;
+    optional int64 trim_lsn = 2;
+    optional uint64 backpointer_lsn = 3;
+    optional uint64 seal_through_lsn = 4;
+}
+
+message BackupSnapshotMetadata {
+    optional string volume_name = 1;
+    optional string backup_id = 2;
+    optional uint64 lsn = 3;
+    optional google.protobuf.Timestamp created_on = 4;
+    optional google.protobuf.Timestamp deadline = 5;
+}
+
+message BackupSnapshotsMetadata {
+    repeated BackupSnapshotMetadata snapshot_metadata = 2;
+}
+
+message ShardDiagnostics {
+    repeated ShardStatus shards = 1;
+    optional uint64 checkpoint_start_lsn = 2;
+    optional uint64 low_watermark_lsn = 3;
+    optional BackupSnapshotsMetadata backup_lsns = 4;
+}
+
+message WalProgress {
+    optional uint64 pre_flush_pos = 7;
+    optional uint64 flush_pos = 3;
+    optional uint64 process_pos = 4;
+    optional uint64 consume_pos = 11;
+    optional uint64 checkpoint_start_pos = 5;
+    optional uint64 backpointer_pos = 2;
+    optional uint64 walbuffer_pos = 1;
+    optional uint64 walbuffer_end_pos = 12;
+    optional uint64 configuration_pos = 8;
+    optional uint64 config_read_pos = 9 [deprecated = true];
+    optional uint64 promotion_pos = 10;
+    optional uint64 parse_pos = 13;
+    optional int64 process_buffer_size = 6;
+}
+
+message ReplicaUnsentRecords {
+    optional int32 replica_id = 1;
+    optional uint64 earliest_start_lsn = 2;
+}
+
+message ReplicaAckedLsn {
+    optional int32 replica_id = 1;
+    optional uint64 acked_lsn = 2;
+}
+
+message SerialQuorumWriteStream {
+    optional uint64 quorum_lsn = 1;
+    repeated ReplicaAckedLsn current_config_acked_lsns = 2;
+    repeated ReplicaAckedLsn target_config_acked_lsns = 3;
+    optional uint64 queue_tail_lsn = 4;
+    repeated ReplicaUnsentRecords replica_unsent_records = 5;
+}
+
+message ArchiverShardDiagnostics {
+    optional int32 shard_id = 1;
+    optional uint64 quorum_lsn = 2;
+    optional bool under_reconfiguration = 3;
+    optional dogfish_proto.ShardConfigurationState reconfiguration_state = 4;
+    optional SerialQuorumWriteStream serial_quorum_write_stream = 5;
+}
+
+message ArchiverDiagnostics {
+    repeated ArchiverShardDiagnostics shard = 1;
+}
+
+message GetStreamzRequest {
+    optional string path = 1;
+    optional bool is_directory = 2;
+}
+
+message StreamzMetric {
+    optional string html = 1;
+}
+
+message StreamzDirectory {
+    repeated string subdirs = 1;
+    repeated string metrics = 2;
+}
+
+message GetStreamzResponse {
+    optional ResponseHeader header = 3;
+    optional StreamzMetric metric = 1;
+    optional StreamzDirectory directory = 2;
+}
+
+message ExportStreamzRequest {
+    repeated string metric_path = 1;
+}
+
+message ExportStreamzResponse {
+    optional ResponseHeader header = 2;
+    repeated google.api.servicecontrol.v1.MetricValueSet metric_values = 1;
+}
+
+message ListLogFilesRequest {
+    
+}
+
+message ListLogFilesResponse {
+    optional ResponseHeader header = 2;
+    repeated string log_file_names = 1;
+}
+
+message FetchLogFileRequest {
+    optional string log_file_name = 1;
+    optional int32 start_byte = 2;
+    optional int32 max_bytes = 3;
+}
+
+message FetchLogFileResponse {
+    optional ResponseHeader header = 3;
+    optional string contents = 1 [ctype = CORD];
+    optional bool eof = 2;
+}
+
+message CollectProfileRequest {
+    optional Type type = 1;
+    enum Type {
+        INVALID = 0;
+        HEAPZ = 1;
+        FRAGMENTATIONZ = 2;
+        PEAKHEAPZ = 4;
+        PROFILEZ = 5;
+    }
+}
+
+message CollectProfileResponse {
+    optional ResponseHeader header = 2;
+    optional perftools.profiles.Profile profile = 1;
+}
+
+message GetMalloczRequest {
+    
+}
+
+message GetMalloczResponse {
+    optional ResponseHeader header = 2;
+    optional string payload = 1;
+}
+
+message TracedRPC {
+    optional int64 start_time_micros = 1;
+    optional int64 end_time_micros = 2;
+    optional string method = 3;
+    repeated int64 trace_time_micros = 4;
+    repeated string trace = 5;
+    optional string debug_bns = 6;
+}
+
+message GetRPCStatsRequest {
+    
+}
+
+message GetRPCStatsResponse {
+    optional ResponseHeader header = 4;
+    repeated TracedRPC pending_rpcs = 1;
+    repeated string methods = 2;
+    repeated stats.HistogramState latency_histos = 3;
+}
+
+message PrefetchCacheStatus {
+    optional int32 number_of_buffers = 1;
+    optional int32 number_of_buffers_in_use = 2;
+    optional int32 number_of_buffers_pinned = 3;
+}
+
+message PrefetchCacheMetrics {
+    optional int64 prefetch_count = 1;
+    optional int64 prefetch_block_count = 2;
+    optional int64 read_count = 3;
+    optional int64 read_hit_count = 4;
+    optional int64 read_miss_count = 5;
+    optional int64 evict_count = 6;
+    optional int64 invalidate_count = 7;
+    optional int64 out_of_buffers_count = 8;
+    optional double mean_read_wait_time_us = 9;
+    optional double median_read_wait_time_us = 10;
+    optional int64 purge_cache_count = 11;
+    optional int64 evict_before_use_count = 12;
+    optional int64 user_table_read_ahead_count = 13;
+}
+
+message GetPrefetchCacheDiagnosticsRequest {
+    
+}
+
+message GetPrefetchCacheDiagnosticsResponse {
+    optional PrefetchCacheStatus status = 1;
+    optional PrefetchCacheMetrics metrics = 2;
+}
+
+message ConfigurationStateInfo {
+    optional int32 shard_id = 1;
+    optional dogfish_proto.ShardConfigurationState configuration_state = 2;
+}
+
+message ShardConfigCollectionInfo {
+    repeated ConfigurationStateInfo configuration_state_info = 1;
+}
+
+message ReplicationSlot {
+    optional string name = 1;
+    optional uint64 dogfish_apply_lsn = 2;
+    optional uint64 confirmed_flush = 3;
+    optional uint64 restart_lsn = 4;
+}
+
+message ReplicationSlotDiagnostics {
+    repeated ReplicationSlot replication_slots = 1;
+}
+
+message ObserveStateRequest {
+    repeated ObservationTarget target = 1;
+}
+
+message LpsStubCacheState {
+    repeated ShardLocation shard_location = 1;
+    message ShardLocation {
+        optional string shard_replica = 1;
+        optional string location = 2;
+        optional string debug_bns = 3;
+        optional string state = 4;
+    }
+    
+    repeated Stub stub = 2;
+    message Stub {
+        optional string location = 1;
+        optional int32 references = 2;
+        optional bool valid = 3;
+    }
+}
+
+message ObserveStateResponse {
+    optional ResponseHeader header = 1;
+    optional LpsStubCacheState lps_stub_cache_state = 2;
+    optional WalProgress wal_progress = 3;
+    optional BuildInfo build_info = 4;
+    optional ArchiverDiagnostics archiver_diagnostics = 5;
+    optional ShardDiagnostics shard_diagnostics = 6;
+    optional PrefetchCacheStatus prefetch_status = 7;
+    optional PrefetchCacheMetrics prefetch_metrics = 8;
+    optional ShardConfigCollectionInfo shard_config_collection_info = 9;
+    optional ReplicationSlotDiagnostics replication_slot_diagnostics = 10;
+}
+
+message SetFlagRequest {
+    optional string name = 1;
+    optional string value = 2;
+}
+
+message SetFlagResponse {
+    optional ResponseHeader header = 1;
+    optional string debug_text = 2;
+}
+
+message GetFlagsRequest {
+    repeated string flag_name = 1;
+}
+
+message GetFlagsResponse {
+    optional ResponseHeader header = 1;
+    
+    repeated Flag flag = 2;
+    message Flag {
+        optional string name = 1;
+        optional string value = 2;
+    }
+}
+
+enum ObservationTarget {
+    TARGET_NOT_SET = 0;
+    TARGET_LPS_STUB_CACHE = 1;
+    TARGET_WAL_PROGRESS = 2;
+    TARGET_BUILD_INFO = 3;
+    TARGET_ARCHIVER_DIAGNOSTICS = 4;
+    TARGET_SHARD_DIAGNOSTICS = 5;
+    TARGET_PREFETCH_CACHE_STATUS = 6;
+    TARGET_PREFETCH_CACHE_METRICS = 7;
+    TARGET_SHARD_CONFIG_COLLECTION = 8;
+    TARGET_REPLICATION_SLOT_DIAGNOSTICS = 9;
+}

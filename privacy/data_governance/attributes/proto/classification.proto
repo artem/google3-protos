@@ -1,0 +1,217 @@
+syntax = "proto3";
+
+package privacy.data_governance.attributes.classification;
+
+import "net/proto2/proto/descriptor.proto";
+
+option java_multiple_files = true;
+option java_package = "com.google.privacy.datagovernance.attributes.classification";
+
+message Category {
+    HasCategory location = 1;
+    enum HasCategory {
+        UNDEFINED = 0;
+        YES = 1;
+        NO = 2;
+    }
+    
+    GeoLocation geo_location = 8;
+    message GeoLocation {
+        LocationType location_type = 1;
+        enum LocationType {
+            LOCATION_UNDEFINED = 0;
+            USER_LOCATION = 1;
+            USER_DIRECT_LOCATION = 2;
+            USER_INDIRECT_LOCATION = 3;
+            USER_CONTEXTUAL_LOCATION = 4;
+            NOT_A_USER_LOCATION = 5;
+            LOCATION_OTHER = 6;
+        }
+        
+        Coarse coarse = 2;
+        enum Coarse {
+            COARSE_UNDEFINED = 0;
+            NOT_COARSE = 1;
+            COARSE_AT_1_PLUS_1_LEVEL = 2;
+            COARSE_AT_3_PLUS_1_LEVEL = 3;
+            COARSE_AT_COUNTRY_LEVEL = 4;
+            COARSE_OTHER = 5;
+        }
+        
+        Traces traces = 3;
+        enum Traces {
+            TRACES_UNDEFINED = 0;
+            CONTAIN_MULTIPLE_LOCATIONS = 1;
+            ONLY_SINGLE_LOCATION = 2;
+            TRACES_OTHER = 3;
+        }
+    }
+    
+    HasCategory financial = 2;
+    HasCategory payment_instrument = 3;
+    HasCategory health = 4;
+    HasCategory hipaa = 5;
+    HasCategory employee = 7;
+    HasCategory children_data = 9 [deprecated = true];
+    HasCategory children_product = 10;
+    HasCategory audio_data = 11;
+    HasCategory has_xfood = 12;
+    
+    ConsumerHealthAndFitness consumer_health_and_fitness = 13 [deprecated = true];
+    enum ConsumerHealthAndFitness {
+        option deprecated = true;
+        CONSUMER_HEALTH_AND_FITNESS_TYPE_UNDEFINED = 0 [deprecated = true];
+        CHF_PROTECTED_HEALTH_INFORMATION = 1 [deprecated = true];
+        CHF_NON_PROTECTED_HEALTH_INFORMATION = 2 [deprecated = true];
+        CHF_ENTERPRISE = 3 [deprecated = true];
+        CHF_RESEARCH = 4 [deprecated = true];
+        CHF_ACHF = 5 [deprecated = true];
+        CHF_ACHF_MBD_HFALD = 6 [deprecated = true];
+        CHF_ACHF_NON_MBD_HFALD = 7 [deprecated = true];
+    }
+    
+    repeated PublicUserData public_user_data = 14;
+    enum PublicUserData {
+        PUBLIC_USER_DATA_UNDEFINED = 0;
+        NOT_PUBLIC_USER_DATA = 1;
+        PUBLIC_USER_DATA = 2;
+        SEPARATED_PUBLIC_USER_DATA = 3;
+    }
+    
+    MinorData minors_data = 15;
+    message MinorData {
+        TeensCategory teens_category = 1;
+        ChildrenCategory children_category = 2;
+    }
+    
+    UserClass user_class = 16;
+    message UserClass {
+        ManagedCategory managed = 1;
+    }
+    
+    HasCategory smart_home = 17;
+    
+    reserved 6;
+    
+    message TeensCategory {
+        HasCategory teens_data = 1;
+    }
+    
+    message ChildrenCategory {
+        HasCategory children_data = 1;
+        HasCategory unicorns_data = 2;
+        HasCategory griffins_data = 3;
+        HasCategory edu_children_data = 4;
+    }
+    
+    message ManagedCategory {
+        HasCategory non_edu_managed = 1;
+        HasCategory edu = 2;
+    }
+}
+
+enum Source {
+    SOURCE_UNDEFINED = 0;
+    SOURCE_OTHER = 1;
+    SOURCE_GOOGLE = 2;
+    SOURCE_OTHER_BETS = 8;
+    SOURCE_GENERATED_TEST = 3;
+    SOURCE_USER = 4;
+    SOURCE_END_USER = 5;
+    SOURCE_CUSTOMER = 6;
+    SOURCE_CUSTOMER_OF_CUSTOMER = 10 [deprecated = true];
+    SOURCE_ENTERPRISE_CUSTOMER = 11 [deprecated = true];
+    SOURCE_PUBLIC = 7;
+    SOURCE_THIRD_PARTY = 9;
+    SOURCE_BUSINESS_USER = 12;
+}
+
+enum SemanticContext {
+    CONTEXT_UNDEFINED = 0;
+    CONTEXT_OTHER = 1;
+    CONTEXT_METADATA = 2;
+    CONTEXT_CONTENT = 3;
+    CONTEXT_CORE_CONTENT = 4;
+    CONTEXT_SECURITY_CONFIGURATION = 7;
+    CONTEXT_CONFIGURATION = 5;
+    CONTEXT_ATTRIBUTE = 6;
+}
+
+enum Confidentiality {
+    CONFIDENTIALITY_UNDEFINED = 0;
+    CONFIDENTIALITY_PUBLIC = 1;
+    CONFIDENTIALITY_CONFIDENTIAL = 2;
+    CONFIDENTIALITY_NEED_TO_KNOW = 3;
+}
+
+enum DatasetTag {
+    UNKNOWN_DATASET = 0;
+    OTHER_DATASET = 1;
+    HULK = 2;
+    OOLONG = 3;
+    PHOTOS_BACKEND_DATA = 4;
+    PHOTOS_BACKEND_GMAIL_DATA = 5;
+    PHOTOS_BACKEND_BENCHMARKS_DATA = 6;
+    GMAIL_DATA = 7;
+    LOCAL_REVIEWS = 8;
+    DATASET_FOOTPRINTS_ASSISTANT_DATA = 9 [deprecated = true];
+    DATASET_FOOTPRINTS_CHROME_DATA = 10;
+    DATASET_FOOTPRINTS_LENS_DATA = 11;
+    DATASET_FOOTPRINTS_PHOTOS_DATA = 12;
+    DATASET_FOOTPRINTS_SPEECH_DATA = 13;
+    DATASET_ASSISTANT_DATA = 14;
+    DATASET_PAYMENTS_DATA = 15;
+    DATASET_ML_WORKFLOW_DATA = 16;
+}
+
+enum Identifiability {
+    IDENTIFIABILITY_UNDEFINED = 0;
+    IDENTIFIABILITY_IDENTIFIABLE = 1;
+    IDENTIFIABILITY_PSEUDONYMOUS = 2;
+    IDENTIFIABILITY_ANONYMOUS = 3;
+    IDENTIFIABILITY_TWO_PHASE_AGGREGATED = 4;
+}
+
+enum Pseudonymization {
+    PSEUDONYMIZATION_UNDEFINED = 0;
+    PSEUDONYMIZATION_PER_USER_UNAGGREGATED_PSEUDO_IDENTIFIED = 1;
+    PSEUDONYMIZATION_PER_USER_UNAGGREGATED_DEIDENTIFIED = 2;
+    PSEUDONYMIZATION_PER_USER_AGGREGATED_PSEUDO_IDENTIFIED = 3;
+    PSEUDONYMIZATION_PER_USER_AGGREGATED_DEIDENTIFIED = 4;
+    PSEUDONYMIZATION_MULTI_USER_AGGREGATED_WITH_ID_LISTS = 5;
+    PSEUDONYMIZATION_MULTI_USER_AGGREGATED_WITH_ID_COUNTS = 6;
+    PSEUDONYMIZATION_MULTI_USER_AGGREGATED_NO_IDS = 7;
+    PSEUDONYMIZATION_PER_USER_NONSTANDARD = 8;
+    PSEUDONYMIZATION_MULTI_USER_NONSTANDARD = 9;
+}
+
+extend .proto2.EnumValueOptions {
+    string label = 204438976;
+    string description = 204438977;
+    string parent = 206747693;
+    string expected_confidentiality = 307833595;
+    bool disabled = 308218636;
+    string go_link = 321358229;
+    string deprecated_message = 377074388;
+    bool deprecated_as_an_error = 376796538;
+}
+
+extend .proto2.FieldOptions {
+    string field_label = 233938569;
+    string field_description = 233938575;
+    string field_expected_confidentiality = 307041375;
+    bool field_disabled = 308602115;
+    string field_go_link = 321231810;
+    string field_deprecated_message = 377079205;
+    bool field_deprecated_as_an_error = 377276026;
+}
+
+extend .proto2.EnumOptions {
+    string enum_description = 306455367;
+    string enum_go_link = 321189327;
+}
+
+extend .proto2.MessageOptions {
+    string message_description = 306457841;
+    string message_go_link = 321173585;
+}

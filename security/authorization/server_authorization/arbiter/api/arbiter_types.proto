@@ -1,0 +1,103 @@
+syntax = "proto3";
+
+package server_authz;
+
+import "google/protobuf/wrappers.proto";
+import "security/authorization/server_authorization/public/policy/client_policy.proto";
+import "security/authorization/server_authorization/public/policy/target.proto";
+import "security/credentials/proto/principal.proto";
+
+option java_multiple_files = true;
+option java_package = "com.google.security.authorization.serverauthorization.arbiter.api";
+
+message WarmCacheRequest {
+    Target target = 1;
+}
+
+message WarmCacheResponse {
+    TargetType target_type = 1;
+}
+
+message AuthzRequest {
+    Target target = 1;
+    PeerInfo peer = 2;
+    UnrestrictedClientPolicy unrestricted_client_policy = 3;
+    RelaxingOverrides relaxing_overrides = 4;
+}
+
+message AuthzResponse {
+    Decision decision = 1;
+    Decision audit_decision = 2;
+    TargetType target_type_for_authz_purposes = 3;
+    repeated FailedOpen failed_open = 4;
+    bool service_check_enforced = 5;
+    repeated CheckType checks_performed = 6;
+}
+
+message Decision {
+    Action action = 1;
+    Reason reason = 2;
+    string message_for_logging = 3;
+}
+
+message PeerInfo {
+    security.credentials.PrincipalProto principal = 1;
+    string security_realm = 2;
+    string machine_name = 3;
+}
+
+message RelaxingOverrides {
+    google.protobuf.BoolValue allow_requirement_to_approve_server_user = 1;
+}
+
+enum Action {
+    UNSPECIFIED_ACTION = 0;
+    ALLOW = 1;
+    DENY = 2;
+}
+
+enum Reason {
+    UNSPECIFIED_REASON = 0;
+    USER_NOT_AUTHORIZED = 1;
+    REALM_NOT_AUTHORIZED = 2;
+    HOSTNAME_NOT_AUTHORIZED = 3;
+    USERS_ACL_DOES_NOT_EXIST = 4;
+    ERROR_READING_USERS_ACL = 5;
+    REALMS_ACL_DOES_NOT_EXIST = 6;
+    ERROR_READING_REALMS_ACL = 7;
+    NOTHING_CHECKED_SERVER_USER = 8;
+    NOTHING_CHECKED_SERVER_REALM = 9;
+    TARGET_IS_MALFORMED = 10;
+    MALFORMED_REQUEST = 11;
+    USER_DETAILS_LOOKUP_FAILED = 12;
+    UNSUPPORTED_TARGET_TYPE = 13;
+    HOSTNAME_IS_UNKNOWN = 14;
+}
+
+enum FailedOpen {
+    UNSPECIFIED_FAILED_OPEN = 0;
+    SKIPPED_ALL_CHECKS_BECAUSE_ENVELOPE_SERVER_AUTHZ_SERVICE_FAILED = 1;
+    SKIPPED_ALL_CHECKS_BECAUSE_ENVELOPE_COMMUNICATION_FAILED = 2;
+    SKIPPED_SERVICE_CHECK_BECAUSE_AUTODETECTION_FAILED = 3;
+    ACCEPTED_STALE_USERS_ACL = 4;
+    SERVICE_CHECK_SKIPPED_USER_BECAUSE_USERS_ACL_DOES_NOT_EXIST = 5;
+    SERVICE_CHECK_SKIPPED_USER_BECAUSE_LOADING_USERS_ACL_FAILED = 6;
+    SERVICE_CHECK_SKIPPED_USER_BECAUSE_USERS_ACL_NOT_POPULATED = 10;
+    SERVICE_CHECK_SKIPPED_REALM_BECAUSE_REALMS_ACL_DOES_NOT_EXIST = 7;
+    SERVICE_CHECK_SKIPPED_REALM_BECAUSE_LOADING_REALMS_ACL_FAILED = 8;
+    SERVICE_CHECK_SKIPPED_REALM_BECAUSE_SERVER_IS_NOT_IN_ANY_REALM = 9;
+}
+
+enum DisabledReason {
+    DISABLED_BECAUSE_UNSPECIFIED = 0;
+    DISABLED_BECAUSE_MISSING_ARBITER = 1;
+    DISABLED_BECAUSE_SECURITY_OPTIONS_DISABLED = 2;
+    DISABLED_BECAUSE_FLAG_DISABLED = 3;
+}
+
+enum CheckType {
+    UNSPECIFIED_CHECK = 0;
+    USER_CHECK = 1;
+    REALM_CHECK = 2;
+    HOSTNAME_CHECK = 3;
+}

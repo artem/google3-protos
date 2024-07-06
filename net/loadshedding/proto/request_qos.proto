@@ -1,0 +1,24 @@
+syntax = "proto2";
+
+package net.loadshedding;
+
+import "logs/proto/logs_annotations/logs_annotations.proto";
+import "net/proto2/proto/descriptor.proto";
+
+option objc_class_prefix = "LOADS";
+option java_outer_classname = "QoS";
+option java_package = "com.google.net.loadshedding.proto1api";
+
+message RequestQoS {
+    optional Criticality criticality = 1 [default = CRITICAL];
+    enum Criticality {
+        CRITICAL_PLUS = 3;
+        CRITICAL = 2;
+        SHEDDABLE_PLUS = 1;
+        SHEDDABLE = 0;
+    }
+}
+
+extend .proto2.EnumValueOptions {
+    optional RequestQoS.Criticality mapped_criticality = 102556457 [default = CRITICAL];
+}

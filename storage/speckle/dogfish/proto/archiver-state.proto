@@ -1,0 +1,19 @@
+syntax = "editions";
+
+package speckle_dogfish.dogfish_proto;
+
+import "storage/datapol/annotations/proto/semantic_annotations.proto";
+import "storage/speckle/dogfish/proto/dogfish.proto";
+
+message NextXidStateProto {
+    optional uint64 next_full_xid = 1;
+}
+
+message LogArchiverCheckpoint {
+    optional uint64 start_lsn = 4;
+    optional uint64 end_lsn = 3;
+    optional uint64 wal_segment_size = 5;
+    optional BackpointerMap backpointer_map = 1;
+    optional NextXidStateProto next_xid_state = 2;
+    optional uint64 timeline_id = 6;
+}

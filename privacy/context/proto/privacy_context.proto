@@ -1,0 +1,92 @@
+syntax = "proto2";
+
+package privacy.context;
+
+import "net/proto2/bridge/proto/message_set.proto";
+import "privacy/context/proto/evaluation_result.proto";
+import "privacy/context/proto/privacy_context_id.proto";
+import "privacy/data_governance/attributes/proto/ddt.proto";
+import "privacy/ptoken/public/core/request_context.proto";
+import "privacy/ptoken/public/core/sot_mappings.proto";
+import "storage/datapol/annotations/proto/semantic_annotations.proto";
+
+option java_multiple_files = true;
+option java_package = "com.google.protos.privacy.context.proto1api";
+
+message PrivacyContext {
+    optional data_governance.attributes.DDTContext ddt = 1;
+    optional .ptoken.PRequestContext prequest = 2;
+    optional .ptoken.SotMappings sot = 3;
+    optional PrivacyContextId id = 4;
+    optional PolicyEvaluationResults policy_evaluation_results = 5;
+    
+    enum Reason {
+        OTHER_REASON = 0;
+        FORWARD_PROPAGATION_REASON = 1;
+        BACKWARD_PROPAGATION_REASON = 2;
+        SUT_DEBUG_REASON = 3;
+        USER_ACTION_GET_SOT = 4;
+        HOMUNCULUS_GET = 5;
+        GET_REDACTED_REASON = 6;
+        GET_PREQUEST_REASON = 7;
+        PTOKEN_ENFORCEMENT_REASON = 8;
+        GET_POLICY_EVALUTION_RESULT_REASON = 9;
+    }
+}
+
+message PrivacyContextTraceInfo {
+    optional string label = 1;
+    optional PrivacyContext privacy_context = 2;
+    
+    optional Language language = 3;
+    enum Language {
+        LANGUAGE_UNKNOWN = 0;
+        CPP = 1;
+        JAVA = 2;
+        GOLANG = 3;
+        JNI = 4;
+    }
+    
+    oneof situation {
+        Protocol send_request = 4;
+        Protocol receive_request = 5;
+        Protocol send_response = 6;
+        Protocol receive_response = 7;
+        UserAction user_action = 8;
+    }
+    
+    enum Protocol {
+        PROTOCOL_UNKNOWN = 0;
+        UNARY_STUBBY = 1;
+        BIDI_STUBBY = 2;
+        GRPC = 3;
+        HTTP = 4;
+        PLAQUE = 5;
+    }
+    
+    enum UserAction {
+        USER_ACTION_UNKNOWN = 0;
+        CLASSIFICATION = 1;
+    }
+    
+    extend .proto2.bridge.MessageSet {
+        optional PrivacyContextTraceInfo message_set_extension = 391707468;
+    }
+}
+
+message PrivacyContextGrpcParts {
+    optional bytes low_cardinality = 1;
+    optional bytes high_cardinality = 2;
+}
+
+message PrivacyContextStreamzFields {
+    enum ComplianceControlsType {
+        COMPLIANCE_CONTROLS_TYPE_UNSPECIFIED = 0;
+        GAIA_PRIMARY = 1;
+        GAIA_NON_PRIMARY = 2;
+        ZWIEBACK_PRIMARY = 3;
+        VISITOR = 4;
+        ZWIEBACK_NON_PRIMARY = 5;
+        ADS_RESOLVED = 6;
+    }
+}

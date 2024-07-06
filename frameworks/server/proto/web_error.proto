@@ -1,0 +1,12 @@
+syntax = "editions";
+
+package frameworks.server;
+
+import "util/task/contrib/proto_status/proto_status.proto";
+
+option java_multiple_files = true;
+option java_package = "com.google.frameworks.server.proto";
+
+enum WebError {
+    REDIRECTED = 1;
+}

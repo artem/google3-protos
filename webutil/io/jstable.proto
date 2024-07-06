@@ -1,0 +1,51 @@
+syntax = "editions";
+
+package webutil.io;
+
+message JSTableData {
+    optional string id = 1;
+    optional int32 rows_to_display = 2;
+    optional int32 header_rows = 3;
+    optional int32 footer_rows = 4;
+    optional int32 sort_column = 5;
+    optional bool descending = 6;
+    optional int32 presorted_column = 7;
+    optional bool column_filter = 8;
+    optional string row_filter_function = 9;
+    optional string initial_row_filter_regex = 10;
+    
+    repeated Group groups = 11;
+    message Group {
+        optional string title = 1;
+        optional int32 startcolumn = 2;
+        optional int32 numcolumns = 3;
+    }
+    
+    repeated Column columns = 12;
+    message Column {
+        optional string title = 1;
+        optional string style = 2;
+        optional string sorter = 3;
+        optional string renderer = 4;
+        optional string tooltip = 5;
+        optional bool descending = 6;
+        optional bool hidden = 7;
+    }
+    
+    repeated HtmlRowClassSpec html_classes = 13;
+    message HtmlRowClassSpec {
+        optional int32 row = 1;
+        optional string row_class = 2;
+        repeated HtmlCellClassSpec cells_classes = 3;
+    }
+    
+    repeated Row rows = 14;
+    message Row {
+        repeated string values = 1;
+    }
+    
+    message HtmlCellClassSpec {
+        optional int32 cell = 1;
+        optional string cell_class = 2;
+    }
+}

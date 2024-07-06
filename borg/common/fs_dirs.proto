@@ -1,0 +1,68 @@
+syntax = "proto2";
+
+package borg;
+
+option cc_enable_arenas = true;
+option java_outer_classname = "FsDirsProto";
+option java_package = "com.google.borg.rpc";
+
+message FsDirState {
+    optional ResourceStateIntent intent = 1;
+    optional Outlook outlook = 2;
+}
+
+message FsDirError {
+    optional ErrorCode error_code = 1;
+    enum ErrorCode {
+        NO_ERROR = 0;
+        OUT_OF_SPACE = 1;
+        UNKNOWN_ERROR = 2;
+        OUT_OF_MEMORY = 3;
+    }
+    
+    optional string error_msg = 2;
+}
+
+message ScratchFsDirInfo {
+    optional string nickname = 1;
+    optional string in_context_name = 2;
+    optional string path = 3;
+    optional int64 size = 4;
+    optional int64 usage = 6;
+    
+    optional Type type = 5;
+    enum Type {
+        LOCAL_HDD_FS_DIR = 0;
+        LOCAL_SSD_FS_DIR = 1;
+        LOCAL_RAM_FS_DIR = 2;
+        REMOTE_HDD_FS_DIR = 3;
+        REMOTE_SSD_FS_DIR = 5;
+        LOCAL_SSD_PARTITION_FS_DIR = 4;
+    }
+    
+    optional FsDirState state = 7;
+    optional string infrastructure_container_name = 8;
+    optional int64 memory_usage = 9;
+    optional int64 memory_reservation = 10;
+    optional float cpurate = 11;
+    optional string device_name = 12;
+    optional int64 pdiscsi_status_port = 13;
+    optional string universal_name = 14;
+}
+
+message ScratchFsDirs {
+    repeated ScratchFsDirInfo scratch_fs_dir = 1;
+    optional string primary_fs_dir_nickname = 2;
+    optional string primary_fs_dir_in_context_name = 3;
+}
+
+enum ResourceStateIntent {
+    UP = 0;
+    DOWN = 1;
+}
+
+enum Outlook {
+    NEVER = 0;
+    IN_FUTURE = 1;
+    NOW = 2;
+}

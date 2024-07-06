@@ -1,0 +1,27 @@
+syntax = "proto2";
+
+package ptoken;
+
+import "logs/proto/logs_annotations/logs_annotations.proto";
+import "storage/datapol/annotations/proto/semantic_annotations.proto";
+
+option java_multiple_files = true;
+option java_package = "com.google.privacy.ptoken.proto";
+
+message LogicalPolicy {
+    enum Enum {
+        UNSPECIFIED = 0;
+        DMA52 = 1;
+        ASSISTANT_GUEST_RESTRICTIONS = 2;
+        K12_MONETIZATION_PROHIBITION = 3;
+        UNICORN_MONETIZATION_PROHIBITION = 4;
+        PHOTOS_MINORS_MONETIZATION_PROHIBITION = 5;
+        YOUTUBE_CHILDREN_EDU = 6;
+        FOOTPRINTS_SIGNED_OUT_RESTRICTIONS = 7;
+        SEARCH_SIGNED_OUT_RESTRICTIONS = 8;
+        USER_PERSONALIZATION_SETTINGS = 9;
+        PAYMENTS_PERSONALIZATION_SETTINGS = 10;
+        OLYMPUS = 11;
+        AADC_GUEST_LOGGING = 12;
+    }
+}

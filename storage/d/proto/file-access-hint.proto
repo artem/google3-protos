@@ -1,0 +1,11 @@
+syntax = "proto2";
+
+package storage_d;
+
+message FileAccessHint {
+    optional Temperature temperature = 1;
+    enum Temperature {
+        COLD = 1;
+        WARM = 2;
+    }
+}

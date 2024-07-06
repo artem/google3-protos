@@ -1,50 +1,68 @@
 syntax = "proto2";
 
-import "production/dependency/proto/dependencies.proto";
 package production_dependency_rpc;
 
-option java_package = "com.google.prod.dependency.rpc";
+import "production/dependency/proto/dependencies.proto";
+
 option java_outer_classname = "RpcConfigurationProto";
+option java_package = "com.google.prod.dependency.rpc";
 
 message RPCConfiguration {
-  optional string service_name = 1;
-  optional string method_name = 2;
-  repeated .production_dependency_rpc.Constraint constraints = 3;
+    optional string service_name = 1;
+    optional string proto_package_name = 6;
+    optional string service_name_suffix = 4;
+    optional string method_name = 2;
+    repeated Constraint constraints = 3;
+    repeated string from_template = 5;
+}
+
+message EnvelopeDependencyConfiguration {
+    optional string envelope_service_name = 1;
+    repeated Constraint constraints = 2;
+    repeated string from_template = 3;
 }
 
 message Constraint {
-  message Softness {
-    optional int32 delay_before_soft_s = 1;
-    optional int32 delay_before_hard_m = 2;
-  }
-  enum Kind {
-    HARD = 10;
-    SOFT = 20;
-  }
-  enum JobSystem {
-    UNKNOWN = 0;
-    BORG = 1;
-    BABYSITTER = 10;
-  }
-  enum Scope {
-    GLOBAL = 0;
-    ZONE = 10;
-    REMOTE_ZONE = 11;
-    CLUSTER = 20;
-    REMOTE_CLUSTER = 21;
-    LOCALHOST = 30;
-    NOT_LOCALHOST = 31;
-  }
-  optional .production_dependency_rpc.Constraint.Kind DEPRECATED_kind = 1 [deprecated = true];
-  optional .production_dependency_rpc.Constraint.Softness DEPRECATED_softness = 2 [deprecated = true];
-  repeated .production_dependency_rpc.Constraint.JobSystem job_systems = 3;
-  optional string username = 31;
-  optional int32 port = 42;
-  optional .production_dependency_rpc.Constraint.Scope allowed_scope = 51 [default = GLOBAL];
+    optional Kind DEPRECATED_kind = 1 [deprecated = true];
+    enum Kind {
+        HARD = 10;
+        SOFT = 20;
+    }
+    
+    optional Softness DEPRECATED_softness = 2 [deprecated = true];
+    message Softness {
+        optional int32 delay_before_soft_s = 1;
+        optional int32 delay_before_hard_m = 2;
+    }
+    
+    repeated JobSystem DEPRECATED_job_systems = 3 [deprecated = true];
+    enum JobSystem {
+        UNKNOWN = 0;
+        BORG = 1;
+        BABYSITTER = 10;
+    }
+    
+    optional string username = 31;
+    optional int32 port = 42;
+    
+    optional Scope allowed_scope = 51 [default = GLOBAL];
+    enum Scope {
+        GLOBAL = 0;
+        ZONE = 10;
+        REMOTE_ZONE = 11;
+        CLUSTER = 20;
+        LOCALHOST = 30;
+        CLOUD_REGION = 40;
+        CLOUD_ZONE = 50;
+        PROD_REGION = 60;
+        PROD_ZONE = 70;
+        PROD_REGION_WITH_COVERAGE = 80;
+        DEPRECATED_REMOTE_CLUSTER = 21 [deprecated = true];
+        DEPRECATED_NOT_LOCALHOST = 31 [deprecated = true];
+    }
 }
 
-extend .production.dependency.proto.Configuration {
-  optional .production_dependency_rpc.RPCConfiguration rpc_configuration = 106146084;
+extend production.dependency.proto.Configuration {
+    optional RPCConfiguration rpc_configuration = 106146084;
+    optional EnvelopeDependencyConfiguration envelope_configuration = 458239102;
 }
-
-

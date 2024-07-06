@@ -1,0 +1,16 @@
+syntax = "proto2";
+
+package google.rpc;
+
+import "google/rpc/status.proto";
+import "net/proto2/bridge/proto/message_set.proto";
+
+option objc_class_prefix = "RPC";
+option go_package = "google.golang.org/genproto/googleapis/rpc/errextension;errextension";
+option java_multiple_files = true;
+option java_outer_classname = "ErrorExtensionProto";
+option java_package = "com.google.rpc";
+
+extend .proto2.bridge.MessageSet {
+    optional Status error_details_ext = 82012934;
+}

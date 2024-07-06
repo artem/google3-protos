@@ -1,0 +1,16 @@
+syntax = "editions";
+
+package rpc;
+
+enum ClientLoadBalancingPolicy {
+    LB_NONE = 0;
+    LB_OTHERS = 1;
+    LB_ERROR_ADVERSE = 2;
+    LB_LEAST_LOADED = 3;
+    LB_ROUND_ROBIN = 4;
+    LB_WEIGHTED_ROUND_ROBIN = 5;
+    LB_OTHER_UTILIZATION_BALANCED = 6;
+    LB_PROBING_LOAD_BALANCER = 7;
+    LB_OTHER_DEFAULT_POLICIES = 8;
+    LB_WEIGHTED_ROUND_ROBIN_DEFAULT = 9;
+}

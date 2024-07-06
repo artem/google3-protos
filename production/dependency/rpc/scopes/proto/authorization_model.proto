@@ -1,0 +1,50 @@
+syntax = "proto2";
+
+package production_dependency_scopes;
+
+option java_outer_classname = "AuthorizationModelProto";
+option java_package = "com.google.prod.dependency.rpc.scopes";
+
+message AuthorizationModel {
+    optional string model_id = 1;
+    
+    optional ModelType model_type = 4 [default = DEFAULT_DAG_MODEL];
+    enum ModelType {
+        DEFAULT_DAG_MODEL = 0;
+        EXTERNAL_BOUNDARY_MODEL = 1;
+    }
+    
+    repeated Node node = 2;
+    optional AuthorizationOptions authorization_options = 3;
+}
+
+message Node {
+    optional NodeId node_id = 1;
+    repeated NodeId child = 2;
+    
+    oneof param {
+        SecurityRealmParameter security_realm = 3;
+    }
+}
+
+message NodeId {
+    optional string node_name = 1;
+}
+
+message SecurityRealmParameter {
+    optional string realm = 1;
+}
+
+message AuthorizationOptions {
+    optional MissingModelVerdict missing_model_verdict = 1 [default = ALLOW_MISSING_MODEL];
+    enum MissingModelVerdict {
+        ALLOW_MISSING_MODEL = 0;
+        REJECT_MISSING_MODEL = 1;
+    }
+    
+    optional RPCImportanceFilter rpc_importance_filter = 2 [default = ALL_RPCS];
+    enum RPCImportanceFilter {
+        ALL_RPCS = 0;
+        CRITICAL_RPCS_ONLY = 1;
+    }
+}

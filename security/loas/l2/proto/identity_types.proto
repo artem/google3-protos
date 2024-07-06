@@ -1,0 +1,24 @@
+syntax = "proto2";
+
+package security_loas_l2;
+
+option java_package = "com.google.net.loas.l2";
+
+message MachineCertDigest {
+    optional bytes value = 1;
+    
+    optional Algorithm algorithm = 2;
+    enum Algorithm {
+        SHA256 = 0;
+    }
+}
+
+message ZammSMTLoas3CertDigest {
+    optional bytes value = 1;
+    
+    optional Algorithm algorithm = 2;
+    enum Algorithm {
+        NO_ALGORITHM = 0;
+        SHA256 = 100;
+    }
+}

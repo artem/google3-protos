@@ -1,0 +1,22 @@
+syntax = "proto3";
+
+package google.crypto.tink;
+
+option go_package = "github.com/tink-crypto/tink-go/v2/proto/aes_ctr_go_proto";
+option java_multiple_files = true;
+option java_package = "com.google.crypto.tink.proto";
+
+message AesCtrParams {
+    uint32 iv_size = 1;
+}
+
+message AesCtrKeyFormat {
+    AesCtrParams params = 1;
+    uint32 key_size = 2;
+}
+
+message AesCtrKey {
+    uint32 version = 1;
+    AesCtrParams params = 2;
+    bytes key_value = 3 [ctype = STRING_PIECE];
+}

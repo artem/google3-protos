@@ -1,0 +1,16 @@
+syntax = "proto2";
+
+package production.rpc.stubs.proto;
+
+import "net/proto2/bridge/proto/message_set.proto";
+import "storage/datapol/annotations/proto/semantic_annotations.proto";
+
+option cc_enable_arenas = true;
+
+message AttemptsExtension {
+    optional int32 attempt_count = 1;
+    
+    extend .proto2.bridge.MessageSet {
+        optional AttemptsExtension message_set_extension = 79757332;
+    }
+}

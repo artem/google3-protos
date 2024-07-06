@@ -1,0 +1,22 @@
+syntax = "proto2";
+
+package sherlog.core;
+
+import "storage/datapol/annotations/proto/semantic_annotations.proto";
+
+option java_multiple_files = true;
+option java_package = "com.google.frameworks.debug.sherlog.core.proto";
+
+message TraceOwner {
+    optional bytes user_consent_token = 2 [ctype = CORD];
+    
+    oneof user_id {
+        int64 gaia_id = 1;
+        uint64 zwieback_id = 3;
+    }
+    
+    oneof secondary_user_id {
+        int64 android_id = 4;
+        string youtube_visitor_id = 5;
+    }
+}

@@ -1,0 +1,35 @@
+syntax = "proto3";
+
+package google.api.servicecontrol.v2;
+
+option ruby_package = "Google::Cloud::ServiceControl::V2";
+option php_namespace = "Google\\Cloud\\ServiceControl\\V2";
+option csharp_namespace = "Google.Cloud.ServiceControl.V2";
+option objc_class_prefix = "GASC";
+option cc_enable_arenas = true;
+option java_multiple_files = true;
+option java_outer_classname = "EsfMigrationServerOverrideProto";
+option java_package = "com.google.api.servicecontrol.v2";
+
+message EsfMigrationServerOverride {
+    Mode override_mode = 1;
+    enum Mode {
+        MODE_UNSPECIFIED = 0;
+        DRY_RUN = 1;
+        NO_OVERRIDE = 2;
+        OVERRIDE_10_V2_5_DRYRUN = 3;
+        OVERRIDE_100_V2 = 4;
+    }
+    
+    int32 version = 2;
+}
+
+message EsfReportMigrationServerOverride {
+    ReportMode report_override = 1;
+    enum ReportMode {
+        REPORT_MODE_UNSPECIFIED = 0;
+        REPORT_V1 = 1;
+    }
+    
+    int32 version = 2;
+}

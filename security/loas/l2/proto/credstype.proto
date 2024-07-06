@@ -1,0 +1,11 @@
+syntax = "proto3";
+
+package security_loas_l2;
+
+option java_package = "com.google.net.loas.l2";
+
+enum CredentialsType {
+    CREDS_TYPE_UNSPECIFIED = 0;
+    CREDS_TYPE_REGULAR = 1;
+    CREDS_TYPE_EMERGENCY = 2;
+}

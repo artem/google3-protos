@@ -1,0 +1,14 @@
+syntax = "proto2";
+
+package adaptive;
+
+message WeightedAverage {
+    optional double half_life_seconds = 1 [default = 10];
+    optional double half_life_samples = 2 [default = 100];
+}
+
+message StreamCalculatorConfiguration {
+    oneof algorithm {
+        WeightedAverage weighted_average = 1;
+    }
+}

@@ -1,0 +1,20 @@
+syntax = "proto2";
+
+package production.rpc.stubs.proto;
+
+import "net/proto2/contrib/validator/annotations.proto";
+
+option java_multiple_files = true;
+option java_package = "com.google.prod.rpc.stubs.proto";
+
+message EmbeddedStatusExtractionConfiguration {
+    optional bool enabled = 1;
+}
+
+enum EmbeddedStatusExtractionErrorCause {
+    EMBEDDED_STATUS_EXTRACTION_ERROR_CAUSE_ERROR_CAUSE_UNSPECIFIED = 0;
+    EMBEDDED_STATUS_EXTRACTION_ERROR_CAUSE_NO_PROTO_REFLECTION_SUPPORT = 1;
+    EMBEDDED_STATUS_EXTRACTION_ERROR_CAUSE_STATUS_FIELD_NOT_SET = 2;
+    EMBEDDED_STATUS_EXTRACTION_ERROR_CAUSE_STATUS_FIELD_PARSING_FAILED = 3;
+    EMBEDDED_STATUS_EXTRACTION_ERROR_CAUSE_INVALID_METADATA_ANNOTATION_TYPE = 4;
+}

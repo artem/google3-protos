@@ -1,0 +1,26 @@
+syntax = "editions";
+
+package secure_collection;
+
+message Tables {
+    repeated Table table = 1;
+}
+
+message Table {
+    optional string table_name = 1;
+    optional string expected_type_url = 2;
+    optional string infrastore_stream_name = 3;
+    optional string infrastore_message_type = 4;
+    optional string pubsub2_topic = 5;
+    repeated string blocked_users = 6;
+    optional bool disabled = 7;
+    optional bool enabled_in_tpc = 8;
+    
+    optional ForwardMode forward_mode = 9;
+    enum ForwardMode {
+        UNSPECIFIED = 0;
+        PUBSUB2 = 1;
+        RETSA = 2;
+        BOTH = 3;
+    }
+}

@@ -1,0 +1,14 @@
+syntax = "proto2";
+
+package pgraph;
+
+import "google/protobuf/timestamp.proto";
+
+option java_multiple_files = true;
+option java_package = "com.google.privacy.pgraph.proto.proto1api";
+
+message DatasetAttributes {
+    optional google.protobuf.Timestamp fetch_timestamp = 1 [deprecated = true];
+    
+    extensions 1103;
+}

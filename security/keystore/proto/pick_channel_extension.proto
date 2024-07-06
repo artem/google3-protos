@@ -1,0 +1,15 @@
+syntax = "editions";
+
+package security.keystore.proto;
+
+import "net/proto2/bridge/proto/message_set.proto";
+import "storage/datapol/annotations/proto/semantic_annotations.proto";
+
+message PickChannelExtension {
+    optional string picked_channel_host = 1;
+    optional string host_to_exclude = 2;
+    
+    extend .proto2.bridge.MessageSet {
+        optional PickChannelExtension message_set_extension = 363111419;
+    }
+}

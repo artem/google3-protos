@@ -1,0 +1,93 @@
+syntax = "editions";
+
+package speckle_dogfish.dogfish_proto;
+
+import "google/protobuf/timestamp.proto";
+import "storage/datapol/annotations/proto/semantic_annotations.proto";
+import "storage/speckle/dogfish/proto/dogfish.proto";
+import "storage/speckle/dogfish/proto/object.proto";
+
+service LogProcessingWorker {
+    rpc Init(InitRequest) returns (InitResponse);
+    rpc ProcessLogRecord(ProcessRecordRequest) returns (stream ProcessRecordResponse);
+    rpc ControlInfo(ControlInfoRequest) returns (ControlInfoResponse);
+    rpc Ping(WorkerPingRequest) returns (WorkerPingResponse);
+}
+
+message InitRequest {
+    optional string tmp_dir = 1;
+    optional ControlInfo control_info = 2;
+    optional uint64 redo_lsn = 3;
+    optional int64 num_shards = 4;
+    optional int64 chunk_size = 5;
+}
+
+message InitResponse {
+    
+}
+
+message ProcessRecordInfo {
+    optional LogRecord record = 1;
+    repeated ReadBlockData block_data = 2;
+}
+
+message PrefetchedObject {
+    optional ObjectPath object_id = 1;
+    optional Object data = 2;
+}
+
+message PrefetchedListing {
+    optional ObjectPath path = 1;
+    optional bool recursive = 2;
+    repeated ObjectPath list = 3;
+}
+
+message PrefetchedData {
+    optional uint64 lsn = 1;
+    optional uint64 subprocess_cache_trim_lsn = 6;
+    repeated PrefetchedObject objects = 2;
+    repeated PrefetchedListing listings = 3;
+    repeated ObjectPath referenced_objects = 4;
+    repeated PrefetchedListing referenced_listings = 5;
+}
+
+message ProcessRecordRequest {
+    optional Header header = 2;
+    repeated ProcessRecordInfo record_info = 1;
+    optional PrefetchedData prefetched_data = 3;
+}
+
+message CompressedUpdate {
+    optional CompressedWrapper wrapper = 1;
+    repeated uint64 uncompressed_versions = 2;
+    repeated uint32 uncompressed_canonical_data_crc32c_scrambled = 3;
+    optional string uncompressed_canonical_data_version = 4;
+}
+
+message ObjectUpdate {
+    optional ObjectPath object_id = 1;
+    
+    oneof payload {
+        Object data = 2;
+        CompressedUpdate compressed = 3;
+    }
+}
+
+message ProcessRecordResponse {
+    repeated ObjectUpdate updates = 1;
+    map<string, int64> timing_breakdown_micros = 8;
+    optional int64 total_handler_time_micros = 2;
+    optional google.protobuf.Timestamp handler_start_timestamp = 7;
+    optional int64 total_generic_apply_time_micros = 3 [deprecated = true];
+    optional int64 total_postgres_redo_time_micros = 4 [deprecated = true];
+    optional int64 total_postgres_setup_time_micros = 5 [deprecated = true];
+    optional int64 total_postgres_slurp_time_micros = 6 [deprecated = true];
+}
+
+message WorkerPingRequest {
+    
+}
+
+message WorkerPingResponse {
+    
+}

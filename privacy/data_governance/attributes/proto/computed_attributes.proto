@@ -1,0 +1,47 @@
+syntax = "proto3";
+
+package privacy.data_governance.attributes;
+
+import "privacy/data_governance/attributes/proto/classification.proto";
+import "privacy/data_governance/attributes/proto/ml_lineage.proto";
+import "privacy/data_governance/attributes/proto/processing_type.proto";
+import "privacy/data_governance/attributes/proto/purpose.proto";
+
+option java_multiple_files = true;
+option java_package = "com.google.privacy.datagovernance.attributes";
+
+message ComputedAttributeTrace {
+    repeated TraceEntry entries = 1;
+    message TraceEntry {
+        string source_guri = 1;
+        string sink_guri = 2;
+        string edge_description = 3;
+    }
+}
+
+message ProcessingDefaultsAnnotationsOverlay {
+    Process process = 4;
+    message Process {
+        ProcessProductAssociation product_association = 11;
+        repeated ProcessingPurpose processing_purpose = 9;
+        Custom custom = 101;
+        repeated ProcessingType processing_type = 12;
+    }
+    
+    message ProcessProductAssociation {
+        int32 default_product_id = 1;
+    }
+    
+    message DmaProcess {
+        classification.Category.HasCategory has_post_access_filtering = 1;
+    }
+    
+    message MlProcess {
+        MlLineage ml_lineage = 1;
+    }
+    
+    message Custom {
+        DmaProcess digital_markets_act = 5;
+        MlProcess ml = 7;
+    }
+}

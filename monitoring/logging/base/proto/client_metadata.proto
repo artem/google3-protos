@@ -1,0 +1,25 @@
+syntax = "proto2";
+
+package remote_debug_logging;
+
+import "devtools/api/buildinfo/buildinfo.proto";
+import "perftools/tracing/proto/process_info.proto";
+
+option java_multiple_files = true;
+option java_package = "com.google.monitoring.logging.base.proto";
+
+message ThirdEyeMetadata {
+    optional string service_name = 1;
+}
+
+message ClientExecutableMetadata {
+    optional devtools.api.buildinfo.BuildInfo build_info = 1;
+    repeated perftools.tracing.ArtifactMapping mappings = 2;
+    optional string config_build_label = 3;
+}
+
+message ClientProcessMetadata {
+    optional ThirdEyeMetadata eye3 = 1;
+    optional ClientExecutableMetadata executable = 2;
+    optional string process_tags = 3;
+}

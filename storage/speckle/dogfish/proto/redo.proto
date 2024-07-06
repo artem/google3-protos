@@ -1,0 +1,14 @@
+syntax = "editions";
+
+package speckle_dogfish.dogfish_proto;
+
+import "storage/datapol/annotations/proto/semantic_annotations.proto";
+import "storage/speckle/dogfish/proto/dogfish.proto";
+
+message ApplyLogRecordResponse {
+    repeated BlockInsertion block_inserts = 1;
+    repeated RelationMetadata relation_metadata = 2;
+    repeated FileWrite file_writes = 3;
+    repeated RemoveDir remove_dirs = 4;
+    repeated VisibilityMapClearForTruncate visibility_map_clears = 5;
+}

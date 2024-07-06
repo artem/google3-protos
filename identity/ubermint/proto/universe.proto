@@ -1,0 +1,35 @@
+syntax = "proto3";
+
+package ubermint;
+
+import "identity/ubermint/proto/platform_options.proto";
+import "storage/datapol/annotations/proto/semantic_annotations.proto";
+
+option java_multiple_files = true;
+option java_outer_classname = "UniverseProtoFile";
+option java_package = "com.google.identity.ubermint";
+
+message UberMintUniverse {
+    UberMintPlatform platform = 1;
+    
+    UberMintDataRealm data_realm = 2;
+    enum UberMintDataRealm {
+        DATA_REALM_UNSPECIFIED = 0;
+        PROD = 1;
+        TEST = 2;
+        FAKE = 3;
+    }
+}
+
+enum UberMintPlatform {
+    PLATFORM_UNSPECIFIED = 0;
+    SANDBOX = 1;
+    CLOUD = 2;
+    DEVICE = 3;
+    SANDCASTLE = 4;
+    LEGACY_GAIA = 5;
+    PROD_ACCOUNT = 6;
+    FITBIT = 7;
+    BORG_NOTARY_ATTESTATION = 8;
+    BORG_NOTARY_APPROVAL = 9;
+}

@@ -1,0 +1,142 @@
+syntax = "proto2";
+
+package speckle_dogfish.dcp.storage;
+
+import "google/protobuf/duration.proto";
+import "google/protobuf/timestamp.proto";
+import "storage/datapol/annotations/proto/semantic_annotations.proto";
+import "storage/speckle/dogfish/proto/data-protection.proto";
+import "storage/speckle/dogfish/proto/database-type.proto";
+
+message VolumeSettings {
+    optional bool wrap_record_in_input_buffer = 1 [default = false];
+    optional int64 num_shards = 2 [default = 6];
+    optional int64 chunk_size = 3 [default = 0xff40000];
+}
+
+message DatabaseFlags {
+    optional int32 max_prepared_transactions = 2;
+    optional int32 max_locks_per_transaction = 3;
+    optional int32 max_pred_locks_per_transaction = 4;
+}
+
+message StorageUsageAdjustment {
+    optional int64 adjustment_bytes = 1;
+    optional string justification = 2;
+    optional google.protobuf.Timestamp last_update_timestamp = 3;
+}
+
+message ChangeableVolumeSettings {
+    optional bool archive_obsolete_input_buffer_files = 4 [default = false];
+    optional PitrSettings pitr_settings = 5;
+    optional int32 version = 6 [default = 1];
+    optional bool use_spanner_for_gc = 7 [default = false, deprecated = true];
+    optional DatabaseFlags database_flags = 9;
+    repeated StorageUsageAdjustment storage_usage_adjustments = 10;
+    
+    reserved 8;
+}
+
+message PitrSettings {
+    optional bool enabled = 1;
+    optional google.protobuf.Duration log_retention_window = 2;
+    optional string gcs_bucket = 3;
+}
+
+message VolumeEncryption {
+    optional string kms_service_account = 1;
+    optional string kms_key_reference = 2;
+    optional string kms_key_reference_version = 3;
+    optional string wrapped_volume_encryption_key = 4;
+    optional fixed32 wrapped_volume_encryption_key_crc32c = 5;
+    optional bool generate_encryption_key_i_know_what_i_am_doing = 6 [default = false];
+    optional string resource_name = 7;
+    optional string gcp_service = 8;
+}
+
+message VolumeLimits {
+    optional int64 storage_limit = 1;
+    optional bool readonly = 2;
+    optional int64 superquota_storage_limit = 3;
+}
+
+message VolumeMetadata {
+    optional int64 creation_timestamp_millis = 1;
+    optional string speckle_realm_name = 2;
+    optional string creation_job_name = 14;
+    optional uint64 volume_owner_project_number = 7;
+    optional string service_account = 4;
+    optional uint64 service_account_gaia_id = 6;
+    optional VolumeSettings settings = 3;
+    optional ChangeableVolumeSettings changeable_settings = 9;
+    optional VolumeEncryption encryption = 5;
+    optional VolumeEncryption keymaster_encryption = 13;
+    optional VolumeEncryption rks_kek_encryption = 15;
+    optional VolumeEncryption rks_dek_encryption = 16;
+    optional string restored_from_backup_id = 8;
+    optional string restored_from_pitr_source_volume_name = 11;
+    optional VolumeLimits limits = 10;
+    optional dogfish_proto.DatabaseType database_type = 12 [default = DATABASE_TYPE_POSTGRES_14];
+}
+
+message ShardMetadata {
+    optional string storage_dir = 1;
+    
+    optional InputBufferStorageFormat input_buffer_storage_format = 2;
+    enum InputBufferStorageFormat {
+        UNSPECIFIED_INPUT_BUFFER = 0;
+        RIEGELI_INPUT_BUFFER = 2;
+    }
+    
+    optional ObjectStorageFormat object_storage_format = 3;
+    enum ObjectStorageFormat {
+        UNSPECIFIED_OBJECT_STORAGE = 0;
+        ROCKSDB_OBJECT_STORAGE = 1;
+        ROCKSDB_LSN_ORDERED_METADATA_OBJECT_STORAGE = 2;
+    }
+    
+    optional int32 volume_settings_version = 4;
+    optional int64 latest_canonical_checksum_lsn = 5 [default = 0x7fffffffffffffff];
+}
+
+message ShardSize {
+    optional int64 lsn = 1;
+    optional int64 bytes = 2;
+}
+
+message BackupMetadata {
+    repeated dogfish_proto.ShardBackupMetadata shard_backup_metadata = 1;
+    optional dogfish_proto.BackupEncryption encryption = 2;
+    optional bool report_cmek_versions_for_pitr = 3;
+    
+    repeated VerificationStatus verification_statuses = 4 [packed = true];
+    enum VerificationStatus {
+        NONE = 0;
+        GCS_SCAN = 1;
+    }
+}
+
+message WalMetadata {
+    optional string file_path = 1;
+    optional int64 file_size_bytes = 2;
+    optional uint32 crc32_checksum = 3;
+    optional string lps_build_label = 4;
+    optional int32 replica_id = 6;
+    
+    reserved 5;
+}
+
+enum ShardState {
+    UNKNOWN_STATE = 0;
+    RESTORING = 3;
+    REPLAYING_WAL = 4;
+    RESTORE_VERIFYING = 5;
+    ACTIVE = 1;
+    DELETED = 2;
+}
+
+enum EncryptedObjectType {
+    ENCRYPTED_OBJECT_TYPE_UNKNOWN = 0;
+    ENCRYPTED_OBJECT_TYPE_PITR = 1;
+    ENCRYPTED_OBJECT_TYPE_VOLUME = 2;
+}

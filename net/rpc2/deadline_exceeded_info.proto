@@ -1,0 +1,14 @@
+syntax = "proto2";
+
+package rpc;
+
+import "net/proto2/bridge/proto/message_set.proto";
+
+message DeadlineExceededInfo {
+    optional int64 bwe_latency_ns = 1;
+    optional int64 last_bwe_reading_at_ns = 2;
+    
+    extend .proto2.bridge.MessageSet {
+        optional DeadlineExceededInfo message_set_extension = 525001320;
+    }
+}

@@ -1,39 +1,40 @@
-syntax = "proto2";
+syntax = "editions";
+
+package security_loas_l2;
 
 import "security/credentials/proto/principal.proto";
 import "security/loas/l2/internal/handshake/handshake.proto";
-package security_loas_l2;
+import "storage/datapol/annotations/proto/semantic_annotations.proto";
 
 message GoogleTicketKeyVersion1 {
-  optional bytes crypt_resumption_key = 1;
-  optional bytes mac_resumption_key = 2;
-}
-
-message ResumptionMasterKeySeed {
-  optional bytes cell = 1;
-  optional int64 unqualified_epoch = 2;
+    optional bytes crypt_resumption_key = 1;
+    optional bytes mac_resumption_key = 2;
 }
 
 message ResumptionTicketKeyIdentifier {
-  message Borg {
-    optional bytes cell = 1;
-    optional int64 unqualified_epoch = 2;
-    optional .security.credentials.PrincipalProto role = 3;
-    optional int32 key_version = 4;
-  }
-  message Local {
-    optional .security.credentials.PrincipalProto role = 1;
-    optional int64 creation_time = 2;
-    optional bytes random = 3;
-  }
-  oneof KeyIdentifierType {
-    .security_loas_l2.ResumptionTicketKeyIdentifier.Borg borg = 1;
-    .security_loas_l2.ResumptionTicketKeyIdentifier.Local local = 2;
-  }
+    oneof KeyIdentifierType {
+        Borg borg = 1;
+        Local local = 2;
+    }
+    
+    message Borg {
+        optional bytes cell = 1;
+        optional int64 unqualified_epoch = 2;
+        optional security.credentials.PrincipalProto role = 3;
+        optional int32 key_version = 4;
+        optional bytes security_realm = 5;
+        optional bytes acct_restrictions_hash = 7;
+        
+        reserved 6;
+    }
+    
+    message Local {
+        optional security.credentials.PrincipalProto role = 1;
+        optional int64 creation_time = 2;
+        optional bytes random = 3;
+    }
 }
 
-extend .security_loas_l2.ResumptionTicketKey {
-  optional .security_loas_l2.GoogleTicketKeyVersion1 encrypt_and_mac_key = 100;
+extend ResumptionTicketKey {
+    optional GoogleTicketKeyVersion1 encrypt_and_mac_key = 100;
 }
-
-

@@ -1,10 +1,12 @@
-syntax = "proto2";
+syntax = "editions";
 
 package security;
 
+option java_multiple_files = true;
+option java_outer_classname = "SymmetricKeyProtoOuterClass";
+option java_package = "com.google.security.keymaster";
+
 message SymmetricKeyProto {
-  optional bytes raw_key = 1;
-  optional bytes key_hash = 2;
+    optional bytes raw_key = 1 [ctype = STRING_PIECE];
+    optional bytes key_hash = 2;
 }
-
-

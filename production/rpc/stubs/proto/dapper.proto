@@ -1,0 +1,50 @@
+syntax = "proto2";
+
+package production.rpc.stubs.proto;
+
+import "net/proto2/bridge/proto/message_set.proto";
+import "net/proto2/proto/descriptor.proto";
+
+option java_multiple_files = true;
+option java_package = "com.google.prod.rpc.stubs.proto";
+
+message ExtensibleStubsMetadata {
+    optional RequestAggregatorBundleMetadata request_aggregator = 1;
+    optional GatingForwardedRequestMetadata gating_forwarded_request = 2;
+    optional GatewiseRequestMetadata gatewise_request = 3;
+    
+    extend .proto2.bridge.MessageSet {
+        optional ExtensibleStubsMetadata message_set_extension = 2147475003;
+    }
+}
+
+message RequestAggregatorBundleMetadata {
+    optional int64 bundle_size = 1;
+}
+
+message GatingForwardedRequestMetadata {
+    optional string backend = 1;
+    optional string service = 2;
+    optional string command = 3;
+    optional string package = 4;
+}
+
+message GatewiseRequestMetadata {
+    optional string backend = 1;
+    optional string package = 2;
+    optional string service = 3;
+    optional string command = 4;
+}
+
+enum CacheDapperSpanName {
+    CACHE_SPAN_NAME_UNKNOWN = 0;
+    CACHE_FAMILY_NAME = 1;
+    CACHE_START_NAME = 2;
+    CACHE_LOOKUP_NAME = 3;
+    CACHE_INSERT_NAME = 4;
+    CACHE_BACKEND_FETCH_NAME = 5;
+}
+
+extend .proto2.EnumValueOptions {
+    optional string stubs_cache_dapper_span_name = 410181832;
+}

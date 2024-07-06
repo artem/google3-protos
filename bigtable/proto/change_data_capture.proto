@@ -1,0 +1,13 @@
+syntax = "proto2";
+
+package bigtable;
+
+import "google/protobuf/duration.proto";
+
+option java_multiple_files = true;
+option java_package = "com.google.bigtable.protos.proto1api";
+
+message ChangeDataCaptureConfig {
+    optional google.protobuf.Duration log_retention_period = 1;
+    optional bool create_gc_mutations = 2 [default = true];
+}

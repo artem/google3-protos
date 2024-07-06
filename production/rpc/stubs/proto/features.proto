@@ -1,0 +1,26 @@
+syntax = "editions";
+
+package production.rpc.stubs.proto;
+
+option java_outer_classname = "StubsFeatures";
+option java_package = "com.google.prod.rpc.stubs.proto";
+
+enum Feature {
+    FEATURE_UNSPECIFIED = 0;
+    USER_FACING_TRAFFIC_TYPE = 1;
+    BATCH_TRAFFIC_TYPE = 2;
+    RETRIES = 3;
+    HEDGING = 4;
+    INTERCEPTORS = 5;
+    ADAPTIVE_CLIENT_SIDE_THROTTLING = 6;
+    GST_CLIENT_SIDE_THROTTLING = 7;
+    REQUEST_QOS_OVERRIDE = 8;
+    REQUEST_AGGREGATION = 9;
+    LATENCY_BASED_DEADLINE = 16;
+    CACHING = 10;
+    GATING = 11;
+    HOTSWAPS = 12;
+    STUBBY_TRANSPORT = 13;
+    CRITICALITY_AWARE_STUBBY_TRANSPORT = 14;
+    GRPC_TRANSPORT = 15;
+}

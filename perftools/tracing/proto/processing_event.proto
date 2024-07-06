@@ -1,0 +1,56 @@
+syntax = "proto2";
+
+package perftools.tracing.processing_events;
+
+import "net/proto2/bridge/proto/message_set.proto";
+
+option java_multiple_files = true;
+option java_package = "com.google.tracing";
+
+message ProcessingEvent {
+    optional ProcessingEventType processing_event_type = 1;
+    optional fixed64 sync_context_id = 2;
+    optional fixed64 cooperative_id = 3;
+    optional int32 sequence_number = 8 [default = -1];
+    optional FlowType flow_type = 9 [default = FLOW_UNDEFINED];
+    optional Instrumentation instrumentation = 5;
+    
+    oneof id_or_string {
+        string label = 6;
+        int32 label_id = 7;
+    }
+    
+    extend .proto2.bridge.MessageSet {
+        optional ProcessingEvent message_set_extension = 433201677;
+    }
+}
+
+enum ProcessingEventType {
+    PROCESSING_EVENT_TYPE_UNSPECIFIED = 0;
+    PROCESSING_EVENT_TYPE_SPAWN = 1;
+    PROCESSING_EVENT_TYPE_BEGIN = 2;
+    PROCESSING_EVENT_TYPE_END = 3;
+    PROCESSING_EVENT_TYPE_SIGNAL = 4;
+    PROCESSING_EVENT_TYPE_WAIT = 5;
+    PROCESSING_EVENT_TYPE_CONTINUE = 6;
+    PROCESSING_EVENT_TYPE_SEND = 7;
+    PROCESSING_EVENT_TYPE_RECV = 8;
+    PROCESSING_EVENT_TYPE_FLOW = 9;
+    PROCESSING_EVENT_TYPE_MARK = 10;
+    PROCESSING_EVENT_TYPE_SPAN_CREATED = 11;
+}
+
+enum Instrumentation {
+    INSTRUMENTATION_UNSPECIFIED = 0;
+    INSTRUMENTATION_MANUAL = 1;
+    INSTRUMENTATION_HUMBOLDT = 2;
+    INSTRUMENTATION_TEMPUS = 3;
+    INSTRUMENTATION_DAPPER = 4;
+}
+
+enum FlowType {
+    FLOW_UNDEFINED = 0;
+    FLOW_GENERIC = 1;
+    FLOW_SCHEDULE = 2;
+    FLOW_CONTINUE = 3;
+}

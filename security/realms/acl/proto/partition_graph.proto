@@ -1,0 +1,73 @@
+syntax = "proto2";
+
+package security_realms;
+
+import "storage/datapol/annotations/proto/semantic_annotations.proto";
+
+option java_multiple_files = true;
+
+message PartitionCoupling {
+    optional PartitionType parent_type = 2;
+    optional PartitionType child_type = 3;
+    optional bool make_child_oriented_groups = 5;
+    
+    repeated Pair pairs = 4;
+    message Pair {
+        optional string parent = 1;
+        optional string child = 2;
+        optional PairStatus status = 3 [default = ACTIVE];
+        optional string notes = 4;
+    }
+    
+    enum PairStatus {
+        PAIR_STATUS_UNSPECIFIED = 0;
+        ACTIVE = 1;
+        PENDING_DELETION = 2;
+        MUST_NOT_EXIST = 3;
+        MUST_EXIST = 4;
+        DELETED = 5;
+    }
+}
+
+message AllowedCouplings {
+    repeated AllowedCoupling allowed_couplings = 1;
+    message AllowedCoupling {
+        optional RelationshipArity relationship_arity = 1;
+        optional PartitionType parent_type = 2;
+        optional PartitionType child_type = 3;
+    }
+    
+    enum RelationshipArity {
+        RELATIONSHIP_TYPE_UNSPECIFIED = 0;
+        ONE_CHILD_ONE_PARENT = 1;
+        ONE_CHILD_MANY_PARENTS = 2;
+        MANY_CHILDREN_ONE_PARENT = 3;
+        MANY_CHILDREN_MANY_PARENTS = 4;
+    }
+}
+
+enum PartitionType {
+    PARTITION_TYPE_UNSPECIFIED = 0;
+    CLUSTER = 1;
+    SECURITY_REALM = 22;
+    DEPLOYMENT_TYPE = 5;
+    REALM_GROUP = 20;
+    CLOUD_ZONE = 6;
+    CLOUD_REGION = 7;
+    CLOUD_GEO = 8;
+    CLOUD_JURISDICTION = 9;
+    PROD_ZONE = 10;
+    PROD_REGION = 11;
+    PROD_JURISDICTION = 18;
+    PROD_UNIVERSE = 27;
+    CAMPUS = 12;
+    METRO = 13;
+    BORG_CELL = 14;
+    WORKSPACE_REGION = 26;
+    DEFAULT_GUARDIANS = 23;
+    CRYPTO_CORE_GUARDIANS = 24;
+    ALLOWED_GUARDIANS = 25;
+    DEFAULT_COVERED_REALMS = 28;
+    CRYPTO_CORE_COVERED_REALMS = 29;
+    INVALID_TYPE = 21;
+}

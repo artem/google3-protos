@@ -1,0 +1,30 @@
+syntax = "proto2";
+
+package crl_public;
+
+import "net/proto2/bridge/proto/message_set.proto";
+import "storage/datapol/annotations/proto/semantic_annotations.proto";
+
+option java_outer_classname = "LoasdCallerStatsProto";
+option java_package = "com.google.security.crl";
+
+message LoasdCallerStats {
+    optional int32 baseline_changelist = 1;
+    optional string file_name = 3;
+    optional bool running_on_forge = 4;
+    
+    optional BorgInfo borg_info = 5;
+    message BorgInfo {
+        optional string borg_user = 1;
+        optional string job_name = 2;
+        optional int32 task_id = 3;
+    }
+    
+    optional int64 build_timestamp_seconds = 6;
+    
+    reserved 2;
+    
+    extend .proto2.bridge.MessageSet {
+        optional LoasdCallerStats message_set_extension = 284300280;
+    }
+}

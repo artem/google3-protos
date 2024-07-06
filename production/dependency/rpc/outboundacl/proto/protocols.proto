@@ -1,0 +1,19 @@
+syntax = "proto3";
+
+package production.dependency.rpc.outboundacl;
+
+option cc_enable_arenas = true;
+option java_package = "com.google.prod.dependency.rpc.outboundacl";
+
+enum Protocol {
+    PROTOCOL_UNKNOWN = 0;
+    PROTOCOL_STUBBY = 1;
+    PROTOCOL_GRPC = 2;
+}
+
+enum Language {
+    LANGUAGE_UNKNOWN = 0;
+    LANGUAGE_CPP = 1;
+    LANGUAGE_GO = 2;
+    LANGUAGE_JAVA = 3;
+}

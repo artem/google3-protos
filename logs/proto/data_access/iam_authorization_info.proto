@@ -1,0 +1,17 @@
+syntax = "proto3";
+
+package security.data_access;
+
+import "logs/proto/data_access/loggable_iam_authority.proto";
+import "storage/datapol/annotations/proto/semantic_annotations.proto";
+
+option java_multiple_files = true;
+option java_outer_classname = "IamAuthorizationInfoProto";
+option java_package = "com.google.logs.proto.data_access";
+
+message IamAuthorizationInfo {
+    string resource = 1;
+    LoggableIamAuthority iam_authority = 4;
+    string permission = 2;
+    bool granted = 3;
+}

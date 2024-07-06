@@ -1,0 +1,20 @@
+syntax = "proto2";
+
+package chubby;
+
+import "chubby/svelte/proto/load_shedding.proto";
+
+option java_multiple_files = true;
+option java_package = "com.google.chubby.svelte.protocol";
+
+message ModifyWaitSetResponseInfo {
+    optional LoadSheddingMode load_shedding_mode = 1;
+}
+
+message AwaitChangeRequestInfo {
+    optional LoadShedding.Token load_shedding_token = 1;
+}
+
+message AwaitChangeResponseInfo {
+    optional LoadSheddingMode load_shedding_mode = 1;
+}

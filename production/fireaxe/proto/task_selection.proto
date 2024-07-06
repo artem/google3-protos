@@ -1,0 +1,26 @@
+syntax = "proto3";
+
+package fireaxe;
+
+option java_multiple_files = true;
+option optimize_for = CODE_SIZE;
+option java_outer_classname = "TaskSelectionPb";
+option java_package = "com.google.protos.fireaxe.taskselection";
+
+message TaskIndexRangeProto {
+    int32 first_index = 1;
+    int32 last_index = 2;
+}
+
+message TaskSelectionProto {
+    Type type = 1;
+    enum Type {
+        TYPE_DEFAULT = 0;
+        TYPE_ALL = 1;
+        TYPE_NONE = 2;
+        TYPE_ONLY_INDEX_RANGES = 3;
+        TYPE_ALL_EXCEPT_INDEX_RANGES = 4;
+    }
+    
+    repeated TaskIndexRangeProto ranges = 2;
+}

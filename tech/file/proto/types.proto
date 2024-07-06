@@ -1,230 +1,340 @@
 syntax = "proto2";
 
-import "google/protobuf/any.proto";
-import "security/thinmint/proto/core/thinmint_core.proto";
-import "tech/file/proto/blob_types.proto";
 package tech.file;
 
+import "frameworks/testing/rpcreplay/processors/rpc_replay_field_option.proto";
+import "google/protobuf/any.proto";
+import "net/base/qos.proto";
+import "security/thinmint/proto/core/thinmint_core.proto";
+import "storage/datapol/annotations/proto/semantic_annotations.proto";
+import "tech/file/proto/blob_types.proto";
+
+option cc_enable_arenas = true;
 option java_outer_classname = "Types";
 
-enum FileType {
-  FILE = 1;
-  DIRECTORY = 2;
-}
-
-enum StatMask {
-  STAT_NONE = 0;
-  STAT_VERSION = 1;
-  STAT_LENGTH = 2;
-  STAT_FILE_TYPE = 4;
-  STAT_IMMUTABLE = 8;
-  STAT_PROTECTED = 16;
-  STAT_STICKY = 32;
-  STAT_OWNER = 64;
-  STAT_GROUP = 128;
-  STAT_MODE = 256;
-  STAT_CRC32C = 512;
-  STAT_PARTITION = 1024;
-  STAT_ENCODING = 2048;
-  STAT_TARGET_ENCODING = 4096;
-  STAT_WRITE_QUANTUM = 8192;
-  STAT_MTIME_NSECS = 16384;
-  STAT_FUZZY_ATIME_NSECS = 32768;
-  STAT_TTL_SECS = 65536;
-  STAT_GC_DELAY_SECS = 131072;
-  STAT_ENCRYPTION_PROPERTIES = 262144;
-  STAT_CONTENT_PROPERTIES = 524288;
-  STAT_FS_PROPERTIES = 1048576;
-  STAT_SPACE_USAGE = 2097152;
-  STAT_LOCALITY = 4194304;
-  STAT_FIFO = 8388608;
-  STAT_ALL = 2147483647;
-}
-
-enum AccessPattern {
-  ACCESS_NONE = 0;
-  ACCESS_NORMAL = 1;
-  ACCESS_RANDOM = 2;
-  ACCESS_SEQUENTIAL = 3;
-}
-
-enum CachePolicy {
-  CACHED = 0;
-  UNCACHED = 1;
-}
-
-enum EncryptionAccess {
-  DEFAULT_ACCESS = 0;
-  RAW_CIPHERTEXT_ACCESS = 1;
-}
-
-enum WrappedKeyType {
-  KEYSTORE_KEY = 0;
-  SHARED_KEY = 1;
-  EPHEMERAL_KEY = 2;
-  CLIENT_MANAGED_KEY = 3;
-  KEYMASTER_KEY = 4;
-}
-
-enum EncryptionMode {
-  UNKNOWN_ENCRYPTION_MODE = 0;
-  AES_SHA1_HMAC = 2;
-  AES_GCM = 3;
-  AES_SHA256_HMAC = 4;
-}
-
 message ContentProperties {
-  optional string content_type = 1;
-  optional string content_encoding = 2;
+    optional string content_type = 1;
+    optional string content_encoding = 2;
 }
 
 message PerPartitionUsage {
-  optional string partition = 1;
-  optional int64 space_used = 2;
-  optional int64 space_overhead = 3;
+    optional string partition = 1;
+    optional int64 space_used = 2 [jstype = JS_STRING];
+    optional int64 space_overhead = 3 [jstype = JS_STRING];
 }
 
 message SpaceUsage {
-  repeated .tech.file.PerPartitionUsage space_usage = 1;
+    repeated PerPartitionUsage space_usage = 1;
 }
 
-message Int128 {
-  optional int64 low_bits = 1;
-  optional int64 high_bits = 2;
+message Unsigned128 {
+    optional uint64 low_bits = 1 [jstype = JS_STRING];
+    optional uint64 high_bits = 2 [jstype = JS_STRING];
+}
+
+message QuotaAccounting {
+    optional string capacity_quota_user = 1;
+}
+
+message Resources {
+    optional NetworkBucket network = 1;
+    optional MetadataBucket metadata = 2;
+    optional DiskTimeBucket disk_time = 3;
+}
+
+message DiskTimeBucket {
+    optional string user = 1;
+    optional string isolation_class = 2;
+    
+    optional Priority priority = 3;
+    enum Priority {
+        UNSPECIFIED = 0;
+        BEST_EFFORT = 1;
+        THROUGHPUT = 2;
+        LOW_LATENCY = 3;
+    }
+}
+
+message NetworkBucket {
+    optional net_base.qos.TrafficClass traffic_class = 1;
+    optional string delegated_user = 2;
+}
+
+message MetadataBucket {
+    optional string user = 1;
+    
+    optional Priority priority = 2;
+    enum Priority {
+        PRIORITY_UNSPECIFIED = 0;
+        PRIORITY_BEST_EFFORT = 1;
+        PRIORITY_EXPEDITED = 2;
+        PRIORITY_ASSURED = 3;
+    }
 }
 
 message FSStat {
-  optional .tech.file.Int128 total_bytes = 1;
-  optional .tech.file.Int128 used_bytes = 2;
-  optional .tech.file.Int128 available_bytes = 3;
+    optional Unsigned128 total_bytes = 1;
+    optional Unsigned128 used_bytes = 2;
+    optional Unsigned128 available_bytes = 3;
 }
 
 message StatProto {
-  optional string version = 1;
-  optional int64 length = 2;
-  optional .tech.file.FileType file_type = 4;
-  optional bool immutable = 5;
-  optional bool protected = 6;
-  optional bool sticky = 7;
-  optional string owner = 8;
-  optional string group = 9;
-  optional uint32 mode = 10;
-  optional fixed32 crc32c = 11;
-  optional string partition = 12;
-  optional string encoding = 13;
-  optional string target_encoding = 14;
-  optional int32 write_quantum = 15;
-  optional int64 mtime_nsecs = 16;
-  optional int64 fuzzy_atime_nsecs = 17;
-  optional int32 ttl_secs = 18;
-  optional int32 gc_delay_secs = 19;
-  optional .tech.file.EncryptionProperties encryption_properties = 20;
-  optional .tech.file.ContentProperties content_properties = 21;
-  oneof fs {
-    .tech.file.BlobV2BucketStat blob_v2_bucket = 22;
-    .tech.file.BlobV2ObjectStat blob_v2_object = 23;
-  }
-  optional .tech.file.SpaceUsage space_used = 24;
-  optional string locality = 25;
-  optional bool fifo = 26;
-  repeated .google.protobuf.Any extended_attributes = 27;
+    optional string version = 1;
+    optional int64 length = 2 [jstype = JS_STRING];
+    optional FileType file_type = 4;
+    optional bool immutable = 5;
+    optional bool protected = 6;
+    optional bool sticky = 7;
+    optional string owner = 8;
+    optional string group = 9;
+    optional uint32 mode = 10;
+    optional fixed32 crc32c = 11;
+    optional string partition = 12;
+    optional string encoding = 13;
+    optional string target_encoding = 14;
+    optional int32 write_quantum = 15;
+    optional int64 mtime_nsecs = 16 [jstype = JS_STRING];
+    optional int64 fuzzy_atime_nsecs = 17 [jstype = JS_STRING];
+    optional int32 ttl_secs = 18;
+    optional int64 expiration_time_secs = 29 [jstype = JS_STRING];
+    optional int32 gc_delay_secs = 19;
+    optional EncryptionProperties encryption_properties = 20;
+    optional ContentProperties content_properties = 21;
+    optional SpaceUsage space_used = 24;
+    optional string locality = 25;
+    optional bool fifo = 26;
+    repeated google.protobuf.Any extended_attributes = 27;
+    repeated google.protobuf.Any extended_results = 31;
+    optional bool already_encrypted = 28;
+    optional QuotaAccounting quota_accounting = 30;
+    
+    oneof fs {
+        BlobV2BucketStat blob_v2_bucket = 22;
+        BlobV2ObjectStat blob_v2_object = 23;
+    }
 }
 
 message SnapshotOptions {
-  optional bool keep_owner = 1;
-  optional bool keep_group = 2;
-  optional int32 dir_mask = 3 [default = 146];
-  optional int32 file_mask = 4 [default = 146];
-  optional .thinmint.ThinMint destination_thinmint = 5;
+    optional bool keep_owner = 1;
+    optional bool keep_group = 2;
+    optional int32 dir_mask = 3 [default = 146];
+    optional int32 file_mask = 4 [default = 146];
+    optional .thinmint.ThinMint destination_thinmint = 5;
+    repeated google.protobuf.Any file_system_options = 7;
+    
+    reserved 6;
 }
 
 message ReadOptions {
-  optional bool allow_partial_reads = 1 [default = false];
+    optional bool allow_partial_reads = 1 [default = false];
+    repeated google.protobuf.Any extended_options = 2;
 }
 
 message WriteOptions {
-  optional bool allow_partial_writes = 1 [default = false];
-  optional uint32 data_crc = 2;
+    optional bool allow_partial_writes = 1 [default = false];
+    optional uint32 data_crc = 2;
+    repeated google.protobuf.Any extended_options = 3;
 }
 
 message RenameOptions {
-  optional bool overwrite = 1 [default = false];
-  optional .thinmint.ThinMint destination_thinmint = 2;
+    optional bool overwrite = 1 [default = false];
+    optional .thinmint.ThinMint destination_thinmint = 2;
+    repeated google.protobuf.Any extended_options = 3;
 }
 
 message CreateDirOptions {
-  optional .tech.file.StatProto stat = 1;
-  optional bool internal_recursive = 2;
+    optional StatProto stat = 1;
+    optional bool internal_recursive = 2;
+    repeated google.protobuf.Any extended_options = 3;
 }
 
 message OpenOptions {
-  optional .tech.file.StatProto stat = 1;
-  optional bool fail_if_exists = 2 [default = false];
-  optional bool require_write_checksum = 3 [default = false];
-  optional bool direct_io = 4 [default = false];
-  optional .tech.file.AccessPattern access_pattern = 5 [default = ACCESS_NONE];
-  optional .tech.file.CachePolicy cache_policy = 6 [default = CACHED];
-  optional bool noatime = 7 [default = false];
-  optional .tech.file.EncryptionAccess encryption_access = 8 [default = DEFAULT_ACCESS];
-  optional bool verify_authorship = 9 [default = true];
-  optional bool allow_stale_metadata = 10 [default = false];
-  optional .tech.file.EncryptionKey client_managed_master_key = 11;
+    optional StatProto stat = 1;
+    optional bool fail_if_exists = 2 [default = false];
+    optional bool require_write_checksum = 3 [default = false];
+    optional bool direct_io = 4 [default = false];
+    optional AccessPattern access_pattern = 5 [default = ACCESS_NONE];
+    optional CachePolicy cache_policy = 6 [default = CACHED];
+    optional bool noatime = 7 [default = false];
+    optional EncryptionAccess encryption_access = 8 [default = DEFAULT_ACCESS];
+    optional bool verify_authorship = 9 [default = true];
+    optional bool allow_stale_metadata = 10 [default = false];
+    optional EncryptionKey client_managed_master_key = 11;
+    optional Integrity integrity_mode = 15 [default = INTEGRITY_BEST_EFFORT];
+    repeated google.protobuf.Any extended_options = 13;
+    
+    reserved 12, 14;
 }
 
 message CloseOptions {
-  enum Mutability {
-    UNKNOWN = 0;
-    MUTABLE = 1;
-    IMMUTABLE = 2;
-  }
-  optional .tech.file.CloseOptions.Mutability mutability = 1;
+    optional Mutability mutability = 1;
+    enum Mutability {
+        UNKNOWN = 0;
+        MUTABLE = 1;
+        IMMUTABLE = 2;
+    }
+    
+    optional bool omit_flush = 2 [default = false];
+    repeated google.protobuf.Any extended_options = 3;
 }
 
 message MatchOptions {
-  optional bool match_dot = 1 [default = false];
-  optional bool match_backup = 2 [default = false];
-  optional bool match_strict = 3 [default = false];
+    optional bool match_dot = 1 [default = false];
+    optional bool match_recovery_entries = 2 [default = false];
+    optional bool match_strict = 3 [default = false];
+    repeated google.protobuf.Any extended_options = 4;
 }
 
 message EncryptionKey {
-  optional bytes key = 1;
-  optional fixed32 crc32c = 2;
+    optional fixed32 crc32c = 2;
+    
+    oneof key_data {
+        bytes key = 1;
+        bytes serialized_keyset = 3;
+    }
+}
+
+message ChecksumKey {
+    optional bytes key = 1;
+    optional fixed32 key_crc32c = 2;
 }
 
 message EncryptionProperties {
-  optional int32 keystore_config_id = 1;
-  optional string master_key_name = 2;
-  optional .tech.file.EncryptionMode encryption_mode = 13;
-  optional int32 encryption_key_length = 14;
-  optional bytes master_key_hash = 3;
-  optional bytes wrapped_key = 4;
-  optional int64 ciphertext_length = 5;
-  optional bytes authentication_code = 6;
-  repeated string owner = 7;
-  optional bytes document_id = 8;
-  optional int32 scope = 9;
-  optional int64 expiry = 10;
-  optional .tech.file.WrappedKeyType key_type = 11;
-  optional fixed32 crc32c = 12;
+    optional int32 keystore_config_id = 1;
+    optional string master_key_name = 2;
+    optional EncryptionMode encryption_mode = 13;
+    optional int32 encryption_key_length = 14;
+    optional bytes master_key_hash = 3;
+    optional bytes wrapped_key = 4;
+    optional fixed32 wrapped_key_crc32c = 15;
+    optional bytes encryption_key_hash = 16;
+    optional bytes wrapped_checksum_key = 17;
+    optional fixed32 wrapped_checksum_key_crc32c = 18;
+    optional int64 ciphertext_length = 5 [jstype = JS_STRING];
+    optional bytes authentication_code = 6;
+    optional fixed32 plaintext_crc32c = 19;
+    repeated string owner = 7;
+    optional bytes document_id = 8;
+    optional int64 expiry = 10 [jstype = JS_STRING];
+    optional int32 key_type = 11;
+    optional fixed32 crc32c = 12;
+    
+    reserved 9;
 }
 
 message StatOptions {
-  optional uint64 statmask = 1 [default = 18446744073709551615];
-  optional bool local_info_only = 2 [default = false];
-  optional bool allow_stale_metadata = 3 [default = false];
-  repeated string extended_attributes_types = 4;
+    optional uint64 statmask = 1 [default = 0xffffffffffffffff];
+    optional bool local_info_only = 2 [default = false];
+    optional bool allow_stale_metadata = 3 [default = false];
+    repeated string extended_attributes_types = 4;
+    repeated google.protobuf.Any extended_options = 5;
 }
 
 message FlushOptions {
-  enum FlushType {
-    FROM_PROCESS = 1;
-    FROM_MACHINE = 2;
-  }
-  optional .tech.file.FlushOptions.FlushType flush_type = 1 [default = FROM_PROCESS];
+    optional FlushType flush_type = 1 [default = FROM_PROCESS];
+    enum FlushType {
+        FROM_PROCESS = 1;
+        FROM_MACHINE = 2;
+    }
+    
+    optional bool force_flush = 2 [default = false];
+    repeated google.protobuf.Any extended_options = 3;
 }
 
 message DeleteOptions {
-  optional string version = 1;
+    optional string version = 1;
+    optional bool internal_recursive = 2;
+    repeated google.protobuf.Any extended_options = 3;
 }
 
+message VerificationOptions {
+    optional bool verify_authorship = 1 [default = true];
+    optional int32 keystore_config_id = 2;
+    optional string master_key_name = 3;
+    optional EncryptionKey client_managed_master_key = 4;
+}
 
+message SetStatOptions {
+    optional VerificationOptions verification = 1;
+    repeated google.protobuf.Any extended_options = 2;
+}
+
+enum FileType {
+    FILE = 1;
+    DIRECTORY = 2;
+}
+
+enum StatMask {
+    STAT_NONE = 0;
+    STAT_VERSION = 1;
+    STAT_LENGTH = 2;
+    STAT_FILE_TYPE = 4;
+    STAT_IMMUTABLE = 8;
+    STAT_PROTECTED = 16;
+    STAT_STICKY = 32;
+    STAT_OWNER = 64;
+    STAT_GROUP = 128;
+    STAT_MODE = 256;
+    STAT_CRC32C = 512;
+    STAT_PARTITION = 1024;
+    STAT_ENCODING = 2048;
+    STAT_TARGET_ENCODING = 4096;
+    STAT_WRITE_QUANTUM = 8192;
+    STAT_MTIME_NSECS = 16384;
+    STAT_FUZZY_ATIME_NSECS = 32768;
+    STAT_TTL_SECS = 65536;
+    STAT_GC_DELAY_SECS = 131072;
+    STAT_ENCRYPTION_PROPERTIES = 262144;
+    STAT_CONTENT_PROPERTIES = 524288;
+    STAT_FS_PROPERTIES = 1048576;
+    STAT_SPACE_USAGE = 2097152;
+    STAT_LOCALITY = 4194304;
+    STAT_FIFO = 8388608;
+    STAT_ALREADY_ENCRYPTED = 16777216;
+    STAT_EXPIRATION_TIME = 33554432;
+    STAT_QUOTA_ACCOUNTING = 67108864;
+    STAT_ALL = 2147483647;
+}
+
+enum AccessPattern {
+    ACCESS_NONE = 0;
+    ACCESS_NORMAL = 1;
+    ACCESS_RANDOM = 2;
+    ACCESS_SEQUENTIAL = 3;
+}
+
+enum CachePolicy {
+    CACHED = 0;
+    UNCACHED = 1;
+}
+
+enum EncryptionAccess {
+    DEFAULT_ACCESS = 0;
+    RAW_CIPHERTEXT_ACCESS = 1;
+}
+
+enum Integrity {
+    INTEGRITY_UNKNOWN = 0;
+    INTEGRITY_BEST_EFFORT = 1;
+    INTEGRITY_GUARANTEED = 2;
+}
+
+enum WrappedKeyType {
+    KEYSTORE_KEY = 0;
+    EPHEMERAL_KEY = 2;
+    KEYMASTER_KEY = 4;
+    CLIENT_MANAGED_KEYMASTER_KEYSET = 5;
+    SHARED_KEY = 1;
+    CLIENT_MANAGED_KEY = 3;
+    SHREDMILL_KEY = 6;
+}
+
+enum EncryptionMode {
+    UNKNOWN_ENCRYPTION_MODE = 0;
+    AES_SHA1_HMAC = 2;
+    AES_GCM = 3;
+    AES_SHA256_HMAC = 4;
+    AES_XTS = 5;
+    AES_GCM_CRC = 6;
+    AES_CTR_SHA256_HMAC_CRC = 7;
+}

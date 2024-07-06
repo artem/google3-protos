@@ -1,0 +1,22 @@
+syntax = "proto2";
+
+package colossus;
+
+option java_multiple_files = true;
+
+message StackTraceProto {
+    repeated BinaryInfo binaries = 1;
+    message BinaryInfo {
+        optional string linker_build_id = 1 [deprecated = true];
+        optional bytes packed_linker_build_id = 3;
+        
+        optional Mapping mapping = 2 [deprecated = true];
+        message Mapping {
+            optional uint64 start = 1;
+            optional uint64 limit = 2;
+            optional uint64 offset = 3;
+        }
+    }
+    
+    repeated uint64 call_stack = 2 [packed = true];
+}

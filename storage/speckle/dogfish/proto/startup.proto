@@ -1,0 +1,24 @@
+syntax = "editions";
+
+package speckle_dogfish.dogfish_proto;
+
+import "storage/datapol/annotations/proto/semantic_annotations.proto";
+import "storage/speckle/dogfish/controlplane/proto/storage.proto";
+import "storage/speckle/dogfish/proto/dogfish.proto";
+
+message ArchiverStartupInfo {
+    optional BackpointerMap backpointer_map = 1;
+    optional uint64 next_full_xid = 2;
+}
+
+message DogfishStartupDataProto {
+    optional uint64 last_rec_ptr = 1;
+    optional uint64 end_of_log_ptr = 2;
+    optional uint64 redo_rec_ptr = 3;
+    optional BackpointerMap backpointer_map = 4;
+    optional ControlInfo control_info = 5;
+    optional dcp.storage.VolumeSettings volume_settings = 6;
+    optional int64 generated_at_timestamp_seconds = 7;
+    optional uint64 aborted_record_lsn = 8;
+    optional uint64 missing_cont_record_lsn = 9;
+}

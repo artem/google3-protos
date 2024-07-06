@@ -1,0 +1,16 @@
+syntax = "proto2";
+
+package speckle_dogfish.dogfish_proto;
+
+import "google/protobuf/timestamp.proto";
+import "storage/datapol/annotations/proto/semantic_annotations.proto";
+
+message BuildInfo {
+    optional google.protobuf.Timestamp build_timestamp = 1;
+    optional int64 changelist = 2;
+    optional int64 base_changelist = 3;
+    optional string citc_workspace_id = 4;
+    optional string citc_snapshot = 5;
+    optional string depot_path = 6;
+    optional string client_info = 7;
+}

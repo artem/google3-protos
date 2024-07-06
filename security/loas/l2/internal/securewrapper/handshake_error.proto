@@ -1,40 +1,59 @@
-syntax = "proto2";
+syntax = "editions";
 
-import "net/proto2/bridge/proto/message_set.proto";
 package security_loas_l2;
 
-enum HandshakeErrorCode {
-  INVALID_ERROR_CODE = 0;
-  HANDSHAKER_UNAVAILABLE = 1;
-  HANDSHAKER_KEYS_UNAVAILABLE = 2;
-  BAD_HANDSHAKE_ID = 3;
-  BAD_KEYS_ERROR = 4;
-  NO_KEYS_DATA = 5;
-  BAD_NEXT_PROTOCOL = 6;
-  NEXT_PROTOCOL_UNAVAILABLE = 7;
-  KEYS_FOR_PROTOCOL_UNAVAILABLE = 8;
-  PEER_UNAVAILABLE = 9;
-  SERIALS_REVOKED = 10;
-  RESUMPTION_ID_UNAVAILABLE = 11;
-  BAD_FRAME = 12;
-  AUTH_OPTIONS_UNAVAILABLE = 13;
-  SERVER_IDENTITY_ERROR = 14;
-  CLIENT_IDENTITY_ERROR = 15;
-  IDENTITY_TO_CONTEXT_ERROR = 16;
-  IDENTITY_TO_PEER_ERROR = 17;
-  GET_REVOCATION_STATUS_ERROR = 18;
-  NEW_CLIENT_HANDSHAKER_ERROR = 19;
-  NEW_SERVER_HANDSHAKER_ERROR = 20;
-  SETUP_CREDS_ERROR = 21;
-  HANDSHAKE_SERVICE_ERROR = 22;
-}
+import "net/proto2/bridge/proto/message_set.proto";
+import "storage/datapol/annotations/proto/semantic_annotations.proto";
 
 message HandshakeError {
-  optional .security_loas_l2.HandshakeErrorCode handshake_error_code = 1;
-  optional int64 securewrapper_error_code = 2;
-  extend .proto2.bridge.MessageSet {
-    optional .security_loas_l2.HandshakeError message_set_extension = 155250150;
-  }
+    optional HandshakeErrorCode handshake_error_code = 1;
+    optional int64 securewrapper_error_code = 2;
+    
+    extend .proto2.bridge.MessageSet {
+        optional HandshakeError message_set_extension = 155250150;
+    }
 }
 
-
+enum HandshakeErrorCode {
+    INVALID_ERROR_CODE = 0;
+    HANDSHAKER_UNAVAILABLE = 1;
+    HANDSHAKER_KEYS_UNAVAILABLE = 2;
+    BAD_HANDSHAKE_ID = 3;
+    BAD_KEYS_ERROR = 4;
+    NO_KEYS_DATA = 5;
+    BAD_NEXT_PROTOCOL = 6;
+    NEXT_PROTOCOL_UNAVAILABLE = 7;
+    KEYS_FOR_PROTOCOL_UNAVAILABLE = 8;
+    PEER_UNAVAILABLE = 9;
+    SERIALS_REVOKED = 10;
+    RESUMPTION_ID_UNAVAILABLE = 11;
+    BAD_FRAME = 12;
+    AUTH_OPTIONS_UNAVAILABLE = 13;
+    SERVER_IDENTITY_ERROR = 14;
+    CLIENT_IDENTITY_ERROR = 15;
+    IDENTITY_TO_CONTEXT_ERROR = 16;
+    IDENTITY_TO_PEER_ERROR = 17;
+    GET_REVOCATION_STATUS_ERROR = 18;
+    NEW_CLIENT_HANDSHAKER_ERROR = 19;
+    NEW_SERVER_HANDSHAKER_ERROR = 20;
+    SETUP_CREDS_ERROR = 21;
+    HANDSHAKE_SERVICE_ERROR = 22;
+    HANDLE_CRL_FINISHED_ERROR = 23;
+    CHANNEL_AUTHZ_SERVER_UNAUTHORIZED = 24;
+    CHANNEL_AUTHZ_CLIENT_UNAUTHORIZED = 25;
+    BAD_HANDSHAKE_CIPHER = 26;
+    MISSING_HANDSHAKE_PARAMETERS_DETECTED = 27;
+    NO_REVOCATION_ID = 28;
+    BAD_RESUMPTION_TICKET = 29;
+    SESSION_RESUMPTION_ERROR = 30;
+    FRAME_MASSAGE_ERROR = 31;
+    PARSING_FRAME_HEADER_ERROR = 32;
+    BAD_AUTHENTICATOR = 33;
+    PROTOCOL_ERROR = 34;
+    HKDF_FAILED = 35;
+    BAD_POST_QUANTUM_PARAMETERS = 36;
+    BAD_EPHEMERAL_PARAMETERS = 37;
+    SELF_SIGNED_CERTIFICATE_REQUIRED = 38;
+    SELF_SIGNED_CERTIFICATE_DISALLOWED = 39;
+    CLIENT_CIPHERS_NOT_SUPPORTED = 40;
+}

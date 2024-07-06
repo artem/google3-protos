@@ -1,0 +1,21 @@
+syntax = "proto2";
+
+package sherlog;
+
+import "net/proto2/bridge/proto/message_set.proto";
+
+option java_package = "com.google.repository.pipelinediagnostics.sherlog.protos";
+
+message RequestExtensionProto {
+    optional bytes token = 1;
+    optional int32 token_format = 2;
+    
+    enum TokenFormat {
+        TOKEN_FORMAT_B64_LEGACY = 0;
+        TOKEN_FORMAT_RAW = 1;
+    }
+    
+    extend .proto2.bridge.MessageSet {
+        optional RequestExtensionProto message_set_extension = 122210290;
+    }
+}

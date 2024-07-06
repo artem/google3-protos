@@ -1,0 +1,19 @@
+syntax = "editions";
+
+package crypto.tink.integration.keymaster;
+
+import "storage/datapol/annotations/proto/semantic_annotations.proto";
+
+message LegacyAesCbcWithMacKeyFormat {
+    optional uint32 version = 1;
+    optional uint32 crypting_key_size = 2;
+    optional uint32 hmac_key_size = 3;
+    optional uint32 tag_size = 4;
+}
+
+message LegacyAesCbcWithMacKey {
+    optional uint32 version = 1;
+    optional bytes crypting_key_value = 2;
+    optional bytes hmac_key_value = 3;
+    optional uint32 tag_size = 4;
+}

@@ -1,33 +1,37 @@
 syntax = "proto3";
 
-import "google/api/annotations.proto";
-import "google/api/label.proto";
-import "google/protobuf/struct.proto";
 package google.api;
 
-option java_package = "com.google.api";
-option java_outer_classname = "MonitoredResourceProto";
-option java_multiple_files = true;
-option go_package = "google.golang.org/genproto/googleapis/api/monitoredres;monitoredres";
-option cc_enable_arenas = true;
+import "google/api/label.proto";
+import "google/api/launch_stage.proto";
+import "google/api/monitoring_migration.proto";
+import "google/api/visibility.proto";
+import "google/protobuf/struct.proto";
+
 option objc_class_prefix = "GAPI";
+option cc_enable_arenas = true;
+option go_package = "google.golang.org/genproto/googleapis/api/monitoredres;monitoredres";
+option java_multiple_files = true;
+option java_outer_classname = "MonitoredResourceProto";
+option java_package = "com.google.api";
 
 message MonitoredResourceDescriptor {
-  string name = 5;
-  string type = 1;
-  string display_name = 2;
-  string description = 3;
-  repeated .google.api.LabelDescriptor labels = 4;
+    string name = 5;
+    string type = 1;
+    string display_name = 2;
+    string description = 3;
+    repeated LabelDescriptor labels = 4;
+    string label_extractor = 8;
+    LaunchStage launch_stage = 7;
+    MonitoringMigration monitoring_migration = 6;
 }
 
 message MonitoredResource {
-  string type = 1;
-  map<string, string> labels = 2;
+    string type = 1;
+    map<string, string> labels = 2;
 }
 
 message MonitoredResourceMetadata {
-  .google.protobuf.Struct system_labels = 1;
-  map<string, string> user_labels = 2;
+    protobuf.Struct system_labels = 1;
+    map<string, string> user_labels = 2;
 }
-
-

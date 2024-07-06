@@ -1,0 +1,16 @@
+syntax = "proto2";
+
+package storage_d;
+
+import "net/proto2/bridge/proto/message_set.proto";
+
+message AioDetails {
+    optional int32 aio_spindle_microseconds_spent = 1;
+    optional int32 aio_spindle_priority = 3;
+    
+    reserved 2, 4;
+    
+    extend .proto2.bridge.MessageSet {
+        optional AioDetails message_set_extension = 272895680;
+    }
+}

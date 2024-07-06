@@ -1,0 +1,13 @@
+syntax = "proto2";
+
+package speckle_dogfish.dogfish_proto;
+
+import "logs/proto/logs_annotations/logs_annotations.proto";
+import "storage/datapol/annotations/proto/semantic_annotations.proto";
+
+enum ClientType {
+    CLIENT_TYPE_UNKNOWN = 0;
+    CLIENT_TYPE_PRIMARY = 1;
+    CLIENT_TYPE_READ_REPLICA = 2;
+    CLIENT_TYPE_DOGTOOL = 3;
+}

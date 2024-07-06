@@ -1,0 +1,27 @@
+syntax = "proto2";
+
+package gaia_auth;
+
+import "storage/datapol/annotations/proto/semantic_annotations.proto";
+
+option java_multiple_files = true;
+option java_package = "com.google.gaia.auth.proto";
+
+message AuthenticatedIdentity {
+    optional int64 effective_gaia_user_id = 1;
+}
+
+message UnifiedAuthResponse {
+    optional int32 return_code = 1;
+    optional AuthenticatedIdentity identity = 2;
+    
+    enum UnifiedAuthReturnCode {
+        REQUEST_AUTHENTICATED = 0;
+        CREDENTIAL_NOT_PRESENT = 1;
+        CREDENTIAL_MALFORMED = 2;
+        CREDENTIAL_UNACCEPTABLE = 3;
+        USER_NOT_PERMITTED = 4;
+        UNKNOWN_ERROR = 5;
+        BACKEND_UNAVAILABLE = 6;
+    }
+}

@@ -1,0 +1,323 @@
+syntax = "proto2";
+
+package colossus;
+
+import "file/colossus/proto/base.proto";
+import "google/protobuf/timestamp.proto";
+import "storage/d/proto/health.proto";
+import "storage/datapol/annotations/proto/semantic_annotations.proto";
+import "tech/file/proto/types.proto";
+
+option java_package = "com.google.io.file.colossus";
+
+message CellClientConfig {
+    optional Cfs2InternalDeadlineConfig cfs2_deadline = 1;
+    message Cfs2InternalDeadlineConfig {
+        optional int32 fast_internal_rpc_deadline_ms = 1;
+        optional int32 fast_internal_rpc_cl_number = 2;
+        optional double backoff_base = 3;
+    }
+    
+    optional string topology_path = 2;
+    optional bool enable_d_server_realm_check = 3 [default = true];
+    repeated string d_machine_roots = 4;
+}
+
+message CellConfig {
+    required Version DEPRECATED_version = 1;
+    enum Version {
+        option allow_alias = true;
+        CURRENT_VERSION = 3;
+        BASE = 1;
+        METADATA_HISTORY = 2;
+        MULTIUSER = 3;
+        NEW_CFS2_PATHS = 4;
+    }
+    
+    required string cell_name = 2;
+    required int32 num_chunkserver_shards = 3;
+    
+    required MetadataKind metadata_kind = 4;
+    enum MetadataKind {
+        MEMORY = 0;
+        BIGTABLE = 1;
+        BTREE = 3;
+    }
+    
+    optional MetadataKind nmeta_metadata_kind = 21;
+    repeated string change_history = 6;
+    optional string bigtable_location_prefix = 7;
+    optional string curator_bns = 18;
+    optional string custodian_bns = 19;
+    optional string console_bns = 23;
+    optional string admin_user = 28;
+    repeated string keystore_thinmint_admins = 34;
+    
+    optional DiskLayerKind disk_layer_kind = 11 [default = ERROR_DISK_LAYER];
+    enum DiskLayerKind {
+        ERROR_DISK_LAYER = 0;
+        D_DISK_LAYER = 1;
+        DEPRECATED_RF_DISK_LAYER = 2;
+        FAKE_DISK_LAYER = 3;
+        TIMELOCK_DISK_LAYER = 4;
+        DUMPED_CHUNK_DISKLAYER = 6;
+        MOARLOAD_DISK_LAYER = 7;
+    }
+    
+    optional bool capabilities_required = 13 [default = false];
+    optional string d_cell_name = 12;
+    optional bool store_d_chunk_server_info_per_colossus_cell = 31 [default = false];
+    optional int32 max_supported_protocol_version = 14 [default = 1];
+    optional int32 min_supported_protocol_version = 15 [default = 69];
+    optional bool proxy_enabled = 16 [default = false];
+    optional bool metadata_cache_enabled = 17 [default = true];
+    optional bool is_cfs2 = 22 [default = false];
+    optional int64 cfs2_master_folder_creation_sequence = 27;
+    optional int32 max_risk_diversity_level = 20;
+    optional bool enable_cfs2_folder_affinity = 26 [default = true, deprecated = true];
+    optional double cfs2_folder_affinity_time_window_size_ms = 24;
+    optional int32 cfs2_folder_affinity_shard_size = 25;
+    optional string default_keystore_address = 29;
+    repeated string DEPRECATED_allowed_chunkserver_versions = 5;
+    optional int32 DEPRECATED_curator_mode = 8 [default = 1];
+    optional Version DEPRECATED_upgrade_target_version = 9;
+    optional int32 DEPRECATED_upgrade_progress = 10;
+    optional CellClientConfig client_config = 30;
+    optional string d_server_user = 32;
+    optional string fake_cfs1_curator_address = 33;
+}
+
+message DiskInfo {
+    required int64 id = 1;
+    optional fixed64 label = 2;
+    optional storage_d.Health.Status d_state = 8;
+    optional bool removable = 6 [default = false];
+    optional int64 d_health_version = 5;
+    optional int64 removal_start_time = 11;
+    optional int64 d_drain_priority = 12;
+    
+    reserved 3, 4, 7, 9, 10;
+}
+
+message ChunkserverInfo {
+    required string name = 1;
+    optional storage_d.Health.Status d_state = 7;
+    required int32 version = 3;
+    optional int32 d_drain_priority = 11;
+    optional int64 d_health_version = 6;
+    required bool removable = 4;
+    optional int64 removal_start_time = 8;
+    optional int64 remaining_chunks_upper_bound = 9;
+    repeated DiskInfo disks = 5;
+    
+    reserved 2, 10, "state";
+}
+
+message ChunkserversConfig {
+    repeated ChunkserverInfo chunkservers = 1;
+    
+    reserved 2;
+}
+
+message PathAclConfig {
+    required string path = 1;
+    required fixed32 mode = 2;
+    required string owner = 3;
+    required string group = 4;
+    optional bool managed_by_namespace = 5 [default = false];
+    repeated string realm = 6;
+    optional bool realm_enforced = 10 [default = true];
+    repeated string namespace_manager = 7;
+    optional tech.file.QuotaAccounting quota_accounting = 8;
+    
+    optional Origin origin = 9;
+    enum Origin {
+        UNKNOWN = 0;
+        PER_CELL_CONFIG = 1;
+        GLOBAL_CONFIG = 2;
+    }
+}
+
+message NamespacePathAdmin {
+    optional string user = 1;
+    optional string path = 2;
+}
+
+message AclConfig {
+    repeated string admin = 1;
+    repeated string readonly_admin = 13;
+    repeated string namespace_admin = 11;
+    repeated NamespacePathAdmin namespace_path_admin = 12;
+    repeated PathAclConfig path_acl = 3;
+    optional string last_change_user = 8;
+    optional int64 last_change_time = 9;
+    
+    reserved 2, 10;
+}
+
+message CellParameter {
+    required string name = 1;
+    optional string value = 2;
+    optional string default_value = 3;
+    optional string description = 4;
+    optional string type = 5;
+    
+    optional Component component = 6 [deprecated = true];
+    enum Component {
+        NONE = 0;
+        TEST = 1;
+        BLOCKHEAD = 2;
+        CONSOLE = 4;
+        CURATOR = 8;
+        NAMESPACE = 16;
+        BOOTSTRAP = 32;
+        CONSOLE2 = 64;
+        CURATOR2 = 128;
+        CUSTODIAN = 256;
+        FOLDER_CACHE = 512;
+        TRANSCODER = 4096;
+        ALL = 8190;
+    }
+    
+    optional double min = 7;
+    optional double max = 8;
+    optional fixed64 component_bitmask = 9;
+    optional string override_reason = 10;
+    optional google.protobuf.Timestamp override_time = 11;
+    optional string override_user = 12;
+}
+
+message CellParameters {
+    repeated string DEPRECATED_allowed_chunkserver_versions = 1;
+    optional string last_change_user = 8;
+    optional int64 last_change_time = 9;
+    repeated CellParameter parameter = 10;
+    
+    enum CellMode {
+        READ_ONLY = 0;
+        READ_WRITE = 1;
+        MAINTENANCE_ONLY = 2;
+    }
+}
+
+message ProhibitedEntry {
+    required string name = 1;
+    optional string partition = 4;
+    optional int32 soft_excess = 6;
+    optional int32 hard_excess = 3;
+    optional double eviction_probability = 5 [default = 0];
+    
+    reserved 2;
+    
+    enum ProhibitedType {
+        NONE = 0;
+        BYTES = 1;
+        FILES = 2;
+        FOLDERS = 4;
+        SPILLOVER = 8;
+    }
+}
+
+message ProhibitedUsers {
+    optional bool enforce_quotas = 5 [default = true];
+    optional bool allow_soft_excess = 8;
+    optional ProhibitedEntry cellwide = 1;
+    repeated ProhibitedEntry cellwide_partitions = 6;
+    optional ProhibitedEntry cumulative_users = 2;
+    repeated ProhibitedEntry cumulative_users_partitions = 7;
+    repeated ProhibitedEntry users = 3;
+    repeated ProhibitedEntry groups = 4;
+}
+
+message AutoPlacementConstraints {
+    repeated Group groups = 1;
+    message Group {
+        required string name = 1;
+        optional string partition = 2 [default = "ssd"];
+        optional int64 max_bytes = 4;
+        optional int32 replication_factor = 7;
+        repeated FilePattern file_patterns = 5;
+        optional int64 total_bytes = 3;
+        optional double probability_multiplier = 6 [default = 1];
+        optional AutoPlacementType type = 8 [default = AUTO];
+        optional string quota_parent = 9;
+    }
+    
+    message FilePattern {
+        required string regexp = 1;
+        optional int32 min_ttl_secs = 2;
+        optional int32 max_ttl_secs = 3;
+        optional int64 max_bytes = 4;
+        optional int64 min_bytes = 5;
+    }
+}
+
+message AutoPlacementSolutions {
+    repeated Group groups = 1;
+    message Group {
+        required string name = 1;
+        optional float probability = 2;
+        optional int32 ttl_secs = 3;
+        repeated FilePattern file_patterns = 5;
+        optional int64 allocated_bytes = 4;
+    }
+    
+    message FilePattern {
+        required string regexp = 1;
+        optional float probability = 2;
+        optional int32 ttl_secs = 3;
+    }
+}
+
+message NamespaceConfig {
+    repeated Rule rules = 1;
+    message Rule {
+        optional string store = 1;
+        optional string cfs2_store = 4;
+        required string anchor = 2;
+        
+        reserved 3, "folder_prefix", "has_metadata";
+    }
+    
+    reserved 2;
+}
+
+message ProxyIsolationConfig {
+    repeated User users = 1;
+    message User {
+        required string username = 1;
+        repeated int32 task_ids = 2;
+    }
+}
+
+message ClientConfig {
+    repeated string always_bypass_proxy_cells = 1;
+}
+
+message StopRemovalsConfig {
+    optional bool stop_removal_votes = 1;
+}
+
+message MetadataCacheConfig {
+    repeated User users = 1;
+    message User {
+        required string username = 1;
+        repeated int32 task_ids = 2;
+    }
+    
+    optional bool allow_any_user = 2 [default = false];
+}
+
+message CapabilityKeys {
+    optional CFSCapabilityKey next_key = 1;
+    optional CFSCapabilityKey previous_key = 2;
+    optional CFSCapabilityKey signing_key = 3;
+}
+
+message BackingStoreConfig {
+    repeated Rule rules = 1;
+    message Rule {
+        optional string prefix = 1;
+        optional int32 proportion_cfsv2 = 2;
+    }
+}

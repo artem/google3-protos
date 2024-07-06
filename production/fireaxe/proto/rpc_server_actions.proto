@@ -1,0 +1,35 @@
+syntax = "proto3";
+
+package fireaxe;
+
+option java_multiple_files = true;
+option optimize_for = CODE_SIZE;
+option java_outer_classname = "RpcServerActionsProto";
+option java_package = "com.google.protos.fireaxe.rpcserveractions";
+
+message RpcServerDisconnectClientAction {
+    string peer_role = 1;
+}
+
+message RpcServerLimitClientConnectionsAction {
+    string peer_role = 1;
+    int32 max_connections = 2;
+}
+
+message RpcServerBlockClientRequestsAction {
+    string peer_role = 1;
+    string peer_cell = 2;
+    string peer_job = 3;
+}
+
+message RpcServerLimitClientRequestsAction {
+    string peer_role = 1;
+    string peer_cell = 3;
+    string peer_job = 4;
+    double max_per_task_qps = 2;
+}
+
+message RpcServerBlockExternalRequestsAction {
+    repeated string internal_peer_role = 1;
+    repeated string internal_peer_group = 2;
+}

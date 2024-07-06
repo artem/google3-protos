@@ -1,0 +1,26 @@
+syntax = "proto3";
+
+package fireaxe.action_feedback;
+
+option java_multiple_files = true;
+option optimize_for = CODE_SIZE;
+option java_outer_classname = "ActionFeedbackProto";
+option java_package = "com.google.protos.fireaxe.actionfeedback";
+
+enum ApplyResult {
+    UNKNOWN = 0;
+    APPLIED = 1;
+    APPLIED_SLOW_UNDRAIN = 12;
+    APPLIED_PREVIEW = 13;
+    NOT_SELECTED = 2;
+    INVALID_CONDITION = 3;
+    SLOW_UNDRAIN_EXPIRED = 4;
+    SLOW_UNDRAIN_UNSUPPORTED = 5;
+    INVALID_MINT = 6;
+    UNSUPPORTED = 7;
+    INVALID_ACTION_SPEC = 8;
+    FAILED_APPLY = 9;
+    PREVIEW_UNSUPPORTED = 14;
+    TO_VERIFY = 10;
+    TO_APPLY = 11;
+}

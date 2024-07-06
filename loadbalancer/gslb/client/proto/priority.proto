@@ -1,0 +1,10 @@
+syntax = "proto2";
+
+package loadbalancer_gslb.client;
+
+option cc_enable_arenas = true;
+
+message DropPriority {
+    optional int32 minimum_priority = 1;
+    optional float drop_ratio = 2;
+}

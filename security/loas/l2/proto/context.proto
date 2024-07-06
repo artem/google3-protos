@@ -1,28 +1,67 @@
 syntax = "proto2";
 
-import "security/loas/l2/proto/securitylevel.proto";
-import "security/util/proto/permission.proto";
 package security_loas_l2;
 
-option java_package = "com.google.net.loas.l2";
-option java_outer_classname = "InternalLoas2ContextOuterClass";
-option java_multiple_files = true;
+import "google/protobuf/any.proto";
+import "security/loas/l2/proto/common.proto";
+import "security/loas/l2/proto/credstype.proto";
+import "security/loas/l2/proto/identity_types.proto";
+import "security/loas/l2/proto/instance.proto";
+import "security/loas/l2/proto/securitylevel.proto";
+import "security/loas/l2/proto/usertype.proto";
+import "security/util/proto/permission.proto";
+import "storage/datapol/annotations/proto/semantic_annotations.proto";
 
-message InternalLoas2Context {
-  optional .security_loas_l2.SecurityLevel security_level = 1;
-  optional string next_protocol = 2;
-  optional string mdb_user = 3;
-  optional int64 gaia_id = 4;
-  repeated uint64 revocation_id = 5;
-  optional string local_username = 6;
-  optional string authenticated_host = 7;
-  repeated string security_realm = 8;
-  optional .AcctRestrictions primary_role_restriction = 9;
-  optional string unauthenticated_borg_cell = 10;
-  optional string unauthenticated_borg_jobname = 11;
-  optional int32 unauthenticated_borg_taskid = 12;
-  optional string unauthenticated_host = 13;
-  repeated string security_tags = 14;
+option java_multiple_files = true;
+option java_outer_classname = "InternalLoas2ContextOuterClass";
+option java_package = "com.google.net.loas.l2";
+
+message IdentityBoundToken {
+    optional string token = 1;
+    
+    extend AuthenticatedOptions {
+        optional IdentityBoundToken identity_bound_token = 1008;
+    }
 }
 
+message ChannelOptions {
+    repeated google.protobuf.Any options = 1;
+    
+    extend AuthenticatedOptions {
+        optional ChannelOptions channel_options = 1009;
+    }
+}
 
+message DirectPathToken {
+    optional string token = 1;
+    
+    extend AuthenticatedOptions {
+        optional DirectPathToken direct_path_token = 1013;
+    }
+}
+
+message InternalLoas2Context {
+    optional SecurityLevel security_level = 1;
+    optional string next_protocol = 2;
+    optional string mdb_user = 3;
+    optional int64 gaia_id = 4;
+    repeated uint64 revocation_id = 5;
+    optional string local_username = 6;
+    optional string authenticated_host = 7;
+    optional string security_realm = 8;
+    optional AcctRestrictions primary_role_restriction = 9;
+    optional string unauthenticated_borg_cell = 10;
+    optional string unauthenticated_borg_jobname = 11;
+    optional int32 unauthenticated_borg_taskid = 12;
+    optional string unauthenticated_host = 13;
+    repeated string security_tags = 14;
+    optional UserType user_type = 15;
+    optional CredentialsType creds_type = 16;
+    optional string application_protocol = 17;
+    optional InstanceInfo instance_info = 18;
+    optional IdentityBoundToken identity_bound_token = 19;
+    optional ChannelOptions channel_options = 20;
+    optional MachineCertDigest machine_cert_digest = 21;
+    optional DirectPathToken direct_path_token = 22;
+    optional HandshakeCipher handshake_cipher = 23;
+}

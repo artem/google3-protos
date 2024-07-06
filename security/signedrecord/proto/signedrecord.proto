@@ -1,26 +1,34 @@
 syntax = "proto2";
 
-import "net/proto2/bridge/proto/message_set.proto";
 package security.signedrecord;
+
+import "net/proto2/bridge/proto/message_set.proto";
 
 option java_package = "com.google.security.signedrecord";
 
-enum SignedRecordFormat {
-  THINMINT = 84;
-  UNSIGNED = 85;
+message TestRecord {
+    optional string realm = 1;
+    optional bytes data = 2;
+    optional uint64 generation = 3;
 }
 
 message SignedRecord {
-  extend .proto2.bridge.MessageSet {
-    optional .security.signedrecord.SignedRecord message_set_extension = 45482205;
-  }
+    extend .proto2.bridge.MessageSet {
+        optional SignedRecord message_set_extension = 45482205;
+    }
 }
 
 message RecordContent {
-  optional bytes data = 1;
-  extend .proto2.bridge.MessageSet {
-    optional .security.signedrecord.RecordContent message_set_extension = 45487168;
-  }
+    optional bytes data = 1;
+    
+    extend .proto2.bridge.MessageSet {
+        optional RecordContent message_set_extension = 45487168;
+    }
 }
 
-
+enum SignedRecordFormat {
+    GO = 71;
+    PROTO = 80;
+    THINMINT = 84;
+    UNSIGNED = 85;
+}

@@ -1,0 +1,114 @@
+syntax = "proto3";
+
+package google.logging.v2;
+
+import "google/api/field_behavior.proto";
+import "google/api/visibility.proto";
+import "google/logging/data_governance.proto";
+import "google/logging/v2/grouping_metadata.proto";
+import "google/logging/v2/internal_entity_id.proto";
+
+option cc_enable_arenas = true;
+
+message InternalMetadata {
+    repeated int64 bq_sinks = 3;
+    repeated int64 gcs_sinks = 4;
+    repeated int64 pubsub_sinks = 5;
+    repeated int64 log_bucket_sinks = 6;
+    repeated SinkInfo project_sink_info = 23;
+    repeated LogBucketWithSinkInfo log_bucket_with_sink_info = 21;
+    bool log_bucket_default_sink = 7 [deprecated = true];
+    bool log_bucket_default_audit_sink = 8 [deprecated = true];
+    bool log_bucket_resolve_all_bucket_configs = 19 [deprecated = true];
+    repeated int64 log_notification_rules = 10;
+    
+    repeated TailSession tail_sessions = 11;
+    message TailSession {
+        int64 tail_session_id = 1;
+        int64 rate_limited_entry_delta = 2;
+    }
+    
+    QueryAnnotations query_annotations = 9;
+    message QueryAnnotations {
+        string resident_bucket_uuid = 1;
+        InternalEntityId resident_bucket_entity_id = 2;
+    }
+    
+    repeated BucketUUID bucket_uuid = 12 [deprecated = true];
+    message BucketUUID {
+        string uid = 6;
+        bool analytics_enabled = 4;
+        repeated string tcube_shard_names = 5;
+        bool enable_cmek = 7;
+        
+        reserved 1, 2, 3;
+    }
+    
+    repeated string tcube_shard_names = 18 [deprecated = true];
+    
+    repeated RegionalMetadata regional_metadata = 13;
+    message RegionalMetadata {
+        string region = 1;
+        string physical_region = 5;
+        repeated int64 log_bucket_sinks = 2 [deprecated = true];
+        repeated BucketUUID bucket_uuid = 3 [deprecated = true];
+        repeated string tcube_shard_names = 4 [deprecated = true];
+        repeated LogBucketWithSinkInfo log_bucket_with_sink_info = 6;
+    }
+    
+    GroupingMetadata grouping_metadata = 14;
+    int64 long_running_operation_id = 15;
+    uint64 monitored_resource_version = 16;
+    int64 billing_size = 17;
+    string user_agent_type = 20;
+    
+    EntryType entry_type = 22;
+    enum EntryType {
+        LOG = 0;
+        TRACE = 1;
+    }
+    
+    bool errors_job_do_enhancement = 25;
+    bool cmek_protected = 26;
+    repeated int64 transformation_ids = 27;
+    
+    reserved 1, 2, 24;
+}
+
+message LogBucketWithSinkInfo {
+    string uid = 1;
+    bool modified_builtin_bucket = 9;
+    
+    BucketStatus bucket_status = 11;
+    enum BucketStatus {
+        OK_DEFAULT = 0;
+        NOT_FOUND = 1;
+        ALL_SINKS_INVALID = 2;
+    }
+    
+    InternalEntityId bucket_owner = 7;
+    bool analytics_enabled = 2;
+    repeated string tcube_shard_names = 3;
+    bool cmek_enabled = 4;
+    repeated SinkInfo sink_info = 6;
+    bool from_project_sink = 10;
+    
+    reserved 8, 5;
+}
+
+message SinkInfo {
+    AccessStatus status = 2;
+    enum AccessStatus {
+        ACCESS_STATUS_UNSPECIFIED = 0;
+        OK = 1;
+        PERMISSION_DENIED = 2;
+        ORG_POLICY_DENIED = 3;
+        SERVICE_ACCOUNT_PURGED = 4;
+    }
+    
+    oneof sink_id {
+        int64 sink_uuid = 1;
+        InternalEntityId unmodified_default_sink_internal_id = 3;
+        InternalEntityId unmodified_required_sink_internal_id = 4;
+    }
+}

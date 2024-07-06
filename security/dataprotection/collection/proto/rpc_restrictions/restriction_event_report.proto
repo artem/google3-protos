@@ -1,0 +1,28 @@
+syntax = "proto2";
+
+package security.dataprotection.collection.proto.rpc_restrictions;
+
+import "google/protobuf/timestamp.proto";
+import "production/dependency/rpc/outboundacl/proto/protocols.proto";
+import "production/resources/dataplatform/idx/time_series/public/proto/idx_time_series_record.proto";
+import "security/dataprotection/collection/public/collection_service.proto";
+import "security/rpc_restrictions/restriction_usage_reporting.proto";
+
+option java_multiple_files = true;
+option java_package = "com.google.security.dataprotection.collection.proto.rpcrestrictions";
+
+message RestrictionEventReport {
+    optional secure_collection.MessageSource message_source = 1;
+    optional google.protobuf.Timestamp event_timestamp = 2;
+    repeated RestrictionUsageEvent usage_events = 3;
+    optional .idx.time_series.ingestion.proto.IDXTimeSeriesMetadata idx_internal_metadata = 9;
+}
+
+message RestrictionUsageEvent {
+    optional security_rpc_restrictions.PermissionUsageReport sample_usage_report = 1;
+    optional string process = 2;
+    optional production.dependency.rpc.outboundacl.Protocol protocol = 3;
+    optional string server_borg_user = 4;
+    optional string server_borg_job = 5;
+    optional string server_borg_cell = 6;
+}

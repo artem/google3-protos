@@ -1,0 +1,705 @@
+syntax = "proto2";
+
+package colossus;
+
+import "file/colossus/proto/base.proto";
+import "file/colossus/proto/client_info.proto";
+import "file/colossus/proto/public.proto";
+import "file/colossus/proto/stack_trace.proto";
+import "google/protobuf/duration.proto";
+import "google/protobuf/timestamp.proto";
+import "security/panoptikeys/crypto_key_classes/crypto_key_classes_binding.proto";
+import "security/panoptikeys/crypto_key_params/crypto_key_params.proto";
+import "storage/datapol/annotations/proto/semantic_annotations.proto";
+import "storage/l4/public/cache_name.proto";
+import "storage/util/int128/int128.proto";
+import "tech/file/proto/types.proto";
+import "util/task/status.proto";
+
+option cc_enable_arenas = true;
+option java_package = "com.google.io.file.colossus";
+
+message StripeChunk {
+    required int32 index = 1;
+    required string location = 2;
+    required int64 disk_id = 3;
+    required uint64 chunk_handle = 4;
+    optional uint64 version = 5;
+    
+    required State state = 6;
+    enum State {
+        READ = 0;
+        WRITE = 1;
+        RECOVERING = 2;
+        UNAVAILABLE = 3;
+        ABANDONED = 4;
+        MISSING = 5;
+        DEAD = 6;
+        ABANDONED_DEPRECATED = 7;
+    }
+    
+    optional int64 length = 7;
+    optional uint32 checksum = 8;
+    
+    optional CapabilityWrapper capability = 12;
+    message CapabilityWrapper {
+        optional bytes c = 8 [ctype = CORD];
+    }
+    
+    optional Layer layer = 10 [default = CMETA];
+    enum Layer {
+        CMETA = 0;
+        DISK = 1;
+        SERVER = 2;
+        CONFIG = 3;
+    }
+    
+    optional string reason = 11;
+    optional .util.StatusProto reason_status = 14;
+    repeated bytes ip_address = 13;
+    optional bool is_partially_corrupted = 15 [default = false];
+}
+
+message RebalanceAnnotation {
+    optional Reason reason = 1 [default = DRAIN];
+    enum Reason {
+        DRAIN = 0;
+        LAME = 1;
+        OVER_FULL = 2;
+        RISK_DIVERSITY = 3;
+        PARTITION = 4;
+        USER = 5;
+        SOFT_OVERFULL = 7;
+        UNHEALTHY = 8;
+        EVICTION = 9;
+        LDD = 10;
+    }
+    
+    optional Event event = 2 [default = START];
+    enum Event {
+        START = 0;
+        RETRY = 1;
+    }
+    
+    repeated int32 sources = 3;
+    
+    optional Method method = 4;
+    enum Method {
+        PULL = 0;
+        RECONSTRUCT = 1;
+    }
+}
+
+message RecoveryAnnotation {
+    optional Event event = 1 [default = START];
+    enum Event {
+        START = 0;
+        RETRY = 1;
+        REVIVED = 2;
+    }
+    
+    repeated int32 sources = 2;
+}
+
+message StripeWriteTieringInfo {
+    optional State state = 1;
+    enum State {
+        UNKNOWN = 0;
+        ADMITTED = 1;
+        EVICTING = 2;
+        EVICTED = 3;
+        ADMITTED_OUT_OF_QUOTA = 4;
+        ADMITTED_DISALLOWED_ENCODING = 5;
+    }
+    
+    optional google.protobuf.Timestamp expiration_time = 2;
+}
+
+message StripeAnnotation {
+    optional Type type = 1 [default = REBALANCE];
+    enum Type {
+        REBALANCE = 0;
+        RECOVERY = 1;
+    }
+    
+    optional RebalanceAnnotation rebalance_annotation = 2;
+    optional RecoveryAnnotation recovery_annotation = 3;
+}
+
+message RebalanceType {
+    enum Type {
+        DRAIN = 0;
+        LAME = 1;
+        OVER_FULL = 2;
+        RISK_DIVERSITY = 3;
+        PARTITION = 4;
+        USER = 5;
+        SOFT_OVERFULL = 7;
+        UNHEALTHY = 8;
+        TIERING_EVICTION = 9;
+        PREEMPTIVE = 10;
+        LDD = 11;
+    }
+}
+
+message MaintenanceOperationInfo {
+    optional google.protobuf.Timestamp expiration_time = 1;
+    
+    repeated Chunk sources = 4;
+    message Chunk {
+        optional uint64 handle = 1;
+        optional int32 index = 2;
+    }
+    
+    repeated Chunk destinations = 5;
+    
+    oneof type_specific_info {
+        RecoveryInfo recovery_info = 2;
+        RebalanceInfo rebalance_info = 3;
+    }
+    
+    message RecoveryInfo {
+        
+    }
+    
+    message RebalanceInfo {
+        optional RebalanceType.Type type = 1;
+    }
+}
+
+message Stripe {
+    required State state = 1;
+    enum State {
+        OPEN = 0;
+        CLOSED = 1;
+        FINALIZED = 2;
+        CORRUPT = 3;
+    }
+    
+    optional int64 generation = 11;
+    optional int64 data_length = 2;
+    optional fixed32 data_crc32c = 14;
+    repeated fixed32 checksums = 4;
+    optional int64 close_time = 3;
+    optional int64 close_time_secs_with_missing_chunks = 24 [deprecated = true];
+    optional int64 oldest_invalid_or_missing_chunk_time_secs = 33;
+    repeated StripeChunk chunks = 10;
+    repeated int32 chunks_length_overhead = 17;
+    
+    optional CloseMethod close_method = 5 [default = CLIENT];
+    enum CloseMethod {
+        CLIENT = 0;
+        FORCED = 1;
+        ADMIN_UNRECOVERABLE = 2;
+    }
+    
+    optional int32 missing_chunks_at_close = 12 [default = 0];
+    optional int64 tentative_generation = 13;
+    optional int64 created_time_secs = 27;
+    optional int64 modified_time = 15;
+    repeated StripeAnnotation annotation = 6;
+    optional bytes encryption_auth_code = 18;
+    optional fixed32 plaintext_crc32c = 20;
+    optional bool spilled_over = 22;
+    optional bool reencrypt_on_open = 23;
+    optional StripeWriteTieringInfo write_tiering_info = 25;
+    
+    optional RodosWriteInformation rodos_write_information = 26;
+    enum RodosWriteInformation {
+        RODOS_WRITE_INFORMATION_UNSPECIFIED = 0;
+        INTENDING_TO_WRITE_USING_RODOS = 1;
+        NO_DATA_WRITTEN_USING_RODOS = 2;
+        DATA_WRITTEN_USING_RODOS = 3;
+    }
+    
+    repeated MaintenanceOperationInfo maintenance_op_infos = 28;
+    optional int32 decryption_failures_since_last_major_change = 29;
+    optional RequestID last_decryption_failure_reporter = 31;
+    optional bool modified_by_rodos_reconstructor = 30;
+    optional bool using_wal_client_library = 32;
+    
+    reserved 16, 19, 21;
+}
+
+message FileEncoding {
+    optional Kind kind = 1;
+    enum Kind {
+        REPLICATED = 0;
+        REED_SOLOMON = 1;
+        NESTED = 2;
+    }
+    
+    optional int64 stripe_length = 2;
+    optional int64 block_length = 3;
+    optional int32 data_chunks = 4;
+    optional int32 code_chunks = 5;
+    optional int32 drows = 8;
+    optional int32 dcols = 9;
+    optional int32 wcrows = 10;
+    optional int32 wccols = 11;
+    optional int32 ccs_per_dcol = 12;
+    optional int32 ccs_per_wccol = 13;
+    optional int32 commit_chunks = 6;
+    optional int32 quantum_length = 7;
+    
+    optional EncryptionMode encryption_mode = 14;
+    enum EncryptionMode {
+        NO_ENCRYPTION = 0;
+        DEFAULT_ENCRYPTION_OVERHEAD = 1;
+        ENCRYPTION_OVERHEAD_24 = 2;
+        ENCRYPTION_OVERHEAD_32 = 3;
+        ENCRYPTION_OVERHEAD_0 = 4;
+    }
+    
+    optional int32 encryption_segment_length = 15;
+    optional int64 logical_stripe_length = 22;
+    optional int64 logical_block_length = 19;
+    
+    reserved 16, 17, 18, 20, 21;
+}
+
+message PlacementPolicy {
+    optional Format format = 6 [default = UNDEFINED];
+    enum Format {
+        UNDEFINED = 0;
+        UNIFIED = 1;
+    }
+    
+    optional string partition = 1;
+    optional int32 num_chunks = 2;
+    optional PartitionPolicy partition_policy = 4;
+    optional DataPolicy data_policy = 5;
+    
+    optional WriteTieringInfo write_tiering_info = 37;
+    message WriteTieringInfo {
+        optional storage_l4.CacheNameProto l4_cache_name = 5;
+        optional tech.file.QuotaAccounting ssd_quota_accounting = 2;
+        optional tech.file.DiskTimeBucket eviction_bucket = 3;
+        map<string, string> census_tags = 4;
+        
+        optional CacheNameSource cache_name_source = 7;
+        enum CacheNameSource {
+            CACHE_NAME_SOURCE_UNSPECIFIED = 0;
+            CACHE_NAME_SOURCE_CLIENT_CACHE_SETTINGS = 1;
+            CACHE_NAME_SOURCE_USER_FLEX_REGISTRATIONS = 2;
+            CACHE_NAME_SOURCE_FLEX_DEFAULT_CELL_WIDE_CACHE = 3;
+        }
+        
+        optional google.protobuf.Duration force_admission_with_ttl = 6;
+        
+        reserved 1;
+    }
+    
+    reserved 3;
+}
+
+message PartitionPolicy {
+    optional string name = 1;
+    optional int32 num_chunks = 2;
+    optional bool fallback = 3 [default = false];
+    optional int32 ttl_secs = 4 [default = 0];
+    optional bool evicted = 5 [default = false];
+    optional bool ttl_expired = 6 [default = false];
+    
+    enum Symbolic {
+        DATA = -1;
+        DATA_AND_COLUMN = -2;
+        ALL = -3;
+    }
+}
+
+message DataPolicy {
+    optional Entity entity = 1 [default = NORMAL];
+    enum Entity {
+        NORMAL = 0;
+        METADATA = 1;
+    }
+    
+    optional Access access_hdd = 2 [default = DEFAULT];
+    enum Access {
+        DEFAULT = 0;
+        COLD = 1;
+    }
+    
+    optional Access access_ssd = 3 [default = DEFAULT];
+}
+
+message FileEncryptionKey {
+    optional bytes aes_key = 1;
+    optional uint32 aes_key_crc32c = 3;
+    optional bytes mac_key = 2;
+    optional uint32 mac_key_crc32c = 4;
+    optional bytes checksum_key = 5;
+    optional uint32 checksum_key_crc32c = 6;
+}
+
+message FileEncryptionInfo {
+    optional int32 keystore_config_id = 1;
+    optional string master_key_name = 2;
+    optional bytes master_key_hash = 3;
+    optional bytes wrapped_key = 4;
+    optional bytes previous_wrapped_key = 14;
+    optional fixed32 previous_wrapped_key_crc32c = 18;
+    optional bytes backup_wrapped_key = 17;
+    optional fixed32 wrapped_key_crc32c = 12;
+    optional bytes encryption_key_hash = 13;
+    optional bytes double_wrapped_key = 15;
+    optional fixed32 double_wrapped_key_crc32c = 16;
+    optional bytes wrapped_checksum_key = 19;
+    optional fixed32 wrapped_checksum_key_crc32c = 20;
+    repeated string owner = 5;
+    optional string document_id = 6;
+    optional int64 expiry = 8;
+    optional tech.file.EncryptionMode encryption_mode = 9;
+    optional int32 encryption_key_length = 10;
+    optional int32 key_type = 11;
+    
+    reserved 7;
+}
+
+message FileParameters {
+    optional FileEncoding encoding = 1;
+    optional int32 stripe_index = 3 [default = -1];
+    optional bool use_proxy = 5;
+    optional string namespace_filename = 6;
+    optional int32 gc_delay_secs = 7 [default = 0x3f480];
+    optional Challenge challenge = 9;
+    optional string partition = 12;
+    optional CFSCapability cfs_capability = 13;
+    optional FileEncryptionInfo encryption_info = 14;
+    optional PlacementPolicy placement_policy = 15;
+    optional bool raw_ciphertext_access = 16;
+    optional bool verify_authorship = 17 [default = true];
+    optional int32 encryption_ttl_secs = 18;
+    optional int32 auto_placement_ttl_secs = 19;
+    optional int64 folder_generation = 20;
+    optional bool already_encrypted = 21;
+    optional EncryptionExemption encryption_exemption = 25;
+    optional bool placement_policy_partition_force_replace = 23 [default = true];
+    optional tech.file.QuotaAccounting quota_accounting = 24;
+    
+    oneof file_identifier {
+        int64 id = 2 [default = 0];
+        string version = 26;
+    }
+    
+    oneof ttl {
+        int32 ttl_secs = 4;
+        bool inherit_ttl = 27;
+    }
+    
+    oneof expiration_time {
+        int64 expiration_time_secs = 22;
+        bool inherit_expiration_time = 28;
+    }
+    
+    reserved 10, 11;
+}
+
+message FileStats {
+    required int64 create_time = 1;
+    required int64 modified_time = 2;
+    optional int64 length = 3;
+    optional bytes encryption_auth_code = 11;
+    optional fixed32 plaintext_crc32c = 24;
+    optional ClientInfo creator = 19;
+    optional ClientInfo writer = 20;
+    optional ClientInfo deleter = 22;
+    optional ClientInfo finalizer = 23;
+    optional string owner = 5;
+    optional string group = 6;
+    optional fixed32 mode = 7;
+    optional int32 ttl_secs = 8;
+    optional int64 create_iff_new_id = 12;
+    optional tech.file.QuotaAccounting quota_accounting = 15;
+    optional CfsExtendedAttributes extended_attributes = 21;
+    
+    reserved 4, 9, 10, 13, 14, 16, 17, 18;
+}
+
+message CfsExtendedAttributes {
+    optional bytes testing_extended_attribute = 1 [ctype = CORD];
+    optional bytes bigtable_extended_attribute = 2 [ctype = CORD];
+    optional bytes blobstore_policy_extended_attribute = 4 [ctype = CORD];
+    optional bytes negba_extended_attribute = 3 [ctype = CORD];
+    optional bytes l4_extended_attribute = 5 [ctype = CORD];
+    optional bytes original_encoding_extended_attribute = 6 [ctype = CORD];
+    optional bytes cns2_stripe_sharing_extended_attribute = 7 [ctype = CORD];
+    optional bytes negba_finalization_extended_attribute = 8 [ctype = CORD];
+    optional bytes fastbyte_writer_sequence_number_attribute = 9 [ctype = CORD];
+}
+
+message DeadChunk {
+    required string location = 1;
+    optional int64 disk_id = 3;
+    required uint64 chunk_handle = 2;
+    optional int64 chunk_became_dead_unix_seconds = 4 [default = 0x7fffffffffffffff];
+}
+
+message NamespaceMetadata {
+    required string filename = 1;
+    optional fixed64 operation_id = 3;
+    
+    oneof id_representation {
+        int64 __id = 2 [deprecated = true];
+        storage_util.Int128 __large_id = 4 [deprecated = true];
+    }
+}
+
+message FileDescriptor {
+    optional Version version = 1;
+    enum Version {
+        UNKNOWN = 0;
+        OBSOLETE_BASE = 1;
+        OBSOLETE_PARALLEL_WRITE = 2;
+        OBSOLETE_SNAPSHOTS = 3;
+        OBSOLETE_FRAGMENTATION = 4;
+        OBSOLETE_NOCHUNKCHECKSUM = 5;
+        OBSOLETE_DVOLUMES = 6;
+        UNIFIED_PLACEMENT = 7;
+        ENCRYPTION_METADATA_BACKFILL = 8;
+    }
+    
+    required int64 id = 3;
+    optional int64 generation = 13;
+    optional int64 capability_generation = 19 [default = 1];
+    
+    required State state = 4;
+    enum State {
+        MUTABLE = 1;
+        FINALIZED = 2;
+        DELETED = 3;
+    }
+    
+    optional bool stripes_deleted = 20 [default = true];
+    optional bool is_protected = 18 [default = false];
+    
+    optional WriteMode write_mode = 11 [default = APPEND_ONLY];
+    enum WriteMode {
+        APPEND_ONLY = 1;
+        PARALLEL = 2;
+    }
+    
+    required FileStats stats = 5;
+    required FileEncoding encoding = 6;
+    
+    optional Properties properties = 25;
+    message Properties {
+        optional string partition = 1;
+    }
+    
+    optional AutoPlacementPolicy auto_placement_policy = 28;
+    message AutoPlacementPolicy {
+        optional string partition = 1;
+        optional int32 ttl_secs = 2;
+        optional int32 replication_factor = 3;
+        optional AutoPlacementType type = 4;
+        optional string quota_parent = 5;
+        optional bool evicted = 6 [default = false];
+    }
+    
+    optional PlacementPolicy placement_policy = 32;
+    optional FileEncryptionInfo encryption_info = 29;
+    optional bool raw_ciphertext_mode = 36;
+    optional int32 stripe_offset = 9;
+    optional int32 stripe_count = 22;
+    optional int64 length = 23;
+    optional bytes encryption_auth_code = 30;
+    optional fixed32 plaintext_crc32c = 40;
+    optional bool already_encrypted = 34;
+    optional EncryptionExemption encryption_exemption = 35;
+    optional bool encryption_opt_out = 38;
+    repeated Stripe stripes = 7;
+    repeated DeadChunk dead_chunks = 8;
+    optional NamespaceMetadata namespace_meta = 12;
+    optional bool namespace_meta_modified = 21;
+    optional int64 tentative_id = 14;
+    optional int64 tentative_generation = 15;
+    optional string tentative_generation_grantee = 27;
+    
+    repeated Snapshot snapshots = 17;
+    message Snapshot {
+        optional string extension = 1;
+        optional string alternate_base = 7;
+        optional int64 id = 2 [default = -1];
+        optional int32 stripe_count = 3 [default = 0];
+        optional int32 skip_count = 4 [default = 0];
+        optional bool copy_on_write = 5 [default = false];
+        optional bool clone_on_snapshot = 6 [default = false];
+    }
+    
+    optional Internal internal = 16;
+    message Internal {
+        optional int64 previous_id = 1;
+        optional int32 previous_version = 2;
+        optional int32 previous_stripe_count = 3;
+        optional bool snapshots_resolved = 4;
+        
+        reserved 5;
+    }
+    
+    optional MutationTrigger mutation_trigger = 37;
+    message MutationTrigger {
+        optional string originator = 1;
+        optional string operation_name = 2;
+        optional string method = 3;
+        optional fixed64 trace_id = 4;
+    }
+    
+    optional FileEvents file_events = 39;
+    message FileEvents {
+        optional StackTraceProto create_stack_trace = 1;
+    }
+    
+    optional SupportedFeatures supported_features = 41;
+    message SupportedFeatures {
+        optional bool allow_snapshot_of_mutable_file = 1 [default = true];
+    }
+    
+    extensions 10000 to max;
+    
+    reserved 2, 10, 24, 26, 31, 33;
+}
+
+message CompressibleCdi {
+    optional string cfs_filename = 1;
+    optional string cns_filename = 2;
+    optional string master_key_name = 3;
+    optional bytes wrapped_key = 4;
+    repeated string owner = 5;
+    optional string document_id = 6;
+}
+
+message ChunkDebugInfo {
+    optional bytes compressed_data = 16;
+    optional bytes encrypted_data = 18;
+    required int64 id = 2;
+    optional int64 base_file_id = 19;
+    optional int64 folder_generation = 14;
+    required int32 stripe_index = 3;
+    optional int32 physical_stripe_index = 9;
+    required int32 chunk_index = 4;
+    optional int64 encryption_offset = 11;
+    optional bytes encryption_auth_code = 12;
+    optional fixed32 plaintext_crc32c = 15;
+    optional fixed32 data_crc32c = 17;
+    optional int64 stripe_data_length = 7;
+    optional string file_name = 1;
+    optional FileEncoding encoding = 5;
+    optional int64 file_create_time = 6;
+    optional NamespaceMetadata namespace_meta = 8;
+    optional int64 snapshot_id = 10;
+    optional FileEncryptionInfo encryption_info = 13;
+}
+
+message NamespaceID {
+    oneof id_representation {
+        int64 __id = 1 [deprecated = true];
+        storage_util.Int128 __large_id = 2 [deprecated = true];
+    }
+}
+
+message MetadataInfo {
+    optional bytes legacy_serialized_sensitive_metadata = 1;
+    optional bytes serialized_sensitive_metadata = 2;
+    optional CompressibleCdi legacy_sensitive_metadata = 8;
+    
+    optional ChunkIdentity chunk_identity = 3;
+    message ChunkIdentity {
+        optional int64 file_id = 1;
+        optional int64 base_file_id = 2;
+        optional int64 folder_generation = 3;
+        optional int32 stripe_index = 4;
+        optional int32 physical_stripe_index = 5;
+        optional int32 chunk_index = 6;
+    }
+    
+    optional FileMetadata file_metadata = 4;
+    message FileMetadata {
+        optional FileEncoding encoding = 1;
+        optional int64 file_create_time = 2;
+        optional int64 snapshot_id = 3;
+    }
+    
+    optional StripeMetadata stripe_metadata = 5;
+    message StripeMetadata {
+        optional int64 stripe_data_length = 1;
+        optional fixed32 data_crc32c = 2;
+    }
+    
+    optional EncryptionMetadata encryption_metadata = 6;
+    message EncryptionMetadata {
+        optional int32 keystore_config_id = 1;
+        optional string master_key_hash = 2;
+        optional fixed32 wrapped_key_crc32c = 3;
+        optional bytes encryption_key_hash = 4;
+        optional bytes double_wrapped_key = 5;
+        optional fixed32 double_wrapped_key_crc32c = 6;
+        optional bytes wrapped_checksum_key = 7;
+        optional fixed32 wrapped_checksum_key_crc32c = 8;
+        optional int64 encryption_key_expiry = 9;
+        optional tech.file.EncryptionMode encryption_mode = 10;
+        optional int32 encryption_key_length = 11;
+        optional int32 key_type = 12;
+        
+        reserved 13;
+    }
+    
+    optional NamespaceID cns_id = 7;
+    
+    optional DroppedFields dropped_fields = 9;
+    message DroppedFields {
+        optional bytes previous_wrapped_key = 1;
+        optional fixed32 previous_wrapped_key_crc32c = 2;
+        optional bytes backup_wrapped_key = 3;
+        optional fixed64 operation_id = 4;
+    }
+}
+
+message DataOffsetInfo {
+    optional int64 physical_offset = 1;
+    optional bytes encryption_auth_code = 2;
+    optional fixed32 plaintext_crc32c = 3;
+}
+
+message FileDelegate {
+    option no_standard_descriptor_accessor = true;
+    optional FileDescriptor descriptor = 1;
+    optional CFSCapability cfs_capability = 2;
+    optional KeystoreInstance keystore_affinity = 4;
+    
+    reserved 3;
+}
+
+message FileIdMapping {
+    optional string filename = 1;
+    optional string extension = 2;
+    optional int64 last_seen = 3;
+    
+    optional Creator creator = 4 [default = CMETA_FILES_LOG];
+    enum Creator {
+        CMETA_FILES_LOG = 0;
+        CMETA_FILES_FSCK = 1;
+    }
+}
+
+message ColossusKeyWithMetadata {
+    optional bytes wrapped_key_ciphertext = 1;
+    
+    optional KeyType key_type = 2;
+    enum KeyType {
+        UNKNOWN = 0;
+        NON_AEAD_WRAPPED_KEY = 1;
+    }
+}
+
+enum DExtendedAttributes {
+    CHUNK_DEBUG_INFO_LEGACY_RESERVED = 0;
+    CHUNK_DEBUG_INFO_METADATA_INFO = 1;
+    CHUNK_DEBUG_INFO_DATA_OFFSET_INFO = 2;
+}
+
+enum KeystoreInstance {
+    DEFAULT_KEYSTORE = 0;
+    ZONAL_KEYSTORE = 1;
+}

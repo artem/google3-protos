@@ -1,0 +1,88 @@
+syntax = "proto3";
+
+package stats_census;
+
+message Censusz {
+    bool is_census_enabled = 1;
+    
+    repeated View views = 2;
+    message View {
+        string name = 1;
+        ViewType view_type = 2;
+        string resource_name = 3;
+        string measure_name = 4;
+        repeated TagSelector tag_selectors = 5;
+    }
+    
+    LayerLocalTags layer_local_tags = 3;
+    message LayerLocalTags {
+        repeated string registered = 1;
+        repeated string accepted_and_propagated = 2;
+    }
+    
+    CpuStats cpu_stats = 4;
+    message CpuStats {
+        Stats tick_count_delta = 1;
+        Stats rsd_tick_count_delta = 2;
+        Stats stuck_pc_count_delta = 3;
+    }
+    
+    repeated UserDefinedSinkStats user_defined_sink_stats = 5;
+    message UserDefinedSinkStats {
+        Stats write_calls_num = 1;
+        Stats sampled_records_num = 2;
+        int64 sampled_capacity = 3;
+        Stats dropped_records_num = 4;
+        Stats flush_duration_millis = 5;
+        int64 flush_interval_millis = 6;
+        string id = 7;
+    }
+    
+    repeated Tag tags = 6;
+    message Tag {
+        string key = 1;
+        Stats observed_cardinality = 2;
+        int64 max_allowed_inbound_cardinality = 3;
+        Stats over_quota_count = 4;
+        string config_link = 5;
+    }
+    
+    bytes meta = 7;
+    
+    Exporter exporter = 8;
+    message Exporter {
+        repeated MetricStat metric_stats = 1;
+        message MetricStat {
+            string name = 1;
+            Stats point_count = 2;
+            Stats bytes_sent = 3;
+        }
+        
+        int64 entities_count = 2;
+        int64 requests_count = 3;
+        
+        repeated BatchesStat batches_stats = 4;
+        message BatchesStat {
+            int64 requests_count = 1;
+            int64 latency_time_millis = 2;
+        }
+    }
+    
+    message Stats {
+        int64 latest = 1;
+        int64 max = 2;
+    }
+    
+    message TagSelector {
+        string key = 1;
+        string allowlist = 2;
+        string blocklist = 3;
+    }
+    
+    enum ViewType {
+        VIEW_TYPE_UNSPECIFIED = 0;
+        PIPER_VIEW = 1;
+        FLAG_VIEW = 2;
+        PROGRAM_VIEW = 3;
+    }
+}

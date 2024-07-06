@@ -1,0 +1,20 @@
+syntax = "proto2";
+
+package cloud.logging;
+
+import "net/proto2/proto/descriptor.proto";
+import "privacy/data_governance/attributes/proto/classification.proto";
+
+message LoggingDataGovernance {
+    optional privacy.data_governance.attributes.classification.Source source = 1;
+    optional privacy.data_governance.attributes.classification.SemanticContext semantic_context = 2;
+    optional privacy.data_governance.attributes.classification.Confidentiality confidentiality = 3;
+}
+
+extend .proto2.FieldOptions {
+    optional LoggingDataGovernance data_governance = 367211393;
+}
+
+extend .proto2.MethodOptions {
+    optional LoggingDataGovernance data_governance_response = 367211394;
+}

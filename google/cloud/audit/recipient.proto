@@ -1,0 +1,22 @@
+syntax = "proto3";
+
+package google.cloud.audit;
+
+import "google/api/visibility.proto";
+import "storage/datapol/annotations/proto/semantic_annotations.proto";
+
+option java_multiple_files = true;
+option java_outer_classname = "RecipientProto";
+option java_package = "com.google.cloud.audit";
+
+message Recipient {
+    oneof id {
+        int64 project_number = 1;
+        string project_id = 4;
+        int64 organization_number = 2;
+        string billing_account = 3;
+        int64 folder_number = 5;
+        string resource_container_name = 7;
+        string flex_id = 6;
+    }
+}

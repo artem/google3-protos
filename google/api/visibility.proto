@@ -1,48 +1,45 @@
 syntax = "proto3";
 
-import "net/proto2/proto/descriptor.proto";
 package google.api;
 
-option java_package = "com.google.api";
-option java_outer_classname = "VisibilityProto";
-option java_multiple_files = true;
-option go_package = "google.golang.org/genproto/googleapis/api/annotations;annotations";
-option cc_enable_arenas = true;
+import "net/proto2/proto/descriptor.proto";
+
 option objc_class_prefix = "GAPI";
+option cc_enable_arenas = true;
+option go_package = "google.golang.org/genproto/googleapis/api/visibility;visibility";
+option java_multiple_files = true;
+option java_outer_classname = "VisibilityProto";
+option java_package = "com.google.api";
 
 message Visibility {
-  repeated .google.api.VisibilityRule rules = 1;
-  reserved 2, 3;
+    repeated VisibilityRule rules = 1;
 }
 
 message VisibilityRule {
-  string selector = 1;
-  string restriction = 2;
-  reserved 3;
+    string selector = 1;
+    string restriction = 2;
 }
 
 extend .proto2.ServiceOptions {
-  .google.api.VisibilityRule api_visibility = 72295727;
+    VisibilityRule api_visibility = 72295727;
 }
 
 extend .proto2.MethodOptions {
-  .google.api.VisibilityRule method_visibility = 72295727;
+    VisibilityRule method_visibility = 72295727;
 }
 
 extend .proto2.MessageOptions {
-  .google.api.VisibilityRule message_visibility = 72295727;
+    VisibilityRule message_visibility = 72295727;
 }
 
 extend .proto2.FieldOptions {
-  .google.api.VisibilityRule field_visibility = 72295727;
+    VisibilityRule field_visibility = 72295727;
 }
 
 extend .proto2.EnumOptions {
-  .google.api.VisibilityRule enum_visibility = 72295727;
+    VisibilityRule enum_visibility = 72295727;
 }
 
 extend .proto2.EnumValueOptions {
-  .google.api.VisibilityRule value_visibility = 72295727;
+    VisibilityRule value_visibility = 72295727;
 }
-
-

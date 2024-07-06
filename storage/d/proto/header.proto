@@ -1,0 +1,87 @@
+syntax = "proto2";
+
+package storage_d;
+
+import "net/base/qos.proto";
+import "net/proto2/bridge/proto/message_set.proto";
+import "storage/d/proto/aio-details.proto";
+import "storage/d/proto/throttling-details.proto";
+
+option cc_enable_arenas = true;
+
+message RequestHeader {
+    optional string acting_user = 1;
+    optional string resource_user = 2;
+    optional string isolation_class = 4;
+    
+    optional Priority priority = 8 [default = LOW_LATENCY];
+    enum Priority {
+        option allow_alias = true;
+        MIN_PRIORITY = 0;
+        P0 = 0;
+        BEST_EFFORT = 0;
+        P1 = 1;
+        P2 = 2;
+        P3 = 3;
+        BATCH = 3;
+        P4 = 4;
+        P5 = 5;
+        P6 = 6;
+        P7 = 7;
+        LOW_LATENCY = 7;
+        P8 = 8;
+        P9 = 9;
+        ULTRA_LOW_LATENCY = 10;
+    }
+    
+    optional bool internal_operation = 3;
+    optional double soft_deadline = 7;
+    optional string reservation_cookie = 9;
+    optional bool is_pulling = 11;
+    optional int64 colossus_file_id = 12;
+    optional int64 colossus_base_file_id = 19;
+    optional SplintersMeta splinters = 13;
+    optional bool dfile_unexpected_usage = 17;
+    optional bool client_supports_error_device_busy = 18;
+    
+    reserved 5 to 6, 10, 14 to 16;
+}
+
+message Cid {
+    optional string resource_user = 1;
+    optional string isolation_class = 2;
+    optional RequestHeader.Priority priority = 3 [default = LOW_LATENCY];
+}
+
+message ReplyHeader {
+    optional double soft_deadline_threshold = 1;
+    optional bool over_disk_time_quota = 2;
+    optional AioDetails aio_details = 5;
+    optional net_base.qos.TrafficClass traffic_class = 6;
+    optional ThrottlingDetails throttling_details = 11;
+    
+    reserved 3, 4, 7, 8, 9, 10;
+    
+    extend .proto2.bridge.MessageSet {
+        optional ReplyHeader message_set_extension = 243922667;
+    }
+}
+
+message SplintersMeta {
+    repeated File files = 4;
+    message File {
+        optional int64 cfs_file_id = 1;
+        optional int64 cfs_base_file_id = 9;
+        optional bool is_cfs2_file = 4;
+        optional bool is_timelock_file = 8;
+        optional uint64 backing_chunk_id = 3;
+        
+        reserved 2;
+    }
+    
+    optional int64 original_d_access_offset = 5;
+    optional int64 original_d_access_size = 7;
+    optional net_base.qos.TrafficClass traffic_class = 6;
+    
+    reserved 1 to 3;
+}

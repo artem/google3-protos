@@ -1,0 +1,119 @@
+syntax = "proto2";
+
+package cdd;
+
+import "storage/datapol/annotations/proto/semantic_annotations.proto";
+
+option java_multiple_files = true;
+option java_package = "com.google.chubby.cdd.impl.state";
+
+message Selector {
+    required Operation operation = 1;
+    enum Operation {
+        TASK_LIST = 100;
+        TAG_REGEXP = 103;
+    }
+    
+    repeated int32 values = 2;
+    optional string text = 3;
+}
+
+message Rule {
+    required string client = 1;
+    repeated string cell = 2;
+    required string acl = 3;
+    optional string notify = 4;
+    optional string p4file = 5;
+    optional string compiler = 6;
+    optional bool allow_gzip = 28;
+    optional string message = 23;
+    optional string proto = 24;
+    optional bool auto_proto_dep = 33;
+    optional bool use_global_protodb = 36 [default = false];
+    optional string gclmodel = 25;
+    optional string gclobjtype = 26 [default = "config"];
+    optional string gclobject = 27;
+    optional bool strict_proto_conversion = 37;
+    optional bool manual = 7 [default = false];
+    optional string bns_name = 8;
+    optional int32 max_versions_on_canaries = 9;
+    optional int32 max_tolerated_failures = 10;
+    optional bool revert_on_error = 11 [default = false];
+    optional int32 task_count = 12 [default = 0];
+    optional bool disable_canaries_on_turnup = 34 [default = false];
+    
+    optional group Source = 13 {
+        optional int64 watch_duration_ms = 14 [default = 0];
+    }
+    
+    optional group Baseline = 15 {
+        optional string canary_tag = 16;
+    }
+    
+    repeated group Canaries = 17 {
+        required string selector = 18;
+        optional Selector parsed_selector = 19;
+        optional string canary_tag = 20;
+        optional int64 rate_limit_ms = 21;
+        optional int64 watch_duration_ms = 22 [default = 0];
+        repeated string bns_to_validate_varz = 30;
+    }
+    
+    optional NotifyLevel notify_level = 31 [default = INFO];
+    enum NotifyLevel {
+        VERBOSE = 0;
+        INFO = 1;
+        WARNING = 2;
+        ERROR = 3;
+    }
+    
+    optional bool export_client = 32;
+    
+    reserved 35;
+}
+
+message Client {
+    required Rule rule = 1;
+    
+    required group State = 2 {
+        optional int64 baseline = 3;
+        
+        repeated group Canaries = 5 {
+            optional int64 version = 6;
+            optional int64 time_start = 7;
+            optional int64 time_end = 8;
+        }
+    }
+    
+    required group Data = 12 {
+        required int64 last_version = 13;
+        
+        repeated group Blacklist = 14 {
+            required int64 version = 15;
+            required bool revert = 29;
+            required int64 time = 16;
+            optional string reason = 17;
+        }
+        
+        repeated group Mapping = 18 {
+            required int64 version = 19;
+            optional bool gzipped = 32;
+            
+            optional group P4 = 20 {
+                required string p4file = 21;
+                required int64 revision = 22;
+                optional int64 cl = 30;
+                optional int64 option_checksum = 31;
+            }
+            
+            optional group Manual = 23 {
+                required string file = 24;
+                required string user = 25;
+                required string hostname = 26;
+                required int64 time = 27;
+                optional string binary = 33;
+                optional string build_target = 34;
+            }
+        }
+    }
+}

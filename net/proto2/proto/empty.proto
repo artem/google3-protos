@@ -2,11 +2,11 @@ syntax = "proto2";
 
 package proto2;
 
-option java_package = "com.google.protobuf";
-option java_outer_classname = "EmptyProtos";
+option objc_class_prefix = "GPB";
 option cc_enable_arenas = true;
+option java_outer_classname = "EmptyProtos";
+option java_package = "com.google.protobuf.proto1api";
 
 message Empty {
+    
 }
-
-

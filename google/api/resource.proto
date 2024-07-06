@@ -1,24 +1,78 @@
 syntax = "proto3";
 
-import "net/proto2/proto/descriptor.proto";
 package google.api;
 
-option java_package = "com.google.api";
-option java_outer_classname = "ResourceProto";
-option java_multiple_files = true;
+import "google/api/visibility.proto";
+import "net/proto2/proto/descriptor.proto";
+
 option objc_class_prefix = "GAPI";
+option cc_enable_arenas = true;
+option go_package = "google.golang.org/genproto/googleapis/api/annotations;annotations";
+option java_multiple_files = true;
+option java_outer_classname = "ResourceProto";
+option java_package = "com.google.api";
+
+message ResourceDescriptor {
+    string type = 1;
+    repeated string pattern = 2;
+    string name_field = 3;
+    
+    History history = 4;
+    enum History {
+        HISTORY_UNSPECIFIED = 0;
+        ORIGINALLY_SINGLE_PATTERN = 1;
+        FUTURE_MULTI_PATTERN = 2;
+    }
+    
+    string plural = 5;
+    string singular = 6;
+    
+    repeated ResourceNameDescriptor name_descriptor = 7;
+    message ResourceNameDescriptor {
+        string pattern = 1;
+        string parent_type = 2;
+        string parent_name_extractor = 3;
+        string location_extractor = 4;
+    }
+    
+    repeated Style style = 10;
+    enum Style {
+        STYLE_UNSPECIFIED = 0;
+        DECLARATIVE_FRIENDLY = 1;
+    }
+    
+    reserved 8, 9;
+}
+
+message ResourceReference {
+    string type = 1;
+    string child_type = 2;
+}
 
 message ResourceContainer {
-  repeated .google.api.ResourceContainerRule rules = 1;
+    option deprecated = true;
+    repeated ResourceContainerRule rules = 1;
 }
 
 message ResourceContainerRule {
-  string selector = 1;
-  string type = 2;
+    option deprecated = true;
+    string selector = 1;
+    string type = 2;
+}
+
+extend .proto2.MessageOptions {
+    ResourceDescriptor resource = 1053;
 }
 
 extend .proto2.FieldOptions {
-  .google.api.ResourceContainerRule resource_container = 135496935;
+    ResourceReference resource_reference = 1055;
+    ResourceContainerRule resource_container = 135496935 [deprecated = true];
 }
 
+extend .proto2.FileOptions {
+    repeated ResourceDescriptor resource_definition = 1053;
+}
 
+extend .proto2.MethodOptions {
+    ResourceReference method_resource = 463459046;
+}

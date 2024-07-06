@@ -2,27 +2,46 @@ syntax = "proto2";
 
 package tech.file;
 
+import "storage/datapol/annotations/proto/semantic_annotations.proto";
+
 option java_outer_classname = "BlobTypes";
 
 message BlobV2BucketStat {
-  optional int64 metadata_generation = 1;
-  optional string project = 2;
-  optional string location = 3;
-  optional string storage_class = 4;
+    optional int64 metadata_generation = 1;
+    optional string project = 2;
+    optional string location = 3;
+    
+    optional CustomPlacementConfig custom_placement_config = 7;
+    message CustomPlacementConfig {
+        repeated string data_locations = 1;
+    }
+    
+    optional string storage_class = 4;
+    optional EncryptionConfig encryption_config = 5;
+    optional bool zone_separation = 8;
+    optional bool zone_isolation = 32;
+    optional fixed64 zone_separation_root_customer_project_number = 9;
+}
+
+message EncryptionConfig {
+    optional string default_kms_key_name = 1;
 }
 
 message BlobV2ObjectStat {
-  enum ObjectState {
-    OBJECT_STATE_UNSPECIFIED = 0;
-    NOT_FINALIZED = 1;
-    CURRENT = 2;
-    ARCHIVED = 3;
-  }
-  optional int64 generation = 1;
-  optional int64 metadata_generation = 2;
-  optional string md5_hash = 3;
-  map<string, string> custom_metadata = 4;
-  optional .tech.file.BlobV2ObjectStat.ObjectState object_state = 5;
+    optional int64 generation = 1;
+    optional int64 metadata_generation = 2;
+    optional string md5_hash = 3;
+    map<string, string> custom_metadata = 4;
+    
+    optional ObjectState object_state = 5;
+    enum ObjectState {
+        OBJECT_STATE_UNSPECIFIED = 0;
+        NOT_FINALIZED = 1;
+        CURRENT = 2;
+        ARCHIVED = 3;
+    }
+    
+    optional string kms_key_name = 6;
+    optional int64 custom_time_nano = 7;
+    optional string storage_class = 8;
 }
-
-

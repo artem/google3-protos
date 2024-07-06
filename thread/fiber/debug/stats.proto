@@ -1,0 +1,49 @@
+syntax = "editions";
+
+package thread.fiber_stats;
+
+import "thread/fiber/fiber.proto";
+
+message Options {
+    optional int32 max_stack_trace_depth = 1;
+}
+
+message PerDomainCounters {
+    map<uint64, uint64> fibers_created = 1;
+    map<uint64, uint64> fibers_finished = 2;
+    map<uint64, uint64> fibers_cancelled = 3;
+    map<uint64, uint64> fibers_expired = 4;
+    map<uint64, uint64> num_fibers = 5;
+    map<uint64, uint64> num_active_fibers = 6;
+}
+
+message Stats {
+    optional Options options = 1;
+    
+    repeated Domain domains = 2;
+    message Domain {
+        optional string name = 1;
+        optional int32 max_concurrency = 2;
+        optional int32 num_slots = 3;
+        optional fixed64 address = 4;
+    }
+    
+    repeated Fiber fibers = 3;
+    message Fiber {
+        optional string name = 1;
+        optional fiber.FiberType type = 2;
+        optional bool runnable = 3;
+        optional bool detached = 4;
+        optional bool cancelled = 5;
+        optional fixed64 address = 6;
+        repeated fixed64 stack_trace = 7;
+        optional bool running = 8;
+        optional fixed64 domain_address = 9;
+        optional fixed64 parent_address = 10;
+        optional string thread_name = 11;
+    }
+    
+    optional int32 analyzed_threads = 4;
+    optional int32 dropped_threads = 5;
+    map<string, PerDomainCounters> per_domain_counters = 6;
+}

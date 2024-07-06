@@ -1,0 +1,324 @@
+syntax = "proto2";
+
+package monarch;
+
+import "google/api/auditing.proto";
+import "google/api/policy.proto";
+import "google/protobuf/any.proto";
+import "logs/proto/data_access/asr/cloud_monarch_resource.proto";
+import "monitoring/monarch/proto/monarch_physical_hint.proto";
+import "monitoring/monarch/proto/stream_data.proto";
+import "monitoring/streamz/proto/distribution.proto";
+import "monitoring/streamz/proto/visibility.proto";
+import "net/proto2/go/annotation/go_annotation.proto";
+import "storage/datapol/annotations/proto/semantic_annotations.proto";
+import "third_party/boundary_proxy/proto_compare/annotation.proto";
+
+option cc_enable_arenas = true;
+option java_multiple_files = true;
+option java_package = "com.google.monitoring.monarch.proto";
+
+message TargetSchema {
+    required FamilyDescriptorProto family_descriptor = 1;
+    
+    optional AccessControlList allowed_retention_policies = 3;
+    message AccessControlList {
+        repeated string allowed_role = 1;
+    }
+}
+
+message ExternalVisibilityPolicy {
+    optional bool publicly_visible = 1;
+    repeated string user_whitelist = 2;
+    repeated int64 project_whitelist = 3;
+    
+    reserved 4;
+}
+
+message SpecializedTargetSchema {
+    required string name = 1;
+    required string base_schema_name = 2;
+    repeated string required_field_name = 3;
+    repeated StreamProto.FieldIdentifier fixed_field = 4;
+    
+    repeated FieldMap field_map = 5;
+    message FieldMap {
+        required string from_name = 1;
+        optional string base_name = 2;
+    }
+    
+    optional string hash_field = 6;
+    optional ExternalVisibilityPolicy read_visibility = 7;
+    
+    repeated RecipeValue recipe_value = 8;
+    message RecipeValue {
+        required string recipe_label = 1;
+        
+        oneof value {
+            bool bool_value = 2;
+            int64 int64_value = 3;
+            string string_value = 4;
+        }
+    }
+}
+
+message MetricDescriptor {
+    required FamilyDescriptorProto family_descriptor = 1;
+    required ValueDescriptor value_descriptor = 3;
+    
+    repeated Annotation annotation = 6;
+    message Annotation {
+        required string name = 1;
+        optional string value = 2;
+    }
+    
+    repeated google.protobuf.Any user_annotation = 8;
+    optional DerivedDataDescriptor derived_data_descriptor = 7;
+}
+
+message MetricAlias {
+    optional string name = 1;
+    
+    repeated BaseMetric base_metric = 8;
+    message BaseMetric {
+        optional string name = 1;
+        optional string resource_type = 2;
+    }
+    
+    optional int64 project_id = 3;
+    optional bool delta = 4;
+    optional string unit = 9;
+    
+    repeated FieldMap field_map = 5;
+    message FieldMap {
+        optional string external_name = 1;
+        optional string base_name = 2;
+    }
+    
+    repeated DroppedField dropped_field = 6;
+    message DroppedField {
+        optional string base_name = 1;
+        
+        optional AggregationType aggregation_type = 2;
+        enum AggregationType {
+            UNKNOWN = 0;
+            LATEST_GENERATION = 1;
+            SUM = 2;
+        }
+    }
+    
+    optional ExternalVisibilityPolicy read_visibility = 7;
+    
+    reserved 2;
+}
+
+message MetricVeneer {
+    required MetricDescriptor metric_descriptor = 1;
+    required string storage_metric_name = 2;
+}
+
+message MetadataDescriptor {
+    optional string external_name = 1;
+    optional int64 project_id = 2;
+    
+    optional ValueType value_type = 3;
+    enum ValueType {
+        UNKNOWN = 0;
+        STRING = 1;
+        BOOL = 2;
+        MULTI_STRING = 3;
+        KEY_VALUE = 4;
+    }
+    
+    optional string metric_name = 4;
+    optional string value_field_name = 5;
+    optional string key_field_value = 6;
+}
+
+message GroupDescriptor {
+    optional string group_id = 1;
+    optional int64 project_id = 2;
+    optional string display_name = 3;
+    optional string parent_id = 4;
+    optional string cloud_filter_text = 5;
+}
+
+message DerivedDataDescriptor {
+    optional string target_schema_name = 1;
+    repeated string target_schema_field = 2;
+    optional bool invert_target_schema_fields = 3;
+    optional bool precomputed_level_switch = 4;
+    
+    optional EvaluationLevel evaluation_level = 5;
+    enum EvaluationLevel {
+        ZONE = 0;
+        ROOT = 1;
+    }
+    
+    optional SloTier slo_tier = 7;
+    enum SloTier {
+        SLO_TIER_UNSPECIFIED = 0;
+        SLO_TIER_DEFAULT = 1;
+        SLO_TIER_REDUCED = 2;
+    }
+    
+    repeated string targeted_project_numbers = 8;
+    
+    reserved 6;
+}
+
+message FamilyDescriptorProto {
+    required string name = 1;
+    repeated FieldDescriptorProto field = 2;
+    
+    required Type type = 3;
+    enum Type {
+        TARGET = 1;
+        METRIC = 2;
+    }
+}
+
+message FieldDescriptorProto {
+    required string name = 1;
+    required int32 tag = 2;
+    
+    required Type type = 3;
+    enum Type {
+        STRING = 1;
+        INT = 2;
+        BOOL = 3;
+    }
+    
+    optional PhysicalHint physical_hint = 5 [default = GLOBAL];
+    optional ZoneSplitFieldOptions zone_split_options = 8;
+    optional bool is_owner = 9 [default = false];
+    optional string description = 10;
+    
+    reserved 4, 6, 7;
+}
+
+message ZoneSplitFieldOptions {
+    optional string cluster_extraction_regexp = 1;
+    optional string corp_rsc_extraction_regexp = 2;
+    optional string metro_extraction_regexp = 3;
+    optional string proxy_zone_extraction_regexp = 4;
+}
+
+message FieldOrderProto {
+    repeated int64 canonical_indices = 1;
+}
+
+message FieldMaskProto {
+    optional bytes bits = 1;
+    optional int32 size = 2;
+}
+
+message FixedFieldProto {
+    optional FieldMaskProto fixed_field_mask = 1;
+    
+    repeated FieldValue field_value = 2;
+    message FieldValue {
+        optional int32 index = 1;
+        
+        oneof value {
+            sint64 int_value = 2;
+            bytes string_value = 3;
+            bool bool_value = 4;
+        }
+    }
+    
+    optional bool target_field_remapped = 3;
+    optional bool physical_hint_inconsistent_with_zone = 4;
+}
+
+message TargetKeyField {
+    optional FieldDescriptorProto field_name = 1;
+    
+    oneof value {
+        sint64 int_value = 2;
+        bool bool_value = 4;
+        string string_value = 5;
+    }
+}
+
+message StreamDescriptorProto {
+    optional ValueDescriptor value_descriptor = 1;
+    
+    optional StreamFamilyDescriptor target_descriptor = 2;
+    message StreamFamilyDescriptor {
+        optional FamilyDescriptorProto family_descriptor = 1;
+        repeated string included_field = 2;
+    }
+    
+    optional StreamFamilyDescriptor metric_descriptor = 3;
+    optional FieldMaskProto field_mask = 4;
+    optional FixedFieldProto fixed_fields = 5;
+    optional FieldOrderProto field_order = 6;
+}
+
+message ValueDescriptor {
+    required Type type = 1;
+    enum Type {
+        NONE = 0;
+        BOOL = 1;
+        INT64 = 2;
+        DOUBLE = 4;
+        STRING = 5;
+        MESSAGE = 6;
+        DISTRIBUTION = 7;
+        TUPLE = 8;
+        VOID = 9;
+    }
+    
+    optional bool cumulative = 6 [default = false];
+    optional bool delta = 7 [default = false];
+    optional bool is_fake_delta = 8 [default = false];
+    optional int32 message_type_id = 3;
+    repeated ValueDescriptor field_type = 4;
+    repeated string field_name = 5;
+}
+
+message StreamProto {
+    optional bytes target_fields = 1;
+    optional bytes metric_fields = 2;
+    optional bytes stream_id_fields = 16;
+    
+    repeated FieldIdentifier target_fields_plaintext = 13;
+    message FieldIdentifier {
+        optional string name = 1;
+        optional int64 int64_value = 2;
+        optional string string_value = 3;
+        optional bool bool_value = 4;
+    }
+    
+    repeated FieldIdentifier metric_fields_plaintext = 14;
+    repeated int64 reset_time_micros = 3 [packed = true];
+    repeated bool bool_value = 4 [packed = true];
+    repeated int64 int64_value = 5 [packed = true];
+    repeated double double_value = 6 [packed = true];
+    repeated bytes string_value = 7;
+    repeated monitoring.streamz.DistributionProto distribution_value = 8;
+    repeated bytes message_value = 9;
+    repeated Tuple tuple_value = 11;
+    repeated int64 timestamp_micros = 10 [packed = true];
+    optional StreamData stream_data = 15;
+    
+    reserved 12, 50;
+}
+
+message Tuple {
+    repeated Element element = 1;
+    message Element {
+        optional int32 message_type_id = 10;
+        
+        oneof element_value {
+            bool bool_value = 4;
+            int64 int64_value = 5;
+            double double_value = 6;
+            bytes string_value = 7;
+            monitoring.streamz.DistributionProto distribution_value = 8;
+            bytes message_value = 9;
+            Tuple tuple_value = 11;
+        }
+    }
+}

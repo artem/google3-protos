@@ -1,0 +1,20 @@
+syntax = "proto3";
+
+package google.logging.v2;
+
+import "google/api/policy.proto";
+import "google/logging/data_governance.proto";
+import "storage/datapol/annotations/proto/semantic_annotations.proto";
+
+option cc_enable_arenas = true;
+
+message InternalEntityId {
+    oneof id {
+        int64 project_number = 1;
+        int64 organization_number = 2;
+        int64 folder_number = 3;
+        string billing_account_id = 19;
+    }
+    
+    reserved 4, 5;
+}

@@ -3,8 +3,6 @@ syntax = "proto3";
 package file.logging;
 
 message BinaryLogRecords {
-  int32 log_severity = 1;
-  bytes records = 2 [ctype = CORD];
+    int32 log_severity = 1;
+    bytes records = 2 [ctype = CORD];
 }
-
-

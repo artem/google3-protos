@@ -1,0 +1,13 @@
+syntax = "proto2";
+
+package security;
+
+option java_multiple_files = true;
+option java_outer_classname = "HybridKeyProtoOuterClass";
+option java_package = "com.google.security.keymaster";
+
+message HybridKeyProto {
+    optional bytes key_hash = 1;
+    optional bytes private_key = 2;
+    optional bytes public_key = 3;
+}

@@ -1,0 +1,8 @@
+syntax = "proto2";
+
+package storage_d;
+
+enum StoragePartition {
+    STORAGE_PARTITION_HDD = 0;
+    STORAGE_PARTITION_SSD = 1;
+}

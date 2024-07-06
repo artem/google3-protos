@@ -1,0 +1,12 @@
+syntax = "proto2";
+
+package speckle_dogfish.dogfish_proto;
+
+import "storage/datapol/annotations/proto/semantic_annotations.proto";
+
+message VMClientInfo {
+    optional string project_id = 1;
+    optional string cluster_id = 2;
+    optional string instance_id = 3;
+    optional string hostname = 4;
+}

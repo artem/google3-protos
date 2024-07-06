@@ -1,0 +1,15 @@
+syntax = "proto2";
+
+package riegeli;
+
+import "net/proto2/proto/descriptor.proto";
+
+message RecordsMetadata {
+    optional string file_comment = 1;
+    optional string record_type_name = 2;
+    repeated .proto2.FileDescriptorProto file_descriptor = 3;
+    optional string record_writer_options = 4;
+    optional int64 num_records = 5;
+    
+    extensions 1000 to 524999999, 525000000 to max;
+}

@@ -1,17 +1,16 @@
 syntax = "proto2";
 
-import "monitoring/streamz/proto/streamz_service_objects.proto";
 package monitoring.streamz;
 
-option java_package = "com.google.monitoring.streamz.proto";
-option java_outer_classname = "StreamzServiceProtos";
+import "monitoring/streamz/proto/streamz_service_objects.proto";
+
 option java_multiple_files = true;
-option java_generic_services = true;
+option java_outer_classname = "StreamzServiceProtos";
+option java_package = "com.google.monitoring.streamz.proto";
 
 service Streamz {
-  rpc MonitorStreams(.monitoring.streamz.MonitorRequest) returns (.monitoring.streamz.MonitorResponse);
-  rpc GetRootList(.monitoring.streamz.GetRootListRequest) returns (.monitoring.streamz.GetRootListResponse);
-  rpc WatchRoot(.monitoring.streamz.WatchRootRequest) returns (.monitoring.streamz.WatchRootResponse);
+    rpc MonitorStreams(MonitorRequest) returns (stream MonitorEvent);
+    rpc GetRootList(GetRootListRequest) returns (GetRootListResponse);
+    rpc WatchRoot(WatchRootRequest) returns (stream RootInfo);
+    rpc InitiateCollection(InitiateCollectionRequest) returns (InitiateCollectionResponse);
 }
-
-

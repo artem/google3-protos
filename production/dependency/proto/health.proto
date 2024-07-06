@@ -2,15 +2,13 @@ syntax = "proto3";
 
 package production.dependency.proto;
 
-option java_package = "com.google.prod.dependency.proto";
-option java_outer_classname = "HealthProto";
 option cc_enable_arenas = true;
+option java_outer_classname = "HealthProto";
+option java_package = "com.google.prod.dependency.proto";
 
 enum ResourceImportance {
-  UNKNOWN = 0;
-  OPTIONAL = 1;
-  STARTUP_CRITICAL = 2;
-  ALWAYS_CRITICAL = 3;
+    UNKNOWN = 0;
+    OPTIONAL = 1;
+    STARTUP_CRITICAL = 2;
+    ALWAYS_CRITICAL = 3;
 }
-
-

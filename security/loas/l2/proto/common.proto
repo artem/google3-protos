@@ -2,47 +2,125 @@ syntax = "proto2";
 
 package security_loas_l2;
 
+import "borg/common/app_class.proto";
+import "security/thinmint/proto/core/thinmint_core.proto";
+import "storage/datapol/annotations/proto/semantic_annotations.proto";
+
 option java_package = "com.google.net.loas.l2";
 
-enum HandshakeCipher {
-  NO_CIPHER = 0;
-  TEST_CIPHER = 1;
-  CURVE25519_SHA512 = 100;
-  CURVE25519_SHA512_EPHEMERAL = 101;
-}
-
-enum HashType {
-  NO_HASH = 0;
-  TEST_HASH = 1;
-  SHA512 = 100;
-}
-
-enum CurveType {
-  NO_CURVE = 0;
-  TEST_CURVE = 1;
-  CURVE25519 = 100;
-}
-
-enum NextProtocol {
-  PROTOCOL_RESERVED = 0;
-  GOOGLE_SECUREWRAPPER_AES128_GCM = 100;
-  GOOGLE_SECUREWRAPPER_AES128_CTR_VMAC128 = 101;
+message HandshakeCipherList {
+    repeated HandshakeCipher cipher = 1;
 }
 
 message Identity {
-  optional bool resumed = 1;
-  extensions 100 to 536870911;
+    optional bool resumed = 1;
+    
+    extensions 100 to max;
 }
 
 message AuthenticatedOptions {
-  extensions 100 to 536870911;
+    extensions 100 to max;
 }
 
 message RpcWireProtocol {
-  optional int32 minor_version = 1 [default = 0];
-  extend .security_loas_l2.AuthenticatedOptions {
-    optional .security_loas_l2.RpcWireProtocol rpc_wire_protocol = 1004;
-  }
+    optional int32 minor_version = 1 [default = 0];
+    
+    extend AuthenticatedOptions {
+        optional RpcWireProtocol rpc_wire_protocol = 1004;
+    }
 }
 
+message DirectPathVmNetworkEndpoints {
+    repeated NetworkEndpoint network_endpoints = 1;
+    message NetworkEndpoint {
+        optional uint32 vnid = 1;
+        optional int64 network_project_number = 2;
+        repeated string vm_ipv6 = 3;
+        optional string vm_ip = 4;
+        repeated string vm_ip_alias = 5;
+    }
+}
 
+message Bamm2MessageHash {
+    optional bytes hash = 1;
+    optional string debug_message_name = 2;
+    optional int64 debug_message_size = 3;
+    
+    extend AuthenticatedOptions {
+        optional Bamm2MessageHash bamm2_message_hash = 1007;
+    }
+}
+
+message SealFrameSize {
+    optional uint32 max_frame_size = 1;
+    
+    extend AuthenticatedOptions {
+        optional SealFrameSize seal_frame_size = 1010;
+    }
+}
+
+message InstanceIdentityRestrictionThinmint {
+    optional .thinmint.ThinMint thinmint = 1;
+    
+    extend AuthenticatedOptions {
+        optional InstanceIdentityRestrictionThinmint instance_identity_thinmint = 1011;
+    }
+}
+
+message UnauthenticatedBorgRuntimeAttributes {
+    optional int32 priority = 1;
+    optional borg.AppClass.Type app_class = 2;
+    
+    extend AuthenticatedOptions {
+        optional UnauthenticatedBorgRuntimeAttributes unauthenticated_borg_runtime_attributes = 1012;
+    }
+}
+
+enum HandshakeCipher {
+    NO_CIPHER = 0;
+    TEST_CIPHER = 1;
+    CURVE25519_SHA512 = 100;
+    CURVE25519_SHA512_EPHEMERAL = 101;
+    CECPQ2_SHA512 = 102;
+    CECPQ2_SHA512_EPHEMERAL = 103;
+    CURVE25519_SHA512_3DH = 104;
+    CECPQ2_SHA512_3DH = 105;
+    CECPQ2_SHA512_RESUMPTION = 106;
+    CECPQ2_SHA512_RESUMPTION_EPHEMERAL = 107;
+    CECPQ2_SHA512_RESUMPTION_3DH = 108;
+    KYBER768_SHA512 = 109;
+    KYBER768_SHA512_3DH = 110;
+    KYBER1024_SHA512 = 111;
+    KYBER1024_SHA512_3DH = 112;
+    CURVE25519_SHA512_3DH_AEKC = 113;
+    CECPQ2_SHA512_RESUMPTION_3DH_AEKC = 114;
+}
+
+enum PostQuantumCipherAlgorithm {
+    NO_POST_QUANTUM_CIPHER_ALGORITHM = 0;
+    CECPQ2_POST_QUANTUM_CIPHER_ALGORITHM = 100;
+    KYBER768_POST_QUANTUM_CIPHER_ALGORITHM = 101;
+    KYBER1024_POST_QUANTUM_CIPHER_ALGORITHM = 102;
+}
+
+enum HashType {
+    NO_HASH = 0;
+    TEST_HASH = 1;
+    SHA512 = 100;
+}
+
+enum CurveType {
+    NO_CURVE = 0;
+    TEST_CURVE = 1;
+    CURVE25519 = 100;
+}
+
+enum NextProtocol {
+    PROTOCOL_RESERVED = 0;
+    GOOGLE_SECUREWRAPPER_AES128_GCM = 100;
+    GOOGLE_SECUREWRAPPER_AES128_CTR_VMAC128 = 101;
+}
+
+extend AuthenticatedOptions {
+    optional DirectPathVmNetworkEndpoints direct_path_vm_network_endpoints = 1006;
+}

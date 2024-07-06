@@ -1,0 +1,60 @@
+syntax = "proto2";
+
+package storage_d;
+
+option java_outer_classname = "HealthProto";
+
+message Health {
+    optional Status status = 1;
+    enum Status {
+        UNKNOWN = 0;
+        COMING_UP = 8;
+        HEALTHY = 1;
+        READ_ONLY = 12;
+        DOWN = 9;
+        LAME = 2;
+        DRAIN = 3;
+        UNHEALTHY = 4;
+        DEAD = 5;
+        STUCK = 13;
+        REMOVING = 6;
+        REMOVED = 7;
+        SHUTTING_DOWN = 10;
+        SHUT_DOWN = 11;
+    }
+    
+    optional uint64 unhealthy_bits = 2;
+    optional int64 health_version = 3;
+    optional int32 drain_priority = 4;
+    
+    enum UnhealthyBits {
+        INCOMPATIBLE = 1;
+        CLOCK_SKEW = 4;
+        FLAPPING = 8;
+        SYSTEM_ERROR = 16;
+        BATTERY_POWER = 32768;
+        NOT_PROVISIONED = 131072;
+        MISSING_BORGLET = 2097152;
+        RECOVERY = 8388608;
+        HUNG_WRITE = 67108864;
+        DISK_MOVED = 32;
+        DISK_RENAMED = 64;
+        DISK_MISSING = 1048576;
+        DUPLICATE_DEVICE = 128;
+        MISSING_CONFIG = 256;
+        CANT_WRITE_CONFIG = 512;
+        CANT_STAT_ROOT = 1024;
+        CANT_INIT_DISK = 2048;
+        CANT_INIT_KEY = 4096;
+        CANT_RESTORE_SILO = 8192;
+        BAD_CONFIG = 65536;
+        BAD_METADATA = 524288;
+        UNRESPONSIVE = 4194304;
+        WRITE_ERROR = 134217728;
+        MAINTENANCE = 16777216;
+        MAINTENANCE_UNPLANNED = 33554432;
+        DEPRECATED_DOWN = 2;
+        DEPRECATED_CELL_MISMATCH = 16384;
+        DEPRECATED_BAD_DADMIN = 262144;
+    }
+}

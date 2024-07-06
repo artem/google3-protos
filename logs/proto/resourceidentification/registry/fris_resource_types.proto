@@ -1,0 +1,44 @@
+syntax = "proto2";
+
+package resourceregistry;
+
+import "net/proto2/proto/descriptor.proto";
+import "storage/datapol/annotations/proto/semantic_annotations.proto";
+
+option java_multiple_files = true;
+option java_outer_classname = "FrisResourceTypesProto";
+option java_package = "com.google.logs.proto.resourceidentification.registry";
+
+message OnePlatformResourcePart {
+    optional string part_value = 1;
+}
+
+message OnePlatformResource {
+    optional string request_message_type = 1;
+    optional string method_type = 2;
+    map<string, OnePlatformResourcePart> one_platform_resource_parts = 3;
+    optional string uri = 4;
+}
+
+message NamespacedResource {
+    optional OnePlatformResource one_platform_resource = 1;
+}
+
+message FrisResourceTypes {
+    optional NamespacedResource namespaced_resource = 1;
+    
+    extensions 102 to max;
+    
+    reserved 101, ".logs.proto.resourceidentification.registry.core.felix.cat";
+}
+
+extend .proto2.MessageOptions {
+    optional string message_description = 525000003;
+    repeated string resource_type_path = 535800959;
+    optional bool resolved_by_lightweight_module = 525000024;
+}
+
+extend .proto2.FieldOptions {
+    optional string field_description = 535800922;
+    repeated string field_path = 535800930;
+}

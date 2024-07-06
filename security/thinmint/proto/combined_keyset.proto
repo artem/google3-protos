@@ -1,0 +1,26 @@
+syntax = "proto3";
+
+package thinmint;
+
+import "security/keymaster/keymaster.proto";
+
+message Keyset {
+    security.SerializedReader serialized_reader = 1;
+    
+    reserved 2;
+}
+
+message CryptoMonitoringAnnotations {
+    map<string, string> monitoring_annotations = 1;
+}
+
+message CombinedKeyset {
+    uint64 version = 1;
+    string digest = 2;
+    string digest_v2 = 5;
+    map<string, Keyset> keysets = 3;
+    map<string, CryptoMonitoringAnnotations> annotations = 6;
+    map<string, Keyset> keysets_default_deny = 4;
+    map<string, CryptoMonitoringAnnotations> annotations_default_deny = 7;
+    map<string, string> keysets_to_universes = 8;
+}

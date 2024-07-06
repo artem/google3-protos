@@ -1,0 +1,77 @@
+syntax = "proto3";
+
+package production.machine_locality;
+
+option java_package = "com.google.prod.machinelocality";
+
+message Value {
+    oneof data {
+        string stringval = 1;
+        CloudZoneAssignment cloud_zones = 2;
+        CoverageDomain coverage_domain = 3;
+        Subnets subnets = 4;
+    }
+    
+    message CloudZones {
+        string primary = 1;
+        repeated string fallback = 2;
+    }
+    
+    message CloudZoneAssignment {
+        map<int32, CloudZones> assignment = 1;
+    }
+    
+    message CoverageDomain {
+        repeated string covered_by_clusters = 1;
+    }
+    
+    message Subnets {
+        repeated string subnet = 1;
+    }
+    
+    enum CloudEnvironment {
+        UNKNOWN = 0;
+        STAGING = 1;
+        PRODUCTION = 2;
+    }
+}
+
+message Host {
+    enum Kind {
+        UNKNOWN = 0;
+        PROD = 1;
+        NET = 2;
+        CORP = 3;
+        BANDAID = 4;
+        PRODZ = 5;
+        TARSIER = 6;
+        BORG_TASK = 7;
+    }
+}
+
+enum LocalityKind {
+    UNKNOWN = 0;
+    CLUSTER = 1;
+    CLUSTER_PURPOSE = 2;
+    CONTINENT = 3;
+    LOGICAL_NETWORK = 6 [deprecated = true];
+    METRO = 7;
+    BUILDING = 8;
+    EDGE_NODE_TYPE = 9;
+    EDGE_NODE_NAME = 23;
+    ENB = 25;
+    CAMPUS = 10;
+    CLOUD_ZONE = 14;
+    CLOUD_REGION = 15;
+    CLOUD_UNIVERSE = 26;
+    PROD_ZONE = 16;
+    PROD_REGION = 17;
+    FABRIC = 18;
+    COVERAGE_DOMAIN = 19;
+    FUTURE_CLUSTER = 20;
+    PROD_UNIVERSE = 21;
+    CLUSTER_IP = 22;
+    IP_ENB = 24;
+    IP_CLUSTER = 11;
+    IP_SATELLITE = 12;
+}

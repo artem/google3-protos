@@ -1,0 +1,18 @@
+syntax = "proto2";
+
+package net.loadshedding.serverthrottler;
+
+import "logs/proto/logs_annotations/logs_annotations.proto";
+import "util/task/contrib/proto_status/proto_status.proto";
+
+option java_outer_classname = "ThrottlingErrors";
+option java_package = "com.google.net.loadshedding.serverthrottler.proto";
+
+enum ErrorCode {
+    THROTTLED_TASK_LIMIT = 2;
+    OVERLOADED = 3;
+    OVERLOADED_TASK = 6;
+    THROTTLED_ROLE_LIMIT = 1;
+    THROTTLED_HOTSPOT_LIMIT = 5;
+    THROTTLED_CLIENT = 4;
+}

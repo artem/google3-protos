@@ -1,0 +1,62 @@
+syntax = "proto2";
+
+package security.keymaster;
+
+import "security/keymaster/keymaster.proto";
+import "security/panoptikeys/crypto_key_params/crypto_key_params.proto";
+import "storage/datapol/annotations/proto/semantic_annotations.proto";
+
+option cc_enable_arenas = true;
+
+message TinkKeyTemplate {
+    optional OutputPrefixType output_prefix_type = 1;
+    optional HmacKeyFormat hmac_key_format = 2;
+    optional AesCtrKeyFormat aes_ctr_key_format = 3;
+    optional EcdsaKeyFormat ecdsa_key_format = 4;
+    optional EciesAeadHkdfKeyFormat ecies_aead_hkdf_key_format = 5;
+    optional AesGcmKeyFormat aes_gcm_key_format = 6;
+}
+
+message HmacKeyFormat {
+    optional KeyMetadata.HashAlgorithm hash_algorithm = 1;
+    optional uint32 key_size_in_bytes = 2;
+    optional uint32 tag_size_in_bytes = 3;
+}
+
+message AesCtrKeyFormat {
+    optional uint32 key_size_in_bytes = 1;
+    optional uint32 iv_size_in_bytes = 2;
+}
+
+message AesGcmKeyFormat {
+    optional uint32 key_size_in_bytes = 1;
+}
+
+message EcdsaKeyFormat {
+    optional KeyMetadata.HashAlgorithm hash_algorithm = 1;
+    optional KeyMetadata.EllipticCurve curve = 2;
+    optional EcdsaSignatureEncoding signature_encoding = 3;
+}
+
+message EciesAeadHkdfKeyFormat {
+    optional KeyMetadata.EllipticCurve curve = 1;
+    optional KeyMetadata.HashAlgorithm hkdf_hash_algorithm = 2;
+    optional bytes hkdf_salt = 3;
+    optional KeyMetadata.Type aead_dem_type = 4;
+    optional TinkKeyTemplate aead_dem_key_template = 5;
+    optional KeyMetadata.EcPointFormat ec_point_format = 6;
+}
+
+enum OutputPrefixType {
+    UNKNOWN_PREFIX = 0;
+    TINK = 1;
+    LEGACY = 2;
+    RAW = 3;
+    CRUNCHY = 4;
+}
+
+enum EcdsaSignatureEncoding {
+    UNKNOWN_ENCODING = 0;
+    IEEE_P1363 = 1;
+    DER = 2;
+}

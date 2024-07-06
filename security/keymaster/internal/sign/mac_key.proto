@@ -1,0 +1,12 @@
+syntax = "editions";
+
+package security;
+
+option java_multiple_files = true;
+option java_outer_classname = "MacKeyProtoOuterClass";
+option java_package = "com.google.security.keymaster";
+
+message MacKeyProto {
+    optional bytes key_hash = 1;
+    optional bytes key = 2;
+}

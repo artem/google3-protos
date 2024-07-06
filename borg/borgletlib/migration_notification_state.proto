@@ -1,0 +1,35 @@
+syntax = "proto2";
+
+package borg.borgletlib;
+
+import "google/protobuf/timestamp.proto";
+
+message MigrationNotificationHandlerInfo {
+    optional bool finished = 1;
+    optional int32 priority = 2;
+    optional int64 registration_seq = 3;
+    optional string registrant_file = 4;
+    optional uint32 registrant_line = 5;
+}
+
+message MigrationNotificationState {
+    optional NotificationPhase phase = 1;
+    enum NotificationPhase {
+        UNSET = 0;
+        NOT_MIGRATED = 1;
+        PRE_MIGRATION = 2;
+        MIGRATING = 3;
+        POST_MIGRATION = 4;
+        MIGRATED = 5;
+    }
+    
+    optional MigrationNotificationHandlerInfo current_handler = 2;
+    optional int32 migration_count = 3;
+    
+    repeated PhaseLogEntry phase_log = 4;
+    message PhaseLogEntry {
+        optional google.protobuf.Timestamp timestamp = 1;
+        optional NotificationPhase phase = 2;
+        optional int64 next_handler_registration_seq = 3;
+    }
+}

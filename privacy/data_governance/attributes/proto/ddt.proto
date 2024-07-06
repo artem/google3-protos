@@ -1,0 +1,33 @@
+syntax = "proto2";
+
+package privacy.data_governance.attributes;
+
+import "privacy/data_governance/attributes/proto/classification.proto";
+import "privacy/data_governance/attributes/proto/search.proto";
+
+option java_package = "com.google.protos.privacy.data_governance.attributes.proto1api";
+
+message DDTContext {
+    optional classification.Confidentiality confidentiality = 1;
+    repeated classification.Source source = 2;
+    optional classification.SemanticContext semantic_context = 3;
+    repeated classification.DatasetTag dataset_tags = 4;
+    
+    optional CustomSearch custom_search = 5;
+    message CustomSearch {
+        repeated Search.DataSpecs.AssistantRequestAcceptanceStatus assistant_request_accept_status = 1;
+        optional classification.Category.HasCategory has_final_intent_health_fitness = 2;
+    }
+    
+    optional classification.Category.MinorData minors_data = 6;
+}
+
+enum DDTPeerAction {
+    DDT_PEER_ACTION_UNDEFINED = 0;
+    DDT_PEER_ACTION_WRITE = 1;
+    DDT_PEER_ACTION_SERVER_REQUEST = 2;
+    DDT_PEER_ACTION_SERVER_RESPONSE = 3;
+    DDT_PEER_ACTION_CLIENT_REQUEST = 4;
+    DDT_PEER_ACTION_CLIENT_RESPONSE = 5;
+    DDT_PEER_ACTION_READ = 6;
+}

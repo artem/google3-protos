@@ -1,0 +1,122 @@
+syntax = "proto3";
+
+package privacy.data_governance.attributes;
+
+import "privacy/data_governance/attributes/proto/classification.proto";
+
+option java_multiple_files = true;
+option java_package = "com.google.privacy.datagovernance.attributes";
+
+message Search {
+    DataSpecs data = 1;
+    message DataSpecs {
+        repeated SearchDataSource data_sources = 1;
+        enum SearchDataSource {
+            DATA_SOURCE_UNSPECIFIED = 0;
+            DATA_SOURCE_OTHER = 1;
+            MULTIDAY_METRIC = 2;
+            SEARCH_GROWTH_SESSION = 3;
+            SEARCH_SESSION = 4;
+            MULTIDAY_METRIC_NAPA = 5;
+            SEARCH_QSESSIONS = 6;
+            SEARCH_SENSITIVE_QSESSIONS = 7;
+            SEARCH_GWS = 8;
+            SEARCH_PROCESSED_ASSISTANT = 9;
+        }
+        
+        repeated ProductSource product_sources = 2;
+        enum ProductSource {
+            PRODUCT_SOURCE_UNSPECIFIED = 0;
+            PRODUCT_SOURCE_OTHER = 1;
+            WEB_SEARCH = 2;
+            IMAGE_SEARCH = 3;
+            SHOPPING_SEARCH = 4;
+            MAPS_SEARCH = 5;
+            ASSISTANT_SEARCH = 6;
+        }
+        
+        repeated UsagePurpose usage_purposes = 3;
+        enum UsagePurpose {
+            USAGE_PURPOSE_UNSPECIFIED = 0;
+            USAGE_PURPOSE_OTHER = 1;
+            PRODUCTION_INPUT = 2;
+            EXPERIMENT_ANALYSIS = 3;
+            DEBUGGING = 4;
+            MANUAL_TESTING = 5;
+            AUTOMATED_TESTING = 6;
+            COMPLIANCE = 7;
+            QUALITY_METRICS_MONITORING = 8;
+            JOB_PERFORMANCE_IMPROVEMENT = 9;
+            JOB_TEMPORARY_STORAGE = 10;
+            STRATEGIC_ANALYSIS = 11;
+        }
+        
+        repeated IdentifierType identifier_types = 4;
+        enum IdentifierType {
+            IDENTIFIER_UNSPECIFIED = 0;
+            IDENTIFIER_OTHER = 1;
+            GAIA_ID = 2;
+            ZWIEBACK_ID = 3;
+        }
+        
+        repeated TransformationCategory transformation_categories = 5;
+        enum TransformationCategory {
+            TRANSFORMATION_CATEGORY_UNSPECIFIED = 0;
+            TRANSFORMATION_CATEGORY_OTHER = 1;
+            RAW = 2;
+            SAMPLED = 3;
+            PSEUDONYMIZED = 4;
+            DEIDENTIFIED = 5;
+            AGGREGATED = 6;
+            K_ANONYMIZED = 7;
+            DIFFERENTIALLY_PRIVATE = 8;
+            NO_USER_DATA = 9;
+        }
+        
+        DataCategory data_category = 6;
+        message DataCategory {
+            classification.Category.HasCategory user_query = 1;
+            classification.Category.HasCategory user_clicks = 2;
+            classification.Category.HasCategory user_impressions = 3;
+            classification.Category.HasCategory user_third_party_interactions = 4;
+            classification.Category.HasCategory user_interests = 5;
+            classification.Category.HasCategory user_generated_content = 6;
+            classification.Category.HasCategory user_google_workspace_content = 7;
+            classification.Category.HasCategory user_contacts = 8;
+            classification.Category.HasCategory user_interacted_url = 9;
+            classification.Category.HasCategory quality_abuse_signals = 10;
+            classification.Category.HasCategory semantic_nlu_signals = 11;
+            classification.Category.HasCategory contractual_content = 12;
+            classification.Category.HasCategory structured_world_facts = 13;
+            classification.Category.HasCategory eom_data = 14;
+        }
+        
+        repeated AssistantRequestAcceptanceStatus assistant_request_accept_status = 7;
+        enum AssistantRequestAcceptanceStatus {
+            ASSISTANT_REQUEST_ACCEPTANCE_UNSPECIFIED = 0;
+            ASSISTANT_REQUEST_ACCEPTANCE_AWAITING = 1;
+            ASSISTANT_REQUEST_ACCEPTANCE_ACCEPTED = 2;
+            ASSISTANT_REQUEST_ACCEPTANCE_REJECTED = 3;
+            ASSISTANT_REQUEST_ACCEPTANCE_CANCELLED = 4;
+            ASSISTANT_REQUEST_ACCEPTANCE_EXPLICIT_UNDEFINED = 5;
+        }
+        
+        classification.Category.HasCategory has_final_intent_health_fitness = 8;
+    }
+    
+    Storage storage = 2;
+    message Storage {
+        repeated UseControlMethod use_control_methods = 1;
+        enum UseControlMethod {
+            USE_CONTROL_METHOD_UNSPECIFIED = 0;
+            USE_CONTROL_METHOD_READ_TIME_FILTERING = 1;
+            USE_CONTROL_METHOD_WRITE_TIME_REJECTION = 2;
+        }
+        
+        CriticalDatasetMitigation search_critical_dataset_mitigation = 2;
+        enum CriticalDatasetMitigation {
+            NOT_CRITICAL = 0;
+            CRITICAL = 1;
+        }
+    }
+}

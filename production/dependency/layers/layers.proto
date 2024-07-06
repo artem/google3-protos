@@ -1,0 +1,24 @@
+syntax = "proto3";
+
+package production_dependency_layers;
+
+import "net/proto2/proto/descriptor.proto";
+
+option java_package = "com.google.prod.dependency.layers";
+
+enum Layer {
+    UNKNOWN_LAYER = 0;
+    CLUSTER_BOOTSTRAP_BACKPACK = 1;
+    CLUSTER_NETWORK_FABRIC = 2;
+    CLUSTER_SCOPED_BASE = 3;
+    BACKBONE_NETWORK = 4;
+    CROSS_CLUSTER_INFRASTRUCTURE = 5;
+    CLOUD_PRODUCTS = 6;
+    PER_PA_INFRA = 7;
+    APPLICATION = 8;
+    NO_LAYER = 9;
+}
+
+extend .proto2.EnumValueOptions {
+    double layer_value = 154735046;
+}

@@ -1,0 +1,103 @@
+syntax = "proto2";
+
+package apps_annotations;
+
+import "net/proto2/proto/descriptor.proto";
+import "storage/datapol/annotations/proto/semantic_annotations.proto";
+
+option java_outer_classname = "WorkspaceAnnotations";
+option java_package = "com.google.apps.annotations.proto";
+
+message AppsQualifier {
+    optional bool is_actor = 1 [default = false];
+    optional bool is_action_target = 2 [default = false];
+    optional bool is_shareable_object = 3 [default = false];
+    optional bool is_action_time = 4 [default = false];
+    optional bool is_user_visible = 8 [default = false];
+    optional bool is_access_grantee = 6 [default = false];
+    optional bool is_derived = 7 [default = false];
+    
+    reserved 5;
+}
+
+message MapFieldAnnotations {
+    repeated .datapol.SemanticType datapol_semantic_type = 1;
+    repeated SemanticType workspace_semantic_type = 2;
+    optional AppsQualifier workspace_qualifier = 3;
+}
+
+message FieldDetails {
+    repeated SemanticType semantic_type = 1;
+}
+
+message MessageDetails {
+    repeated SemanticType semantic_type = 1;
+}
+
+message EnumDetails {
+    repeated SemanticType semantic_type = 1;
+}
+
+enum SemanticType {
+    ST_UNSPECIFIED = 0;
+    ST_RESERVED_12031 = 12031 [deprecated = true];
+    ST_WORKSPACE_OBJECT_ID = 12001;
+    ST_WORKSPACE_OBJECT_CONTENT_REFERENCE = 12032;
+    ST_STRUCTURED_WORKSPACE_CONTENT_INFO = 12033;
+    ST_LOGICAL_DEVICE_ID = 12002;
+    ST_UNSTRUCTURED_CUSTOMER_ADMIN_SETTING = 12003;
+    ST_STRUCTURED_CUSTOMER_ADMIN_SETTING = 12024;
+    ST_UNSTRUCTURED_USER_SETTING = 12004;
+    ST_STRUCTURED_USER_SETTING = 12012;
+    ST_USER_LABEL = 12005;
+    ST_WORKSPACE_OBJECT_STATE = 12006;
+    ST_SYSTEM_CLASSIFICATION = 12007;
+    ST_USER_ACTION = 12008;
+    ST_STRUCTURED_REQUEST_PARAMETER = 12027;
+    ST_PER_USER_AGGREGATE_VALUE = 12009;
+    ST_CROSS_USER_AGGREGATE_VALUE = 12010;
+    ST_SYSTEM_AGGREGATE_VALUE = 12014;
+    ST_PER_CUSTOMER_AGGREGATE_VALUE = 12038;
+    ST_NON_IDENTIFIABLE_HASH_OR_CHECKSUM = 12011;
+    ST_CLIENT_IDENTIFIER = 12013;
+    ST_SYSTEM_RESOURCE_IDENTIFIER = 12015;
+    ST_VERSION_ID = 12016;
+    ST_SYSTEM_DIAGNOSTIC_INFO = 12017;
+    ST_DEVICE_INFO = 12018;
+    ST_REQUEST_ID = 12019;
+    ST_ACL_SCOPE = 12020;
+    ST_ACL_ENTRY = 12021;
+    ST_ACL = 12022;
+    ST_ACCESS_LEVEL = 12023;
+    ST_DURATION = 12025;
+    ST_WORKSPACE_OBJECT_TYPE = 12026;
+    ST_SYSTEM_CONFIGURATION = 12028;
+    ST_BODY_CONTENT = 12029;
+    ST_TITLE = 12030;
+    ST_CONTENT_SUMMARY = 12034;
+    ST_CALENDAR_EVENT_TIMESTAMP = 12035;
+    ST_GROUP_NAME = 12036;
+    ST_PTOKEN = 12037;
+}
+
+extend .proto2.FieldOptions {
+    optional SemanticType semantic_type = 484328798;
+    optional AppsQualifier qualifier = 491407099;
+    optional MapFieldAnnotations map_key_annotation = 504752717;
+    optional MapFieldAnnotations map_value_annotation = 504912947;
+    optional FieldDetails field_details = 525000022;
+    repeated string msg_type_name = 535801098;
+    optional string enum_type_name = 535801099;
+}
+
+extend .proto2.MessageOptions {
+    optional SemanticType msg_semantic_type = 518668963;
+    optional AppsQualifier msg_qualifier = 518671256;
+    optional MessageDetails msg_details = 525000006;
+}
+
+extend .proto2.EnumOptions {
+    optional SemanticType enum_semantic_type = 518672169;
+    optional AppsQualifier enum_qualifier = 518672798;
+    optional EnumDetails enum_details = 525000001;
+}

@@ -1,0 +1,23 @@
+syntax = "proto2";
+
+package sherlog.core;
+
+import "frameworks/debug/sherlog/core/proto/data_id_type.proto";
+import "frameworks/debug/sherlog/core/proto/label.proto";
+
+option java_multiple_files = true;
+option java_package = "com.google.frameworks.debug.sherlog.core.proto";
+
+message DataIDConnections {
+    repeated DataID input = 1;
+    repeated DataID output = 2;
+    repeated DataID related = 3;
+}
+
+message DataID {
+    optional string id = 1;
+    optional string version = 2;
+    repeated Label label = 3;
+    optional DataIDType.Type type = 4;
+    optional string access_tag = 5;
+}

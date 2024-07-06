@@ -1,0 +1,16 @@
+syntax = "proto2";
+
+package security.data_access;
+
+import "logs/eventid/eventid.proto";
+import "storage/datapol/annotations/proto/semantic_annotations.proto";
+
+option java_outer_classname = "IngestInfoProto";
+option java_package = "com.google.security.data_access.proto";
+
+message IngestInfo {
+    optional EventIdMessage ingest_server_start_time = 1;
+    optional int64 ingest_sequence_num = 2;
+    optional int64 ingest_time_usec = 3;
+    optional string ingest_server_bns = 4;
+}

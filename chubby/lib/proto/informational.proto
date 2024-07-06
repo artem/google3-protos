@@ -3,8 +3,6 @@ syntax = "proto2";
 package chubby;
 
 message ClientStats {
-  optional int64 reads_for_session = 1;
-  optional int64 lscache_hits_for_session = 2;
+    optional int64 reads_for_session = 1;
+    optional int64 lscache_hits_for_session = 2;
 }
-
-

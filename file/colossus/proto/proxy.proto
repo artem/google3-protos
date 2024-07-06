@@ -1,0 +1,170 @@
+syntax = "editions";
+
+package colossus;
+
+import "file/base/fileproperties.proto";
+import "file/colossus/proto/base.proto";
+import "file/colossus/proto/cfs.proto";
+import "security/thinmint/proto/core/thinmint_core.proto";
+import "storage/datapol/annotations/proto/semantic_annotations.proto";
+import "storage/util/int128/int128.proto";
+
+option java_package = "com.google.io.file.colossus";
+
+service ProxyInterface {
+    rpc Open(Proxy_OpenArg) returns (Proxy_OpenResult);
+    rpc Read(Proxy_ReadArg) returns (Proxy_ReadResult);
+    rpc Stat(Proxy_StatArg) returns (Proxy_StatResult);
+    rpc Match(Proxy_MatchArg) returns (Proxy_MatchResult);
+}
+
+message Proxy_ArgHeader {
+    optional string end_user = 1;
+    
+    optional ServerVersion required_server_version = 2 [default = BASE];
+    enum ServerVersion {
+        BASE = 1;
+        LOOKUP_WITH_CFS_ID_FOR_RECORD_APPEND = 2;
+        DELETE_WITH_USER = 3;
+        OPEN_FULLY_SPECIFIED = 4;
+        DELETE_DIR = 5;
+        PARALLEL_WRITE = 6;
+    }
+    
+    optional int64 op_id = 3 [default = 0];
+    optional .thinmint.ThinMint thinmint = 4;
+    optional .thinmint.ThinMint destination_thinmint = 5;
+}
+
+message Proxy_Redirect {
+    optional string target = 1;
+    optional string reason = 2;
+}
+
+message Proxy_ResultHeader {
+    optional Proxy_Redirect redirect = 1;
+}
+
+message Proxy_FileKey {
+    optional string path = 1;
+    optional int64 cfs_id = 4;
+    optional int64 generation = 3;
+    optional int32 stripe_index = 5 [default = -1];
+    optional string end_user = 6;
+    
+    oneof id_representation {
+        int64 __id = 2 [default = 0, deprecated = true];
+        storage_util.Int128 __large_id = 7 [deprecated = true];
+    }
+}
+
+message Proxy_OpenArg {
+    optional Proxy_ArgHeader header = 1;
+    optional string path = 2;
+    optional Proxy_FileKey reopen_key = 11;
+    
+    optional Mode mode = 3;
+    enum Mode {
+        OTHER = -1;
+        TRUNCATE = 0;
+        APPEND = 1;
+        RECORD_APPEND = 2;
+        READ_ONLY = 3;
+    }
+    
+    optional string mode_str = 7;
+    optional uint32 permissions = 8;
+    optional uint32 attr = 9;
+    optional string group = 10;
+    optional int64 cfs_id = 6;
+    optional Challenge response = 4;
+    
+    oneof id_representation {
+        int64 __id = 5 [deprecated = true];
+        storage_util.Int128 __large_id = 12 [deprecated = true];
+    }
+}
+
+message Proxy_OpenResult {
+    optional Proxy_ResultHeader header = 4;
+    optional Challenge request = 1;
+    optional Proxy_FileKey file_key = 2;
+    optional int64 file_size = 3;
+    optional FileEncoding file_encoding = 5;
+}
+
+message Proxy_ReadArg {
+    optional Proxy_ArgHeader header = 1;
+    optional Proxy_FileKey file_key = 2;
+    optional int64 offset = 3;
+    optional int64 size = 4;
+}
+
+message Proxy_ReadResult {
+    optional bytes data = 1 [ctype = CORD];
+}
+
+message Proxy_StatArg {
+    optional Proxy_ArgHeader header = 1;
+    optional string path = 2;
+    
+    oneof id_representation {
+        int64 __id = 3 [deprecated = true];
+        storage_util.Int128 __large_id = 4 [deprecated = true];
+    }
+}
+
+message FileStatProto {
+    optional int64 length = 1;
+    optional int32 mtime = 2;
+    optional uint32 attributes = 3;
+    optional uint32 mode = 4;
+    optional string owner = 5;
+    optional string group = 6;
+    optional string encoding = 7;
+    optional file.FileProperties properties = 9;
+    
+    oneof identifier_representation {
+        int64 __identifier = 8 [deprecated = true];
+        storage_util.Int128 __large_identifier = 10 [deprecated = true];
+    }
+}
+
+message Proxy_StatResult {
+    optional Proxy_ResultHeader header = 10;
+    optional FileStatProto file_stat = 11;
+    optional int64 length = 1;
+    optional int32 mtime = 2;
+    optional int32 attributes = 3;
+    optional int32 mode = 4;
+    optional string owner = 5;
+    optional string group = 6;
+    optional string encoding = 7;
+    optional file.FileProperties properties = 9;
+    
+    oneof identifier_representation {
+        int64 __identifier = 8 [deprecated = true];
+        storage_util.Int128 __large_identifier = 12 [deprecated = true];
+    }
+}
+
+message Proxy_MatchArg {
+    optional Proxy_ArgHeader header = 1;
+    optional string pattern = 2;
+    optional bool want_stat = 3;
+    optional uint32 match_type = 4 [default = 0];
+    optional uint32 stat_mask = 5;
+}
+
+message Proxy_MatchResult {
+    optional Proxy_ResultHeader header = 1;
+    repeated string paths = 2;
+    repeated FileStatProto stats = 3;
+}
+
+message Proxy_UserStats {
+    optional string user = 1;
+    optional int64 outstanding_ops = 2;
+    optional int64 outstanding_bytes = 3;
+    optional int64 buffered_bytes = 4;
+}

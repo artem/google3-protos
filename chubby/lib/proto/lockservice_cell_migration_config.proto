@@ -1,0 +1,22 @@
+syntax = "proto2";
+
+package chubby;
+
+import "chubby/lib/proto/sharding_config_common.proto";
+
+option java_multiple_files = true;
+
+message LockserviceCellMigrationConfig {
+    repeated PathTranslationRule path_translations = 1;
+}
+
+message ServerCellMigrationConfigSet {
+    repeated ServerCellMigrationConfigParams config_params = 1;
+    message ServerCellMigrationConfigParams {
+        optional bool do_bns_migration = 1;
+        optional int32 enabled_client_min_version = 2;
+        repeated string disabled_usernames = 3;
+        repeated string enabled_usernames = 4;
+        optional double enabled_users_ratio = 5;
+    }
+}

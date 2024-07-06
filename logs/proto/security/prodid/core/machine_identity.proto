@@ -1,0 +1,32 @@
+syntax = "proto2";
+
+package security_prodid;
+
+import "security/credentials/proto/principal.proto";
+import "storage/datapol/annotations/proto/semantic_annotations.proto";
+
+option java_package = "com.google.security.prodid";
+
+message GoogleMachineIdentityProto {
+    optional string fqdn = 1;
+    optional security.credentials.PrincipalProto owner = 2;
+    optional bool in_hwops_state = 3;
+    repeated string security_realms = 4;
+    optional uint64 serial_number = 5 [deprecated = true];
+    optional uint64 issue_timestamp = 6 [deprecated = true];
+    repeated string bandaid_rack_labels = 7;
+    repeated string bandaid_service_groups = 8;
+    
+    optional NetbootInstallerType netboot_installer_type = 9;
+    enum NetbootInstallerType {
+        UNSPECIFIED = 0;
+        DEFAULT_INSTALL = 1;
+        RECOVERY_INSTALL = 2;
+    }
+    
+    optional bytes offline_node_entities_hash = 10;
+}
+
+message NetbootInstallerTypeProto3Wrapper {
+    optional GoogleMachineIdentityProto.NetbootInstallerType netboot_installer_type = 1;
+}

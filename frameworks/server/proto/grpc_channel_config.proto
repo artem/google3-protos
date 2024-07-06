@@ -1,0 +1,68 @@
+syntax = "proto3";
+
+package frameworks.server;
+
+import "net/base/qos.proto";
+import "security/authorization/server_authorization/public/policy/client_policy.proto";
+import "security/loas/l2/proto/securitylevel.proto";
+import "storage/datapol/annotations/proto/semantic_annotations.proto";
+
+option cc_enable_arenas = true;
+option java_multiple_files = true;
+option java_package = "com.google.frameworks.server.proto";
+
+message GrpcChannelConfig {
+    string target = 1;
+    
+    oneof channel {
+        ProdChannel prod_channel = 2;
+        InProcessChannel in_process_channel = 3;
+        UnixDomainSocketChannel unix_domain_socket_channel = 6;
+        CloudChannel cloud_channel = 4;
+        CloudALTSChannel cloud_alts_channel = 7;
+        ProdToCloudChannel prod_to_cloud_channel = 5;
+    }
+    
+    message ProdChannel {
+        security_loas_l2.SecurityLevelValue min_security_level = 1;
+        net_base.qos.TrafficClassValue traffic_class = 2;
+        server_authz.UnrestrictedClientPolicy server_authorization_policy = 5;
+        int32 max_header_list_size = 3;
+        int32 max_message_size = 4;
+        double keep_alive_timeout_seconds = 6;
+        string load_balancing_policy_name = 7;
+    }
+    
+    message InProcessChannel {
+        
+    }
+    
+    message UnixDomainSocketChannel {
+        
+    }
+    
+    message CloudChannel {
+        int32 max_header_list_size = 2;
+        string server_name = 3;
+        bool use_client_cert = 4;
+        string custom_roots_certs_file = 5;
+        GrpcSocketOptions socket_options = 7;
+        
+        reserved 1, 6;
+    }
+    
+    message CloudALTSChannel {
+        int32 max_header_list_size = 1;
+        repeated string target_service_account = 2;
+    }
+    
+    message ProdToCloudChannel {
+        server_authz.UnrestrictedClientPolicy server_authorization_policy = 1;
+        int32 max_header_list_size = 2;
+        int32 max_message_size = 3;
+    }
+    
+    message GrpcSocketOptions {
+        bool enable_torpedo = 1;
+    }
+}

@@ -1,0 +1,49 @@
+syntax = "proto2";
+
+package security_realms;
+
+import "storage/datapol/annotations/proto/semantic_annotations.proto";
+
+option java_multiple_files = true;
+option java_package = "com.google.security.realms.acl";
+
+message Realm {
+    optional string name = 1;
+}
+
+message RealmGroup {
+    optional string name = 1;
+}
+
+message Member {
+    oneof member_oneof {
+        Realm realm = 1;
+        RealmGroup realm_group = 2;
+    }
+}
+
+message BaseEntry {
+    optional string mdb_group_owner = 1;
+    repeated Member members = 2;
+    repeated string prod_universe_ids = 3;
+}
+
+message RealmEntry {
+    optional BaseEntry base = 1;
+}
+
+message RealmGroupEntry {
+    optional BaseEntry base = 1;
+}
+
+message RealmEntityEntry {
+    oneof realm_entity_entry_oneof {
+        RealmEntry realm = 1;
+        RealmGroupEntry realm_group = 2;
+    }
+}
+
+message RealmGroupMapping {
+    map<string, RealmEntityEntry> entries = 1;
+    optional int64 version = 2;
+}

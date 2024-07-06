@@ -1,0 +1,22 @@
+syntax = "editions";
+
+package colossus;
+
+import "file/colossus/proto/cfs.proto";
+
+message SetStatDefaultEncryptionKeyPush {
+    
+}
+
+message StatRestrictedAttributes {
+    optional int64 file_generation = 1;
+    optional bool setstat_ignore_quota_enforcement = 2 [default = false];
+}
+
+message ExtendedEncryptionAttributes {
+    optional KeystoreInstance keystore_affinity = 1;
+}
+
+message ExposeDefaultEncryptionInStat {
+    
+}

@@ -1,0 +1,18 @@
+syntax = "proto2";
+
+package borg;
+
+option java_outer_classname = "MigrationProtos";
+option java_package = "com.google.borg.util";
+
+message CheckpointsInfo {
+    optional int64 latest_checkpoint_timestamp = 1;
+    optional int32 number_of_checkpoints = 2;
+}
+
+message RestoresInfo {
+    optional int64 latest_restore_timestamp = 1;
+    optional int64 virtual_cycle_offset = 2;
+    optional int64 virtual_monotonic_offset = 3;
+    optional int64 virtual_boot_time_offset = 4;
+}

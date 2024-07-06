@@ -1,0 +1,16 @@
+syntax = "proto2";
+
+package sherlog.core;
+
+import "frameworks/debug/sherlog/core/proto/trace_owner.proto";
+import "frameworks/debug/sherlog/core/proto/tracer_metadata.proto";
+import "frameworks/debug/sherlog/core/proto/tracing_state.proto";
+
+option java_multiple_files = true;
+option java_package = "com.google.frameworks.debug.sherlog.core.proto";
+
+message RequestMetadata {
+    optional TracerMetadata tracer_metadata = 1;
+    optional TracingState state = 2;
+    optional TraceOwner owner = 3;
+}

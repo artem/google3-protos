@@ -1,0 +1,153 @@
+syntax = "proto3";
+
+package google.cloud.sql.authorization.v1;
+
+import "google/api/field_behavior.proto";
+import "google/api/resource.proto";
+import "google/api/visibility.proto";
+import "google/protobuf/duration.proto";
+import "storage/datapol/annotations/proto/semantic_annotations.proto";
+
+option java_multiple_files = true;
+option java_outer_classname = "DataTypeProto";
+option java_package = "com.google.cloud.sql.authorization.v1";
+
+message InstancesLoginRequest {
+    string instance = 1;
+    string database = 2;
+    string user = 3;
+    
+    UserType usertype = 4;
+    enum UserType {
+        BUILT_IN = 0;
+        CLOUD_IAM_USER = 1;
+        CLOUD_IAM_SERVICE_ACCOUNT = 2;
+        CLOUD_IAM_GROUP = 3;
+        CLOUD_IAM_GROUP_USER = 4;
+        CLOUD_IAM_GROUP_SERVICE_ACCOUNT = 5;
+    }
+    
+    string client_ip_address = 6;
+    int32 database_session_id = 7;
+    string vm = 8;
+    
+    oneof user_credential {
+        string access_token = 5;
+    }
+}
+
+message InstancesLoginResponse {
+    
+}
+
+message GetInstancePasswordPolicyRequest {
+    string name = 1;
+    string vm = 2;
+}
+
+message GetInstancePasswordPolicyResponse {
+    oneof _min_length {
+        int32 min_length = 1;
+    }
+    
+    oneof _complexity {
+        Complexity complexity = 2;
+    }
+    
+    oneof _reuse_count {
+        int32 reuse_count = 3;
+    }
+    
+    oneof _disallow_username_substr {
+        bool disallow_username_substr = 4;
+    }
+    
+    oneof _password_change_interval {
+        protobuf.Duration password_change_interval = 5;
+    }
+    
+    oneof _disallow_compromised_credentials {
+        bool disallow_compromised_credentials = 6 [deprecated = true];
+    }
+    
+    oneof _detect_compromised_credentials {
+        bool detect_compromised_credentials = 7 [deprecated = true];
+    }
+    
+    enum Complexity {
+        COMPLEXITY_UNSPECIFIED = 0;
+        COMPLEXITY_DEFAULT = 1;
+    }
+}
+
+message CheckGroupMembershipRequest {
+    repeated string iam_groups = 4;
+    
+    oneof user_id {
+        string user = 2;
+        string access_token = 3;
+    }
+    
+    oneof _instance {
+        string instance = 1;
+    }
+    
+    oneof _client_ip_address {
+        string client_ip_address = 5;
+    }
+    
+    oneof _vm {
+        string vm = 6;
+    }
+    
+    oneof _database_username {
+        string database_username = 7;
+    }
+    
+    oneof _database {
+        string database = 8;
+    }
+    
+    oneof _database_session_id {
+        int32 database_session_id = 9;
+    }
+}
+
+message CheckGroupMembershipResponse {
+    repeated string membership_groups = 2;
+    repeated string non_membership_groups = 3;
+    
+    oneof _user {
+        string user = 1;
+    }
+}
+
+message BulkCheckGroupMembershipRequest {
+    repeated string users = 2;
+    repeated string iam_groups = 3;
+    
+    oneof _instance {
+        string instance = 1;
+    }
+    
+    oneof _vm {
+        string vm = 4;
+    }
+}
+
+message GroupMembershipSyncInfo {
+    repeated string membership_groups = 2;
+    repeated string non_membership_groups = 3;
+    
+    oneof _user {
+        string user = 1;
+    }
+    
+    oneof _error_message {
+        string error_message = 4;
+    }
+}
+
+message BulkCheckGroupMembershipResponse {
+    repeated GroupMembershipSyncInfo group_membership_responses = 1;
+}

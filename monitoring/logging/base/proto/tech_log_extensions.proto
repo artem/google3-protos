@@ -1,0 +1,13 @@
+syntax = "proto2";
+
+package remote_debug_logging;
+
+import "monitoring/logging/base/proto/client_metadata.proto";
+import "tech/log/proto/entity.proto";
+
+option java_outer_classname = "TechLogExtensions";
+option java_package = "com.google.monitoring.logging.base.proto";
+
+extend tech.log.Entity {
+    optional ClientProcessMetadata client_process_metadata_ext = 1000;
+}

@@ -1,0 +1,40 @@
+syntax = "editions";
+
+package storage.integrity.reporting;
+
+import "google/protobuf/timestamp.proto";
+
+option java_multiple_files = true;
+option java_outer_classname = "DCMBatchProto";
+option java_package = "com.google.storage.integrity.reporting";
+
+message BorgTaskIdentifier {
+    optional string cluster = 1;
+    optional string machine = 2;
+    optional string user = 3;
+    optional string job = 4;
+    optional int64 task = 5;
+    optional int64 cpu = 6;
+    optional string build_changelist = 7;
+    optional string mpm_label = 8;
+    optional ReporterType reporter_type = 9;
+}
+
+message OptionalAttributes {
+    optional int64 suspect_count = 1;
+}
+
+message DcmReportBatch {
+    optional BorgTaskIdentifier reporter = 1;
+    optional BorgTaskIdentifier accused = 2;
+    optional string reporting_system = 3;
+    optional string error_type = 4;
+    optional int64 count = 5;
+    optional google.protobuf.Timestamp symptom_time = 6;
+    optional OptionalAttributes optional_attributes = 7;
+}
+
+enum ReporterType {
+    REPORTER_BORG = 0;
+    REPORTER_DAEMON = 1;
+}

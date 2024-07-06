@@ -1,41 +1,84 @@
 syntax = "proto3";
 
-import "net/proto2/proto/descriptor.proto";
 package google.api;
 
-option java_package = "com.google.api";
-option java_outer_classname = "PolicyProto";
-option java_multiple_files = true;
-option go_package = "google.golang.org/genproto/googleapis/api/policy;policy";
-option cc_enable_arenas = true;
+import "google/api/visibility.proto";
+import "google/protobuf/struct.proto";
+import "net/proto2/proto/descriptor.proto";
+
 option objc_class_prefix = "GAPI";
+option cc_enable_arenas = true;
+option go_package = "google.golang.org/genproto/googleapis/api/serviceconfig;serviceconfig";
+option java_multiple_files = true;
+option java_outer_classname = "PolicyProto";
+option java_package = "com.google.api";
 
 message FieldPolicy {
-  string selector = 1;
-  string resource_permission = 2;
-  string resource_type = 3;
-  string auditing = 4;
-  repeated .google.api.OrgPolicy org_policies = 5;
-  bool is_service_consumer = 6;
+    string selector = 1;
+    string resource_permission = 2;
+    string resource_type = 3;
+    string child_resource_type = 10;
+    string child_resource_name_extractor = 11;
+    string auditing = 4;
+    string resource_access_type = 12;
+    string monitored_resource_type = 8;
+    string monitored_resource_label_extractor = 9;
+    repeated OrgPolicy org_policies = 5;
+    bool is_service_consumer = 6;
+    string location_selector = 7;
+    repeated MetadataPolicy metadata_policies = 13;
+    string resource_location_selector = 14;
+    string cmek_key_selector = 15;
+    
+    CustomOrgPolicyAccessibility custom_org_policy_accessibility = 16;
+    enum CustomOrgPolicyAccessibility {
+        CUSTOM_ORG_POLICY_ACCESSIBILITY_UNSPECIFIED = 0;
+        PUBLIC = 1;
+        RESTRICTED = 2;
+    }
+    
+    string custom_org_policy = 17;
+    string condition = 18;
+    string resource_decorator = 19;
 }
 
 message OrgPolicy {
-  string constraint = 1;
-  string value_selector = 2;
+    string constraint = 1;
+    string value_selector = 2;
+    string enabled = 5;
+    repeated string value_extractors = 4;
+    
+    reserved 3;
+}
+
+message MetadataPolicy {
+    string type = 1;
+    string value_selector = 2;
+    repeated string value_extractors = 3;
 }
 
 message MethodPolicy {
-  string action = 1;
-  string auditing = 4;
-  repeated .google.api.FieldPolicy request_policies = 2;
-  repeated .google.api.FieldPolicy response_policies = 3;
+    string action = 1;
+    string selector = 9;
+    string auditing = 4;
+    string authorization = 6;
+    string flags = 7;
+    bool active_developer_method = 8;
+    repeated FieldPolicy request_policies = 2;
+    repeated FieldPolicy response_policies = 3;
+    map<string, string> metadata = 5;
+    repeated PolicyAspect policy_aspects = 10;
+}
+
+message PolicyAspect {
+    string kind = 1;
+    protobuf.Struct spec = 2;
 }
 
 extend .proto2.FieldOptions {
-  .google.api.FieldPolicy field_policy = 158361448;
+    FieldPolicy field_policy = 158361448;
 }
 
 extend .proto2.MethodOptions {
-  .google.api.MethodPolicy method_policy = 161893301;
+    MethodPolicy method_policy = 161893301;
 }
-

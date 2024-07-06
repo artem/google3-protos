@@ -2,21 +2,20 @@ syntax = "proto2";
 
 package borg;
 
-option java_package = "com.google.borg.rpc";
-option java_outer_classname = "AppClassProto";
 option cc_enable_arenas = true;
+option java_outer_classname = "AppClassProto";
+option java_package = "com.google.borg.rpc";
 
 message AppClass {
-  enum Type {
-    option allow_alias = true;
-    LATENCY_TOLERANT_SECONDARY = 0;
-    LATENCY_TOLERANT_PRIMARY = 1;
-    LATENCY_SENSITIVE_SECONDARY = 2;
-    LATENCY_SENSITIVE_CRITICAL = 3;
-    BEST_EFFORT = 0;
-    PRODUCTION_BATCH = 1;
-  }
-  required .borg.AppClass.Type type = 1;
+    required Type type = 1;
+    enum Type {
+        option allow_alias = true;
+        LATENCY_TOLERANT_SECONDARY = 0;
+        LATENCY_TOLERANT_PRIMARY = 1;
+        LATENCY_SENSITIVE_SECONDARY = 2;
+        LATENCY_SENSITIVE_CRITICAL = 3;
+        LATENCY_OPTIMIZED = 4;
+        BEST_EFFORT = 0 [deprecated = true];
+        PRODUCTION_BATCH = 1 [deprecated = true];
+    }
 }
-
-

@@ -1,0 +1,100 @@
+syntax = "proto2";
+
+package bigtable;
+
+import "storage/datapol/annotations/proto/semantic_annotations.proto";
+
+message CacheSizerParams {
+    optional CacheSizeRecommenderParams size_recommender_params = 1;
+    optional CacheLimitApplierParams limit_applier_params = 2;
+}
+
+message CacheSizeRecommenderParams {
+    optional bool generate_recommendations = 1;
+    repeated CacheRecommendationModel recommendation_models = 2;
+}
+
+message CacheRecommendationModel {
+    optional Type type = 1;
+    enum Type {
+        MODEL_TYPE_UNSPECIFIED = 0;
+        PERF_PER_TCO = 1;
+    }
+    
+    optional string tag = 2;
+    optional int64 generate_recommendations_interval_secs = 3;
+}
+
+message CacheLimitApplierParams {
+    optional bool apply_limits = 1;
+    repeated CacheLimitModel limit_models = 2;
+}
+
+message CacheLimitModel {
+    optional string tag = 1;
+    optional int64 apply_limits_interval_secs = 2;
+    optional CacheRecommendationModel recommendation_model = 3;
+    optional CacheLimitAggregation aggregation = 4;
+    optional CacheLimitSafeguards safeguards = 5;
+    
+    optional ApplyMode apply_mode = 6;
+    enum ApplyMode {
+        APPLY_MODE_UNSPECIFIED = 0;
+        AUTOMATED_APPLY_MODE = 1;
+        GUIDED_APPLY_MODE = 2;
+    }
+    
+    optional CacheLimitNotificationMode notification_mode = 7;
+    
+    reserved 8;
+}
+
+message CacheLimitAggregation {
+    optional int32 aggregation_window_hours = 1;
+    
+    optional AggregationType aggregation_type = 2;
+    enum AggregationType {
+        AGGREGATION_TYPE_UNSPECIFIED = 0;
+        LATEST_AGGREGATION_TYPE = 1;
+        AVG_AGGREGATION_TYPE = 2;
+        P50_AGGREGATION_TYPE = 3;
+        P90_AGGREGATION_TYPE = 4;
+        P95_AGGREGATION_TYPE = 5;
+        P99_AGGREGATION_TYPE = 6;
+    }
+}
+
+message CacheLimitSafeguards {
+    optional double max_cache_limit_fraction = 4;
+    optional double min_cache_limit_fraction = 1;
+    optional double max_cache_update_fraction = 2;
+    optional double min_cache_update_fraction = 3;
+}
+
+message CacheLimitNotificationMode {
+    optional Type type = 1;
+    enum Type {
+        NOTIFICATION_TYPE_UNSPECIFIED = 0;
+        NO_NOTIFICATION = 1;
+        BUG_NOTIFICATION = 2;
+        SUBSPACE_NOTIFICATION = 3;
+    }
+    
+    oneof notification_params {
+        BugNotificationParams bug_notification_params = 2;
+        SubspaceNotificationParams subspace_notification_params = 3;
+    }
+}
+
+message BugNotificationParams {
+    optional string assignee = 1;
+    optional int64 component_id = 2;
+    repeated string cc_list = 3;
+    optional int64 hotlist_id = 4;
+    optional int64 priority = 5;
+}
+
+message SubspaceNotificationParams {
+    optional bool notify_all_users = 1;
+    optional string resource_owner = 2;
+}

@@ -1,0 +1,30 @@
+syntax = "proto2";
+
+package bns;
+
+import "chubby/lib/proto/bnsresolver.proto";
+import "net/base/addressresolver.proto";
+
+option java_multiple_files = true;
+option java_package = "com.google.net.bns";
+
+message BNSAliasConfig {
+    repeated Target targets = 1;
+    message Target {
+        oneof address {
+            string bns = 1;
+            ResolvedAddr ip = 2;
+        }
+    }
+    
+    optional TaskResolutionMode task_resolution_mode = 2;
+    enum TaskResolutionMode {
+        TASK_RESOLUTION_MODE_UNSPECIFIED = 0;
+        TASK_RESOLUTION_MODE_CONCAT = 1;
+        TASK_RESOLUTION_MODE_MERGE = 2;
+    }
+    
+    extend BNSMeta {
+        optional BNSAliasConfig bns_alias_config = 482675313;
+    }
+}

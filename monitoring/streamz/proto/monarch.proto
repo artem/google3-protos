@@ -1,0 +1,94 @@
+syntax = "proto2";
+
+package monitoring.streamz;
+
+import "google/protobuf/duration.proto";
+import "monitoring/streamz/api/data_model.proto";
+import "monitoring/streamz/api/hierarchical_isolation.proto";
+import "monitoring/streamz/proto/lazy_point_set.proto";
+import "net/base/qos.proto";
+import "util/task/status.proto";
+
+option cc_enable_arenas = true;
+
+service MonarchCollector {
+    rpc ReadSchedules(ReadSchedulesRequest) returns (ReadSchedulesResponse);
+    rpc Write(WriteRequest) returns (WriteResponse);
+}
+
+message ReadSchedulesRequest {
+    optional .streamz.Entity entity = 1;
+    optional int64 recipe_fingerprint = 2 [default = -1];
+    
+    repeated TargetInfo target_info = 3;
+    message TargetInfo {
+        optional bytes target_key = 1;
+        optional fixed64 schedules_fingerprint = 3;
+    }
+    
+    optional .streamz.HierarchicalIsolationRole isolation_role = 4;
+}
+
+message ReadSchedulesResponse {
+    optional int64 recipe_fingerprint = 1 [default = -1];
+    
+    repeated TargetInfo target_info = 2;
+    message TargetInfo {
+        optional bytes target_key = 1;
+        optional fixed64 schedules_fingerprint = 3;
+        
+        repeated Schedule schedule = 4;
+        message Schedule {
+            optional google.protobuf.Duration sampling_period = 1;
+            repeated string inclusion_pattern = 2;
+            repeated string exclusion_pattern = 3;
+            optional net_base.qos.TrafficClass traffic_class = 4;
+            optional int32 replication_level = 5;
+            optional google.protobuf.Duration max_write_period = 6;
+        }
+    }
+    
+    optional google.protobuf.Duration next_delay = 3;
+    repeated string warning = 4;
+}
+
+message WriteRequest {
+    optional bytes target_key = 1;
+    
+    repeated Points points = 2;
+    message Points {
+        optional int32 replication_level = 1;
+        repeated LazyPointSet lazy_point_set = 3;
+    }
+    
+    optional Debug debug = 3;
+    message Debug {
+        optional bool request_trace = 1 [default = false];
+    }
+    
+    optional .streamz.HierarchicalIsolationRole isolation_role = 4;
+}
+
+message WriteResponse {
+    optional DebugInfo debug_info = 1;
+    message DebugInfo {
+        optional RequestTrace request_trace = 1;
+        message RequestTrace {
+            repeated Replication replication = 1;
+            message Replication {
+                optional int32 replication_index = 1;
+                optional string tss_write_request = 2;
+                
+                repeated Leaf leaf = 3;
+                message Leaf {
+                    optional string address = 1;
+                    
+                    oneof response {
+                        string tss_write_response = 2;
+                        util.StatusProto failure = 3;
+                    }
+                }
+            }
+        }
+    }
+}

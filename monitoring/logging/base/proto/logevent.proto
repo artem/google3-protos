@@ -1,73 +1,88 @@
 syntax = "proto2";
 
+package logging.proto;
+
+import "monitoring/logging/base/proto/missing_data.proto";
 import "perftools/tracing/proto/process_info.proto";
 import "perftools/tracing/proto/tracecontext.proto";
-package logging.proto;
+import "privacy/ptoken/public/core/ptoken.proto";
+import "storage/datapol/annotations/proto/semantic_annotations.proto";
 
 option java_package = "com.google.logging.proto";
 
-enum Severity {
-  FINEST = 300;
-  FINER = 400;
-  FINE = 500;
-  VERBOSE_0 = 600;
-  CONFIG = 700;
-  INFO = 800;
-  NOTICE = 850;
-  WARNING = 900;
-  ERROR = 950;
-  SEVERE = 1000;
-  FATAL = 1100;
-}
-
 message Event {
-  optional fixed64 global_process_id = 1;
-  optional string file_name = 2 [ctype = CORD];
-  optional int32 file_line = 3;
-  optional int64 time_nsecs = 4;
-  optional int32 severity = 5 [default = 800];
-  optional int64 thread_id = 6;
-  repeated .logging.proto.Value value = 7;
-  optional .logging.proto.RequestContext request_context = 8;
-  repeated .logging.proto.KeyValue log_context = 33;
-  optional .perftools.tracing.ProcessInfo process_info = 34;
-  extensions 1000 to 1100;
-  extensions 2000 to 2100;
+    optional string file_name = 2 [ctype = CORD];
+    optional int32 file_line = 3;
+    optional int64 time_nsecs = 4;
+    optional int32 severity = 5 [default = 800];
+    optional int64 thread_id = 6;
+    optional string thread_name = 10 [ctype = CORD];
+    optional int64 sequence_number = 9;
+    repeated Value value = 7;
+    optional RequestContext request_context = 8;
+    repeated KeyValue log_context = 33;
+    optional perftools.tracing.ProcessInfo process_info = 34;
+    optional remote_debug_logging.MissingData missing_data = 35;
+    
+    extensions 1000 to 1100, 2000 to 2100;
+    
+    reserved 1;
 }
 
 message Value {
-  oneof value {
-    bytes str = 1 [ctype = CORD];
-    int64 i64 = 2;
-    uint64 u64 = 3;
-    double dbl = 4;
-    bool boolean = 5;
-    bytes literal = 6 [ctype = CORD];
-    .logging.proto.KeyValue field = 8;
-    .logging.proto.TaggedMessage proto = 10;
-  }
-  optional .logging.proto.Format format = 15;
-}
-
-message Format {
-  optional int32 precision = 1;
-  optional bool fixed = 2;
-  optional bool scientific = 4;
-  optional int32 base = 3 [default = 10];
+    oneof value {
+        bytes str = 1 [ctype = CORD];
+        bytes literal = 6 [ctype = CORD];
+        int64 i64 = 2;
+        uint64 u64 = 3;
+        double dbl = 4;
+        bool boolean = 5;
+        TaggedMessage proto = 10;
+    }
+    
+    reserved 8, 15;
 }
 
 message TaggedMessage {
-  optional string type_name = 1;
-  optional bytes data = 2;
+    optional string type_name = 1;
+    optional bytes data = 2;
 }
 
 message RequestContext {
-  optional .perftools.tracing.TraceContextProto trace_context = 1;
+    optional perftools.tracing.TraceContextProto trace_context = 1;
+    optional .ptoken.PToken ptoken = 2;
 }
 
 message KeyValue {
-  optional string key = 1;
-  optional .logging.proto.Value value = 2;
+    optional string key = 1;
+    optional Value value = 2;
 }
 
+message SymbolizedStackFrame {
+    optional string fully_qualified_symbol_name = 1;
+    optional int32 line_number = 2;
+    optional string file_name = 3;
+}
 
+message SymbolizedStackTrace {
+    repeated SymbolizedStackFrame stack_frames = 1;
+    optional bool is_truncated = 2;
+}
+
+enum Severity {
+    FINEST = 300;
+    FINER = 400;
+    FINE = 500;
+    VERBOSE_0 = 600;
+    CONFIG = 700;
+    INFO = 800;
+    NOTICE = 850;
+    WARNING = 900;
+    ERROR = 950;
+    SEVERE = 1000;
+    FATAL = 1100;
+}
+
+extend Event {
+    optional SymbolizedStackTrace symbolized_stack_trace = 2004;
+}

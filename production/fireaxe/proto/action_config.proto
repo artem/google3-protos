@@ -1,0 +1,40 @@
+syntax = "proto3";
+
+package fireaxe;
+
+import "google/protobuf/any.proto";
+import "production/fireaxe/proto/operation_info.proto";
+import "production/fireaxe/proto/task_condition.proto";
+import "production/fireaxe/proto/task_selection.proto";
+import "security/thinmint/proto/core/thinmint_core.proto";
+
+option java_multiple_files = true;
+option optimize_for = CODE_SIZE;
+option java_outer_classname = "ActionConfigPb";
+option java_package = "com.google.protos.fireaxe.actionconfig";
+
+message ActionConfigProto {
+    string action_id = 1;
+    google.protobuf.Any action_spec = 2;
+    repeated TaskConditionProto task_condition = 3;
+    TaskSelectionProto preview_tasks = 8;
+    .thinmint.ThinMint action_mint = 4;
+    bool action_mint_is_superuser = 7;
+    OperationInfoProto create_info = 5;
+    OperationInfoProto modify_info = 6;
+}
+
+message ActionConfigFileProto {
+    repeated ActionConfigProto action_config = 1;
+}
+
+message JobConfigProto {
+    string borg_cell = 1;
+    string user = 2;
+    string job_or_group = 3;
+    ActionConfigFileProto config = 4;
+}
+
+message GlobalConfigProto {
+    repeated JobConfigProto configs = 1;
+}

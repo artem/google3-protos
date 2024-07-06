@@ -1,0 +1,20 @@
+syntax = "proto3";
+
+package security.data_access;
+
+import "logs/proto/data_access/loggable_data_governance_annotations.proto";
+import "storage/datapol/annotations/proto/semantic_annotations.proto";
+
+option java_multiple_files = true;
+
+message AppliedAnnotations {
+    Category category = 1;
+    enum Category {
+        CATEGORY_UNSPECIFIED = 0;
+        HANDLER = 1;
+        BORG_JOB = 2;
+        BORG_ROLE = 3;
+    }
+    
+    LoggableDataGovernanceAnnotations data_governance_annotations = 2;
+}

@@ -1,0 +1,60 @@
+syntax = "proto2";
+
+package security.dataprotection.collection.proto.outboundacl;
+
+import "google/protobuf/timestamp.proto";
+import "production/dependency/proto/dependencies.proto";
+import "production/dependency/rpc/outboundacl/proto/protocols.proto";
+import "production/dependency/rpc/outboundacl/proto/reasons.proto";
+import "production/resources/dataplatform/idx/time_series/public/proto/idx_time_series_record.proto";
+import "security/dataprotection/collection/public/collection_service.proto";
+
+option java_multiple_files = true;
+option java_package = "com.google.security.dataprotection.collection.proto.outboundacl";
+
+message OutboundACLEventReport {
+    optional secure_collection.MessageSource message_source = 1;
+    optional google.protobuf.Timestamp event_timestamp = 2;
+    repeated OutboundACLEvent events = 3;
+    optional .idx.time_series.ingestion.proto.IDXTimeSeriesMetadata idx_internal_metadata = 4;
+}
+
+message OutboundACLEvent {
+    optional RpcEvent rpc_event = 1;
+    optional StateEvent state_event = 2;
+}
+
+message RpcEvent {
+    optional string service_name = 1;
+    optional string method_name = 2;
+    optional string gslb_target = 3 [deprecated = true];
+    optional bool rejected = 4 [deprecated = true];
+    optional string reason = 5 [deprecated = true];
+    optional string process = 6;
+    optional string target = 7;
+    repeated string reasons = 8 [deprecated = true];
+    optional bool exempted = 9;
+    optional production.dependency.rpc.outboundacl.Protocol protocol = 10;
+    optional production.dependency.rpc.outboundacl.Language language = 11;
+    optional string proto_package_name = 12;
+    optional string service_name_suffix = 13;
+    repeated production.dependency.rpc.outboundacl.Reason rejection_reasons = 14 [packed = true];
+    optional production.dependency.rpc.outboundacl.Verdict verdict = 15;
+    optional google.protobuf.Timestamp state_change_timestamp = 16;
+    optional string remote_borg_user = 17;
+    optional string remote_borg_job = 18;
+    repeated string remote_borg_cells = 19;
+}
+
+message StateEvent {
+    optional string policy_state = 1;
+    optional bool enforcement = 2;
+    optional string policy_path = 3;
+    optional string process = 4;
+    optional string build_target = 5;
+    optional uint64 build_cl = 6;
+    optional production.dependency.proto.Dependencies policy = 7 [deprecated = true];
+    optional production.dependency.rpc.outboundacl.Language language = 8;
+    optional google.protobuf.Timestamp state_change_timestamp = 9;
+    optional bytes full_policy = 10;
+}

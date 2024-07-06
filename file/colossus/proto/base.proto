@@ -1,0 +1,331 @@
+syntax = "proto2";
+
+package colossus;
+
+import "file/colossus/cfs2/proto/folder_role.proto";
+import "net/proto2/bridge/proto/message_set.proto";
+import "security/context/proto/loggable_peer.proto";
+import "security/credentials/proto/authenticator.proto";
+import "security/credentials/proto/end_user_credentials.proto";
+import "security/thinmint/proto/core/thinmint_core.proto";
+import "storage/datapol/annotations/proto/semantic_annotations.proto";
+
+option java_package = "com.google.io.file.colossus";
+
+message RequestID {
+    optional uint64 client_id = 1;
+    optional int64 local_id = 2 [default = 0];
+    optional int64 DEPRECATED_done_id = 3 [deprecated = true];
+}
+
+message ArgHeader {
+    required int32 client_version = 1;
+    required int32 required_server_version = 2;
+    required string cell = 3;
+    optional int32 priority = 4;
+    optional int32 op_time = 5;
+    optional string client_id = 6;
+    optional int64 lamport_time = 7;
+    optional string end_user = 8;
+    optional string capabilities_user = 9;
+    optional string secondary_capabilities_user = 28;
+    optional string charge_user = 12;
+    
+    optional Source source = 10 [default = UNKNOWN];
+    enum Source {
+        UNKNOWN = 0;
+        NAMESPACE = 1;
+    }
+    
+    optional .thinmint.ThinMint thinmint = 11;
+    optional .thinmint.ThinMint destination_thinmint = 13;
+    optional security.credentials.EndUserCredentialsProto end_user_creds = 31;
+    optional int64 client_changelist = 14;
+    optional CFS2ArgHeader cfs2_arg_header = 15;
+    optional Cns2Options cns2_options = 27;
+    optional RequestID request_id = 18;
+    
+    optional ClientLibrary client_library = 20;
+    enum ClientLibrary {
+        DEFAULT_CLIENT_LIBRARY = 0;
+        USECCFS_CLIENT_LIBRARY = 1;
+        WAL_CLIENT_LIBRARY = 2;
+    }
+    
+    optional string client_physical_hostname = 23;
+    optional string client_task_hostname = 24;
+    optional string client_task_port = 25;
+    optional string client_bns = 26;
+    
+    optional RequestOriginator client_source = 29;
+    message RequestOriginator {
+        optional string client_role = 1;
+        optional string client_realm = 2;
+        optional security.context.LoggablePeerProto loggable_client = 3;
+    }
+    
+    optional string user_facing_cell_name = 30;
+    optional bool bypass_cell_virtualization = 32 [default = false];
+    optional string opname = 33;
+    
+    oneof capabilities_realm_policy {
+        string capabilities_realm = 21;
+        bool generate_global_capabilities = 22;
+    }
+    
+    reserved 16, 17, 19;
+    
+    enum Version {
+        option allow_alias = true;
+        MIN_SUPPORTED_VERSION = 69;
+        NAMESPACE_MIN_SUPPORTED_VERSION = 69;
+        REQUIRED_SERVER_VERSION = 69;
+        NONE = 0;
+        BASE = 1;
+        OBSOLETE_PARALLEL_WRITE = 2;
+        OBSOLETE_ENFORCE_ENCODINGS = 3;
+        OBSOLETE_RECURSIVE_MATCH = 4;
+        OBSOLETE_REFACTORED_CREATE = 5;
+        OBSOLETE_NAMESPACE_BASE = 6;
+        OBSOLETE_NAMESPACE_MATCH_RENAME_SNAPSHOT = 7;
+        OBSOLETE_CREATE_IF_EXISTS_FOR_STRIPE_FILES = 8;
+        OBSOLETE_WRITER_EXCLUSION = 9;
+        OBSOLETE_CFS_DELEGATE_OPEN = 10;
+        OBSOLETE_CLIENT_SPECIFIED_CAPABILITIES_USER = 11;
+        OBSOLETE_NAMESPACE_WRITER_EXCLUSION = 12;
+        OBSOLETE_OPEN_FOR_APPEND = 13;
+        OBSOLETE_NAMESPACE_CLIENT_CAN_RETRIEVE_LENGTH = 14;
+        OBSOLETE_CFS_SET_WRITE_MODE_APPEND_ONLY = 15;
+        OBSOLETE_NAMESPACE_SET_WRITE_MODE_APPEND_ONLY = 16;
+        OBSOLETE_CFS_TYPED_CAPABILITY = 17;
+        OBSOLETE_SETATTR_PROTECTED = 18;
+        DEPRECATED_USED_SET_MTIME = 19;
+        OBSOLETE_CURATOR_STAT = 20;
+        OBSOLETE_OPEN_ENFORCE_FILE_ID = 21;
+        OBSOLETE_CFS_CAPABILITIES = 22;
+        OBSOLETE_CURATOR_STAT_BUG_2973152 = 23;
+        OBSOLETE_SET_MTIME = 24;
+        OBSOLETE_ERROR_CODE_STRIPE_CLOSED = 25;
+        OBSOLETE_CONCURRENT_SNAPSHOT_APPEND_BUG_2989831 = 26;
+        OBSOLETE_GET_CAPABILITIES_RPC = 27;
+        DEPRECATED_CLIENT_CFS_CAPABILITIES = 28;
+        OBSOLETE_NAMESPACE_RENAME_CHECKS_OVERWRITE = 29;
+        OBSOLETE_CLIENT_CFS_CAPABILITIES = 30;
+        OBSOLETE_NAMESPACE_MATCH_WITH_FAST_STAT = 31;
+        OBSOLETE_CAPABILITIES_FOR_MIXED_MODE_FILES = 32;
+        OBSOLETE_MAX_STRIPE_COUNT_SERVER = 33;
+        OBSOLETE_SNAPSHOT_HONORS_SUFFIX_PARAMS = 34;
+        OBSOLETE_BOOTSTRAP_CHUNKS_SEGREGATED = 35;
+        OBSOLETE_MAX_STRIPE_COUNT_ON_CREATE = 36;
+        OBSOLETE_TREAT_OPEN_FOR_APPEND_AS_TRUNCATE_ON_EMPTY_STRIPE = 37;
+        OBSOLETE_NAMESPACE_TRUNCATE_REPLICATED = 38;
+        OBSOLETE_STICKY_BIT_ON_DIR = 39;
+        OBSOLETE_SET_TTL_SECONDS_FROM_MTIME = 40;
+        OBSOLETE_DELETE_DIR_IFF_EXPIRED = 41;
+        OBSOLETE_NESTED_CODES = 42;
+        OBSOLETE_CREATE_NAME = 43;
+        OBSOLETE_CAPABILITIES_USER_IS_RPC_USER = 44;
+        OBSOLETE_FILE_PARTITIONS = 45;
+        OBSOLETE_NAMESPACE_MATCH_OPEN_CAPABILITY = 46;
+        OBSOLETE_NAMESPACE_DIR_DEFAULT_PARTITION = 47;
+        OBSOLETE_LARGE_SMALL_NESTED_CODES = 48;
+        OBSOLETE_WATCHER_MAP_PER_TABLET = 49;
+        OBSOLETE_DVOLUMES = 50;
+        OBSOLETE_OPEN_ERASURE_STRIPES = 51;
+        OBSOLETE_CREATE_IFF_NEW = 52;
+        DEPRECATED_ENCRYPT_WITH_SHARED_KEY = 53;
+        OBSOLETE_ENCRYPT_WITH_SHARED_KEY = 54;
+        OBSOLETE_CHUNK_PLACEMENT_POLICY = 55;
+        OBSOLETE_NAMESPACE_CHUNK_PLACEMENT_POLICY = 56;
+        OBSOLETE_NAMESPACE_ACCEPTS_CFS2_CAPABILITY_KEY = 57;
+        OBSOLETE_NAMESPACE_ON_CFS2 = 58;
+        OBSOLETE_TRUNCATE_LAST_UNRESOLVED_BLOCK_ROW = 59;
+        OBSOLETE_STRIPE_UPDATE_WITH_REENCRYPTION = 60;
+        OBSOLETE_CNS_LINKS_CFS2 = 61;
+        OBSOLETE_SEND_COLOSSUS_FILE_ID_TO_D_BY_DEFAULT = 62;
+        OBSOLETE_CREATE_DEFAULT_ENCRYPTED_FILES = 63;
+        DEPRECATED_UNIFIED_PLACEMENT = 64;
+        OBSOLETE_CREATE_ENCRYPTED_FILES_PASS_INFO = 65;
+        DEPRECATED_REWRAP_ENCRYPTION_KEY_ON_OPEN_STRIPE = 66;
+        OBSOLETE_SNAPSHOT_ARG_SUPPORTS_DST_BASE = 67;
+        DEPRECATED_REWRAP_ENCRYPTION_KEY_ON_SET_ATTR = 68;
+        OBSOLETE_RETRY_SNAPSHOT_WITH_STALE_THINMINT = 69;
+        DEPRECATED_2_REWRAP_ENCRYPTION_KEY_ON_OPEN_STRIPE = 70;
+        OBSOLETE_REWRAP_ENCRYPTION_KEY_ON_OPEN_STRIPE = 71;
+        DEPRECATED_2_REWRAP_ENCRYPTION_KEY_ON_SET_ATTR = 72;
+        REALM_RESTRICTED_CFS_CAPABILITIES = 73;
+        REWRAP_ENCRYPTION_KEY_ON_SET_ATTR = 74;
+        UNIFIED_PLACEMENT = 75;
+        KEYSTORE_AFFINITY = 76;
+        SSD_SPILLOVER = 77;
+        SSD_SPILLOVER_DEFAULT = 78;
+        SSD_SPILLOVER_OPTIONS = 79;
+        CHECKSUM_CLEARED_ON_REWRAP_ON_SET_ATTR = 80;
+        REALM_SET_FOR_DEFAULT_POLICY = 80;
+        REALM_SET_FOR_DEFAULT_POLICY_NEW_VERSION = 81;
+        CNS_ON_BLOBSTORE = 82;
+        ENCRYPT_D_METADATA = 83;
+        E2E_WRAPPED_KEY_CHECKSUM = 84;
+    }
+    
+    extend .proto2.bridge.MessageSet {
+        optional ArgHeader message_set_extension = 14104137;
+    }
+}
+
+message Challenge {
+    required int64 id = 13;
+    required int64 new_generation = 14;
+    optional int64 cur_generation = 16;
+    
+    reserved 15;
+}
+
+message CFSCapabilityKey {
+    optional bytes key = 1;
+    optional int64 id = 2;
+    optional int64 creation_time = 4;
+    optional int64 expiration_time = 3;
+    
+    optional Source source = 5;
+    enum Source {
+        CONSOLE = 1;
+        CURATOR = 2;
+    }
+    
+    extend .proto2.bridge.MessageSet {
+        optional CFSCapabilityKey message_set_extension = 16223161;
+    }
+}
+
+message CFSGrant {
+    optional int64 file_id = 1;
+    optional int64 capability_generation = 2;
+    optional string granter = 3;
+    optional string grantee = 4;
+    optional string delegated_user = 7;
+    optional string grantee_security_realm = 9;
+    optional int32 rights = 5;
+    optional int64 expiration_time = 6;
+    optional string charge_user = 8;
+    
+    enum Rights {
+        READ = 1;
+        WRITE = 2;
+    }
+}
+
+message CFSCapabilityRestriction {
+    extend .proto2.bridge.MessageSet {
+        optional CFSCapabilityRestriction message_set_extension = 460297847;
+    }
+}
+
+message CFSGrantRestriction {
+    optional CFSGrant grant = 1;
+    
+    extend .proto2.bridge.MessageSet {
+        optional CFSGrantRestriction message_set_extension = 460190708;
+    }
+}
+
+message CFSCapability {
+    optional CFSGrant grant = 1 [deprecated = true];
+    optional bytes serialized_grant = 7;
+    optional int64 key_id = 2;
+    optional bytes signature = 3;
+    optional .thinmint.ThinMint mint = 6;
+    
+    reserved 4, 5;
+    
+    extend .proto2.bridge.MessageSet {
+        optional CFSCapability message_set_extension = 16532497;
+    }
+}
+
+message CFSEndUserRestriction {
+    optional string end_user = 1;
+    optional bool allow_redelegation = 2;
+    optional bool delegate_resources = 3;
+    optional bool can_decrypt = 4;
+    
+    extend .proto2.bridge.MessageSet {
+        optional CFSEndUserRestriction message_set_extension = 21730724;
+    }
+}
+
+message CFSCreateParentRestriction {
+    extend .proto2.bridge.MessageSet {
+        optional CFSCreateParentRestriction message_set_extension = 38349822;
+    }
+}
+
+message CFSRedelegateRestriction {
+    optional int32 delegates_limit = 1;
+    
+    extend .proto2.bridge.MessageSet {
+        optional CFSRedelegateRestriction message_set_extension = 158313683;
+    }
+}
+
+message CFSAnyCellRestriction {
+    optional string cell = 1;
+    
+    extend .proto2.bridge.MessageSet {
+        optional CFSAnyCellRestriction message_set_extension = 59680047;
+    }
+}
+
+message CFSAuditRestriction {
+    repeated security.credentials.DataAccessReason access_reason = 1;
+    
+    extend .proto2.bridge.MessageSet {
+        optional CFSAuditRestriction message_set_extension = 69644482;
+    }
+}
+
+message CFSDecryptRestriction {
+    extend .proto2.bridge.MessageSet {
+        optional CFSDecryptRestriction message_set_extension = 70817693;
+    }
+}
+
+message ServerLocation {
+    optional bytes socket_address = 1;
+}
+
+message CFS2ArgHeader {
+    optional int64 generation = 1;
+    optional string flat_namespace_folder_name = 5;
+    optional bool flat_namespace_op = 6 [default = false];
+    optional CFS2ProxyArgHeader proxy_arg = 2;
+    optional bool internal_op = 3 [default = false];
+    optional bool loopback_op = 4 [default = false];
+    optional .colossus.cfs2.FolderRole expected_folder_role = 9;
+    optional int32 DEPRECATED_num_retries = 10 [deprecated = true];
+    optional string original_request_rpc_user = 11;
+    optional bool curator_remote_btree_op = 12 [default = false];
+    
+    reserved 7, 8;
+}
+
+message CFS2ProxyArgHeader {
+    optional int32 proxy_hop_count = 1 [default = 0];
+    optional ServerLocation proxy_source = 2;
+    
+    reserved 3;
+}
+
+message Cns2Options {
+    optional string universe_name = 5;
+    optional string source_store_cell_name = 6;
+    
+    reserved 1, 2, 3, 4;
+}
+
+enum AutoPlacementType {
+    AUTO = 0;
+    USER = 1;
+    OPP_AUTO = 2;
+    MANUAL = 3;
+}

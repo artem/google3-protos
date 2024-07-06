@@ -1,0 +1,69 @@
+syntax = "proto2";
+
+package ptoken;
+
+import "privacy/compliance_controls/proto/ads_compliance_controls.proto";
+import "privacy/compliance_controls/proto/gaia_compliance_controls.proto";
+import "privacy/compliance_controls/proto/youtube_visitor_compliance_controls.proto";
+import "privacy/compliance_controls/proto/zwieback_compliance_controls.proto";
+import "privacy/ptoken/public/core/sot_mappings_defs.proto";
+import "storage/datapol/annotations/proto/semantic_annotations.proto";
+
+option java_multiple_files = true;
+option java_package = "com.google.privacy.ptoken.proto.proto1api";
+
+message SotMappings {
+    repeated GaiaKeyedMappings gaia_keyed_mappings = 1;
+    message GaiaKeyedMappings {
+        optional int64 gaia_id = 1;
+        optional bool is_primary = 5;
+        optional .compliance_controls.GaiaComplianceControls compliance_controls = 2;
+        
+        oneof olympus_location_restriction {
+            GeoLocationRestriction liable_olympus_location_restriction = 3;
+            GeoLocationRestriction principal_olympus_location_restriction = 4;
+        }
+    }
+    
+    repeated CustomerKeyedMappings customer_keyed_mappings = 2;
+    message CustomerKeyedMappings {
+        optional int64 customer_id = 1;
+        
+        oneof olympus_location_restriction {
+            GeoLocationRestriction liable_olympus_location_restriction = 2;
+            GeoLocationRestriction principal_olympus_location_restriction = 3;
+        }
+    }
+    
+    repeated ZwiebackKeyedMappings zwieback_keyed_mappings = 3;
+    message ZwiebackKeyedMappings {
+        optional fixed64 zwieback_uid = 3;
+        optional bool is_primary = 4;
+        optional .compliance_controls.ZwiebackComplianceControls compliance_controls = 2;
+        
+        reserved 1;
+    }
+    
+    optional YouTubeVisitor youtube_visitor = 4;
+    message YouTubeVisitor {
+        optional string visitor_id = 1;
+        optional .compliance_controls.YouTubeVisitorComplianceControls compliance_controls = 2;
+    }
+    
+    optional AdsResolvedMapping ads_resolved_mapping = 5;
+    message AdsResolvedMapping {
+        optional .compliance_controls.AdsComplianceControls compliance_controls = 1;
+    }
+    
+    optional VaultMatterKeyedMappings vault_matter_keyed_mappings = 6;
+    message VaultMatterKeyedMappings {
+        optional GeoLocationRestriction liable_olympus_location_restriction = 2;
+        
+        reserved 1;
+    }
+    
+    optional AnonymousEntityMapping anonymous_entity_mapping = 7;
+    message AnonymousEntityMapping {
+        optional GeoLocationRestriction liable_olympus_location_restriction = 1;
+    }
+}

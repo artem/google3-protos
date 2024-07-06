@@ -1,30 +1,31 @@
 syntax = "proto3";
 
-import "net/proto2/proto/descriptor.proto";
 package google.api;
 
-option java_package = "com.google.api";
-option java_outer_classname = "AuditingProto";
-option java_multiple_files = true;
-option go_package = "google.golang.org/genproto/googleapis/api/auditing;auditing";
+import "net/proto2/proto/descriptor.proto";
+import "storage/datapol/annotations/proto/semantic_annotations.proto";
+
 option objc_class_prefix = "GAPI";
+option cc_enable_arenas = true;
+option go_package = "google.golang.org/genproto/googleapis/api/auditing;auditing";
+option java_multiple_files = true;
+option java_outer_classname = "AuditingProto";
+option java_package = "com.google.api";
 
 message Auditing {
-  repeated .google.api.AuditingRule rules = 1;
-  map<string, string> labels = 2;
+    repeated AuditingRule rules = 1;
+    map<string, string> labels = 2;
 }
 
 message AuditingRule {
-  string selector = 1;
-  string directive = 2;
+    string selector = 1;
+    string directive = 2;
 }
 
 extend .proto2.FieldOptions {
-  .google.api.AuditingRule field_auditing = 112199341;
+    AuditingRule field_auditing = 112199341;
 }
 
 extend .proto2.MethodOptions {
-  .google.api.AuditingRule method_auditing = 112199341;
+    AuditingRule method_auditing = 112199341;
 }
-
-

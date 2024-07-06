@@ -1,87 +1,146 @@
 syntax = "proto2";
 
+package transport_metrics_log;
+
 import "google/protobuf/duration.proto";
 import "net/base/qos.proto";
 import "net/proto2/bridge/proto/message_set.proto";
-package transport_metrics_log;
 
-option java_package = "com.google.net.util";
 option java_outer_classname = "TransportMetricsLog";
+option java_package = "com.google.net.util";
 
 message TransportMetrics {
-  optional .transport_metrics_log.Flow flow = 1;
-  optional .transport_metrics_log.ConnectionMetrics connection_metrics = 2;
-  optional .transport_metrics_log.Latency latency = 3;
+    optional Flow flow = 1;
+    optional ConnectionMetrics connection_metrics = 2;
+    optional Latency latency = 3;
 }
 
 message Flow {
-  enum Protocol {
-    TCP = 0;
-  }
-  optional bytes local_ip_addr = 1;
-  optional uint32 local_port = 2;
-  optional bytes peer_ip_addr = 3;
-  optional uint32 peer_port = 4;
-  optional bytes peer_user = 10;
-  optional bytes peer_job = 11;
-  optional string congestion_ctrl = 5;
-  optional .net_base.qos.TrafficClass traffic_class = 6;
-  optional bool is_b4 = 7;
-  optional .transport_metrics_log.Flow.Protocol protocol = 8;
-  optional bool is_closed = 9;
+    optional bytes local_ip_addr = 1;
+    optional uint32 local_port = 2;
+    optional bytes peer_ip_addr = 3;
+    optional uint32 peer_port = 4;
+    optional bytes peer_user = 10;
+    optional bytes peer_job = 11;
+    optional string congestion_ctrl = 5;
+    optional net_base.qos.TrafficClass traffic_class = 6;
+    optional bool is_b4 = 7;
+    
+    optional Protocol protocol = 8;
+    enum Protocol {
+        TCP = 0;
+    }
+    
+    optional bool is_closed = 9;
 }
 
 message ConnectionMetrics {
-  optional uint64 delivery_rate = 1;
-  optional uint64 data_retx = 2;
-  optional uint64 data_sent = 3;
-  optional uint32 min_rtt = 4;
-  optional uint32 recurring_retrans = 5;
-  optional bool is_delivery_rate_app_limited = 6;
-  optional uint64 pacing_rate = 7;
-  optional uint32 congestion_window = 8;
-  optional uint32 reordering = 9;
+    optional uint64 delivery_rate = 1;
+    optional uint64 data_retx = 2;
+    optional uint64 data_sent = 3;
+    optional uint32 packet_retx = 14;
+    optional uint32 packet_spurious_retx = 15;
+    optional uint32 packet_sent = 16;
+    optional uint32 packet_delivered = 18;
+    optional uint32 packet_delivered_ce = 19;
+    optional uint64 data_notsent = 17;
+    optional uint32 min_rtt = 4;
+    optional uint32 srtt = 20;
+    optional uint32 ttl = 27;
+    optional uint32 recurring_retrans = 5;
+    optional int32 net_rtt_usec = 29;
+    optional uint32 timeout_rehash = 24;
+    optional uint32 ecn_rehash = 25;
+    optional uint64 edt = 26;
+    optional bool is_delivery_rate_app_limited = 6;
+    optional uint64 pacing_rate = 7;
+    optional uint32 congestion_window = 8;
+    optional uint32 reordering = 9;
+    optional uint64 busy_usec = 10;
+    optional uint64 rwnd_limited_usec = 11;
+    optional uint64 sndbuf_limited_usec = 12;
+    optional uint32 snd_ssthresh = 13;
+    optional uint32 time_to_ack_usec = 21;
+    optional uint64 sendmsg_duration_usec = 22;
+    optional int32 socket_errno = 23;
+    optional uint32 peer_rwnd = 28;
+    optional uint32 rcvq_drops = 30;
+    optional uint32 nic_rx_delay_usec = 31;
+    optional uint32 total_rto = 32;
+    optional uint32 total_rto_recoveries = 33;
+    optional uint32 total_rto_time_msec = 34;
 }
 
 message Latency {
-  enum Type {
-    UNKNOWN = 0;
-    HEAD_OF_LINE_BLOCKING_LATENCY = 1;
-    RATE_LIMIT_LATENCY = 2;
-    TRANSFER_LATENCY = 3;
-  }
-  optional .transport_metrics_log.Latency.Type type = 1;
-  optional uint64 size = 2;
-  optional .google.protobuf.Duration duration = 3;
+    optional Type type = 1;
+    enum Type {
+        UNKNOWN = 0;
+        HEAD_OF_LINE_BLOCKING_LATENCY = 1;
+        RATE_LIMIT_LATENCY = 2;
+        TRANSFER_LATENCY = 3;
+    }
+    
+    optional uint64 size = 2;
+    optional google.protobuf.Duration duration = 3;
+}
+
+message HttpFlowControlStats {
+    optional int64 target_window = 1;
+    optional int64 target_frame_size = 2;
+    optional int64 target_preferred_rx_crypto_frame_size = 3;
+    optional uint32 acked_init_window = 4;
+    optional uint32 queued_init_window = 5;
+    optional uint32 sent_init_window = 6;
+    optional int64 remote_window = 7;
+    optional int64 announced_window = 8;
+    optional int64 announced_stream_total_over_incoming_window = 9;
+    optional int64 bdp_accumulator = 10;
+    optional int64 bdp_estimate = 11;
+    optional double bdp_bw_est = 12;
+    optional int64 min_progress_size = 13;
+    optional int64 remote_window_delta = 14;
+    optional int64 announced_window_delta = 15;
+    optional int64 pending_size = 16;
+    optional uint64 target_write_size = 17;
 }
 
 message Timestamps {
-  message Timestamp {
-    enum Type {
-      UNKNOWN = 0;
-      SCHEDULED = 1;
-      SENT = 2;
-      ACKED = 3;
-      SENDMSG = 4;
+    optional fixed64 base_time_nsec = 1;
+    
+    repeated Timestamp timestamp = 3;
+    message Timestamp {
+        optional Type type = 1;
+        enum Type {
+            UNKNOWN = 0;
+            SCHEDULED = 1;
+            SENT = 2;
+            ACKED = 3;
+            SENDMSG = 4;
+            CLOSED = 5;
+            HTTP_START = 6;
+            HTTP_HEAD_WRITTEN = 7;
+            HTTP_END = 8;
+        }
+        
+        optional int64 delta_nsec = 2;
+        optional uint64 byte_offset = 3;
+        
+        optional CongestionControl congestion_ctrl = 4;
+        enum CongestionControl {
+            FALLBACK = 0;
+            BBR = 1;
+            CUBIC = 2;
+            BBR2 = 3;
+            BBR2S = 4;
+        }
+        
+        optional string congestion_ctrl_name = 5;
+        optional ConnectionMetrics connection_metrics = 6;
+        optional HttpFlowControlStats http_flow_control_stats = 8;
+        optional int64 stream_seq = 7;
     }
-    enum CongestionControl {
-      FALLBACK = 0;
-      BBR = 1;
-      CUBIC = 2;
+    
+    extend .proto2.bridge.MessageSet {
+        optional Timestamps message_set_extension = 141924095;
     }
-    optional .transport_metrics_log.Timestamps.Timestamp.Type type = 1;
-    optional int64 delta_nsec = 2;
-    optional uint64 byte_offset = 3;
-    optional .transport_metrics_log.Timestamps.Timestamp.CongestionControl congestion_ctrl = 4;
-    optional string congestion_ctrl_name = 5;
-    optional .transport_metrics_log.ConnectionMetrics connection_metrics = 6;
-    optional int64 stream_seq = 7;
-  }
-  optional fixed64 base_time_nsec = 1;
-  repeated .transport_metrics_log.Timestamps.Timestamp timestamp = 3;
-  extend .proto2.bridge.MessageSet {
-    optional .transport_metrics_log.Timestamps message_set_extension = 141924095;
-  }
 }
-
-

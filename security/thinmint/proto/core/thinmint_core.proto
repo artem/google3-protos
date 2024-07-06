@@ -5,8 +5,6 @@ package thinmint;
 option java_package = "com.google.protos.thinmint";
 
 message ThinMint {
-  repeated bytes signature_and_message = 1;
-  optional bytes one_hop_message = 2;
+    repeated bytes signature_and_message = 1;
+    optional bytes one_hop_message = 2;
 }
-
-

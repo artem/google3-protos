@@ -1,0 +1,43 @@
+syntax = "proto3";
+
+package google.crypto.tink;
+
+import "third_party/tink/proto/common.proto";
+import "third_party/tink/proto/tink.proto";
+
+option go_package = "github.com/tink-crypto/tink-go/v2/proto/ecies_aead_hkdf_go_proto";
+option java_multiple_files = true;
+option java_package = "com.google.crypto.tink.proto";
+
+message EciesHkdfKemParams {
+    EllipticCurveType curve_type = 1;
+    HashType hkdf_hash_type = 2;
+    bytes hkdf_salt = 11;
+}
+
+message EciesAeadDemParams {
+    KeyTemplate aead_dem = 2;
+}
+
+message EciesAeadHkdfParams {
+    EciesHkdfKemParams kem_params = 1;
+    EciesAeadDemParams dem_params = 2;
+    EcPointFormat ec_point_format = 3;
+}
+
+message EciesAeadHkdfPublicKey {
+    uint32 version = 1;
+    EciesAeadHkdfParams params = 2;
+    bytes x = 3;
+    bytes y = 4;
+}
+
+message EciesAeadHkdfPrivateKey {
+    uint32 version = 1;
+    EciesAeadHkdfPublicKey public_key = 2;
+    bytes key_value = 3 [ctype = STRING_PIECE];
+}
+
+message EciesAeadHkdfKeyFormat {
+    EciesAeadHkdfParams params = 1;
+}

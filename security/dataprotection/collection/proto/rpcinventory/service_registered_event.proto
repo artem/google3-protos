@@ -1,0 +1,217 @@
+syntax = "proto3";
+
+package rpc_inventory;
+
+import "google/protobuf/timestamp.proto";
+import "production/resources/dataplatform/idx/time_series/public/proto/idx_time_series_record.proto";
+import "security/dataprotection/collection/public/collection_service.proto";
+import "storage/datapol/annotations/proto/semantic_annotations.proto";
+
+option java_multiple_files = true;
+option java_outer_classname = "ServiceRegisteredEventProtoFile";
+option java_package = "com.google.security.context";
+
+message ServiceRegisteredEvent {
+    secure_collection.MessageSource message_source = 1;
+    repeated RPCServiceInfo service_info = 2;
+    repeated HttpHandlerInfo http_handler_info = 3;
+    repeated AppsFrameworkServerInfo af_server_info = 10 [deprecated = true];
+    repeated FrameworkServerInfo framework_server_info = 11;
+    int64 borg_job_uid = 4;
+    int32 task_index = 12;
+    
+    TransportType transport_type = 7;
+    enum TransportType {
+        UNKNOWN = 0;
+        STUBBY2 = 1;
+        STUBBY3 = 2;
+        STUBBY_GO = 3;
+    }
+    
+    google.protobuf.Timestamp event_timestamp = 8;
+    HttpLabelAclConfig http_label_acl_config = 13;
+    LabelAclConfig label_acl_config = 14;
+    
+    ProcessType process_type = 16;
+    enum ProcessType {
+        UNKNOWN_OR_MAIN_PROCESS = 0;
+        ENVELOPE_MAIN = 1;
+        ENVELOPE_EXTENSION = 2;
+        LAMPREY = 3;
+    }
+    
+    PlatformType platform_type = 17;
+    enum PlatformType {
+        UNKNOWN_PLATFORM_TYPE = 0;
+        NONE = 1;
+        BOQ = 2;
+        POD = 3;
+    }
+    
+    oneof _idx_internal_metadata {
+        .idx.time_series.ingestion.proto.IDXTimeSeriesMetadata idx_internal_metadata = 15;
+    }
+    
+    reserved 6, 9;
+}
+
+message HttpHandlerInfo {
+    AuthType auth_type = 1;
+    enum AuthType {
+        UNKNOWN = 0;
+        ANONYMOUS = 1;
+    }
+    
+    repeated AccountAuthType account_auth_type = 2;
+    enum AccountAuthType {
+        UNKNOWN_ACCOUNT_AUTH_TYPE = 0;
+        GAIA_ACCOUNT = 1;
+        PROD_ACCOUNT = 2;
+    }
+}
+
+message RPCServiceInfo {
+    string registered_name = 1;
+    string full_name = 2;
+    string filename = 3;
+    repeated RPCServiceMethod method = 4;
+    repeated int32 port = 5;
+    FrameworkServerInfo.FrameworkType framework_type = 6;
+}
+
+message RPCServiceMethod {
+    string name = 1;
+    bool streaming = 2;
+    string request_type = 3;
+    string response_type = 4;
+    string stream_type = 5;
+    
+    SecurityLevel security_level = 6;
+    enum SecurityLevel {
+        UNKNOWN = 0;
+        OTHER = 1;
+        NONE = 2;
+        INTEGRITY = 3;
+        PRIVACY_AND_INTEGRITY = 4;
+        STRONG_PRIVACY_AND_INTEGRITY = 5;
+    }
+    
+    SecurityLevel server_required_security_level = 7;
+}
+
+message FrameworkServerInfo {
+    repeated FrameworkEndpointInfo framework_endpoint_info = 1;
+    
+    repeated PortInfo port_info = 2;
+    message PortInfo {
+        string port_name = 1;
+        uint32 port_number = 2;
+    }
+    
+    FrameworkType framework_type = 3;
+    enum FrameworkType {
+        UNKNOWN = 0;
+        APPS_FRAMEWORK = 1;
+        SCAFFOLDING = 2;
+        GOA = 3;
+    }
+    
+    repeated LabelAclDebugRole label_acl_debug_role = 4;
+    message LabelAclDebugRole {
+        string security_label = 1;
+        DebugRole debug_role = 2;
+    }
+    
+    enum DebugRole {
+        DEBUG_ROLE_UNKNOWN = 0;
+        DEBUG_ROLE_NONE = 1;
+        DEBUG_ROLE_CODE = 2;
+        DEBUG_ROLE_DATA = 3;
+    }
+}
+
+message FrameworkEndpointInfo {
+    string endpoint_name = 1;
+    
+    repeated EndpointRequestPath endpoint_request_paths = 2;
+    message EndpointRequestPath {
+        string full_stubby_service = 1;
+        string renamed_full_stubby_service_name = 6;
+        string request_path_name = 2;
+        string request_type = 3;
+        string response_type = 4;
+        string group = 5;
+        string handler_security_label = 10;
+        
+        oneof _http_handler_info {
+            HttpHandlerInfo http_handler_info = 7;
+        }
+        
+        oneof _url_security_label {
+            string url_security_label = 8;
+        }
+        
+        oneof _allow_unauthenticated {
+            bool allow_unauthenticated = 9;
+        }
+    }
+    
+    string endpoint_varz_name = 3;
+    FrameworkServerInfo.DebugRole endpoint_debug_role = 4;
+}
+
+message AppsFrameworkServerInfo {
+    repeated AppsFrameworkActionInfo af_action_info = 1 [deprecated = true];
+    
+    repeated PortInfo port_info = 2;
+    message PortInfo {
+        string port_name = 1;
+        uint32 port_number = 2;
+    }
+}
+
+message AppsFrameworkActionInfo {
+    option deprecated = true;
+    string action_name = 1;
+    
+    repeated ActionRequestPath action_request_paths = 2;
+    message ActionRequestPath {
+        string full_stubby_service = 1;
+        string request_path_name = 2;
+        string request_type = 3;
+        string response_type = 4;
+        string group = 5;
+    }
+    
+    reserved 3, 4, 5;
+}
+
+message HttpLabelAclConfig {
+    repeated UrlLabel url_labels = 1;
+    message UrlLabel {
+        string url_prefix = 1;
+        string security_label = 2;
+        bool allow_unauthenticated = 3;
+    }
+    
+    bool http_labelacl_enforced = 2;
+}
+
+message LabelAclConfig {
+    repeated LabelAcl label_acls = 1;
+    message LabelAcl {
+        string security_label = 1;
+        string acl = 2;
+    }
+    
+    LabelAclPolicy default_label_acl_policy = 2;
+    enum LabelAclPolicy {
+        UNKNOWN = 0;
+        OPEN = 1;
+        OWNER_ONLY = 2;
+        CLOSED = 3;
+    }
+    
+    LabelAclPolicy label_acl_cold_start_policy = 3;
+    bool label_acl_static_config_is_set = 4;
+}

@@ -1,0 +1,13 @@
+syntax = "proto3";
+
+package security_loas_l2;
+
+message CrossUniverseDestination {
+    string universe = 1;
+    string target = 2;
+}
+
+message SecureWrapperCryptoOptions {
+    CrossUniverseDestination cross_universe_destination = 1;
+    bool multihop_integrity_passthrough_enabled = 2;
+}

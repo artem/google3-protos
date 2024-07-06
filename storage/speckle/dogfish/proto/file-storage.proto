@@ -1,0 +1,24 @@
+syntax = "editions";
+
+package speckle_dogfish.dogfish_proto;
+
+import "storage/datapol/annotations/proto/semantic_annotations.proto";
+
+message FileMetadata {
+    optional int64 file_size = 1;
+    
+    optional Format block_format = 2;
+    enum Format {
+        UNSET = 0;
+        RAW = 1;
+        WRAPPED = 2;
+    }
+}
+
+message FileBlock {
+    oneof contents {
+        bytes uncompressed = 1 [ctype = CORD];
+        bytes zippy_compressed = 2 [ctype = CORD];
+        bytes zstd_compressed = 3 [ctype = CORD];
+    }
+}

@@ -1,0 +1,32 @@
+syntax = "proto2";
+
+package security.context;
+
+import "net/proto2/bridge/proto/message_set.proto";
+import "security/context/proto/httpsp_denial_resolution.proto";
+import "security/context/proto/unmet_client_specified_requirements.proto";
+
+option java_multiple_files = true;
+option java_outer_classname = "ErrorPayloadProtoFile";
+option java_package = "com.google.security.context";
+
+message PolicyEnforcerErrorPayload {
+    optional HttpSPDenialResolution httpsp_denial_resolution = 1;
+    optional UnmetClientSpecifiedRequirements unmet_client_specified_requirements = 2;
+    
+    extend .proto2.bridge.MessageSet {
+        optional PolicyEnforcerErrorPayload message_set_extension = 330835938;
+    }
+}
+
+message PolicyEnforcerCreationErrorPayload {
+    optional PolicyEnforcerCreationErrorCode code = 1;
+    enum PolicyEnforcerCreationErrorCode {
+        POLICY_ENFORCER_CREATION_ERROR_UNSPECIFIED = 0;
+        POLICY_ENFORCER_CREATION_ERROR_NO_POLICY = 1;
+    }
+    
+    extend .proto2.bridge.MessageSet {
+        optional PolicyEnforcerCreationErrorPayload message_set_extension = 518123380;
+    }
+}

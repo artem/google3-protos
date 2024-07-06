@@ -1,62 +1,95 @@
 syntax = "proto2";
 
+import "java/com/google/apps/jspb/jspb.proto";
 import "net/proto2/bridge/proto/message_set.proto";
+import "perftools/tracing/proto/source_location.proto";
+import "storage/datapol/annotations/proto/semantic_annotations.proto";
+import "util/task/status.proto";
+
 option java_package = "com.google.tracing";
 
 message TraceRecord {
-  enum SpanType {
-    SPAN_UNKNOWN = 0;
-    SPAN_LOCAL = 1;
-    SPAN_CLIENT_HALF = 2;
-    SPAN_SERVER_HALF = 3;
-  }
-  enum SpanIdVersion {
-    SPAN_ID_VERSION_SAME_FOR_CLIENT_SERVER = 0;
-    SPAN_ID_VERSION_UNIQUE = 1;
-  }
-  enum ChannelIdsLegacy {
-    LEGACY_CHANNEL = 1073741824;
-  }
-  required fixed64 rpc_id = 1;
-  required fixed64 global_id = 2;
-  optional fixed64 parent_span_id = 14;
-  optional fixed64 grandparent_span_id = 39;
-  optional fixed64 process_id = 15;
-  optional int32 trace_mask = 16 [default = 1];
-  optional double sampling_probability = 32;
-  optional double trace_period = 17 [default = 1024];
-  optional string name = 18;
-  optional double local_start_time = 19;
-  optional double local_end_time = 20;
-  optional double local_stop_time = 31;
-  optional bool is_leaf = 26;
-  optional int32 child_span_count = 38;
-  optional bool error = 33;
-  optional .TraceRecord.SpanType span_type = 34 [default = SPAN_UNKNOWN];
-  optional string peer_address = 35;
-  optional bool tracing_initiator = 36;
-  optional .TraceRecord.SpanIdVersion span_id_version = 40 [default = SPAN_ID_VERSION_SAME_FOR_CLIENT_SERVER];
-  repeated group ChannelEntry = 9 {
-    required fixed32 channel_id = 10;
-    repeated group AnnotationEntry = 11 {
-      optional string key = 27;
-      required double timestamp = 12;
-      optional int32 thread_id = 37;
-      optional string string_value = 13;
-      optional int32 int32_value = 21;
-      optional int64 int64_value = 22;
-      optional double double_value = 23;
-      optional .proto2.bridge.MessageSet message_value = 24;
-      optional bool boolean_value = 30;
-      repeated group SymbolizedStackFrame = 25 {
-        required int64 program_counter = 28;
-        optional string function_name = 29;
-      }
+    required fixed64 rpc_id = 1;
+    required fixed64 global_id = 2;
+    optional fixed64 global_id_hi = 44;
+    optional fixed64 parent_span_id = 14;
+    optional fixed64 grandparent_span_id = 39;
+    optional fixed64 process_id = 15;
+    optional int32 trace_mask = 16 [default = 1];
+    optional double sampling_probability = 32 [deprecated = true];
+    optional double trace_period = 17 [default = 1024, deprecated = true];
+    optional double local_sampling_probability = 42;
+    optional double query_cost_sampling_probability = 48;
+    optional string name = 18;
+    optional string stubby_name_with_package = 45;
+    optional double local_start_time = 19;
+    optional double local_end_time = 20;
+    optional double local_stop_time = 31;
+    optional bool is_leaf = 26 [deprecated = true];
+    optional int32 child_span_count = 38;
+    optional bool error = 33 [deprecated = true];
+    optional util.StatusProto status = 41;
+    
+    optional SpanType span_type = 34 [default = SPAN_UNKNOWN];
+    enum SpanType {
+        SPAN_UNKNOWN = 0;
+        SPAN_LOCAL = 1;
+        SPAN_CLIENT_HALF = 2;
+        SPAN_SERVER_HALF = 3;
     }
-  }
-  extend .proto2.bridge.MessageSet {
-    optional .TraceRecord message_set_extension = 6076542;
-  }
+    
+    optional bool tracing_initiator = 36;
+    optional uint64 initiator_id = 43;
+    optional string resolved_initiator = 50;
+    
+    optional SpanIdVersion span_id_version = 40 [default = SPAN_ID_VERSION_SAME_FOR_CLIENT_SERVER];
+    enum SpanIdVersion {
+        SPAN_ID_VERSION_SAME_FOR_CLIENT_SERVER = 0;
+        SPAN_ID_VERSION_UNIQUE = 1;
+    }
+    
+    optional perftools.tracing.SourceLocation span_source_location = 49;
+    
+    optional AnnotationsLocation annotations_location = 47;
+    message AnnotationsLocation {
+        optional string filename = 1;
+        optional bytes position = 2;
+    }
+    
+    repeated group ChannelEntry = 9 {
+        required fixed32 channel_id = 10;
+        
+        repeated group AnnotationEntry = 11 {
+            optional string key = 27;
+            optional perftools.tracing.SourceLocation source_location = 46;
+            required double timestamp = 12;
+            optional int32 thread_id = 37;
+            optional string string_value = 13;
+            optional int32 int32_value = 21;
+            optional int64 int64_value = 22;
+            optional double double_value = 23;
+            optional .proto2.bridge.MessageSet message_value = 24;
+            optional bool boolean_value = 30;
+            
+            repeated group SymbolizedStackFrame = 25 {
+                required int64 program_counter = 28;
+                optional string function_name = 29;
+            }
+        }
+    }
+    
+    reserved 3 to 8, 35;
+    
+    extend .proto2.bridge.MessageSet {
+        optional TraceRecord message_set_extension = 6076542;
+    }
 }
 
-
+message EncryptedAnnotationPlaceholder {
+    optional int32 num_cipher_bytes = 1;
+    optional uint64 encrypted_annotation_id = 2;
+    
+    extend .proto2.bridge.MessageSet {
+        optional EncryptedAnnotationPlaceholder message_set_extension = 444581584;
+    }
+}

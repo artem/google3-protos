@@ -1,0 +1,26 @@
+syntax = "proto3";
+
+package server_authz;
+
+import "security/authorization/server_authorization/arbiter/api/arbiter_types.proto";
+
+option java_multiple_files = true;
+option java_package = "com.google.security.authorization.serverauthorization.envelopeservice.proto";
+
+message EnvelopeWarmCacheRequest {
+    WarmCacheRequest request = 2;
+    
+    reserved 1;
+}
+
+message EnvelopeWarmCacheResponse {
+    WarmCacheResponse response = 1;
+}
+
+message EnvelopeCheckRequest {
+    AuthzRequest request = 1;
+}
+
+message EnvelopeCheckResponse {
+    AuthzResponse response = 1;
+}

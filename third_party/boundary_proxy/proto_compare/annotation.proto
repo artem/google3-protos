@@ -1,0 +1,98 @@
+syntax = "proto2";
+
+package proto_compare;
+
+import "net/proto2/proto/descriptor.proto";
+
+option go_package = "proto_compare/annotation";
+option java_multiple_files = true;
+
+message ComparisonOptions {
+    optional RepeatedFieldOptions repeated_field = 1;
+    enum RepeatedFieldOptions {
+        UNSPECIFIED = 0;
+        AS_LIST = 1;
+        AS_SET = 2;
+    }
+    
+    optional DataHandlingPolicy data_handling_policy = 5;
+    enum DataHandlingPolicy {
+        DP_UNSPECIFIED = 0;
+        DP_EQUAL = 1;
+        DP_REPLACE_WITH_HASHED_VALUE = 2;
+        DP_NUMERIC_APPROXIMATE = 3;
+    }
+    
+    oneof numeric_uncertainty {
+        uint64 int_uncertainty = 3;
+        double float_uncertainty = 4;
+    }
+}
+
+message RedactionOptions {
+    optional bool omit_entirely = 1;
+    optional int32 max_string_length = 2;
+    optional int32 max_repeated_values = 3;
+    optional string match_regex = 4;
+    optional int64 min_integer_value = 5;
+    optional int64 max_integer_value = 6;
+    optional string audit_instructions = 7;
+    
+    optional TimestampPrecision timestamp_precision = 8;
+    enum TimestampPrecision {
+        TP_UNSPECIFIED = 0;
+        TP_DAY = 1;
+        TP_HOUR = 2;
+        TP_MINUTE = 3;
+        TP_SECOND = 4;
+    }
+}
+
+enum FieldDisposition {
+    FD_UNSPECIFIED = 0;
+    FD_INCLUDE = 1;
+    FD_EXCLUDE = 2;
+    FD_TRANSFORM = 3;
+}
+
+enum ExcludeReason {
+    ER_UNSPECIFIED = 0;
+    ER_TIMESTAMP = 1;
+    ER_STATUS = 2;
+    ER_METRIC = 3;
+    ER_CAPACITY = 4;
+    ER_IDENTIFIER = 5;
+    ER_OPAQUE_IDENTIFIER = 9;
+    ER_SIGNATURE = 6;
+    ER_STREAMED_DATA = 7;
+    ER_CONTROL_PARAMETERS = 8;
+}
+
+enum FileUseCase {
+    FILE_USE_CASE_UNSPECIFIED = 0;
+    FILE_USE_CASE_INTERNAL_TPC = 1;
+    FILE_USE_CASE_EXTERNAL_TPC = 2;
+}
+
+enum TpcType {
+    TT_UNSPECIFIED = 0;
+    TT_OBSERVABILITY = 1;
+    TT_CHANGE = 2;
+}
+
+extend .proto2.FieldOptions {
+    optional FieldDisposition disposition = 484519953;
+    optional ExcludeReason exclude_reason = 482813086;
+    optional ComparisonOptions options = 478786899;
+    optional RedactionOptions redaction = 485077330;
+    optional string comment = 486375988;
+}
+
+extend .proto2.FileOptions {
+    optional string file_vetting_status = 501006184;
+    repeated FileUseCase file_use_case = 525000016;
+}
+
+extend .proto2.MethodOptions {
+    optional TpcType tpc_type = 520991498;
+}

@@ -1,42 +1,50 @@
 syntax = "proto2";
 
+package security.data_access;
+
 import "security/credentials/proto/data_access_token_scope.proto";
 import "security/credentials/proto/principal.proto";
 import "storage/datapol/annotations/proto/semantic_annotations.proto";
-package security.data_access;
 
-option java_package = "com.google.security.data_access.proto";
 option cc_enable_arenas = true;
+option java_package = "com.google.security.data_access.proto";
 
 message UserDataScopeProto {
-  optional .security.credentials.PrincipalProto principal_id = 1;
-  optional bool all_principals_allowed = 2 [default = false];
-  repeated .security.data_access.DataScopeProto data_scope = 3;
-  optional bool all_data_scopes_allowed = 4 [default = false];
-  reserved 5;
+    optional credentials.PrincipalProto principal_id = 1;
+    optional ProdUserType prod_user_type = 6;
+    optional bool all_principals_allowed = 2 [default = false];
+    repeated DataScopeProto data_scope = 3 [deprecated = true];
+    optional bool all_data_scopes_allowed = 4 [default = false, deprecated = true];
+    
+    reserved 5;
 }
 
 message DataScopeProto {
-  optional int64 datatype_scope_code = 1;
-  repeated .security.data_access.DocumentIdProto document_id = 5;
-  optional bool all_document_ids_allowed = 6 [default = false];
-  optional bytes OBSOLETE_7 = 7;
+    optional int64 datatype_scope_code = 1;
+    repeated DocumentIdProto document_id = 5;
+    optional bool all_document_ids_allowed = 6 [default = false];
+    optional bytes OBSOLETE_7 = 7;
 }
 
 message DocumentIdProto {
-  optional string document_id_string = 1;
-  optional int64 document_id_int = 2;
+    optional string document_id_string = 1;
+    optional int64 document_id_int = 2;
 }
 
 message StandardDatScopeProto {
-  repeated int32 api_scope_code = 5 [packed = true];
-  repeated .security.data_access.UserDataScopeProto user_data_scope = 1;
-  optional bytes app_specific_resources = 4;
-  optional bytes OBSOLETE_2 = 2;
-  optional bytes OBSOLETE_3 = 3;
-  extend .security.credentials.DataAccessTokenScope {
-    optional .security.data_access.StandardDatScopeProto dat_scope_extension = 17199386;
-  }
+    repeated int32 api_scope_code = 5 [packed = true];
+    repeated UserDataScopeProto user_data_scope = 1;
+    optional bytes app_specific_resources = 4;
+    optional bytes OBSOLETE_2 = 2;
+    optional bytes OBSOLETE_3 = 3;
+    
+    extend credentials.DataAccessTokenScope {
+        optional StandardDatScopeProto dat_scope_extension = 17199386;
+    }
 }
 
-
+enum ProdUserType {
+    USER_TYPE_UNSPECIFIED = 0;
+    USER_TYPE_PERSON = 1;
+    USER_TYPE_NON_PERSON = 2;
+}

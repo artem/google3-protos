@@ -1,0 +1,97 @@
+syntax = "proto2";
+
+package ptoken;
+
+import "net/proto2/proto/descriptor.proto";
+
+option java_multiple_files = true;
+option java_package = "com.google.privacy.ptoken.core.proto1api";
+
+message PTokenType {
+    enum Enum {
+        UNKNOWN = 0;
+        AISTORE_CUSTOMER_DATA = 25;
+        AISTORE_USER_DATA = 24;
+        ANDROID_ID_DATA = 49;
+        APP_MANAGER_APP_DATA = 77;
+        APP_PLATFORM_CONSENTS_DATA = 64;
+        ASSISTANT_BARD_WORKSPACE = 62;
+        ASSISTANT_BARD_YOUTUBE = 67;
+        ASSISTANT_BARD_DATA = 78;
+        ASSISTANT_QUERY = 5;
+        ASSISTANT_REQUEST = 26;
+        CAT_POTENTIAL_ABUSE_DATA = 60;
+        CLOUD_BILLING_ACCOUNT_DATA = 72;
+        COMMON_PERSONAL_DATA = 48;
+        NON_PERSONAL_DATA = 68;
+        COMMON_REQUEST = 31;
+        COMPOSITE_DOC = 3;
+        DEVICE_ACCOUNT_DATA = 52;
+        DYNAMITE_SPACE_DATA = 39;
+        EDU_ADD_ON_ATTACHMENT_DATA = 73;
+        FIREBASE_INSTALLATION = 14;
+        FITBIT_ACCOUNT_DATA = 38;
+        FITBIT_HFD_USER = 69;
+        FITBIT_TSS_DATA = 80;
+        FOOTPRINTS_DATA = 40;
+        FOOTPRINTS_SPEECH_DATA = 57;
+        GHIRE_APPLICATION = 56;
+        GHIRE_CANDIDATE = 55;
+        GMAIL_GAIA_DATA = 61;
+        GPAY_USER_ACTIVITY = 17;
+        GPAY_ACTOR_DATA = 65;
+        HR_PERSON_DATA = 36;
+        INCOGNITO_REQUEST = 66;
+        KANSAS_SEARCH_DATA = 54;
+        LEGACY_DECORUM_EECC = 19;
+        LEGACY_PS1 = 2;
+        LEGACY_PS1_MODEL_T = 18;
+        LEGACY_WIPEOUT_CLOUD_PRINCIPAL_ID = 15;
+        LEGACY_WIPEOUT_DASHER = 8;
+        LEGACY_WIPEOUT_GAIA = 7;
+        LEGACY_WIPEOUT_IDENTITY_POOL_CPI_PREFIX_ID = 16;
+        LEGACY_WIPEOUT_YOUTUBE_CHANNEL = 9;
+        LEGACY_WIPEOUT_YOUTUBE_PLAYLIST = 10;
+        LEGACY_WIPEOUT_YOUTUBE_VIDEO = 11;
+        LEGACY_WIPEOUT_ZWIEBACK = 12;
+        LOCATION_HISTORY = 4;
+        LOCATION_SENSITIVE_DATA = 75;
+        LOGS_DATA = 51;
+        OOLONG_EVENT = 53;
+        PS1_AVOCADO_DATA = 33;
+        PS1_CUSTOMER_DATA = 20;
+        PS1_CUSTOMER_OWNED_OBJECT = 44;
+        PS1_GAIA_OWNED_OBJECT = 42;
+        PS1_GPAY_ACTOR_DATA = 34;
+        PS1_MANAGED_OBJECT = 27;
+        PS1_NO_OWNER_DATA = 35;
+        PS1_PHOTOS_USER_DATA = 30;
+        PS1_USER_DATA = 21;
+        PS1_ZWIEBACK_DATA = 32;
+        RETENTION_TTL_DATA = 37;
+        ROSTER_AND_GAIA_DATA = 74;
+        SEARCH_ANALYTICS = 6;
+        SEARCH_ANALYTICS_BETA = 28;
+        SEARCH_G1_BENEFITS = 79;
+        SUPERROOT_REQUEST = 43;
+        TORUS_DEVICE_DATA = 50;
+        VAULT_MATTER_DATA = 58;
+        VERTEX_TRAFFIC_FOR_GROUNDING_DATA = 76;
+        WEB_AND_APP_ACTIVITY = 22;
+        WORKSPACE_INTELLIGENCE_DATA = 47;
+        WORKSPACE_USER_DATA = 59;
+        YOUTUBE = 1;
+        YOUTUBE_COMMENT = 45;
+        YOUTUBE_GAIA_DATA = 46;
+        YOUTUBE_POST = 13;
+        YOUTUBE_USER_REQUEST = 41;
+        YOUTUBE_VISITOR_DATA = 29;
+        YOUTUBE_FILE_DATA = 70;
+        YOUTUBE_IMAGE_DATA = 71;
+        ADS_PERSONAL_DATA = 63;
+    }
+}
+
+extend .proto2.MessageOptions {
+    optional PTokenType.Enum ptoken_type = 320170681;
+}

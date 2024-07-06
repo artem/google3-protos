@@ -3,85 +3,132 @@ syntax = "proto2";
 package httpsconnection;
 
 message CertificateConfig {
-  message Cert {
-    message RandomReplacement {
-      required string cert = 1;
-      required uint32 parts_per_1024 = 2;
+    required string base_directory = 1;
+    optional string issuing_certificates_file = 2;
+    optional bool retain_only_sha256_of_client_certs = 10 [default = false];
+    optional bool tls_channel_ids = 11 [default = false];
+    
+    repeated Cert cert = 4;
+    message Cert {
+        required string name = 1;
+        optional bool extract_names = 2 [default = true];
+        repeated string ip_and_port = 3;
+        repeated uint32 port = 4;
+        
+        optional SNIAlternatives sni_alternatives = 15;
+        message SNIAlternatives {
+            repeated string cert_name = 1;
+        }
+        
+        optional int32 preference_level = 16 [default = 0];
+        repeated string alias = 9;
+        optional bool emit_expect_ct_header = 11;
+        optional bool use_as_unverifiable_cert = 12;
+        
+        repeated FingerprintBasedReplacement fingerprint_based_replacement = 13;
+        message FingerprintBasedReplacement {
+            required string fingerprint = 1;
+            required string replace_with = 2;
+        }
+        
+        optional bool require_scts = 14;
+        
+        reserved 7, 6, 10, "additional_cert_base64", "strict_address", "replacement";
     }
-    required string name = 1;
-    optional bool extract_names = 2 [default = true];
-    repeated string ip_and_port = 3;
-    repeated uint32 port = 4;
-    optional bool strict_address = 6 [default = false];
-    repeated string alias = 9;
-    repeated .httpsconnection.CertificateConfig.Cert.RandomReplacement replacement = 10;
-    optional bool emit_expect_ct_header = 11;
-    optional bool use_as_unverifiable_cert = 12;
-    reserved 7;
-    reserved "additional_cert_base64";
-  }
-  message Host {
-    enum ClientCertificateRequestType {
-      DONT_REQUEST_CLIENT_CERTIFICATE = 0;
-      REQUEST_CLIENT_CERTIFICATE_BUT_DONT_VERIFY = 1;
-      REQUEST_CLIENT_CERTIFICATE_AND_VERIFY = 2;
-      REQUEST_AND_REQUIRE_CLIENT_CERTIFICATE_BUT_DONT_VERIFY = 3;
-      REQUEST_AND_REQUIRE_CLIENT_CERTIFICATE_AND_VERIFY = 4;
+    
+    optional TrustStore server_auth_trust_store = 20;
+    enum TrustStore {
+        NOT_SET = 0;
+        FOR_CONNECTING_TO_GOOGLE = 1;
+        STANDARD = 2;
     }
-    enum TLSVersions {
-      VERSION_TLS1 = 769;
-      VERSION_TLS1_1 = 770;
-      VERSION_TLS1_2 = 771;
+    
+    repeated bytes server_auth_trust_anchors = 21;
+    optional string server_cert_root_file = 9;
+    optional string server_cert_untrusted_intermediate_file = 17;
+    optional string client_cert_root_file = 5;
+    
+    optional Host default_host = 7;
+    message Host {
+        optional string name = 1;
+        repeated string ip_and_port = 3;
+        
+        optional ClientCertificateRequestType client_cert_request = 2;
+        enum ClientCertificateRequestType {
+            DONT_REQUEST_CLIENT_CERTIFICATE = 0;
+            REQUEST_CLIENT_CERTIFICATE_BUT_DONT_VERIFY = 1;
+            REQUEST_CLIENT_CERTIFICATE_AND_VERIFY = 2;
+            REQUEST_AND_REQUIRE_CLIENT_CERTIFICATE_BUT_DONT_VERIFY = 3;
+            REQUEST_AND_REQUIRE_CLIENT_CERTIFICATE_AND_VERIFY = 4;
+            REQUEST_AND_REQUIRE_CLIENT_CERTIFICATE_AND_VERIFY_EXTERNALLY = 5;
+        }
+        
+        optional bool only_request_cert_if_no_channel_id = 5 [default = false];
+        optional string ciphers = 4;
+        optional int32 min_version = 6;
+        optional bool enable_tls13 = 8 [deprecated = true];
+        optional bool require_sni = 7;
+        optional bool retain_only_sha256_of_client_certs = 9;
+        repeated uint32 signature_algorithm = 10;
+        optional string client_cert_root_file = 11;
     }
-    optional string name = 1;
-    repeated string ip_and_port = 3;
-    optional .httpsconnection.CertificateConfig.Host.ClientCertificateRequestType client_cert_request = 2;
-    optional bool only_request_cert_if_no_channel_id = 5 [default = false];
-    optional string ciphers = 4;
-    optional int32 min_version = 6;
-    optional bool enable_tls13 = 8;
-    optional bool require_sni = 7;
-    optional bool retain_only_sha256_of_client_certs = 9;
-  }
-  message VIPPrefixGroup {
-    required string name = 1;
-    repeated string range = 2;
-  }
-  message CertificateProvider {
-    enum ProviderType {
-      PROVIDER_UNSPECIFIED = 0;
-      CLOUD = 1;
-      DASHER_EXTERNAL = 2;
+    
+    repeated Host host = 8;
+    
+    repeated VIPPrefixGroup vip_prefix_group = 3;
+    message VIPPrefixGroup {
+        required string name = 1;
+        repeated string range = 2;
     }
-    enum LookupPolicy {
-      LOOKUP_UNSPECIFIED = 0;
-      IP_PORT = 1;
-      SNI = 2;
-      IP_PORT_AND_SNI = 3;
+    
+    repeated CertificateProvider certificate_provider = 16;
+    message CertificateProvider {
+        optional string name = 1;
+        
+        optional ProviderType provider_type = 2;
+        enum ProviderType {
+            PROVIDER_UNSPECIFIED = 0;
+            CLOUD = 1;
+            DASHER_EXTERNAL = 2;
+        }
+        
+        repeated string ip_port_and_prefix_spec = 3;
+        
+        optional LookupPolicy lookup_policy = 4;
+        enum LookupPolicy {
+            LOOKUP_UNSPECIFIED = 0;
+            IP_PORT = 1;
+            SNI = 2;
+            IP_PORT_AND_SNI = 3;
+        }
+        
+        optional HostOptionsPolicy host_options_policy = 6;
+        enum HostOptionsPolicy {
+            APPLY = 0;
+            IGNORE = 1;
+        }
+        
+        optional bool disconnect_client_on_lookup_failure = 5 [default = true];
     }
-    optional string name = 1;
-    optional .httpsconnection.CertificateConfig.CertificateProvider.ProviderType provider_type = 2;
-    repeated string ip_port_and_prefix_spec = 3;
-    optional .httpsconnection.CertificateConfig.CertificateProvider.LookupPolicy lookup_policy = 4;
-    optional bool disconnect_client_on_lookup_failure = 5 [default = true];
-  }
-  required string base_directory = 1;
-  optional string issuing_certificates_file = 2;
-  optional bool retain_only_sha256_of_client_certs = 10 [default = false];
-  optional bool tls_channel_ids = 11 [default = false];
-  repeated .httpsconnection.CertificateConfig.Cert cert = 4;
-  optional string server_cert_root_file = 9;
-  optional string server_cert_untrusted_intermediate_file = 17;
-  optional string client_cert_root_file = 5;
-  repeated string client_cert_subtree_cert_file = 6;
-  optional bool stricter_checking = 12 [default = false];
-  optional .httpsconnection.CertificateConfig.Host default_host = 7;
-  repeated .httpsconnection.CertificateConfig.Host host = 8;
-  optional bool enable_token_binding = 15 [default = false];
-  repeated .httpsconnection.CertificateConfig.VIPPrefixGroup vip_prefix_group = 3;
-  repeated .httpsconnection.CertificateConfig.CertificateProvider certificate_provider = 16;
-  reserved 14, 13;
-  reserved "ciphers_tls10", "ciphers_tls11";
+    
+    repeated Fingerprint fingerprint = 18;
+    message Fingerprint {
+        optional string name = 1;
+        optional bool quic = 8 [default = false];
+        repeated uint32 version = 2;
+        repeated uint32 cipher_suite = 3;
+        optional bool match_cipher_suites_exactly = 4 [default = true];
+        repeated uint32 compression = 5;
+        optional bool match_compression_methods_exactly = 6 [default = true];
+        
+        repeated Extension extension = 7;
+        message Extension {
+            required uint32 id = 1;
+            repeated bytes contents = 2;
+        }
+    }
+    
+    repeated string ip_and_port_without_sni = 19;
+    
+    reserved 15, 12, 6, 14, 13, "enable_token_binding", "stricter_checking", "client_cert_subtree_cert_file", "ciphers_tls10", "ciphers_tls11";
 }
-
-

@@ -1,0 +1,15 @@
+syntax = "proto2";
+
+package speckle_dogfish.dogfish_proto;
+
+import "storage/datapol/annotations/proto/semantic_annotations.proto";
+
+enum ChecksumProvenance {
+    CHECKSUM_PROVENANCE_UNSPECIFIED = 0;
+    COMPUTED_AT_DATA_CREATION = 1;
+    COMPUTED_AT_READ_LEGACY_DATA = 2;
+    COMPUTED_AT_READ_LOCAL_STORAGE = 3;
+    COMPUTED_AT_READ_REMOTE_SHARD_DATA = 4;
+    COMPUTED_AT_READ_BACKUP = 5;
+    COMPUTED_AT_READ_GENERIC_LOG_RECORD = 6;
+}

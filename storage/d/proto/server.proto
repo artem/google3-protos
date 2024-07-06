@@ -1,0 +1,866 @@
+syntax = "proto2";
+
+package storage_d;
+
+import "net/base/addressresolver.proto";
+import "net/proto2/bridge/proto/message_set.proto";
+import public "storage/d/proto/access-permissions.proto";
+import public "storage/d/proto/capability.proto";
+import public "storage/d/proto/file-access-hint.proto";
+import public "storage/d/proto/header.proto";
+import public "storage/d/proto/health.proto";
+import public "storage/d/proto/storage-partition.proto";
+import "storage/d/proto/request-sampler.proto";
+import "storage/datapol/annotations/proto/semantic_annotations.proto";
+
+option cc_enable_arenas = true;
+
+service StorageD {
+    rpc Statfs(StatfsRequest) returns (ServerStats);
+    rpc GetCapabilityKey(GetCapabilityKeyRequest) returns (GetCapabilityKeyReply);
+    rpc GetReservation(GetReservationRequest) returns (GetReservationReply);
+    rpc ReleaseReservation(ReleaseReservationRequest) returns (ReleaseReservationReply);
+    rpc CreateDir(CreateDirRequest) returns (StatInfoResults);
+    rpc RemoveDir(RemoveDirRequest) returns (ErrorStatuses);
+    rpc Match(MatchRequest) returns (MatchReply);
+    rpc Open(OpenRequest) returns (StatInfoResults);
+    rpc Read(ReadRequest) returns (ReadReply);
+    rpc ReadHDD(ReadRequest) returns (ReadReply);
+    rpc ReadSSD(ReadRequest) returns (ReadReply);
+    rpc Write(WriteRequest) returns (WriteReply);
+    rpc RmaAlloc(RmaAllocRequest) returns (RmaAllocReply);
+    rpc RmaDealloc(RmaDeallocRequest) returns (RmaDeallocReply);
+    rpc Stat(StatRequest) returns (StatInfoResults);
+    rpc WriteStat(WriteStatRequest) returns (StatInfoResults);
+    rpc Remove(RemoveRequest) returns (ErrorStatuses);
+    rpc ReconstructFiles(ReconstructFilesRequest) returns (ReconstructFilesReply);
+    rpc Sync(SyncRequest) returns (ErrorStatuses);
+    rpc VerifyFile(VerifyFileRequest) returns (VerifyFileReply);
+    rpc CollectSamples(CollectSamplesRequest) returns (CollectSamplesReply);
+    rpc PullBlocks(PullBlocksRequest) returns (PullBlocksReply);
+    rpc CheckCapability(CheckCapabilityRequest) returns (CheckCapabilityReply);
+}
+
+message Xattr {
+    optional bytes value = 1 [ctype = CORD];
+    optional fixed32 checksum = 2;
+}
+
+message UpdateXattr {
+    oneof update {
+        Xattr xattr = 1;
+        EmptyMessage remove = 2;
+    }
+    
+    message EmptyMessage {
+        
+    }
+}
+
+message StatInfo {
+    optional string path = 1;
+    optional bool is_dir = 2;
+    optional AccessPermissions permissions = 3;
+    optional bool immutable = 4;
+    optional int64 length = 5;
+    optional fixed32 checksum = 6;
+    optional int64 mtime = 7;
+    optional int64 fuzzy_atime = 8;
+    optional uint64 version = 9;
+    optional uint64 content_version = 11;
+    optional bytes user_info = 10 [ctype = CORD];
+    map<int32, Xattr> xattrs = 22;
+    optional fixed32 user_info_checksum = 21;
+    optional int64 ok_length = 16;
+    optional int64 space_used = 12;
+    optional FileAccessHint access_hint = 17;
+    
+    repeated FileExtent extents = 19;
+    message FileExtent {
+        optional int64 offset_bytes = 1;
+        optional int64 size_bytes = 2;
+    }
+    
+    optional bool volume_writable = 20;
+    
+    reserved 18;
+    
+    enum Sizes {
+        MAX_USER_INFO_SIZE = 2048;
+    }
+}
+
+message StatInfoResult {
+    optional StatInfo info = 1;
+    optional ErrorStatus status = 2;
+}
+
+message StatInfoResults {
+    repeated StatInfoResult results = 1;
+    optional ReplyHeader header = 2;
+}
+
+message ErrorStatus {
+    optional ReplyHeader header = 3;
+    optional int32 error_code = 1;
+    optional string error_message = 2;
+}
+
+message ErrorStatuses {
+    optional ReplyHeader header = 2;
+    repeated ErrorStatus statuses = 1;
+}
+
+message StatfsRequest {
+    optional RequestHeader header = 1;
+    optional int32 serverstats_fields_to_include = 2;
+    optional int32 diskstatus_fields_to_include = 3;
+    optional int32 devicestatus_fields_to_include = 5;
+    optional bool include_other_users_usage = 4 [default = false];
+}
+
+message SsdOpsStats {
+    optional int32 capacity = 1 [default = -1];
+    optional int32 usage = 2 [default = -1];
+    optional int32 in_quota_usage = 3 [default = -1];
+}
+
+message DeviceStats {
+    optional string name = 1;
+    optional Health health = 2;
+    optional int64 size_bytes = 3;
+    optional string universal_name = 8;
+    optional int32 utilization_1m = 6;
+    optional int32 utilization_60m = 7;
+    optional SsdOpsStats ssd_ops_stats = 9;
+    
+    optional Durability durability = 10;
+    message Durability {
+        optional bool durable = 1 [default = true];
+        optional double wearout_indicator = 2 [default = 0];
+    }
+    
+    reserved 4, 5;
+    
+    enum Fields {
+        DEV_HEALTH_STATUS = 2;
+        DEV_HEALTH_BITS = 4;
+        DEV_HEALTH_VERSION = 8;
+        DEV_SIZE_BYTES = 16;
+        DEV_UTILIZATION_1M = 128;
+        DEV_UTILIZATION_60M = 256;
+        DEV_UNIVERSAL_NAME = 512;
+        DEV_SSD_OPS_STATS_V2 = 2048;
+        DEV_DURABILITY = 4096;
+        DEPRECATED_DEV_NAME = 1;
+        DEPRECATED_DEV_INFO_BITS = 32;
+        DEPRECATED_DEV_SPINDLE_CATEGORY = 64;
+        DEPRECATED_DEV_SSD_OPS_STATS = 1024;
+    }
+}
+
+message VolumeSpaceUsageStats {
+    optional int64 volume_size_bytes = 1;
+    optional int64 free_space_bytes = 2;
+    optional int64 used_space_bytes = 3;
+    optional int64 stored_data_bytes = 4;
+    optional int64 num_files = 5;
+}
+
+message SpaceUsedPerUser {
+    optional string username = 1;
+    optional int64 stored_data_bytes = 2;
+    optional int64 used_space_bytes = 4;
+    optional int64 num_files = 3;
+}
+
+message DiskCostPerUser {
+    optional string username = 1;
+    optional string isolation_class = 2;
+    optional StoragePartition storage_partition = 5;
+    repeated int64 current_cost_per_priority = 3;
+    repeated RequestHeader.Priority current_cost_priorities = 4;
+}
+
+message VolumeStats {
+    optional string name = 1;
+    optional uint64 volume_id = 28;
+    optional fixed64 label = 2;
+    optional string device_name = 27;
+    optional int64 disk_size_bytes = 3 [deprecated = true];
+    optional int64 disk_used_bytes = 5 [deprecated = true];
+    optional int64 available_bytes = 4 [deprecated = true];
+    optional int64 used_bytes = 16 [deprecated = true];
+    optional int64 num_files = 24 [deprecated = true];
+    optional VolumeSpaceUsageStats space_usage_stats = 30;
+    optional int32 read_operation_latency_ms = 9;
+    optional int32 read_bandwidth_kbps = 17;
+    optional int32 write_bandwidth_kbps = 18;
+    optional int32 disk_writeback_rate_kbps = 19;
+    optional int32 utilization = 23 [deprecated = true];
+    repeated SpaceUsedPerUser space_used_per_user = 13;
+    repeated DiskCostPerUser disk_cost_per_user = 25 [deprecated = true];
+    optional Health health = 14;
+    optional int32 info_bits = 29;
+    optional string volume_name = 26 [deprecated = true];
+    
+    reserved 6, 7, 8, 10, 11, 12, 15, 20, 21, 22;
+    
+    enum Fields {
+        VOL_LABEL = 1;
+        VOL_DISK_SIZE_BYTES = 2;
+        VOL_DISK_USED_BYTES = 4;
+        DEPRECATED_VOL_DISK_USED_TRANSIENT_BYTES = 8;
+        VOL_AVAILABLE_BYTES = 16;
+        VOL_USED_BYTES = 32;
+        DEPRECATED_VOL_QUEUE_DELAY_MS_MINUTE = 64;
+        DEPRECATED_VOL_QUEUE_DELAY_MS_HOUR = 128;
+        DEPRECATED_VOL_QUEUE_DELAY_MS_START = 256;
+        VOL_READ_OPERATION_LATENCY_MS = 512;
+        VOL_READ_BANDWIDTH_KBPS = 1024;
+        VOL_WRITE_BANDWIDTH_KBPS = 2048;
+        VOL_DISK_WRITEBACK_RATE_KBPS = 4096;
+        DEPRECATED_VOL_READ_UTILIZATION = 8192;
+        DEPRECATED_VOL_WRITE_UTILIZATION = 16384;
+        VOL_UTILIZATION = 32768;
+        VOL_USED_BYTES_PER_USER = 65536;
+        VOL_HEALTH_STATUS = 131072;
+        VOL_HEALTH_BITS = 262144;
+        VOL_HEALTH_VERSION = 524288;
+        DEPRECATED_VOL_WRITEBACK_TIME = 1048576;
+        VOL_NUM_FILES = 2097152;
+        VOL_NUM_FILES_PER_USER = 4194304;
+        DEPRECATED_VOL_DISK_COST_PER_USER = 8388608;
+        VOL_DISK_COST_PER_USER_PER_PRIORITY = 16777216;
+        VOL_VOLUME_NAME = 33554432;
+        VOL_DEVICE_NAME = 67108864;
+        VOL_VOLUME_ID = 134217728;
+        VOL_INFO_BITS = 268435456;
+        VOL_SPACE_USAGE_STATS = 536870912;
+        DEPRECATED_VOL_STORAGE_PARTITIONS = 1073741824;
+    }
+    
+    enum VolumeBits {
+        VOL_BIT_DEFAULT_VOLUME = 1;
+        VOL_BIT_COLD_VOLUME = 2;
+        VOL_BIT_LOCKABLE_VOLUME = 4;
+        VOL_BIT_IMMUTABLE_VOLUME = 8;
+        VOL_BIT_DEPRECATED_LOCKED_VOLUME = 16 [deprecated = true];
+        VOL_BIT_INTERFACE_DFS = 32;
+        VOL_BIT_INTERFACE_NUFS = 64;
+        VOL_BIT_INTERFACE_BLOCK = 128;
+        VOL_BIT_UNREPLICATED_DATA = 256;
+    }
+}
+
+message NetworkUsageAtPriority {
+    optional int64 requested_usage = 1;
+    optional int64 actual_usage = 2;
+    optional RequestHeader.Priority priority = 3;
+}
+
+message NetworkUsagePerUser {
+    optional string username = 1;
+    optional string isolation_class = 2;
+    optional StoragePartition storage_partition = 4;
+    repeated NetworkUsageAtPriority current_usage = 3;
+}
+
+message CPUUsageAtPriority {
+    optional int64 requested_usage = 1;
+    optional int64 actual_usage = 2;
+    optional RequestHeader.Priority priority = 3;
+}
+
+message CPUUsagePerUser {
+    optional string username = 1;
+    optional string isolation_class = 2;
+    optional StoragePartition storage_partition = 4;
+    repeated CPUUsageAtPriority current_usage = 3;
+}
+
+message AtaioAtPriority {
+    optional double usage = 1;
+    optional double write_usage = 2;
+    optional RequestHeader.Priority priority = 3;
+}
+
+message AtaioPerUser {
+    optional string username = 1;
+    optional string isolation_class = 2;
+    optional StoragePartition storage_partition = 4;
+    repeated AtaioAtPriority current_usage = 3;
+    repeated AtaioAtPriority new_aio_usage = 5;
+}
+
+message AbstractCPUUsageAtPriority {
+    optional double intended_total_usage = 1;
+    optional double intended_read_usage = 2;
+    optional double intended_write_usage = 3;
+    optional double scheduled_total_usage = 4;
+    optional double scheduled_read_usage = 5;
+    optional double scheduled_write_usage = 6;
+    optional RequestHeader.Priority priority = 7;
+}
+
+message AbstractCPUUsagePerUser {
+    optional string username = 1;
+    optional string isolation_class = 2;
+    optional StoragePartition storage_partition = 3;
+    repeated AbstractCPUUsageAtPriority current_usage = 4;
+}
+
+message WriteBandwidthUsageAtPriority {
+    optional double intended_usage = 1;
+    optional double scheduled_usage = 2;
+    optional RequestHeader.Priority priority = 3;
+}
+
+message WriteBandwidthUsagePerUser {
+    optional string username = 1;
+    optional string isolation_class = 2;
+    optional StoragePartition storage_partition = 3;
+    repeated WriteBandwidthUsageAtPriority current_usage = 4;
+}
+
+message D_RPCStats {
+    optional string method = 1;
+    optional int64 count = 2;
+    optional int64 bytes = 3;
+    optional int64 errors = 6;
+    optional int64 cancels = 5;
+    optional int64 soft_deadlines_rejected = 4;
+    optional double elapsed = 7;
+}
+
+message ServerStats {
+    optional string name = 3;
+    optional fixed32 build_timestamp = 13;
+    optional string mpm_version = 14;
+    optional string release = 7;
+    optional int64 server_time = 8;
+    optional int64 startup_time = 9;
+    optional bool flapping_restarts = 34;
+    optional int64 system_startup_time = 20;
+    optional int64 heartbeat_time = 10;
+    optional Health health = 11;
+    optional int64 last_health_change_time = 17;
+    optional string d_cell_name = 15;
+    repeated VolumeStats volume_stats = 12;
+    repeated DeviceStats device_stats = 23;
+    repeated NetworkUsagePerUser network_usage_per_user = 24;
+    repeated CPUUsagePerUser cpu_usage_per_user = 25;
+    repeated AbstractCPUUsagePerUser abstract_cpu_usage_per_user = 32;
+    repeated WriteBandwidthUsagePerUser write_bandwidth_usage_per_user = 33;
+    repeated AtaioPerUser ataio_per_user = 26;
+    repeated D_RPCStats rpc_stats = 19;
+    optional int32 additional_info_bitfield = 27;
+    optional string bucket = 28;
+    
+    optional AllocatorWeightInfo allocator_weight_info = 31;
+    message AllocatorWeightInfo {
+        optional int32 hdd_hot_weight = 1;
+        optional int32 ssd_hot_weight = 3;
+        optional string hdd_hot_version = 2;
+        optional string ssd_hot_version = 4;
+        optional int32 hdd_cold_weight = 5;
+        optional int32 ssd_cold_weight = 6;
+        optional string hdd_cold_version = 7;
+        optional string ssd_cold_version = 8;
+    }
+    
+    optional string perf_options = 1000;
+    optional ReplyHeader header = 30;
+    
+    reserved 1 to 2, 4 to 6, 16, 18, 21, 29;
+    
+    enum Fields {
+        SRV_VERSION = 1;
+        SRV_MIN_SUPPORTED_VERSION = 2;
+        SRV_BUILD_TIMESTAMP = 4;
+        SRV_MPM_VERSION = 8;
+        SRV_RELEASE = 16;
+        SRV_SERVER_TIME = 32;
+        SRV_STARTUP_TIME = 64;
+        SRV_HEARTBEAT_TIME = 128;
+        SRV_HEALTH_STATUS = 256;
+        SRV_HEALTH_BITS = 512;
+        SRV_HEALTH_VERSION = 1024;
+        SRV_LAST_HEALTH_CHANGE_TIME = 2048;
+        SRV_D_CELL_NAME = 4096;
+        DEPRECATED_SRV_PREVIOUS_D_CELL_NAME = 8192;
+        SRV_RPC_STATS_METHOD = 16384;
+        SRV_RPC_STATS_COUNT = 32768;
+        SRV_RPC_STATS_BYTES = 65536;
+        SRV_RPC_STATS_ERRORS = 131072;
+        SRV_RPC_STATS_CANCELS = 262144;
+        SRV_RPC_STATS_SOFT_DEADLINES = 524288;
+        SRV_RPC_STATS_ELAPSED = 1048576;
+        SRV_SYSTEM_STARTUP_TIME = 2097152;
+        SRV_NETWORK_USAGE_PER_USER = 4194304;
+        SRV_CPU_USAGE_PER_USER = 8388608;
+        SRV_ATAIO_PER_USER = 16777216;
+        SRV_ADDITIONAL_INFO_BITFIELD = 67108864;
+        SRV_BUCKET = 134217728;
+        SRV_SPINDLE_WEIGHT = 268435456;
+        SRV_ALLOCATOR_WEIGHT_INFO = 536870912;
+        SRV_ABSTRACT_CPU_USAGE_PER_USER = 1073741824;
+        DEPRECATED_SRV_WRITE_BANDWIDTH_USAGE_PER_USER = 560718538;
+        DEPRECATED_SRV_STORAGE_PARTITIONS = 33554432;
+    }
+    
+    enum ServerBits {
+        SERVER_BIT_UNREPLICATED_DATA = 1;
+    }
+}
+
+message GetCapabilityKeyRequest {
+    optional RequestHeader header = 1;
+}
+
+message GetCapabilityKeyReply {
+    optional ReplyHeader header = 4;
+    optional bytes key = 1;
+    optional fixed64 key_id = 2;
+    optional int64 expiration = 3;
+}
+
+message GetReservationRequest {
+    optional RequestHeader header = 1;
+    optional string disk = 2;
+    optional int32 tokens = 3;
+    optional double timeout = 4;
+    
+    optional Kind kind = 5 [default = READ];
+    enum Kind {
+        READ = 0;
+        WRITE = 1;
+    }
+}
+
+message GetReservationReply {
+    optional ReplyHeader header = 1;
+    optional string cookie = 2;
+}
+
+message ReleaseReservationRequest {
+    optional RequestHeader header = 1;
+    optional string cookie = 2;
+    
+    reserved 3, 4;
+}
+
+message ReleaseReservationReply {
+    optional ReplyHeader header = 1;
+}
+
+message CreateDirRequest {
+    optional RequestHeader header = 1;
+    repeated string paths = 2;
+    optional AccessPermissions create_permissions = 3;
+    
+    reserved 4, 5;
+}
+
+message RemoveDirRequest {
+    optional RequestHeader header = 1;
+    repeated string paths = 2;
+    optional bool recursive = 3;
+    
+    reserved 4;
+}
+
+message MatchRequest {
+    optional RequestHeader header = 1;
+    optional string pattern = 2;
+    optional bool match_dot_files = 3;
+    optional bool want_recursive_sizes = 7;
+    optional bool want_user_info = 8;
+    repeated int32 want_xattrs = 11 [packed = true];
+    optional bool want_extents = 10;
+    optional bool limited_info = 4;
+    optional bool want_is_dir = 6;
+    optional bool want_space_used = 9;
+    optional bytes restart_cookie = 5;
+}
+
+message MatchReply {
+    optional ReplyHeader header = 4;
+    optional bytes restart_cookie = 1;
+    repeated StatInfo infos = 2;
+    
+    reserved 3;
+}
+
+message OpenRequest {
+    optional RequestHeader header = 1;
+    repeated string paths = 2;
+    repeated Capability capabilities = 17;
+    optional bool readable = 3;
+    optional bool writable = 4;
+    optional bool truncate = 5;
+    optional bool fail_if_exists = 6;
+    optional bool create_if_missing = 7;
+    optional bool new_version = 8;
+    optional bool available_writes = 18;
+    optional AccessPermissions create_permissions = 10;
+    optional bytes user_info = 11 [ctype = CORD];
+    optional fixed32 user_info_checksum = 25;
+    map<int32, UpdateXattr> xattrs = 26;
+    optional int64 size_hint = 12;
+    optional double utilization_ceiling = 13;
+    optional FileAccessHint access_hint = 16;
+    optional bool already_encrypted = 19;
+    
+    optional NotEncryptedReason not_encrypted_reason = 20;
+    enum NotEncryptedReason {
+        UNSPECIFIED = 0;
+        SYNTHETIC_DATA = 1;
+        METADATA = 2;
+        EXEMPT = 3;
+    }
+    
+    optional int32 client_block_size = 21;
+    optional bool want_extents = 23;
+    optional AllocatorInfo allocator_info = 24;
+    optional bool is_pulling = 15 [default = false];
+    optional bool finalize_on_restart_l4_only = 22 [default = false];
+    
+    reserved 9, 14;
+}
+
+message AllocatorInfo {
+    optional string name = 1;
+}
+
+message ReadRequest {
+    optional RequestHeader header = 1;
+    optional string path = 2;
+    optional uint64 version = 3;
+    optional Capability capability = 4;
+    required int64 length = 5;
+    optional int64 offset = 6;
+    repeated int32 want_xattrs = 19 [packed = true];
+    optional bool reject_if_file_corrupted = 8 [default = true];
+    optional bool client_verifies_checksum = 10;
+    optional bool reverify = 13;
+    optional bool retrying_read_checksum_mismatch = 20;
+    
+    optional StatusUpdateInfo status_update_info = 11;
+    message StatusUpdateInfo {
+        required fixed64 unique_read_id = 1;
+        optional int32 request_index = 2;
+        repeated string replica_to_notify = 4;
+    }
+    
+    optional bool no_fuzzy_atime = 14;
+    optional int32 client_block_size = 15;
+    optional int64 prefetch_length = 16;
+    optional int64 prefetch_offset = 17;
+    optional bool disallow_short_mutable_reads = 18;
+    optional bool is_hail_mary = 21;
+    optional bool skip_checksum_computation = 22;
+    
+    reserved 7, 9, 12;
+}
+
+message ReadReply {
+    optional ReplyHeader header = 3;
+    required bytes data = 1 [ctype = CORD];
+    optional bool buffer_cache_hit = 2;
+    optional fixed32 data_checksum = 4;
+    map<int32, Xattr> xattrs = 7;
+    optional bool xattrs_not_loaded = 8;
+    
+    reserved 5, 6;
+}
+
+message OverlappingWriteFailure {
+    extend .proto2.bridge.MessageSet {
+        optional OverlappingWriteFailure message_set_extension = 107800439;
+    }
+}
+
+message PosixAccessDenied {
+    extend .proto2.bridge.MessageSet {
+        optional PosixAccessDenied message_set_extension = 158173253;
+    }
+}
+
+message RateACLError {
+    extend .proto2.bridge.MessageSet {
+        optional RateACLError message_set_extension = 511249246;
+    }
+}
+
+message WriteRequest {
+    optional RequestHeader header = 1;
+    optional string path = 2;
+    optional uint64 version = 3;
+    optional Capability capability = 4;
+    optional int64 offset = 5;
+    required bytes data = 6 [ctype = CORD];
+    optional fixed32 data_checksum = 16;
+    optional fixed32 new_file_checksum = 7;
+    optional bytes user_info = 10 [ctype = CORD];
+    optional fixed32 user_info_checksum = 15;
+    map<int32, UpdateXattr> xattrs = 17;
+    optional bool append_l4_only = 11;
+    optional int64 next_write_reservation = 12;
+    optional string cookie = 13;
+    optional int32 client_block_size = 14;
+    
+    reserved 8, 9;
+}
+
+message WriteReply {
+    optional ReplyHeader header = 2;
+    optional int64 offset = 3;
+    optional int64 write_bytes_allowed = 4;
+    optional string cookie = 5;
+    
+    reserved 1, 6;
+}
+
+message RmaAllocRequest {
+    optional RequestHeader header = 1;
+    optional string path = 2;
+    optional uint64 version = 3;
+    optional Capability capability = 4;
+    optional uint32 bytes_requested = 5;
+    optional uint32 pony_station_handle = 6;
+    optional string pony_path = 7;
+    optional string pony_engine_id = 8;
+}
+
+message RmaAllocReply {
+    optional ReplyHeader header = 1;
+    optional uint32 physical_buffer_size = 2;
+    optional uint32 logical_buffer_size = 3;
+    repeated uint64 buffer_addresses = 4;
+    optional uint64 offset = 5;
+    optional uint32 logical_alloc_size = 6;
+    optional uint32 file_checksum_salt = 7;
+    optional double alloc_write_sampling_frequency = 8;
+}
+
+message RmaDeallocRequest {
+    optional RequestHeader header = 1;
+    optional string path = 2;
+    optional Capability capability = 3;
+}
+
+message RmaDeallocReply {
+    optional ReplyHeader header = 1;
+}
+
+message StatRequest {
+    optional RequestHeader header = 1;
+    repeated string paths = 2;
+    repeated uint64 versions = 3;
+    repeated Capability capabilities = 4;
+    optional bool want_user_info = 5;
+    repeated int32 want_xattrs = 9 [packed = true];
+    optional bool want_extents = 7;
+    optional bool want_volume_writable = 8;
+    
+    reserved 6;
+}
+
+message WriteStatRequest {
+    optional RequestHeader header = 1;
+    repeated string paths = 2;
+    repeated uint64 versions = 3;
+    repeated Capability capabilities = 4;
+    optional StatInfo info = 5;
+    optional bool new_version = 6;
+    optional bool want_user_info = 7;
+    repeated int32 want_xattrs = 13 [packed = true];
+    map<int32, UpdateXattr> xattrs_update = 14;
+    optional bool want_extents = 10;
+    optional bool clear_pulling = 9;
+    optional bool wait_until_flushed = 11;
+    optional bool write_timelander_recovery_metadata = 12;
+    
+    reserved 8;
+}
+
+message RemoveRequest {
+    optional RequestHeader header = 1;
+    repeated string paths = 2;
+    repeated Capability capabilities = 4;
+    repeated int64 colossus_file_ids = 5;
+    
+    reserved 3;
+}
+
+message ReconstructFilesSource {
+    optional string server = 1;
+    optional string path = 2;
+    optional Cid cid_override = 9;
+    optional Capability capability = 3;
+    optional int64 length = 5;
+    optional fixed32 checksum = 6;
+    optional int32 chunk_index = 8;
+    
+    reserved 4, 7;
+}
+
+message ReconstructFilesTarget {
+    optional string server = 6;
+    optional string path = 1;
+    optional Capability capability = 7;
+    optional int64 length = 2;
+    optional fixed32 checksum = 4;
+    optional bytes user_info = 3 [ctype = CORD];
+    optional fixed32 user_info_checksum = 9;
+    map<int32, UpdateXattr> xattrs_update = 11;
+    optional FileAccessHint access_hint = 8;
+    optional int32 chunk_index = 10;
+    
+    reserved 5;
+}
+
+message ErrorOrigin {
+    optional string server = 1;
+    optional string device = 2;
+    
+    optional Reason reason = 3 [default = UNKNOWN];
+    enum Reason {
+        UNKNOWN = 0;
+        PULL_FILES = 1;
+        WRITE_TOKENS = 2;
+        READ_TOKENS = 3;
+    }
+    
+    extend .proto2.bridge.MessageSet {
+        optional ErrorOrigin message_set_extension = 119566879;
+    }
+}
+
+message Encoding {
+    optional Kind kind = 1;
+    enum Kind {
+        INVALID = 0;
+        REPLICATED = 1;
+        REED_SOLOMON = 2;
+        NESTED = 3;
+    }
+    
+    optional int32 data_chunks = 2;
+    optional int32 code_chunks = 3;
+}
+
+message ReconstructFilesRequest {
+    optional RequestHeader header = 1;
+    repeated ReconstructFilesSource sources = 2;
+    repeated ReconstructFilesTarget targets = 3;
+    optional bool fail_if_targets_exists = 4;
+    optional bool pull_tail = 12;
+    optional AccessPermissions targets_permissions = 5;
+    optional int64 targets_mtime = 6;
+    optional bool targets_immutable = 7;
+    optional int32 num_packets = 9;
+    optional int32 packet_size = 10;
+    optional bytes matrix = 11;
+    optional int32 priority = 13;
+    optional Encoding encoding = 14;
+    repeated ReconstructFilesSource potential_sources = 15;
+    optional bool is_hail_mary = 16;
+    
+    reserved 8;
+}
+
+message ReconstructFilesReply {
+    optional ReplyHeader header = 2;
+    repeated StatInfo infos = 1;
+    repeated StatInfoResult results = 3;
+}
+
+message SyncRequest {
+    optional RequestHeader header = 1;
+    repeated string paths = 2;
+    optional Capability capability = 3;
+}
+
+message VerifyFileRequest {
+    optional RequestHeader header = 1;
+    optional string path = 2;
+    optional uint64 version = 3;
+    optional Capability capability = 4;
+    optional int64 length = 5;
+    optional int64 offset = 6;
+    
+    optional EncodingPacket encoding_packet = 8;
+    message EncodingPacket {
+        optional int32 span_length = 1;
+        optional int32 packet_length = 2;
+        optional int32 num_packets = 3;
+    }
+    
+    reserved 7;
+}
+
+message VerifyFileReply {
+    optional ReplyHeader header = 1;
+    optional ErrorStatus status = 2;
+    optional int64 good_length = 3;
+    optional fixed32 checksum = 4;
+    repeated fixed32 packet_checksum = 5 [packed = true];
+}
+
+message PullBlocksRequest {
+    optional RequestHeader header = 1;
+    
+    optional Source source = 2;
+    message Source {
+        optional bytes suffix = 13 [ctype = CORD];
+        optional fixed32 suffix_checksum = 15;
+        optional ResolvedAddr server = 2;
+        optional string filename = 3;
+        optional int64 offset = 5;
+        optional int64 size = 6;
+        optional Capability capability = 7;
+        optional string resource_user = 12;
+        optional int64 client_block_size = 14;
+        
+        reserved 1, 4, 8 to 11;
+    }
+    
+    optional string dest_filename = 3;
+    optional int32 client_block_size_for_target = 5;
+    optional Capability dest_capability = 4;
+    optional int64 dest_free_space_threshold_bytes = 6;
+    optional double dest_free_space_threshold_fraction = 7;
+}
+
+message PullBlocksReply {
+    optional ReplyHeader header = 1;
+    optional int64 offset = 2;
+    optional int64 source_size = 3;
+}
+
+message CheckCapabilityRequest {
+    optional RequestHeader header = 1;
+    optional Capability capability_to_check = 2;
+    optional string path = 3;
+    optional string grantee = 4;
+    optional uint64 version = 5;
+}
+
+message CheckCapabilityReply {
+    optional ReplyHeader header = 1;
+    optional bool capability_valid = 2;
+}
+
+message StatusNotification {
+    optional fixed64 unique_id = 1;
+    
+    optional Status status = 2;
+    enum Status {
+        UNKNOWN_STATUS = 0;
+        STARTING_READ = 1;
+        STARTING_READ_ON_SLOW_DISK = 3;
+        FINISHED_READ = 2;
+    }
+}

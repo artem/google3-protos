@@ -1,0 +1,18 @@
+syntax = "proto2";
+
+package coroner.collection;
+
+enum CrashReason {
+    UNKNOWN_REASON = 0;
+    KILLED_BY_SIGNAL = 1;
+    LOG_FATAL = 3;
+    OUT_OF_MEMORY = 5;
+    OUT_OF_MEMORY_CRITICAL = 14;
+    SANDBOX_VIOLATION = 10;
+    REPORT_CRITICAL = 12;
+    REPORT_NON_CRITICAL = 13;
+    HEAPDUMP = 7;
+    JAVA_OOME = 9;
+    GVISOR_VIOLATION = 11;
+    DUMP_POINT = 15;
+}

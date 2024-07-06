@@ -1,0 +1,50 @@
+syntax = "proto3";
+
+package privacy_boost.predicates;
+
+option java_multiple_files = true;
+option java_outer_classname = "PredicatesProto";
+option java_package = "com.google.privacyboost";
+
+message Zone {
+    repeated string ranges = 1;
+    
+    repeated TagPair tags = 2;
+    message TagPair {
+        TagType type = 1;
+        uint32 value = 2;
+    }
+    
+    string name = 3;
+}
+
+message Metadata {
+    repeated int32 exception_ports = 1;
+    string version_serial = 2;
+}
+
+message Config {
+    repeated Zone zones = 1;
+    Metadata metadata = 2;
+}
+
+message Proxy {
+    repeated string ranges = 1;
+    string location = 2;
+    string proxy_target = 3;
+}
+
+message ProxyConfig {
+    repeated Proxy proxies = 1;
+}
+
+enum TagType {
+    INVALID = 0;
+    ENCRYPT = 1;
+    COMPRESS = 2;
+    ALLOW_PONY = 3;
+    ALLOW_PSP = 4;
+    ALLOW_INTRA_METRO_PSP = 5;
+    ENCRYPT_GRPC = 6;
+    ALLOW_HTTP3_LOAS = 7;
+}

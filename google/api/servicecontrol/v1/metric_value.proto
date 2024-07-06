@@ -1,0 +1,36 @@
+syntax = "proto3";
+
+package google.api.servicecontrol.v1;
+
+import "frameworks/testing/rpcreplay/processors/rpc_replay_field_option.proto";
+import "google/api/servicecontrol/v1/distribution.proto";
+import "google/protobuf/timestamp.proto";
+import "google/type/money.proto";
+
+option ruby_package = "Google::Cloud::ServiceControl::V1";
+option php_namespace = "Google\\Cloud\\ServiceControl\\V1";
+option csharp_namespace = "Google.Cloud.ServiceControl.V1";
+option cc_enable_arenas = true;
+option java_multiple_files = true;
+option java_outer_classname = "MetricValueSetProto";
+option java_package = "com.google.api.servicecontrol.v1";
+
+message MetricValue {
+    map<string, string> labels = 1;
+    protobuf.Timestamp start_time = 2;
+    protobuf.Timestamp end_time = 3;
+    
+    oneof value {
+        bool bool_value = 4;
+        int64 int64_value = 5;
+        double double_value = 6;
+        string string_value = 7;
+        Distribution distribution_value = 8;
+        type.Money money_value = 9;
+    }
+}
+
+message MetricValueSet {
+    string metric_name = 1;
+    repeated MetricValue metric_values = 2;
+}

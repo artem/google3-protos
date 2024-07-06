@@ -1,0 +1,15 @@
+syntax = "proto2";
+
+package borg;
+
+import "borg/common/device_alloc.proto";
+import "borg/common/scalar_resource.proto";
+
+option cc_enable_arenas = true;
+option java_outer_classname = "AcceleratorAllocProto";
+option java_package = "com.google.borg.rpc";
+
+message AcceleratorAlloc {
+    optional ScalarResource.Key type = 1;
+    repeated DeviceAlloc device = 2;
+}

@@ -1,0 +1,29 @@
+syntax = "proto2";
+
+package borg;
+
+import "production/tpc/change_management/equivalence/proto/annotation.proto";
+import "third_party/boundary_proxy/proto_compare/annotation.proto";
+
+option cc_enable_arenas = true;
+option java_outer_classname = "PermissionsProto";
+option java_package = "com.google.borg.rpc";
+
+message ReadAccessPolicy {
+    optional Policy policy = 1;
+    enum Policy {
+        UNSPECIFIED = 0;
+        STRICT = 1;
+    }
+}
+
+message Permissions {
+    required string user = 1;
+    optional int32 mode = 3;
+    repeated string read_access_role = 4;
+    optional int32 prod_uid = 6;
+    optional ReadAccessPolicy read_access_policy = 7;
+    optional string group = 2 [deprecated = true];
+    
+    reserved 5;
+}

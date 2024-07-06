@@ -1,0 +1,11 @@
+syntax = "editions";
+
+package chubby.svelte.internal;
+
+option java_multiple_files = true;
+
+enum SvelteDCMErrorType {
+    SVELTE_UNKNOWN_ERROR = 0;
+    SVELTE_SVFILE_UNCOMPRESS_FAILURE = 1;
+    SVELTE_SVFILE_CORRUPT = 2;
+}

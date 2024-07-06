@@ -1,0 +1,11 @@
+syntax = "proto2";
+
+package production.rpc.stubs.cache;
+
+option java_package = "com.google.prod.rpc.stubs.cache.proto";
+
+message Cache {
+    optional string type = 1;
+    
+    extensions 1000 to max;
+}

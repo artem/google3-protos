@@ -1,0 +1,16 @@
+syntax = "proto3";
+
+package httpsconnection;
+
+option optimize_for = CODE_SIZE;
+
+message ClientHello {
+    uint32 version = 1;
+    repeated uint32 cipher_suite = 2;
+    
+    repeated Extension extension = 3;
+    message Extension {
+        uint32 id = 1;
+        bytes contents = 2;
+    }
+}

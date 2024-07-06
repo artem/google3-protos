@@ -1,97 +1,119 @@
 syntax = "proto2";
 
+package security_loas_l2;
+
 import "net/proto2/bridge/proto/message_set.proto";
 import "security/credentials/proto/principal.proto";
 import "security/loas/l2/proto/common.proto";
-package security_loas_l2;
+import "security/loas/l2/proto/credstype.proto";
+import "security/loas/l2/proto/identity_types.proto";
+import "security/loas/l2/proto/instance.proto";
+import "security/loas/l2/proto/usertype.proto";
+import "storage/datapol/annotations/proto/semantic_annotations.proto";
 
 message MasterCertificate {
-  repeated uint64 revocation_ids = 1;
-  extend .proto2.bridge.MessageSet {
-    optional .security_loas_l2.MasterCertificate message_set_extension = 43796541;
-  }
+    repeated uint64 revocation_ids = 1;
+    
+    extend .proto2.bridge.MessageSet {
+        optional MasterCertificate message_set_extension = 43796541;
+    }
 }
 
 message MachineCertificate {
-  message Digest {
-    enum Algorithm {
-      SHA256 = 0;
+    optional string fqdn = 2;
+    optional MachineCertDigest corp_machine_cert_digest = 3;
+    optional ZammSMTLoas3CertDigest zamm_smt_loas3_cert_digest = 4;
+    
+    extensions 1;
+    
+    extend .proto2.bridge.MessageSet {
+        optional MachineCertificate message_set_extension = 43673850;
     }
-    optional bytes value = 1;
-    optional .security_loas_l2.MachineCertificate.Digest.Algorithm algorithm = 2;
-  }
-  optional string fqdn = 2;
-  optional .security_loas_l2.MachineCertificate.Digest corp_machine_cert_digest = 3;
-  extensions 1 to 1;
-  extend .proto2.bridge.MessageSet {
-    optional .security_loas_l2.MachineCertificate message_set_extension = 43673850;
-  }
 }
 
 message RoleCertificate {
-  repeated uint64 revocation_ids = 1;
-  optional .security.credentials.PrincipalProto primary = 2;
-  repeated string security_realms = 3;
-  optional bool is_emergency = 4;
-  extend .proto2.bridge.MessageSet {
-    optional .security_loas_l2.RoleCertificate message_set_extension = 43526055;
-  }
+    repeated uint64 revocation_ids = 1;
+    optional security.credentials.PrincipalProto primary = 2;
+    repeated string security_realms = 3;
+    optional UserType user_type = 6 [default = USER_TYPE_UNSPECIFIED];
+    optional CredentialsType creds_type = 7 [default = CREDS_TYPE_UNSPECIFIED];
+    
+    reserved 5, 4, "is_emergency";
+    
+    extend .proto2.bridge.MessageSet {
+        optional RoleCertificate message_set_extension = 43526055;
+    }
 }
 
 message ProcessCertificate {
-  optional string local_username = 2;
-  extensions 1 to 1;
-  extend .proto2.bridge.MessageSet {
-    optional .security_loas_l2.ProcessCertificate message_set_extension = 41317618;
-  }
+    optional string local_username = 2;
+    
+    extensions 1;
+    
+    extend .proto2.bridge.MessageSet {
+        optional ProcessCertificate message_set_extension = 41317618;
+    }
 }
 
 message RekeHandshakeParameters {
-  repeated .security_loas_l2.HandshakeCipher ciphers = 1;
-  optional bytes serialized_public_key = 2;
+    repeated HandshakeCipher ciphers = 1;
+    optional bytes serialized_public_key = 2;
 }
 
 message RekeCertificate {
-  repeated uint64 revocation_ids = 1;
-  repeated .security_loas_l2.RekeHandshakeParameters handshake = 2;
-  repeated string next_protocol = 4;
-  repeated .security_loas_l2.NextProtocol protocol = 3;
-  extend .proto2.bridge.MessageSet {
-    optional .security_loas_l2.RekeCertificate message_set_extension = 26605557;
-  }
+    repeated uint64 revocation_ids = 1;
+    repeated RekeHandshakeParameters handshake = 2;
+    
+    reserved 3, 4, "protocol", "next_protocol";
+    
+    extend .proto2.bridge.MessageSet {
+        optional RekeCertificate message_set_extension = 26605557;
+    }
 }
 
 message BorgMasterCertificate {
-  optional bool resumable = 1;
-  optional string cell = 2;
-  extend .proto2.bridge.MessageSet {
-    optional .security_loas_l2.BorgMasterCertificate message_set_extension = 44423886;
-  }
+    optional bool resumable = 1;
+    optional string cell = 2;
+    
+    extend .proto2.bridge.MessageSet {
+        optional BorgMasterCertificate message_set_extension = 44423886;
+    }
 }
 
 message BorgTaskCertificate {
-  optional bool resumable = 1;
-  optional string jobname = 2;
-  optional int32 id = 3;
-  optional int64 epoch = 4;
-  optional string fqdn = 5;
-  extend .proto2.bridge.MessageSet {
-    optional .security_loas_l2.BorgTaskCertificate message_set_extension = 44454843;
-  }
+    optional bool resumable = 1;
+    optional string jobname = 2;
+    optional int32 id = 3;
+    optional int64 epoch = 4;
+    optional string fqdn = 5;
+    optional InstanceInfo instance_info = 6;
+    optional bool instance_info_resumable = 7;
+    
+    extend .proto2.bridge.MessageSet {
+        optional BorgTaskCertificate message_set_extension = 44454843;
+    }
 }
 
 message UserCertificateComment {
-  optional string role = 1;
-  extend .proto2.bridge.MessageSet {
-    optional .security_loas_l2.UserCertificateComment message_set_extension = 86999188;
-  }
+    optional string role = 1;
+    
+    extend .proto2.bridge.MessageSet {
+        optional UserCertificateComment message_set_extension = 86999188;
+    }
 }
 
 message EmergencyCertificate {
-  optional string role = 1;
-  extend .proto2.bridge.MessageSet {
-    optional .security_loas_l2.EmergencyCertificate message_set_extension = 62148510;
-  }
+    optional string role = 1;
+    
+    extend .proto2.bridge.MessageSet {
+        optional EmergencyCertificate message_set_extension = 62148510;
+    }
 }
 
-
+message SelfSignedCertificateComment {
+    optional bool is_self_signed = 1;
+    
+    extend .proto2.bridge.MessageSet {
+        optional SelfSignedCertificateComment message_set_extension = 45813468;
+    }
+}

@@ -2,9 +2,18 @@ syntax = "proto2";
 
 package security_util;
 
+import "borg/common/app_class.proto";
+import "security/loas/l2/proto/common.proto";
+import "storage/datapol/annotations/proto/semantic_annotations.proto";
+
+option java_outer_classname = "PeerValuesProto";
+option java_package = "com.google.security.util";
+
 message PeerValues {
-  optional uint32 psp_version = 1 [default = 0];
-  optional int32 rpc_wire_protocol_version = 2 [default = 0];
+    optional uint32 psp_version = 1 [default = 0];
+    optional int32 rpc_wire_protocol_version = 2 [default = 0];
+    optional security_loas_l2.AuthenticatedOptions additional_authenticated_options = 3;
+    optional int32 borg_priority = 4;
+    optional borg.AppClass.Type borg_appclass = 5;
+    optional bool enable_inline_psp = 6 [default = false];
 }
-
-

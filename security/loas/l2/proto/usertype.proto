@@ -1,0 +1,11 @@
+syntax = "proto3";
+
+package security_loas_l2;
+
+option java_package = "com.google.net.loas.l2";
+
+enum UserType {
+    USER_TYPE_UNSPECIFIED = 0;
+    MDB_USER_PERSON = 1;
+    MDB_USER_NON_PERSON = 2;
+}

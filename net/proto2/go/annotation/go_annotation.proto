@@ -1,16 +1,15 @@
 syntax = "proto2";
 
-import "net/proto2/proto/descriptor.proto";
 package go_annotation;
+
+import "net/proto2/proto/descriptor.proto";
 
 option cc_enable_arenas = true;
 
-extend .proto2.MessageOptions {
-  optional bool used_as_weak_field = 31845588;
+extend .proto2.FileOptions {
+    optional bool track_message_field_use = 288987817;
 }
 
 extend .proto2.MessageOptions {
-  optional bool track_field_use = 37383685;
+    optional bool track_field_use = 37383685;
 }
-
-

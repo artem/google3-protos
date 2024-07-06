@@ -1,0 +1,14 @@
+syntax = "proto2";
+
+package production.rpc.stubs;
+
+import "util/task/contrib/proto_status/proto_status.proto";
+
+option java_outer_classname = "StubsErrors";
+option java_package = "com.google.prod.rpc.stubs.proto";
+
+enum ErrorCode {
+    OVERLOADED_TOO_MANY_RETRIES_PER_REQUEST = 2;
+    OVERLOADED_TOO_MANY_RETRIES_PER_STUB = 3;
+    UNABLE_TO_RETRY = 4;
+}

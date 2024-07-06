@@ -1,0 +1,13 @@
+syntax = "proto2";
+
+package ptoken;
+
+option java_multiple_files = true;
+option java_package = "com.google.privacy.ptoken.proto";
+
+enum GeoLocationRestriction {
+    GEO_LOCATION_RESTRICTION_UNSPECIFIED = 0;
+    GEO_LOCATION_RESTRICTION_NO_RESTRICTION = 1;
+    GEO_LOCATION_RESTRICTION_ONLY_US_ALLOWED = 2;
+    GEO_LOCATION_RESTRICTION_ONLY_EU_ALLOWED = 3;
+}

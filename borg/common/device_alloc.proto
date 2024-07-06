@@ -1,0 +1,34 @@
+syntax = "proto2";
+
+package borg;
+
+option cc_enable_arenas = true;
+option java_outer_classname = "DeviceAllocProto";
+option java_package = "com.google.borg.rpc";
+
+message DeviceAlloc {
+    optional string device_id = 1;
+    repeated int32 group_ids = 10 [packed = true];
+    
+    oneof state {
+        int64 num_units = 5;
+        uint64 bitmap = 6;
+        ExtendedBitmap extended_bitmap = 7;
+        BitmapRange bitmap_range = 8;
+    }
+    
+    reserved 2, 3, 4, 9;
+    
+    message ExtendedBitmap {
+        repeated uint64 bitmap = 1;
+        repeated uint64 negative = 2 [packed = true];
+    }
+    
+    message BitmapRange {
+        repeated Range range = 1;
+        message Range {
+            optional int32 start = 1;
+            optional int32 end = 2;
+        }
+    }
+}

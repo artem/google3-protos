@@ -1,24 +1,31 @@
 syntax = "proto2";
 
-import public "security/context/proto/loggable_peer.proto";
-import "security/credentials/proto/authenticator.proto";
-import "security/credentials/proto/end_user_credentials.proto";
-import "security/credentials/proto/iam_request_attributes.proto";
-import "security/credentials/proto/principal.proto";
-import "storage/datapol/annotations/proto/semantic_annotations.proto";
 package security.context;
 
-option java_package = "com.google.security.context";
-option java_outer_classname = "ContextProtoFile";
+import public "security/context/proto/loggable_peer.proto";
+import "logs/proto/logs_annotations/logs_annotations.proto";
+import "logs/proto/security/credentials/loggable_end_user_credentials.proto";
+import "security/credentials/proto/authenticator.proto";
+import "security/credentials/proto/principal.proto";
+import "storage/datapol/annotations/proto/semantic_annotations.proto";
+
 option java_multiple_files = true;
+option java_outer_classname = "ContextProtoFile";
+option java_package = "com.google.security.context.proto1api";
 
 message LoggableSecurityContextProto {
-  optional .security.credentials.UserPrincipalProto user = 3;
-  optional .security.credentials.LoggableIAMRequestAttributes iam_attributes = 6;
-  optional .security.credentials.UserPrincipalProto originator = 4;
-  repeated .security.credentials.DataAccessReason reason = 5;
-  optional .security.credentials.LoggableEndUserCredentialsProto loggable_end_user_creds = 1;
-  optional .security.context.LoggablePeerProto loggable_peer = 2;
+    optional .security.credentials.UserPrincipalProto user = 3;
+    optional .security.credentials.LoggableIAMRequestAttributes iam_attributes = 6;
+    optional .security.credentials.UserPrincipalProto originator = 4;
+    repeated .security.credentials.DataAccessReason reason = 5;
+    optional .security.credentials.LoggableEndUserCredentialsProto loggable_end_user_creds = 1;
+    optional LoggablePeerProto loggable_peer = 2;
+    
+    optional PopulatingLibrary populating_library_internal_use_only = 7;
+    enum PopulatingLibrary {
+        UNKNOWN_LIBRARY = 0;
+        RPCSP_CPP = 1;
+        RPCSP_JAVA = 2;
+        RPCSP_GO = 3;
+    }
 }
-
-

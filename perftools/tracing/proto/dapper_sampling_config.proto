@@ -1,0 +1,18 @@
+syntax = "proto2";
+
+package perftools.tracing;
+
+option java_multiple_files = true;
+option java_outer_classname = "DapperSamplingConfigProto";
+option java_package = "com.google.tracing";
+
+message SpanSamplingConfig {
+    optional string family = 1;
+    optional string name = 2;
+    optional float sampling_rate = 3;
+    optional float speculative_sampling_rate = 4;
+}
+
+message DapperSamplingConfig {
+    repeated SpanSamplingConfig span_config = 1;
+}

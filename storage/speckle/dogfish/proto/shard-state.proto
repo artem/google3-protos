@@ -1,0 +1,33 @@
+syntax = "proto2";
+
+package speckle_dogfish.dogfish_proto;
+
+import "google/protobuf/timestamp.proto";
+import "storage/datapol/annotations/proto/semantic_annotations.proto";
+
+message ReadOnlyState {
+    optional bool read_only = 1;
+    optional uint64 generation = 2;
+    optional google.protobuf.Timestamp deadline = 3;
+}
+
+message ShardState {
+    optional uint64 last_checkpoint_lsn = 1;
+    optional uint64 max_purgeable_lsn = 3;
+    repeated ShardSnapshotLsnPair shard_snapshot_lsn_pairs = 7;
+    optional ReadOnlyState read_only_state = 8;
+    optional uint64 latest_canonical_checksum_lsn = 9;
+    
+    reserved 2, 4, 5, 6;
+}
+
+message ReconstructionState {
+    optional uint64 max_prefix_lsn = 1;
+    optional uint64 target_consistent_snapshot_lsn = 2;
+    optional uint64 latest_canonical_checksum_lsn = 3;
+}
+
+message ShardSnapshotLsnPair {
+    optional uint64 given_snapshot_lsn = 1;
+    optional uint64 adjusted_snapshot_lsn = 2;
+}

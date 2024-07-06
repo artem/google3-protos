@@ -1,0 +1,23 @@
+syntax = "proto3";
+
+package ubermint.options;
+
+import "net/proto2/proto/descriptor.proto";
+import "storage/datapol/annotations/proto/semantic_annotations.proto";
+
+option java_multiple_files = true;
+option java_outer_classname = "PlatformOptionsProtoFile";
+option java_package = "com.google.identity.ubermint";
+
+extend .proto2.EnumValueOptions {
+    string payload_proto_name = 301347376;
+    string loggable_payload_proto_name = 301347424;
+    int32 keystore_config_id = 301347512;
+    bool is_linked_platform = 301347565;
+    repeated int32 primary_platforms = 521677670;
+    string unsigned_payload_proto_name = 336272391;
+    string loggable_unsigned_payload_proto_name = 336637490;
+    int32 max_lifetime_seconds = 374662232;
+    int32 max_extended_lifetime_seconds = 374410703;
+    int32 max_overall_lifetime_seconds = 516181937;
+}

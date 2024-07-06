@@ -1,0 +1,18 @@
+syntax = "proto3";
+
+package fireaxe.watcher_feedback;
+
+option java_multiple_files = true;
+option optimize_for = CODE_SIZE;
+option java_outer_classname = "WatcherFeedbackProto";
+option java_package = "com.google.protos.fireaxe.watcherfeedback";
+
+enum WatcherStatus {
+    UNKNOWN = 0;
+    DISABLED = 1;
+    INITIALIZING = 2;
+    WATCHING = 3;
+    CHUBBY_ERROR = 4;
+    INVALID_SIGNATURE = 5;
+    INVALID_CONTENTS = 6;
+}

@@ -1,0 +1,12 @@
+syntax = "proto3";
+
+package security.ganpati.grants.proto;
+
+import "storage/datapol/annotations/proto/semantic_annotations.proto";
+
+enum GrantsFileFormat {
+    GRANTS_FILE_FORMAT_UNKNOWN = 0;
+    GRANTS_FILE_FORMAT_PLAIN = 1;
+    GRANTS_FILE_FORMAT_BZ2 = 2;
+    GRANTS_FILE_FORMAT_GZIP = 3;
+}

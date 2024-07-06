@@ -1,0 +1,22 @@
+syntax = "proto3";
+
+package bigtable;
+
+import "storage/datapol/annotations/proto/semantic_annotations.proto";
+
+option java_multiple_files = true;
+option java_package = "com.google.bigtable.protos";
+
+message SchemaValidatorSpec {
+    string target = 1;
+    bool silent = 2;
+    Findings.Enum reject_on = 3;
+    string breakglass_justification = 4;
+    
+    message Findings {
+        enum Enum {
+            ALL_FINDINGS = 0;
+            NEW_FINDINGS_ONLY = 1;
+        }
+    }
+}

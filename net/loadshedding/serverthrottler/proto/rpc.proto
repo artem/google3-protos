@@ -1,0 +1,17 @@
+syntax = "proto2";
+
+package net.loadshedding.serverthrottler;
+
+import "net/proto2/bridge/proto/message_set.proto";
+
+option cc_enable_arenas = true;
+option java_outer_classname = "ThrottlingRpc";
+option java_package = "com.google.net.loadshedding.serverthrottler.proto";
+
+message RequestHeader {
+    optional string role = 1;
+    
+    extend .proto2.bridge.MessageSet {
+        optional RequestHeader message_set_extension = 46602399;
+    }
+}

@@ -1,0 +1,11 @@
+syntax = "proto2";
+
+package frameworks_platform_endpoints_rpc_options;
+
+import "net/proto2/proto/descriptor.proto";
+
+option java_multiple_files = true;
+
+extend .proto2.ServiceOptions {
+    optional bool is_generic_service = 511740168 [default = false];
+}

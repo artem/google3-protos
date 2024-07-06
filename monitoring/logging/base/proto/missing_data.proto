@@ -1,0 +1,32 @@
+syntax = "proto2";
+
+package remote_debug_logging;
+
+import "storage/datapol/annotations/proto/semantic_annotations.proto";
+
+option java_multiple_files = true;
+option java_package = "com.google.monitoring.logging.proto.remotedebug";
+
+message MissingData {
+    oneof reason {
+        NotAuthorized not_authorized = 1;
+        AclCheckFailed acl_check_failed = 2;
+    }
+    
+    message NotAuthorized {
+        repeated string acl_group = 1;
+        repeated string aod_eligible_group = 2;
+        optional SourceAccess source_access = 3;
+    }
+    
+    message AclCheckFailed {
+        
+    }
+    
+    enum SourceAccess {
+        SOURCE_ACCESS_UNSPECIFIED = 0;
+        SOURCE_ACCESS_ALLOWED = 1;
+        SOURCE_ACCESS_DENIED = 2;
+        SOURCE_ACCESS_CHECK_FAILED = 3;
+    }
+}

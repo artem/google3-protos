@@ -1,0 +1,15 @@
+syntax = "proto3";
+
+package speckle_dogfish.dogfish_proto;
+
+import "logs/proto/logs_annotations/logs_annotations.proto";
+import "storage/datapol/annotations/proto/semantic_annotations.proto";
+
+enum DatabaseType {
+    DATABASE_TYPE_UNKNOWN = 0;
+    DATABASE_TYPE_POSTGRES_12 = 1 [deprecated = true];
+    DATABASE_TYPE_POSTGRES_13 = 2 [deprecated = true];
+    DATABASE_TYPE_POSTGRES_14 = 3;
+    DATABASE_TYPE_POSTGRES_15 = 4;
+    DATABASE_TYPE_POSTGRES_16 = 5;
+}

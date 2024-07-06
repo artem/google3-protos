@@ -1,0 +1,21 @@
+syntax = "proto3";
+
+package google.crypto.tink;
+
+import "third_party/tink/proto/aes_ctr.proto";
+import "third_party/tink/proto/hmac.proto";
+
+option go_package = "github.com/tink-crypto/tink-go/v2/proto/aes_ctr_hmac_aead_go_proto";
+option java_multiple_files = true;
+option java_package = "com.google.crypto.tink.proto";
+
+message AesCtrHmacAeadKeyFormat {
+    AesCtrKeyFormat aes_ctr_key_format = 1;
+    HmacKeyFormat hmac_key_format = 2;
+}
+
+message AesCtrHmacAeadKey {
+    uint32 version = 1;
+    AesCtrKey aes_ctr_key = 2;
+    HmacKey hmac_key = 3;
+}

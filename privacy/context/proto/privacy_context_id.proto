@@ -1,0 +1,16 @@
+syntax = "proto2";
+
+package privacy.context;
+
+import "storage/datapol/annotations/proto/semantic_annotations.proto";
+
+option cc_enable_arenas = true;
+option java_multiple_files = true;
+option java_outer_classname = "PrivacyContextIdProto";
+option java_package = "com.google.privacy.context.proto1api";
+
+message PrivacyContextId {
+    optional fixed64 rand_lo = 1;
+    optional fixed64 rand_hi = 2;
+    optional int32 quarter_hours_since_epoch = 3 [deprecated = true];
+}

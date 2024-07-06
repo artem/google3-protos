@@ -1,0 +1,22 @@
+syntax = "proto2";
+
+package production.rpc.stubs.proto;
+
+import "net/proto2/contrib/validator/annotations.proto";
+
+option java_outer_classname = "LatencyBasedDeadlineConfigurationProto";
+option java_package = "com.google.prod.rpc.stubs.proto";
+
+message LatencyBasedDeadlinePolicy {
+    optional double healthy_threshold_seconds = 5;
+    optional double threshold_latency_seconds = 1 [deprecated = true];
+    optional double unhealthy_deadline_seconds = 2;
+    optional double idle_threshold = 3 [default = 0.1];
+    optional LatencyBasedDeadlineBehaviorMode behavior_mode = 4 [default = LATENCY_BASED_DEADLINE_BEHAVIOR_MODE_ACTING_AND_OBSERVING];
+}
+
+enum LatencyBasedDeadlineBehaviorMode {
+    LATENCY_BASED_DEADLINE_BEHAVIOR_MODE_UNKNOWN = 0;
+    LATENCY_BASED_DEADLINE_BEHAVIOR_MODE_ACTING_AND_OBSERVING = 1;
+    LATENCY_BASED_DEADLINE_BEHAVIOR_MODE_OBSERVING_ONLY = 2;
+}

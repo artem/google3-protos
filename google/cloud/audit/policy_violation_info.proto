@@ -1,0 +1,36 @@
+syntax = "proto3";
+
+package google.cloud.audit;
+
+import "google/api/field_behavior.proto";
+import "google/protobuf/struct.proto";
+
+option cc_enable_arenas = true;
+option java_multiple_files = true;
+option java_outer_classname = "PolicyViolationInfoProto";
+option java_package = "com.google.cloud.audit";
+
+message PolicyViolationInfo {
+    OrgPolicyViolationInfo org_policy_violation_info = 1;
+}
+
+message OrgPolicyViolationInfo {
+    protobuf.Struct payload = 1 [deprecated = true];
+    string resource_type = 2;
+    map<string, string> resource_tags = 3 [deprecated = true];
+    repeated ViolationInfo violation_info = 4;
+}
+
+message ViolationInfo {
+    string constraint = 1;
+    string error_message = 2;
+    string checked_value = 3;
+    
+    PolicyType policy_type = 4;
+    enum PolicyType {
+        POLICY_TYPE_UNSPECIFIED = 0;
+        BOOLEAN_CONSTRAINT = 1;
+        LIST_CONSTRAINT = 2;
+        CUSTOM_CONSTRAINT = 3;
+    }
+}

@@ -1,0 +1,21 @@
+syntax = "proto3";
+
+package stats_census.record_collector;
+
+import "stats/census/proto/unaggregated_measurements.proto";
+
+option cc_enable_arenas = true;
+
+service RecordCollector {
+    rpc Write(WriteRequest) returns (WriteResponse);
+}
+
+message WriteRequest {
+    UnaggregatedMeasurements measurements = 8;
+    
+    reserved 1 to 7;
+}
+
+message WriteResponse {
+    
+}

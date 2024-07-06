@@ -1,0 +1,237 @@
+syntax = "proto2";
+
+package security.data_access;
+
+import "google/protobuf/struct.proto";
+import "logs/eventid/eventid.proto";
+import "logs/proto/data_access/admin_access_control_authorization_info.proto";
+import "logs/proto/data_access/app_specific_resources.proto";
+import "logs/proto/data_access/applied_annotations.proto";
+import "logs/proto/data_access/iam_authorization_info.proto";
+import "logs/proto/data_access/ingest_info.proto";
+import "logs/proto/data_access/loggable_data_governance_annotations.proto";
+import "logs/proto/resourceidentification/registry/fris_resource_types.proto";
+import "logs/proto/security/credentials/loggable_authenticator.proto";
+import "privacy/ptoken/public/core/ptoken.proto";
+import "security/context/proto/context.proto";
+import "security/context/proto/loggable_peer.proto";
+import "security/credentials/proto/authenticator.proto";
+import "security/credentials/proto/principal.proto";
+import "storage/datapol/annotations/proto/semantic_annotations.proto";
+
+option java_package = "com.google.security.data_access.proto";
+
+message DataAccessLogProto {
+    required .security.credentials.PrincipalProto caller_id = 6;
+    repeated .security.credentials.PrincipalProto user_id = 32;
+    
+    optional ActionType action_type = 30 [default = UNKNOWN_ACTION_TYPE];
+    enum ActionType {
+        UNKNOWN_ACTION_TYPE = 0;
+        NONE = 1;
+        READ = 2;
+        WRITE = 3;
+        READ_WRITE = 4;
+    }
+    
+    required string action = 3;
+    optional string data_type = 31;
+    optional string query = 10;
+    optional google.protobuf.Struct request = 38;
+    optional uint64 request_size_bytes = 46;
+    optional google.protobuf.Struct response = 39;
+    optional EncryptedFullResponseInfo encrypted_full_response_info = 49;
+    optional uint64 response_size_bytes = 47;
+    
+    repeated FieldMetadata request_field_metadata = 43;
+    message FieldMetadata {
+        optional string field_path = 1;
+        repeated .datapol.SemanticType semantic_type = 2;
+        optional .datapol.Qualifier datapol_qualifier = 3;
+    }
+    
+    repeated FieldMetadata response_field_metadata = 44;
+    
+    optional UserContentStatus user_content_status = 45;
+    enum UserContentStatus {
+        USER_CONTENT_STATUS_UNSPECIFIED = 0;
+        USER_CONTENT_ACCESSED_OR_MODIFIED = 1;
+        USER_CONTENT_NOT_ACCESSED_OR_MODIFIED = 2;
+    }
+    
+    required SuccessCode success = 16;
+    enum SuccessCode {
+        FAILURE = 0;
+        SUCCESS = 1;
+        UNKNOWN = 2;
+    }
+    
+    required string accessing_process_name = 4;
+    
+    optional ProcessType process_type = 26 [default = UNKNOWN_PROCESS_TYPE];
+    enum ProcessType {
+        UNKNOWN_PROCESS_TYPE = 0;
+        COMMAND_LINE_FRONTEND = 1;
+        WEB_FRONTEND = 2;
+        BACKEND = 3;
+    }
+    
+    required EventIdMessage event_id = 1;
+    repeated .security.credentials.DataAccessReason reason = 13;
+    optional context.LoggableSecurityContextProto security_context = 33;
+    repeated AuthorizationInfo authorization_info = 37;
+    optional string request_url = 27;
+    optional string tool_commandline = 5;
+    
+    optional TraceInfo trace_info = 36;
+    message TraceInfo {
+        optional int64 trace_id = 1;
+        optional string cloud_trace_id = 2;
+        optional fixed64 span_id = 3;
+    }
+    
+    repeated int32 api_scope_code = 34;
+    optional AppSpecificResources app_specific_resources = 35;
+    optional resourceregistry.FrisResourceTypes fris_resource_types = 56;
+    optional uint64 partial_asr_path_length = 54;
+    repeated ResourceId resource_id = 8;
+    optional string accessing_process_family = 25;
+    repeated string caller_hostname = 7;
+    optional string error_message = 17;
+    optional uint64 number_of_results = 21;
+    optional bool is_emergency = 14;
+    optional string run_as_role = 19;
+    optional string logging_role = 28;
+    optional context.LoggablePeerProto logging_peer = 42;
+    
+    optional LoggingReasons logging_reasons = 53;
+    message LoggingReasons {
+        optional bool authentication_policy = 1;
+        optional bool legacy_creds_bit = 2;
+        optional bool local_iam_authorization = 3;
+        optional bool cloud_iam_authorization = 4;
+        optional bool darklaunch = 5;
+    }
+    
+    optional RelatedEventSummary related_events = 22;
+    message RelatedEventSummary {
+        optional int64 num_events = 1 [default = 1];
+        required int64 last_time_usec = 2;
+    }
+    
+    optional string unique_id = 52;
+    
+    optional AppSpecificData app_specific_data = 15;
+    message AppSpecificData {
+        optional bytes deprecated_requested_token_scope = 1 [deprecated = true];
+        optional string columbus_log_message = 3;
+        
+        extensions 2, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27, 28, 29, 30, 31, 32, 33, 34, 35, 36, 37, 38, 39, 40, 41;
+    }
+    
+    optional RequestProcessingStage request_processing_stage = 40;
+    enum RequestProcessingStage {
+        REQUEST_PROCESSING_STAGE_UNSPECIFIED = 0;
+        AUTHORIZATION_CHECKED = 1;
+        REQUEST_COMPLETE = 2;
+        STREAM_AUTHORIZATION_CHECKED = 3;
+        STREAM_COMPLETE = 4;
+        STREAM_REQUEST = 5;
+        STREAM_RESPONSE = 6;
+    }
+    
+    optional EventIdMessage request_event_id = 41;
+    
+    optional GinInternalData gin_internal = 23;
+    message GinInternalData {
+        optional string sawmill_date = 1;
+        optional string log_type = 2;
+        optional bool truncated = 3;
+        
+        repeated TruncationDetails truncation_details = 4;
+        message TruncationDetails {
+            optional string field = 1;
+            optional int64 original_size = 2;
+            optional int64 original_count = 3;
+        }
+        
+        optional DalType dal_type = 5;
+        enum DalType {
+            DAL_TYPE_UNSPECIFIED = 0;
+            AUTODERT = 1;
+            WHITELIST_REJECTED = 2;
+            HEARTBEAT = 3;
+            LOGCATCHER_EOL = 4;
+        }
+        
+        optional IngestInfo ingest_info = 6;
+        optional bool logcatcher_provided_apn = 7;
+        optional bool logcatcher_modified_trace = 8;
+    }
+    
+    repeated DalHandler dal_handler = 50;
+    enum DalHandler {
+        DAL_HANDLER_UNKNOWN = 0;
+        GIN_LOGGER_CC = 1;
+        GIN_LOGGER_JAVA = 2;
+        GIN_LOGGER_PYTHON = 3;
+        GIN_LOGGER_GO = 4;
+        GIN_HELPER_CC = 5;
+        GIN_HELPER_JAVA = 6;
+        GIN_HELPER_PYTHON = 7;
+        GIN_HELPER_GO = 8;
+        GIN_HELPER_GO_APP_ENGINE = 9;
+        GIN_CAL_TO_DAL = 10;
+        AUTOGIN_JAVA = 11;
+        AUTOGIN_CC = 12;
+        CLOUD_POLICY_ENFORCEMENT_JAVA = 13;
+        CLOUD_POLICY_ENFORCEMENT_CC = 14;
+        CLOUD_POLICY_ENFORCEMENT_ESF = 15;
+        GIN_ENVELOPE_THICK_CLIENT = 16;
+        GIN_ENVELOPE_THIN_CLIENT = 17;
+        CLOUD_POLICY_ENFORCEMENT_CHEMIST = 18;
+        RPCSP_ADMIN_API_CC = 19;
+        AAC_PLATFORM = 20;
+        ONEPLATFORM_API = 21;
+        MULTI_CLOUD_SILVA = 22;
+        FRIS_CLIENT = 23;
+        HTTPSP = 24;
+    }
+    
+    optional uint32 sensitivity_of_log_records = 2 [deprecated = true];
+    optional uint32 sensitivity_of_resource = 9 [deprecated = true];
+    optional .security.credentials.AuthenticatorProto.AuthenticatorType authenticator_type = 11 [deprecated = true];
+    optional string authenticator_description = 12 [deprecated = true];
+    optional .security.credentials.DataAccessTokenLoggingParams.Usage deprecated_usage = 20 [deprecated = true];
+    repeated .security.credentials.LoggableAuthenticatorProto loggable_authenticator = 24 [deprecated = true];
+    optional string caller_chosen_jobname = 29 [deprecated = true];
+    optional string primary_role = 18 [deprecated = true];
+    optional LoggableDataGovernanceAnnotations data_governance_annotations = 55;
+    repeated AppliedAnnotations applied_annotations = 58;
+    optional string uberproxy_uuid = 57;
+    optional .ptoken.PToken ptoken = 9099;
+    
+    reserved 48, 51;
+}
+
+message AuthorizationInfo {
+    oneof authorization_detail {
+        IamAuthorizationInfo iam_authorization_info = 1;
+        AdminAccessControlAuthorizationInfo admin_access_control_authorization_info = 2;
+    }
+}
+
+message ResourceId {
+    required string resource_scope = 1;
+    optional string resource_name = 3;
+    repeated .datapol.SemanticType semantic_type = 5 [deprecated = true];
+    optional string field_path = 6;
+    optional string guri = 7;
+    optional .security.credentials.PrincipalProto user_id = 2 [deprecated = true];
+    optional int64 customer_id = 4 [deprecated = true];
+}
+
+message EncryptedFullResponseInfo {
+    optional bytes wrapped_key = 1;
+    optional bytes encrypted_response = 2;
+}

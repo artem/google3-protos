@@ -1,38 +1,49 @@
 syntax = "proto2";
 
-import "net/base/qos.proto";
-import "security/thinmint/proto/core/thinmint_core.proto";
-import "tech/file/proto/types.proto";
 package file;
 
-option java_package = "com.google.file.base";
+import "net/base/qos.proto";
+import "net/rpc/rpc-authority.proto";
+import "security/thinmint/proto/core/thinmint_core.proto";
+import "storage/datapol/annotations/proto/semantic_annotations.proto";
+import "tech/file/proto/types.proto";
+
 option java_multiple_files = true;
+option java_package = "com.google.file.base.proto1api";
 
 message Options {
-  optional .thinmint.ThinMint thinmint = 22;
-  optional .net_base.qos.TrafficClass traffic_class = 26;
-  optional int32 priority = 27;
-  optional .tech.file.RenameOptions rename_options = 17;
-  optional .tech.file.CloseOptions close = 31;
-  optional .file.CopyOptions copy = 28;
-  optional .tech.file.CreateDirOptions create_dir = 18;
-  optional .tech.file.DeleteOptions delete = 25;
-  optional .tech.file.FlushOptions flush = 29;
-  optional .tech.file.MatchOptions match = 23;
-  optional .tech.file.StatOptions stat = 24;
-  optional .tech.file.OpenOptions open_file = 19;
-  optional .tech.file.ReadOptions read = 20;
-  optional .tech.file.WriteOptions write = 21;
-  optional .tech.file.SnapshotOptions snapshot = 30;
+    optional SecurityOptions security = 35;
+    optional .thinmint.ThinMint thinmint = 22;
+    optional .rpc.RpcAuthorityProto rpc_authority = 34;
+    optional net_base.qos.TrafficClass traffic_class = 26;
+    optional int32 priority = 27;
+    optional tech.file.Resources resources = 32;
+    optional tech.file.RenameOptions rename_options = 17;
+    optional tech.file.CloseOptions close = 31;
+    optional CopyOptions copy = 28;
+    optional tech.file.CreateDirOptions create_dir = 18;
+    optional tech.file.DeleteOptions delete = 25;
+    optional tech.file.FlushOptions flush = 29;
+    optional tech.file.MatchOptions match = 23;
+    optional tech.file.StatOptions stat = 24;
+    optional tech.file.OpenOptions open_file = 19;
+    optional tech.file.ReadOptions read = 20;
+    optional tech.file.WriteOptions write = 21;
+    optional tech.file.SnapshotOptions snapshot = 30;
+    optional tech.file.SetStatOptions set_stat = 33;
 }
 
 message CopyOptions {
-  optional bool overwrite = 1 [default = false];
-  optional bool resume = 2 [default = false];
-  optional int64 buffer_size_bytes = 3 [default = 0];
-  optional int64 sync_interval_bytes = 4 [default = 0];
-  optional .thinmint.ThinMint destination_thinmint = 5;
-  optional .tech.file.OpenOptions source_open_file = 6;
+    optional bool overwrite = 1 [default = false];
+    optional bool resume = 2 [default = false];
+    optional int64 buffer_size_bytes = 3 [default = 0];
+    optional int64 sync_interval_bytes = 4 [default = 0];
+    optional .thinmint.ThinMint destination_thinmint = 5;
+    optional tech.file.OpenOptions source_open_file = 6;
+    optional bool clear_euc_for_destination_operations = 7;
 }
 
-
+message SecurityOptions {
+    repeated string allowed_prefixes = 1;
+    optional bool prevent_parent_traversal = 2 [default = false];
+}

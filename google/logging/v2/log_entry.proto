@@ -1,0 +1,89 @@
+syntax = "proto3";
+
+package google.logging.v2;
+
+import "google/api/auditing.proto";
+import "google/api/field_behavior.proto";
+import "google/api/monitored_resource.proto";
+import "google/api/policy.proto";
+import "google/api/resource.proto";
+import "google/api/visibility.proto";
+import "google/logging/data_governance.proto";
+import "google/logging/type/http_request.proto";
+import "google/logging/type/log_severity.proto";
+import "google/logging/v2/internal_entity_id.proto";
+import "google/logging/v2/internal_metadata.proto";
+import "google/protobuf/any.proto";
+import "google/protobuf/struct.proto";
+import "google/protobuf/timestamp.proto";
+
+option ruby_package = "Google::Cloud::Logging::V2";
+option php_namespace = "Google\\Cloud\\Logging\\V2";
+option csharp_namespace = "Google.Cloud.Logging.V2";
+option cc_enable_arenas = true;
+option java_multiple_files = true;
+option java_outer_classname = "LogEntryProto";
+option java_package = "com.google.logging.v2";
+
+message LogEntry {
+    string log_name = 12;
+    api.MonitoredResource resource = 8;
+    protobuf.Timestamp timestamp = 9;
+    protobuf.Timestamp receive_timestamp = 24;
+    type.LogSeverity severity = 10;
+    string insert_id = 4;
+    type.HttpRequest http_request = 7;
+    map<string, string> labels = 11;
+    api.MonitoredResourceMetadata metadata = 25 [deprecated = true];
+    LogEntryOperation operation = 15;
+    string trace = 22;
+    string span_id = 27;
+    bool trace_sampled = 30;
+    LogEntrySourceLocation source_location = 23;
+    string receive_location = 34;
+    LogSplit split = 35;
+    InternalEntityId internal_id = 20;
+    repeated InternalEntityId ancestor_internal_ids = 21;
+    string writer_email_address = 16;
+    string error_group = 26;
+    repeated LogErrorGroup error_groups = 36;
+    InternalMetadata internal_metadata = 32;
+    
+    oneof payload {
+        protobuf.Any proto_payload = 2;
+        string text_payload = 3;
+        protobuf.Struct json_payload = 6;
+    }
+    
+    reserved 29, 33;
+}
+
+message LogErrorGroup {
+    string id = 1;
+}
+
+message LogEntryOperation {
+    string id = 1;
+    string producer = 2;
+    bool first = 3;
+    bool last = 4;
+    
+    repeated OperationType types = 5;
+    enum OperationType {
+        OPERATION_TYPE_UNSPECIFIED = 0;
+        LONG_RUNNING = 1;
+        STREAMING = 2;
+    }
+}
+
+message LogEntrySourceLocation {
+    string file = 1;
+    int64 line = 2;
+    string function = 3;
+}
+
+message LogSplit {
+    string uid = 1;
+    int32 index = 2;
+    int32 total_splits = 3;
+}

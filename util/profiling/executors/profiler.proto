@@ -1,0 +1,58 @@
+syntax = "proto2";
+
+package util_profiling;
+
+message AutoTuningProfile {
+    repeated AutoTunerData autotuner_data = 1;
+    message AutoTunerData {
+        optional string thread_prefix = 1;
+        optional string autosizer_name = 2;
+        repeated Epoch epochs = 3;
+    }
+    
+    message GlobalStats {
+        optional int64 sum_total_usec = 1;
+        optional int64 sum_run_usec = 2;
+        optional int64 sum_wasted_usec = 5;
+        optional int64 highprio_wakeup_delay_usec = 3;
+        optional int64 lowprio_wakeup_delay_usec = 4;
+    }
+    
+    message TeamStats {
+        repeated int64 tasks = 1 [packed = true];
+        optional int64 no_blocking_poller_events = 2;
+        optional int64 max_delay_between_polls_usec = 3;
+        optional int64 polls = 4;
+        optional uint64 num_blocking_pollers = 5;
+        optional uint32 num_threads = 6;
+        optional uint32 suicide_budget = 7;
+        optional int32 min_steal_level = 8;
+        optional int32 max_steal_level = 9;
+        optional int64 remote_node_steal_delay_usec = 10;
+        optional int64 local_node_steal_delay_usec = 11;
+    }
+    
+    message GlobalActions {
+        optional int64 highprio_wakeup_delay_usec = 1;
+        optional int64 lowprio_wakeup_delay_usec = 2;
+    }
+    
+    message TeamActions {
+        optional int32 delta_num_threads = 1;
+        optional int32 min_steal_level = 2;
+        optional int32 max_steal_level = 3;
+        optional int64 max_delay_between_polls_usec = 4;
+        optional int64 remote_node_steal_delay_usec = 5;
+        optional int64 local_node_steal_delay_usec = 6;
+    }
+    
+    message Epoch {
+        optional int64 timestamp_us = 1;
+        optional GlobalStats global_stats = 2;
+        repeated TeamStats team_stats = 3;
+        optional GlobalActions global_actions = 4;
+        repeated TeamActions team_actions = 5;
+        optional int64 max_sleep_usec = 6;
+        optional int64 silence_usec = 7;
+    }
+}

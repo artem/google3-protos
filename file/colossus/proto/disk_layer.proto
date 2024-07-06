@@ -1,0 +1,89 @@
+syntax = "proto2";
+
+package colossus;
+
+import "storage/d/proto/health.proto";
+import "storage/util/int128/int128.proto";
+
+option java_package = "com.google.file.colossus";
+
+message DiskLayer_ServerStats {
+    optional storage_util.Int128 wide_total_storage_bytes_used = 8;
+    optional storage_util.Int128 wide_total_storage_bytes_available = 9;
+    
+    reserved 1 to 7;
+}
+
+message DiskLayer_DiskStats {
+    optional int64 NO_LONGER_SET_storage_bytes_used = 4 [deprecated = true];
+    optional int64 NO_LONGER_SET_storage_bytes_available = 5 [deprecated = true];
+    optional int64 bandwidth_kbps = 6;
+    optional int32 queue_delay_ms = 7;
+    optional int32 read_bandwidth_kbps = 8;
+    optional int32 write_bandwidth_kbps = 9;
+    optional int32 writeback_rate_kbps = 10;
+    optional int32 utilization = 11;
+    optional storage_util.Int128 wide_bytes_available = 12;
+    optional int64 NO_LONGER_SET_bytes_available = 1;
+    optional storage_util.Int128 wide_bytes_used = 13;
+    optional int64 NO_LONGER_SET_bytes_used = 2;
+    optional storage_util.Int128 wide_bytes_used_foreign = 14;
+    optional int64 NO_LONGER_SET_bytes_used_foreign = 3;
+}
+
+message DiskLayer_DiskStatus {
+    required int64 id = 1;
+    optional int64 label = 2;
+    optional string disk_name = 3;
+    optional storage_d.Health.Status d_state = 11;
+    optional int64 d_health_version = 9;
+    optional string error_msg = 5;
+    optional DiskLayer_DiskStats stats = 6;
+    optional uint64 unhealthy_bits = 14;
+    
+    reserved 4, 7 to 8, 10, 12, 13;
+}
+
+message DiskLayer_ServerStatus {
+    optional string name = 1;
+    optional storage_d.Health.Status d_state = 9;
+    optional uint64 unhealthy_bits = 10;
+    optional double start_time = 5;
+    optional uint64 d_health_version = 8;
+    optional int32 d_drain_priority = 15;
+    repeated DiskLayer_DiskStatus disk_status = 3;
+    optional double server_time = 4;
+    optional string server_version = 6;
+    optional DiskLayer_ServerStats stats = 16;
+    
+    optional SpindleWeightInfo spindle_weight_info = 14;
+    message SpindleWeightInfo {
+        optional int32 hdd_hot_weight = 1;
+        optional int32 ssd_hot_weight = 3;
+        optional string hdd_hot_version = 2;
+        optional string ssd_hot_version = 4;
+        optional int32 hdd_cold_weight = 5;
+        optional int32 ssd_cold_weight = 6;
+        optional string hdd_cold_version = 7;
+        optional string ssd_cold_version = 8;
+    }
+    
+    optional string d_bucket = 13;
+    
+    reserved 2, 7, 11, 12;
+}
+
+message DiskLayer_DiskProblem {
+    required ProblemType type = 1;
+    enum ProblemType {
+        OK = 0;
+        CORRUPT_DATA = 1;
+        LENGTH_MISMATCH = 2;
+        CHECKSUM_MISMATCH = 3;
+        OTHER_DISK_PROBLEM = 4;
+    }
+    
+    optional string error_msg = 2;
+    optional string cfs_filename = 3;
+    optional string partition = 4;
+}

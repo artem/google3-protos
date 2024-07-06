@@ -1,0 +1,13 @@
+syntax = "proto3";
+
+package server_authz;
+
+import "security/authorization/server_authorization/envelope_service/proto/envelope_service.proto";
+
+option java_multiple_files = true;
+option java_package = "com.google.security.authorization.serverauthorization.envelopeservice.stubby2.common";
+
+service ServerAuthorizationService {
+    rpc WarmCache(EnvelopeWarmCacheRequest) returns (EnvelopeWarmCacheResponse);
+    rpc Check(EnvelopeCheckRequest) returns (EnvelopeCheckResponse);
+}

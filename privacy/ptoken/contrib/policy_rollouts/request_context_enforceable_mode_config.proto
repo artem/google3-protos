@@ -1,0 +1,28 @@
+syntax = "proto2";
+
+package ptoken.policy_rollouts;
+
+import "privacy/ptoken/public/proto/policies/policy_id.proto";
+
+option java_multiple_files = true;
+option java_package = "com.google.privacy.ptoken.policyrollouts";
+
+message RequestContextEnforceableModeConfig {
+    optional PolicyId policy_id = 1;
+    
+    optional RequestContextEnforceableMode request_context_enforceable_mode = 2;
+    enum RequestContextEnforceableMode {
+        UNSPECIFIED = 0;
+        NOT_ENFORCEABLE = 1;
+        EARLY_ENFORCEABLE = 2;
+        ENFORCEABLE = 3;
+        DISCOVERY_ENFORCEABLE = 4;
+        LAUNCHED = 5;
+    }
+    
+    optional RequestContextEnforceableMode request_context_enforceable_mode_without_consents = 3;
+}
+
+message RequestContextEnforceableModeConfigs {
+    repeated RequestContextEnforceableModeConfig request_context_enforceable_mode_configs = 1;
+}

@@ -1,0 +1,52 @@
+syntax = "proto2";
+
+package security_realms;
+
+option java_multiple_files = true;
+option java_outer_classname = "SecurityRealmMappingProto";
+option java_package = "com.google.security.realms.proto";
+
+message SecurityRealmMapping {
+    optional int32 version = 2;
+    
+    repeated SecurityRealmEntry security_realm_entries = 3;
+    message SecurityRealmEntry {
+        repeated Entity entities = 1;
+        message Entity {
+            optional string name = 1;
+            optional EntityType type = 2;
+        }
+        
+        optional string security_realm = 3;
+        optional bool enabled = 6 [default = false];
+        
+        optional DeploymentType deployment_type = 7 [default = UNSPECIFIED];
+        enum DeploymentType {
+            UNSPECIFIED = 0;
+            YAWN = 1;
+            MINICLUSTER = 2;
+            SILVA = 3;
+            EDGE = 4;
+            TPC = 5;
+            CORP = 6;
+            TPC_EDGE = 7;
+            TPC_CORP = 8;
+            TPC_XUNIVERSE = 9;
+        }
+        
+        optional uint32 id = 8;
+        optional string universe_id = 9;
+        
+        reserved 2, 4, 5, 10;
+        
+        enum EntityType {
+            UNKNOWN = 0;
+            CLUSTER = 1;
+            BORG_CELL = 2;
+        }
+    }
+    
+    optional uint32 next_security_realm_id = 4;
+    
+    reserved 1;
+}

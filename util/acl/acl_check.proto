@@ -1,0 +1,22 @@
+syntax = "editions";
+
+package util.acl;
+
+import "net/proto2/bridge/proto/message_set.proto";
+import "storage/datapol/annotations/proto/semantic_annotations.proto";
+
+message ACLCheckFailure {
+    optional string principal = 1;
+    
+    repeated ACL acls = 2;
+    message ACL {
+        optional string name = 1;
+        optional bool not_found = 2;
+        optional bool eligible = 3;
+        optional bool unknown = 4;
+    }
+    
+    extend .proto2.bridge.MessageSet {
+        optional ACLCheckFailure message_set_extension = 314508753;
+    }
+}

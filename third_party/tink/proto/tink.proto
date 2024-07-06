@@ -1,0 +1,72 @@
+syntax = "proto3";
+
+package google.crypto.tink;
+
+option objc_class_prefix = "TINKPB";
+option go_package = "github.com/tink-crypto/tink-go/v2/proto/tink_go_proto";
+option java_multiple_files = true;
+option java_package = "com.google.crypto.tink.proto";
+
+message KeyTemplate {
+    string type_url = 1;
+    bytes value = 2;
+    OutputPrefixType output_prefix_type = 3;
+}
+
+message KeyData {
+    string type_url = 1;
+    bytes value = 2 [ctype = STRING_PIECE];
+    
+    KeyMaterialType key_material_type = 3;
+    enum KeyMaterialType {
+        UNKNOWN_KEYMATERIAL = 0;
+        SYMMETRIC = 1;
+        ASYMMETRIC_PRIVATE = 2;
+        ASYMMETRIC_PUBLIC = 3;
+        REMOTE = 4;
+    }
+}
+
+message Keyset {
+    uint32 primary_key_id = 1;
+    
+    repeated Key key = 2;
+    message Key {
+        KeyData key_data = 1;
+        KeyStatusType status = 2;
+        uint32 key_id = 3;
+        OutputPrefixType output_prefix_type = 4;
+    }
+}
+
+message KeysetInfo {
+    uint32 primary_key_id = 1;
+    
+    repeated KeyInfo key_info = 2;
+    message KeyInfo {
+        string type_url = 1;
+        KeyStatusType status = 2;
+        uint32 key_id = 3;
+        OutputPrefixType output_prefix_type = 4;
+    }
+}
+
+message EncryptedKeyset {
+    bytes encrypted_keyset = 2;
+    KeysetInfo keyset_info = 3;
+}
+
+enum KeyStatusType {
+    UNKNOWN_STATUS = 0;
+    ENABLED = 1;
+    DISABLED = 2;
+    DESTROYED = 3;
+}
+
+enum OutputPrefixType {
+    UNKNOWN_PREFIX = 0;
+    TINK = 1;
+    LEGACY = 2;
+    RAW = 3;
+    CRUNCHY = 4;
+}

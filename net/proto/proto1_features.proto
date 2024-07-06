@@ -1,0 +1,16 @@
+syntax = "proto2";
+
+package pb;
+
+import "net/proto2/proto/descriptor.proto";
+
+option java_outer_classname = "Proto1FeaturesProto";
+option java_package = "com.google.protobuf";
+
+message Proto1Features {
+    optional bool legacy_packed = 3;
+}
+
+extend .proto2.FeatureSet {
+    optional Proto1Features proto1 = 9990;
+}

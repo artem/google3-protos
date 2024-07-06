@@ -1,0 +1,16 @@
+syntax = "proto2";
+
+package security.panoptikeys.crypto_key_classes;
+
+import "net/proto2/proto/descriptor.proto";
+import "storage/datapol/annotations/proto/semantic_annotations.proto";
+
+option java_multiple_files = true;
+
+message CryptoBoundKeyClasses {
+    repeated string bound_fully_qualified_target = 1;
+}
+
+extend .proto2.FieldOptions {
+    optional CryptoBoundKeyClasses bound_crypto_key_classes = 7519436;
+}

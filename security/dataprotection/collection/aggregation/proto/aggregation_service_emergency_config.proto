@@ -1,0 +1,10 @@
+syntax = "editions";
+
+package secure_collection;
+
+import "security/dataprotection/collection/aggregation/proto/aggregation_service_proto.proto";
+import "storage/datapol/annotations/proto/semantic_annotations.proto";
+
+message AggregationServiceEmergencyConfig {
+    optional AdminKillswitchRequest.KillswitchCommand command = 1;
+}

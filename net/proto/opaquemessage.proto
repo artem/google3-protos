@@ -1,7 +1,7 @@
-syntax = "proto2";
+syntax = "editions";
 
 option java_package = "com.google.io.protocol.proto";
 
 message OpaqueMessage {
+    
 }
-

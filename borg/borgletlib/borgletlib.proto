@@ -1,111 +1,233 @@
 syntax = "proto2";
 
-import "borg/borgletlib/dynamic_remote_package.proto";
-import "borg/common/common.proto";
-import "net/rpc/empty-message.proto";
 package borg;
 
-option java_package = "com.google.borg.rpc";
+import "borg/borgletlib/bofflet.proto";
+import "borg/borgletlib/dynamic_remote_package.proto";
+import "borg/borgletlib/task_problems.proto";
+import "borg/common/disk_alloc.proto";
+import "borg/common/fs_dirs.proto";
+import "borg/common/permissions.proto";
+import "borg/common/res_alloc.proto";
+import "borg/common/task_stop_status.proto";
+import "net/rpc/empty-message.proto";
+
 option java_outer_classname = "TaskStatus";
+option java_package = "com.google.borg.rpc";
+
+service BorgletClient {
+    rpc TaskStatus(TaskStatusReq) returns (TaskStatusResp);
+    rpc UpdateHealthz(UpdateHealthReq) returns (EmptyMessage);
+    rpc RunCommandInTask(RunCommandInTaskReq) returns (RunCommandInTaskResp);
+    rpc GetGpuIpvState(GetGpuIpvStateRequest) returns (GetGpuIpvStateResponse);
+    rpc SetGpuIpvState(SetGpuIpvStateRequest) returns (SetGpuIpvStateResponse);
+    rpc InstallDynamicPackage(InstallDynamicPackageRequest) returns (InstallDynamicPackageResponse);
+    rpc ListDynamicPackages(ListDynamicPackagesRequest) returns (ListDynamicPackagesResponse);
+    rpc UninstallDynamicPackage(UninstallDynamicPackageRequest) returns (UninstallDynamicPackageResponse);
+    rpc UpdateMigrationState(UpdateMigrationStateReq) returns (UpdateMigrationStateResp);
+    rpc GetTaskHandlesForPids(GetTaskHandlesForPidsRequest) returns (GetTaskHandlesForPidsResponse);
+    rpc GetContainerVars(ContainerVarsRequest) returns (ContainerVarsResponse);
+    rpc SetApplicationInfo(SetApplicationInfoRequest) returns (SetApplicationInfoResponse);
+    rpc RegisterMemBwNotification(RegisterMemBwNotificationRequest) returns (RegisterMemBwNotificationResponse);
+    rpc ReportTaskProblems(ReportTaskProblemsRequest) returns (ReportTaskProblemsResponse);
+}
+
+service OffloadBorgletClient {
+    rpc StartTaskOnBlt(StartTaskOnBltRequest) returns (StartTaskOnBltResponse);
+    rpc StopTaskOnBlt(StopTaskOnBltRequest) returns (StopTaskOnBltResponse);
+    rpc SetupBareMetal(SetupBareMetalRequest) returns (SetupBareMetalResponse);
+    rpc GetTaskStatusOnBlt(GetTaskStatusOnBltRequest) returns (GetTaskStatusOnBltResponse);
+}
 
 message TaskStatusReq {
-  optional string status_msg = 1;
-  optional string jobstate = 2;
-  optional int32 signalpid = 7;
-  optional string task_handle = 8;
-  optional int64 timestamp_sec = 9;
-  optional bytes auth_token = 10;
+    optional string status_msg = 1;
+    optional string jobstate = 2;
+    optional int32 signalpid = 7;
+    optional string task_handle = 8;
+    optional int64 timestamp_sec = 9;
+    optional bytes auth_token = 10;
 }
 
 message TaskStatusResp {
-  message LostDiskRecord {
-    required int32 id = 1;
-    required string path = 2;
-  }
-  optional .borg.ResAlloc limits = 1;
-  optional .borg.ResAlloc usage = 2;
-  optional .borg.ResAlloc reservation = 26;
-  optional .borg.ScratchFsDirs scratch_fs_dirs = 29;
-  optional .borg.DiskAlloc logsusage = 3;
-  optional .borg.ResAlloc alloc_limits = 20;
-  optional .borg.ResAlloc alloc_usage = 21;
-  optional .borg.ResAlloc alloc_reservation = 27;
-  optional .borg.ScratchFsDirs alloc_scratch_fs_dirs = 30;
-  repeated .borg.CliqueSsdInfo clique_ssd = 31;
-  repeated uint64 reserved_cpu_mask = 4;
-  optional int32 reserved_cpu_core_count = 5;
-  required string taskstate = 11;
-  optional string jobstate = 13;
-  optional int32 death_time = 16;
-  optional string death_status = 22;
-  repeated group LostDisks = 23 {
-    required int32 id = 24;
-    required string path = 25;
-  }
-  repeated .borg.TaskStatusResp.LostDiskRecord lostshareddisks = 28;
-  optional .borg.Permissions perm = 32;
+    optional ResAlloc limits = 1;
+    optional ResAlloc usage = 2;
+    optional ResAlloc reservation = 26;
+    optional ScratchFsDirs scratch_fs_dirs = 29;
+    optional DiskAlloc logsusage = 3;
+    optional ResAlloc alloc_limits = 20;
+    optional ResAlloc alloc_usage = 21;
+    optional ResAlloc alloc_reservation = 27;
+    optional ScratchFsDirs alloc_scratch_fs_dirs = 30;
+    repeated uint64 reserved_cpu_mask = 4;
+    optional int32 reserved_cpu_core_count = 5;
+    required string taskstate = 11;
+    optional string jobstate = 13;
+    optional int32 death_time = 16;
+    optional string death_status = 22;
+    optional Permissions perm = 32;
+    
+    optional HealthData health_data = 33;
+    message HealthData {
+        optional int64 time = 1;
+        optional int32 health = 2;
+        optional int32 status = 3;
+        optional int32 response = 4;
+        optional int32 port = 5;
+        optional int32 err_no = 6;
+        optional bool disabled = 7;
+    }
+    
+    optional TaskStopStatus stop_status = 34;
+    
+    optional AutopilotData autopilot_data = 35;
+    message AutopilotData {
+        optional bool cpu_limit_can_grow = 1;
+        optional bool ram_limit_can_grow = 2;
+        optional int64 memory_bytes_potential = 3;
+        optional int64 alloc_memory_bytes_potential = 4;
+    }
+    
+    optional ResAlloc alloc_requested_container_limits = 36;
+    optional string slice_migration_state = 37;
+    
+    reserved 23, 28, 31;
 }
 
 message UpdateHealthReq {
-  required string handle = 1;
-  optional string portname = 2;
-  required bool disable = 3;
+    required string handle = 1;
+    optional string portname = 2;
+    required bool disable = 3;
 }
 
 message RunCommandInTaskReq {
-  required string task_handle = 1;
-  repeated string cmdargv = 2;
-  optional bool repin_master_process = 3;
+    required string task_handle = 1;
+    repeated string cmdargv = 2;
+    optional bool repin_master_process = 3;
+    optional bool full_fledged_process = 4;
+    optional string break_glass_reason = 5;
 }
 
 message RunCommandInTaskResp {
-  optional int32 assigned_port = 1;
-  optional int32 attached_pid = 2;
-  optional string borglet_name = 3;
+    optional int32 attached_pid = 2;
+    optional string borglet_name = 3;
+    
+    reserved 1;
 }
 
 message UpdateMigrationStateReq {
-  enum Endpoint {
-    SOURCE = 0;
-    DESTINATION = 1;
-  }
-  enum State {
-    MIGRATING = 0;
-    COMPLETE = 1;
-  }
-  optional string task_handle = 1;
-  optional .borg.UpdateMigrationStateReq.Endpoint endpoint = 2;
-  optional .borg.UpdateMigrationStateReq.State state = 3;
-  optional string destination_hostport = 4;
-  optional int32 root_pid = 5;
-  optional string google_loas_cookie = 6;
+    optional string task_handle = 1;
+    
+    optional Endpoint endpoint = 2;
+    enum Endpoint {
+        SOURCE = 0;
+        DESTINATION = 1;
+    }
+    
+    optional State state = 3;
+    enum State {
+        MIGRATING = 0;
+        COMPLETE = 1;
+    }
+    
+    optional string destination_hostport = 4;
+    optional int32 root_pid = 5;
+    optional string google_loas_cookie = 6;
+    
+    optional SliceMigrationWorkerState slice_migration_worker_state = 7;
+    enum SliceMigrationWorkerState {
+        SOURCE_NOTIFIED = 0;
+        SOURCE_QUIESCED = 1;
+        SOURCE_SAVED = 2;
+        TARGET_RUN = 3;
+        TARGET_COMPLETE = 4;
+    }
 }
 
 message UpdateMigrationStateResp {
+    
 }
 
 message PidList {
-  repeated int32 pid = 1;
+    repeated int32 pid = 1;
 }
 
 message GetTaskHandlesForPidsRequest {
-  optional .borg.PidList pid_list = 1;
+    optional PidList pid_list = 1;
 }
 
 message GetTaskHandlesForPidsResponse {
-  map<string, .borg.PidList> task_handle_pids = 1;
-  optional int32 num_pids_handled = 2;
+    map<string, PidList> task_handle_pids = 1;
+    optional int32 num_pids_handled = 2;
 }
 
-service BorgletClient {
-  rpc TaskStatus(.borg.TaskStatusReq) returns (.borg.TaskStatusResp);
-  rpc UpdateHealthz(.borg.UpdateHealthReq) returns (.EmptyMessage);
-  rpc RunCommandInTask(.borg.RunCommandInTaskReq) returns (.borg.RunCommandInTaskResp);
-  rpc InstallDynamicPackage(.borg.InstallDynamicPackageRequest) returns (.borg.InstallDynamicPackageResponse);
-  rpc ListDynamicPackages(.borg.ListDynamicPackagesRequest) returns (.borg.ListDynamicPackagesResponse);
-  rpc UninstallDynamicPackage(.borg.UninstallDynamicPackageRequest) returns (.borg.UninstallDynamicPackageResponse);
-  rpc UpdateMigrationState(.borg.UpdateMigrationStateReq) returns (.borg.UpdateMigrationStateResp);
-  rpc GetTaskHandlesForPids(.borg.GetTaskHandlesForPidsRequest) returns (.borg.GetTaskHandlesForPidsResponse);
+message ContainerVarsRequest {
+    optional string container_name = 1;
+    repeated string var_name = 2;
 }
 
+message ContainerVarsResponse {
+    repeated Var vars = 1;
+    message Var {
+        optional string name = 1;
+        optional double value = 2;
+    }
+}
 
+message ApplicationInfo {
+    optional int32 phase_id = 1;
+    optional bool reschedule_allowed = 2;
+    repeated int32 flume_stages = 3;
+}
+
+message SetApplicationInfoRequest {
+    optional ApplicationInfo app_info = 1;
+    optional string task_handle = 2;
+}
+
+message SetApplicationInfoResponse {
+    
+}
+
+message RegisterMemBwNotificationRequest {
+    optional string task_handle = 1;
+}
+
+message RegisterMemBwNotificationResponse {
+    
+}
+
+message SetGpuIpvStateRequest {
+    optional string pcie_address = 1;
+    optional bool enable = 2;
+    optional string task_handle_set_by_user = 3;
+    optional bool use_smbpbi_cap_check = 4;
+}
+
+message SetGpuIpvStateResponse {
+    
+}
+
+message GetGpuIpvStateRequest {
+    optional string pcie_address = 1;
+    optional string task_handle_set_by_user = 2;
+    optional bool use_smbpbi_cap_check = 3;
+}
+
+message GetGpuIpvStateResponse {
+    optional State state = 1;
+    enum State {
+        UNKNOWN = 0;
+        IPV_ENABLED = 1;
+        IPV_DISABLED = 2;
+        IPV_UNINITIALIZED = 3;
+    }
+}
+
+message ReportTaskProblemsRequest {
+    optional TaskProblems problems = 1;
+    optional string task_handle = 2;
+}
+
+message ReportTaskProblemsResponse {
+    
+}

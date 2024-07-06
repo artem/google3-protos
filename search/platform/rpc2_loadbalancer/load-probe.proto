@@ -1,0 +1,17 @@
+syntax = "proto2";
+
+package search.platform.rpc2_loadbalancer;
+
+service LoadProbeService {
+    rpc GetLoad(GetLoadRequest) returns (GetLoadResponse);
+}
+
+message GetLoadRequest {
+    
+}
+
+message GetLoadResponse {
+    optional double server_load = 1;
+    optional double experimental_server_load = 2;
+    map<string, double> named_server_loads = 3;
+}

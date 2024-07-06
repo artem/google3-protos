@@ -1,0 +1,46 @@
+syntax = "proto2";
+
+package security_loas_l2;
+
+import "security/loas/l2/proto/common.proto";
+import "security/thinmint/proto/core/thinmint_core.proto";
+import "storage/datapol/annotations/proto/semantic_annotations.proto";
+
+option java_package = "com.google.net.loas.l2";
+
+message InstanceInfo {
+    extensions 100 to max;
+}
+
+message InstanceConfidentiality {
+    optional ConfidentialityState confidentiality_state = 1;
+    optional string instance_platform = 2;
+}
+
+message CloudVMInfo {
+    optional uint64 project_number_fp = 1 [jstype = JS_STRING];
+    optional uint64 project_name_fp = 5 [jstype = JS_STRING];
+    optional uint64 instance_number = 2 [jstype = JS_STRING];
+    optional uint64 instance_name_fp = 6 [jstype = JS_STRING];
+    optional int64 instance_creation_timestamp = 7 [jstype = JS_STRING];
+    optional string zone_name = 3;
+    repeated string license_id = 8;
+    optional FingerprintAlgorithm fingerprint_algorithm = 4;
+    optional InstanceConfidentiality instance_confidentiality = 9;
+}
+
+enum FingerprintAlgorithm {
+    FINGERPRINT_ALGORITHM_UNSPECIFIED = 0;
+    FINGERPRINT_2011 = 1;
+}
+
+enum ConfidentialityState {
+    UNSPECIFIED = 0;
+    CONFIDENTIAL = 1;
+}
+
+extend InstanceInfo {
+    optional CloudVMInfo cloud_vm = 101;
+    optional DirectPathVmNetworkEndpoints self_asserted_direct_path_vm_network_endpoints = 102;
+    optional .thinmint.ThinMint instance_identity_restriction_thinmint = 103;
+}

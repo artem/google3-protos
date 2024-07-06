@@ -1,0 +1,28 @@
+syntax = "proto3";
+
+package production.dependency.rpc.outboundacl;
+
+option cc_enable_arenas = true;
+option java_package = "com.google.prod.dependency.rpc.outboundacl";
+
+enum Reason {
+    REASON_UNSPECIFIED = 0;
+    REASON_NOT_IN_CLUSTER = 1;
+    REASON_NOT_IN_CLOUD_REGION = 2;
+    REASON_NOT_IN_CLOUD_ZONE = 3;
+    REASON_NOT_IN_PROD_REGION = 4;
+    REASON_NOT_IN_PROD_ZONE = 5;
+    REASON_NOT_IN_PROD_REGION_WITH_COVERAGE = 6;
+    REASON_NOT_IN_LOCALHOST = 7;
+    REASON_INCORRECT_USERNAME = 8;
+    REASON_INCORRECT_PORT = 9;
+    REASON_UNKNOWN_SERVICE = 10;
+    REASON_UNKNOWN_METHOD = 11;
+}
+
+enum Verdict {
+    VERDICT_UNKNOWN = 0;
+    VERDICT_ALLOWED = 1;
+    VERDICT_REJECTED = 2;
+    VERDICT_BLOCKED = 3;
+}

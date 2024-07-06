@@ -1,0 +1,12 @@
+syntax = "proto2";
+
+package production.rpc.stubs.aggregator;
+
+option java_outer_classname = "Monitoring";
+option java_package = "com.google.prod.rpc.stubs.aggregator";
+
+enum AggregatorType {
+    UNKNOWN_AGGREGATOR = 0;
+    APP_SPECIFIC_AGGREGATOR = 1;
+    GENERIC_AGGREGATOR = 2;
+}

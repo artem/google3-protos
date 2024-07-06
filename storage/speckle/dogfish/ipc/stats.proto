@@ -1,0 +1,19 @@
+syntax = "editions";
+
+package speckle_dogfish.ipc;
+
+import "stats/histogram/proto/histogram.proto";
+import "storage/datapol/annotations/proto/semantic_annotations.proto";
+
+message SampledIPC {
+    optional int64 start_time_micros = 1;
+    optional int64 processing_start_micros = 2;
+    optional int64 processing_done_micros = 3;
+    optional int64 done_micros = 4;
+}
+
+message IPCStats {
+    repeated SampledIPC sample = 1;
+    repeated int32 methods = 2;
+    repeated stats.HistogramState latency_histos = 3;
+}

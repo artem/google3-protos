@@ -1,0 +1,17 @@
+syntax = "proto2";
+
+package storage_d;
+
+import "net/proto2/bridge/proto/message_set.proto";
+
+message ThrottlingDetails {
+    optional bool should_treat_as_throttling = 1;
+    optional uint32 max_throttle_time_millis = 2 [default = 65535];
+    optional float clear_multiplier = 3 [default = 1];
+    optional float target_server_load_fraction = 4;
+    optional uint32 half_life_millis = 5;
+    
+    extend .proto2.bridge.MessageSet {
+        optional ThrottlingDetails message_set_extension = 465653865;
+    }
+}

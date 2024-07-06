@@ -1,13 +1,44 @@
-syntax = "proto2";
+syntax = "editions";
 
-import "net/proto2/proto/empty.proto";
 package chubby.testing;
 
-message AliveResponse {
-  optional uint64 stream_id = 1;
-}
+import "net/proto2/proto/empty.proto";
+import "storage/datapol/annotations/proto/semantic_annotations.proto";
 
 service SessionService {
+    rpc Alive(stream .proto2.Empty) returns (stream AliveResponse);
 }
 
+service HeartbeatService {
+    rpc NewSession(NewSessionRequest) returns (NewSessionResponse);
+    rpc Heartbeat(HeartbeatRequest) returns (HeartbeatResponse);
+    rpc EndSession(EndSessionRequest) returns (EndSessionResponse);
+}
 
+message AliveResponse {
+    optional uint64 stream_id = 1;
+}
+
+message NewSessionRequest {
+    
+}
+
+message NewSessionResponse {
+    optional uint64 session_id = 1;
+}
+
+message HeartbeatRequest {
+    optional uint64 session_id = 1;
+}
+
+message HeartbeatResponse {
+    
+}
+
+message EndSessionRequest {
+    optional uint64 session_id = 1;
+}
+
+message EndSessionResponse {
+    
+}

@@ -1,0 +1,137 @@
+syntax = "proto2";
+
+package chubby;
+
+option java_multiple_files = true;
+option java_package = "com.google.chubby.lib.proto";
+
+message PathTranslationRule {
+    optional string path_regex = 1;
+    optional string replacement = 2;
+}
+
+message BnsClientShardingConfigSet {
+    repeated BnsClientShardingParams bns_client_sharding_params = 1;
+}
+
+message TpcClientShardingConfigSet {
+    repeated TpcClientShardingParams tpc_client_sharding_params = 1;
+}
+
+message PhysicalCellClientShardingConfigSet {
+    repeated PhysicalCellClientShardingParams params = 1;
+}
+
+message CoreProdShardingConfigSet {
+    repeated CoreProdShardingParams core_prod_sharding_params = 1;
+}
+
+message DomainAwareShardingConfigSet {
+    repeated DomainAwareShardingParams params = 1;
+}
+
+message LegacySpecialSvelteShardingConfigSet {
+    repeated LegacySpecialSvelteShardingConfigParams params = 1;
+}
+
+message NetworkControlShardingConfigSet {
+    repeated NetworkControlShardingParams params = 1;
+}
+
+message VirtualCellClientShardingConfigSet {
+    repeated VirtualCellClientShardingParams params = 1;
+}
+
+message AclMigrationClientShardingConfigSet {
+    repeated AclMigrationClientShardingParams params = 1;
+}
+
+message PhysicalCellClientShardingParams {
+    optional ClientShardingConfigFilter client_sharding_config_filter = 1;
+    
+    repeated PathRegexParams path_regex_params = 2;
+    message PathRegexParams {
+        optional string cell_regex = 1;
+        optional string path_regex = 2;
+    }
+}
+
+message BnsClientShardingParams {
+    optional ClientShardingConfigFilter client_sharding_config_filter = 1;
+    repeated string cells_to_enable_bns_sharding = 2;
+}
+
+message TpcClientShardingParams {
+    optional ClientShardingConfigFilter client_sharding_config_filter = 1;
+    
+    repeated UniverseRemote universe_remote_cells = 2;
+    message UniverseRemote {
+        optional string id = 1;
+        repeated string cells = 2;
+    }
+    
+    repeated string universe_local_cells = 3;
+    repeated PathTranslationRule service_regexes = 4;
+    repeated PathTranslationRule custom_service_by_universe_regexes = 7;
+    optional bool isolate_tpc_to_local_universe = 8 [default = false];
+    repeated string tpc_to_gdu_allowed_paths = 9;
+    
+    reserved 5, 6;
+}
+
+message CoreProdShardingParams {
+    optional ClientShardingConfigFilter client_sharding_config_filter = 1;
+    repeated string core_shard_dirs_regex = 2;
+    optional bool assign_all_paths_to_prod = 4;
+    
+    reserved 3, "domain_aware_sharded_cells";
+}
+
+message DomainAwareShardingParams {
+    optional ClientShardingConfigFilter client_sharding_config_filter = 1;
+    repeated string domain_aware_sharded_cells = 2;
+}
+
+message LegacySpecialSvelteShardingConfigParams {
+    optional ClientShardingConfigFilter client_sharding_config_filter = 1;
+    optional string path_regex = 2;
+    repeated string primary_cells = 3;
+    repeated string secondary_cells = 4;
+}
+
+message NetworkControlCell {
+    optional string cell = 1;
+    optional string fabric = 2;
+}
+
+message NetworkControlShardingParams {
+    optional ClientShardingConfigFilter client_sharding_config_filter = 1;
+    repeated string cells_with_nc_sveltes = 2 [deprecated = true];
+    repeated NetworkControlCell nc_cells_with_sveltes = 3;
+}
+
+message VirtualCellClientShardingParams {
+    optional ClientShardingConfigFilter client_sharding_config_filter = 1;
+    
+    repeated PathRegexParams path_translate_to_ls_any = 2;
+    message PathRegexParams {
+        optional string cell_regex = 1;
+        optional string path_regex = 2;
+    }
+    
+    optional bool assign_local_cell_to_direct_access = 3;
+}
+
+message AclMigrationClientShardingParams {
+    optional ClientShardingConfigFilter client_sharding_config_filter = 1;
+    optional int32 migration_step = 2;
+}
+
+message ClientShardingConfigFilter {
+    optional double config_ratio = 1;
+    repeated string config_usernames = 2;
+    repeated string exclude_config_usernames = 3;
+    optional string lockservice_locality_regex = 4;
+    optional string exclude_lockservice_locality_regex = 5;
+    optional bool shard_config_ratio_by_task_id = 6;
+}

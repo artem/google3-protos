@@ -1,0 +1,22 @@
+syntax = "proto3";
+
+package google.crypto.tink;
+
+option go_package = "github.com/tink-crypto/tink-go/v2/proto/ed25519_go_proto";
+option java_multiple_files = true;
+option java_package = "com.google.crypto.tink.proto";
+
+message Ed25519KeyFormat {
+    uint32 version = 1;
+}
+
+message Ed25519PublicKey {
+    uint32 version = 1;
+    bytes key_value = 2 [ctype = STRING_PIECE];
+}
+
+message Ed25519PrivateKey {
+    uint32 version = 1;
+    bytes key_value = 2 [ctype = STRING_PIECE];
+    Ed25519PublicKey public_key = 3;
+}

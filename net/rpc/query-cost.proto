@@ -1,23 +1,25 @@
 syntax = "proto2";
 
-import "net/proto2/bridge/proto/message_set.proto";
 package rpc;
 
-option java_package = "com.google.net.rpc.impl";
+import "net/proto2/bridge/proto/message_set.proto";
+
 option cc_enable_arenas = true;
+option java_package = "com.google.net.rpc.impl";
 
 message QueryCost {
-  required float query_cost = 1;
-  optional string cost_name = 2;
-  extend .proto2.bridge.MessageSet {
-    optional .rpc.QueryCost query_cost_extension = 9650773;
-  }
+    required float query_cost = 1;
+    optional string cost_name = 2;
+    
+    extend .proto2.bridge.MessageSet {
+        optional QueryCost message_set_extension = 9650773;
+    }
 }
 
 message NamedQueryCost {
-  repeated .rpc.QueryCost dimension = 1;
-  extend .proto2.bridge.MessageSet {
-    optional .rpc.NamedQueryCost message_set_extension = 71205558;
-  }
+    repeated QueryCost dimension = 1;
+    
+    extend .proto2.bridge.MessageSet {
+        optional NamedQueryCost message_set_extension = 71205558;
+    }
 }
-

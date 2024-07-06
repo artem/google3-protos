@@ -1,0 +1,12 @@
+syntax = "proto3";
+
+package security_loas_l2;
+
+import "gfe/membrane/thinmint_attestation/boundary_proxy_attestation_signature.proto";
+import "security/thinmint/xuniverse/proto/core/cross_universe_token.proto";
+import public "google/protobuf/timestamp.proto";
+
+message LOAS2E2EIntegritySignature {
+    .xuniverse.NotarizationWrapper signature = 1;
+    gfe.membrane.BoundaryProxyAttestationSignature attestation_signature = 2;
+}

@@ -1,0 +1,119 @@
+syntax = "proto2";
+
+package loadbalancer_gslb.client;
+
+import "loadbalancer/gslb/client/proto/algorithm.proto";
+import "loadbalancer/gslb/client/proto/load.proto";
+import "loadbalancer/gslb/client/proto/priority.proto";
+import "net/proto2/bridge/proto/message_set.proto";
+import "storage/datapol/annotations/proto/semantic_annotations.proto";
+
+option cc_enable_arenas = true;
+
+service BalancerChannelControl {
+    rpc PickTargetAndReport(TargetRequestAndReport) returns (BackendTargets);
+    rpc GetAssignment(AssignmentRequest) returns (AssignmentResponse);
+    rpc GetClientsInfo(ClientsInfoRequest) returns (ClientsInfoResponse);
+}
+
+message BalancerMetaData {
+    optional string client_namespace = 1 [default = "blade"];
+    optional string service_name = 2;
+    optional int32 priority = 5;
+    optional string picked_namespace = 3 [default = "blade"];
+    optional string picked_service = 4;
+    optional string client_host = 6;
+    
+    extend .proto2.bridge.MessageSet {
+        optional BalancerMetaData message_set_extension = 15878969;
+    }
+}
+
+message RequestGslbMetaData {
+    optional bool force_send_to_failover = 1;
+    repeated string allowed_clusters = 2;
+    optional bool use_allowed_clusters_order = 3 [default = false];
+    
+    optional ClusterSelectionMode cluster_selection_mode = 4 [default = DEFAULT_CLUSTER_SELECTION];
+    enum ClusterSelectionMode {
+        DEFAULT_CLUSTER_SELECTION = 0;
+        AFFINITY_CLUSTER_SELECTION = 1;
+    }
+    
+    optional string user_context = 5;
+    optional bool notify_picked_cluster_sync = 6 [default = false];
+    
+    extend .proto2.bridge.MessageSet {
+        optional RequestGslbMetaData message_set_extension = 19668831;
+    }
+}
+
+message DscClientStats {
+    optional double user_qps = 1;
+    optional double dsc_qps = 2;
+    optional double fifo_empty_events_per_second = 3;
+    optional int64 client_version = 4;
+    optional string client_type = 5;
+}
+
+message ClientInfo {
+    optional string client_id = 1;
+    optional int64 client_version = 2;
+    optional string client_type = 3;
+}
+
+message TargetRequestAndReport {
+    optional string client_namespace = 1 [default = "blade"];
+    required string service_name = 2;
+    repeated rpc.LBLoad lb_load = 3;
+    optional DscClientStats stats = 4;
+}
+
+message BackendTarget {
+    optional string target = 1;
+    optional string target_dc = 2;
+    optional bool failover = 3 [default = false];
+    optional double weight = 5;
+    optional bool drop_overload = 4 [default = false];
+}
+
+message BackendTargets {
+    repeated BackendTarget picked_targets = 1;
+    repeated BackendTarget possible_targets = 2;
+    optional double expiry_interval_secs = 3 [default = 20];
+    optional Algorithm.ALGORITHM algorithm = 4 [default = UNKNOWN];
+    optional float drop_ratio = 5;
+    optional DropPriority drop_priority = 6;
+}
+
+message ClientsInfoRequest {
+    
+}
+
+message ClientsInfoResponse {
+    repeated ClientInfo clients_info = 1;
+}
+
+message AssignmentRequest {
+    repeated TargetRequestAndReport service_request = 1;
+    optional int64 client_version = 2;
+    optional string client_type = 3;
+}
+
+message ServiceAssignment {
+    optional string client_namespace = 1 [default = "blade"];
+    required string service_name = 2;
+    
+    optional Status status = 3 [default = NOT_OK];
+    enum Status {
+        NOT_OK = 0;
+        OK = 1;
+    }
+    
+    optional BackendTargets backend_targets = 4;
+}
+
+message AssignmentResponse {
+    repeated ServiceAssignment service_assignment = 1;
+    optional double desired_request_interval_in_sec = 2 [default = 10];
+}

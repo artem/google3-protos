@@ -1,0 +1,22 @@
+syntax = "proto2";
+
+package sherlog;
+
+option objc_class_prefix = "SHERLOG";
+option cc_enable_arenas = true;
+option java_package = "com.google.repository.pipelinediagnostics.sherlog.protos";
+
+message DummyMessageForFileDescriptorLookup {
+    
+}
+
+enum LogSeverity {
+    NONE = 0;
+    FATAL = 10;
+    STATUS = 15;
+    ERROR = 20;
+    WARNING = 30;
+    INFO = 40;
+    TRACE = 45;
+    DEBUG = 50;
+}

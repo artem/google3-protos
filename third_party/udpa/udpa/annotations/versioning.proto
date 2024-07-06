@@ -1,0 +1,15 @@
+syntax = "proto3";
+
+package udpa.annotations;
+
+import "net/proto2/proto/descriptor.proto";
+
+option go_package = "github.com/cncf/xds/go/udpa/annotations";
+
+message VersioningAnnotation {
+    string previous_message_type = 1;
+}
+
+extend .proto2.MessageOptions {
+    VersioningAnnotation versioning = 7881811;
+}

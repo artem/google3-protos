@@ -1,0 +1,80 @@
+syntax = "editions";
+
+package speckle_dogfish.dogfish_proto;
+
+import "storage/datapol/annotations/proto/semantic_annotations.proto";
+import "storage/speckle/dogfish/proto/dogfish.proto";
+
+service PostgresToDogfishConnector {
+    rpc ReadOrPrefetchBlocks(ReadOrPrefetchBlocksRequest) returns (ReadOrPrefetchBlocksResponse);
+    rpc GetMultiNumBlocks(GetMultiNumBlocksRequest) returns (GetMultiNumBlocksResponse);
+    rpc CopyDirsFromDogfish(CopyDirsFromDogfishRequest) returns (CopyDirsFromDogfishResponse);
+    rpc Ping(PingRequest) returns (PingResponse);
+    rpc ReadDir(ReadDirRequest) returns (ReadDirResponse);
+    rpc RegisterSnapshot(RegisterSnapshotRequest) returns (RegisterSnapshotResponse);
+    rpc DeregisterSnapshot(DeregisterSnapshotRequest) returns (DeregisterSnapshotResponse);
+}
+
+message PingRequest {
+    optional string ping = 1;
+}
+
+message PingResponse {
+    optional string pong = 1;
+}
+
+message RegisterSnapshotRequest {
+    optional string snapshot_id = 1;
+    optional uint64 snapshot_lsn = 2;
+}
+
+message RegisterSnapshotResponse {
+    
+}
+
+message DeregisterSnapshotRequest {
+    optional string snapshot_id = 1;
+}
+
+message DeregisterSnapshotResponse {
+    
+}
+
+message CopyDirsFromDogfishRequest {
+    repeated string dirs = 1;
+}
+
+message CopyDirsFromDogfishResponse {
+    
+}
+
+message ReadOrPrefetchBlockInfo {
+    optional RelFileId rel_file_id = 1;
+    optional uint32 block = 2;
+}
+
+message ReadOrPrefetchBlocksRequest {
+    optional Header header = 1;
+    optional ReadOrPrefetchBlockInfo read_block = 3;
+    repeated ReadOrPrefetchBlockInfo prefetch_blocks = 4;
+    optional uint64 time_sent_micros = 5;
+    
+    optional ReadType read_type = 6;
+    enum ReadType {
+        DEFAULT = 0;
+        USER_TABLE_READ_AHEAD = 1;
+        SYSTEM_TABLE_READ_AHEAD = 2;
+        CACHE_VERIFIER = 3;
+        PREWARMER = 4;
+    }
+}
+
+message ReadOrPrefetchBlockData {
+    optional ReadOrPrefetchBlockInfo info = 1;
+    optional bytes data = 2 [ctype = CORD];
+}
+
+message ReadOrPrefetchBlocksResponse {
+    repeated ReadOrPrefetchBlockData block_data = 1;
+    optional uint64 time_sent_micros = 2;
+}

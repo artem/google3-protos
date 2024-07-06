@@ -1,0 +1,11 @@
+syntax = "proto2";
+
+package colossus;
+
+option java_multiple_files = true;
+
+message ClientInfo {
+    optional string hostname = 1;
+    optional int64 baseline_cl = 2;
+    optional string network_address = 3;
+}

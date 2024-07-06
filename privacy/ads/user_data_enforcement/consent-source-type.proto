@@ -1,0 +1,16 @@
+syntax = "proto3";
+
+package privacy.ads.user_data_enforcement;
+
+import "storage/datapol/annotations/proto/semantic_annotations.proto";
+
+option java_multiple_files = true;
+option java_package = "com.google.privacy.ads.userdataenforcement";
+
+enum ConsentSourceType {
+    CONSENT_SOURCE_TYPE_UNKNOWN = 0;
+    CONSENT_SOURCE_TYPE_GAIA = 1;
+    CONSENT_SOURCE_TYPE_ZWIEBACK = 2;
+    CONSENT_SOURCE_TYPE_YOUTUBE_VISITOR = 3;
+    CONSENT_SOURCE_TYPE_AD_REQUEST = 4;
+}

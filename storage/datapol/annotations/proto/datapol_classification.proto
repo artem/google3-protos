@@ -1,0 +1,14 @@
+syntax = "proto2";
+
+package datapol.classification;
+
+import "net/proto2/proto/descriptor.proto";
+
+message Options {
+    repeated string implies = 1;
+    optional string description = 2;
+}
+
+extend .proto2.EnumValueOptions {
+    optional Options options = 268862122;
+}

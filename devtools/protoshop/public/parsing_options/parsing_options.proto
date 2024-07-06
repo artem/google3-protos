@@ -1,0 +1,71 @@
+syntax = "proto2";
+
+package devtools.protoshop.external;
+
+import "net/proto2/proto/descriptor.proto";
+import "security/panoptikeys/panoptikeys.proto";
+import "storage/datapol/annotations/proto/semantic_annotations.proto";
+
+option java_outer_classname = "ParsingOptionsProto";
+option java_package = "com.google.devtools.protoshop.external";
+
+message Selector {
+    oneof selector {
+        bool self = 1;
+        string path_selector = 2;
+    }
+}
+
+message ParsingOptions {
+    optional string type_name = 1;
+    optional Selector type_field_selector = 2;
+    optional Selector ms_extension_field_selector = 3;
+    optional string value_regex = 6;
+    
+    optional Encoding encoding = 4;
+    enum Encoding {
+        UNKNOWN = 0;
+        NONE = 1;
+        BASE64 = 2;
+        WEBSAFE = 3;
+        BASE64_URL = 4;
+        WEBSAFE_BASE64_URL = 5;
+    }
+    
+    optional Serialization serialization = 5;
+    enum Serialization {
+        UNSPECIFIED = 0;
+        WIRE = 1;
+        TEXT = 2;
+        JSON = 3;
+    }
+    
+    optional security.panoptikeys.EncryptionCiphertextFormats encryption = 9;
+}
+
+message AnnotationOptions {
+    optional Selector type_name = 1;
+    optional Selector type_name_selector = 5;
+    optional Selector ms_extension_selector = 6;
+    optional Selector encoding = 2;
+    optional Selector serialization = 3;
+    optional Selector value_regex = 4;
+}
+
+message ParsingOptionsCollection {
+    map<string, ParsingOptions> parsing_options = 1;
+    map<int64, AnnotationOptions> annotation_options = 2;
+}
+
+message ParsingResultsMetadata {
+    optional TruncationResult truncation = 1;
+    enum TruncationResult {
+        TRUNCATION_RESULT_UNSPECIFIED = 0;
+        TRUNCATION_RESULT_TRUNCATED = 1;
+        TRUNCATION_RESULT_NOT_TRUNCATED = 2;
+    }
+}
+
+extend .proto2.FieldOptions {
+    optional ParsingOptions parsing_options = 224917477;
+}

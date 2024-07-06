@@ -1,0 +1,13 @@
+syntax = "proto2";
+
+package production.rpc.stubs.proto;
+
+import "production/rpc/stubs/proto/stub_configuration.proto";
+
+message TransportChannelDeduplication {
+    optional string domain = 1;
+    
+    extend CanonicalStubConfiguration {
+        optional TransportChannelDeduplication extension = 355466356;
+    }
+}

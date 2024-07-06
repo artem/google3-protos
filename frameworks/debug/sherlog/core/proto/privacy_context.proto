@@ -1,0 +1,29 @@
+syntax = "proto2";
+
+package sherlog.core;
+
+import "privacy/context/proto/privacy_context.proto";
+import "util/task/status.proto";
+
+option java_multiple_files = true;
+option java_package = "com.google.frameworks.debug.sherlog.core.proto";
+
+message PrivacyContext {
+    optional LogSite log_site = 3;
+    enum LogSite {
+        UNKNOWN_LOG_SITE = 0;
+        LOGGED_BY_PROCESSOR_CREATION = 1;
+        LOGGED_BY_RPC_LOGGING = 2;
+    }
+    
+    oneof privacy_context_info {
+        privacy.context.PrivacyContext privacy_context = 1;
+        util.StatusProto status = 2;
+    }
+    
+    enum LogLevel {
+        LOG_LEVEL_UNSPECIFIED = 0;
+        LOG_LEVEL_DISABLED = 1;
+        LOG_LEVEL_COMPLETE = 2;
+    }
+}

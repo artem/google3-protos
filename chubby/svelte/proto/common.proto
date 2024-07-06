@@ -1,0 +1,27 @@
+syntax = "proto2";
+
+option java_package = "com.google.chubby.svelte.protocol.proto1api";
+
+message ServerGroup {
+    repeated string server = 1;
+    
+    repeated Server servers = 2;
+    message Server {
+        optional string cell_name = 1;
+        optional string bns_name = 2;
+    }
+}
+
+message SVBlacklistRule {
+    optional string hostname_regex = 1 [default = ".*"];
+    optional string binary_regex = 2 [default = ".*"];
+    optional string username_regex = 3 [default = ".*"];
+    optional string borg_job_regex = 4 [default = ".*"];
+    optional string filename_regex = 5 [default = ".*"];
+    optional string forge_test_binary_regex = 6 [default = ".*"];
+}
+
+message SVBlacklistRules {
+    repeated SVBlacklistRule rules = 1;
+    optional bool distribute_to_peers = 2 [default = false];
+}

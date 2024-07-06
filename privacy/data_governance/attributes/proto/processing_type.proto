@@ -1,0 +1,14 @@
+syntax = "proto3";
+
+package privacy.data_governance.attributes;
+
+import "privacy/data_governance/attributes/proto/classification.proto";
+
+option java_multiple_files = true;
+option java_package = "com.google.privacy.datagovernance.attributes";
+
+enum ProcessingType {
+    PROCESSING_TYPE_UNSPECIFIED = 0;
+    PROCESSING_TYPE_COPY = 1;
+    PROCESSING_TYPE_ML_INFERENCE = 2;
+}

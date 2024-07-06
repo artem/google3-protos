@@ -1,0 +1,34 @@
+syntax = "proto2";
+
+package borg;
+
+import "borg/common/accelerator_alloc.proto";
+import "borg/common/disk_alloc.proto";
+import "borg/common/numa_alloc.proto";
+import "borg/common/raw_ssd.proto";
+import "borg/common/scalar_resource.proto";
+
+option cc_enable_arenas = true;
+option java_outer_classname = "ResAllocProto";
+option java_package = "com.google.borg.rpc";
+
+message ResAlloc {
+    required int64 memory = 1;
+    optional int64 regular_memory = 21;
+    repeated DiskAlloc disk = 4;
+    repeated DiskAlloc ssd_fs = 9;
+    repeated RawSSDAlloc ssd_raw_partition = 11;
+    optional float cpusecs = 5;
+    optional float cpurate = 6;
+    optional float cpuload = 8;
+    optional float sustained_cpurate = 13;
+    optional float sustained_cpuload = 14;
+    optional int64 reserved_cpus = 19;
+    optional int64 exclusive_cpus = 20;
+    optional int64 elastic_exclusive_cpus = 16;
+    optional int64 max_scheduling_delay_ns = 15;
+    optional int64 network_rate = 7;
+    repeated ScalarResource scalar = 12;
+    repeated AcceleratorAlloc accelerator = 17;
+    repeated NumaAlloc numa = 18;
+}

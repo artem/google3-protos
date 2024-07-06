@@ -1,0 +1,24 @@
+syntax = "proto2";
+
+package streamz;
+
+option cc_enable_arenas = true;
+option java_multiple_files = true;
+option java_package = "com.google.monitoring.streamz";
+
+message HierarchicalIsolationRole {
+    repeated Level level = 1;
+    message Level {
+        optional Category category = 1;
+        optional string value = 2;
+    }
+    
+    enum Category {
+        UNSPECIFIED = 0;
+        GCP_PRODUCT = 1;
+        CONSUMER_RESOURCE_CONTAINER = 2;
+        TARGET_RESOURCE_CONTAINER = 3;
+        INTERNAL_MONARCH_ONLY_STRING_ONLY = 4;
+        AGGREGATION_POLICY_OWNER = 5;
+    }
+}

@@ -1,0 +1,21 @@
+syntax = "proto2";
+
+package production.rpc.stubs.proto;
+
+option java_outer_classname = "MetricConstants";
+option java_package = "com.google.prod.rpc.stubs.proto";
+
+enum TransportType {
+    TRANSPORT_UNKNOWN = 0;
+    TRANSPORT_STUBBY = 1;
+    TRANSPORT_GRPC = 2;
+}
+
+enum DelayType {
+    DELAY_TYPE_UNSPECIFIED = 0;
+    PROCESSING = 1;
+    EXTERNAL = 2;
+    EXPLICIT_QUEUEING = 3;
+    TOTAL = 4;
+    SERVER = 5;
+}

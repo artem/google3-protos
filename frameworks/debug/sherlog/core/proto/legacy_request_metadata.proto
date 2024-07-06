@@ -1,0 +1,50 @@
+syntax = "proto2";
+
+package sherlog.core;
+
+import "frameworks/debug/sherlog/core/proto/tracer_metadata.proto";
+import "storage/datapol/annotations/proto/semantic_annotations.proto";
+
+option java_multiple_files = true;
+option java_package = "com.google.frameworks.debug.sherlog.core.proto";
+
+message LegacyRequestMetadata {
+    repeated DebugMetadata debug_metadata = 1;
+    message DebugMetadata {
+        optional DebugType debug_type = 1;
+        enum DebugType {
+            UNSPECIFIED = 0;
+            SHERLOG_ENABLED = 1;
+            SHERLOG_DETAILED_LOGGING = 2;
+            SHERLOG_DISABLED = 3;
+        }
+    }
+    
+    optional Identity identity = 2;
+    message Identity {
+        optional string zwieback_id = 2;
+        optional int64 gaia_id = 3;
+    }
+    
+    optional ProcessorID processor_id = 4;
+    message ProcessorID {
+        optional string system = 3;
+        
+        optional Uint128 id = 4;
+        message Uint128 {
+            optional fixed64 high = 1;
+            optional fixed64 low = 2;
+        }
+    }
+    
+    optional uint64 workflow_id = 10;
+    optional TracerMetadata tracer_metadata = 12;
+}
+
+message DebugSettingsExtension {
+    optional bytes signed_settings = 2 [ctype = CORD];
+    
+    enum MessageSetFieldNumber {
+        MESSAGE_SET_EXTENSION = 157792538;
+    }
+}

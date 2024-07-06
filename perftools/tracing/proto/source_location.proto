@@ -1,0 +1,15 @@
+syntax = "proto3";
+
+package perftools.tracing;
+
+option java_outer_classname = "SourceLocationProto";
+option java_package = "com.google.tracing";
+
+message SourceLocation {
+    int32 line_number = 3;
+    
+    oneof path {
+        string name = 1;
+        fixed64 hash = 2;
+    }
+}

@@ -1,0 +1,47 @@
+syntax = "proto2";
+
+package colossus;
+
+import "net/proto2/bridge/proto/message_set.proto";
+import "security/credentials/proto/authenticator.proto";
+import "security/credentials/proto/principal.proto";
+
+option java_package = "com.google.io.file.colossus";
+
+message CFSThinMintOptions {
+    optional string granting_user = 1;
+    optional string delegate = 2;
+    repeated string additional_delegates = 18 [deprecated = true];
+    repeated security.credentials.PrincipalProto allowed_rewrap_principal = 17;
+    repeated security.credentials.PrincipalProto delegate_principal = 15;
+    optional string granting_end_user = 3;
+    optional string path = 4;
+    optional bool recursive = 5;
+    optional int64 start_time = 6;
+    optional int64 end_time = 7;
+    repeated uint64 revocation_id = 12;
+    optional bool read_write = 8;
+    optional bool create_parent = 9;
+    optional bool allow_redelegation = 10;
+    optional bool delegate_resources = 11;
+    optional bool can_decrypt = 13 [default = false];
+    optional bool rewrap_key_only = 16;
+    repeated security.credentials.DataAccessReason access_reason = 14;
+    
+    extend .proto2.bridge.MessageSet {
+        optional CFSThinMintOptions message_set_extension = 21962910;
+    }
+}
+
+message CFSRewrapKeyRestriction {
+    optional int32 num_additional_redelegations = 1;
+    repeated security.credentials.PrincipalProto allowed_rewrap_principal = 2;
+    
+    extend .proto2.bridge.MessageSet {
+        optional CFSRewrapKeyRestriction message_set_extension = 222999058;
+    }
+}
+
+message EncryptionExemption {
+    optional int64 buganizer_id = 1;
+}

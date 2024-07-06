@@ -1,0 +1,25 @@
+syntax = "proto2";
+
+package pb;
+
+import "net/proto2/proto/descriptor.proto";
+
+option java_outer_classname = "CppFeaturesProto";
+option java_package = "com.google.protobuf";
+
+message CppFeatures {
+    optional bool legacy_closed_enum = 1;
+    
+    optional StringType string_type = 2;
+    enum StringType {
+        STRING_TYPE_UNKNOWN = 0;
+        VIEW = 1;
+        CORD = 2;
+        STRING = 3;
+        STRING_PIECE = 4 [deprecated = true];
+    }
+}
+
+extend .proto2.FeatureSet {
+    optional CppFeatures cpp = 1000;
+}

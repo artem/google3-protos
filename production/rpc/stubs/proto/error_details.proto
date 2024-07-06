@@ -1,0 +1,17 @@
+syntax = "proto2";
+
+package production.rpc.stubs.proto;
+
+import "net/proto2/bridge/proto/message_set.proto";
+import "util/task/status.proto";
+
+option java_outer_classname = "ErrorDetails";
+option java_package = "com.google.prod.rpc.stubs.proto";
+
+message ExtensibleStubsBackendErrors {
+    repeated util.StatusProto errors = 1;
+    
+    extend .proto2.bridge.MessageSet {
+        optional ExtensibleStubsBackendErrors message_set_extension = 328114429;
+    }
+}

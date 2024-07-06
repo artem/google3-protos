@@ -1,0 +1,15 @@
+syntax = "proto2";
+
+package ptoken;
+
+import "storage/datapol/annotations/proto/semantic_annotations.proto";
+
+option java_multiple_files = true;
+option java_outer_classname = "PTokenProto";
+option java_package = "com.google.privacy.ptoken.proto";
+
+message PToken {
+    extensions 6, 7, 8, 50;
+    
+    reserved 1 to 5;
+}

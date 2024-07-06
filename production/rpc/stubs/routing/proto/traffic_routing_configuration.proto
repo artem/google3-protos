@@ -1,0 +1,25 @@
+syntax = "proto2";
+
+package production.rpc.stubs.routing.proto;
+
+import "net/proto2/bridge/proto/message_set.proto";
+import "net/proto2/contrib/validator/annotations.proto";
+
+option java_outer_classname = "TrafficRoutingConfigurationProto";
+option java_package = "com.google.prod.rpc.stubs.routing.proto";
+
+message TrafficRoutingConfiguration {
+    optional RouterConfiguration router_configuration = 2;
+    
+    reserved 1;
+    
+    extend .proto2.bridge.MessageSet {
+        optional TrafficRoutingConfiguration message_set_extension = 456711073;
+    }
+}
+
+message RouterConfiguration {
+    optional string traffic_router_name = 1;
+    
+    extensions 1000 to max;
+}

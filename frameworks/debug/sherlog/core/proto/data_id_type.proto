@@ -1,0 +1,27 @@
+syntax = "proto2";
+
+package sherlog;
+
+option objc_class_prefix = "SHERLOG";
+option cc_enable_arenas = true;
+option java_package = "com.google.repository.pipelinediagnostics.sherlog.protos";
+
+message DataIDType {
+    enum Type {
+        TYPE_UNSPECIFIED = 0;
+        SHERLOG_TEST = 14;
+        QUERY_TEXT = 1;
+        EVENT_ID = 2;
+        ASSISTANT_CONVERSATION_KEY = 3;
+        XENON_FILE = 4;
+        FEED_PATH = 5;
+        OCEANFRONT_UPDATE = 6;
+        OCEANFRONT_SIGNAL = 7;
+        DAPPER_TRACE_ID = 8;
+        INDEXING_TRACING_ID = 9;
+        INDEXING_TRACING_DATA_KEY = 10;
+        MUPPET_BREADCRUMB = 11;
+        MOBILE_SERVER_LINKING_ID = 12;
+        BOQ_DEMO_ID = 13;
+    }
+}

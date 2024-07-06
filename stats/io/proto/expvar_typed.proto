@@ -1,30 +1,31 @@
-syntax = "proto2";
+syntax = "editions";
 
 package expvar;
 
+option cc_enable_arenas = true;
 option java_package = "com.google.common.stats.proto";
 
 message MapProto {
-  required string key_description = 1;
-  repeated group Pairs = 2 {
-    required string key = 3;
-    optional int64 value_int = 4;
-    optional double value_float = 5;
-    optional string value_string = 6;
-  }
+    optional string key_description = 1;
+    
+    repeated Pairs pairs = 2;
+    message Pairs {
+        optional string key = 3;
+        optional int64 value_int = 4;
+        optional double value_float = 5;
+        optional string value_string = 6;
+    }
 }
 
 message VariableProto {
-  required string name = 1;
-  optional string docstring = 6;
-  optional int64 value_int = 2;
-  optional double value_float = 3;
-  optional string value_string = 4;
-  optional .expvar.MapProto value_map = 5;
+    optional string name = 1;
+    optional string docstring = 6;
+    optional int64 value_int = 2;
+    optional double value_float = 3;
+    optional string value_string = 4;
+    optional MapProto value_map = 5;
 }
 
 message ListProto {
-  repeated .expvar.VariableProto pair = 1;
+    repeated VariableProto pair = 1;
 }
-
-

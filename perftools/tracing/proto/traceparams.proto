@@ -1,24 +1,27 @@
-syntax = "proto2";
+syntax = "editions";
 
-import "net/proto2/bridge/proto/message_set.proto";
 package perftools.tracing;
 
-option java_package = "com.google.tracing";
-option java_outer_classname = "TraceParamsProto";
-option cc_generic_services = false;
+import "net/proto2/bridge/proto/message_set.proto";
+import "perftools/tracing/proto/dapper_sampling_config.proto";
+
 option java_generic_services = false;
+option cc_generic_services = false;
+option java_outer_classname = "TraceParamsProto";
+option java_package = "com.google.tracing";
 
 message TraceParams {
-  optional double root_sampling_probability = 1;
-  optional double inflationary_sampling_probability = 2;
-  optional double tracer_probability = 4;
-  optional int32 max_tracer_bytes = 5;
-  optional int32 max_tracer_entry_bytes = 6;
-  optional int32 initial_trace_mask = 7;
-  optional bool only_sample_roots = 8;
-  extend .proto2.bridge.MessageSet {
-    optional .perftools.tracing.TraceParams message_set_extension = 16462216;
-  }
+    optional double root_sampling_probability = 1;
+    optional double inflationary_sampling_probability = 2;
+    optional double tracer_probability = 4;
+    optional int32 max_tracer_bytes = 5;
+    optional int32 max_tracer_entry_bytes = 6;
+    optional int32 initial_trace_mask = 7;
+    optional bool only_sample_roots = 8;
+    optional DapperSamplingConfig dapper_sampling_config = 12;
+    optional double speculative_tracing_probability = 13;
+    
+    extend .proto2.bridge.MessageSet {
+        optional TraceParams message_set_extension = 16462216;
+    }
 }
-
-

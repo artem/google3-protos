@@ -1,0 +1,19 @@
+syntax = "editions";
+
+package crypto.tink.integration.keymaster;
+
+import "storage/datapol/annotations/proto/semantic_annotations.proto";
+import "third_party/tink/proto/hmac.proto";
+
+message LegacyAesCtrWithMacKeyFormat {
+    optional uint32 version = 1;
+    optional uint32 aes_ctr_key_size = 2;
+    optional google.crypto.tink.HmacKeyFormat hmac_key_format = 3;
+}
+
+message LegacyAesCtrWithMacKey {
+    optional uint32 version = 1;
+    optional bytes aes_ctr_key_value = 2;
+    optional google.crypto.tink.HmacKey hmac_key = 3;
+    optional bytes legacy_key_id = 4;
+}

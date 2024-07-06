@@ -1,18 +1,21 @@
 syntax = "proto2";
 
-import "storage/datapol/annotations/proto/semantic_annotations.proto";
 package security.context;
 
-option java_package = "com.google.security.context";
-option java_outer_classname = "LoggablePeerProtoFile";
+import "storage/datapol/annotations/proto/semantic_annotations.proto";
+
+option cc_enable_arenas = true;
 option java_multiple_files = true;
+option java_outer_classname = "LoggablePeerProtoFile";
+option java_package = "com.google.security.context";
 
 message LoggablePeerProto {
-  optional string username = 1;
-  optional int64 prod_gaia_id = 5;
-  optional string primary_role = 2;
-  optional string unauthenticated_host = 3;
-  optional string jobname_chosen_by_user = 4;
+    optional string username = 1;
+    optional int64 prod_gaia_id = 5;
+    optional string primary_role = 2;
+    optional string security_realm = 7;
+    optional string unauthenticated_host = 3;
+    optional string jobname_chosen_by_user = 4;
+    optional string unauthenticated_borg_cell = 6;
+    optional bool is_borg_job = 8;
 }
-
-

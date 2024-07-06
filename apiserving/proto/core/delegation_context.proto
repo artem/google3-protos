@@ -1,0 +1,16 @@
+syntax = "proto2";
+
+package com.google.api.server.rest.adapter.context;
+
+import "net/proto2/bridge/proto/message_set.proto";
+import "security/credentials/proto/peer_identity.proto";
+
+option java_package = "com.google.api.server.rest.adapter.context";
+
+message ApiaryDelegationContext {
+    optional security.credentials.PeerDelegationChain peer_delegation_chain = 1;
+    
+    extend .proto2.bridge.MessageSet {
+        optional ApiaryDelegationContext message_set_extension = 197721573;
+    }
+}

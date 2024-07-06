@@ -1,0 +1,38 @@
+syntax = "proto3";
+
+package google.logging.v2;
+
+import "google/api/visibility.proto";
+import "google/logging/data_governance.proto";
+
+option php_namespace = "Google\\Cloud\\Logging\\V2";
+option csharp_namespace = "Google.Cloud.Logging.V2";
+option cc_enable_arenas = true;
+option java_multiple_files = true;
+option java_outer_classname = "GroupingMetadataProto";
+option java_package = "com.google.logging.v2";
+
+message GroupingMetadata {
+    repeated GroupSpec groups = 1;
+    message GroupSpec {
+        repeated GroupLocation group_locations = 2;
+        message GroupLocation {
+            int32 start_offset = 3;
+            int32 end_offset = 4;
+            
+            oneof path {
+                string field_path = 1;
+                bytes parsed_field_path = 2;
+            }
+        }
+        
+        oneof group_info {
+            ErrorGroupInfo error_group = 1;
+        }
+        
+        message ErrorGroupInfo {
+            fixed64 group_id = 1;
+            bool platform_error = 2;
+        }
+    }
+}

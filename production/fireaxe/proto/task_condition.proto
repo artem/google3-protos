@@ -1,0 +1,22 @@
+syntax = "proto3";
+
+package fireaxe;
+
+import "google/protobuf/duration.proto";
+import "google/protobuf/timestamp.proto";
+import "production/fireaxe/proto/task_selection.proto";
+
+option java_multiple_files = true;
+option optimize_for = CODE_SIZE;
+option java_outer_classname = "TaskConditionPb";
+option java_package = "com.google.protos.fireaxe.taskcondition";
+
+message TransitionTimingProto {
+    google.protobuf.Timestamp begin_time = 1;
+    google.protobuf.Duration duration = 2;
+}
+
+message TaskConditionProto {
+    TaskSelectionProto task_selection = 1;
+    TransitionTimingProto slow_undrain = 2;
+}

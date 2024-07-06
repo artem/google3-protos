@@ -1,0 +1,16 @@
+syntax = "editions";
+
+package contentads.shared.loadbalancing;
+
+import "net/proto2/bridge/proto/message_set.proto";
+import "storage/datapol/annotations/proto/semantic_annotations.proto";
+
+message LeastCpuUsedState {
+    optional int64 cpu_usage_micros = 1;
+    optional double cpu_limit = 2;
+    optional bool disregard_errors = 3;
+    
+    extend .proto2.bridge.MessageSet {
+        optional LeastCpuUsedState message_set_extension = 147624901;
+    }
+}

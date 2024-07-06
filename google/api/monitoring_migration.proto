@@ -1,0 +1,38 @@
+syntax = "proto3";
+
+package google.api;
+
+import "google/api/visibility.proto";
+
+option objc_class_prefix = "GAPI";
+option go_package = "google.golang.org/genproto/googleapis/api/serviceconfig;serviceconfig";
+option java_multiple_files = true;
+option java_outer_classname = "MonitoringAutomationMigrationProto";
+option java_package = "com.google.api";
+
+message MonitoringMigration {
+    MonitoringBackend monitoring_backend = 1;
+    enum MonitoringBackend {
+        UNSPECIFIED = 0;
+        STACKDRIVER = 1;
+        CLOUD_MONARCH = 2;
+    }
+    
+    MetricMapping metric_mappings = 3;
+    message MetricMapping {
+        string metric = 1;
+        string monitored_resource = 2;
+        
+        repeated LabelMapping label_mappings = 3;
+        message LabelMapping {
+            string source_label = 1;
+            
+            oneof destination_label {
+                string destination_metric_label = 2;
+                string destination_resource_label = 3;
+            }
+        }
+    }
+    
+    reserved 2;
+}

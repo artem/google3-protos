@@ -1,0 +1,149 @@
+syntax = "proto2";
+
+package security.data_access.asr;
+
+import "logs/proto/data_access/app_specific_resources.proto";
+import "net/proto2/proto/descriptor.proto";
+import "storage/datapol/annotations/proto/semantic_annotations.proto";
+
+option java_multiple_files = true;
+option java_outer_classname = "CloudMonarchResourceProtoFile";
+option java_package = "com.google.security.data_access.asr.proto";
+
+message CloudMonarchResource {
+    repeated ConfigKeyProto config_key = 1;
+    message ConfigKeyProto {
+        optional string service = 1;
+        optional string type = 2;
+        optional string identifier = 3;
+    }
+    
+    repeated ConfigKeyPrefixProto config_key_prefix = 2;
+    message ConfigKeyPrefixProto {
+        optional string service = 1;
+        optional string type = 2;
+        optional string identifier_prefix = 3;
+    }
+    
+    repeated MDBModule mdb_module = 3;
+    message MDBModule {
+        optional string mdb_role = 1;
+        optional string module_name = 2;
+    }
+    
+    repeated string metric_descriptor_name = 4;
+    
+    repeated TargetRecipe target_recipe = 6;
+    message TargetRecipe {
+        optional string target_recipe_name = 1;
+        optional string mdb_role = 2;
+    }
+    
+    optional string target_schema_name = 7;
+    optional string specialized_target_schema_name = 8;
+    
+    repeated AccessControlKeyProto access_control_key = 9;
+    message AccessControlKeyProto {
+        optional string service = 1;
+        optional string type = 2;
+        optional string identifier_or_prefix = 3;
+    }
+    
+    repeated AccessControlPolicy access_control_policy = 10;
+    message AccessControlPolicy {
+        optional int64 project_number = 1;
+        optional string project_id = 2;
+    }
+    
+    repeated string target_schema = 11;
+    optional string mdb_role = 12;
+    
+    repeated Annotation annotation = 13;
+    message Annotation {
+        optional string owner = 1;
+        optional string key = 2;
+    }
+    
+    repeated AnnotationMatcher annotation_matcher = 14;
+    message AnnotationMatcher {
+        optional string owner = 1;
+        optional string key = 2;
+    }
+    
+    repeated MetricNamespace metric_namespace = 15;
+    message MetricNamespace {
+        optional string prefix = 1;
+        optional string metric_or_prefix = 2;
+    }
+    
+    repeated MonitoringConfig monitoring_config = 16;
+    message MonitoringConfig {
+        optional string service_name = 1;
+        optional string prod_service_name = 2;
+        optional string service_id = 3;
+        optional string cargo_container_id = 4;
+    }
+    
+    repeated string resource_descriptor_type = 17;
+    repeated string resource_descriptor_type_prefix = 18;
+    repeated string external_metric_prefix = 19;
+    repeated string resource_container = 20;
+    
+    repeated Quota quota = 21;
+    message Quota {
+        optional string mdb_role = 1;
+        optional string zone = 2;
+    }
+    
+    repeated CollectionWhitelistEntry collection_whitelist_entry = 22;
+    message CollectionWhitelistEntry {
+        optional string data_owner = 1;
+        optional string collection_user = 2;
+    }
+    
+    repeated RepositoryPolicy repository_policy = 23;
+    message RepositoryPolicy {
+        optional string metric_pattern = 1;
+        optional string metric_exclusion = 2;
+        optional bytes interval_min = 3;
+        optional bytes interval_max = 4;
+    }
+    
+    repeated FieldPredicate field_predicate = 24;
+    message FieldPredicate {
+        optional string name = 1;
+        optional string value = 2;
+    }
+    
+    repeated string target_key = 25;
+    
+    optional ListMetricNamesFields list_metric_names_fields = 26;
+    message ListMetricNamesFields {
+        optional string raw_pattern = 1;
+        optional bool include_precomputations = 2;
+    }
+    
+    repeated ExternalMetric external_metric = 27;
+    message ExternalMetric {
+        optional string resource_container = 1;
+        optional string type = 2;
+    }
+    
+    repeated TargetField target_fields = 28;
+    message TargetField {
+        optional string name = 1;
+        optional string value = 2;
+    }
+    
+    repeated int64 precomputation_targeted_project_numbers = 29 [packed = true];
+    
+    reserved 5;
+    
+    extend .proto2.FieldOptions {
+        optional string path = 472988227;
+    }
+}
+
+extend AppSpecificResources {
+    repeated CloudMonarchResource cloud_monarch_resource = 58;
+}

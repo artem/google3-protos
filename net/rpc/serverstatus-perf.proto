@@ -1,0 +1,76 @@
+syntax = "proto2";
+
+package rpc;
+
+import "net/proto2/bridge/proto/message_set.proto";
+
+option java_package = "com.google.net.rpc.proto";
+
+message PerfRequest {
+    optional TYPE type = 1 [default = BY_METHOD];
+    enum TYPE {
+        BY_METHOD = 0;
+        BY_SERVER = 1;
+        BY_CLIENT = 2;
+        BACKENDS = 3;
+    }
+}
+
+message PerfResponseErrorCount {
+    required int32 status = 1;
+    required int64 count = 2;
+}
+
+message PerfResponseStats {
+    required int64 count = 2;
+    required int32 latency = 3;
+    required int32 max_latency = 4;
+    required float rate = 5;
+    required float arg_bytes_rate = 6;
+    required float result_bytes_rate = 7;
+    required float uncompressed_result_bytes_rate = 8;
+    required int64 rpc_errors = 9;
+    required int64 app_errors = 10;
+    optional float server_elapsed_deprecated = 11;
+    optional int64 retransmissions = 12;
+    optional int64 duplicates = 13;
+    optional int64 latency_sum_msec = 14;
+    optional int64 server_latency_sum_msec = 15;
+    optional int64 interval_msec = 16;
+    optional int64 request_bytes_sum = 17;
+    optional int64 response_bytes_sum = 18;
+    optional int64 uncompressed_response_bytes_sum = 19;
+    repeated PerfResponseErrorCount error_count = 20;
+    optional int64 uncompressed_request_bytes_sum = 21;
+    optional float uncompressed_arg_bytes_rate = 22;
+    optional int64 count_ipv4 = 23;
+    optional int64 count_ipv6 = 24;
+    optional int64 count_other = 25;
+    optional int64 local_stall_time_sum_msec = 26;
+}
+
+message PerfResponseGroupRow {
+    required string name = 1;
+    required PerfResponseStats minute = 2;
+    required PerfResponseStats hour = 3;
+    required PerfResponseStats total = 4;
+}
+
+message PerfResponseGroup {
+    required string name = 1;
+    required PerfResponseGroupRow total = 2;
+    repeated PerfResponseGroupRow row = 3;
+}
+
+message PerfResponseCategory {
+    optional string name = 1;
+    repeated PerfResponseGroup group = 2;
+}
+
+message PerfResponse {
+    repeated PerfResponseCategory category = 1;
+    
+    extend .proto2.bridge.MessageSet {
+        optional PerfResponse message_set_extension = 7620611;
+    }
+}

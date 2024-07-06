@@ -1,0 +1,63 @@
+syntax = "proto2";
+
+package fireaxe;
+
+import "google/protobuf/any.proto";
+import "net/proto2/bridge/proto/message_set.proto";
+
+option java_multiple_files = true;
+option optimize_for = CODE_SIZE;
+option java_outer_classname = "RestrictionsProto";
+option java_package = "com.google.protos.fireaxe.restrictions";
+
+message BaseRestriction {
+    extend .proto2.bridge.MessageSet {
+        optional BaseRestriction message_set_extension = 359253447;
+    }
+}
+
+message TargetUserRestriction {
+    optional string user = 1;
+    
+    extend .proto2.bridge.MessageSet {
+        optional TargetUserRestriction message_set_extension = 360155651;
+    }
+}
+
+message TargetCellRestriction {
+    optional string cell = 1;
+    
+    extend .proto2.bridge.MessageSet {
+        optional TargetCellRestriction message_set_extension = 360014848;
+    }
+}
+
+message TargetJobRestriction {
+    optional string job = 1;
+    
+    extend .proto2.bridge.MessageSet {
+        optional TargetJobRestriction message_set_extension = 360368067;
+    }
+}
+
+message ExactActionRestriction {
+    optional google.protobuf.Any action_spec = 1;
+    
+    extend .proto2.bridge.MessageSet {
+        optional ExactActionRestriction message_set_extension = 359551891;
+    }
+}
+
+message ClientRoleRestriction {
+    optional string role = 1;
+    
+    extend .proto2.bridge.MessageSet {
+        optional ClientRoleRestriction message_set_extension = 360626275;
+    }
+}
+
+message NoExpressionRestriction {
+    extend .proto2.bridge.MessageSet {
+        optional NoExpressionRestriction message_set_extension = 361101684;
+    }
+}

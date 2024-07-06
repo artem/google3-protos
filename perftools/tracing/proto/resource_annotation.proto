@@ -1,0 +1,35 @@
+syntax = "editions";
+
+package perftools.tracing;
+
+import "net/proto2/bridge/proto/message_set.proto";
+
+option java_multiple_files = true;
+
+message TestResource {
+    optional string data = 1;
+}
+
+message BigtableResource {
+    optional TableIdentifier table_identifier = 1;
+    message TableIdentifier {
+        optional string cell_name = 1;
+        optional uint64 table_version = 2;
+    }
+}
+
+message Resource {
+    oneof resource {
+        TestResource test_resource = 1;
+        BigtableResource bigtable_resource = 2;
+    }
+}
+
+message ResourceTaggedAnnotation {
+    optional Resource resource = 1;
+    optional bytes annotation = 2;
+    
+    extend .proto2.bridge.MessageSet {
+        optional ResourceTaggedAnnotation message_set_extension = 501075392;
+    }
+}

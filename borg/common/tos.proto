@@ -1,0 +1,15 @@
+syntax = "proto2";
+
+package borg;
+
+option cc_enable_arenas = true;
+option java_outer_classname = "TosProto";
+option java_package = "com.google.borg.rpc";
+
+enum TOS {
+    BE1 = 0;
+    AF1 = 1;
+    AF2 = 2;
+    AF3 = 3;
+    AF4 = 4;
+}

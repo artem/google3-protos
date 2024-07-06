@@ -1,0 +1,15 @@
+syntax = "proto2";
+
+package rpc.acl_config;
+
+option java_outer_classname = "ConfigSourceProto";
+option java_package = "com.google.protos.rpc.aclconfig";
+
+enum ConfigSource {
+    DEFAULT = 0;
+    NONE = 1;
+    FLAGS = 4;
+    CDD = 2;
+    FLAGS_AND_FIREAXE = 5;
+    FIREAXE = 3;
+}

@@ -1,0 +1,19 @@
+syntax = "proto2";
+
+package net.loadshedding;
+
+import "net/loadshedding/proto/request_qos.proto";
+
+option objc_class_prefix = "LOADS";
+option cc_enable_arenas = true;
+option java_outer_classname = "QoSOverrides";
+option java_package = "com.google.net.loadshedding";
+
+message RequestQoSOverrides {
+    optional RequestQoS.Criticality default_criticality = 1;
+    
+    oneof criticality_decreasing_type {
+        RequestQoS.Criticality ceiling_criticality = 2;
+        uint32 decrease_non_default_by = 3;
+    }
+}

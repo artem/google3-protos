@@ -1,41 +1,45 @@
 syntax = "proto2";
 
-import "borg/common/common.proto";
 package borg;
 
+import "borg/common/mpm_package.proto";
+
 message InstallDynamicPackageRequest {
-  optional string package_name = 1;
-  optional string exposure_name = 2;
-  optional .borg.MpmPackageSpec package_spec = 3;
-  optional .borg.MpmPackageHints package_hints = 4;
-  optional bool in_alloc = 5;
-  optional int32 generation = 6 [default = 1];
+    optional string package_name = 1;
+    optional string exposure_name = 2;
+    optional MpmPackageSpec package_spec = 3;
+    optional MpmPackageHints package_hints = 4;
+    optional bool in_alloc = 5;
+    optional string task_handle = 7;
+    
+    reserved 6;
 }
 
 message DynamicPackageReport {
-  optional string package_name = 1;
-  optional string absolute_path = 2;
-  optional bool in_alloc = 3;
-  optional .borg.MpmPackageSpec package_spec = 4;
+    optional string package_name = 1;
+    optional string absolute_path = 2;
+    optional bool in_alloc = 3;
+    optional MpmPackageSpec package_spec = 4;
 }
 
 message InstallDynamicPackageResponse {
-  optional .borg.DynamicPackageReport report = 1;
+    optional DynamicPackageReport report = 1;
 }
 
 message ListDynamicPackagesRequest {
+    optional string task_handle = 1;
 }
 
 message ListDynamicPackagesResponse {
-  repeated .borg.DynamicPackageReport dynamic_package = 1;
+    repeated DynamicPackageReport dynamic_package = 1;
 }
 
 message UninstallDynamicPackageRequest {
-  optional string package_name = 1;
-  optional bool in_alloc = 2;
+    optional string package_name = 1;
+    optional bool in_alloc = 2;
+    optional string task_handle = 3;
 }
 
 message UninstallDynamicPackageResponse {
+    
 }
-
-

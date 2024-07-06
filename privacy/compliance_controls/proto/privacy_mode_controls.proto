@@ -1,0 +1,12 @@
+syntax = "proto2";
+
+package compliance_controls;
+
+import "privacy/compliance_controls/proto/privacy_mode.proto";
+
+option java_multiple_files = true;
+option java_package = "com.google.privacy.compliancecontrols";
+
+message PrivacyModeControls {
+    repeated PrivacyMode.Mode privacy_modes = 1 [packed = true];
+}

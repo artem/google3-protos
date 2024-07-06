@@ -1,0 +1,64 @@
+syntax = "proto2";
+
+package security_realms;
+
+import "google/protobuf/empty.proto";
+
+message RegionalTrustPolicy {
+    optional PolicyInstance live_policy = 4;
+    message PolicyInstance {
+        repeated TrustBinding trust_bindings = 1;
+    }
+    
+    optional PolicyInstance darklaunch_policy = 3;
+    
+    reserved 1, 2;
+    
+    message RunningIn {
+        oneof running_in_oneof {
+            string prod_universe = 1;
+            string prod_region = 2;
+            string security_realm = 3;
+            string cloud_region = 8;
+            google.protobuf.Empty core = 4;
+            google.protobuf.Empty anywhere = 5;
+            google.protobuf.Empty corp_as_humans = 6;
+            google.protobuf.Empty miniclusters = 7;
+        }
+    }
+    
+    message Trust {
+        oneof trust_oneof {
+            google.protobuf.Empty all_tpc_universes = 1;
+            string prod_universe = 2;
+            string security_realm = 12;
+            google.protobuf.Empty local_prod_universe = 10;
+            google.protobuf.Empty core = 3;
+            google.protobuf.Empty edge = 11;
+            google.protobuf.Empty humans_in_corp = 4;
+            google.protobuf.Empty local_cloud_region = 5;
+            google.protobuf.Empty local_prod_region = 6;
+            google.protobuf.Empty local_security_realm = 7;
+            google.protobuf.Empty covered_security_realms = 8;
+            google.protobuf.Empty covering_security_realms = 9;
+            string prod_region = 13;
+            string cloud_region = 14;
+            google.protobuf.Empty miniclusters = 15;
+        }
+    }
+    
+    message TrustBinding {
+        repeated RunningIn running_in = 1;
+        repeated Trust trusts = 2;
+    }
+}
+
+message RegionalTrustPolicyBundle {
+    repeated Config configs = 2;
+    message Config {
+        optional string config_name = 1;
+        optional RegionalTrustPolicy policy = 2;
+    }
+    
+    reserved 1;
+}

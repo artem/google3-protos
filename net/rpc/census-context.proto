@@ -2,14 +2,15 @@ syntax = "proto2";
 
 package rpc;
 
-option java_package = "com.google.net.rpc.proto";
-option java_outer_classname = "CensusContextUnused";
-option java_multiple_files = true;
 option cc_enable_arenas = true;
+option java_multiple_files = true;
+option java_outer_classname = "CensusContextUnused";
+option java_package = "com.google.net.rpc.proto";
 
 message CensusContext {
-  optional string originator = 1;
-  optional string tracking_tag = 2;
+    optional string originator = 1;
+    optional string tracking_tag = 2;
+    optional string layer_local_tracking_tag = 3;
+    
+    reserved 4;
 }
-
-

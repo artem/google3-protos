@@ -1,0 +1,37 @@
+syntax = "proto3";
+
+package storage.speckle.proto.dataplane_internal.proxy_server;
+
+import "storage/datapol/annotations/proto/semantic_annotations.proto";
+
+service ProxyServerInternal {
+    rpc SyncIAMGroupUser(SyncIAMGroupUserRequest) returns (SyncIAMGroupUserResponse);
+}
+
+message SyncIAMGroupUserRequest {
+    repeated string iam_groups = 3;
+    
+    oneof _access_token {
+        string access_token = 1;
+    }
+    
+    oneof _client_ip_address {
+        string client_ip_address = 2;
+    }
+    
+    oneof _database_username {
+        string database_username = 4;
+    }
+    
+    oneof _database {
+        string database = 5;
+    }
+    
+    oneof _database_session_id {
+        int32 database_session_id = 6;
+    }
+}
+
+message SyncIAMGroupUserResponse {
+    
+}

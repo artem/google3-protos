@@ -1,0 +1,24 @@
+syntax = "proto2";
+
+package idx.time_series.ingestion.proto;
+
+import "google/protobuf/any.proto";
+import "google/protobuf/timestamp.proto";
+
+option java_multiple_files = true;
+option java_package = "com.google.prod.resources.dataplatform.idx.timeseries.proto";
+
+message IDXTimeSeriesMetadata {
+    optional string key = 1;
+    optional google.protobuf.Timestamp event_timestamp = 2;
+    optional google.protobuf.Timestamp ingestion_timestamp = 3;
+    repeated google.protobuf.Timestamp compaction_timestamp = 7;
+    optional int64 version = 4;
+    optional int32 replica_quality = 5;
+    optional string legacy_key = 6;
+}
+
+message TimeSeriesRecord {
+    optional IDXTimeSeriesMetadata metadata = 1;
+    optional google.protobuf.Any value = 2;
+}

@@ -1,0 +1,12 @@
+syntax = "proto2";
+
+package borg;
+
+import "borg/common/app_class.proto";
+
+message ClientTaskRuntimeInfo {
+    optional int32 priority = 1;
+    optional AppClass.Type appclass = 2;
+    optional int32 top_level_priority = 3;
+    optional AppClass.Type top_level_appclass = 4;
+}

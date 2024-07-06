@@ -1,0 +1,45 @@
+syntax = "proto3";
+
+package compliance_controls;
+
+import "logs/proto/logs_annotations/logs_annotations.proto";
+
+option objc_class_prefix = "CCS";
+option java_multiple_files = true;
+option java_package = "com.google.privacy.compliancecontrols";
+
+enum CorePlatformService {
+    CPS_UNSPECIFIED = 0;
+    CPS_OR_NONCPS_UNKNOWN = 1;
+    CPS_NONCPS_PRODUCT = 2;
+    CPS_SEARCH = 3;
+    CPS_YOUTUBE = 4;
+    CPS_CHROME = 6;
+    CPS_PLAYSTORE = 7;
+    CPS_SHOPPING = 8;
+    CPS_ADS = 9;
+    CPS_MAPS = 10;
+    CPS_ANDROID = 5;
+    CPS_ASSISTANT = 11;
+    CPS_CONTACTS = 12;
+    CPS_ACCOMMODATIONS = 19;
+    CPS_ANDROID_AUTO = 20;
+    CPS_ANDROID_TV = 21;
+    CPS_AUTHENTICATOR = 22;
+    CPS_CHROME_WEB_STORE = 23;
+    CPS_FILES_BY_GOOGLE = 24;
+    CPS_FLIGHTS = 25;
+    CPS_GALLERY_GO = 26;
+    CPS_GBOARD = 27;
+    CPS_GOOGLE_ONE = 28;
+    CPS_GOOGLE_PHOTOS = 29;
+    CPS_GOOGLE_SIGN_IN = 30;
+    CPS_GOOGLE_TV = 31;
+    CPS_NEWS = 14;
+    CPS_PAYMENTS_AND_WALLET = 15;
+    CPS_TRANSLATE = 32;
+    CPS_WORKSPACE_COMMUNICATIONS = 16;
+    CPS_WORKSPACE_DOCUMENT_PROCESSING = 17;
+    CPS_WORKSPACE_EMAIL_AND_SCHEDULING = 18;
+    NOT_FOR_USE_WITH_EXHAUSTIVE_SWITCH_STATEMENTS = 13;
+}

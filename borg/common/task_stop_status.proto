@@ -1,0 +1,19 @@
+syntax = "proto2";
+
+package borg;
+
+option cc_enable_arenas = true;
+option java_outer_classname = "TaskStopStatusProto";
+option java_package = "com.google.borg.rpc";
+
+message TaskStopStatus {
+    optional Source source = 1;
+    enum Source {
+        UNSPECIFIED = 0;
+        BORGMASTER = 1;
+        BORGLET = 2;
+    }
+    
+    optional string state = 2;
+    optional string reason = 3;
+}

@@ -1,0 +1,16 @@
+syntax = "proto3";
+
+package security.data_access;
+
+import "security/credentials/proto/iam_request_attributes.proto";
+import "security/credentials/proto/principal.proto";
+import "storage/datapol/annotations/proto/semantic_annotations.proto";
+
+option java_multiple_files = true;
+option java_outer_classname = "AuthorityProto";
+option java_package = "com.google.logs.proto.data_access";
+
+message LoggableIamAuthority {
+    credentials.UserPrincipalProto user = 1;
+    credentials.LoggableIAMRequestAttributes iam_attributes = 2;
+}

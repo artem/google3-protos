@@ -1,20 +1,23 @@
 syntax = "proto2";
 
-import "net/proto2/bridge/proto/message_set.proto";
 package rpc;
 
-option java_package = "com.google.net.rpc.impl";
-option java_outer_classname = "LoadBalancingFeedbackProto";
-option java_multiple_files = true;
+import "net/proto2/bridge/proto/message_set.proto";
+
 option cc_enable_arenas = true;
+option java_multiple_files = true;
+option java_outer_classname = "LoadBalancingFeedbackProto";
+option java_package = "com.google.net.rpc.impl";
 
 message LoadBalancingFeedback {
-  optional float utilization = 1 [default = 0];
-  optional float qps = 2 [default = 0];
-  optional float eps = 3 [default = 0];
-  extend .proto2.bridge.MessageSet {
-    optional .rpc.LoadBalancingFeedback message_set_extension = 41997751;
-  }
+    optional float utilization = 1 [default = 0];
+    optional float utilization_adjustment = 6 [default = 1];
+    optional float qps = 2 [default = 0];
+    optional float eps = 3 [default = 0];
+    optional float stream_qps = 4 [default = 0];
+    optional float stream_eps = 5 [default = 0];
+    
+    extend .proto2.bridge.MessageSet {
+        optional LoadBalancingFeedback message_set_extension = 41997751;
+    }
 }
-
-

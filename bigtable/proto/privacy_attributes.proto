@@ -1,0 +1,18 @@
+syntax = "proto2";
+
+package bigtable;
+
+import "privacy/pgraph/proto/proxied_attributes/dataset_attributes.proto";
+
+option java_multiple_files = true;
+option java_package = "com.google.bigtable.protos.proto1api";
+
+message PrivacyAttributes {
+    optional .pgraph.DatasetAttributes dataset_attributes = 1;
+    optional DefaultPtokenFilterPolicy default_ptoken_filter_policy = 2 [default = FAMILY_POLICY_FAIL_REQUEST];
+}
+
+enum DefaultPtokenFilterPolicy {
+    FAMILY_POLICY_FILTER_CELLS_DEFAULT = 0;
+    FAMILY_POLICY_FAIL_REQUEST = 1;
+}

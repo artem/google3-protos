@@ -1,0 +1,28 @@
+syntax = "proto2";
+
+package privacy.context;
+
+import "net/proto2/bridge/proto/message_set.proto";
+import "storage/datapol/annotations/proto/semantic_annotations.proto";
+
+option java_multiple_files = true;
+option java_package = "com.google.privacy.context.proto1api";
+
+message PolicyEvaluationResults {
+    optional int64 dma52_return_row_allowed_count = 1;
+    optional int64 dma52_return_row_denied_count = 2;
+    optional int64 dma52_return_row_failed_precondition_count = 5;
+    optional int64 dma52_return_dataset_allowed_count = 3;
+    optional int64 dma52_return_dataset_denied_count = 4;
+    optional int64 dma52_return_dataset_failed_precondition_count = 6;
+    optional int64 aom_dma52_return_row_allowed_count = 7;
+    optional int64 aom_dma52_return_row_denied_count = 8;
+    optional int64 aom_dma52_return_row_failed_precondition_count = 9;
+    optional int64 aom_dma52_return_dataset_allowed_count = 10;
+    optional int64 aom_dma52_return_dataset_denied_count = 11;
+    optional int64 aom_dma52_return_dataset_failed_precondition_count = 12;
+    
+    extend .proto2.bridge.MessageSet {
+        optional PolicyEvaluationResults message_set_extension = 525001346;
+    }
+}

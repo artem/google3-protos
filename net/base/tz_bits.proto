@@ -1,0 +1,12 @@
+syntax = "proto3";
+
+package net_base;
+
+option java_multiple_files = true;
+
+enum TZBits {
+    TZ_UNSPECIFIED = 0;
+    TZ_T0Z0 = 1;
+    TZ_T1Z1 = 2;
+    TZ_T1Z0 = 3;
+}

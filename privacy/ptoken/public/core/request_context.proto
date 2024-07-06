@@ -1,0 +1,54 @@
+syntax = "proto2";
+
+package ptoken;
+
+import "dataresidency/mapping/cloud/cloud_locations_enum.proto";
+import "privacy/ads/user_data_enforcement/data-usage.proto";
+import "privacy/context/proto/privacy_attributes_setter.proto";
+import "privacy/data_governance/attributes/proto/purpose.proto";
+import "privacy/pattributes/public/proto/geo_location_lookup_status.proto";
+import "privacy/ptoken/public/core/logical_policy.proto";
+import "privacy/ptoken/public/core/request_context_defs.proto";
+
+option java_multiple_files = true;
+option java_package = "com.google.privacy.ptoken.proto.proto1api";
+
+message PRequestContext {
+    optional bool assistant_guest_mode_enabled = 1;
+    optional bool assistant_is_subject_to_minor_mode_restrictions_for_guests = 2;
+    optional bool assistant_user_identity_is_ambiguous = 3;
+    optional bool assistant_pocket_is_enabled = 4;
+    repeated AssistantPocketFeature assistant_pocket_triggered_features = 5 [packed = true];
+    optional AssistantRequestAcceptanceStatus assistant_request_acceptance_status = 6;
+    optional EssentialUseConsentState essential_use_consent_state = 7;
+    optional UserSignInState user_sign_in_state = 8;
+    optional bool is_dark_launch_request = 9;
+    optional AssistantSurfaceRestriction assistant_surface_restriction = 10;
+    optional YoutubePrivacyEnhancedPlayerType youtube_privacy_enhanced_player_type = 11;
+    optional bool youtube_autoplay_embedded_playback = 12;
+    optional int32 origin_associated_product_id = 13;
+    optional bool search_is_in_emergency_critical_only_mode = 14;
+    repeated LogicalPolicy.Enum poe_enforced_return_policies = 15 [packed = true];
+    repeated privacy.data_governance.attributes.ProcessingPurpose.Purpose processing_purpose = 16 [packed = true];
+    optional bool origin_is_end_user = 17;
+    optional bool dma52_cross_use_offered_together = 18;
+    repeated LogicalPolicy.Enum request_policy_enforcement = 19 [packed = true, deprecated = true];
+    optional Dma52ProcessingType dma52_processing_type = 20;
+    repeated privacy.ads.user_data_enforcement.DataUsage ads_processing_purpose = 21 [packed = true];
+    optional privacy.context.PrivacyAttributesSetter privacy_attributes_setter = 100;
+    optional BardUserHistorySetting bard_request_time_user_history_setting = 22;
+    repeated PolicyRolloutEnforcementMode request_policy_rollout_enforcement_mode = 23 [packed = true];
+    optional bool is_incognito = 24;
+    repeated LogicalPolicy.Enum policies_breakglass = 25 [packed = true];
+    repeated LogicalPolicy.Enum policies_breakglass_still_evaluated = 32 [packed = true];
+    optional bytes bitfield_value = 26;
+    optional bytes bitfield_set = 27;
+    repeated int32 dataset_product_ids = 30 [packed = true, deprecated = true];
+    optional .pattributes.external.GeoLocationLookupStatus geo_location_lookup_status = 31;
+    
+    oneof origin_logical_location {
+        data_residency.mapping.cloud.CloudDataResidencyLocation origin_logical_cloud_location = 28;
+    }
+    
+    reserved 29;
+}

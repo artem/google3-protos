@@ -1,0 +1,59 @@
+syntax = "proto2";
+
+package privacy.context;
+
+import "net/proto2/bridge/proto/message_set.proto";
+import "privacy/ads/user_data_enforcement/data-usage.proto";
+import "privacy/context/proto/policy_breakglass.proto";
+import "privacy/data_governance/attributes/proto/ddt.proto";
+import "privacy/data_governance/attributes/proto/purpose.proto";
+import "privacy/ptoken/public/core/logical_policy.proto";
+import "privacy/ptoken/public/core/request_context_defs.proto";
+
+option java_multiple_files = true;
+option java_package = "com.google.privacy.context";
+
+message PrivacyContextDefaultConfig {
+    optional Source source = 1;
+    enum Source {
+        SOURCE_UNSPECIFIED = 0;
+        CONFIG_API = 1;
+        ENVIRONMENT = 2;
+        COMMAND_LINE_FLAG = 3;
+        INTRINSIC = 50;
+        ENV_ROLE_DEFAULT = 100;
+        ENV_JOB_DEFAULT = 200;
+        FLAG_OVERRIDE = 999;
+        DYNAMIC = 2001;
+    }
+    
+    optional int32 origin_product_id = 2;
+    repeated .ptoken.PolicyRolloutEnforcementMode request_policy_global_rampup = 12 [packed = true];
+    optional data_governance.attributes.DDTContext ddt_context = 13;
+    optional bool dma52_cross_use_offered_together = 4;
+    optional .ptoken.Dma52ProcessingType dma52_processing_type = 6;
+    optional bool post_access_filtering = 8;
+    repeated data_governance.attributes.ProcessingPurpose.Purpose processing_purpose = 3 [packed = true];
+    repeated ads.user_data_enforcement.DataUsage ads_processing_purpose = 7 [packed = true];
+    repeated .ptoken.PolicyRolloutEnforcementMode request_policy_rollout_enforcement_mode = 9 [packed = true];
+    repeated PolicyBreakglass policies_breakglass = 10;
+    optional bool allow_enforcement_without_consent = 11;
+    repeated .ptoken.LogicalPolicy.Enum request_policy_enforcement = 5 [packed = true];
+}
+
+message PrivacyContextDefaultTraceInfo {
+    optional DefaultConfigurationInactiveReason inactive_reason = 1;
+    enum DefaultConfigurationInactiveReason {
+        REASON_UNSPECIFIED = 0;
+        REASON_CONFIG_DISABLED_OR_ABSENT = 1;
+        REASON_EXISTING_ORIGIN_PRODUCT_ID = 2;
+        REASON_CONFIG_NO_MATCH = 3;
+        REASON_INCOMING_RPC_CONTEXT = 4;
+    }
+    
+    optional int32 existing_product_id = 2;
+    
+    extend .proto2.bridge.MessageSet {
+        optional PrivacyContextDefaultTraceInfo message_set_extension = 495337008;
+    }
+}

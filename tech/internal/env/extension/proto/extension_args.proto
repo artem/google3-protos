@@ -1,0 +1,25 @@
+syntax = "proto2";
+
+package tech.env;
+
+import "storage/datapol/annotations/proto/semantic_annotations.proto";
+
+option java_multiple_files = true;
+option java_package = "com.google.tech.env.extension";
+
+message ExtensionArgs {
+    repeated ExtensionSpec extensions = 1;
+}
+
+message ExtensionSpec {
+    optional string path = 1;
+    repeated string flags = 2;
+    optional string name = 3;
+    optional string label = 4;
+    optional string package = 5;
+    optional string version_id = 8;
+    optional string java_launcher = 6;
+    repeated string jvm_args = 7;
+    optional bool lazy_load = 9;
+    optional bool use_auto_btb = 10;
+}

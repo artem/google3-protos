@@ -1,0 +1,12 @@
+syntax = "editions";
+
+package sherlog;
+
+import "frameworks/debug/sherlog/core/proto/sherlog_entry.proto";
+
+option java_multiple_files = true;
+option java_package = "com.google.frameworks.debug.sherlog.core.proto";
+
+message EnvelopeEntry {
+    repeated .sherlog.core.SherlogEntry sherlog_entries = 1;
+}

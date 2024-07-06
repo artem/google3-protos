@@ -1,0 +1,31 @@
+syntax = "editions";
+
+package qbone;
+
+service BNSResolverService {
+    rpc Resolve(stream BNSResolutionRequest) returns (stream ResolvedServers);
+}
+
+message BNSResolutionRequest {
+    optional string path = 1;
+}
+
+message ResolvedTask {
+    optional string name = 1;
+    optional int32 task_number = 2;
+    optional int32 port = 3;
+    repeated bytes ip_addresses = 4;
+}
+
+message ResolvedServer {
+    optional bool resolved = 4;
+    optional bool fully_resolved_but_empty = 6;
+    optional string job_path = 1;
+    optional int32 num_tasks = 3;
+    optional string port_name = 5;
+    repeated ResolvedTask tasks = 2;
+}
+
+message ResolvedServers {
+    repeated ResolvedServer servers = 1;
+}

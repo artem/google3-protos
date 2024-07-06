@@ -1,0 +1,23 @@
+syntax = "proto2";
+
+package security_loas_l2;
+
+import "google/protobuf/timestamp.proto";
+import "storage/datapol/annotations/proto/semantic_annotations.proto";
+
+message CrlState {
+    optional string crl_state_id = 1;
+    optional google.protobuf.Timestamp checked_time = 2;
+    optional int64 realm_crl_version = 3;
+    optional int64 emergency_crl_version = 4;
+    optional google.protobuf.Timestamp expiry = 5;
+    optional CrlStateStrategy crl_state_strategy = 6;
+    optional bool ignore_realm_crl_version_update = 7;
+}
+
+enum CrlStateStrategy {
+    UPDATE_STRATEGY_UNSPECIFIED = 0;
+    UPDATE_NEVER = 1;
+    UPDATE_IF_EXPIRED = 2;
+    UPDATE_ON_CHANGE = 3;
+}

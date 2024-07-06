@@ -1,0 +1,33 @@
+syntax = "proto2";
+
+package bigtable;
+
+import "bigtable/proto/privacy_attributes.proto";
+import "privacy/ptoken/contrib/policy_rollouts/fractional_enforcement.proto";
+import "privacy/ptoken/contrib/policy_rollouts/request_context_enforceable_mode_config.proto";
+import "privacy/ptoken/public/proto/policies/policy_id.proto";
+
+option java_multiple_files = true;
+option java_package = "com.google.bigtable.protos";
+
+message DmaRolloutConfig {
+    optional int32 audit_only_rollout_percentage = 1 [deprecated = true];
+    optional bool disable_enforcement = 4;
+    optional DefaultPtokenFilterPolicy default_ptoken_filter_policy = 5 [default = FAMILY_POLICY_FAIL_REQUEST];
+    optional .ptoken.policy_rollouts.FractionalRolloutConfigurationProto fractional_rollout_config = 6;
+    optional bool use_defaults_when_missing_dataset_attributes = 8;
+    
+    repeated PolicyParameters policy_parameters = 10;
+    message PolicyParameters {
+        optional .ptoken.PolicyId policy_id = 4;
+        optional int32 audit_only_rollout_percentage = 1;
+        optional .ptoken.policy_rollouts.RequestContextEnforceableModeConfig.RequestContextEnforceableMode online_request_enforceable_mode = 5 [default = NOT_ENFORCEABLE];
+        optional .ptoken.policy_rollouts.RequestContextEnforceableModeConfig.RequestContextEnforceableMode offline_request_enforceable_mode = 6 [default = NOT_ENFORCEABLE];
+        
+        reserved 2, 3;
+    }
+    
+    optional bool skip_default_id_for_multi_prod_column_family = 11;
+    
+    reserved 2, 3, 7, 9;
+}
