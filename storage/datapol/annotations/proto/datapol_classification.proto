@@ -9,6 +9,6 @@ message Options {
     optional string description = 2;
 }
 
-extend .proto2.EnumValueOptions {
+extend proto2.EnumValueOptions {
     optional Options options = 268862122;
 }

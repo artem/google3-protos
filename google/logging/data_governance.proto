@@ -11,10 +11,10 @@ message LoggingDataGovernance {
     optional privacy.data_governance.attributes.classification.Confidentiality confidentiality = 3;
 }
 
-extend .proto2.FieldOptions {
+extend proto2.FieldOptions {
     optional LoggingDataGovernance data_governance = 367211393;
 }
 
-extend .proto2.MethodOptions {
+extend proto2.MethodOptions {
     optional LoggingDataGovernance data_governance_response = 367211394;
 }

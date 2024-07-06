@@ -3,6 +3,7 @@ syntax = "proto3";
 package privacy.data_governance.attributes;
 
 import "privacy/data_governance/attributes/proto/classification.proto";
+import "privacy/data_governance/attributes/proto/privacy_documentation.proto";
 
 option java_multiple_files = true;
 option java_package = "com.google.privacy.datagovernance.attributes";
@@ -117,6 +118,23 @@ message Search {
         enum CriticalDatasetMitigation {
             NOT_CRITICAL = 0;
             CRITICAL = 1;
+        }
+        
+        repeated PrivacyModeControlPolicy privacy_mode_control_policies = 3;
+        message PrivacyModeControlPolicy {
+            oneof _action {
+                PolicyAction action = 1;
+            }
+            
+            oneof _documentation {
+                PrivacyDocumentation documentation = 2;
+            }
+            
+            enum PolicyAction {
+                POLICY_ACTION_UNSPECIFIED = 0;
+                POLICY_ACTION_EXPLICIT_PRIVACY_INTENT_DISALLOWED = 1;
+                POLICY_ACTION_EXPLICIT_PRIVACY_INTENT_ALLOWED = 2;
+            }
         }
     }
 }

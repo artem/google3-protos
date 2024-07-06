@@ -2,14 +2,55 @@ syntax = "proto3";
 
 package google.api;
 
-option java_package = "com.google.api";
-option java_outer_classname = "ControlProto";
-option java_multiple_files = true;
-option go_package = "google.golang.org/genproto/googleapis/api/serviceconfig;serviceconfig";
-option objc_class_prefix = "GAPI";
+import "google/api/policy.proto";
+import "google/api/visibility.proto";
+import "storage/datapol/annotations/proto/semantic_annotations.proto";
 
-message Control {
-  string environment = 1;
+option objc_class_prefix = "GAPI";
+option go_package = "google.golang.org/genproto/googleapis/api/serviceconfig;serviceconfig";
+option java_multiple_files = true;
+option java_outer_classname = "ControlProto";
+option java_package = "com.google.api";
+
+message P4SAAuthPolicy {
+    oneof _owner_project_id {
+        string owner_project_id = 1;
+    }
+    
+    oneof _allow_nonproduction_accounts {
+        bool allow_nonproduction_accounts = 2;
+    }
+    
+    oneof _allow_access_on_success {
+        bool allow_access_on_success = 3;
+    }
 }
 
-
+message Control {
+    string environment = 1;
+    
+    FailureMode failure_mode = 2;
+    enum FailureMode {
+        DEFAULT_FAIL_OPEN = 0;
+        FAIL_CLOSED = 1;
+    }
+    
+    repeated MethodPolicy method_policies = 4;
+    
+    repeated PolicyCallback policy_callbacks = 5;
+    message PolicyCallback {
+        string resource_type = 1;
+        string policy_callback_backend_address = 2;
+        string policy_callback_address = 3;
+        repeated string resource_patterns = 4;
+        string selector = 6;
+        
+        oneof _location_extractor {
+            string location_extractor = 5;
+        }
+    }
+    
+    P4SAAuthPolicy p4sa_auth_policy = 6;
+    
+    reserved 3;
+}

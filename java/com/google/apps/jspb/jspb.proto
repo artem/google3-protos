@@ -14,7 +14,7 @@ enum JsType {
     STRING = 2;
 }
 
-extend .proto2.FieldOptions {
+extend proto2.FieldOptions {
     optional bool ignore = 17702;
     optional JsType jstype = 17703;
     optional bool use_broken_java_unsigned_serialization_behavior = 17705 [deprecated = true];
@@ -22,12 +22,12 @@ extend .proto2.FieldOptions {
     optional bool deprecated_use_binary_values_for_any = 448127177;
 }
 
-extend .proto2.MessageOptions {
+extend proto2.MessageOptions {
     optional string message_id = 17701 [deprecated = true];
     optional bool generate_xid = 78050980;
 }
 
-extend .proto2.FileOptions {
+extend proto2.FileOptions {
     optional string js_namespace = 17702;
     optional bool generate_legacy_nullable_accessors = 448127176;
 }

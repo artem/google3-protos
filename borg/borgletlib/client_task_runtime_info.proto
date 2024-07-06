@@ -9,4 +9,5 @@ message ClientTaskRuntimeInfo {
     optional AppClass.Type appclass = 2;
     optional int32 top_level_priority = 3;
     optional AppClass.Type top_level_appclass = 4;
+    optional bool has_batch_strategy = 5;
 }

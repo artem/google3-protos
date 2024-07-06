@@ -1,60 +1,91 @@
 syntax = "proto3";
 
-import "google/api/annotations.proto";
 package google.api;
 
-option java_package = "com.google.api";
-option java_outer_classname = "LegacyProto";
-option java_multiple_files = true;
-option go_package = "google.golang.org/genproto/googleapis/api/serviceconfig;serviceconfig";
+import "google/api/visibility.proto";
+
 option objc_class_prefix = "GAPI";
+option go_package = "google.golang.org/genproto/googleapis/api/serviceconfig;serviceconfig";
+option java_multiple_files = true;
+option java_outer_classname = "LegacyProto";
+option java_package = "com.google.api";
 
 message Legacy {
-  message TrustedTesterList {
-    repeated int64 gaia_group_ids = 1;
-  }
-  enum MigrationStrategy {
-    UNSPECIFIED = 0;
-    PREFER_APIARY = 1;
-    PREFER_ONEPLATFORM = 2;
-  }
-  string email = 2;
-  string oncall = 3;
-  string mdb = 9;
-  bool lower_camel_enums = 4;
-  string api_v1_name = 5;
-  .google.api.Devconsole devconsole = 6;
-  .google.api.Legacy.MigrationStrategy migration_strategy = 10;
-  repeated string excluded_versions_in_package_path = 11;
-  string demo_url = 12;
-  .google.api.ControlPlaneMigration control_plane_migration = 13;
-  bool use_v1_error_format = 14;
-  bool hidden_from_list = 15;
-  string bug_id = 16;
-  map<string, .google.api.Legacy.TrustedTesterList> restricted_quota_bucket_trusted_testers = 17;
-  bool uses_apiary_proxy = 18;
-  bool do_not_send_quota_overrides_to_quotaserver = 19;
-  reserved 1, 7;
+    string email = 2;
+    string oncall = 3;
+    string mdb = 9;
+    string support = 22;
+    string api_v1_name = 5;
+    Devconsole devconsole = 6;
+    repeated string excluded_versions_in_package_path = 11;
+    ControlPlaneMigration control_plane_migration = 13;
+    bool hidden_from_list = 15;
+    string bug_id = 16;
+    map<string, TrustedTesterList> restricted_quota_bucket_trusted_testers = 17;
+    bool uses_apiary_proxy = 18;
+    bool do_not_send_quota_overrides_to_quotaserver = 19;
+    repeated LegacyRule rules = 20;
+    bool enable_direct_path_for_grpc = 21;
+    bool disable_quota_project_override = 23;
+    bool forward_jwt_known_issuers = 24;
+    bool enable_org_quota_for_all_consumers = 25;
+    bool use_loas_project_with_projectless_credentials = 26;
+    ESFGwsLogConfig gwslog = 27;
+    string healthz = 28;
+    string bug_component_id = 29;
+    string taxonomy_id = 30;
+    bool include_debug_tracking_id = 31;
+    
+    BoqSettings boq_settings = 32;
+    message BoqSettings {
+        string control_plane_config = 1;
+    }
+    
+    int32 origin_product_id = 33;
+    
+    reserved 1, 4, 7, 10, 12, 14;
+    
+    message TrustedTesterList {
+        repeated int64 gaia_group_ids = 1;
+    }
+}
+
+message ESFGwsLogConfig {
+    bool disable_granted_scope = 1;
+    string log_type = 2;
+    bool enable_log_task_info = 3;
+    bool enable_log_grpc_autobahn_stream_close_latency = 4;
+    bool enable_log_frontline_tls_protocol_negotiation = 5;
+    bool enable_log_error_only = 6;
 }
 
 message Devconsole {
-  enum ConsoleApi {
-    UNKNOWN = 0;
-    LEGACY = 1;
-    NEW = 2;
-    NEW_GOOGLERS_ONLY = 3;
-  }
-  string example_url = 1;
-  string learnmore_url = 2;
-  string request_quota_url = 3;
-  string pricing_link = 4;
-  bool enable_reporting = 5 [deprecated = true];
-  .google.api.Devconsole.ConsoleApi console_api = 1000;
+    string example_url = 1;
+    string learnmore_url = 2;
+    string request_quota_url = 3;
+    string pricing_link = 4;
+    
+    ConsoleApi console_api = 1000;
+    enum ConsoleApi {
+        UNKNOWN = 0;
+        LEGACY = 1;
+        NEW = 2;
+        NEW_GOOGLERS_ONLY = 3;
+    }
+    
+    reserved 5;
+}
+
+message LegacyRule {
+    string selector = 1;
+    bool enable_esf_sherlog = 2;
+    bool enable_esf_fast_path = 3;
+    bool enable_esf_checksum = 4;
+    bool disable_esf_user_agent_detection = 5;
 }
 
 message ControlPlaneMigration {
-  bool migrating = 1;
-  bool retain_api_v1_name = 2;
+    bool migrating = 1;
+    
+    reserved 2;
 }
-
-

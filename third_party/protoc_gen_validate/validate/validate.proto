@@ -289,15 +289,15 @@ enum KnownRegex {
     HTTP_HEADER_VALUE = 2;
 }
 
-extend .proto2.MessageOptions {
+extend proto2.MessageOptions {
     optional bool disabled = 1071;
     optional bool ignored = 1072;
 }
 
-extend .proto2.OneofOptions {
+extend proto2.OneofOptions {
     optional bool required = 1071;
 }
 
-extend .proto2.FieldOptions {
+extend proto2.FieldOptions {
     optional FieldRules rules = 1071;
 }

@@ -1,15 +1,15 @@
 syntax = "proto3";
 
-import "google/protobuf/struct.proto";
 package google.api;
 
-option java_package = "com.google.api";
-option java_outer_classname = "ProvisioningProto";
-option java_multiple_files = true;
+import "google/protobuf/struct.proto";
+
 option objc_class_prefix = "GAPI";
+option java_multiple_files = true;
+option java_outer_classname = "ProvisioningProto";
+option java_package = "com.google.api";
 
 message Provisioning {
-  string provider = 1;
-  .google.protobuf.Struct settings = 2;
+    string provider = 1;
+    protobuf.Struct settings = 2;
 }
-

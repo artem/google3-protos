@@ -5,6 +5,7 @@ package envoy.config.core.v3;
 import "third_party/envoy/src/api/envoy/config/core/v3/base.proto";
 import "third_party/envoy/src/api/envoy/config/core/v3/event_service_config.proto";
 import "third_party/envoy/src/api/envoy/config/core/v3/extension.proto";
+import "third_party/envoy/src/api/envoy/config/core/v3/proxy_protocol.proto";
 import "third_party/envoy/src/api/envoy/type/matcher/v3/string.proto";
 import "third_party/envoy/src/api/envoy/type/v3/http.proto";
 import "third_party/envoy/src/api/envoy/type/v3/range.proto";
@@ -90,6 +91,7 @@ message HealthCheck {
     message TcpHealthCheck {
         Payload send = 1;
         repeated Payload receive = 2;
+        ProxyProtocolConfig proxy_protocol_config = 3;
     }
     
     message RedisHealthCheck {

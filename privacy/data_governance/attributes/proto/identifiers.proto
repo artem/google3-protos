@@ -86,6 +86,7 @@ enum Identifiers {
     ID_PHOTOS = 71;
     ID_PHOTOS_ALBUM = 72;
     ID_PHOTOS_EVENT = 73;
+    ID_PHOTOS_CLUSTER = 91;
     ID_PHOTOS_MEDIA_KEY = 74;
     ID_PHOTOS_VIPER_VIDEO = 75;
     ID_PHOTOS_STREAM = 76;
@@ -101,7 +102,7 @@ enum Identifiers {
     ID_BUYSIDE_PUBLISHER_ID_WITH_ATC_ID = 90;
 }
 
-extend .proto2.EnumValueOptions {
+extend proto2.EnumValueOptions {
     string warning = 140599355;
     string datapol_equivalent = 140605468;
     string retention_equivalent = 140826283;

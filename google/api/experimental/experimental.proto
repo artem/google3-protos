@@ -1,24 +1,30 @@
 syntax = "proto3";
 
-import "google/api/annotations.proto";
+package google.api;
+
 import "google/api/experimental/advanced_service_config.proto";
 import "google/api/experimental/authorization_config.proto";
 import "google/api/experimental/codegen.proto";
+import "google/api/experimental/mediation_config.proto";
+import "google/api/experimental/provisioning.proto";
 import "google/api/experimental/service_control_config.proto";
 import "google/api/experimental/service_management_config.proto";
-package google.api;
+import "google/api/visibility.proto";
 
-option java_package = "com.google.api";
-option java_outer_classname = "ExperimentalProto";
-option java_multiple_files = true;
 option objc_class_prefix = "GAPI";
+option java_multiple_files = true;
+option java_outer_classname = "ExperimentalProto";
+option java_package = "com.google.api";
 
 message Experimental {
-  .google.api.Codegen codegen = 1;
-  .google.api.AdvancedServiceConfig advanced = 2;
-  .google.api.ServiceControlConfig service_control = 5;
-  .google.api.ServiceManagementConfig service_management = 7;
-  .google.api.AuthorizationConfig authorization = 8;
+    Codegen codegen = 1;
+    AdvancedServiceConfig advanced = 2;
+    ServiceControlConfig service_control = 5;
+    ServiceManagementConfig service_management = 7;
+    AuthorizationConfig authorization = 8;
+    Provisioning provisioning = 9;
+    MediationConfig mediation = 10;
+    string cargo_container_prefixes = 12;
+    
+    reserved 3, 4, 6, 11;
 }
-
-

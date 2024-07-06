@@ -1,23 +1,39 @@
 syntax = "proto3";
 
-import "google/api/annotations.proto";
-import "google/api/service_control_access.proto";
 package google.api;
 
-option java_package = "com.google.api";
-option java_outer_classname = "MonitoringProto";
-option java_multiple_files = true;
-option go_package = "google.golang.org/genproto/googleapis/api/serviceconfig;serviceconfig";
+import "google/api/visibility.proto";
+
 option objc_class_prefix = "GAPI";
+option go_package = "google.golang.org/genproto/googleapis/api/serviceconfig;serviceconfig";
+option java_multiple_files = true;
+option java_outer_classname = "MonitoringProto";
+option java_package = "com.google.api";
 
 message Monitoring {
-  message MonitoringDestination {
-    string monitored_resource = 1;
-    repeated string metrics = 2;
-    .google.api.ServiceControlAccess acl = 3;
-  }
-  repeated .google.api.Monitoring.MonitoringDestination producer_destinations = 1;
-  repeated .google.api.Monitoring.MonitoringDestination consumer_destinations = 2;
+    repeated MonitoringDestination producer_destinations = 1;
+    message MonitoringDestination {
+        string monitored_resource = 1;
+        repeated string metrics = 2;
+        
+        AggregationType aggregation_type = 4;
+        enum AggregationType {
+            AGGREGATION_TYPE_UNSPECIFIED = 0;
+            FULL_AGGREGATION = 1;
+            NO_AGGREGATION = 2;
+            QUOTA_AGGREGATION = 3;
+        }
+        
+        repeated QueryOptimization query_optimizations = 5;
+        message QueryOptimization {
+            repeated string aggregated_labels = 1;
+            string flags = 2;
+        }
+        
+        string precomputation_flags = 6;
+        
+        reserved 3;
+    }
+    
+    repeated MonitoringDestination consumer_destinations = 2;
 }
-
-

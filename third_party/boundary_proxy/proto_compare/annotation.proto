@@ -80,7 +80,7 @@ enum TpcType {
     TT_CHANGE = 2;
 }
 
-extend .proto2.FieldOptions {
+extend proto2.FieldOptions {
     optional FieldDisposition disposition = 484519953;
     optional ExcludeReason exclude_reason = 482813086;
     optional ComparisonOptions options = 478786899;
@@ -88,11 +88,11 @@ extend .proto2.FieldOptions {
     optional string comment = 486375988;
 }
 
-extend .proto2.FileOptions {
+extend proto2.FileOptions {
     optional string file_vetting_status = 501006184;
     repeated FileUseCase file_use_case = 525000016;
 }
 
-extend .proto2.MethodOptions {
+extend proto2.MethodOptions {
     optional TpcType tpc_type = 520991498;
 }

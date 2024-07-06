@@ -1,63 +1,86 @@
 syntax = "proto3";
 
-import "google/api/annotations.proto";
 package google.api;
 
-option java_package = "com.google.api";
-option java_outer_classname = "QuotaProto";
-option java_multiple_files = true;
-option go_package = "google.golang.org/genproto/googleapis/api/serviceconfig;serviceconfig";
+import "google/api/launch_stage.proto";
+import "google/api/visibility.proto";
+
 option objc_class_prefix = "GAPI";
+option go_package = "google.golang.org/genproto/googleapis/api/serviceconfig;serviceconfig";
+option java_multiple_files = true;
+option java_outer_classname = "QuotaProto";
+option java_package = "com.google.api";
 
 message Quota {
-  repeated .google.api.QuotaGroup groups = 1;
-  repeated .google.api.QuotaRule rules = 2;
-  repeated .google.api.QuotaLimit limits = 3;
-  repeated .google.api.MetricRule metric_rules = 4;
+    repeated QuotaGroup groups = 1;
+    repeated QuotaRule rules = 2;
+    repeated QuotaLimit limits = 3;
+    repeated MetricRule metric_rules = 4;
+    string supported_regions = 5;
+    string supported_locations = 6;
 }
 
 message MetricRule {
-  string selector = 1;
-  map<string, int64> metric_costs = 2;
+    string selector = 1;
+    map<string, int64> metric_costs = 2;
+    map<string, DynamicCostType> dynamic_metric_costs = 3;
+    
+    enum DynamicCostType {
+        DYNAMIC_COST_TYPE_UNSPECIFIED = 0;
+        REQUEST_BODY_BYTES = 1;
+        REQUEST_BODY_AND_HEADER_BYTES = 2;
+        RESPONSE_BODY_BYTES = 3;
+        RESPONSE_BODY_AND_HEADER_BYTES = 4;
+    }
 }
 
 message QuotaRule {
-  string selector = 1;
-  repeated .google.api.QuotaGroupMapping groups = 2;
-  bool disable_quota = 3 [deprecated = true];
+    string selector = 1;
+    repeated QuotaGroupMapping groups = 2;
+    bool disable_quota = 3 [deprecated = true];
 }
 
 message QuotaGroupMapping {
-  string group = 1;
-  int32 cost = 2;
+    string group = 1;
+    int32 cost = 2;
 }
 
 message QuotaGroup {
-  string name = 1;
-  string description = 2;
-  repeated .google.api.QuotaLimit limits = 3;
-  bool billable = 4;
+    string name = 1;
+    string description = 2;
+    repeated QuotaLimit limits = 3;
+    bool billable = 4;
 }
 
 message QuotaLimit {
-  enum LimitType {
-    CLIENT_PROJECT = 0;
-    USER = 1;
-  }
-  string name = 6;
-  .google.api.QuotaLimit.LimitType limit_by = 1;
-  string description = 2;
-  int64 default_limit = 3;
-  int64 max_limit = 4;
-  int64 free_tier = 7;
-  string duration = 5;
-  string metric = 8;
-  string unit = 9;
-  map<string, int64> values = 10;
-  bool is_precise = 11;
-  string display_name = 12;
-  bool is_fixed = 13;
-  string visibility_restriction = 14;
+    string name = 6;
+    
+    LimitType limit_by = 1;
+    enum LimitType {
+        CLIENT_PROJECT = 0;
+        USER = 1;
+    }
+    
+    string description = 2;
+    int64 default_limit = 3;
+    int64 max_limit = 4;
+    int64 free_tier = 7;
+    string duration = 5;
+    string metric = 8;
+    string unit = 9;
+    map<string, int64> values = 10;
+    bool is_precise = 11;
+    string display_name = 12;
+    bool is_fixed = 13;
+    string visibility_restriction = 14;
+    bool enable_per_cell_rate_limiting = 15;
+    string supported_regions = 16;
+    string supported_locations = 17;
+    LaunchStage launch_stage = 18;
+    bool is_concurrent = 19;
+    int64 max_project_cardinality = 20;
+    
+    oneof _max_org_cardinality {
+        int64 max_org_cardinality = 21;
+    }
 }
-
-

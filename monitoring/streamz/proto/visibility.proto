@@ -12,10 +12,10 @@ enum VisibilityPolicy {
     PUBLIC = 2;
 }
 
-extend .proto2.FieldOptions {
+extend proto2.FieldOptions {
     optional VisibilityPolicy visibility = 53740412 [default = INTERNAL];
 }
 
-extend .proto2.EnumValueOptions {
+extend proto2.EnumValueOptions {
     optional VisibilityPolicy enum_visibility = 53705596 [default = INTERNAL];
 }

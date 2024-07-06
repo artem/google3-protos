@@ -80,7 +80,7 @@ enum SemanticType {
     ST_PTOKEN = 12037;
 }
 
-extend .proto2.FieldOptions {
+extend proto2.FieldOptions {
     optional SemanticType semantic_type = 484328798;
     optional AppsQualifier qualifier = 491407099;
     optional MapFieldAnnotations map_key_annotation = 504752717;
@@ -90,13 +90,13 @@ extend .proto2.FieldOptions {
     optional string enum_type_name = 535801099;
 }
 
-extend .proto2.MessageOptions {
+extend proto2.MessageOptions {
     optional SemanticType msg_semantic_type = 518668963;
     optional AppsQualifier msg_qualifier = 518671256;
     optional MessageDetails msg_details = 525000006;
 }
 
-extend .proto2.EnumOptions {
+extend proto2.EnumOptions {
     optional SemanticType enum_semantic_type = 518672169;
     optional AppsQualifier enum_qualifier = 518672798;
     optional EnumDetails enum_details = 525000001;

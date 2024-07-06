@@ -1,65 +1,135 @@
 syntax = "proto3";
 
-import "google/api/annotations.proto";
-import "security/context/proto/policy/rpc_security_policy.proto";
 package google.api;
 
-option java_package = "com.google.api";
-option java_outer_classname = "AuthProto";
-option java_multiple_files = true;
-option go_package = "google.golang.org/genproto/googleapis/api/serviceconfig;serviceconfig";
+import "google/api/visibility.proto";
+
 option objc_class_prefix = "GAPI";
+option go_package = "google.golang.org/genproto/googleapis/api/serviceconfig;serviceconfig";
+option java_multiple_files = true;
+option java_outer_classname = "AuthProto";
+option java_package = "com.google.api";
 
 message Authentication {
-  string gaia_service = 1;
-  repeated .google.api.AuthenticationRule rules = 3;
-  repeated .google.api.AuthProvider providers = 4;
-  .security.context.RpcSecurityPolicy rpc_security_policy = 5;
+    string gaia_service = 1;
+    string environment = 6;
+    repeated AuthenticationRule rules = 3;
+    repeated AuthProvider providers = 4;
+    PeerDelegationMode.Mode peer_delegation_mode = 8;
+    bool enable_mtls = 7;
+    
+    reserved 2, 5;
 }
 
 message AuthenticationRule {
-  enum RpcSecurityPolicyMode {
-    DISABLED = 0;
-    ENABLED = 1;
-    DARKLAUNCH = 2;
-  }
-  string selector = 1;
-  .google.api.OAuthRequirements oauth = 2;
-  .google.api.EndUserCredsRequirements end_user_creds = 3;
-  .google.api.BrowserFirstPartyAuthRequirements browser_first_party_auth = 4;
-  .google.api.CustomAuthRequirements custom_auth = 9;
-  bool allow_without_credential = 5;
-  bool hide_creds_from_backend = 6;
-  repeated .google.api.AuthRequirement requirements = 7;
-  .google.api.AuthenticationRule.RpcSecurityPolicyMode use_rpc_security_policy = 8;
+    string selector = 1;
+    OAuthRequirements oauth = 2;
+    EndUserCredsRequirements end_user_creds = 3 [deprecated = true];
+    BrowserFirstPartyAuthRequirements browser_first_party_auth = 4;
+    BasicAuthRequirements basic_auth = 12;
+    bool allow_without_credential = 5;
+    repeated AuthRequirement requirements = 7;
+    
+    RpcSecurityPolicyMode use_rpc_security_policy = 8;
+    enum RpcSecurityPolicyMode {
+        DISABLED = 0;
+        DELEGATED = 3;
+        CLOUD_POLICY_ENFORCEMENT = 4;
+    }
+    
+    UberMintRequirements uber_mint = 10;
+    LoasRequirements loas = 11;
+    UberProxyAuthRequirements uberproxy_auth = 13;
+    bool allow_auth_server_fail_open = 14;
+    UberMintPlatformConfig ubermint_platform_config = 15;
+    
+    reserved 6, 9;
+}
+
+message JwtLocation {
+    string value_prefix = 3;
+    
+    oneof in {
+        string header = 1;
+        string query = 2;
+        string cookie = 4;
+    }
 }
 
 message AuthProvider {
-  string id = 1;
-  string issuer = 2;
-  string jwks_uri = 3;
-  string audiences = 4;
+    string id = 1;
+    string issuer = 2;
+    string jwks_uri = 3;
+    string audiences = 4;
+    string authorization_url = 5;
+    repeated JwtLocation jwt_locations = 6;
 }
 
 message BrowserFirstPartyAuthRequirements {
-  string scope_codes = 1;
+    string scope_codes = 1;
+    bool allow_missing_active_session = 14;
+    bool ignore_invalid_credentials = 15;
 }
 
 message EndUserCredsRequirements {
-  string scope_codes = 1;
+    string scope_codes = 1;
 }
 
 message OAuthRequirements {
-  string canonical_scopes = 1;
+    string canonical_scopes = 1;
+    bool allow_any_scope = 2;
 }
 
-message CustomAuthRequirements {
-  string provider = 1;
+message BasicAuthRequirements {
+    string scope_codes = 1;
+    bool enable_programmatic_client_token = 3;
+    
+    reserved 2;
 }
 
 message AuthRequirement {
-  string provider_id = 1;
-  string audiences = 2;
+    string provider_id = 1;
+    string audiences = 2;
 }
 
+message UberMintRequirements {
+    UberMintMode mode = 1;
+    enum UberMintMode {
+        DISABLED = 0;
+        ENABLED_LEGACY_MINT = 1;
+        ENABLED = 2;
+        ENABLED_ONLY_FOR_THIRD_PARTY = 3;
+    }
+    
+    oneof _rollout_ratio {
+        double rollout_ratio = 2;
+    }
+}
 
+message LoasRequirements {
+    bool allow_service_account = 1;
+}
+
+message UberProxyAuthRequirements {
+    UberProxyAuthMode mode = 1;
+    enum UberProxyAuthMode {
+        DISABLED = 0;
+        ENABLED = 1;
+    }
+    
+    string uptick_dat_policy = 2;
+}
+
+message PeerDelegationMode {
+    enum Mode {
+        MODE_UNSPECIFIED = 0;
+        ENABLED = 1;
+        DISABLED = 2;
+    }
+}
+
+message UberMintPlatformConfig {
+    string address = 1;
+    repeated string required_http_headers = 2;
+    repeated string optional_http_headers = 3;
+}

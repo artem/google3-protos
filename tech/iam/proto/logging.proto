@@ -1,22 +1,31 @@
 syntax = "proto3";
 
-import "net/proto2/proto/descriptor.proto";
 package tech.iam;
 
+import "net/proto2/proto/descriptor.proto";
+import "storage/datapol/annotations/proto/semantic_annotations.proto";
+
 message FieldLogOption {
-  bool not_logged = 1;
+    HandleOption handle_option = 1;
+    enum HandleOption {
+        NORMAL = 0;
+        NOT_LOGGED = 1;
+        SPECIAL_HANDLING = 2;
+        IGNORE_MISSING_DST_FIELDS = 3;
+        UNPACK_ANY = 4;
+    }
+    
+    string type_url = 2;
 }
 
 message MethodLogOption {
-  bool logged = 1;
+    bool logged = 1;
 }
 
-extend .proto2.FieldOptions {
-  .tech.iam.FieldLogOption log_option = 139642647;
+extend proto2.FieldOptions {
+    FieldLogOption log_option = 139642647;
 }
 
-extend .proto2.MethodOptions {
-  .tech.iam.MethodLogOption method_log_option = 139642647;
+extend proto2.MethodOptions {
+    MethodLogOption method_log_option = 139642647;
 }
-
-

@@ -142,6 +142,8 @@ message Http3ProtocolOptions {
 }
 
 message SchemeHeaderTransformation {
+    bool match_upstream = 2;
+    
     oneof transformation {
         string scheme_to_overwrite = 1;
     }

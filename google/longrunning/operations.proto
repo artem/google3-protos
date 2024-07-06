@@ -1,56 +1,77 @@
 syntax = "proto3";
 
-import "google/api/annotations.proto";
-import "google/protobuf/any.proto";
-import "google/protobuf/empty.proto";
-import "google/rpc/status.proto";
 package google.longrunning;
 
-option java_package = "com.google.longrunning";
-option java_outer_classname = "OperationsProto";
-option java_multiple_files = true;
-option go_package = "google.golang.org/genproto/googleapis/longrunning;longrunning";
-option csharp_namespace = "Google.LongRunning";
+import "google/api/annotations.proto";
+import "google/api/client.proto";
+import "google/protobuf/any.proto";
+import "google/protobuf/duration.proto";
+import "google/protobuf/empty.proto";
+import "google/rpc/status.proto";
+import "net/proto2/proto/descriptor.proto";
+
 option php_namespace = "Google\\LongRunning";
+option csharp_namespace = "Google.LongRunning";
+option objc_class_prefix = "GLRUN";
+option cc_enable_arenas = true;
+option go_package = "cloud.google.com/go/longrunning/autogen/longrunningpb;longrunningpb";
+option java_multiple_files = true;
+option java_outer_classname = "OperationsProto";
+option java_package = "com.google.longrunning";
+
+service Operations {
+    rpc ListOperations(ListOperationsRequest) returns (ListOperationsResponse);
+    rpc GetOperation(GetOperationRequest) returns (Operation);
+    rpc DeleteOperation(DeleteOperationRequest) returns (protobuf.Empty);
+    rpc CancelOperation(CancelOperationRequest) returns (protobuf.Empty);
+    rpc WaitOperation(WaitOperationRequest) returns (Operation);
+}
 
 message Operation {
-  string name = 1;
-  .google.protobuf.Any metadata = 2;
-  bool done = 3;
-  oneof result {
-    .google.rpc.Status error = 4;
-    .google.protobuf.Any response = 5;
-  }
+    string name = 1;
+    protobuf.Any metadata = 2;
+    bool done = 3;
+    
+    oneof result {
+        rpc.Status error = 4;
+        protobuf.Any response = 5;
+    }
 }
 
 message GetOperationRequest {
-  string name = 1;
+    string name = 1;
 }
 
 message ListOperationsRequest {
-  string name = 4;
-  string filter = 1;
-  int32 page_size = 2;
-  string page_token = 3;
+    string name = 4;
+    string filter = 1;
+    int32 page_size = 2;
+    string page_token = 3;
 }
 
 message ListOperationsResponse {
-  repeated .google.longrunning.Operation operations = 1;
-  string next_page_token = 2;
+    repeated Operation operations = 1;
+    string next_page_token = 2;
 }
 
 message CancelOperationRequest {
-  string name = 1;
+    string name = 1;
 }
 
 message DeleteOperationRequest {
-  string name = 1;
+    string name = 1;
 }
 
-service Operations {
-  rpc ListOperations(.google.longrunning.ListOperationsRequest) returns (.google.longrunning.ListOperationsResponse);
-  rpc GetOperation(.google.longrunning.GetOperationRequest) returns (.google.longrunning.Operation);
-  rpc DeleteOperation(.google.longrunning.DeleteOperationRequest) returns (.google.protobuf.Empty);
-  rpc CancelOperation(.google.longrunning.CancelOperationRequest) returns (.google.protobuf.Empty);
+message WaitOperationRequest {
+    string name = 1;
+    protobuf.Duration timeout = 2;
 }
 
+message OperationInfo {
+    string response_type = 1;
+    string metadata_type = 2;
+}
+
+extend proto2.MethodOptions {
+    OperationInfo operation_info = 1049;
+}

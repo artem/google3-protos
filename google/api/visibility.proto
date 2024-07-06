@@ -20,26 +20,26 @@ message VisibilityRule {
     string restriction = 2;
 }
 
-extend .proto2.ServiceOptions {
+extend proto2.ServiceOptions {
     VisibilityRule api_visibility = 72295727;
 }
 
-extend .proto2.MethodOptions {
+extend proto2.MethodOptions {
     VisibilityRule method_visibility = 72295727;
 }
 
-extend .proto2.MessageOptions {
+extend proto2.MessageOptions {
     VisibilityRule message_visibility = 72295727;
 }
 
-extend .proto2.FieldOptions {
+extend proto2.FieldOptions {
     VisibilityRule field_visibility = 72295727;
 }
 
-extend .proto2.EnumOptions {
+extend proto2.EnumOptions {
     VisibilityRule enum_visibility = 72295727;
 }
 
-extend .proto2.EnumValueOptions {
+extend proto2.EnumValueOptions {
     VisibilityRule value_visibility = 72295727;
 }

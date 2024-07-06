@@ -9,7 +9,7 @@ option java_multiple_files = true;
 option java_outer_classname = "PlatformOptionsProtoFile";
 option java_package = "com.google.identity.ubermint";
 
-extend .proto2.EnumValueOptions {
+extend proto2.EnumValueOptions {
     string payload_proto_name = 301347376;
     string loggable_payload_proto_name = 301347424;
     int32 keystore_config_id = 301347512;

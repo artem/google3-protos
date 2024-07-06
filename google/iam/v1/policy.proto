@@ -1,75 +1,87 @@
 syntax = "proto3";
 
+package google.iam.v1;
+
 import public "google/api/auditing.proto";
 import public "google/iam/v1/rule.proto";
 import public "google/type/expr.proto";
+import "google/api/visibility.proto";
+import "storage/datapol/annotations/proto/semantic_annotations.proto";
 import "tech/iam/proto/logging.proto";
-package google.iam.v1;
 
-option java_package = "com.google.iam.v1";
-option java_outer_classname = "PolicyProto";
-option java_multiple_files = true;
-option cc_enable_arenas = true;
+option php_namespace = "Google\\Cloud\\Iam\\V1";
 option csharp_namespace = "Google.Cloud.Iam.V1";
+option cc_enable_arenas = true;
+option go_package = "cloud.google.com/go/iam/apiv1/iampb;iampb";
+option java_multiple_files = true;
+option java_outer_classname = "PolicyProto";
+option java_package = "com.google.iam.v1";
 
 message Policy {
-  int32 version = 1;
-  repeated .google.iam.v1.Binding bindings = 4;
-  repeated .google.iam.v1.AuditConfig audit_configs = 6;
-  repeated .google.iam.v1.Rule rules = 2;
-  bytes etag = 3;
-  bool iam_owned = 5;
+    int32 version = 1;
+    repeated Binding bindings = 4;
+    repeated AuditConfig audit_configs = 6;
+    repeated Rule rules = 2;
+    bytes etag = 3;
+    
+    reserved 5;
 }
 
 message Binding {
-  string role = 1;
-  repeated string members = 2;
-  .google.type.Expr condition = 3;
+    string role = 1;
+    repeated string members = 2;
+    type.Expr condition = 3;
+    string binding_id = 4;
 }
 
 message AuditConfig {
-  string service = 1;
-  repeated string exempted_members = 2 [deprecated = true];
-  repeated .google.iam.v1.AuditLogConfig audit_log_configs = 3;
+    string service = 1;
+    repeated AuditLogConfig audit_log_configs = 3;
+    
+    reserved 2;
 }
 
 message AuditLogConfig {
-  enum LogType {
-    LOG_TYPE_UNSPECIFIED = 0;
-    ADMIN_READ = 1;
-    DATA_WRITE = 2;
-    DATA_READ = 3;
-  }
-  .google.iam.v1.AuditLogConfig.LogType log_type = 1;
-  repeated string exempted_members = 2;
+    LogType log_type = 1;
+    enum LogType {
+        LOG_TYPE_UNSPECIFIED = 0;
+        ADMIN_READ = 1;
+        DATA_WRITE = 2;
+        DATA_READ = 3;
+    }
+    
+    repeated string exempted_members = 2;
+    bool ignore_child_exemptions = 3;
 }
 
 message PolicyDelta {
-  repeated .google.iam.v1.BindingDelta binding_deltas = 1;
-  repeated .google.iam.v1.AuditConfigDelta audit_config_deltas = 2;
+    repeated BindingDelta binding_deltas = 1;
+    repeated AuditConfigDelta audit_config_deltas = 2;
 }
 
 message BindingDelta {
-  enum Action {
-    ACTION_UNSPECIFIED = 0;
-    ADD = 1;
-    REMOVE = 2;
-  }
-  .google.iam.v1.BindingDelta.Action action = 1;
-  string role = 2;
-  string member = 3;
+    Action action = 1;
+    enum Action {
+        ACTION_UNSPECIFIED = 0;
+        ADD = 1;
+        REMOVE = 2;
+    }
+    
+    string role = 2;
+    string member = 3;
+    type.Expr condition = 4;
 }
 
 message AuditConfigDelta {
-  enum Action {
-    ACTION_UNSPECIFIED = 0;
-    ADD = 1;
-    REMOVE = 2;
-  }
-  .google.iam.v1.AuditConfigDelta.Action action = 1;
-  string service = 2;
-  string exempted_member = 3;
-  string log_type = 4;
+    Action action = 1;
+    enum Action {
+        ACTION_UNSPECIFIED = 0;
+        ADD = 1;
+        REMOVE = 2;
+    }
+    
+    string service = 2;
+    string exempted_member = 3;
+    string log_type = 4;
+    bool ignore_child_exemptions = 5;
 }
-
-

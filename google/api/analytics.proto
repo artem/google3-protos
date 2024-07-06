@@ -2,17 +2,36 @@ syntax = "proto3";
 
 package google.api;
 
-option java_package = "com.google.api";
-option java_outer_classname = "AnalyticsProto";
-option java_multiple_files = true;
+import "google/api/visibility.proto";
+import "net/proto2/proto/descriptor.proto";
+
 option objc_class_prefix = "GAPI";
+option java_multiple_files = true;
+option java_outer_classname = "AnalyticsProto";
+option java_package = "com.google.api";
 
 message Analytics {
-  message AnalyticsDestination {
-    string monitored_resource = 1;
-    repeated string metrics = 2;
-  }
-  repeated .google.api.Analytics.AnalyticsDestination producer_destinations = 1;
+    repeated AnalyticsDestination producer_destinations = 1;
+    message AnalyticsDestination {
+        string monitored_resource = 1;
+        repeated string metrics = 2;
+    }
+    
+    repeated AnalyticsRule rules = 2;
 }
 
+message AnalyticsRule {
+    string selector = 1;
+    AnalyticsSamplingConfiguration sampling_configuration = 2;
+    BusinessIntelligenceConfig business_intelligence = 3;
+    bool append_trace_id = 4;
+}
 
+message AnalyticsSamplingConfiguration {
+    bool enable_sampling = 1;
+    double sampling_ratio = 2;
+}
+
+message BusinessIntelligenceConfig {
+    bool active_developer_method = 1;
+}

@@ -1,17 +1,16 @@
-syntax = "proto2";
+syntax = "editions";
 
 package net_base;
 
-option cc_enable_arenas = true;
 option java_package = "com.google.net.util";
 
 message ConnectionData {
-    required int32 local_port = 1;
-    required int32 remote_port = 2;
+    optional int32 local_port = 1;
+    optional int32 remote_port = 2;
     optional fixed32 remote_ipv4 = 3 [default = 0];
     optional bytes remote_ip = 10;
-    required string remote_label = 4;
-    required int32 mode = 5;
+    optional string remote_label = 4;
+    optional int32 mode = 5;
     
     optional TransportLayer transport_layer = 6 [default = INET_TCP];
     enum TransportLayer {
@@ -23,9 +22,10 @@ message ConnectionData {
         INET_UNKNOWN = 256;
     }
     
-    repeated group Owner = 7 {
-        required string name = 8;
-        required int32 bytes = 9;
+    repeated Owner owner = 7;
+    message Owner {
+        optional string name = 8;
+        optional int32 bytes = 9;
     }
     
     enum ConnectionMode {
@@ -36,7 +36,7 @@ message ConnectionData {
 }
 
 message NetmonPortMap {
-    required string local_label = 1;
+    optional string local_label = 1;
     optional int32 addrspace_id = 5;
     optional int32 deletion_threshold_secs = 2;
     repeated ConnectionData active_connection = 3;

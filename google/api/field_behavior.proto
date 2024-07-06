@@ -2,6 +2,7 @@ syntax = "proto3";
 
 package google.api;
 
+import "google/api/visibility.proto";
 import "net/proto2/proto/descriptor.proto";
 
 option objc_class_prefix = "GAPI";
@@ -24,6 +25,6 @@ enum FieldBehavior {
     MUTABLE_RESOURCE_NAME = 10;
 }
 
-extend .proto2.FieldOptions {
+extend proto2.FieldOptions {
     repeated FieldBehavior field_behavior = 1052 [packed = false];
 }

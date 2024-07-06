@@ -34,9 +34,9 @@ message DocumentIdProto {
 message StandardDatScopeProto {
     repeated int32 api_scope_code = 5 [packed = true];
     repeated UserDataScopeProto user_data_scope = 1;
-    optional bytes app_specific_resources = 4;
     optional bytes OBSOLETE_2 = 2;
     optional bytes OBSOLETE_3 = 3;
+    optional bytes OBSOLETE_4 = 4;
     
     extend credentials.DataAccessTokenScope {
         optional StandardDatScopeProto dat_scope_extension = 17199386;

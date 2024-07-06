@@ -1,24 +1,55 @@
 syntax = "proto2";
 
-import "google/iam/v1/policy.proto";
 package security.context;
 
-option java_package = "com.google.security.context";
-option java_outer_classname = "AuthenticationPolicyProtoFile";
-option java_multiple_files = true;
+import "google/iam/v1/policy.proto";
 
-enum AuthorizationMode {
-  AUTHORIZATION_MODE_UNKNOWN = 0;
-  AUTOMATIC_IAM = 1;
-  MANUAL_IAM = 2;
-  MANUAL_LEGACY = 3;
-  MANUAL = 4;
-}
+option java_multiple_files = true;
+option java_outer_classname = "AuthenticationPolicyProtoFile";
+option java_package = "com.google.security.context";
 
 message AuthenticationPolicy {
-  optional .google.iam.v1.Policy creds_policy = 1;
-  optional .google.iam.v1.Policy impersonation_policy = 2;
-  reserved 3;
+    optional google.iam.v1.Policy creds_policy = 1;
+    optional google.iam.v1.Policy impersonation_policy = 2;
+    optional bool default_anonymous_mode = 4 [default = false];
+    optional AuthenticationMethods authentication_methods = 5;
+    
+    reserved 3;
 }
 
+message AuthenticationMethods {
+    optional CloudUberMintConfig cloud_ubermint = 1;
+    message CloudUberMintConfig {
+        optional UberMintMode mode = 1;
+        enum UberMintMode {
+            UNSPECIFIED = 0;
+            ENABLED = 1;
+        }
+    }
+    
+    optional UberMintConfig ubermint = 3;
+    message UberMintConfig {
+        repeated UberMintPlatform platforms = 1;
+        enum UberMintPlatform {
+            PLATFORM_UNSPECIFIED = 0;
+            SANDBOX = 1;
+            CLOUD = 2;
+            DEVICE = 3;
+            LEGACY_GAIA = 5;
+            PROD_ACCOUNT = 6;
+            FITBIT = 7;
+            SANDCASTLE = 8;
+        }
+    }
+    
+    optional bool use_default_methods = 2;
+}
 
+enum AuthorizationMode {
+    AUTHORIZATION_MODE_UNKNOWN = 0;
+    AUTOMATIC_IAM = 1;
+    MANUAL_IAM = 2;
+    MANUAL_LEGACY = 3;
+    CLOUD_POLICY_ENFORCEMENT = 5;
+    MANUAL = 4;
+}

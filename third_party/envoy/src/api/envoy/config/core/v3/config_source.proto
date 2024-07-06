@@ -80,7 +80,7 @@ message ExtensionConfigSource {
 }
 
 enum ApiVersion {
-    AUTO = 0 [deprecated = true];
+    AUTO = 0;
     V2 = 1 [deprecated = true];
     V3 = 2;
 }

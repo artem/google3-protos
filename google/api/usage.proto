@@ -1,34 +1,67 @@
 syntax = "proto3";
 
-import "google/api/annotations.proto";
 package google.api;
 
-option java_package = "com.google.api";
-option java_outer_classname = "UsageProto";
-option java_multiple_files = true;
-option go_package = "google.golang.org/genproto/googleapis/api/serviceconfig;serviceconfig";
+import "google/api/visibility.proto";
+
 option objc_class_prefix = "GAPI";
+option go_package = "google.golang.org/genproto/googleapis/api/serviceconfig;serviceconfig";
+option java_multiple_files = true;
+option java_outer_classname = "UsageProto";
+option java_package = "com.google.api";
 
 message Usage {
-  enum ServiceAccess {
-    RESTRICTED = 0;
-    PUBLIC = 1;
-    ORG_RESTRICTED = 2;
-    ORG_PUBLIC = 3;
-  }
-  .google.api.Usage.ServiceAccess service_access = 4;
-  repeated string requirements = 1;
-  repeated string depends_on_services = 2;
-  repeated string activation_hooks = 3;
-  repeated string deactivation_hooks = 5;
-  repeated .google.api.UsageRule rules = 6;
-  string producer_notification_channel = 7;
+    ServiceAccess service_access = 4;
+    enum ServiceAccess {
+        RESTRICTED = 0;
+        PUBLIC = 1;
+        ORG_RESTRICTED = 2;
+        ORG_PUBLIC = 3;
+    }
+    
+    repeated string requirements = 1;
+    repeated string depends_on_services = 2 [deprecated = true];
+    repeated string activation_hooks = 3 [deprecated = true];
+    repeated string deactivation_hooks = 5 [deprecated = true];
+    repeated UsageRule rules = 6;
+    string producer_notification_channel = 7;
+    ServiceIdentity service_identity = 8;
+    
+    ResourceBasedSharing sharing = 9;
+    enum ResourceBasedSharing {
+        RESOURCE_BASED_SHARING_UNSPECIFIED = 0;
+        BY_POLICY = 1;
+        ALWAYS = 2;
+    }
+    
+    repeated Group groups = 10;
 }
 
 message UsageRule {
-  string selector = 1;
-  bool allow_unregistered_calls = 2;
-  bool skip_service_control = 3;
+    string selector = 1;
+    bool allow_unregistered_calls = 2;
+    bool skip_service_control = 3;
+    bool skip_service_control_for_stubby = 4;
+    string default_api_key = 6;
+    bool skip_streaming_api_metrics = 7;
+    
+    reserved 5;
 }
 
+message ServiceIdentity {
+    string service_account_parent = 1;
+    string display_name = 2;
+    string description = 3;
+}
 
+message Group {
+    string name = 1;
+    string display_name = 2;
+    string description = 3;
+    repeated MemberInfo members = 4;
+}
+
+message MemberInfo {
+    string name = 1;
+    string reason = 2;
+}

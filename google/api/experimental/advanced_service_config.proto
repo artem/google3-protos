@@ -2,87 +2,141 @@ syntax = "proto2";
 
 package google.api;
 
-option java_package = "com.google.api";
-option java_outer_classname = "ServiceFrameworkAdvancedProto";
-option java_multiple_files = true;
 option objc_class_prefix = "GAPI";
-
-enum CacheStrategy {
-  LOCAL_ONLY = 0;
-  MEMCACHE_ONLY = 1;
-  LOCAL_AND_MEMCACHE = 2;
-}
-
-enum JspbVariant {
-  UNKNOWN = 0;
-  LITE = 1;
-  FAVA = 2;
-  GWT = 3;
-}
+option java_multiple_files = true;
+option java_outer_classname = "ServiceFrameworkAdvancedProto";
+option java_package = "com.google.api";
 
 message AdvancedServiceConfig {
-  repeated .google.api.RenameMethodRule rename_rules = 1;
-  repeated .google.api.UsageManagerRule usage_manager_rules = 2;
-  optional .google.api.CacheConfig oauth_cache = 3;
-  optional .google.api.CacheConfig usage_manager_cache = 4;
-  optional .google.api.CacheConfig quota_cache = 5;
-  optional .google.api.CacheConfig chemist_cache = 12;
-  repeated .google.api.ExtendedQuotaRule quota_rules = 6;
-  repeated .google.api.WebChannelConfig webchannel_config = 7;
-  repeated .google.api.TranslatorConfig translator_config = 8;
-  repeated .google.api.MessageLimitsRule message_limits_rules = 9;
-  optional .google.api.ChemistConfig chemist_config = 10;
-  reserved 11;
+    repeated RenameMethodRule rename_rules = 1;
+    repeated UsageManagerRule usage_manager_rules = 2;
+    optional CacheConfig oauth_cache = 3;
+    optional CacheConfig usage_manager_cache = 4;
+    optional CacheConfig quota_cache = 5;
+    optional CacheConfig chemist_cache = 12;
+    repeated ExtendedQuotaRule quota_rules = 6;
+    repeated WebChannelConfig webchannel_config = 7;
+    repeated TranslatorConfig translator_config = 8;
+    repeated MessageLimitsRule message_limits_rules = 9;
+    optional ChemistConfig chemist_config = 10;
+    optional CacheConfig jwt_cache = 13;
+    optional UbermintConfig ubermint_config = 14;
+    optional BatchConfig batch = 15;
+    optional QuotaConfig quota = 16;
+    optional IAMConfig iam_config = 17;
+    repeated EasyApisConfig easyapis_config = 18;
+    
+    reserved 11;
 }
 
 message RenameMethodRule {
-  optional string selector = 1;
-  optional string rename_to = 2;
+    optional string selector = 1;
+    optional string rename_to = 2;
 }
 
 message UsageManagerRule {
-  optional string selector = 1;
-  optional string address = 2;
-  optional bool enable_cache = 3;
+    optional string selector = 1;
+    optional string address = 2;
+    optional bool enable_cache = 3;
 }
 
 message ExtendedQuotaRule {
-  optional string selector = 1;
-  optional bool enable_cache = 2;
-  optional int32 quota_cache_lifetime_seconds = 3;
+    optional string selector = 1;
+    optional bool enable_cache = 2;
+    optional int32 quota_cache_lifetime_seconds = 3;
 }
 
 message CacheConfig {
-  optional bool disabled = 6;
-  optional .google.api.CacheStrategy strategy = 1;
-  optional int32 lifetime_seconds = 2;
-  optional int32 local_cache_size_bytes = 3;
-  optional int32 memcacheg_rpc_timeout_ms = 4;
-  optional int32 refresh_threshold_seconds = 5;
+    optional bool disabled = 6;
+    optional CacheStrategy strategy = 1;
+    optional int32 lifetime_seconds = 2;
+    optional int32 local_cache_size_bytes = 3;
+    optional int32 memcacheg_rpc_timeout_ms = 4;
+    optional int32 refresh_threshold_seconds = 5;
 }
 
 message WebChannelConfig {
-  optional string selector = 1;
-  repeated string url_paths = 2;
+    optional string selector = 1;
+    repeated string url_paths = 2;
 }
 
 message TranslatorConfig {
-  optional string selector = 1;
-  optional bool output_all_primitive_fields_to_json = 2;
-  optional .google.api.JspbVariant jspb_variant = 3;
-  optional bool use_web_safe_base64_for_byte_fields = 4;
-  optional bool struct_integers_as_strings = 5;
-  optional bool add_trailing_zeros_for_timestamp_and_duration = 6;
+    optional string selector = 1;
+    optional bool output_all_primitive_fields_to_json = 2;
+    optional JspbVariant jspb_variant = 3;
+    optional int32 jspb_pivot = 7;
+    optional bool jspb_accept_negative_unsigned_number = 11;
+    optional bool use_web_safe_base64_for_byte_fields = 4;
+    optional bool struct_integers_as_strings = 5;
+    optional bool add_trailing_zeros_for_timestamp_and_duration = 6;
+    optional int32 json_translation_max_recursion_depth = 9;
+    optional bool drop_empty_fields = 10;
+    
+    reserved 8;
 }
 
 message MessageLimitsRule {
-  optional string selector = 1;
-  optional int32 request_limit = 2;
-  optional int32 response_limit = 3;
+    optional string selector = 1;
+    optional int32 request_limit = 2;
+    
+    reserved 3;
+}
+
+message BatchConfig {
+    optional int32 inner_request_count_limit = 1;
+    optional int32 outer_request_size_limit = 2;
+    
+    reserved 3;
 }
 
 message ChemistConfig {
-  optional string address = 1;
+    optional string address = 1;
+    optional string report_address = 2;
 }
 
+message UbermintConfig {
+    optional string consumer_address = 1;
+    optional string service_account_address = 2;
+    optional string yawns_only_service_account_uberminter_address = 3;
+}
 
+message IAMConfig {
+    optional string custom_address = 1;
+}
+
+message QuotaConfig {
+    map<string, double> max_credit_percentages = 1;
+    repeated string custom_enforcement_metrics = 2;
+    repeated string org_quota_metrics = 3;
+    repeated string force_regionalized_enforcement_metrics = 4;
+    repeated string ignore_project_default_metrics = 5;
+    repeated SkipQuotaRule esf_quota_skip_rules = 6;
+}
+
+message SkipQuotaRule {
+    optional ValueType type = 1;
+    enum ValueType {
+        VALUE_TYPE_UNSPECIFIED = 0;
+        BORG_USER = 1;
+        INTERNAL_PROJECT_ID = 2;
+    }
+    
+    repeated string values = 2;
+}
+
+message EasyApisConfig {
+    optional string selector = 1;
+    optional bool enable = 2;
+}
+
+enum CacheStrategy {
+    LOCAL_ONLY = 0;
+    MEMCACHE_ONLY = 1;
+    LOCAL_AND_MEMCACHE = 2;
+}
+
+enum JspbVariant {
+    UNKNOWN = 0;
+    FAVA = 2;
+    GWT = 3;
+}

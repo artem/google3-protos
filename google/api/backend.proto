@@ -2,21 +2,39 @@ syntax = "proto3";
 
 package google.api;
 
-option java_package = "com.google.api";
-option java_outer_classname = "BackendProto";
-option java_multiple_files = true;
-option go_package = "google.golang.org/genproto/googleapis/api/serviceconfig;serviceconfig";
+import "google/api/rename.proto";
+import "google/api/visibility.proto";
+
 option objc_class_prefix = "GAPI";
+option go_package = "google.golang.org/genproto/googleapis/api/serviceconfig;serviceconfig";
+option java_multiple_files = true;
+option java_outer_classname = "BackendProto";
+option java_package = "com.google.api";
 
 message Backend {
-  repeated .google.api.BackendRule rules = 1;
+    repeated BackendRule rules = 1;
+    repeated RenameRule rename_rules = 2;
 }
 
 message BackendRule {
-  string selector = 1;
-  string address = 2;
-  double deadline = 3;
-  double min_deadline = 4;
+    string selector = 1;
+    string address = 2;
+    double deadline = 3;
+    double min_deadline = 4 [deprecated = true];
+    double operation_deadline = 5;
+    
+    PathTranslation path_translation = 6;
+    enum PathTranslation {
+        PATH_TRANSLATION_UNSPECIFIED = 0;
+        CONSTANT_ADDRESS = 1;
+        APPEND_PATH_TO_ADDRESS = 2;
+    }
+    
+    string protocol = 9;
+    map<string, BackendRule> overrides_by_request_protocol = 10;
+    
+    oneof authentication {
+        string jwt_audience = 7;
+        bool disable_auth = 8;
+    }
 }
-
-

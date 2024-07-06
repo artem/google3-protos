@@ -1,20 +1,42 @@
 syntax = "proto3";
 
-import "google/api/annotations.proto";
 package google.api;
 
-option java_package = "com.google.api";
-option java_outer_classname = "ServiceManagementConfigProto";
-option java_multiple_files = true;
+import "google/api/field_behavior.proto";
+import "google/api/visibility.proto";
+
 option objc_class_prefix = "GAPI";
+option java_multiple_files = true;
+option java_outer_classname = "ServiceManagementConfigProto";
+option java_package = "com.google.api";
 
 message ServiceManagementConfig {
-  enum DeploymentMode {
-    NORMAL = 0;
-    SKIP_CANARY = 1;
-  }
-  .google.api.ServiceManagementConfig.DeploymentMode deployment_mode = 1;
-  bool include_legacy_components = 2;
+    DeploymentMode deployment_mode = 1;
+    enum DeploymentMode {
+        NORMAL = 0;
+        SKIP_CANARY = 1;
+    }
+    
+    bool include_legacy_components = 2;
+    
+    ConfigDestination config_destination = 3;
+    enum ConfigDestination {
+        UNSPECIFIED = 0;
+        STAGING = 1;
+    }
+    
+    string prod_service_name = 4;
+    
+    BuildMode build_mode = 5;
+    enum BuildMode {
+        BUILD_MODE_UNSPECIFIED = 0;
+        BUILD_MODE_V1 = 1;
+        BUILD_MODE_V2 = 2;
+    }
+    
+    UniverseConfig universe_config = 6;
+    message UniverseConfig {
+        string name = 1;
+        bool turnup = 2;
+    }
 }
-
-

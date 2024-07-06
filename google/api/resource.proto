@@ -60,19 +60,19 @@ message ResourceContainerRule {
     string type = 2;
 }
 
-extend .proto2.MessageOptions {
+extend proto2.MessageOptions {
     ResourceDescriptor resource = 1053;
 }
 
-extend .proto2.FieldOptions {
+extend proto2.FieldOptions {
     ResourceReference resource_reference = 1055;
     ResourceContainerRule resource_container = 135496935 [deprecated = true];
 }
 
-extend .proto2.FileOptions {
+extend proto2.FileOptions {
     repeated ResourceDescriptor resource_definition = 1053;
 }
 
-extend .proto2.MethodOptions {
+extend proto2.MethodOptions {
     ResourceReference method_resource = 463459046;
 }

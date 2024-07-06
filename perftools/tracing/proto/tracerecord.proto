@@ -22,9 +22,12 @@ message TraceRecord {
     optional double query_cost_sampling_probability = 48;
     optional string name = 18;
     optional string stubby_name_with_package = 45;
-    optional double local_start_time = 19;
-    optional double local_end_time = 20;
-    optional double local_stop_time = 31;
+    optional double local_start_time = 19 [deprecated = true];
+    optional double local_end_time = 20 [deprecated = true];
+    optional fixed64 local_start_time_ns = 51;
+    optional fixed64 local_end_time_ns = 52;
+    optional double local_stop_time = 31 [deprecated = true];
+    optional fixed64 local_stop_time_ns = 53;
     optional bool is_leaf = 26 [deprecated = true];
     optional int32 child_span_count = 38;
     optional bool error = 33 [deprecated = true];
@@ -62,13 +65,14 @@ message TraceRecord {
         repeated group AnnotationEntry = 11 {
             optional string key = 27;
             optional perftools.tracing.SourceLocation source_location = 46;
-            required double timestamp = 12;
+            optional double timestamp = 12 [deprecated = true];
+            optional fixed64 timestamp_ns = 54;
             optional int32 thread_id = 37;
             optional string string_value = 13;
             optional int32 int32_value = 21;
             optional int64 int64_value = 22;
             optional double double_value = 23;
-            optional .proto2.bridge.MessageSet message_value = 24;
+            optional proto2.bridge.MessageSet message_value = 24;
             optional bool boolean_value = 30;
             
             repeated group SymbolizedStackFrame = 25 {
@@ -80,7 +84,7 @@ message TraceRecord {
     
     reserved 3 to 8, 35;
     
-    extend .proto2.bridge.MessageSet {
+    extend proto2.bridge.MessageSet {
         optional TraceRecord message_set_extension = 6076542;
     }
 }
@@ -89,7 +93,7 @@ message EncryptedAnnotationPlaceholder {
     optional int32 num_cipher_bytes = 1;
     optional uint64 encrypted_annotation_id = 2;
     
-    extend .proto2.bridge.MessageSet {
+    extend proto2.bridge.MessageSet {
         optional EncryptedAnnotationPlaceholder message_set_extension = 444581584;
     }
 }

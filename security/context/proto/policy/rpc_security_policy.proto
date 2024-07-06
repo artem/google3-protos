@@ -1,50 +1,127 @@
 syntax = "proto2";
 
-import "google/iam/v1/policy.proto";
-import "security/context/proto/policy/authentication_policy.proto";
-import "security/context/proto/creds_policy_config.proto";
 package security.context;
 
-option java_package = "com.google.security.context";
-option java_outer_classname = "RpcSecurityPolicyProtoFile";
+import "google/api/auditing.proto";
+import "google/api/policy.proto";
+import "google/iam/v1/policy.proto";
+import "privacy/data_governance/attributes/proto/annotations.proto";
+import "security/context/proto/policy/authentication_policy.proto";
+import "security/context/proto/policy/axt_level.proto";
+import "security/context/proto/policy/creds_assertion.proto";
+import "security/context/proto/policy/endpoint_policy.proto";
+import "security/context/proto/policy/http_extraction.proto";
+import "security/context/proto/policy/policy_processing.proto";
+import "security/context/proto/policy/rpc_security_policy_admin.proto";
+
 option java_multiple_files = true;
+option java_outer_classname = "RpcSecurityPolicyProtoFile";
+option java_package = "com.google.security.context";
 
 message RpcSecurityPolicyMapping {
-  repeated string rpc_method = 1;
-  repeated string action = 5;
-  optional .security.context.AuthenticationPolicy authentication_policy = 2;
-  optional .security.context.AuthorizationMode authorization_mode = 3;
-  optional string permission_to_check = 4;
-  repeated .security.context.AuthorizationMethod authorization_method = 6;
+    repeated rpcsp.PolicyRewriteName enable_rewrites = 14;
+    repeated rpcsp.PolicyRewriteName disable_rewrites = 15;
+    repeated rpcsp.PolicyCheckName enable_checks = 16;
+    repeated rpcsp.PolicyCheckName disable_checks = 17;
+    repeated string rpc_method = 1;
+    repeated string action = 5;
+    repeated string http_path = 7;
+    repeated string label = 8;
+    optional AuthenticationPolicy authentication_policy = 2;
+    optional AuthorizationMode authorization_mode = 3;
+    optional string permission_to_check = 4;
+    repeated AuthorizationMethod authorization_method = 6;
+    optional privacy.data_governance.attributes.Annotations data_governance_annotations = 9;
+    optional AdminPolicy admin = 10;
+    repeated CredsAssertion creds_assertion = 11;
+    optional EsfConfig esf_config = 12;
+    optional CrossProductSharing cross_product_sharing = 18;
+    optional CrossProductSharing cross_product_sharing_dry_run = 19;
+    
+    reserved 13;
 }
 
 message AuthorizationMethod {
-  message LocalIam {
-  }
-  message CloudIam {
-  }
-  message Delegated {
-  }
-  message Custom {
-  }
-  oneof method {
-    .security.context.AuthorizationMethod.LocalIam local_iam = 1;
-    .security.context.AuthorizationMethod.CloudIam cloud_iam = 2;
-    .security.context.AuthorizationMethod.Delegated delegated = 4;
-    .security.context.AuthorizationMethod.Custom custom = 3;
-  }
+    oneof method {
+        LocalIam local_iam = 1;
+        CloudIam cloud_iam = 2;
+        Zanzibar zanzibar = 5;
+        Delegated delegated = 4;
+        Custom custom = 3;
+        CcfeAuthorizationAlreadyDone ccfe_authorization_already_done = 6;
+    }
+    
+    message LocalIam {
+        
+    }
+    
+    message CloudIam {
+        
+    }
+    
+    message Zanzibar {
+        
+    }
+    
+    message Delegated {
+        
+    }
+    
+    message Custom {
+        
+    }
+    
+    message CcfeAuthorizationAlreadyDone {
+        
+    }
 }
 
 message AuditingConfig {
-  optional .google.api.Auditing auditing = 1;
+    optional google.api.Auditing auditing = 1;
+    optional HttpExtractionRules http = 2;
+}
+
+message PolicyRequirement {
+    optional rpcsp.AXTLadder.Level axt_level = 1;
 }
 
 message RpcSecurityPolicy {
-  repeated .security.context.RpcSecurityPolicyMapping mapping = 2;
-  optional .google.iam.v1.Policy system_authorization_policy = 3;
-  optional .security.context.AuditingConfig audit = 5;
-  optional .security.context.CredsPolicyConfigProto creds_policy_config = 1;
-  optional bool trust_esf_authentication = 4;
+    repeated RpcSecurityPolicyMapping mapping = 2;
+    repeated google.api.MethodPolicy method_policies = 7;
+    optional google.iam.v1.Policy system_authorization_policy = 3;
+    optional AuditingConfig audit = 5;
+    optional PolicyRequirement policy_requirement = 9;
+    optional bool trust_esf_authentication = 4 [default = false, deprecated = true];
+    repeated RpcService rpc_services = 14;
+    repeated EndpointPolicy endpoint_policies = 6;
+    repeated rpcsp.PolicyRewriteName enable_rewrites = 10;
+    repeated rpcsp.PolicyRewriteName disable_rewrites = 11;
+    repeated rpcsp.PolicyCheckName enable_checks = 12;
+    repeated rpcsp.PolicyCheckName disable_checks = 13;
+    optional bool enable_label_enforcement = 8;
+    optional bool legacy_allow_label_mappings_without_label_enforcement = 101 [deprecated = true];
+    
+    reserved 1;
 }
 
+message RpcService {
+    optional string name = 1;
+    optional string renamed_as = 2;
+}
 
+message EsfConfig {
+    repeated string trusted_esf_roles = 1;
+    repeated string trusted_esf_groups = 4;
+    optional bool allow_untrusted_requests = 2 [default = false];
+    optional bool enable_peer_delegation = 3 [default = false];
+}
+
+message EnableConsentCheck {
+    
+}
+
+message CrossProductSharing {
+    optional EnableConsentCheck enable_consent_check = 1;
+    optional int32 service_team_graph_product_id = 2;
+    repeated string exclude_peers = 3;
+}

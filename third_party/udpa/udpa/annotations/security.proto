@@ -12,6 +12,6 @@ message FieldSecurityAnnotation {
     bool configure_for_untrusted_upstream = 2;
 }
 
-extend .proto2.FieldOptions {
+extend proto2.FieldOptions {
     FieldSecurityAnnotation security = 11122993;
 }

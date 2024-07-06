@@ -2,30 +2,89 @@ syntax = "proto3";
 
 package google.api;
 
-option java_package = "com.google.api";
-option java_outer_classname = "DocumentationProto";
-option java_multiple_files = true;
-option go_package = "google.golang.org/genproto/googleapis/api/serviceconfig;serviceconfig";
+import "google/api/visibility.proto";
+
 option objc_class_prefix = "GAPI";
+option go_package = "google.golang.org/genproto/googleapis/api/serviceconfig;serviceconfig";
+option java_multiple_files = true;
+option java_outer_classname = "DocumentationProto";
+option java_package = "com.google.api";
 
 message Documentation {
-  string summary = 1;
-  repeated .google.api.Page pages = 5;
-  repeated .google.api.DocumentationRule rules = 3;
-  string documentation_root_url = 4;
-  string overview = 2;
+    string summary = 1;
+    repeated Page pages = 5;
+    repeated DocumentationRule rules = 3;
+    string documentation_root_url = 4;
+    string service_root_url = 6;
+    string overview = 2;
+    repeated DocumentationPerVersion documentation_per_version = 7;
+    string unattached_type_behaviors = 8;
+    repeated Page section_overrides = 9;
+    repeated ReferenceNode reference_nodes = 10;
+    repeated CodeSnippetRule code_snippet_rules = 11;
 }
 
 message DocumentationRule {
-  string selector = 1;
-  string description = 2;
-  string deprecation_description = 3;
+    string selector = 1;
+    string description = 2;
+    string deprecation_description = 3;
+    string disable_replacement_words = 4;
+}
+
+message CodeSnippetRule {
+    string selector = 1;
+    repeated CodeSnippet code_snippets = 2;
+}
+
+message CodeSnippet {
+    string title = 1;
+    repeated CodeSnippetInclude includes = 2;
+}
+
+message CodeSnippetInclude {
+    string title = 1;
+    CodeSnippetLanguage code_language = 2;
+    string region_tag = 3;
+    
+    oneof code_snippet_type {
+        GitHubInclude github_include = 4;
+    }
+}
+
+message GitHubInclude {
+    string account = 1;
+    string project = 2;
+    string file = 3;
+    string branch = 4;
 }
 
 message Page {
-  string name = 1;
-  string content = 2;
-  repeated .google.api.Page subpages = 3;
+    string name = 1;
+    string content = 2;
+    repeated Page subpages = 3;
 }
 
+message DocumentationPerVersion {
+    string version = 1;
+    repeated string additional_type_names = 2;
+}
 
+message ReferenceNode {
+    string title = 1;
+    string bundle = 2;
+}
+
+enum CodeSnippetLanguage {
+    CODE_SNIPPET_LANGUAGE_UNSPECIFIED = 0;
+    C_PLUS_PLUS = 1;
+    C_SHARP = 2;
+    GO = 3;
+    JAVA = 4;
+    KOTLIN = 5;
+    JAVASCRIPT = 6;
+    PHP = 7;
+    PYTHON = 8;
+    RUBY = 9;
+    SHELL = 10;
+    TYPESCRIPT = 11;
+}

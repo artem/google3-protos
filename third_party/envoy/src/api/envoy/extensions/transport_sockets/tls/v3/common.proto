@@ -82,6 +82,12 @@ message SubjectAltNameMatcher {
 message CertificateValidationContext {
     .envoy.config.core.v3.DataSource trusted_ca = 1;
     CertificateProviderPluginInstance ca_certificate_provider_instance = 13;
+    
+    SystemRootCerts system_root_certs = 17;
+    message SystemRootCerts {
+        
+    }
+    
     .envoy.config.core.v3.WatchedDirectory watched_directory = 11;
     repeated string verify_certificate_spki = 3;
     repeated string verify_certificate_hash = 2;

@@ -31,6 +31,7 @@ message Qualifier {
 message LocationQualifier {
     optional bool non_user_location = 1 [default = false];
     optional bool user_indirect_location = 4 [default = false];
+    optional bool user_place_of_interest = 5 [default = false];
     optional bool precise_location = 2 [default = false];
     optional bool country_level_location = 3 [default = false];
 }
@@ -144,6 +145,9 @@ enum SemanticType {
     ST_CLOUD_IAM_ROLE_ID = 2702;
     ST_CLOUD_IAM_ROLE_NAME = 2703;
     ST_CLOUD_IAM_PERMISSION = 2704;
+    ST_GOOGLE_OPERATIONAL_DATA = 2800;
+    ST_GOOGLE_OPERATIONAL_METRICS = 2801;
+    ST_GOOGLE_GENERATED_USER_METADATA = 2901;
     ST_CONTENT_DEPENDENT = 9900;
     ST_DEBUG_INFO = 9901;
     ST_KEY_VALUE_PAIR = 9902;
@@ -163,7 +167,7 @@ enum DataFormat {
     DF_LOGGING_ELEMENT_TYPE_ID = 7;
 }
 
-extend .proto2.FieldOptions {
+extend proto2.FieldOptions {
     optional SemanticType semantic_type = 40075780 [default = ST_NOT_SPECIFIED];
     optional Qualifier qualifier = 40270992;
     optional LocationQualifier location_qualifier = 69646961;
@@ -172,7 +176,7 @@ extend .proto2.FieldOptions {
     repeated RetentionSpec retention = 40223876;
 }
 
-extend .proto2.MessageOptions {
+extend proto2.MessageOptions {
     optional SemanticType msg_semantic_type = 41149386 [default = ST_NOT_SPECIFIED];
     optional Qualifier msg_qualifier = 41551199;
     optional LocationQualifier msg_location_qualifier = 69646961;
@@ -180,7 +184,7 @@ extend .proto2.MessageOptions {
     repeated RetentionSpec msg_retention = 41909987;
 }
 
-extend .proto2.FileOptions {
+extend proto2.FileOptions {
     optional bool file_vetted_for_datapol_annotations = 43601160 [default = false];
     optional string file_vetting_status = 71304954;
 }

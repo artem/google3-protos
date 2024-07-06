@@ -64,7 +64,7 @@ enum IdentifierType {
     LOGSID_HTTPHEADER = 206;
 }
 
-extend .proto2.FieldOptions {
+extend proto2.FieldOptions {
     optional IdentifierType id_type = 21713708 [default = LOGSID_NONE];
     optional bool temp_logs_only = 21623477 [default = false];
     optional bool is_private_log = 23459630 [default = false];
@@ -74,7 +74,7 @@ extend .proto2.FieldOptions {
     optional string sawmill_filter_override_approved_by_logs_access = 56871503;
 }
 
-extend .proto2.MessageOptions {
+extend proto2.MessageOptions {
     optional IdentifierType msg_id_type = 21713708 [default = LOGSID_NONE];
     optional bool msg_temp_logs_only = 21623477 [default = false];
     optional bool msg_not_logged_in_sawmill = 21596320 [default = false];
@@ -82,7 +82,7 @@ extend .proto2.MessageOptions {
     optional string field_encryption_key_name = 26652850;
 }
 
-extend .proto2.FileOptions {
+extend proto2.FileOptions {
     optional bool file_not_used_for_logging_except_enums = 21596320 [default = false];
     optional bool file_vetted_for_logs_annotations = 28993747 [default = false];
 }

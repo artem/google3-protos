@@ -23,5 +23,7 @@ message LogicalPolicy {
         PAYMENTS_PERSONALIZATION_SETTINGS = 10;
         OLYMPUS = 11;
         AADC_GUEST_LOGGING = 12;
+        NO_ADS_ACCESS = 13;
+        ADS_KIDS = 14;
     }
 }

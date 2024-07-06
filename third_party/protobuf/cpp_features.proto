@@ -20,6 +20,6 @@ message CppFeatures {
     }
 }
 
-extend .proto2.FeatureSet {
+extend proto2.FeatureSet {
     optional CppFeatures cpp = 1000;
 }

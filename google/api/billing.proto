@@ -1,28 +1,33 @@
 syntax = "proto3";
 
-import "google/api/annotations.proto";
-import "google/api/metric.proto";
-import "google/api/service_control_access.proto";
 package google.api;
 
-option java_package = "com.google.api";
-option java_outer_classname = "BillingProto";
-option java_multiple_files = true;
-option go_package = "google.golang.org/genproto/googleapis/api/serviceconfig;serviceconfig";
+import "google/api/metric.proto";
+import "google/api/visibility.proto";
+
 option objc_class_prefix = "GAPI";
+option go_package = "google.golang.org/genproto/googleapis/api/serviceconfig;serviceconfig";
+option java_multiple_files = true;
+option java_outer_classname = "BillingProto";
+option java_package = "com.google.api";
 
 message Billing {
-  repeated string metrics = 1;
-  .google.api.ServiceControlAccess acl = 2;
-  repeated .google.api.BillingStatusRule rules = 5;
-  string billing_service_name = 6;
-  repeated .google.api.AreaUnderCurveParams area_under_curve_params = 7;
-  reserved 3, 4;
+    repeated string metrics = 1;
+    repeated BillingStatusRule rules = 5;
+    string billing_service_name = 6;
+    repeated AreaUnderCurveParams area_under_curve_params = 7;
+    
+    repeated BillingDestination consumer_destinations = 8;
+    message BillingDestination {
+        string monitored_resource = 1;
+        repeated string metrics = 2;
+    }
+    
+    reserved 2, 3, 4;
 }
 
 message BillingStatusRule {
-  string selector = 1;
-  repeated string allowed_statuses = 2;
+    string selector = 1;
+    repeated string allowed_statuses = 2;
+    string flags = 3;
 }
-
-

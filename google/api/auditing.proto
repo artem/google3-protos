@@ -22,10 +22,10 @@ message AuditingRule {
     string directive = 2;
 }
 
-extend .proto2.FieldOptions {
+extend proto2.FieldOptions {
     AuditingRule field_auditing = 112199341;
 }
 
-extend .proto2.MethodOptions {
+extend proto2.MethodOptions {
     AuditingRule method_auditing = 112199341;
 }

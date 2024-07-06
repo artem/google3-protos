@@ -1,21 +1,27 @@
 syntax = "proto3";
 
-import "google/api/annotations.proto";
 package google.api;
 
-option java_package = "com.google.api";
-option java_outer_classname = "EndpointProto";
-option java_multiple_files = true;
-option go_package = "google.golang.org/genproto/googleapis/api/serviceconfig;serviceconfig";
+import "google/api/launch_stage.proto";
+import "google/api/visibility.proto";
+import "storage/datapol/annotations/proto/semantic_annotations.proto";
+
 option objc_class_prefix = "GAPI";
+option go_package = "google.golang.org/genproto/googleapis/api/serviceconfig;serviceconfig";
+option java_multiple_files = true;
+option java_outer_classname = "EndpointProto";
+option java_package = "com.google.api";
 
 message Endpoint {
-  string name = 1;
-  repeated string aliases = 2 [deprecated = true];
-  repeated string apis = 3;
-  repeated string features = 4;
-  string target = 101;
-  bool allow_cors = 5;
+    string name = 1;
+    repeated string aliases = 2;
+    repeated string features = 4;
+    string target = 101;
+    bool allow_cors = 5;
+    string url_map = 6;
+    LaunchStage launch_stage = 7;
+    string project_id = 8;
+    string location = 9;
+    
+    reserved 3;
 }
-
-

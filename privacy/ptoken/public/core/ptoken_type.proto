@@ -35,6 +35,7 @@ message PTokenType {
         FITBIT_TSS_DATA = 80;
         FOOTPRINTS_DATA = 40;
         FOOTPRINTS_SPEECH_DATA = 57;
+        GEMINI_TRAFFIC_FOR_GROUNDING_DATA = 81;
         GHIRE_APPLICATION = 56;
         GHIRE_CANDIDATE = 55;
         GMAIL_GAIA_DATA = 61;
@@ -92,6 +93,6 @@ message PTokenType {
     }
 }
 
-extend .proto2.MessageOptions {
+extend proto2.MessageOptions {
     optional PTokenType.Enum ptoken_type = 320170681;
 }

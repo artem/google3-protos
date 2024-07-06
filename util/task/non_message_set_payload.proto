@@ -1,4 +1,4 @@
-syntax = "proto2";
+syntax = "editions";
 
 package util;
 
@@ -8,7 +8,7 @@ import "net/proto2/bridge/proto/message_set.proto";
 message NonMessageSetPayload {
     repeated google.protobuf.Any payloads = 1;
     
-    extend .proto2.bridge.MessageSet {
+    extend proto2.bridge.MessageSet {
         optional NonMessageSetPayload message_set_extension = 258191113;
     }
 }

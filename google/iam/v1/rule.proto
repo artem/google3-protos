@@ -1,94 +1,126 @@
 syntax = "proto3";
 
-import "third_party/android/nanoproto/nano_descriptor.proto";
-import "google/api/annotations.proto";
-import "tech/iam/proto/logging.proto";
 package google.iam.v1;
 
-option java_package = "com.google.iam.v1";
-option java_outer_classname = "RuleProto";
-option java_multiple_files = true;
-option cc_enable_arenas = true;
+import "google/api/visibility.proto";
+import "google/cloud/audit/audit_log.proto";
+import "google/cloud/audit/authorization_logging_options.proto";
+import "tech/iam/proto/logging.proto";
+
+option php_namespace = "Google\\Cloud\\Iam\\V1";
 option csharp_namespace = "Google.Cloud.Iam.V1";
+option cc_enable_arenas = true;
+option go_package = "cloud.google.com/go/iam/apiv1/iampb;iampb";
+option java_multiple_files = true;
+option java_outer_classname = "RuleProto";
+option java_package = "com.google.iam.v1";
 
 message Rule {
-  enum Action {
-    NO_ACTION = 0;
-    ALLOW = 1;
-    ALLOW_WITH_LOG = 4;
-    DENY = 2;
-    DENY_WITH_LOG = 5;
-    LOG = 3;
-  }
-  string description = 1;
-  repeated string permissions = 2;
-  .google.iam.v1.Rule.Action action = 3;
-  repeated string in = 4;
-  repeated string not_in = 5;
-  repeated .google.iam.v1.Condition conditions = 6;
-  repeated .google.iam.v1.LogConfig log_config = 7;
+    string description = 1;
+    repeated string permissions = 2;
+    
+    Action action = 3;
+    enum Action {
+        NO_ACTION = 0;
+        ALLOW = 1;
+        ALLOW_WITH_LOG = 4;
+        DENY = 2;
+        DENY_WITH_LOG = 5;
+        LOG = 3;
+    }
+    
+    repeated string in = 4;
+    repeated string not_in = 5;
+    repeated Condition conditions = 6;
+    repeated LogConfig log_config = 7;
 }
 
 message Condition {
-  enum Operator {
-    NO_OP = 0;
-    EQUALS = 1;
-    NOT_EQUALS = 2;
-    IN = 3;
-    NOT_IN = 4;
-    DISCHARGED = 5;
-  }
-  oneof Subject {
-    .google.iam.v1.AuthContext.Attr iam = 1;
-    .google.iam.v1.SystemContext.Attr sys = 2;
-    string svc = 3;
-  }
-  .google.iam.v1.Condition.Operator op = 5;
-  string value = 6 [deprecated = true];
-  repeated string values = 7;
+    Operator op = 5;
+    enum Operator {
+        NO_OP = 0;
+        EQUALS = 1;
+        NOT_EQUALS = 2;
+        IN = 3;
+        NOT_IN = 4;
+        DISCHARGED = 5;
+    }
+    
+    repeated string values = 7;
+    
+    oneof Subject {
+        AuthContext.Attr iam = 1;
+        SystemContext.Attr sys = 2;
+        string svc = 3;
+    }
+    
+    reserved 6;
 }
 
 message AuthContext {
-  enum Attr {
-    NO_ATTR = 0;
-    AUTHORITY = 1;
-    ATTRIBUTION = 2;
-    SECURITY_REALM = 3;
-    APPROVER = 4;
-    JUSTIFICATION_TYPE = 5;
-  }
+    enum Attr {
+        NO_ATTR = 0;
+        AUTHORITY = 1;
+        ATTRIBUTION = 2;
+        SECURITY_REALM = 3;
+        APPROVER = 4;
+        JUSTIFICATION_TYPE = 5;
+        CREDENTIALS_TYPE = 6;
+        CREDS_ASSERTION = 7;
+    }
 }
 
 message SystemContext {
-  enum Attr {
-    NO_ATTR = 0;
-    REGION = 1;
-    SERVICE = 2;
-    NAME = 3;
-    IP = 4;
-  }
+    enum Attr {
+        NO_ATTR = 0;
+        REGION = 1;
+        SERVICE = 2;
+        NAME = 3;
+        IP = 4;
+    }
 }
 
 message LogConfig {
-  message CounterOptions {
-    string metric = 1;
-    string field = 2;
-  }
-  message DataAccessOptions {
-  }
-  message CloudAuditOptions {
-    enum LogName {
-      UNSPECIFIED_LOG_NAME = 0;
-      ADMIN_ACTIVITY = 1;
-      DATA_ACCESS = 2;
+    oneof type {
+        CounterOptions counter = 1;
+        DataAccessOptions data_access = 2;
+        CloudAuditOptions cloud_audit = 3;
     }
-    .google.iam.v1.LogConfig.CloudAuditOptions.LogName log_name = 1;
-  }
-  oneof type {
-    .google.iam.v1.LogConfig.CounterOptions counter = 1;
-    .google.iam.v1.LogConfig.DataAccessOptions data_access = 2;
-    .google.iam.v1.LogConfig.CloudAuditOptions cloud_audit = 3;
-  }
+    
+    message CounterOptions {
+        string metric = 1;
+        string field = 2;
+        
+        repeated CustomField custom_fields = 3;
+        message CustomField {
+            string name = 1;
+            string value = 2;
+        }
+    }
+    
+    message DataAccessOptions {
+        LogMode log_mode = 1;
+        enum LogMode {
+            LOG_MODE_UNSPECIFIED = 0;
+            LOG_FAIL_CLOSED = 1;
+        }
+        
+        oneof _is_direct_auth {
+            bool is_direct_auth = 2;
+        }
+    }
+    
+    message CloudAuditOptions {
+        LogName log_name = 1;
+        enum LogName {
+            UNSPECIFIED_LOG_NAME = 0;
+            ADMIN_ACTIVITY = 1;
+            DATA_ACCESS = 2;
+        }
+        
+        cloud.audit.AuthorizationLoggingOptions authorization_logging_options = 3;
+        cloud.audit.AuthorizationInfo.PermissionType permission_type = 4;
+        
+        reserved 2;
+    }
 }
-
-

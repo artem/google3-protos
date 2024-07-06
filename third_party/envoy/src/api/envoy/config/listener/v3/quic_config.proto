@@ -28,4 +28,5 @@ message QuicProtocolOptions {
     .envoy.config.core.v3.TypedExtensionConfig connection_id_generator_config = 8;
     .envoy.config.core.v3.TypedExtensionConfig server_preferred_address_config = 9;
     google.protobuf.BoolValue send_disable_active_migration = 10;
+    .envoy.config.core.v3.TypedExtensionConfig connection_debug_visitor_config = 11;
 }

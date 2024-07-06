@@ -19,22 +19,22 @@ message FileMigrateAnnotation {
     string move_to_package = 2;
 }
 
-extend .proto2.MessageOptions {
+extend proto2.MessageOptions {
     MigrateAnnotation message_migrate = 171962766;
 }
 
-extend .proto2.FieldOptions {
+extend proto2.FieldOptions {
     FieldMigrateAnnotation field_migrate = 171962766;
 }
 
-extend .proto2.EnumOptions {
+extend proto2.EnumOptions {
     MigrateAnnotation enum_migrate = 171962766;
 }
 
-extend .proto2.EnumValueOptions {
+extend proto2.EnumValueOptions {
     MigrateAnnotation enum_value_migrate = 171962766;
 }
 
-extend .proto2.FileOptions {
+extend proto2.FileOptions {
     FileMigrateAnnotation file_migrate = 171962766;
 }

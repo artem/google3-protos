@@ -1,4 +1,4 @@
-syntax = "proto2";
+syntax = "editions";
 
 package perftools.tracing;
 
@@ -7,27 +7,27 @@ import "net/proto2/bridge/proto/message_set.proto";
 option java_package = "com.google.tracing";
 
 message ChildSpanLink {
-    required fixed64 child_trace_id = 1;
-    required fixed64 child_span_id = 2;
+    optional fixed64 child_trace_id = 1;
+    optional fixed64 child_span_id = 2;
     optional string name = 3;
     optional fixed64 child_trace_id_hi = 4;
     optional TraceSystem child_trace_system = 5 [default = DAPPER];
     
-    extend .proto2.bridge.MessageSet {
+    extend proto2.bridge.MessageSet {
         optional ChildSpanLink message_set_extension = 13616823;
     }
 }
 
 message ParentSpanLink {
-    required fixed64 parent_trace_id = 1;
-    required fixed64 parent_span_id = 2;
+    optional fixed64 parent_trace_id = 1;
+    optional fixed64 parent_span_id = 2;
     optional string name = 3;
     optional fixed64 parent_trace_id_hi = 4;
     optional TraceSystem parent_trace_system = 5 [default = DAPPER];
     
     reserved 6, "parent_owner";
     
-    extend .proto2.bridge.MessageSet {
+    extend proto2.bridge.MessageSet {
         optional ParentSpanLink message_set_extension = 13768969;
     }
 }

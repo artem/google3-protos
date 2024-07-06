@@ -89,6 +89,7 @@ message Listener {
     google.protobuf.BoolValue bind_to_port = 26;
     bool enable_mptcp = 30;
     bool ignore_global_conn_limit = 31;
+    bool bypass_overload_manager = 35;
     
     oneof listener_specifier {
         InternalListenerConfig internal_listener = 27;
