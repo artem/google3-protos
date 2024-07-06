@@ -1,0 +1,22 @@
+syntax = "proto3";
+
+package xla;
+
+import "third_party/tensorflow/compiler/xla/autotuning.proto";
+
+message AutotuneResults {
+    int32 version = 1;
+    
+    repeated Entry results = 4;
+    message Entry {
+        string device = 1;
+        string hlo = 2;
+        AutotuneResult result = 3;
+    }
+    
+    reserved 2, 3;
+}
+
+message AutotuningLogs {
+    repeated AutotuningLog logs = 1;
+}

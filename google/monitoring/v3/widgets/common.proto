@@ -1,0 +1,294 @@
+syntax = "proto3";
+
+package google.monitoring.v3.widgets;
+
+import "google/api/field_behavior.proto";
+import "google/api/visibility.proto";
+import "google/logging/data_governance.proto";
+import "google/monitoring/v3/common.proto";
+import "google/monitoring/v3/widgets/trace.proto";
+import "google/protobuf/duration.proto";
+import "storage/datapol/annotations/proto/semantic_annotations.proto";
+
+option ruby_package = "Google::Cloud::Monitoring::V3::Widgets";
+option php_namespace = "Google\\Cloud\\Monitoring\\V3\\Widgets";
+option csharp_namespace = "Google.Cloud.Monitoring.V3.Widgets";
+option java_multiple_files = true;
+option java_outer_classname = "CommonWidgetsProto";
+option java_package = "com.google.monitoring.v3.widgets";
+
+message TimeSeriesFilter {
+    string filter = 1;
+    Aggregation.Aligner per_series_aligner = 2;
+    Aggregation.Reducer cross_series_reducer = 3;
+    repeated string group_by_fields = 4;
+    Aggregation.Reducer secondary_cross_series_reducer = 8;
+    repeated string secondary_group_by_fields = 9;
+    string unit_override = 6;
+    protobuf.Duration min_alignment_period = 7;
+    ApiSource api_source = 11;
+    repeated Aggregation aggregations = 12;
+    
+    oneof OutputFilter {
+        PickTimeSeriesFilter pick_time_series_filter = 5;
+        StatisticalTimeSeriesFilter statistical_time_series_filter = 10;
+    }
+}
+
+message TimeSeriesFilterRatio {
+    TimeSeriesFilter numerator_filter = 1;
+    TimeSeriesFilter denominator_filter = 2;
+    
+    oneof OutputTimeSeriesFilter {
+        PickTimeSeriesFilter pick_time_series_filter = 3;
+        StatisticalTimeSeriesFilter statistical_time_series_filter = 4;
+    }
+}
+
+message TimeSeriesQueryLanguage {
+    string query = 1;
+}
+
+message GroupFilter {
+    string group_id = 1;
+    
+    Relation relation = 2;
+    enum Relation {
+        NO_RELATION = 0;
+        CHILDREN = 1;
+        ANCESTORS = 2;
+        DECENDANTS = 3;
+    }
+}
+
+message GroupMemberFilter {
+    string group_id = 1;
+    string filter = 2;
+}
+
+message MonitoredResourceMetadataFilter {
+    string filter = 1;
+}
+
+message Threshold {
+    string label = 1;
+    double value = 2;
+    
+    Category category = 3;
+    enum Category {
+        CATEGORY_UNSPECIFIED = 0;
+        WARNING = 1;
+        DANGER = 2;
+    }
+    
+    TriggerDirection trigger_direction = 4;
+    enum TriggerDirection {
+        TRIGGER_DIRECTION_UNSPECIFIED = 0;
+        ABOVE = 1;
+        BELOW = 2;
+    }
+    
+    TargetAxis target_axis = 5;
+    enum TargetAxis {
+        TARGET_AXIS_UNSPECIFIED = 0;
+        Y1 = 1;
+        Y2 = 2;
+    }
+}
+
+message DataSourceFilter {
+    oneof source {
+        TimeSeriesFilter time_series_filter = 1;
+        GroupMemberFilter group_member_filter = 2;
+        MonitoredResourceMetadataFilter resource_metadata_filter = 3;
+        TimeSeriesFilterRatio time_series_filter_ratio = 4;
+    }
+}
+
+message DataSourceSet {
+    PrimarySource primary_source = 1;
+    message PrimarySource {
+        DataSourceFilter filter = 1;
+        repeated DataValueExtractor join_values = 2;
+        map<string, DataValueExtractor> export_values = 3;
+        string data_source_name = 4;
+    }
+    
+    repeated SecondarySource secondary_sources = 2;
+    message SecondarySource {
+        DataSourceFilter filter = 1;
+        repeated DataValueExtractor join_values = 2;
+        map<string, DataValueReducer> reduce_values = 3;
+        string data_source_name = 4;
+        
+        JoinType join_type = 5;
+        enum JoinType {
+            DEFAULT_LEFT = 0;
+            OUTER = 1;
+        }
+    }
+    
+    message DataValueExtractor {
+        oneof value {
+            MetricLabelValue metric_label_value = 1;
+            MonitoredResourceTypeValue monitored_resource_type_value = 2;
+            MonitoredResourceLabelValue monitored_resource_label_value = 3;
+            MonitoredResourceMetadataSystemLabelValue monitored_resource_metadata_system_label_value = 4;
+            MonitoredResourceMetadataUserLabelValue monitored_resource_metadata_user_label_value = 5;
+            MonitoredResourceRawContentValue monitored_resource_raw_content_value = 6;
+            TimeSeriesValue time_series_value = 7;
+            ResourceMetadataValue resource_metadata_value = 8;
+            MonitoredResourceCollectionTimeValue monitored_resource_collection_time = 9;
+            ResourceMetadataFieldValue resource_metadata_field_value = 10;
+            ResourceMetadataViewsValue resource_metadata_views_value = 11;
+        }
+    }
+    
+    message DataValueReducer {
+        ReduceMethod reduce_method = 1;
+        enum ReduceMethod {
+            REDUCE_METHOD_UNSPECIFIED = 0;
+            COUNT = 1;
+            SUM = 2;
+            MEAN = 3;
+            MAX = 4;
+            MIN = 5;
+            LIST = 6;
+            FIRST = 7;
+        }
+        
+        DataValueExtractor reduce_value = 2;
+    }
+    
+    message TimeSeriesValue {
+        
+    }
+    
+    message MetricLabelValue {
+        string key = 1;
+    }
+    
+    message MonitoredResourceTypeValue {
+        
+    }
+    
+    message MonitoredResourceLabelValue {
+        string key = 1;
+    }
+    
+    message MonitoredResourceMetadataSystemLabelValue {
+        string key = 1;
+    }
+    
+    message MonitoredResourceMetadataUserLabelValue {
+        string key = 1;
+    }
+    
+    message MonitoredResourceRawContentValue {
+        string data_path = 1;
+    }
+    
+    message ResourceMetadataValue {
+        
+    }
+    
+    message MonitoredResourceCollectionTimeValue {
+        
+    }
+    
+    message ResourceMetadataFieldValue {
+        ResourceMetadataField field = 1;
+    }
+    
+    message ResourceMetadataViewsValue {
+        string view = 1;
+        string data_path = 2;
+    }
+}
+
+message DataSourceValue {
+    string key = 1;
+}
+
+message OpsAnalyticsQuery {
+    string sql = 1;
+    string query_handle = 2;
+    OpsAnalyticsQueryExecutionRules query_execution_rules = 3;
+}
+
+message OpsAnalyticsQueryExecutionRules {
+    bool use_reserved_slots = 1;
+}
+
+message AggregationFunction {
+    string type = 1;
+    
+    repeated Parameter parameters = 2;
+    message Parameter {
+        oneof value {
+            int64 int_value = 1;
+            double double_value = 2;
+        }
+    }
+}
+
+message Dimension {
+    string column = 1;
+    string column_type = 7;
+    int32 max_bin_count = 4;
+    SortOrder sort_order = 5;
+    string sort_column = 6;
+    
+    oneof bin_size {
+        protobuf.Duration time_bin_size = 2;
+        int32 numeric_bin_size = 3;
+        double float_bin_size = 8;
+    }
+}
+
+message Measure {
+    string column = 1;
+    AggregationFunction aggregation_function = 2;
+}
+
+message Breakdown {
+    string column = 1;
+    int32 limit = 2;
+    AggregationFunction aggregation_function = 3;
+    SortOrder sort_order = 4;
+}
+
+message TimeSeriesQuery {
+    ApiSource api_source = 6;
+    string unit_override = 7;
+    bool output_full_duration = 8;
+    
+    oneof source {
+        TimeSeriesFilter time_series_filter = 1;
+        TimeSeriesFilterRatio time_series_filter_ratio = 2;
+        string time_series_query = 3;
+        string prometheus_query = 4;
+        OpsAnalyticsQuery ops_analytics_query = 5;
+        TraceQuery trace_query = 9;
+    }
+}
+
+enum ApiSource {
+    DEFAULT_CLOUD = 0;
+    AUTO = 1;
+}
+
+enum ResourceMetadataField {
+    RESOURCE_METADATA_FIELD_UNSPECIFIED = 0;
+    NAME = 1;
+    PARENT = 2;
+    TYPE = 3;
+    LOCATION = 4;
+}
+
+enum SortOrder {
+    SORT_ORDER_UNSPECIFIED = 0;
+    SORT_ORDER_NONE = 1;
+    SORT_ORDER_ASCENDING = 2;
+    SORT_ORDER_DESCENDING = 3;
+}

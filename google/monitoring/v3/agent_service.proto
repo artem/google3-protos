@@ -1,0 +1,46 @@
+syntax = "proto3";
+
+package google.monitoring.v3;
+
+import "google/api/annotations.proto";
+import "google/api/monitored_resource.proto";
+import "google/api/policy.proto";
+import "google/logging/data_governance.proto";
+import "google/monitoring/v3/agent.proto";
+import "google/monitoring/v3/metric_service.proto";
+import "google/rpc/status.proto";
+
+option ruby_package = "Google::Cloud::Monitoring::V3";
+option php_namespace = "Google\\Cloud\\Monitoring\\V3";
+option csharp_namespace = "Google.Cloud.Monitoring.V3";
+option go_package = "cloud.google.com/go/monitoring/apiv3/v2/monitoringpb;monitoringpb";
+option java_multiple_files = true;
+option java_outer_classname = "AgentServiceProto";
+option java_package = "com.google.monitoring.v3";
+
+service AgentTranslationService {
+    rpc CreateCollectdTimeSeries(CreateCollectdTimeSeriesRequest) returns (CreateCollectdTimeSeriesResponse);
+}
+
+message CreateCollectdTimeSeriesRequest {
+    string name = 5;
+    api.MonitoredResource resource = 2;
+    string collectd_version = 3;
+    repeated CollectdPayload collectd_payloads = 4;
+}
+
+message CreateCollectdTimeSeriesResponse {
+    repeated CollectdPayloadError payload_errors = 1;
+    message CollectdPayloadError {
+        int32 index = 1;
+        rpc.Status error = 2;
+        
+        repeated CollectdValueError value_errors = 3;
+        message CollectdValueError {
+            int32 index = 1;
+            rpc.Status error = 2;
+        }
+    }
+    
+    CreateTimeSeriesSummary summary = 2;
+}

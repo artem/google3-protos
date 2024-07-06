@@ -1,0 +1,9 @@
+syntax = "proto2";
+
+package coroner.collection;
+
+enum CrashSource {
+    UNKNOWN_CRASH_SOURCE = 0;
+    CRASHING = 1;
+    BORGLET = 2;
+}

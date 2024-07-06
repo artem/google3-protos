@@ -1,0 +1,91 @@
+syntax = "proto3";
+
+package google.api;
+
+import "google/api/visibility.proto";
+import "google/protobuf/duration.proto";
+import "google/protobuf/timestamp.proto";
+import "google/type/calendar_period.proto";
+import "storage/datapol/annotations/proto/semantic_annotations.proto";
+
+option objc_class_prefix = "GAPI";
+option go_package = "google.golang.org/genproto/googleapis/api/serviceconfig;serviceconfig";
+option java_multiple_files = true;
+option java_outer_classname = "SloProto";
+option java_package = "com.google.api";
+
+message Slo {
+    repeated SloObjective objectives = 3;
+    repeated SloRule rules = 4;
+    SloRepoMetadata metadata = 5;
+    bool report_resource_location = 6;
+    
+    oneof period_type {
+        protobuf.Duration rolling_period = 1;
+        type.CalendarPeriod calendar_period = 2;
+    }
+}
+
+message SloObjective {
+    string name = 1;
+    double goal = 4;
+    string locations = 7;
+    
+    oneof sli {
+        AvailabilityCriteria availability = 2;
+        LatencyCriteria latency = 3;
+        OperationAvailabilityCriteria operation_availability = 5;
+        OperationLatencyCriteria operation_latency = 6;
+    }
+    
+    message AvailabilityCriteria {
+        
+    }
+    
+    message LatencyCriteria {
+        protobuf.Duration threshold = 3;
+        LatencyExperience latency_experience = 4;
+    }
+    
+    message OperationAvailabilityCriteria {
+        
+    }
+    
+    message OperationLatencyCriteria {
+        protobuf.Duration threshold = 1;
+        LatencyExperience latency_experience = 2;
+    }
+    
+    enum LatencyExperience {
+        LATENCY_EXPERIENCE_UNSPECIFIED = 0;
+        DELIGHTING = 1;
+        SATISFYING = 2;
+        ANNOYING = 3;
+    }
+}
+
+message SloRule {
+    string selector = 1;
+    repeated string objectives = 2;
+    string name = 3;
+}
+
+message SloRepoMetadata {
+    repeated string teams = 1;
+    repeated string emails = 2;
+    string learnmore_url = 3;
+    protobuf.Timestamp approve_time = 4;
+    repeated string approvers = 5;
+    string taxonomy_id = 6 [deprecated = true];
+    bool enable_per_consumer_sli = 7;
+    bool enable_slomatic = 8;
+    string owning_group = 9;
+    SloAccessControl slo_access_control = 11;
+    
+    reserved 10;
+}
+
+message SloAccessControl {
+    repeated string reader_groups = 1;
+    repeated string annotations_writer_groups = 2;
+}

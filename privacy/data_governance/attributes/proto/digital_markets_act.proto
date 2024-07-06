@@ -1,0 +1,55 @@
+syntax = "proto3";
+
+package privacy.data_governance.attributes;
+
+import "privacy/data_governance/attributes/proto/classification.proto";
+
+option java_package = "com.google.privacy.datagovernance.attributes";
+
+message DigitalMarketsAct {
+    message AggregateComplianceControls {
+        oneof sharing_controls {
+            Cps sharing_enabled_for_cps = 1;
+            bool sharing_enabled_for_all_cps = 2;
+        }
+        
+        message Cps {
+            repeated int32 cps = 1;
+        }
+    }
+    
+    message Data {
+        repeated FoundationalPersonalData foundational_personal_data = 1;
+        AggregateComplianceControls aggregate_compliance_controls = 3;
+        
+        oneof _is_irreversibly_combined {
+            bool is_irreversibly_combined = 2;
+        }
+        
+        oneof _business_user_source_override {
+            bool business_user_source_override = 4;
+        }
+        
+        oneof _policy_test {
+            bool policy_test = 5;
+        }
+    }
+    
+    message Process {
+        classification.Category.HasCategory has_post_access_filtering = 1;
+    }
+    
+    enum FoundationalPersonalData {
+        FOUNDATIONAL_DATA_UNSPECIFIED = 0;
+        FOUNDATIONAL_DATA_ACCOUNT_INFORMATION = 1 [deprecated = true];
+        FOUNDATIONAL_DATA_ACCOUNT_PREFERENCES = 2 [deprecated = true];
+        FOUNDATIONAL_DATA_EMMETT_COUNTRY = 3 [deprecated = true];
+        FOUNDATIONAL_DATA_SUPERVISED_ACCOUNT_INFORMATION = 4 [deprecated = true];
+        FOUNDATIONAL_DATA_ACCOUNT_SYSTEM_INFORMATION = 5;
+        FOUNDATIONAL_DATA_ACCOUNT_USER_INFORMATION = 6;
+        FOUNDATIONAL_DATA_ACCOUNT_SETTINGS_CONSENTS = 7;
+        FOUNDATIONAL_DATA_WORKSPACE_POLICIES = 8;
+        FOUNDATIONAL_DATA_SIGNED_OUT_INFORMATION = 9;
+        FOUNDATIONAL_DATA_PLATFORM_SYSTEM_INFORMATION = 10;
+    }
+}

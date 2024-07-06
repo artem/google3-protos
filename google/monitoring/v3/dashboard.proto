@@ -1,0 +1,91 @@
+syntax = "proto3";
+
+package google.monitoring.v3;
+
+import "google/monitoring/v3/dashboard_annotations.proto";
+import "google/monitoring/v3/widgets/charting.proto";
+import "google/monitoring/v3/widgets/common.proto";
+import "google/monitoring/v3/widgets/widget.proto";
+import "google/protobuf/duration.proto";
+import "storage/datapol/annotations/proto/semantic_annotations.proto";
+
+option ruby_package = "Google::Cloud::Monitoring::V3";
+option php_namespace = "Google\\Cloud\\Monitoring\\V3";
+option csharp_namespace = "Google.Cloud.Monitoring.V3";
+option go_package = "cloud.google.com/go/monitoring/apiv3/v2/monitoringpb;monitoringpb";
+option java_multiple_files = true;
+option java_outer_classname = "DashboardProto";
+option java_package = "com.google.monitoring.v3";
+
+message Dashboard {
+    string name = 1;
+    string category = 7;
+    string display_name = 2;
+    int64 revision = 6;
+    widgets.Widget root = 4;
+    
+    DefaultOptions default_options = 5;
+    message DefaultOptions {
+        protobuf.Duration time_span = 3;
+        widgets.ChartOptions chart_options = 2;
+    }
+    
+    repeated DashboardFilter dashboard_filters = 8;
+    repeated Label labels = 9;
+    DashboardAnnotations annotations = 10;
+    string description = 11;
+}
+
+message PublicWidget {
+    string name = 1;
+    string display_name = 2;
+    int64 revision = 3;
+    
+    oneof content {
+        widgets.XYChart xy_chart = 4;
+    }
+}
+
+message DashboardFilter {
+    string label_key = 1;
+    string template_variable = 3;
+    
+    ValueType value_type = 9;
+    enum ValueType {
+        VALUE_TYPE_UNSPECIFIED = 0;
+        STRING = 1;
+        STRING_ARRAY = 2;
+    }
+    
+    FilterType filter_type = 5;
+    enum FilterType {
+        FILTER_TYPE_UNSPECIFIED = 0;
+        RESOURCE_LABEL = 1;
+        METRIC_LABEL = 2;
+        USER_METADATA_LABEL = 3;
+        SYSTEM_METADATA_LABEL = 4;
+        GROUP = 5;
+        VALUE_ONLY = 6;
+    }
+    
+    bool apply_to_new_widgets = 8;
+    
+    oneof default_value {
+        string string_value = 4;
+        StringArray string_array_value = 10;
+    }
+    
+    oneof value_source {
+        widgets.TimeSeriesQuery time_series_query = 6;
+        StringArray string_array = 7;
+    }
+    
+    message StringArray {
+        repeated string values = 1;
+    }
+}
+
+message Label {
+    string key = 1;
+    string value = 2;
+}

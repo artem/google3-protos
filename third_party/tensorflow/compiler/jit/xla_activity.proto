@@ -1,0 +1,51 @@
+syntax = "proto3";
+
+package tensorflow;
+
+import "third_party/tensorflow/core/protobuf/config.proto";
+
+message XlaAutoClusteringSummary {
+    int32 unclustered_node_count = 1;
+    int32 clustered_node_count = 2;
+    
+    repeated Cluster clusters = 3;
+    message Cluster {
+        string name = 1;
+        int32 size = 2;
+        repeated OpAndCount op_histogram = 3;
+    }
+    
+    repeated OpAndCount unclustered_op_histogram = 4;
+    message OpAndCount {
+        string op = 1;
+        int32 count = 2;
+    }
+}
+
+message XlaAutoClusteringActivity {
+    OptimizerOptions.GlobalJitLevel global_jit_level = 1;
+    bool cpu_global_jit_enabled = 2;
+    XlaAutoClusteringSummary summary = 3;
+}
+
+message XlaJitCompilationActivity {
+    string cluster_name = 1;
+    int32 compile_count = 2;
+    int64 compile_time_us = 3;
+    int64 cumulative_compile_time_us = 4;
+    bool used_persistent_cache = 5;
+}
+
+message XlaOptimizationRemark {
+    Warning warning = 1;
+    enum Warning {
+        NONE = 0;
+        INACCURATE_OPERATION = 1;
+        SLOW_OPERATION = 2;
+        UNIMPLEMENTED_OPERATION = 3;
+        SLOW_IMAGE_RESIZE_DIMENSIONS = 4;
+        MEGAMORPHIC_FUNCTION = 5;
+    }
+    
+    string debug_information = 2;
+}

@@ -1,0 +1,9 @@
+syntax = "proto2";
+
+package coroner.collection.metadata;
+
+enum ClientVersion {
+    UNSPECIFIED_CLIENT_VERSION = 0;
+    SUPPORTS_SYMBOLIZATION_HINTS = 4;
+    SIGNED_INTEGERS = 5;
+}

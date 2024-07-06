@@ -1,0 +1,37 @@
+syntax = "proto3";
+
+package tensorflow.data.experimental;
+
+import "third_party/tensorflow/core/framework/tensor.proto";
+import "third_party/tensorflow/core/framework/tensor_shape.proto";
+import "third_party/tensorflow/core/framework/types.proto";
+
+option go_package = "github.com/tensorflow/tensorflow/tensorflow/go/core/protobuf/for_core_protos_go_proto";
+
+message SnapshotRecord {
+    repeated TensorProto tensor = 1;
+}
+
+message SnapshotMetadataRecord {
+    string graph_hash = 1;
+    string run_id = 2;
+    int64 creation_timestamp = 3;
+    int64 version = 4;
+    repeated DataType dtype = 5;
+    int64 num_elements = 6;
+    bool finalized = 1000;
+}
+
+message TensorMetadata {
+    TensorShapeProto tensor_shape = 2;
+    int64 tensor_size_bytes = 3;
+}
+
+message SnapshotTensorMetadata {
+    repeated TensorMetadata tensor_metadata = 1;
+}
+
+message DistributedSnapshotMetadata {
+    bytes element_spec = 1;
+    string compression = 2;
+}

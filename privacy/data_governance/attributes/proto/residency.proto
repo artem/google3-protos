@@ -1,0 +1,65 @@
+syntax = "proto3";
+
+package privacy.data_governance.attributes;
+
+import "privacy/data_governance/attributes/proto/classification.proto";
+import "privacy/data_governance/attributes/proto/common.proto";
+
+option java_multiple_files = true;
+option java_package = "com.google.privacy.datagovernance.attributes";
+
+message AllowedLocations {
+    classification.Source source = 1 [deprecated = true];
+    classification.SemanticContext semantic_context = 2 [deprecated = true];
+    repeated Location locations = 3 [deprecated = true];
+}
+
+message Residency {
+    Data data = 1 [deprecated = true];
+    message Data {
+        ContentSubclassification content_subclassification = 1 [deprecated = true];
+        Lifecycle lifecycle_state = 2;
+        repeated string intended_data_locations = 4;
+        classification.SemanticContext semantic_context = 5;
+        
+        reserved 3;
+    }
+    
+    Storage storage = 2 [deprecated = true];
+    message Storage {
+        repeated ResidencyPolicy data_locations_that_can_be_stored = 1;
+    }
+    
+    Process process = 3 [deprecated = true];
+    message Process {
+        repeated ResidencyPolicy data_locations_that_can_be_processed = 1;
+    }
+    
+    message ResidencyPolicy {
+        ResidencyData dr_data = 1;
+        message ResidencyData {
+            classification.Source source = 1 [deprecated = true];
+            classification.SemanticContext semantic_context = 2;
+            ContentSubclassification content_subclassification = 3 [deprecated = true];
+            Lifecycle lifecycle_state = 4;
+        }
+        
+        repeated Location intended_data_location = 2 [deprecated = true];
+    }
+    
+    enum Lifecycle {
+        STATE_UNDEFINED = 0;
+        DATA_AT_REST = 1;
+        DATA_IN_TRANSIT = 2;
+        DATA_IN_USE = 3;
+    }
+    
+    enum ContentSubclassification {
+        CLASSIFICATION_UNDEFINED = 0;
+        CUSTOMER_CORE_CONTENT = 1;
+        SERVICE_CONFIG = 2;
+        CUSTOMER_DEFINED_ATTRIBUTES = 3;
+        GOOGLE_OPERATIONAL_DATA = 4;
+        CUSTOMER_METADATA = 5;
+    }
+}

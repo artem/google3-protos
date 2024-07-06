@@ -1,0 +1,24 @@
+syntax = "proto3";
+
+package google.monitoring.v3.widgets;
+
+import "google/api/auditing.proto";
+import "google/api/field_behavior.proto";
+import "google/logging/data_governance.proto";
+
+option ruby_package = "Google::Cloud::Monitoring::V3::Widgets";
+option php_namespace = "Google\\Cloud\\Monitoring\\V3\\Widgets";
+option csharp_namespace = "Google.Cloud.Monitoring.V3.Widgets";
+option java_multiple_files = true;
+option java_outer_classname = "GeomapProto";
+option java_package = "com.google.monitoring.v3.widgets";
+
+message Geomap {
+    oneof content {
+        UptimeGeomap uptime_geomap = 1;
+    }
+    
+    message UptimeGeomap {
+        repeated string uptime_checks = 1;
+    }
+}

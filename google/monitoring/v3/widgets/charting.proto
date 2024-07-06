@@ -1,0 +1,108 @@
+syntax = "proto3";
+
+package google.monitoring.v3.widgets;
+
+import "google/api/visibility.proto";
+import "google/monitoring/v3/widgets/common.proto";
+import "google/monitoring/v3/widgets/trace.proto";
+import "google/protobuf/duration.proto";
+import "storage/datapol/annotations/proto/semantic_annotations.proto";
+
+option ruby_package = "Google::Cloud::Monitoring::V3::Widgets";
+option php_namespace = "Google\\Cloud\\Monitoring\\V3\\Widgets";
+option csharp_namespace = "Google.Cloud.Monitoring.V3.Widgets";
+option java_multiple_files = true;
+option java_outer_classname = "ChartingWidgetsProto";
+option java_package = "com.google.monitoring.v3.widgets";
+
+message XYChart {
+    repeated DataSet data_sets = 1;
+    message DataSet {
+        TargetAxis target_axis = 2;
+        PlotType plot_type = 3;
+        string legend_template = 6;
+        string unit_override = 9;
+        repeated Dimension dimensions = 11;
+        repeated Measure measures = 12;
+        repeated Breakdown breakdowns = 13;
+        
+        oneof source {
+            TimeSeriesFilter time_series_filter = 1;
+            TimeSeriesFilterRatio time_series_filter_ratio = 4;
+            TimeSeriesQueryLanguage time_series_query_language = 5 [deprecated = true];
+            string time_series_query = 7;
+            string prometheus_query = 8;
+            OpsAnalyticsQuery ops_analytics_query = 10;
+            TraceQuery trace_query = 14;
+        }
+    }
+    
+    protobuf.Duration timeshift_duration = 7;
+    
+    repeated ConstantLine constant_lines = 2;
+    message ConstantLine {
+        string label = 1;
+        float value = 2;
+        TargetAxis target_axis = 3;
+    }
+    
+    ChartOptions options = 3;
+    Axis x_axis = 6;
+    Axis y1_axis = 4;
+    Axis y2_axis = 5;
+    repeated Threshold thresholds = 8;
+    
+    enum TargetAxis {
+        Y1 = 0;
+        Y2 = 1;
+    }
+}
+
+message Axis {
+    string label = 1;
+    
+    Scale scale = 2;
+    enum Scale {
+        LINEAR = 0;
+        LOG10 = 1;
+    }
+}
+
+message ChartOptions {
+    Mode mode = 1;
+    enum Mode {
+        COLOR = 0;
+        X_RAY = 1;
+        STATS = 2;
+    }
+    
+    bool hide_on_no_data = 2;
+    bool show_legend = 3;
+    
+    SortingOptions sorting_options = 4;
+    message SortingOptions {
+        Direction direction = 2;
+        enum Direction {
+            DIRECTION_UNSPECIFIED = 0;
+            ASCENDING = 1;
+            DESCENDING = 2;
+        }
+        
+        oneof column {
+            ValueColumn value_column = 1;
+        }
+        
+        message ValueColumn {
+            
+        }
+    }
+    
+    bool display_horizontal = 5;
+}
+
+enum PlotType {
+    LINE = 0;
+    STACKED_AREA = 1;
+    STACKED_BAR = 2;
+    HEATMAP = 3;
+}

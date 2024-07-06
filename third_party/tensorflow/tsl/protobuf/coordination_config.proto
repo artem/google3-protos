@@ -1,0 +1,26 @@
+syntax = "proto3";
+
+package tensorflow;
+
+option go_package = "github.com/tensorflow/tensorflow/tensorflow/go/core/protobuf/for_core_protos_go_proto";
+
+message CoordinatedJob {
+    string name = 1;
+    int32 num_tasks = 2;
+}
+
+message CoordinationServiceConfig {
+    string service_type = 1;
+    string service_leader = 2;
+    bool enable_health_check = 3;
+    int64 cluster_register_timeout_in_ms = 4;
+    int64 heartbeat_timeout_in_ms = 5;
+    repeated CoordinatedJob coordinated_job_list = 10;
+    int64 shutdown_barrier_timeout_in_ms = 7;
+    bool agent_destruction_without_shutdown = 8;
+    repeated string recoverable_jobs = 9;
+    bool allow_new_incarnation_to_reconnect = 11;
+    bool force_disable = 12;
+    
+    reserved 6;
+}

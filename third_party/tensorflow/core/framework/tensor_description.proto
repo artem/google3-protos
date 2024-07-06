@@ -1,0 +1,19 @@
+syntax = "proto3";
+
+package tensorflow;
+
+import "third_party/tensorflow/core/framework/allocation_description.proto";
+import "third_party/tensorflow/core/framework/tensor_shape.proto";
+import "third_party/tensorflow/core/framework/types.proto";
+
+option cc_enable_arenas = true;
+option go_package = "github.com/tensorflow/tensorflow/tensorflow/go/core/framework/tensor_description_go_proto";
+option java_multiple_files = true;
+option java_outer_classname = "TensorDescriptionProtos";
+option java_package = "org.tensorflow.framework";
+
+message TensorDescription {
+    DataType dtype = 1;
+    TensorShapeProto shape = 2;
+    AllocationDescription allocation_description = 4;
+}

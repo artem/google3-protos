@@ -1,0 +1,19 @@
+syntax = "proto3";
+
+package moma.teams.graph.external;
+
+import "net/proto2/proto/descriptor.proto";
+
+option java_multiple_files = true;
+option java_package = "com.google.moma.teams.graph.external";
+
+enum TeamGraphNodeType {
+    TYPE_UNKNOWN = 0;
+    TYPE_TEAM = 1;
+    TYPE_PRODUCT = 2;
+    TYPE_SYSTEM = 3;
+}
+
+extend proto2.FieldOptions {
+    repeated TeamGraphNodeType tg_node_type = 499752697;
+}

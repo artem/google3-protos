@@ -1,0 +1,292 @@
+syntax = "proto3";
+
+package google.monitoring.v3;
+
+import "google/api/auditing.proto";
+import "google/api/field_behavior.proto";
+import "google/api/resource.proto";
+import "google/api/visibility.proto";
+import "google/logging/data_governance.proto";
+import "google/monitoring/v3/common.proto";
+import "google/monitoring/v3/mutation_record.proto";
+import "google/protobuf/duration.proto";
+import "google/protobuf/wrappers.proto";
+import "google/rpc/status.proto";
+import "google/type/timeofday.proto";
+import "net/proto2/contrib/validator/annotations.proto";
+import "storage/datapol/annotations/proto/semantic_annotations.proto";
+
+option ruby_package = "Google::Cloud::Monitoring::V3";
+option php_namespace = "Google\\Cloud\\Monitoring\\V3";
+option csharp_namespace = "Google.Cloud.Monitoring.V3";
+option go_package = "cloud.google.com/go/monitoring/apiv3/v2/monitoringpb;monitoringpb";
+option java_multiple_files = true;
+option java_outer_classname = "AlertProto";
+option java_package = "com.google.monitoring.v3";
+
+message AlertPolicy {
+    string name = 1;
+    string display_name = 2;
+    
+    Documentation documentation = 13;
+    message Documentation {
+        string content = 1;
+        string mime_type = 2;
+        string subject = 3;
+        
+        repeated Link links = 4;
+        message Link {
+            string display_name = 1;
+            string url = 2;
+        }
+    }
+    
+    map<string, string> user_labels = 16;
+    
+    repeated Condition conditions = 12;
+    message Condition {
+        string name = 12;
+        string display_name = 6;
+        ResourceStateFilter resource_state_filter = 15;
+        
+        oneof condition {
+            MetricThreshold condition_threshold = 1;
+            MetricAbsence condition_absent = 2;
+            LogMatch condition_matched_log = 20;
+            ClusterOutlier condition_cluster_outlier = 3;
+            MetricRateChange condition_rate = 4;
+            UpMon condition_up_mon = 5;
+            ProcessCountThreshold condition_process_count = 10;
+            TimeSeriesQueryLanguageCondition condition_time_series_query_language = 14;
+            MonitoringQueryLanguageCondition condition_monitoring_query_language = 19;
+            PrometheusQueryLanguageCondition condition_prometheus_query_language = 21;
+            SqlCondition condition_sql = 22;
+        }
+        
+        reserved 7, 9, 11, "condition_id", "condition_internal", "condition_univariate_detection";
+        
+        message Trigger {
+            oneof type {
+                int32 count = 1;
+                double percent = 2;
+            }
+        }
+        
+        message MetricThreshold {
+            string filter = 2;
+            repeated Aggregation aggregations = 8;
+            string denominator_filter = 9;
+            repeated Aggregation denominator_aggregations = 10;
+            
+            ForecastOptions forecast_options = 12;
+            message ForecastOptions {
+                protobuf.Duration forecast_horizon = 1;
+            }
+            
+            ComparisonType comparison = 4;
+            double threshold_value = 5;
+            protobuf.Duration duration = 6;
+            Trigger trigger = 7;
+            EvaluationMissingData evaluation_missing_data = 11;
+            
+            reserved 3, "aggregation";
+        }
+        
+        message MetricAbsence {
+            string filter = 1;
+            repeated Aggregation aggregations = 5;
+            protobuf.Duration duration = 2;
+            Trigger trigger = 3;
+            
+            reserved 4, "aggregation";
+        }
+        
+        message LogMatch {
+            string filter = 1;
+            map<string, string> label_extractors = 2;
+            repeated string resource_containers = 3;
+        }
+        
+        message ClusterOutlier {
+            string filter = 1;
+        }
+        
+        message MetricRateChange {
+            string filter = 1;
+            repeated Aggregation aggregations = 7;
+            ComparisonType comparison = 2;
+            double threshold_value = 3;
+            protobuf.Duration time_window = 4;
+            Trigger trigger = 5;
+            
+            reserved 6, "aggregation";
+        }
+        
+        message UpMon {
+            string filter = 1;
+            string endpoint_id = 2;
+            string check_id = 5;
+            protobuf.Duration duration = 3;
+            Trigger trigger = 4;
+        }
+        
+        message ProcessCountThreshold {
+            string process = 1;
+            string user = 2;
+            string filter = 3;
+            ComparisonType comparison = 4;
+            int64 process_count_threshold = 5;
+            Trigger trigger = 6;
+            protobuf.Duration duration = 7;
+        }
+        
+        message TimeSeriesQueryLanguageCondition {
+            string query = 1;
+            string summary = 2;
+        }
+        
+        message MonitoringQueryLanguageCondition {
+            string query = 1;
+            protobuf.Duration duration = 2;
+            Trigger trigger = 3;
+            EvaluationMissingData evaluation_missing_data = 4;
+        }
+        
+        message PrometheusQueryLanguageCondition {
+            string query = 1;
+            protobuf.Duration duration = 2;
+            protobuf.Duration evaluation_interval = 3;
+            map<string, string> labels = 4;
+            string rule_group = 5;
+            string alert_rule = 6;
+        }
+        
+        message SqlCondition {
+            string query = 1;
+            
+            ConditionStats stats = 7;
+            message ConditionStats {
+                int64 estimate_bytes_scanned = 1;
+                float condition_quota_usage = 2;
+                float overall_quota_usage = 3;
+            }
+            
+            oneof schedule {
+                Minutes minutes = 2;
+                Hourly hourly = 3;
+                Daily daily = 4;
+            }
+            
+            oneof evaluate {
+                RowCountTest row_count_test = 5;
+                BooleanTest boolean_test = 6;
+            }
+            
+            message Minutes {
+                int32 periodicity = 1;
+            }
+            
+            message Hourly {
+                int32 periodicity = 1;
+                
+                oneof _minute_offset {
+                    int32 minute_offset = 2;
+                }
+            }
+            
+            message Daily {
+                int32 periodicity = 1;
+                type.TimeOfDay execution_time = 2;
+            }
+            
+            message RowCountTest {
+                ComparisonType comparison = 1;
+                int64 threshold = 2;
+            }
+            
+            message BooleanTest {
+                string column = 1;
+                Trigger trigger = 2;
+            }
+        }
+        
+        enum EvaluationMissingData {
+            EVALUATION_MISSING_DATA_UNSPECIFIED = 0;
+            EVALUATION_MISSING_DATA_INACTIVE = 1;
+            EVALUATION_MISSING_DATA_ACTIVE = 2;
+            EVALUATION_MISSING_DATA_NO_OP = 3;
+        }
+    }
+    
+    ConditionCombinerType combiner = 6;
+    enum ConditionCombinerType {
+        COMBINE_UNSPECIFIED = 0;
+        AND = 1;
+        OR = 2;
+        AND_WITH_MATCHING_RESOURCE = 3;
+    }
+    
+    bool disabled = 7 [deprecated = true];
+    protobuf.BoolValue enabled = 17;
+    rpc.Status validity = 18;
+    repeated string notification_channels = 14;
+    MutationRecord creation_record = 10;
+    MutationRecord mutation_record = 11;
+    IncidentStrategy incident_strategy = 15;
+    
+    Metadata metadata = 20;
+    message Metadata {
+        repeated string slo_names = 1;
+        repeated string resource_types = 2;
+        repeated string group_ids = 3;
+        repeated string uptime_check_ids = 4;
+    }
+    
+    AlertStrategy alert_strategy = 21;
+    message AlertStrategy {
+        NotificationRateLimit notification_rate_limit = 1;
+        message NotificationRateLimit {
+            protobuf.Duration period = 1;
+        }
+        
+        repeated NotificationPrompt notification_prompts = 2;
+        enum NotificationPrompt {
+            NOTIFICATION_PROMPT_UNSPECIFIED = 0;
+            OPENED = 1;
+            CLOSED = 3;
+        }
+        
+        protobuf.Duration auto_close = 3;
+        
+        repeated NotificationChannelStrategy notification_channel_strategy = 4;
+        message NotificationChannelStrategy {
+            repeated string notification_channel_names = 1;
+            protobuf.Duration renotify_interval = 2;
+        }
+    }
+    
+    Severity severity = 22;
+    enum Severity {
+        SEVERITY_UNSPECIFIED = 0;
+        CRITICAL = 1;
+        ERROR = 2;
+        WARNING = 3;
+    }
+    
+    reserved 3, 5, 8, "condition", "description", "notification_channel_ids";
+    
+    enum ResourceStateFilter {
+        RESOURCE_STATE_FILTER_UNSPECIFIED = 0;
+        INCLUDE_INACTIVE = 1;
+        EXCLUDE_INACTIVE = 2;
+    }
+}
+
+message IncidentStrategy {
+    Type type = 1;
+    enum Type {
+        INCIDENT_STRATEGY_UNSPECIFIED = 0;
+        PER_VIOLATION = 1;
+        PER_CONDITION = 2;
+    }
+}

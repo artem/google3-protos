@@ -1,0 +1,45 @@
+syntax = "proto3";
+
+package google.monitoring.v3;
+
+import "google/api/annotations.proto";
+import "google/api/field_behavior.proto";
+import "google/api/visibility.proto";
+import "google/logging/data_governance.proto";
+import "google/protobuf/timestamp.proto";
+import "google/rpc/status.proto";
+import "storage/datapol/annotations/proto/semantic_annotations.proto";
+
+option ruby_package = "Google::Cloud::Monitoring::V3";
+option php_namespace = "Google\\Cloud\\Monitoring\\V3";
+option csharp_namespace = "Google.Cloud.Monitoring.V3";
+option go_package = "cloud.google.com/go/monitoring/apiv3/v2/monitoringpb;monitoringpb";
+option java_multiple_files = true;
+option java_outer_classname = "AlertEvaluationHistoryServiceProto";
+option java_package = "com.google.monitoring.v3";
+
+service AlertEvaluationHistoryService {
+    rpc ListSqlConditionEvaluationResults(ListSqlConditionEvaluationResultsRequest) returns (ListSqlConditionEvaluationResultsResponse);
+}
+
+message ListSqlConditionEvaluationResultsRequest {
+    string parent = 1;
+    int32 page_size = 2;
+    string page_token = 3;
+}
+
+message SqlConditionEvaluationResult {
+    protobuf.Timestamp intended_start_time = 1;
+    rpc.Status status = 2;
+    bool alert_condition_met = 3;
+    int64 total_slot_ms = 5;
+    
+    reserved 4;
+}
+
+message ListSqlConditionEvaluationResultsResponse {
+    repeated SqlConditionEvaluationResult sql_condition_evaluation_results = 1;
+    rpc.Status policy_status = 2;
+    int64 slot_ms_per_day = 4;
+    string next_page_token = 3;
+}

@@ -1,0 +1,90 @@
+syntax = "proto3";
+
+package tensorflow.profiler;
+
+import "third_party/tensorflow/core/profiler/protobuf/diagnostics.proto";
+import "third_party/tensorflow/core/profiler/protobuf/kernel_stats.proto";
+import "third_party/tensorflow/core/profiler/protobuf/op_metrics.proto";
+import "third_party/tensorflow/core/profiler/protobuf/power_metrics.proto";
+import "third_party/tensorflow/core/profiler/protobuf/steps_db.proto";
+import "third_party/tensorflow/core/profiler/protobuf/tf_function.proto";
+import "third_party/tensorflow/core/profiler/protobuf/topology.proto";
+
+message PerfEnv {
+    double peak_tera_flops_per_second = 1;
+    double peak_bw_giga_bytes_per_second = 4;
+    double peak_hbm_bw_giga_bytes_per_second = 2;
+    repeated double peak_bws_giga_bytes_per_second = 5;
+    double ridge_point = 3;
+}
+
+message HostIndependentJobInfoResult {
+    int64 change_list = 1;
+    int64 build_time = 2;
+    string build_target = 3;
+    uint32 profile_duration_ms = 4;
+}
+
+message HostDependentJobInfoResult {
+    string host_id = 1;
+    string command_line = 2;
+    int64 start_time = 3;
+    string bns_address = 4;
+    uint64 profile_time_ns = 5;
+}
+
+message SystemTopology {
+    int64 x_dimension = 1;
+    int64 y_dimension = 2;
+    int64 z_dimension = 3;
+    int64 num_expected_reduced_chips = 4;
+}
+
+message RunEnvironment {
+    int32 host_count = 1;
+    int32 task_count = 2;
+    map<string, bool> hostnames = 3;
+    string device_type = 4;
+    int32 device_core_count = 5;
+    HostIndependentJobInfoResult host_independent_job_info = 7;
+    repeated HostDependentJobInfoResult host_dependent_job_info = 8;
+    int32 replica_count = 9;
+    int32 num_cores_per_replica = 10;
+    SystemTopology topology = 11 [deprecated = true];
+    uint32 host_trace_level = 12;
+    Topology system_topology = 13;
+    bool is_training = 14;
+    PowerMetrics power_metrics = 15;
+    
+    reserved 6;
+}
+
+message CoreDetails {
+    string hostname = 1;
+    uint32 device_ordinal = 2;
+    uint32 core_num = 3;
+    uint32 local_chip_id = 4;
+    uint32 global_chip_id = 5;
+    uint32 global_core_id = 6;
+}
+
+message PerformanceCounterResult {
+    double matrix_unit_utilization_percent = 1;
+}
+
+message OpStats {
+    OpMetricsDb host_op_metrics_db = 1;
+    OpMetricsDb device_op_metrics_db = 2;
+    OpMetricsDb hlo_metrics_db_complete_steps_only = 10;
+    PerfEnv perf_env = 3;
+    StepDatabaseResult step_db = 4;
+    RunEnvironment run_environment = 5;
+    KernelStatsDb kernel_stats_db = 6;
+    TfFunctionDb tf_function_db = 8;
+    map<uint32, CoreDetails> core_id_to_details = 11;
+    Diagnostics diagnostics = 9;
+    map<uint64, string> program_id_to_name_map = 12;
+    PerformanceCounterResult performance_counter_result = 13;
+    
+    reserved 7;
+}

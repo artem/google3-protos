@@ -1,0 +1,38 @@
+syntax = "proto3";
+
+package tensorflow.data.experimental;
+
+import "third_party/tensorflow/core/protobuf/data_service.proto";
+
+option go_package = "github.com/tensorflow/tensorflow/tensorflow/go/core/protobuf/for_core_protos_go_proto";
+
+message DispatcherConfig {
+    int64 port = 1;
+    string protocol = 2;
+    string work_dir = 3;
+    bool fault_tolerant_mode = 4;
+    repeated string worker_addresses = 7;
+    DeploymentMode deployment_mode = 9;
+    int64 job_gc_check_interval_ms = 5;
+    int64 job_gc_timeout_ms = 6;
+    bool gc_dynamic_sharding_jobs = 11;
+    int64 client_timeout_ms = 8;
+    int64 worker_timeout_ms = 10;
+    int64 worker_max_concurrent_snapshots = 12;
+}
+
+message WorkerConfig {
+    int64 port = 1;
+    string protocol = 2;
+    string dispatcher_address = 3;
+    string worker_address = 4;
+    repeated string worker_tags = 10;
+    int64 heartbeat_interval_ms = 5;
+    int64 dispatcher_timeout_ms = 6;
+    string data_transfer_protocol = 7;
+    int64 data_transfer_port = 13;
+    string data_transfer_address = 8;
+    int64 cross_trainer_cache_size_bytes = 11;
+    int64 snapshot_max_chunk_size_bytes = 12;
+    int64 shutdown_quiet_period_ms = 9;
+}

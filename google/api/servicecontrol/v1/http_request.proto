@@ -1,0 +1,30 @@
+syntax = "proto3";
+
+package google.api.servicecontrol.v1;
+
+import "google/protobuf/duration.proto";
+
+option ruby_package = "Google::Cloud::ServiceControl::V1";
+option php_namespace = "Google\\Cloud\\ServiceControl\\V1";
+option csharp_namespace = "Google.Cloud.ServiceControl.V1";
+option java_multiple_files = true;
+option java_outer_classname = "HttpRequestProto";
+option java_package = "com.google.api.servicecontrol.v1";
+
+message HttpRequest {
+    string request_method = 1;
+    string request_url = 2;
+    int64 request_size = 3;
+    int32 status = 4;
+    int64 response_size = 5;
+    string user_agent = 6;
+    string remote_ip = 7;
+    string server_ip = 13;
+    string referer = 8;
+    protobuf.Duration latency = 14;
+    bool cache_lookup = 11;
+    bool cache_hit = 9;
+    bool cache_validated_with_origin_server = 10;
+    int64 cache_fill_bytes = 12;
+    string protocol = 15;
+}

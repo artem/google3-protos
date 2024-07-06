@@ -1,0 +1,55 @@
+syntax = "proto3";
+
+package google.monitoring.v3.widgets;
+
+import "google/api/field_behavior.proto";
+import "google/api/visibility.proto";
+import "google/monitoring/v3/widgets/common.proto";
+import "google/monitoring/v3/widgets/trace.proto";
+import "google/protobuf/empty.proto";
+import "storage/datapol/annotations/proto/semantic_annotations.proto";
+
+option ruby_package = "Google::Cloud::Monitoring::V3::Widgets";
+option php_namespace = "Google\\Cloud\\Monitoring\\V3\\Widgets";
+option csharp_namespace = "Google.Cloud.Monitoring.V3.Widgets";
+option java_multiple_files = true;
+option java_outer_classname = "ScorecardWidgetsProto";
+option java_package = "com.google.monitoring.v3.widgets";
+
+message Scorecard {
+    repeated Threshold thresholds = 6;
+    bool output_full_duration = 10;
+    string unit_override = 11;
+    repeated Dimension dimensions = 14;
+    repeated Measure measures = 15;
+    
+    oneof data_view {
+        GaugeView gauge_view = 1;
+        SparkChartView spark_chart_view = 2;
+        protobuf.Empty blank_view = 8;
+    }
+    
+    oneof source {
+        TimeSeriesFilter time_series_filter = 3;
+        TimeSeriesFilterRatio time_series_filter_ratio = 4;
+        TimeSeriesQueryLanguage time_series_query_language = 5 [deprecated = true];
+        string time_series_query = 7;
+        string prometheus_query = 9;
+        OpsAnalyticsQuery ops_analytics_query = 12;
+        TraceQuery trace_query = 13;
+    }
+    
+    message GaugeView {
+        double lower_bound = 1;
+        double upper_bound = 2;
+    }
+    
+    message SparkChartView {
+        ChartType chart_type = 1;
+        enum ChartType {
+            CHART_TYPE_UNSPECIFIED = 0;
+            SPARK_LINE = 1;
+            SPARK_BAR = 2;
+        }
+    }
+}

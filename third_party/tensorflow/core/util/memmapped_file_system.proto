@@ -1,0 +1,15 @@
+syntax = "proto3";
+
+package tensorflow;
+
+option cc_enable_arenas = true;
+
+message MemmappedFileSystemDirectoryElement {
+    uint64 offset = 1;
+    string name = 2;
+    uint64 length = 3;
+}
+
+message MemmappedFileSystemDirectory {
+    repeated MemmappedFileSystemDirectoryElement element = 1;
+}

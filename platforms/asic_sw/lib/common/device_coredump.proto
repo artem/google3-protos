@@ -1,0 +1,113 @@
+syntax = "proto2";
+
+package asic_sw;
+
+import "google/protobuf/timestamp.proto";
+import "platforms/asic_sw/driver/common/configuration.proto";
+import "platforms/asic_sw/lib/common/architectural_state.proto";
+import "platforms/asic_sw/lib/common/architectural_state_collection_config.proto";
+import "platforms/asic_sw/lib/common/arm/results.proto";
+import "platforms/asic_sw/lib/common/csr_snapshot.proto";
+import "platforms/asic_sw/lib/common/kernel_device_info.proto";
+import "platforms/asic_sw/proto/device_identifiers.proto";
+import "platforms/asic_sw/tools/common/register_dump.proto";
+
+option optimize_for = CODE_SIZE;
+
+message Results {
+    optional GeneralInfo general = 1;
+    repeated Info anomalies = 2;
+    map<int32, Csrs> csrs = 3;
+    repeated ArchitecturalState arch_state = 11;
+    map<int32, uint32> pcie_config_registers = 7;
+    optional .asic_sw.proto.DeviceIdentifiers device_identifiers = 8;
+    optional .asic_sw.driver.Configuration config = 9;
+    repeated CsrCollectionConfig csr_collection_configs = 10;
+    repeated ArchitecturalStateCollectionConfig arch_state_configs = 12;
+    optional CpuState cpu_state = 13;
+    
+    reserved 4 to 6, "pcie_devices", "sensors", "errors";
+}
+
+message GeneralInfo {
+    optional google.protobuf.Timestamp timestamp = 1;
+    optional string machine_name = 2;
+    optional KernelDeviceInfo kernel_device_info = 3;
+    optional string kernel_version = 4;
+    optional google.protobuf.Timestamp boot_time = 5;
+    optional string ae33_devpath = 6;
+}
+
+message Info {
+    optional InfoCategory category = 1;
+    optional string description = 2;
+    repeated string tag = 4;
+    
+    reserved 3, "timestamp";
+}
+
+message RegisterDump {
+    repeated .asic_sw.tools.DeviceRegister reg = 1;
+}
+
+message CpuState {
+    optional StateValue state = 1;
+    enum StateValue {
+        UNKNOWN = 0;
+        STOPPED = 1;
+        RUNNING = 2;
+        SINGLE_STEP = 3;
+        TRAPPED = 4;
+        BLOCKED = 5;
+        UNHANDLED_EXCEPTION = 6;
+    }
+    
+    optional RegisterDump registers = 2;
+    optional uint64 pc = 3;
+    optional uint64 stack_ptr = 4;
+}
+
+message StackDumpEntry {
+    optional uint64 stack = 1;
+    optional uint64 code = 2;
+    optional .asic_sw.arm.ExceptionInfo exception_info = 3;
+}
+
+message StackDump {
+    repeated StackDumpEntry entry = 1;
+}
+
+message CrashInfo {
+    optional string file_name = 1;
+    optional uint64 file_name_address = 2;
+    optional uint64 line_number = 3;
+}
+
+message TrapReason {
+    optional uint64 trap_reason = 1;
+    optional uint64 trap_reason_offset = 2;
+    optional uint64 faulting_address = 3;
+}
+
+message DebugWords {
+    repeated uint64 debug_word = 1;
+}
+
+message FirmwareDebugState {
+    optional TrapReason trap_reason = 1;
+    optional CrashInfo crash_info = 2;
+    optional DebugWords debug_words = 3;
+    optional StackDump crash_dump = 4;
+    optional StackDump stack_dump = 5;
+}
+
+enum InfoCategory {
+    SOFTWARE = 1;
+    PCIE = 2;
+    ERROR_STATUS = 3;
+    BIT_ERRORS = 4;
+    RUN_STATUS = 5;
+    STATISTICS = 6;
+    FIRMWARE_ERROR = 7;
+    PROGRAM_INFO = 8;
+}

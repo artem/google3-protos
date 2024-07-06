@@ -1,0 +1,11 @@
+syntax = "proto2";
+
+package monarch;
+
+option java_multiple_files = true;
+option java_package = "com.google.monitoring.monarch.proto";
+
+message ExemplarBucketCount {
+    optional int64 bucket_number = 1 [deprecated = true];
+    optional int64 bucket_count = 2;
+}

@@ -1,0 +1,236 @@
+syntax = "proto2";
+
+package hardware.chips.infra.gcsr.gcsrproto;
+
+message Block {
+    optional string mnemonic = 1;
+    optional string name = 2;
+    optional string description = 15;
+    optional uint64 base = 3;
+    optional uint64 size = 4;
+    optional uint32 count = 5;
+    repeated Node node = 6;
+    repeated Block block = 7;
+    repeated Import import = 8;
+    optional Import origin = 14;
+    optional uint64 alignment = 9;
+    optional uint64 bytes_per_word = 13;
+    repeated ImportViews import_view = 11;
+    optional LintConf lintconf = 10;
+    repeated string tag = 12;
+    map<string, Block> view = 16;
+    optional ViewOptions view_options = 17;
+    
+    extensions 1000 to max;
+}
+
+message Node {
+    optional string mnemonic = 1;
+    optional string name = 2;
+    optional string description = 12;
+    optional uint64 base = 3;
+    
+    repeated Register register = 4;
+    message Register {
+        optional string mnemonic = 1;
+        optional string name = 2;
+        optional uint64 offset = 3;
+        optional uint32 width = 4;
+        optional uint64 size = 15;
+        optional string description = 5;
+        repeated RegField field = 6;
+        optional RTLGenWrites rtlgen = 7;
+        optional RegLocation reglocation = 8;
+        optional GQRegType gqregtype = 9;
+        optional uint32 count = 10;
+        optional bool ssgeneratertl = 11 [default = true];
+        optional string swgroup = 12;
+        optional string regtype = 13;
+        repeated string tag = 14;
+        
+        extensions 1000 to max;
+    }
+    
+    repeated Memory memory = 5;
+    message Memory {
+        optional string mnemonic = 1;
+        optional string name = 2;
+        optional uint64 offset = 3;
+        optional uint32 width = 4;
+        optional string description = 5;
+        optional uint32 depth = 6;
+        optional uint64 size = 18;
+        optional uint64 row_size = 19;
+        optional SWAccessType swaccess = 7;
+        optional HWAccessType hwaccess = 8;
+        optional RegLocation reglocation = 9;
+        optional GQRegType gqregtype = 10;
+        repeated MemField field = 11;
+        optional bool ssgeneratertl = 12 [default = true];
+        optional bool dvuvmreg = 13;
+        optional string swgroup = 14;
+        optional string memtype = 15;
+        repeated string tag = 16;
+        repeated Register register = 17;
+        
+        extensions 1000 to max;
+    }
+    
+    optional uint32 count = 6;
+    optional uint32 nibblealign = 8;
+    optional uint64 size = 9;
+    repeated string tag = 10;
+    optional Import origin = 11;
+    map<string, Node> view = 13;
+    optional ViewOptions view_options = 14;
+    
+    extensions 1000 to max;
+    
+    enum HWAccessType {
+        INVISIBLE = 0;
+        HRO = 1;
+        HRW = 2;
+        HWO = 3;
+    }
+    
+    enum SWAccessType {
+        UNKNOWN_SWACCESS = 0;
+        RO = 1;
+        RW = 2;
+        RC = 3;
+        RS = 4;
+        WRC = 5;
+        WRS = 6;
+        WC = 7;
+        WS = 8;
+        WSRC = 9;
+        WCRS = 10;
+        W1C = 11;
+        W1S = 12;
+        W1T = 13;
+        W0C = 14;
+        W0S = 15;
+        W0T = 16;
+        W1SRC = 17;
+        W1CRS = 18;
+        W0SRC = 19;
+        W0CRS = 20;
+        WO = 21;
+        WOS = 22;
+        W1 = 23;
+        WO1 = 24;
+        WOC = 25;
+    }
+    
+    enum RTLGenWrites {
+        ONE_VAL_ONE_WR = 0;
+        ONE_VAL_PER_WR = 1;
+        PER_VAL_PER_WR = 2;
+    }
+    
+    enum RegLocation {
+        INTERNAL = 0;
+        EXTERNAL = 1;
+        EXTERNAL_HANDSHAKE = 2;
+    }
+    
+    enum GQRegType {
+        STS = 0;
+        CFG = 1;
+        DHS = 2;
+    }
+}
+
+message RegField {
+    optional string mnemonic = 1;
+    optional string name = 2;
+    optional string description = 3;
+    optional Node.SWAccessType swaccess = 4;
+    optional uint64 init = 5;
+    optional uint32 msb = 6;
+    optional uint32 lsb = 7;
+    optional Node.HWAccessType hwaccess = 8;
+    repeated string dvrtlpath = 9;
+    optional uint32 rtlmsb = 10;
+    optional uint32 rtllsb = 11;
+    optional uint64 typical = 12;
+    optional string validvalues = 13;
+    map<string, uint32> enum = 14;
+    repeated string tag = 15;
+    repeated FieldConstraint constraints = 16;
+    
+    extensions 1000 to max;
+}
+
+message MemField {
+    optional string mnemonic = 1;
+    optional string name = 2;
+    optional string description = 3;
+    optional uint32 msb = 4;
+    optional uint32 lsb = 5;
+    optional uint64 offset = 9;
+    optional uint64 typical = 6;
+    optional string validvalues = 7;
+    map<string, uint32> enum = 8;
+    repeated string tag = 10;
+    
+    extensions 1000 to max;
+}
+
+message FieldConstraint {
+    oneof constraint {
+        uint64 min = 1;
+        uint64 max = 2;
+    }
+}
+
+message Import {
+    optional string file = 1;
+    optional string path = 2;
+    optional string as = 3;
+    optional uint64 base = 4;
+    optional uint32 count = 5;
+    optional string name = 6;
+    optional uint64 size = 7;
+    repeated string tag = 8;
+    map<string, Import> view = 9;
+}
+
+message ViewOptions {
+    optional bool allow_any_swaccess = 1;
+    optional bool allow_any_hwaccess = 2;
+}
+
+message ImportViews {
+    required Import base = 1;
+    map<string, Import> view = 2;
+}
+
+message RegTypes {
+    repeated Node.Register regtypeinfo = 1;
+}
+
+message LintConf {
+    optional bool checkswaccess = 1;
+    optional bool checkaddrcollision = 2;
+    optional uint32 regmaxwidth = 3;
+    optional uint32 memmaxwidth = 4;
+    optional uint64 regalignment = 5;
+    optional uint64 memalignment = 6;
+    optional bool regfieldsgeq1 = 7;
+    repeated string regtypein = 8;
+    repeated string memtypein = 9;
+    optional bool checkmemfieldwidth = 10;
+    repeated string allowedtags = 11;
+    repeated string illegalmnemonics = 12;
+    optional bool checkregfieldoverlap = 13;
+    optional bool checkmemfieldoverlap = 14;
+    repeated string regmarkrequired = 15;
+    repeated string regfieldmarkrequired = 16;
+    repeated string memmarkrequired = 18;
+    repeated string memfieldmarkrequired = 19;
+    repeated string nodemarkrequired = 20;
+    optional bool uniquemnemonicpath = 21;
+    optional bool packedregfields = 22;
+    repeated string illegaltags = 23;
+}

@@ -1,0 +1,19 @@
+syntax = "proto3";
+
+package tensorflow;
+
+import "third_party/tensorflow/compiler/xla/service/hlo.proto";
+
+message XlaSerializedCacheKey {
+    uint64 signature_fingerprint = 1;
+    uint64 cluster_fingerprint = 2;
+    string device_type = 3;
+    string prefix = 4;
+    bool compiled_using_pjrt = 5;
+}
+
+message XlaSerializedCacheEntry {
+    XlaSerializedCacheKey key = 1;
+    .xla.HloModuleProto hlo_module = 2;
+    bytes executable = 3;
+}

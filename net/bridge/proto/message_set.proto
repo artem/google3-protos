@@ -1,0 +1,14 @@
+syntax = "proto2";
+
+package proto2.bridge;
+
+option objc_class_prefix = "GPB";
+option cc_enable_arenas = true;
+option java_multiple_files = true;
+option java_outer_classname = "MessageSetProtos";
+
+message MessageSet {
+    option message_set_wire_format = true;
+    
+    extensions 4 to 524999999, 525000000 to max;
+}

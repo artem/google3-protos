@@ -1,0 +1,16 @@
+syntax = "proto3";
+
+package xla.cpu;
+
+import "third_party/tensorflow/compiler/xla/service/cpu/onednn_config.proto";
+
+message BackendConfig {
+    repeated int64 outer_dimension_partitions = 1;
+    
+    oneof backend_config_oneof {
+        OneDnnMatMulConfig onednn_matmul_config = 2;
+        OneDnnNormConfig onednn_layer_norm_config = 3;
+        OneDnnSoftmaxConfig onednn_softmax_config = 4;
+        OneDnnConvolutionConfig onednn_conv_config = 5;
+    }
+}

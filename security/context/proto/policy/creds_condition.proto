@@ -1,0 +1,47 @@
+syntax = "proto2";
+
+package security.context;
+
+option java_multiple_files = true;
+option java_outer_classname = "CredsConditionProto";
+option java_package = "com.google.security.context.credentialcondition";
+
+message CredsCondition {
+    oneof condition {
+        DeviceTrustLevelCondition device_trust_level = 1;
+        OauthCondition oauth = 2;
+        OsidDomainCondition osid_domain = 3;
+    }
+}
+
+message DeviceTrustLevelCondition {
+    optional TrustLevel minimum = 1;
+    enum TrustLevel {
+        INDETERMINATE = 0;
+        UNTRUSTED_DEVICE = 2;
+        REMEDIATION_TRUSTED_DEVICE = 5;
+        MINIMALLY_TRUSTED_DEVICE = 10;
+        MOSTLY_TRUSTED_DEVICE = 20;
+        FULLY_TRUSTED_DEVICE = 30;
+        HIT_TRUSTED_DEVICE = 35;
+        RIX_TRUSTED_DEVICE = 40;
+        RMG_TRUSTED_DEVICE = 50 [deprecated = true];
+    }
+    
+    optional bool loas_origin_trusted = 2;
+}
+
+message OauthCondition {
+    repeated int32 allow_scopes = 1;
+    
+    optional OAuthMode mode = 2;
+    enum OAuthMode {
+        ALLOW_ALL = 0;
+        ALLOW_NON_OAUTH_ONLY = 1;
+        ALLOW_OAUTH_ONLY = 2;
+    }
+}
+
+message OsidDomainCondition {
+    repeated string allow_domains = 1;
+}

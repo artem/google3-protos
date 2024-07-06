@@ -1,0 +1,79 @@
+syntax = "proto3";
+
+package tensorflow.tpu;
+
+import "third_party/tensorflow/compiler/xla/xla.proto";
+import "third_party/tensorflow/compiler/xla/xla_data.proto";
+import "third_party/tensorflow/core/framework/tensor_shape.proto";
+import "third_party/tensorflow/core/framework/types.proto";
+import "third_party/tensorflow/core/protobuf/tpu/dynamic_padding.proto";
+
+option cc_enable_arenas = true;
+
+message TPUCompileMetadataProto {
+    repeated Arg args = 1;
+    message Arg {
+        DataType dtype = 1;
+        TensorShapeProto shape = 2;
+        
+        Kind kind = 3;
+        enum Kind {
+            INVALID = 0;
+            PARAMETER = 1;
+            VARIABLE = 2;
+            GUARANTEED_CONSTANT = 3;
+        }
+        
+        .xla.OpSharding sharding = 4;
+        bool is_same_data_across_replicas = 5;
+        
+        EnableXlaSharding enable_xla_sharding = 6;
+        enum EnableXlaSharding {
+            DISALLOWED = 0;
+            TENTATIVE = 1;
+            ALLOWED = 2;
+        }
+        
+        int32 retval_index_for_sharding = 8;
+        bool fast_mem = 7;
+        bool unrestricted_layout = 9;
+        string name = 10;
+        bool requires_xla_broadcast = 11;
+        repeated bool is_bounded_dynamic_dim = 12;
+    }
+    
+    repeated Retval retvals = 2;
+    message Retval {
+        .xla.OpSharding sharding = 1;
+    }
+    
+    int32 num_replicas = 3;
+    int32 num_cores_per_replica = 4;
+    .xla.DeviceAssignmentProto device_assignment = 8;
+    uint64 function_library_fingerprint = 6;
+    string session_handle = 9;
+    string guaranteed_const_fingerprint = 10;
+    repeated PaddingMap padding_maps = 11;
+    .xla.DebugOptions.StepMarkerLocation step_marker_location = 12;
+    int64 xla_fusion_autotuner_thresh = 13;
+    bool enable_automatic_model_parallelism = 14;
+    bool use_spmd_for_xla_partitioning = 15;
+    bool use_auto_spmd_for_xla_partitioning = 18;
+    repeated int64 auto_spmd_mesh_shape = 19;
+    repeated int64 auto_spmd_mesh_ids = 20;
+    uint64 mlir_fingerprint = 17;
+    TPUCompileOptions compile_options = 21;
+    string module_name = 22;
+    
+    reserved 5, 7, 16;
+}
+
+message TPUCompileOptions {
+    Precision matrix_unit_operand_precision = 1;
+    enum Precision {
+        DEFAULT = 0;
+        BFLOAT16 = 1;
+        FLOAT32 = 2;
+        TENSOR_FLOAT32 = 3;
+    }
+}

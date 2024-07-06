@@ -1,0 +1,56 @@
+syntax = "proto3";
+
+package tensorflow.tpu;
+
+import "third_party/tensorflow/core/protobuf/tpu/optimization_parameters.proto";
+
+message TPUEmbeddingConfiguration {
+    repeated TableDescriptor table_descriptor = 1;
+    message TableDescriptor {
+        string name = 1;
+        int64 vocabulary_size = 2;
+        int32 dimension = 3;
+        int32 num_features = 4;
+        OptimizationParameters optimization_parameters = 5;
+    }
+    
+    Mode mode = 2;
+    enum Mode {
+        UNSPECIFIED = 0;
+        INFERENCE = 1;
+        TRAINING = 2;
+        BACKWARD_PASS_ONLY = 3;
+    }
+    
+    int32 batch_size_per_tensor_core = 3;
+    int32 num_hosts = 4;
+    int32 num_tensor_cores = 5;
+    
+    ShardingStrategy sharding_strategy = 6;
+    enum ShardingStrategy {
+        DIV_DEFAULT = 0;
+        MOD = 1;
+    }
+    
+    bool pipeline_execution_with_tensor_core = 7;
+    string profile_data_directory = 9;
+    
+    repeated FeatureDescriptor feature_descriptor = 10;
+    message FeatureDescriptor {
+        string name = 1;
+        int32 table_id = 2;
+        repeated int32 input_shape = 3;
+    }
+    
+    SpmdSharding spmd_sharding = 11;
+    message SpmdSharding {
+        bool enabled = 1;
+        int32 num_cores_per_replica = 2;
+    }
+    
+    reserved 8, "output_layout";
+}
+
+message TPUEmbeddingError {
+    
+}

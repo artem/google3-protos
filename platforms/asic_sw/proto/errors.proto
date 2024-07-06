@@ -1,0 +1,51 @@
+syntax = "proto2";
+
+package asic_sw.proto;
+
+option optimize_for = CODE_SIZE;
+
+message MemoryEccError {
+    optional int32 version = 14 [default = 1];
+    optional string location = 1;
+    optional uint64 count = 2;
+    optional uint64 first_address = 3;
+    optional uint64 syndrome = 4;
+    optional uint64 rams = 5;
+    optional uint64 first_ram = 6;
+    optional string detailed_location = 7;
+    optional string memory_class = 8;
+    map<uint64, string> ram_mnemonics = 9;
+    optional ErrorCanary canary = 10 [default = CANARY_UNSPECIFIED];
+    optional bool is_canary = 11 [default = false];
+    optional int32 location_index = 12;
+    optional uint64 timestamp = 13;
+}
+
+message GeneralError {
+    optional int32 version = 11 [default = 1];
+    optional string location = 1;
+    optional uint64 value = 2;
+    optional uint64 first_value = 3;
+    optional uint64 timestamp = 4;
+    map<int32, uint64> scratch_registers = 5;
+    optional string detailed_location = 6;
+    optional int32 location_index = 7;
+    map<uint64, string> field_descriptions = 8;
+    optional ErrorCanary canary = 9 [default = CANARY_UNSPECIFIED];
+    optional bool is_canary = 10 [default = false];
+}
+
+message ThermalError {
+    optional int32 version = 2 [default = 1];
+    optional string location = 1;
+}
+
+message ChipMissingError {
+    optional int32 version = 1 [default = 1];
+}
+
+enum ErrorCanary {
+    CANARY_UNSPECIFIED = 0;
+    CANARY_GENERIC = 1;
+    CANARY_CPU_MISC_ECC_STATUS = 2;
+}

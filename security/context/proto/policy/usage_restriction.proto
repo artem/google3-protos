@@ -1,0 +1,21 @@
+syntax = "proto2";
+
+package security.context;
+
+import "net/proto2/proto/descriptor.proto";
+import "security/context/proto/policy/policy_bundle_types.proto";
+
+option java_multiple_files = true;
+
+message UsageRestriction {
+    repeated rpcsp.Framework unsupported_frameworks = 1;
+    optional string note = 2;
+}
+
+extend proto2.EnumValueOptions {
+    repeated UsageRestriction enum_usage_restrictions = 401461094;
+}
+
+extend proto2.FieldOptions {
+    repeated UsageRestriction field_usage_restrictions = 401461094;
+}

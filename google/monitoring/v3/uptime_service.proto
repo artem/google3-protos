@@ -1,0 +1,169 @@
+syntax = "proto3";
+
+package google.monitoring.v3;
+
+import "google/api/annotations.proto";
+import "google/api/auditing.proto";
+import "google/api/authz.proto";
+import "google/api/client.proto";
+import "google/api/field_behavior.proto";
+import "google/api/policy.proto";
+import "google/api/resource.proto";
+import "google/api/visibility.proto";
+import "google/logging/data_governance.proto";
+import "google/longrunning/operations.proto";
+import "google/monitoring/v3/uptime.proto";
+import "google/protobuf/duration.proto";
+import "google/protobuf/empty.proto";
+import "google/protobuf/field_mask.proto";
+import "logs/proto/data_access/asr/cloud_monitoring_uptime_resource.proto";
+import "storage/datapol/annotations/proto/semantic_annotations.proto";
+
+option ruby_package = "Google::Cloud::Monitoring::V3";
+option php_namespace = "Google\\Cloud\\Monitoring\\V3";
+option csharp_namespace = "Google.Cloud.Monitoring.V3";
+option go_package = "cloud.google.com/go/monitoring/apiv3/v2/monitoringpb;monitoringpb";
+option java_multiple_files = true;
+option java_outer_classname = "UptimeServiceProto";
+option java_package = "com.google.monitoring.v3";
+
+service UptimeCheckService {
+    rpc ListUptimeCheckConfigs(ListUptimeCheckConfigsRequest) returns (ListUptimeCheckConfigsResponse);
+    rpc GetUptimeCheckConfig(GetUptimeCheckConfigRequest) returns (UptimeCheckConfig);
+    rpc CreateUptimeCheckConfig(CreateUptimeCheckConfigRequest) returns (UptimeCheckConfig);
+    rpc UpdateUptimeCheckConfig(UpdateUptimeCheckConfigRequest) returns (UptimeCheckConfig);
+    rpc DeleteUptimeCheckConfig(DeleteUptimeCheckConfigRequest) returns (protobuf.Empty);
+    rpc ValidateUptimeCheckConfig(ValidateUptimeCheckConfigRequest) returns (ValidateUptimeCheckConfigResponse);
+    rpc ListUptimeCheckIps(ListUptimeCheckIpsRequest) returns (ListUptimeCheckIpsResponse);
+    rpc ListExpandedUptimeCheckIps(ListExpandedUptimeCheckIpsRequest) returns (ListExpandedUptimeCheckIpsResponse);
+    rpc ListPrivateCheckers(ListPrivateCheckersRequest) returns (ListPrivateCheckersResponse);
+    rpc GetPrivateChecker(GetPrivateCheckerRequest) returns (UptimePrivateChecker);
+    rpc CreatePrivateChecker(CreatePrivateCheckerRequest) returns (longrunning.Operation);
+    rpc UpdatePrivateChecker(UpdatePrivateCheckerRequest) returns (UptimePrivateChecker);
+    rpc DeletePrivateChecker(DeletePrivateCheckerRequest) returns (longrunning.Operation);
+    rpc ListPrivateCheckerOperations(ListPrivateCheckerOperationsRequest) returns (longrunning.ListOperationsResponse);
+    rpc GetPrivateCheckerOperation(GetPrivateCheckerOperationRequest) returns (longrunning.Operation);
+    rpc WaitPrivateCheckerOperation(WaitPrivateCheckerOperationRequest) returns (longrunning.Operation);
+}
+
+message ListUptimeCheckConfigsRequest {
+    string parent = 1;
+    string filter = 2;
+    int32 page_size = 3;
+    string page_token = 4;
+    repeated string legacy_check_ids = 5 [deprecated = true];
+    string group_id = 6;
+    repeated string resource_filters = 7;
+    bool show_sensitive_fields = 8;
+    
+    reserved 9, 10;
+}
+
+message ListUptimeCheckConfigsResponse {
+    repeated UptimeCheckConfig uptime_check_configs = 1;
+    string next_page_token = 2;
+    int32 total_size = 3;
+}
+
+message GetUptimeCheckConfigRequest {
+    string name = 1;
+}
+
+message CreateUptimeCheckConfigRequest {
+    string parent = 1;
+    UptimeCheckConfig uptime_check_config = 2;
+}
+
+message UpdateUptimeCheckConfigRequest {
+    protobuf.FieldMask update_mask = 2;
+    UptimeCheckConfig uptime_check_config = 3;
+}
+
+message DeleteUptimeCheckConfigRequest {
+    string name = 1;
+    bool ignore_alerting_policies = 2 [deprecated = true];
+}
+
+message ValidateUptimeCheckConfigRequest {
+    string parent = 1;
+    UptimeCheckConfig uptime_check_config = 2;
+}
+
+message ValidateUptimeCheckConfigResponse {
+    repeated UptimeCheckResult uptime_check_results = 1;
+}
+
+message ListUptimeCheckIpsRequest {
+    int32 page_size = 2;
+    string page_token = 3;
+    bool return_checker_locations = 4;
+    
+    reserved 1;
+}
+
+message ListUptimeCheckIpsResponse {
+    repeated UptimeCheckIp uptime_check_ips = 1;
+    string next_page_token = 2;
+    repeated UptimePrivateCheckerLocation private_checker_locations = 3;
+}
+
+message ListExpandedUptimeCheckIpsRequest {
+    
+}
+
+message ListExpandedUptimeCheckIpsResponse {
+    repeated ExpandedUptimeCheckIp uptime_check_ips = 1;
+}
+
+message ListPrivateCheckersRequest {
+    string parent = 1;
+    int32 page_size = 3;
+    string page_token = 4;
+    
+    reserved 2, "customer_id";
+}
+
+message ListPrivateCheckersResponse {
+    repeated UptimePrivateChecker private_checkers = 1;
+    string next_page_token = 2;
+}
+
+message GetPrivateCheckerRequest {
+    string name = 1;
+    
+    reserved 2, "customer_id";
+}
+
+message CreatePrivateCheckerRequest {
+    string parent = 1;
+    UptimePrivateChecker private_checker = 2;
+}
+
+message UpdatePrivateCheckerRequest {
+    protobuf.FieldMask update_mask = 1;
+    UptimePrivateChecker private_checker = 2;
+}
+
+message DeletePrivateCheckerRequest {
+    string name = 1;
+}
+
+message GetPrivateCheckerOperationRequest {
+    string name = 1;
+}
+
+message ListPrivateCheckerOperationsRequest {
+    string parent = 1;
+    string filter = 2;
+    int32 page_size = 3;
+    string page_token = 4;
+}
+
+message WaitPrivateCheckerOperationRequest {
+    string name = 1;
+    protobuf.Duration timeout = 2;
+}
+
+message OperationMetadata {
+    
+}

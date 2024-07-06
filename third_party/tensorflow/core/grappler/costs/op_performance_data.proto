@@ -1,0 +1,71 @@
+syntax = "proto3";
+
+package tensorflow;
+
+import "third_party/tensorflow/core/framework/tensor.proto";
+import "third_party/tensorflow/core/framework/tensor_shape.proto";
+import "third_party/tensorflow/core/framework/types.proto";
+import "third_party/tensorflow/core/framework/attr_value.proto";
+import "third_party/tensorflow/core/protobuf/device_properties.proto";
+
+option cc_enable_arenas = true;
+
+message SessionInfo {
+    int64 intra_op_parallelism = 1;
+}
+
+message OpInfo {
+    string op = 1;
+    map<string, AttrValue> attr = 2;
+    
+    repeated TensorProperties inputs = 3;
+    message TensorProperties {
+        DataType dtype = 1;
+        TensorShapeProto shape = 2;
+        TensorProto value = 3;
+    }
+    
+    repeated TensorProperties outputs = 5;
+    DeviceProperties device = 4;
+    SessionInfo session_info = 6;
+}
+
+message NormalDistribution {
+    double mu = 1;
+    double sigma = 2;
+}
+
+message LogNormalDistribution {
+    double mu = 1;
+    double sigma = 2;
+}
+
+message OpPerformance {
+    OpInfo op = 1;
+    SessionInfo session_info = 12 [deprecated = true];
+    string node = 5;
+    int64 temporary_memory_size = 2;
+    int64 compute_cost = 3;
+    int64 compute_time = 6;
+    int64 memory_time = 7;
+    double compute_efficiency = 4;
+    double memory_efficiency = 8;
+    
+    OpMemory op_memory = 9;
+    message OpMemory {
+        repeated int64 output_memory = 1;
+        int64 temp_memory = 2;
+        int64 persistent_memory = 4;
+        int64 device_temp_memory = 3 [deprecated = true];
+        int64 device_persistent_memory = 5 [deprecated = true];
+    }
+    
+    oneof execution_time {
+        NormalDistribution execution_time_normal = 10;
+        LogNormalDistribution execution_time_log_normal = 11;
+    }
+}
+
+message OpPerformanceList {
+    repeated OpPerformance op_performance = 1;
+}

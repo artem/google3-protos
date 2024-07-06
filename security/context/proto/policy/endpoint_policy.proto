@@ -1,0 +1,267 @@
+syntax = "proto2";
+
+package security.context;
+
+import "google/protobuf/duration.proto";
+import "google/protobuf/empty.proto";
+import "identity/ubermint/proto/universe.proto";
+import "privacy/data_governance/attributes/proto/annotations.proto";
+import "security/context/proto/policy/creds_condition.proto";
+import "security/context/proto/policy/policy_processing.proto";
+import "security/context/proto/policy/role_name.proto";
+import "security/context/proto/policy/usage_restriction.proto";
+import "storage/datapol/annotations/proto/semantic_annotations.proto";
+
+option java_multiple_files = true;
+option java_outer_classname = "EndpointPolicyProtoFile";
+option java_package = "com.google.security.context";
+
+message EndpointPolicy {
+    repeated rpcsp.PolicyRewriteName enable_rewrites = 11;
+    repeated rpcsp.PolicyRewriteName disable_rewrites = 12;
+    repeated rpcsp.PolicyCheckName enable_checks = 13;
+    repeated rpcsp.PolicyCheckName disable_checks = 14;
+    repeated string rpc_methods = 1;
+    repeated string actions = 2;
+    repeated string labels = 3;
+    repeated string http_handlers = 16;
+    repeated string http_paths = 18;
+    repeated RoleBinding bindings = 4;
+    repeated EndpointPolicyCondition conditions = 8;
+    repeated EndpointPolicyDarklaunchCondition darklaunch_conditions = 17;
+    optional AuthenticationConfig authentication_config = 9;
+    optional ProxyServiceConfig proxy_service_config = 15;
+    
+    oneof data_governance_annotations_oneof {
+        privacy.data_governance.attributes.Annotations data_governance_annotations = 5;
+        string includes_data_governance_annotations = 19;
+    }
+    
+    reserved 6, 7, 10;
+}
+
+message RoleBinding {
+    optional string description = 6;
+    optional RoleName role = 1;
+    optional Members members = 2;
+    repeated BindingCondition conditions = 3;
+    optional MpaReviewerConfig reviewer_config = 7;
+    
+    oneof admin_config {
+        AdminAccessControlConfig admin_access_control = 4;
+        DisabledAdminAccessControlConfig disable_admin_access_control = 5;
+    }
+}
+
+message AdminAccessControlConfig {
+    optional bool allow_break_glass = 1 [default = false, deprecated = true];
+    
+    optional BreakGlassConfig allow_break_glass_access = 5;
+    message BreakGlassConfig {
+        optional BreakGlassMpaConfig require_mpa = 1;
+        optional bool require_omg = 2;
+    }
+    
+    optional AdminAccessEnforcement enforcement = 3 [deprecated = true];
+    enum AdminAccessEnforcement {
+        ADMIN_ACCESS_ENFORCEMENT_DEFAULT = 0;
+    }
+    
+    optional Container.BaselineControls baseline_controls = 7;
+    
+    optional GinLoggingFailureBehavior gin_logging_failure_behavior = 6 [default = UNSPECIFIED];
+    enum GinLoggingFailureBehavior {
+        UNSPECIFIED = 0;
+        FAIL_CLOSED = 1;
+    }
+    
+    oneof non_unilateral_access_controls {
+        MultiPartyAuthorizationConfig require_mpa = 2;
+    }
+    
+    reserved 4;
+    
+    message Container {
+        enum BaselineControls {
+            AUTOMATIC = 0;
+            INPUT_PRESENCE = 1;
+            BREAK_GLASS_ONLY = 2;
+        }
+    }
+}
+
+message MultiPartyAuthorizationConfig {
+    optional string review_guidance = 1;
+    optional google.protobuf.Duration approval_cache_duration = 2;
+}
+
+message BreakGlassMpaConfig {
+    
+}
+
+message DisabledAdminAccessControlConfig {
+    optional bool disable_audit_logging = 1 [default = false];
+    
+    optional Audit audit = 2;
+    enum Audit {
+        AUDIT_UNSPECIFIED = 0;
+        DISABLE_LOGGING = 1;
+        ENABLE_LOGGING_LITE = 2;
+        ENABLE_LOGGING = 3;
+    }
+}
+
+message MpaReviewerConfig {
+    repeated string preferred_reviewers_from_rotations = 2;
+    repeated string preferred_reviewers = 1;
+}
+
+message Members {
+    repeated string includes = 10;
+    repeated string prod_users = 1;
+    repeated string prod_groups = 2;
+    repeated string local_prod_groups = 8;
+    repeated string prod_authority_selectors = 3;
+    repeated string corp_groups = 13;
+    optional google.protobuf.Empty all = 9;
+    optional google.protobuf.Empty all_normal_users = 6;
+    optional google.protobuf.Empty self = 7;
+    optional google.protobuf.Empty all_except_anonymous = 11;
+    
+    reserved 4, 5;
+}
+
+message BindingCondition {
+    optional string description = 1;
+    
+    oneof condition_definition {
+        PeerUserCondition peer_user = 2;
+        PeerUserCondition primary_peer_user = 12;
+        ExcludePeerUserCondition exclude_peer_user = 15;
+        ExcludePeerUserCondition exclude_primary_peer_user = 16;
+        PeerSecurityRealmCondition peer_security_realm = 4;
+        ExcludeInsecureUsersCondition exclude_insecure_users = 5;
+        ExcludeProdAuthoritySelectorsCondition exclude_prod_authority_selectors = 17;
+        ApplicationAuthorizationCheckCondition application_authorization_check = 8;
+        ZanzibarAuthorizationCheckCondition zanzibar_authorization_check = 9;
+        UserAttributionCondition user_attribution = 10;
+        ImpersonationTargetCondition impersonation_target = 11;
+        PeerDelegationTargetCondition peer_delegation_target = 14;
+        CredsCondition creds = 13;
+    }
+    
+    extensions 1111, 1112, 1001, 1002;
+    
+    reserved 3, 6, 7;
+}
+
+message PeerUserCondition {
+    repeated string includes = 5;
+    repeated string prod_users = 1;
+    repeated string prod_groups = 2;
+    repeated string local_prod_groups = 3;
+    optional google.protobuf.Empty self = 4;
+}
+
+message ExcludePeerUserCondition {
+    repeated string prod_users = 1;
+    repeated string prod_groups = 2;
+}
+
+message PeerSecurityRealmCondition {
+    repeated string includes = 7;
+    repeated string realms = 2;
+    optional google.protobuf.Empty persons_in_corp = 9;
+    optional google.protobuf.Empty local_campus = 3;
+    optional google.protobuf.Empty local_metro = 4;
+    optional google.protobuf.Empty local_cloud_region = 5;
+    optional google.protobuf.Empty local_prod_region = 8;
+    optional google.protobuf.Empty default_covering_realms = 6;
+    optional google.protobuf.Empty crypto_core_covering_realms = 10;
+    
+    reserved 1;
+}
+
+message ExcludeInsecureUsersCondition {
+    repeated string prod_users = 1;
+}
+
+message ExcludeProdAuthoritySelectorsCondition {
+    
+}
+
+message UserAttributionCondition {
+    repeated string includes = 4;
+    repeated string prod_users = 5;
+    repeated string prod_groups = 1;
+    repeated string local_prod_groups = 2;
+    repeated string corp_groups = 6;
+    optional google.protobuf.Empty self = 3;
+}
+
+message ImpersonationTargetCondition {
+    optional google.protobuf.Empty all_normal_users = 1;
+    optional google.protobuf.Empty all_prod_users = 2;
+}
+
+message PeerDelegationTargetCondition {
+    repeated string prod_users = 1;
+    optional google.protobuf.Empty all_normal_users = 2;
+    optional google.protobuf.Empty all_prod_users = 3;
+}
+
+message AuthenticationConfig {
+    repeated .ubermint.UberMintPlatform additional_ubermint_platforms = 1 [packed = true];
+    optional bool default_anonymous_mode = 4 [default = false];
+    optional thinmintControl.Values thinmint_control = 5;
+}
+
+message thinmintControl {
+    enum Values {
+        UNSPECIFIED = 0;
+        IGNORED = 1;
+        FORWARDED = 2;
+        CONSUMED = 3;
+    }
+}
+
+message LegacyAuthorizationCheckRequiredCondition {
+    
+}
+
+message ApplicationAuthorizationCheckCondition {
+    
+}
+
+message ZanzibarAuthorizationCheckCondition {
+    
+}
+
+message EndpointPolicyCondition {
+    optional string description = 1;
+    
+    oneof condition_definition {
+        PeerUserCondition peer_user = 2;
+        PeerSecurityRealmCondition peer_security_realm = 3;
+        CrossProductSharingCondition cross_product_sharing = 4;
+        CredsCondition creds = 5;
+    }
+}
+
+message EndpointPolicyDarklaunchCondition {
+    optional string description = 1;
+    
+    oneof condition_definition {
+        CrossProductSharingCondition cross_product_sharing = 2;
+    }
+}
+
+message CrossProductSharingCondition {
+    optional google.protobuf.Empty enable_consent_check = 1;
+    optional int32 service_team_graph_product_id = 2;
+    optional PeerUserCondition exclude_peers = 3;
+}
+
+message ProxyServiceConfig {
+    
+}

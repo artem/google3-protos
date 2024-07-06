@@ -1,0 +1,30 @@
+syntax = "proto3";
+
+package tensorflow;
+
+import "third_party/tensorflow/core/framework/attr_value.proto";
+
+option cc_enable_arenas = true;
+option go_package = "github.com/tensorflow/tensorflow/tensorflow/go/core/framework/kernel_def_go_proto";
+option java_multiple_files = true;
+option java_outer_classname = "KernelDefProtos";
+option java_package = "org.tensorflow.framework";
+
+message KernelDef {
+    string op = 1;
+    string device_type = 2;
+    
+    repeated AttrConstraint constraint = 3;
+    message AttrConstraint {
+        string name = 1;
+        AttrValue allowed_values = 2;
+    }
+    
+    repeated string host_memory_arg = 4;
+    string label = 5;
+    int32 priority = 6;
+}
+
+message KernelList {
+    repeated KernelDef kernel = 1;
+}

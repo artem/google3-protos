@@ -1,0 +1,19 @@
+syntax = "proto3";
+
+package google.api.servicecontrol.v1;
+
+import "google/api/servicecontrol/v1/metric_value.proto";
+
+option ruby_package = "Google::Cloud::ServiceControl::V1";
+option php_namespace = "Google\\Cloud\\ServiceControl\\V1";
+option csharp_namespace = "Google.Cloud.ServiceControl.V1";
+option cc_enable_arenas = true;
+option java_multiple_files = true;
+option java_outer_classname = "QuotaInfoProto";
+option java_package = "com.google.api.servicecontrol.v1";
+
+message QuotaInfo {
+    map<string, int32> quota_consumed = 1;
+    repeated string limit_exceeded = 2 [deprecated = true];
+    repeated MetricValueSet quota_metrics = 3;
+}

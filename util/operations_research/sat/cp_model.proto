@@ -1,0 +1,258 @@
+syntax = "proto3";
+
+package operations_research.sat;
+
+option csharp_namespace = "Google.OrTools.Sat";
+option java_multiple_files = true;
+option java_outer_classname = "CpModelProtobuf";
+option java_package = "com.google.operationsresearch.sat";
+
+message IntegerVariableProto {
+    string name = 1;
+    repeated int64 domain = 2;
+}
+
+message BoolArgumentProto {
+    repeated int32 literals = 1;
+}
+
+message LinearExpressionProto {
+    repeated int32 vars = 1;
+    repeated int64 coeffs = 2;
+    int64 offset = 3;
+}
+
+message LinearArgumentProto {
+    LinearExpressionProto target = 1;
+    repeated LinearExpressionProto exprs = 2;
+}
+
+message AllDifferentConstraintProto {
+    repeated LinearExpressionProto exprs = 1;
+}
+
+message LinearConstraintProto {
+    repeated int32 vars = 1;
+    repeated int64 coeffs = 2;
+    repeated int64 domain = 3;
+}
+
+message ElementConstraintProto {
+    int32 index = 1;
+    int32 target = 2;
+    repeated int32 vars = 3;
+}
+
+message IntervalConstraintProto {
+    LinearExpressionProto start = 4;
+    LinearExpressionProto end = 5;
+    LinearExpressionProto size = 6;
+}
+
+message NoOverlapConstraintProto {
+    repeated int32 intervals = 1;
+}
+
+message NoOverlap2DConstraintProto {
+    repeated int32 x_intervals = 1;
+    repeated int32 y_intervals = 2;
+    bool boxes_with_null_area_can_overlap = 3 [deprecated = true];
+}
+
+message CumulativeConstraintProto {
+    LinearExpressionProto capacity = 1;
+    repeated int32 intervals = 2;
+    repeated LinearExpressionProto demands = 3;
+}
+
+message ReservoirConstraintProto {
+    int64 min_level = 1;
+    int64 max_level = 2;
+    repeated LinearExpressionProto time_exprs = 3;
+    repeated LinearExpressionProto level_changes = 6;
+    repeated int32 active_literals = 5;
+    
+    reserved 4;
+}
+
+message CircuitConstraintProto {
+    repeated int32 tails = 3;
+    repeated int32 heads = 4;
+    repeated int32 literals = 5;
+}
+
+message RoutesConstraintProto {
+    repeated int32 tails = 1;
+    repeated int32 heads = 2;
+    repeated int32 literals = 3;
+    repeated int32 demands = 4;
+    int64 capacity = 5;
+}
+
+message TableConstraintProto {
+    repeated int32 vars = 1;
+    repeated int64 values = 2;
+    bool negated = 3;
+}
+
+message InverseConstraintProto {
+    repeated int32 f_direct = 1;
+    repeated int32 f_inverse = 2;
+}
+
+message AutomatonConstraintProto {
+    int64 starting_state = 2;
+    repeated int64 final_states = 3;
+    repeated int64 transition_tail = 4;
+    repeated int64 transition_head = 5;
+    repeated int64 transition_label = 6;
+    repeated int32 vars = 7;
+}
+
+message ListOfVariablesProto {
+    repeated int32 vars = 1;
+}
+
+message ConstraintProto {
+    string name = 1;
+    repeated int32 enforcement_literal = 2;
+    
+    oneof constraint {
+        BoolArgumentProto bool_or = 3;
+        BoolArgumentProto bool_and = 4;
+        BoolArgumentProto at_most_one = 26;
+        BoolArgumentProto exactly_one = 29;
+        BoolArgumentProto bool_xor = 5;
+        LinearArgumentProto int_div = 7;
+        LinearArgumentProto int_mod = 8;
+        LinearArgumentProto int_prod = 11;
+        LinearArgumentProto lin_max = 27;
+        LinearConstraintProto linear = 12;
+        AllDifferentConstraintProto all_diff = 13;
+        ElementConstraintProto element = 14;
+        CircuitConstraintProto circuit = 15;
+        RoutesConstraintProto routes = 23;
+        TableConstraintProto table = 16;
+        AutomatonConstraintProto automaton = 17;
+        InverseConstraintProto inverse = 18;
+        ReservoirConstraintProto reservoir = 24;
+        IntervalConstraintProto interval = 19;
+        NoOverlapConstraintProto no_overlap = 20;
+        NoOverlap2DConstraintProto no_overlap_2d = 21;
+        CumulativeConstraintProto cumulative = 22;
+        ListOfVariablesProto dummy_constraint = 30;
+    }
+}
+
+message CpObjectiveProto {
+    repeated int32 vars = 1;
+    repeated int64 coeffs = 4;
+    double offset = 2;
+    double scaling_factor = 3;
+    repeated int64 domain = 5;
+    bool scaling_was_exact = 6;
+    int64 integer_before_offset = 7;
+    int64 integer_after_offset = 9;
+    int64 integer_scaling_factor = 8;
+}
+
+message FloatObjectiveProto {
+    repeated int32 vars = 1;
+    repeated double coeffs = 2;
+    double offset = 3;
+    bool maximize = 4;
+}
+
+message DecisionStrategyProto {
+    repeated int32 variables = 1;
+    repeated LinearExpressionProto exprs = 5;
+    
+    VariableSelectionStrategy variable_selection_strategy = 2;
+    enum VariableSelectionStrategy {
+        CHOOSE_FIRST = 0;
+        CHOOSE_LOWEST_MIN = 1;
+        CHOOSE_HIGHEST_MAX = 2;
+        CHOOSE_MIN_DOMAIN_SIZE = 3;
+        CHOOSE_MAX_DOMAIN_SIZE = 4;
+    }
+    
+    DomainReductionStrategy domain_reduction_strategy = 3;
+    enum DomainReductionStrategy {
+        SELECT_MIN_VALUE = 0;
+        SELECT_MAX_VALUE = 1;
+        SELECT_LOWER_HALF = 2;
+        SELECT_UPPER_HALF = 3;
+        SELECT_MEDIAN_VALUE = 4;
+    }
+}
+
+message PartialVariableAssignment {
+    repeated int32 vars = 1;
+    repeated int64 values = 2;
+}
+
+message SparsePermutationProto {
+    repeated int32 support = 1;
+    repeated int32 cycle_sizes = 2;
+}
+
+message DenseMatrixProto {
+    int32 num_rows = 1;
+    int32 num_cols = 2;
+    repeated int32 entries = 3;
+}
+
+message SymmetryProto {
+    repeated SparsePermutationProto permutations = 1;
+    repeated DenseMatrixProto orbitopes = 2;
+}
+
+message CpModelProto {
+    string name = 1;
+    repeated IntegerVariableProto variables = 2;
+    repeated ConstraintProto constraints = 3;
+    CpObjectiveProto objective = 4;
+    FloatObjectiveProto floating_point_objective = 9;
+    repeated DecisionStrategyProto search_strategy = 5;
+    PartialVariableAssignment solution_hint = 6;
+    repeated int32 assumptions = 7;
+    SymmetryProto symmetry = 8;
+}
+
+message CpSolverSolution {
+    repeated int64 values = 1;
+}
+
+message CpSolverResponse {
+    CpSolverStatus status = 1;
+    repeated int64 solution = 2;
+    double objective_value = 3;
+    double best_objective_bound = 4;
+    repeated CpSolverSolution additional_solutions = 27;
+    repeated IntegerVariableProto tightened_variables = 21;
+    repeated int32 sufficient_assumptions_for_infeasibility = 23;
+    CpObjectiveProto integer_objective = 28;
+    int64 inner_objective_lower_bound = 29;
+    int64 num_integers = 30;
+    int64 num_booleans = 10;
+    int64 num_conflicts = 11;
+    int64 num_branches = 12;
+    int64 num_binary_propagations = 13;
+    int64 num_integer_propagations = 14;
+    int64 num_restarts = 24;
+    int64 num_lp_iterations = 25;
+    double wall_time = 15;
+    double user_time = 16;
+    double deterministic_time = 17;
+    double gap_integral = 22;
+    string solution_info = 20;
+    string solve_log = 26;
+}
+
+enum CpSolverStatus {
+    UNKNOWN = 0;
+    MODEL_INVALID = 1;
+    FEASIBLE = 2;
+    INFEASIBLE = 3;
+    OPTIMAL = 4;
+}

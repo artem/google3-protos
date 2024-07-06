@@ -1,0 +1,120 @@
+syntax = "proto3";
+
+package xla.memory_space_assignment;
+
+message SlicedPrefetchOptions {
+    uint32 max_slices = 1;
+    uint64 min_bytes = 2;
+    bool fail_on_non_alignment_boundary_slice_proposal = 3;
+    uint32 all_slice_time_permutations_threshold = 4;
+    uint64 preferred_slice_size = 5;
+}
+
+message MemoryBoundLoopOptimizerOptions {
+    oneof _enabled {
+        bool enabled = 1;
+    }
+    
+    oneof _desired_copy_ratio {
+        float desired_copy_ratio = 2;
+    }
+    
+    oneof _allow_unsatisfied_fully_pipelined_prefetch {
+        bool allow_unsatisfied_fully_pipelined_prefetch = 3;
+    }
+    
+    oneof _min_num_iterations {
+        float min_num_iterations = 4;
+    }
+}
+
+message TupleShapeIndex {
+    repeated int64 index = 1;
+}
+
+message HloOperandFilter {
+    oneof _instruction_name_regex {
+        string instruction_name_regex = 1;
+    }
+    
+    oneof _operand_number {
+        int64 operand_number = 2;
+    }
+    
+    oneof _size_gte {
+        int64 size_gte = 3;
+    }
+    
+    oneof _size_lte {
+        int64 size_lte = 4;
+    }
+    
+    oneof _tuple_index {
+        TupleShapeIndex tuple_index = 5;
+    }
+}
+
+message PreferredPrefetchOverrideOptions {
+    oneof options {
+        float prefetch_eagerness = 1;
+        string after_instruction_name = 2;
+        string before_instruction_name = 3;
+    }
+}
+
+message PreferredPrefetchOverride {
+    oneof _hlo_operand_filter {
+        HloOperandFilter hlo_operand_filter = 1;
+    }
+    
+    oneof _override_options {
+        PreferredPrefetchOverrideOptions override_options = 2;
+    }
+}
+
+message PreferredPrefetchOverrides {
+    repeated PreferredPrefetchOverride overrides = 1;
+}
+
+message HloPositionMatcher {
+    oneof _instruction_regex {
+        string instruction_regex = 1;
+    }
+    
+    oneof _instruction_name_regex {
+        string instruction_name_regex = 2;
+    }
+    
+    oneof _tuple_index {
+        TupleShapeIndex tuple_index = 3;
+    }
+    
+    oneof _size_gte {
+        int64 size_gte = 4;
+    }
+    
+    oneof _size_lte {
+        int64 size_lte = 5;
+    }
+}
+
+message MsaSortOrderOverrideOptions {
+    oneof options {
+        bool assign_first = 1;
+        bool assign_last = 2;
+    }
+}
+
+message MsaSortOrderOverride {
+    oneof _hlo_position_matcher {
+        HloPositionMatcher hlo_position_matcher = 1;
+    }
+    
+    oneof _override_options {
+        MsaSortOrderOverrideOptions override_options = 2;
+    }
+}
+
+message MsaSortOrderOverrides {
+    repeated MsaSortOrderOverride overrides = 1;
+}

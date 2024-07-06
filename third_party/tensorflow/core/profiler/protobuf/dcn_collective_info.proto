@@ -1,0 +1,31 @@
+syntax = "proto3";
+
+package tensorflow.profiler;
+
+message DcnCollectiveInfoProto {
+    TransferType transfer_type = 1;
+    enum TransferType {
+        UNKNOWN_TRANSFER_TYPE = 0;
+        ALL_TO_ALL = 1;
+        ONE_TO_ONE = 2;
+        REDUCE_SCATTER = 3;
+        ALL_GATHER = 4;
+        ALL_REDUCE = 5;
+    }
+    
+    repeated EndpointGroup endpoint_groups = 2;
+    message EndpointGroup {
+        repeated Endpoint endpoints = 1;
+    }
+    
+    repeated OneToOneGroup one_to_one_groups = 3;
+    message OneToOneGroup {
+        Endpoint source = 1;
+        Endpoint destination = 2;
+    }
+    
+    message Endpoint {
+        int32 slice_id = 1;
+        int32 device_id = 2;
+    }
+}

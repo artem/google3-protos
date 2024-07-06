@@ -1,0 +1,57 @@
+syntax = "proto3";
+
+package google.api.servicecontrol.v1;
+
+import "google/protobuf/timestamp.proto";
+import "google/protobuf/wrappers.proto";
+import "google/rpc/status.proto";
+
+option ruby_package = "Google::Cloud::ServiceControl::V1";
+option php_namespace = "Google\\Cloud\\ServiceControl\\V1";
+option csharp_namespace = "Google.Cloud.ServiceControl.V1";
+option cc_enable_arenas = true;
+option java_multiple_files = true;
+option java_outer_classname = "TraceProto";
+option java_package = "com.google.api.servicecontrol.v1";
+
+message TraceSpan {
+    string name = 1;
+    string span_id = 2;
+    string parent_span_id = 3;
+    TruncatableString display_name = 4;
+    protobuf.Timestamp start_time = 5;
+    protobuf.Timestamp end_time = 6;
+    
+    Attributes attributes = 7;
+    message Attributes {
+        map<string, AttributeValue> attribute_map = 1;
+        int32 dropped_attributes_count = 2;
+    }
+    
+    rpc.Status status = 8;
+    protobuf.BoolValue same_process_as_parent_span = 9;
+    protobuf.Int32Value child_span_count = 10;
+    
+    SpanKind span_kind = 11;
+    enum SpanKind {
+        SPAN_KIND_UNSPECIFIED = 0;
+        INTERNAL = 1;
+        SERVER = 2;
+        CLIENT = 3;
+        PRODUCER = 4;
+        CONSUMER = 5;
+    }
+    
+    message AttributeValue {
+        oneof value {
+            TruncatableString string_value = 1;
+            int64 int_value = 2;
+            bool bool_value = 3;
+        }
+    }
+}
+
+message TruncatableString {
+    string value = 1;
+    int32 truncated_byte_count = 2;
+}

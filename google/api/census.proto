@@ -1,0 +1,21 @@
+syntax = "proto3";
+
+package google.api;
+
+import "google/api/visibility.proto";
+
+option objc_class_prefix = "GAPI";
+option go_package = "google.golang.org/genproto/googleapis/api/serviceconfig;serviceconfig";
+option java_multiple_files = true;
+option java_outer_classname = "CensusProto";
+option java_package = "com.google.api";
+
+message Census {
+    repeated CensusRule rules = 1;
+}
+
+message CensusRule {
+    string selector = 1;
+    string product_cui = 2;
+    bool log_product_cui = 3;
+}

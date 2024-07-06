@@ -1,0 +1,59 @@
+syntax = "proto3";
+
+package xla;
+
+import "google/protobuf/any.proto";
+import "google/protobuf/duration.proto";
+import "google/protobuf/timestamp.proto";
+
+message PassMetrics {
+    uint64 module_id = 1;
+    string pass_name = 2;
+    google.protobuf.Duration pass_duration = 3;
+    google.protobuf.Any custom_metrics = 4;
+}
+
+message JobInfo {
+    oneof _name {
+        string name = 1;
+    }
+    
+    oneof _cell {
+        string cell = 2;
+    }
+    
+    oneof _user {
+        string user = 3;
+    }
+    
+    oneof _uid {
+        int64 uid = 4;
+    }
+    
+    oneof _task_id {
+        int64 task_id = 5;
+    }
+    
+    oneof _task_uid {
+        int64 task_uid = 6;
+    }
+}
+
+message CompilationLogEntry {
+    google.protobuf.Timestamp timestamp = 1;
+    
+    CompilationStage stage = 2;
+    enum CompilationStage {
+        UNSPECIFIED = 0;
+        END_TO_END = 1;
+        HLO_PASSES = 2;
+        CODE_GENERATION = 3;
+        BACKEND_PASSES = 4;
+    }
+    
+    google.protobuf.Duration duration = 3;
+    int32 task_index = 4;
+    repeated PassMetrics pass_metrics = 5;
+    repeated uint64 module_ids = 6;
+    JobInfo job_info = 7;
+}

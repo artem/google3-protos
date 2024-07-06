@@ -1,0 +1,15 @@
+syntax = "proto2";
+
+package sstable;
+
+option java_multiple_files = true;
+option java_package = "com.google.sstable";
+
+message RecordBlockTrailer {
+    required int32 Entries = 1;
+    required int32 KeyBytes = 2;
+    required int32 ValueBytes = 3;
+    required int32 ValueCompressedBytes = 4;
+    optional int32 LgWin = 5 [default = 15];
+    optional int32 FixedKeyWidth = 6 [default = -1];
+}

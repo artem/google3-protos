@@ -1,0 +1,16 @@
+syntax = "editions";
+
+package tech.file;
+
+import "privacy/pgraph/proto/ab2_write_observations.proto";
+import "privacy/pgraph/proto/proxied_attributes/dataset_attributes.proto";
+
+option java_multiple_files = true;
+
+message ComplianceDatasetAttributes {
+    optional .pgraph.DatasetAttributes dataset_attributes = 1;
+}
+
+message ComplianceWriteObservations {
+    optional .pgraph.WriteObservations write_observations = 1;
+}

@@ -1,0 +1,263 @@
+syntax = "proto3";
+
+package tensorflow;
+
+import "google/protobuf/any.proto";
+import "third_party/tensorflow/core/framework/cost_graph.proto";
+import "third_party/tensorflow/core/framework/device_attributes.proto";
+import "third_party/tensorflow/core/framework/graph.proto";
+import "third_party/tensorflow/core/framework/step_stats.proto";
+import "third_party/tensorflow/core/framework/tensor.proto";
+import "third_party/tensorflow/core/framework/tensor_shape.proto";
+import "third_party/tensorflow/core/framework/types.proto";
+import "third_party/tensorflow/core/protobuf/config.proto";
+import "third_party/tensorflow/core/protobuf/debug.proto";
+import "third_party/tensorflow/core/protobuf/error_codes.proto";
+import "third_party/tensorflow/core/protobuf/named_tensor.proto";
+import "third_party/tensorflow/core/protobuf/tensorflow_server.proto";
+
+option cc_enable_arenas = true;
+option go_package = "github.com/tensorflow/tensorflow/tensorflow/go/core/protobuf/for_core_protos_go_proto";
+option java_multiple_files = true;
+option java_outer_classname = "WorkerProtos";
+option java_package = "org.tensorflow.distruntime";
+
+message GetStatusRequest {
+    
+}
+
+message GetStatusResponse {
+    repeated DeviceAttributes device_attributes = 1;
+}
+
+message CreateWorkerSessionRequest {
+    string session_handle = 1;
+    ServerDef server_def = 2;
+    bool isolate_session_state = 3;
+    repeated DeviceAttributes cluster_device_attributes = 4;
+    string master_task = 5;
+    int64 master_incarnation = 6;
+    
+    reserved 7;
+}
+
+message CreateWorkerSessionResponse {
+    
+}
+
+message DeleteWorkerSessionRequest {
+    string session_handle = 1;
+}
+
+message DeleteWorkerSessionResponse {
+    
+}
+
+message RegisterGraphRequest {
+    string session_handle = 1;
+    bool create_worker_session_called = 6;
+    GraphDef graph_def = 2;
+    bool has_control_flow = 3 [deprecated = true];
+    GraphOptions graph_options = 4;
+    DebugOptions debug_options = 5;
+    int64 collective_graph_key = 7;
+    ConfigProto config_proto = 8;
+}
+
+message RegisterGraphResponse {
+    string graph_handle = 1;
+}
+
+message DeregisterGraphRequest {
+    string session_handle = 2;
+    bool create_worker_session_called = 3;
+    string graph_handle = 1;
+}
+
+message DeregisterGraphResponse {
+    
+}
+
+message CleanupAllRequest {
+    repeated string container = 1;
+}
+
+message CleanupAllResponse {
+    
+}
+
+message ExecutorOpts {
+    bool record_costs = 1;
+    bool record_timeline = 3;
+    bool record_partition_graphs = 4;
+    bool report_tensor_allocations_upon_oom = 5;
+}
+
+message RunGraphRequest {
+    string session_handle = 8;
+    bool create_worker_session_called = 10;
+    string graph_handle = 1;
+    int64 step_id = 2;
+    ExecutorOpts exec_opts = 5;
+    repeated NamedTensorProto send = 3;
+    repeated string recv_key = 4;
+    bool is_partial = 6;
+    bool is_last_partial_run = 7;
+    bool store_errors_in_response_body = 9;
+    int64 request_id = 11;
+}
+
+message RunGraphResponse {
+    repeated NamedTensorProto recv = 1;
+    StepStats step_stats = 2;
+    CostGraphDef cost_graph = 3;
+    repeated GraphDef partition_graph = 4;
+    error.Code status_code = 5;
+    string status_error_message = 6;
+}
+
+message CleanupGraphRequest {
+    int64 step_id = 1;
+}
+
+message CleanupGraphResponse {
+    
+}
+
+message RecvTensorRequest {
+    int64 step_id = 1;
+    string rendezvous_key = 2;
+    bool dma_ok = 3;
+    DeviceLocality client_locality = 4;
+    DeviceLocality server_locality = 5;
+    google.protobuf.Any transport_options = 6;
+    int64 request_id = 7;
+}
+
+message RecvTensorResponse {
+    TensorProto tensor = 1;
+    bool is_dead = 2;
+    int64 send_start_micros = 3;
+    google.protobuf.Any transport_options = 4;
+    bool require_ack = 5;
+}
+
+message MarkRecvFinishedRequest {
+    int64 request_id = 1;
+}
+
+message MarkRecvFinishedResponse {
+    
+}
+
+message LoggingRequest {
+    bool enable_rpc_logging = 1;
+    bool disable_rpc_logging = 4;
+    bool clear = 2;
+    repeated int64 fetch_step_id = 3;
+}
+
+message LabeledStepStats {
+    int64 step_id = 1;
+    StepStats step_stats = 2;
+}
+
+message LoggingResponse {
+    repeated LabeledStepStats step = 1;
+}
+
+message TraceOpts {
+    double duration = 1;
+    bool use_step_profiler = 2;
+    bool use_kernel_profiler = 3;
+    bool use_extended_profiler = 4;
+    bool use_gpu_profiler = 5;
+    bool use_sample_profiler = 6;
+}
+
+message TracingRequest {
+    TraceOpts options = 1;
+}
+
+message TracingResponse {
+    
+}
+
+message RecvBufRequest {
+    int64 step_id = 1;
+    string buf_rendezvous_key = 2;
+    int64 num_bytes = 3;
+    fixed64 buf_ptr = 4;
+    DeviceLocality client_locality = 5;
+    DeviceLocality server_locality = 6;
+    google.protobuf.Any transport_options = 7;
+    string src_device = 8;
+    string dst_device = 9;
+    int64 request_id = 10;
+    uint64 src_incarnation = 11;
+}
+
+message RecvBufResponse {
+    fixed64 buf_ptr = 1;
+    int64 num_bytes = 2;
+    bool is_dead = 3;
+    google.protobuf.Any transport_options = 4;
+    int64 send_start_micros = 5;
+    bool require_ack = 6;
+}
+
+message CompleteGroupRequest {
+    int32 group_key = 1;
+    int32 group_size = 2;
+    string device_type = 3;
+    int32 collective_type = 5;
+    DeviceAttributes device_attributes = 6;
+    
+    reserved 4;
+}
+
+message CompleteGroupResponse {
+    int32 group_key = 1;
+    int32 group_size = 2;
+    string device_type = 3;
+    int32 num_tasks = 4;
+    bytes communicator_key = 7;
+    repeated DeviceAttributes device_attributes = 8;
+    
+    reserved 5, 6;
+}
+
+message CompleteInstanceRequest {
+    string name = 1;
+    int32 type = 2;
+    DataType data_type = 3;
+    TensorShapeProto shape = 4;
+    int32 group_key = 5;
+    int32 group_size = 6;
+    int32 instance_key = 7;
+    string device_type = 8;
+    repeated int32 subdiv_offset = 9;
+    string device = 10;
+    bool is_source = 11;
+    int64 step_id = 12;
+}
+
+message CompleteInstanceResponse {
+    int32 instance_key = 1;
+    int32 source_rank = 2;
+    
+    reserved 3;
+}
+
+message GetStepSequenceRequest {
+    repeated int64 graph_key = 1;
+}
+
+message StepSequence {
+    int64 graph_key = 1;
+    int64 next_step_id = 2;
+}
+
+message GetStepSequenceResponse {
+    repeated StepSequence step_sequence = 1;
+}

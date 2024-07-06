@@ -1,0 +1,154 @@
+syntax = "proto3";
+
+package tensorflow.data;
+
+import "third_party/tensorflow/core/framework/model.proto";
+
+option go_package = "github.com/tensorflow/tensorflow/tensorflow/go/core/framework/dataset_options_go_proto";
+
+message AutotuneOptions {
+    oneof optional_enabled {
+        bool enabled = 1;
+    }
+    
+    oneof optional_cpu_budget {
+        int32 cpu_budget = 2;
+    }
+    
+    oneof optional_ram_budget {
+        int64 ram_budget = 3;
+    }
+    
+    oneof optional_autotune_algorithm {
+        model.AutotuneAlgorithm autotune_algorithm = 4;
+    }
+    
+    oneof optional_initial_parallelism {
+        int64 initial_parallelism = 5;
+    }
+}
+
+message CardinalityOptions {
+    ComputeLevel compute_level = 1;
+    enum ComputeLevel {
+        CARDINALITY_COMPUTE_UNSPECIFIED = 0;
+        CARDINALITY_COMPUTE_LOW = 1;
+        CARDINALITY_COMPUTE_MODERATE = 2;
+    }
+}
+
+message DistributeOptions {
+    AutoShardPolicy auto_shard_policy = 1;
+    
+    oneof optional_num_devices {
+        int32 num_devices = 2;
+    }
+}
+
+message OptimizationOptions {
+    oneof optional_apply_default_optimizations {
+        bool apply_default_optimizations = 1;
+    }
+    
+    oneof optional_filter_fusion {
+        bool filter_fusion = 6;
+    }
+    
+    oneof optional_map_and_batch_fusion {
+        bool map_and_batch_fusion = 9;
+    }
+    
+    oneof optional_map_and_filter_fusion {
+        bool map_and_filter_fusion = 10;
+    }
+    
+    oneof optional_map_fusion {
+        bool map_fusion = 11;
+    }
+    
+    oneof optional_map_parallelization {
+        bool map_parallelization = 12;
+    }
+    
+    oneof optional_noop_elimination {
+        bool noop_elimination = 14;
+    }
+    
+    oneof optional_parallel_batch {
+        bool parallel_batch = 15;
+    }
+    
+    oneof optional_shuffle_and_repeat_fusion {
+        bool shuffle_and_repeat_fusion = 17;
+    }
+    
+    oneof optional_filter_parallelization {
+        bool filter_parallelization = 18;
+    }
+    
+    oneof optional_inject_prefetch {
+        bool inject_prefetch = 19;
+    }
+    
+    oneof optional_seq_interleave_prefetch {
+        bool seq_interleave_prefetch = 21;
+    }
+    
+    reserved 2, 3, 4, 5, 7, 8, 13, 16, 20;
+}
+
+message ThreadingOptions {
+    oneof optional_max_intra_op_parallelism {
+        int32 max_intra_op_parallelism = 1;
+    }
+    
+    oneof optional_private_threadpool_size {
+        int32 private_threadpool_size = 2;
+    }
+}
+
+message Options {
+    repeated string framework_type = 11;
+    AutotuneOptions autotune_options = 7;
+    DistributeOptions distribute_options = 2;
+    OptimizationOptions optimization_options = 3;
+    ThreadingOptions threading_options = 5;
+    
+    oneof optional_dataset_name {
+        string dataset_name = 10;
+    }
+    
+    oneof optional_deterministic {
+        bool deterministic = 1;
+    }
+    
+    oneof optional_slack {
+        bool slack = 4;
+    }
+    
+    oneof optional_external_state_policy {
+        ExternalStatePolicy external_state_policy = 6;
+    }
+    
+    oneof optional_symbolic_checkpoint {
+        bool symbolic_checkpoint = 8;
+    }
+    
+    oneof optional_warm_start {
+        bool warm_start = 9;
+    }
+}
+
+enum AutoShardPolicy {
+    AUTO = 0;
+    FILE = 1;
+    DATA = 2;
+    HINT = 3;
+    OFF = -1;
+}
+
+enum ExternalStatePolicy {
+    POLICY_WARN = 0;
+    POLICY_IGNORE = 1;
+    POLICY_FAIL = 2;
+}

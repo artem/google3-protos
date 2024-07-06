@@ -1,0 +1,27 @@
+syntax = "proto2";
+
+package operations_research;
+
+message FlowArcProto {
+    optional int64 tail = 1;
+    optional int64 head = 2;
+    optional int64 capacity = 3 [default = 1];
+    optional int64 unit_cost = 4 [default = 0];
+}
+
+message FlowNodeProto {
+    optional int64 id = 1;
+    optional int64 supply = 2 [default = 0];
+}
+
+message FlowModelProto {
+    repeated FlowNodeProto nodes = 1;
+    repeated FlowArcProto arcs = 2;
+    
+    optional ProblemType problem_type = 3;
+    enum ProblemType {
+        LINEAR_SUM_ASSIGNMENT = 0;
+        MAX_FLOW = 1;
+        MIN_COST_FLOW = 2;
+    }
+}

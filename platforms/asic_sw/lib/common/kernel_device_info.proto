@@ -1,0 +1,41 @@
+syntax = "proto2";
+
+package asic_sw;
+
+import "platforms/asic_sw/lib/common/kernel_device_specific_info.proto";
+import "platforms/asic_sw/proto/device_identifiers.proto";
+
+message KernelDeviceInfo {
+    optional int32 device_id = 1;
+    optional string device_path = 2;
+    map<int32, string> debug_paths = 3;
+    optional string sysfs_path = 4;
+    optional string pci_address = 5;
+    optional string driver_version = 6;
+    optional int32 numa_node = 7 [default = -1];
+    optional int32 major_number = 26;
+    optional int32 minor_number = 10;
+    optional uint32 reset_count = 11;
+    optional uint32 write_open_count = 12;
+    optional string status = 13;
+    optional uint32 is_device_owned = 14;
+    optional uint32 device_owner = 15;
+    optional string framework_version = 16;
+    optional string user_mem_ranges = 17;
+    optional string interrupt_counts = 18;
+    optional string chip_model = 19;
+    optional .asic_sw.proto.DeviceIdentifiers device_identifiers = 21;
+    optional KernelDeviceSpecificInfo device_specific_info = 22;
+    optional bool uses_vfio = 25;
+    repeated VirtualFunction virtual_functions = 27;
+    optional string pf_pci_location = 28;
+    optional uint32 iommu_group_id = 29;
+    
+    reserved 20, 100, 23, 24, 8;
+}
+
+message VirtualFunction {
+    optional uint32 iommu_group_id = 1;
+    optional string pci_location = 2;
+    optional string pci_path = 3;
+}

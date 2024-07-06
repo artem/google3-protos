@@ -1,0 +1,14 @@
+syntax = "proto3";
+
+package xla.cpu;
+
+import "third_party/tensorflow/compiler/xla/service/cpu/xla_framework.proto";
+import "third_party/tensorflow/compiler/xla/service/hlo.proto";
+import "third_party/tensorflow/compiler/xla/xla.proto";
+
+message CompilationResultProto {
+    HloModuleProtoWithConfig hlo_module = 1;
+    BufferAssignmentProto buffer_assignment = 2;
+    string entry_function_name = 3;
+    bytes obj_file = 4;
+}

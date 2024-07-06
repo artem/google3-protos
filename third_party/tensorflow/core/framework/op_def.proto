@@ -1,0 +1,63 @@
+syntax = "proto3";
+
+package tensorflow;
+
+import "third_party/tensorflow/core/framework/attr_value.proto";
+import "third_party/tensorflow/core/framework/full_type.proto";
+import "third_party/tensorflow/core/framework/resource_handle.proto";
+import "third_party/tensorflow/core/framework/types.proto";
+
+option cc_enable_arenas = true;
+option go_package = "github.com/tensorflow/tensorflow/tensorflow/go/core/framework/op_def_go_proto";
+option java_multiple_files = true;
+option java_outer_classname = "OpDefProtos";
+option java_package = "org.tensorflow.framework";
+
+message OpDef {
+    string name = 1;
+    
+    repeated ArgDef input_arg = 2;
+    message ArgDef {
+        string name = 1;
+        string description = 2;
+        DataType type = 3;
+        string type_attr = 4;
+        string number_attr = 5;
+        string type_list_attr = 6;
+        repeated ResourceHandleProto.DtypeAndShape handle_data = 7;
+        bool is_ref = 16;
+        FullTypeDef experimental_full_type = 17;
+    }
+    
+    repeated ArgDef output_arg = 3;
+    repeated string control_output = 20;
+    
+    repeated AttrDef attr = 4;
+    message AttrDef {
+        string name = 1;
+        string type = 2;
+        AttrValue default_value = 3;
+        string description = 4;
+        bool has_minimum = 5;
+        int64 minimum = 6;
+        AttrValue allowed_values = 7;
+    }
+    
+    OpDeprecation deprecation = 8;
+    string summary = 5;
+    string description = 6;
+    bool is_commutative = 18;
+    bool is_aggregate = 16;
+    bool is_stateful = 17;
+    bool allows_uninitialized_input = 19;
+    bool is_distributed_communication = 21;
+}
+
+message OpDeprecation {
+    int32 version = 1;
+    string explanation = 2;
+}
+
+message OpList {
+    repeated OpDef op = 1;
+}

@@ -1,0 +1,11 @@
+syntax = "proto3";
+
+package tensorflow.proto_splitter;
+
+option cc_enable_arenas = true;
+
+message VersionDef {
+    int32 splitter_version = 1;
+    int32 join_version = 2;
+    repeated int32 bad_consumers = 3;
+}

@@ -1,0 +1,52 @@
+syntax = "proto3";
+
+package google.api.servicecontrol.v1;
+
+import "frameworks/testing/rpcreplay/processors/rpc_replay_field_option.proto";
+import "google/api/servicecontrol/v1/log_entry.proto";
+import "google/api/servicecontrol/v1/metric_value.proto";
+import "google/api/servicecontrol/v1/quota_properties.proto";
+import "google/api/servicecontrol/v1/trace.proto";
+import "google/protobuf/timestamp.proto";
+
+option ruby_package = "Google::Cloud::ServiceControl::V1";
+option php_namespace = "Google\\Cloud\\ServiceControl\\V1";
+option csharp_namespace = "Google.Cloud.ServiceControl.V1";
+option cc_enable_arenas = true;
+option java_multiple_files = true;
+option java_outer_classname = "OperationProto";
+option java_package = "com.google.api.servicecontrol.v1";
+
+message Operation {
+    string operation_id = 1;
+    string operation_name = 2;
+    string consumer_id = 3;
+    protobuf.Timestamp start_time = 4;
+    protobuf.Timestamp end_time = 5;
+    map<string, string> labels = 6;
+    repeated MetricValueSet metric_value_sets = 7;
+    repeated LogEntry log_entries = 8;
+    QuotaProperties quota_properties = 9;
+    
+    Importance importance = 11;
+    enum Importance {
+        LOW = 0;
+        HIGH = 1;
+        DEBUG = 2;
+        PROMOTED = 3;
+    }
+    
+    map<string, string> user_labels = 12;
+    
+    repeated ResourceInfo resources = 14;
+    message ResourceInfo {
+        string resource_container = 1;
+        string resource_name = 2;
+        string resource_location = 3;
+        string permission = 4;
+    }
+    
+    repeated TraceSpan trace_spans = 15;
+    
+    reserved 13, 16;
+}

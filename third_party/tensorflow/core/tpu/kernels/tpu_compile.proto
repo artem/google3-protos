@@ -1,0 +1,23 @@
+syntax = "proto3";
+
+package tensorflow.tpu;
+
+import "third_party/tensorflow/core/framework/attr_value.proto";
+import "third_party/tensorflow/core/framework/function.proto";
+import "third_party/tensorflow/core/framework/tensor.proto";
+import "third_party/tensorflow/core/framework/tensor_shape.proto";
+import "third_party/tensorflow/core/protobuf/tpu/compile_metadata.proto";
+
+message TpuCompilationRequestProto {
+    bool use_experimental = 1;
+    bool use_mlir = 2;
+    bool return_hlo_protos = 3;
+    bool unload_cache_on_session_close = 4;
+    TPUCompileMetadataProto metadata = 5;
+    repeated TensorShapeProto arg_shapes = 6;
+    repeated TensorProto guaranteed_constants = 7;
+    string mlir_module = 8;
+    FunctionDefLibrary fdef_lib = 9;
+    int32 graph_def_version = 10;
+    NameAttrList function = 11;
+}

@@ -1,0 +1,62 @@
+syntax = "proto3";
+
+package stablehlo.quantization;
+
+option cc_enable_arenas = true;
+
+message QuantizationOptions {
+    QuantizationMethod quantization_method = 1;
+}
+
+message QuantizationMethod {
+    oneof quantization_method {
+        PresetQuantizationMethod preset_quantization_method = 1;
+        CustomQuantizationMethod custom_quantization_method = 2;
+    }
+}
+
+message PresetQuantizationMethod {
+    PresetMethod preset_method = 1;
+    enum PresetMethod {
+        METHOD_UNSPECIFIED = 0;
+        WEIGHT_ONLY = 1;
+        POST_TRAINING_QUANTIZATION_DYNAMIC_RANGE = 2;
+        FLOAT16 = 3;
+        POST_TRAINING_QUANTIZATION_STATIC_RANGE = 4;
+    }
+}
+
+message CustomQuantizationMethod {
+    repeated QuantizationComponentSpec quantization_component_spec = 1;
+}
+
+message QuantizationComponentSpec {
+    QuantizationComponent quantization_component = 1;
+    enum QuantizationComponent {
+        COMPONENT_UNSPECIFIED = 0;
+        COMPONENT_ACTIVATION = 1;
+        COMPONENT_WEIGHT = 2;
+        COMPONENT_BIAS = 3;
+    }
+    
+    BitWidth bit_width = 2;
+    enum BitWidth {
+        BIT_WIDTH_UNSPECIFIED = 0;
+        BIT_WIDTH_4 = 1;
+        BIT_WIDTH_8 = 2;
+        BIT_WIDTH_16 = 3;
+        BIT_WIDTH_32 = 4;
+    }
+    
+    BitType bit_type = 3;
+    enum BitType {
+        BIT_TYPE_UNSPECIFIED = 0;
+        BIT_TYPE_INT = 1;
+        BIT_TYPE_FLOAT = 2;
+        BIT_TYPE_BFLOAT = 3;
+    }
+    
+    bool enable_narrow_range = 4;
+    bool enable_per_channel_quantization = 5;
+    bool enable_symmetric = 6;
+}

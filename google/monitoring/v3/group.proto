@@ -1,0 +1,22 @@
+syntax = "proto3";
+
+package google.monitoring.v3;
+
+import "google/api/resource.proto";
+import "google/logging/data_governance.proto";
+
+option ruby_package = "Google::Cloud::Monitoring::V3";
+option php_namespace = "Google\\Cloud\\Monitoring\\V3";
+option csharp_namespace = "Google.Cloud.Monitoring.V3";
+option go_package = "cloud.google.com/go/monitoring/apiv3/v2/monitoringpb;monitoringpb";
+option java_multiple_files = true;
+option java_outer_classname = "GroupProto";
+option java_package = "com.google.monitoring.v3";
+
+message Group {
+    string name = 1;
+    string display_name = 2;
+    string parent_name = 3;
+    string filter = 5;
+    bool is_cluster = 6;
+}

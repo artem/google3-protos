@@ -1,0 +1,95 @@
+syntax = "proto3";
+
+package privacy.data_governance.attributes;
+
+import "privacy/data_governance/attributes/proto/classification.proto";
+import "privacy/data_governance/attributes/proto/ml_lineage.proto";
+
+option java_package = "com.google.privacy.datagovernance.attributes";
+
+message ML {
+    Data data = 1;
+    message Data {
+        DataCategory data_category = 1;
+        enum DataCategory {
+            UNKNOWN_CATEGORY = 0;
+            RAW_DATA = 1;
+            TRAINING_DATA = 2;
+            META_DATA = 3;
+            MODEL = 4;
+            VALIDATION_DATA = 5;
+        }
+        
+        bool is_encrypted = 2;
+        
+        oneof retention {
+            bool is_high_retention = 3;
+            bool is_standard_retention = 4;
+            bool is_low_retention = 5;
+        }
+    }
+    
+    Transformation transformation = 2;
+    message Transformation {
+        bool is_local_run = 1;
+        Data.DataCategory to_category = 2;
+    }
+    
+    Storage storage = 3;
+    message Storage {
+        bool is_input = 1;
+    }
+    
+    message Process {
+        MlLineage ml_lineage = 1;
+    }
+}
+
+message MlModel {
+    message Data {
+        classification.Category.HasCategory synthesis = 1;
+        classification.Category.HasCategory donated = 2;
+        classification.Category.HasCategory study = 3;
+        
+        repeated ModelArch model_architectures = 4;
+        enum ModelArch {
+            MODEL_ARCH_UNDEFINED = 0;
+            MODEL_ARCH_TRADITIONAL = 1;
+            MODEL_ARCH_NEURAL_NETWORK = 2;
+            MODEL_ARCH_GENERATIVE = 3;
+            MODEL_ARCH_OTHER = 4;
+        }
+        
+        ModelAnonymization model_anonymization = 5;
+        enum ModelAnonymization {
+            UNDEFINED_MODEL_ANONYMIZATION = 0;
+            MODEL_NOT_ANONYMOUS = 1;
+            MODEL_ANONYMOUS = 2;
+        }
+        
+        ModelDeployment model_deployment = 6;
+        enum ModelDeployment {
+            MODEL_DEPLOYMENT_UNDEFINED = 0;
+            MODEL_DEPLOYMENT_INTERNAL = 1;
+            MODEL_DEPLOYMENT_USER_FACING_SERVER_SIDE = 2;
+            MODEL_DEPLOYMENT_ON_DEVICE = 3;
+            MODEL_DEPLOYMENT_EXTERNAL = 4;
+        }
+        
+        ModelPersonalization model_personalization = 7;
+        enum ModelPersonalization {
+            MODEL_PERSONALIZATION_UNDEFINED = 0;
+            MODEL_PERSONALIZATION_NONE = 1;
+            MODEL_PERSONALIZATION_GROUP = 2;
+            MODEL_PERSONALIZATION_USER = 3;
+        }
+        
+        ModelAccessStatus access_status = 8;
+        enum ModelAccessStatus {
+            MODEL_ACCESS_STATUS_UNSPECIFIED = 0;
+            MODEL_ACCESS_STATUS_RESTRICTED_GENERALLY = 1;
+            MODEL_ACCESS_STATUS_RESTRICTED_FOR_TRAINING = 2;
+            MODEL_ACCESS_STATUS_UNRESTRICTED = 3;
+        }
+    }
+}

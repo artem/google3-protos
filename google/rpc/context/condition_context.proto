@@ -1,0 +1,24 @@
+syntax = "proto3";
+
+package google.rpc.context;
+
+import "google/api/visibility.proto";
+
+option objc_class_prefix = "RPC";
+option java_multiple_files = true;
+option java_outer_classname = "ConditionContextProto";
+option java_package = "com.google.rpc.context";
+
+message Match {
+    repeated string entity_tags = 1;
+    bool exists = 2;
+}
+
+message ConditionRequestContext {
+    Match if_match = 1;
+    Match if_none_match = 2;
+}
+
+message ConditionResponseContext {
+    string entity_tag = 1;
+}

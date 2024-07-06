@@ -1,0 +1,33 @@
+syntax = "proto3";
+
+package privacy.data_governance.attributes;
+
+import "privacy/data_governance/attributes/proto/classification.proto";
+
+option java_multiple_files = true;
+option java_package = "com.google.privacy.datagovernance.attributes";
+
+message Location {
+    string cluster = 1 [deprecated = true];
+    string iso3166_region = 2 [deprecated = true];
+    string cloud_region = 4 [deprecated = true];
+    string cloud_zone = 5 [deprecated = true];
+    
+    reserved 3;
+}
+
+message EncryptionProperties {
+    EncryptionStatus status = 1;
+    enum EncryptionStatus {
+        ENCRYPTION_STATUS_UNSPECIFIED = 0;
+        NOT_ENCRYPTED = 1;
+        PARTIALLY_ENCRYPTED = 2;
+        ENCRYPTED = 3;
+    }
+    
+    repeated CryptographicKeyStatus cryptographic_key_status = 2;
+    enum CryptographicKeyStatus {
+        CRYPTOGRAPHIC_KEY_STATUS_UNSPECIFIED = 0;
+        CRYPTOGRAPHIC_KEY_STATUS_INACCESSIBLE_TO_GOOGLERS = 1;
+    }
+}

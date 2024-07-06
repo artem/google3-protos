@@ -1,0 +1,17 @@
+syntax = "proto2";
+
+package privacy.data_governance.attributes;
+
+import "storage/datapol/annotations/proto/semantic_annotations.proto";
+import "storage/datapol/annotations/proto/workspace_annotations.proto";
+
+option java_multiple_files = true;
+option java_package = "com.google.privacy.datagovernance.attributes";
+
+message DatapolAnnotations {
+    repeated .datapol.SemanticType semantic_types = 1 [packed = true];
+    optional .datapol.Qualifier qualifier = 2;
+    optional .datapol.LocationQualifier location_qualifier = 3;
+    repeated apps_annotations.SemanticType apps_semantic_types = 4 [packed = true];
+    optional apps_annotations.AppsQualifier apps_qualifier = 5;
+}

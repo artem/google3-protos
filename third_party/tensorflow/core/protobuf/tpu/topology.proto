@@ -1,0 +1,24 @@
+syntax = "proto3";
+
+package tensorflow.tpu;
+
+option cc_enable_arenas = true;
+
+message TPUHardwareFeature {
+    EmbeddingFeature embedding_feature = 1;
+    enum EmbeddingFeature {
+        UNSUPPORTED = 0;
+        V1 = 1;
+        V2 = 2;
+    }
+    
+    int32 num_embedding_devices_per_chip = 2;
+}
+
+message TopologyProto {
+    repeated int32 mesh_shape = 1;
+    int32 num_tasks = 2;
+    int32 num_tpu_devices_per_task = 3;
+    repeated int32 device_coordinates = 4;
+    TPUHardwareFeature tpu_hardware_feature = 5;
+}

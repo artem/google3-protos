@@ -1,0 +1,49 @@
+syntax = "editions";
+
+import "logs/compression/compressor.proto";
+import "storage/datapol/annotations/proto/semantic_annotations.proto";
+
+message PerColumnPlanProto {
+    optional int32 version = 1;
+    
+    repeated ColumnCompressor columncompressor = 2;
+    message ColumnCompressor {
+        optional fixed32 tag_hash = 3;
+        optional fixed32 trainer = 4;
+        optional CompressorProto compressor = 5;
+    }
+    
+    optional CompressorProto default_column_compressor = 6;
+}
+
+message RecordCompressorProto {
+    optional bool transpose = 1;
+    optional string transpose_sort_key = 6;
+    
+    optional TransposePlan transposeplan = 2;
+    message TransposePlan {
+        optional Strategy strategy = 3 [default = CONCATENATE];
+        enum Strategy {
+            CONCATENATE = 1;
+            PER_COLUMN_PLAN = 2;
+            COMPUTE_PLAN = 3;
+        }
+        
+        optional PerColumnPlanProto per_column_plan = 4;
+    }
+    
+    optional CompressorProto backend_compressor = 5;
+}
+
+message RecordLengthsProto {
+    optional int32 num_records = 1;
+    optional int32 fixed_length = 2;
+    optional string varint_lengths = 3;
+}
+
+message RecordCompressorTrailerProto {
+    optional RecordCompressorProto compression_plan = 1;
+    optional int64 original_size = 2;
+    optional int64 post_transpose_size = 3;
+    optional RecordLengthsProto lengths = 4;
+}

@@ -1,0 +1,132 @@
+syntax = "proto3";
+
+package google.monitoring.v3;
+
+import "google/api/field_behavior.proto";
+import "google/api/metric.proto";
+import "google/api/monitored_resource.proto";
+import "google/api/resource.proto";
+import "google/api/visibility.proto";
+import "google/logging/data_governance.proto";
+import "google/monitoring/v3/alert.proto";
+import "google/monitoring/v3/metric.proto";
+import "google/protobuf/duration.proto";
+import "google/protobuf/timestamp.proto";
+import "storage/datapol/annotations/proto/semantic_annotations.proto";
+
+option ruby_package = "Google::Cloud::Monitoring::V3";
+option php_namespace = "Google\\Cloud\\Monitoring\\V3";
+option csharp_namespace = "Google.Cloud.Monitoring.V3";
+option go_package = "cloud.google.com/go/monitoring/apiv3/v2/monitoringpb;monitoringpb";
+option java_multiple_files = true;
+option java_outer_classname = "IncidentProto";
+option java_package = "com.google.monitoring.v3";
+
+message Incident {
+    string name = 1;
+    string policy_name = 9;
+    
+    IncidentState incident_state = 3;
+    enum IncidentState {
+        INCIDENT_STATE_UNSPECIFIED = 0;
+        OPEN = 1;
+        ACKNOWLEDGED = 2;
+        CLOSED = 3;
+    }
+    
+    string owner_email = 4;
+    protobuf.Timestamp open_time = 5;
+    protobuf.Timestamp close_time = 6;
+    protobuf.Timestamp autoclose_time = 7;
+    protobuf.Timestamp modify_time = 8;
+    string policy_display_name = 10;
+    string summary = 11;
+    api.MonitoredResource resource = 12;
+    api.Metric metric = 13;
+    api.MonitoredResourceMetadata metadata = 14;
+    AlertPolicy.Condition condition = 15;
+    
+    oneof _severity {
+        Severity severity = 16;
+    }
+    
+    enum Severity {
+        SEVERITY_UNSPECIFIED = 0;
+        CRITICAL = 1;
+        ERROR = 2;
+        WARNING = 3;
+    }
+}
+
+message Violation {
+    string name = 1;
+    api.MonitoredResource monitored_resource = 10;
+    api.MonitoredResourceMetadata metadata = 12;
+    api.Metric metric = 11;
+    
+    Log log = 15;
+    message Log {
+        string name = 1;
+        string entry_id = 2;
+        string filter = 3;
+        map<string, string> labels = 4;
+    }
+    
+    ViolationState violation_state = 3;
+    enum ViolationState {
+        VIOLATION_STATE_UNSPECIFIED = 0;
+        ACTIVE = 1;
+        INACTIVE = 2;
+    }
+    
+    protobuf.Timestamp start_time = 6;
+    protobuf.Timestamp end_time = 7;
+    AlertPolicy.Condition condition = 8 [deprecated = true];
+    
+    PolicyMetadata policy_metadata = 16;
+    message PolicyMetadata {
+        string name = 1;
+        string display_name = 2;
+        map<string, string> user_labels = 3;
+        AlertPolicy.Condition condition = 4;
+    }
+    
+    string logs_based_metric_filter = 13 [deprecated = true];
+    
+    Details details = 14 [deprecated = true];
+    message Details {
+        repeated string log = 1;
+        
+        ForecastParameters forecast_parameters = 2;
+        message ForecastParameters {
+            protobuf.Duration training_window = 1;
+            protobuf.Duration downsampling_period = 2;
+        }
+    }
+    
+    oneof cause {
+        api.MonitoredResource resource = 5 [deprecated = true];
+        string group_name = 9;
+    }
+}
+
+message Annotation {
+    string name = 1;
+    string author_email = 2;
+    string body = 3;
+    string mime_type = 4;
+    protobuf.Timestamp create_time = 5;
+}
+
+message ForecastWithState {
+    ForecastState state = 1;
+    enum ForecastState {
+        FORECAST_STATE_UNSPECIFIED = 0;
+        FORECAST_STATE_NORMAL = 1;
+        FORECAST_STATE_TRAINING = 2;
+        FORECAST_STATE_DISABLED = 3;
+    }
+    
+    TimeSeries forecast = 2;
+    protobuf.Timestamp training_completion_time = 3;
+}

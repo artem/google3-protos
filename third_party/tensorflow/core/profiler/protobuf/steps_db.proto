@@ -1,0 +1,57 @@
+syntax = "proto3";
+
+package tensorflow.profiler;
+
+import "google/protobuf/any.proto";
+import "third_party/tensorflow/core/profiler/protobuf/op_metrics.proto";
+
+message GenericStepBreakdown {
+    map<int32, uint64> type_ps = 1;
+    map<string, uint64> category_ps = 2;
+}
+
+message DeviceMemoryTransfer {
+    uint64 occurrence = 1;
+    double time_us = 2;
+    uint64 bytes_transferred = 3;
+}
+
+message StepInfoResult {
+    uint32 step_num = 1;
+    string step_name = 5;
+    uint64 duration_ps = 2;
+    uint64 begin_ps = 3;
+    google.protobuf.Any step_breakdown = 4;
+    DeviceMemoryTransfer collectives = 6;
+}
+
+message AllReduceInfo {
+    uint64 id = 1;
+    string name = 2 [deprecated = true];
+    uint64 all_reduce_id = 3;
+    uint64 start_time_ps = 4;
+    uint64 end_time_ps = 5;
+    uint64 byte_size = 6;
+}
+
+message AllReduceDbResult {
+    repeated AllReduceInfo all_reduce_info = 1;
+}
+
+message PerCoreStepInfo {
+    uint32 step_num = 1;
+    map<uint32, StepInfoResult> step_info_per_core = 2;
+    OpMetricsDb hlo_metrics_db = 3;
+    map<uint32, uint32> core_id_to_replica_id_map = 5;
+    map<uint32, AllReduceDbResult> all_reduce_db_per_core = 6;
+    repeated DeviceMemoryTransfer device_memory_transfers = 7;
+    
+    reserved 4;
+}
+
+message StepDatabaseResult {
+    repeated PerCoreStepInfo step_sequence = 1;
+    bool use_incomplete_step = 2;
+    uint32 num_steps_dropped = 3;
+    bool empty_intersect = 4;
+}

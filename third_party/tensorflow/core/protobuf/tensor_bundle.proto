@@ -1,0 +1,36 @@
+syntax = "proto3";
+
+package tensorflow;
+
+import "third_party/tensorflow/core/framework/tensor_shape.proto";
+import "third_party/tensorflow/core/framework/tensor_slice.proto";
+import "third_party/tensorflow/core/framework/types.proto";
+import "third_party/tensorflow/core/framework/versions.proto";
+
+option cc_enable_arenas = true;
+option go_package = "github.com/tensorflow/tensorflow/tensorflow/go/core/protobuf/for_core_protos_go_proto";
+option java_multiple_files = true;
+option java_outer_classname = "TensorBundleProtos";
+option java_package = "org.tensorflow.util";
+
+message BundleHeaderProto {
+    int32 num_shards = 1;
+    
+    Endianness endianness = 2;
+    enum Endianness {
+        LITTLE = 0;
+        BIG = 1;
+    }
+    
+    VersionDef version = 3;
+}
+
+message BundleEntryProto {
+    DataType dtype = 1;
+    TensorShapeProto shape = 2;
+    int32 shard_id = 3;
+    int64 offset = 4;
+    int64 size = 5;
+    fixed32 crc32c = 6;
+    repeated TensorSliceProto slices = 7;
+}

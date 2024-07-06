@@ -1,0 +1,30 @@
+syntax = "proto3";
+
+package privacy.data_governance.attributes;
+
+import "privacy/data_governance/attributes/proto/classification.proto";
+
+option java_package = "com.google.privacy.datagovernance.attributes";
+
+message EssentialOnlyMode {
+    message Data {
+        repeated UsagePurpose usage_purposes = 1;
+    }
+    
+    message Process {
+        repeated UsagePurpose usage_purposes = 1;
+    }
+    
+    enum UsagePurpose {
+        USAGE_PURPOSE_UNSPECIFIED = 0;
+        USAGE_PURPOSE_PRODUCT_SERVICE_IMPROVEMENT = 1;
+        USAGE_PURPOSE_PROVISION_OF_SERVICE = 2;
+        USAGE_PURPOSE_PREVENT_FRAUD_AND_ABUSE = 3;
+        USAGE_PURPOSE_ADDRESS_SECURITY_ISSUES = 4;
+        USAGE_PURPOSE_PROTECT_AGAINST_HARM = 5;
+        USAGE_PURPOSE_LEGAL_AND_ETHICAL_OBLIGATION = 6;
+        USAGE_PURPOSE_PERSONALIZE_RECOMMENDATIONS_OR_CONTENT = 7;
+        USAGE_PURPOSE_PERSONALIZE_DIRECT_MARKETING = 8;
+        USAGE_PURPOSE_ADVERTISING = 9;
+    }
+}

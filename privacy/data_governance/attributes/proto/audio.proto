@@ -1,0 +1,60 @@
+syntax = "proto3";
+
+package privacy.data_governance.attributes;
+
+import "logs/proto/logs_annotations/logs_annotations.proto";
+import "privacy/data_governance/attributes/proto/classification.proto";
+
+option java_package = "com.google.privacy.datagovernance.attributes";
+
+message Audio {
+    message Data {
+        AudioCategory audio_category = 1;
+        message AudioCategory {
+            UserAudio user_audio = 1;
+            message UserAudio {
+                classification.Category.HasCategory public_audio = 5;
+                classification.Category.HasCategory private_donated = 6;
+                classification.Category.HasCategory private_non_donated = 7;
+                
+                reserved 1, 2, 3, 4;
+            }
+            
+            EnterpriseAudio enterprise_audio = 2;
+            message EnterpriseAudio {
+                classification.Category.HasCategory donated = 3;
+                classification.Category.HasCategory non_donated = 4;
+                
+                reserved 1, 2;
+            }
+            
+            classification.Category.HasCategory audio_acquired = 5;
+            classification.Category.HasCategory public_audio = 6;
+            
+            SyntheticAudio synthetic_audio = 4;
+            message SyntheticAudio {
+                classification.Category.HasCategory pre_approved = 3;
+                classification.Category.HasCategory limited_use = 4;
+                
+                reserved 1, 2;
+            }
+            
+            reserved 3;
+        }
+        
+        classification.Category.HasCategory identifies_sensitive_personal_characteristics = 2;
+        classification.Category.HasCategory is_copy = 3;
+    }
+    
+    message Process {
+        repeated ProcessingPurpose processing_purpose = 1;
+        enum ProcessingPurpose {
+            UNKNOWN = 0;
+            SOUND_SEARCH = 1;
+            TEXT_TO_SPEECH = 2;
+            AUTOMATIC_SPEECH_RECOGNITION = 3;
+            VOICE_MATCH_PERSONALIZATION = 4;
+            MULTI_DEVICE_ARBITRATION = 5;
+        }
+    }
+}

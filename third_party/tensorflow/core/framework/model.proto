@@ -1,0 +1,73 @@
+syntax = "proto3";
+
+package tensorflow.data.model;
+
+option cc_enable_arenas = true;
+option go_package = "github.com/tensorflow/tensorflow/tensorflow/go/core/framework/model_go_proto";
+
+message ModelProto {
+    string dataset_name = 7;
+    map<int64, Node> nodes = 1;
+    int64 output = 2;
+    int64 id_counter = 3;
+    
+    OptimizationParams optimization_params = 5;
+    message OptimizationParams {
+        AutotuneAlgorithm algorithm = 1;
+        int64 cpu_budget = 2;
+        int64 ram_budget = 3;
+        double model_input_time = 4;
+    }
+    
+    repeated uint64 gap_times = 6;
+    
+    reserved 4;
+    
+    message Node {
+        int64 id = 1;
+        string name = 2;
+        bool autotune = 3;
+        int64 buffered_bytes = 4;
+        int64 buffered_elements = 5;
+        int64 bytes_consumed = 6;
+        int64 bytes_produced = 7;
+        int64 num_elements = 8;
+        int64 processing_time = 9;
+        bool record_metrics = 10;
+        
+        repeated Parameter parameters = 11;
+        message Parameter {
+            string name = 1;
+            double value = 2;
+            double state_value = 3;
+            double min = 4;
+            double max = 5;
+            bool tunable = 6;
+        }
+        
+        double input_processing_time_sum = 12;
+        int64 input_processing_time_count = 13;
+        repeated int64 inputs = 14;
+        NodeClass node_class = 15;
+        double ratio = 16;
+        double memory_ratio = 17;
+    }
+}
+
+enum NodeClass {
+    UNKNOWN = 0;
+    INTERLEAVE_MANY = 1;
+    ASYNC_INTERLEAVE_MANY = 2;
+    KNOWN_RATIO = 3;
+    ASYNC_KNOWN_RATIO = 4;
+    UNKNOWN_RATIO = 5;
+    ASYNC_UNKNOWN_RATIO = 6;
+}
+
+enum AutotuneAlgorithm {
+    DEFAULT = 0;
+    HILL_CLIMB = 1;
+    GRADIENT_DESCENT = 2;
+    MAX_PARALLELISM = 3;
+    STAGE_BASED = 4;
+}

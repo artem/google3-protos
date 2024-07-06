@@ -1,0 +1,172 @@
+syntax = "proto3";
+
+package privacy.data_governance.attributes;
+
+import "privacy/data_governance/attributes/proto/ads.proto";
+import "privacy/data_governance/attributes/proto/annotations_version.proto";
+import "privacy/data_governance/attributes/proto/apps.proto";
+import "privacy/data_governance/attributes/proto/assurant.proto";
+import "privacy/data_governance/attributes/proto/audio.proto";
+import "privacy/data_governance/attributes/proto/classification.proto";
+import "privacy/data_governance/attributes/proto/common.proto";
+import "privacy/data_governance/attributes/proto/consumer_trust.proto";
+import "privacy/data_governance/attributes/proto/datapol.proto";
+import "privacy/data_governance/attributes/proto/digital_markets_act.proto";
+import "privacy/data_governance/attributes/proto/encryption_key_properties.proto";
+import "privacy/data_governance/attributes/proto/essential_only_mode.proto";
+import "privacy/data_governance/attributes/proto/experimental.proto";
+import "privacy/data_governance/attributes/proto/face_authentication.proto";
+import "privacy/data_governance/attributes/proto/faroe.proto";
+import "privacy/data_governance/attributes/proto/finance.proto";
+import "privacy/data_governance/attributes/proto/geo.proto";
+import "privacy/data_governance/attributes/proto/geo_location.proto";
+import "privacy/data_governance/attributes/proto/identifiers.proto";
+import "privacy/data_governance/attributes/proto/medical.proto";
+import "privacy/data_governance/attributes/proto/ml.proto";
+import "privacy/data_governance/attributes/proto/payments.proto";
+import "privacy/data_governance/attributes/proto/photos.proto";
+import "privacy/data_governance/attributes/proto/primary_for_portability.proto";
+import "privacy/data_governance/attributes/proto/privacy_documentation.proto";
+import "privacy/data_governance/attributes/proto/processing_type.proto";
+import "privacy/data_governance/attributes/proto/product_association.proto";
+import "privacy/data_governance/attributes/proto/production_impact.proto";
+import "privacy/data_governance/attributes/proto/production_infrastructure.proto";
+import "privacy/data_governance/attributes/proto/ptoken.proto";
+import "privacy/data_governance/attributes/proto/purpose.proto";
+import "privacy/data_governance/attributes/proto/residency.proto";
+import "privacy/data_governance/attributes/proto/retention.proto";
+import "privacy/data_governance/attributes/proto/search.proto";
+import "privacy/data_governance/attributes/proto/trusted_core_access.proto";
+import "privacy/data_governance/attributes/proto/youtube.proto";
+
+option java_multiple_files = true;
+option java_package = "com.google.privacy.datagovernance.attributes.proto1api";
+
+message Annotations {
+    Data data = 1;
+    message Data {
+        repeated classification.Source source = 1;
+        classification.SemanticContext semantic_context = 2;
+        classification.Confidentiality confidentiality = 3;
+        repeated classification.DatasetTag dataset_tags = 9;
+        classification.Category category = 5;
+        repeated classification.Identifiers identifiers = 6;
+        classification.Pseudonymization pseudonymization = 10;
+        classification.Identifiability identifiability = 7;
+        uint64 anonymization_bug_id = 8 [deprecated = true];
+        repeated AllowedLocations allowed_locations = 4 [deprecated = true];
+        DataProductAssociation product_association = 11;
+        repeated ProcessingPurpose.Purpose limited_purposes = 12;
+        repeated DatapolAnnotations datapol = 13;
+        
+        Custom custom = 101;
+        message Custom {
+            Ads.Data ads = 1;
+            Apps.Data apps = 2;
+            Medical.Data medical = 5 [deprecated = true];
+            repeated Residency.Data residency = 3;
+            Search.DataSpecs search = 4;
+            Assurant.Data assurant = 6;
+            Photos.Data photos = 7;
+            Payments.Data payments = 8;
+            Audio.Data audio = 9;
+            EncryptionKeyProperties encryption_key_properties = 10;
+            EssentialOnlyMode.Data essential_only_mode = 11;
+            MlModel.Data ml_model = 12;
+            Geo.Data geo = 13;
+            FaceAuthentication.Data face_authentication = 14;
+            DigitalMarketsAct.Data digital_markets_act = 15;
+            Youtube.Data youtube = 16;
+            Faroe.Data faroe = 17;
+            Finance.Data finance = 18;
+            Experimental.Data experimental = 101;
+        }
+    }
+    
+    AnnotationsVersion version = 6;
+    fixed64 annotation_id = 5;
+    PrivacyDocumentation privacy_documentation = 7;
+    
+    Custom custom = 101;
+    message Custom {
+        ProductionImpact production_impact = 1 [deprecated = true];
+        ProductionInfrastructure production_infrastructure = 2;
+    }
+    
+    oneof family_specific_annotations {
+        Storage storage = 2;
+        Rpc rpc = 3;
+        Process process = 4;
+    }
+    
+    message Storage {
+        Retention retention = 2;
+        message Retention {
+            int64 plan_id = 1;
+            repeated string wipeout_processor = 2;
+            ExemptReason exempt_reason = 3;
+        }
+        
+        EncryptionProperties encryption = 3;
+        PrimaryForPortability primary_for_portability = 4;
+        StorageProductAssociation product_association = 5;
+        FineGrainedProductAssociation fine_grained_product_association = 6;
+        
+        Custom custom = 101;
+        message Custom {
+            Ads.Storage ads = 1;
+            Residency.Storage residency = 2 [deprecated = true];
+            Search.Storage search = 3;
+            PToken.Storage ptoken = 4;
+            ConsumerTrust.Storage consumer_trust = 5;
+        }
+        
+        reserved 1;
+    }
+    
+    message Rpc {
+        Data writes = 2;
+        Data returns = 3;
+        Data reads = 4;
+        ServiceType service_type = 5;
+        PrimaryForPortability primary_for_portability = 6;
+        
+        Custom custom = 101;
+        message Custom {
+            TrustedCoreAccess.Rpc trusted_core_access = 1;
+        }
+        
+        reserved 1;
+    }
+    
+    message Process {
+        GeoLocation geo_location = 8;
+        message GeoLocation {
+            classification.GeoLocation.Process.LocationType location_type = 1;
+            classification.GeoLocation.Process.CoarseningTransformation coarsening_transformation = 2;
+        }
+        
+        repeated ProcessingPurpose processing_purpose = 9;
+        ServiceType service_type = 10;
+        ProcessProductAssociation product_association = 11;
+        repeated ProcessingType processing_type = 12;
+        
+        Custom custom = 101;
+        message Custom {
+            Residency.Process residency = 1 [deprecated = true];
+            Ads.Process ads = 2;
+            EssentialOnlyMode.Process essential_only_mode = 3;
+            Audio.Process audio = 4;
+            DigitalMarketsAct.Process digital_markets_act = 5;
+            PToken.Process ptoken = 6;
+            ML.Process ml = 7;
+        }
+    }
+    
+    enum ServiceType {
+        UNKNOWN = 0;
+        SERVER = 1;
+        PASSTHROUGH = 2;
+        LOAD_BALANCER = 3;
+    }
+}

@@ -1,0 +1,67 @@
+syntax = "proto3";
+
+package privacy.data_governance.attributes;
+
+import "privacy/data_governance/attributes/proto/classification.proto";
+import "privacy/data_governance/attributes/proto/common.proto";
+
+option java_multiple_files = true;
+option java_package = "com.google.privacy.datagovernance.attributes";
+
+message Assurant {
+    message Data {
+        repeated CustomerTenancy customer_tenancy = 1;
+        message CustomerTenancy {
+            Product product = 1;
+            classification.SemanticContext context = 2;
+            EncryptionProperties encryption = 3;
+        }
+    }
+    
+    enum Product {
+        PRODUCT_NONE = 0;
+        PRODUCT_CLOUD_STORAGE = 1;
+        PRODUCT_COMPUTE_ENGINE = 2;
+        PRODUCT_GOOGLE_KUBERNETES_ENGINE = 3;
+        PRODUCT_INSTANCE_MANAGER = 4 [deprecated = true];
+        PRODUCT_RESOURCE_MANAGER = 5 [deprecated = true];
+        PRODUCT_CLOUD_KEY_MANAGEMENT_SERVICE = 6;
+        PRODUCT_PERSISTENT_DISK = 7;
+        PRODUCT_CLOUD_DATAPROC = 8;
+        PRODUCT_CLOUD_DATAFLOW = 9;
+        PRODUCT_CLOUD_HSM = 10;
+        PRODUCT_BIGQUERY = 11;
+        PRODUCT_CLOUD_EKM = 12;
+        PRODUCT_CLOUD_IDENTITY_AND_ACCESS_MANAGEMENT = 13;
+        PRODUCT_VPC_ACCESS = 14 [deprecated = true];
+        PRODUCT_VPC_VIRTNET = 15;
+        PRODUCT_AI_PLATFORM = 16;
+        PRODUCT_CLOUD_SPEECH_TO_TEXT = 17;
+        PRODUCT_SECRET_MANAGER = 18;
+        PRODUCT_CLOUD_LOGGING = 19;
+        PRODUCT_SPEAKER_ID = 20;
+        PRODUCT_DOCUMENT_AI = 21;
+        PRODUCT_CLOUD_HEALTHCARE_API = 22;
+        PRODUCT_CLOUD_3525030c = 23;
+        PRODUCT_CLOUD_SPANNER = 24;
+        PRODUCT_CLOUD_DLP = 25;
+        PRODUCT_ARTIFACT_REGISTRY = 26;
+        PRODUCT_CLOUD_SQL = 27;
+        PRODUCT_CLOUD_TRANSLATION = 28;
+        PRODUCT_CCAI_ASSIST_AND_KNOWLEDGE = 29;
+        PRODUCT_EVENTARC = 30;
+        PRODUCT_ASSURANT_AAC_EXAMPLES = 31;
+        PRODUCT_DIALOGFLOW_CX = 32;
+        PRODUCT_INTEGRATION_PLATFORM = 33;
+        PRODUCT_FINANCIAL_SERVICES = 34;
+        PRODUCT_CLOUD_TEXT_TO_SPEECH = 35;
+        PRODUCT_CLOUD_RUN = 36;
+        PRODUCT_CLOUD_FIRESTORE = 37;
+        PRODUCT_DATAPROC_METASTORE = 38;
+        PRODUCT_CLOUD_PUBSUB = 39;
+        PRODUCT_CLOUD_VISION = 40;
+        PRODUCT_CLOUD_DATA_FUSION = 41;
+        PRODUCT_DATA_CATALOG = 42;
+        PRODUCT_FILESTORE = 43;
+    }
+}

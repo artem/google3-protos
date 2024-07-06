@@ -1,0 +1,70 @@
+syntax = "proto3";
+
+package tensorflow;
+
+import "third_party/tensorflow/core/framework/allocation_description.proto";
+import "third_party/tensorflow/core/framework/tensor_description.proto";
+
+option cc_enable_arenas = true;
+option go_package = "github.com/tensorflow/tensorflow/tensorflow/go/core/framework/step_stats_go_proto";
+option java_multiple_files = true;
+option java_outer_classname = "StepStatsProtos";
+option java_package = "org.tensorflow.framework";
+
+message AllocationRecord {
+    int64 alloc_micros = 1;
+    int64 alloc_bytes = 2;
+}
+
+message AllocatorMemoryUsed {
+    string allocator_name = 1;
+    int64 total_bytes = 2;
+    int64 peak_bytes = 3;
+    int64 live_bytes = 4;
+    repeated AllocationRecord allocation_records = 6;
+    int64 allocator_bytes_in_use = 5;
+}
+
+message NodeOutput {
+    int32 slot = 1;
+    TensorDescription tensor_description = 3;
+}
+
+message MemoryStats {
+    int64 temp_memory_size = 1;
+    int64 persistent_memory_size = 3;
+    repeated int64 persistent_tensor_alloc_ids = 5;
+    int64 device_temp_memory_size = 2 [deprecated = true];
+    int64 device_persistent_memory_size = 4 [deprecated = true];
+    repeated int64 device_persistent_tensor_alloc_ids = 6 [deprecated = true];
+}
+
+message NodeExecStats {
+    string node_name = 1;
+    int64 all_start_micros = 2;
+    int64 op_start_rel_micros = 3;
+    int64 op_end_rel_micros = 4;
+    int64 all_end_rel_micros = 5;
+    repeated AllocatorMemoryUsed memory = 6;
+    repeated NodeOutput output = 7;
+    string timeline_label = 8;
+    int64 scheduled_micros = 9;
+    uint32 thread_id = 10;
+    repeated AllocationDescription referenced_tensor = 11;
+    MemoryStats memory_stats = 12;
+    int64 all_start_nanos = 13;
+    int64 op_start_rel_nanos = 14;
+    int64 op_end_rel_nanos = 15;
+    int64 all_end_rel_nanos = 16;
+    int64 scheduled_nanos = 17;
+}
+
+message DeviceStepStats {
+    string device = 1;
+    repeated NodeExecStats node_stats = 2;
+    map<uint32, string> thread_names = 3;
+}
+
+message StepStats {
+    repeated DeviceStepStats dev_stats = 1;
+}

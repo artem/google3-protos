@@ -1,0 +1,37 @@
+syntax = "proto3";
+
+package tensorflow;
+
+import "third_party/tensorflow/core/framework/tensor_shape.proto";
+import "third_party/tensorflow/core/framework/tensor_slice.proto";
+import "third_party/tensorflow/core/framework/tensor.proto";
+import "third_party/tensorflow/core/framework/types.proto";
+import "third_party/tensorflow/core/framework/versions.proto";
+
+option cc_enable_arenas = true;
+option java_multiple_files = true;
+option java_outer_classname = "SavedTensorSliceProtos";
+option java_package = "org.tensorflow.util";
+
+message SavedSliceMeta {
+    string name = 1;
+    TensorShapeProto shape = 2;
+    DataType type = 3;
+    repeated TensorSliceProto slice = 4;
+}
+
+message SavedTensorSliceMeta {
+    repeated SavedSliceMeta tensor = 1;
+    VersionDef versions = 2;
+}
+
+message SavedSlice {
+    string name = 1;
+    TensorSliceProto slice = 2;
+    TensorProto data = 3;
+}
+
+message SavedTensorSlices {
+    SavedTensorSliceMeta meta = 1;
+    SavedSlice data = 2;
+}

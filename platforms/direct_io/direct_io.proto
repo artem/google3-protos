@@ -1,0 +1,34 @@
+syntax = "proto2";
+
+package platforms_direct_io;
+
+option optimize_for = CODE_SIZE;
+
+message PciLocationProto {
+    required int32 domain = 1;
+    required int32 bus = 2;
+    required int32 device = 3;
+    required int32 function = 4;
+}
+
+message PciSignatureProto {
+    required int32 vendor_id = 1;
+    required int32 device_id = 2;
+    optional int32 subsystem_vendor_id = 3;
+    optional int32 subsystem_id = 4;
+}
+
+message SmbusLocationProto {
+    required int32 bus = 1;
+    required int32 address = 2;
+}
+
+message UsbLocationProto {
+    required int32 bus = 1;
+    repeated int32 port = 2;
+}
+
+message UsbSignatureProto {
+    required int32 vendor_id = 1;
+    required int32 product_id = 2;
+}

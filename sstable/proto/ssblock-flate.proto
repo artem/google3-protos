@@ -1,0 +1,22 @@
+syntax = "proto2";
+
+package sstable;
+
+option java_multiple_files = true;
+option java_package = "com.google.sstable";
+
+message FlateBlockTrailer {
+    optional int32 algorithm = 1 [default = 0];
+    optional fixed32 Adler = 2;
+    required int32 Entries = 3;
+    required int32 KeyBytes = 4;
+    required int32 ValueBytes = 5;
+    optional int32 LgWin = 6 [default = 15];
+    optional int32 FixedKeyWidth = 7 [default = -1];
+    optional int32 FixedValWidth = 8 [default = -1];
+    optional int32 TransposedValueBytes = 9 [default = -1];
+    
+    enum ALGORITHM {
+        FLATE = 0;
+    }
+}

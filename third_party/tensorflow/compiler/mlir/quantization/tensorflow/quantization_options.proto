@@ -1,0 +1,98 @@
+syntax = "proto3";
+
+package tensorflow.quantization;
+
+import "third_party/tensorflow/compiler/mlir/quantization/stablehlo/quantization_config.proto";
+import "third_party/tensorflow/core/framework/tensor.proto";
+
+option cc_enable_arenas = true;
+
+message QuantizationMethod {
+    PresetMethod preset_method = 4;
+    enum PresetMethod {
+        METHOD_UNSPECIFIED = 0;
+        METHOD_NO_QUANTIZE = 1;
+        METHOD_STATIC_RANGE_INT8 = 2;
+        METHOD_DYNAMIC_RANGE_INT8 = 3;
+        METHOD_STATIC_RANGE_WEIGHT_ONLY_INT8 = 4;
+    }
+    
+    repeated QuantizationComponentSpec quantization_component_specs = 3;
+    
+    reserved 1 to 2;
+}
+
+message QuantizationComponentSpec {
+    QuantizationComponent quantization_component = 1;
+    enum QuantizationComponent {
+        COMPONENT_UNSPECIFIED = 0;
+        COMPONENT_ACTIVATION = 1;
+        COMPONENT_WEIGHT = 2;
+        COMPONENT_BIAS = 3;
+    }
+    
+    TensorType tensor_type = 2;
+    enum TensorType {
+        TENSORTYPE_UNSPECIFIED = 0;
+        TENSORTYPE_INT_4 = 1;
+        TENSORTYPE_INT_8 = 2;
+        TENSORTYPE_INT_32 = 3;
+    }
+}
+
+message UnitWiseQuantizationSpec {
+    repeated QuantizationUnit unit = 5;
+    message QuantizationUnit {
+        string op_type = 1;
+        string node_name = 2;
+        string func_name = 3;
+    }
+    
+    QuantizationMethod quantization_method = 6;
+    
+    reserved 1 to 4;
+}
+
+message RepresentativeDataSample {
+    map<string, TensorProto> tensor_proto_inputs = 2;
+}
+
+message RepresentativeDatasetFile {
+    oneof dataset_file {
+        string tfrecord_file_path = 1;
+    }
+}
+
+message QuantizationOptions {
+    QuantizationMethod quantization_method = 1;
+    OpSet op_set = 2;
+    repeated UnitWiseQuantizationSpec unit_wise_quantization_specs = 17;
+    repeated string tags = 5;
+    repeated string signature_keys = 6;
+    map<string, RepresentativeDatasetFile> representative_datasets = 7;
+    int64 min_num_elements_for_weights = 8;
+    bool enable_two_input_tensors = 11;
+    bool experimental_enable_tpu_model_support = 12;
+    bool enable_legacy_weight_only = 13;
+    bool force_graph_mode_calibration = 14;
+    .stablehlo.quantization.CalibrationOptions calibration_options = 15;
+    .stablehlo.quantization.DebuggerConfig debugger_config = 16;
+    
+    oneof _freeze_all_variables {
+        bool freeze_all_variables = 9;
+    }
+    
+    oneof _enable_per_channel_quantization {
+        bool enable_per_channel_quantization = 10;
+    }
+    
+    reserved 3;
+}
+
+enum OpSet {
+    OP_SET_UNSPECIFIED = 0;
+    TF = 1;
+    XLA = 2;
+    UNIFORM_QUANTIZED = 3;
+    STABLEHLO = 4;
+}

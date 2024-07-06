@@ -1,0 +1,44 @@
+syntax = "proto2";
+
+package webutil.http;
+
+enum CookieVersion {
+    VERSION_UNUSED = 0;
+    OLD_NETSCAPE_FROM_SETTERS = 1;
+    RFC6265 = 2;
+    RFC6265_FROM_STRING = 3;
+    RFC6265_FROM_SETTERS = 4;
+}
+
+enum CookiePriority {
+    option allow_alias = true;
+    PRIORITY_UNUSED = 0;
+    PRIORITY_LOW = 1;
+    PRIORITY_MEDIUM = 2;
+    PRIORITY_DEFAULT = 2;
+    PRIORITY_HIGH = 3;
+}
+
+enum CookieNonComplianceReason {
+    REASON_UNUSED = 0;
+    INVALID_CHARACTER_IN_TOKEN = 1;
+    INVALID_CHARACTER_IN_VALUE = 2;
+    MISUSED_QUOTES_IN_VALUE = 3;
+    EMPTY_NAME = 4;
+    EMPTY_COOKIE = 5;
+    INVALID_EXPIRES = 6;
+    INVALID_MAX_AGE = 7;
+    TOO_MANY_ATTRIBUTES = 8;
+    UNKNOWN_ATTRIBUTE = 9;
+    UNEXPECTED_ATTRIBUTE_VALUE = 10;
+    MISSING_ATTRIBUTE_VALUE = 11;
+}
+
+enum SameSiteValue {
+    SAMESITE_UNSPECIFIED = 0;
+    SAMESITE_UNRECOGNIZED = 1;
+    SAMESITE_NONE = 2;
+    SAMESITE_LAX = 3;
+    SAMESITE_STRICT = 4;
+    SAMESITE_EXTENDED = 5;
+}

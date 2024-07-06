@@ -1,0 +1,36 @@
+syntax = "proto2";
+
+package operations_research.sat;
+
+option csharp_namespace = "Google.OrTools.Sat";
+option java_multiple_files = true;
+option java_package = "com.google.operationsresearch.sat";
+
+message LinearBooleanConstraint {
+    repeated int32 literals = 1;
+    repeated int64 coefficients = 2;
+    optional int64 lower_bound = 3;
+    optional int64 upper_bound = 4;
+    optional string name = 5;
+}
+
+message LinearObjective {
+    repeated int32 literals = 1;
+    repeated int64 coefficients = 2;
+    optional double offset = 3 [default = 0];
+    optional double scaling_factor = 4 [default = 1];
+}
+
+message BooleanAssignment {
+    repeated int32 literals = 1;
+}
+
+message LinearBooleanProblem {
+    optional string name = 1;
+    optional int32 num_variables = 3;
+    repeated LinearBooleanConstraint constraints = 4;
+    optional LinearObjective objective = 5;
+    repeated string var_names = 6;
+    optional BooleanAssignment assignment = 7;
+    optional int32 original_num_variables = 8;
+}

@@ -1,0 +1,10 @@
+syntax = "proto2";
+
+package xla.cpu;
+
+message XlaFrameworkMappingProto {
+    repeated int64 inputs = 1 [packed = true];
+    repeated int64 flattened_outputs = 2 [packed = true];
+    optional int64 result = 3 [default = -1];
+    optional bool output_is_tuple = 4;
+}

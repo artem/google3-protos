@@ -1,0 +1,23 @@
+syntax = "proto3";
+
+package google.monitoring.v3;
+
+option ruby_package = "Google::Cloud::Monitoring::V3";
+option php_namespace = "Google\\Cloud\\Monitoring\\V3";
+option csharp_namespace = "Google.Cloud.Monitoring.V3";
+option go_package = "cloud.google.com/go/monitoring/apiv3/v2/monitoringpb;monitoringpb";
+option java_multiple_files = true;
+option java_outer_classname = "MqlEditorProto";
+option java_package = "com.google.monitoring.v3";
+
+enum IconKind {
+    ICON_KIND_UNSPECIFIED = 0;
+    KIND_TABLE_OP = 1;
+    KIND_FUNC = 2;
+    KIND_OPERATOR = 3;
+    KIND_PUNCTUATION = 4;
+    KIND_LIT = 5;
+    KIND_COLUMN_NAME = 6;
+    KIND_NAME = 7;
+    KIND_NAME_WITH_DATA_PRESENT = 8;
+}

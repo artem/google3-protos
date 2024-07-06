@@ -1,0 +1,19 @@
+syntax = "proto2";
+
+package asic_sw;
+
+message TagFilterSpec {
+    repeated Filter filter = 1;
+    message Filter {
+        optional FilterMode mode = 1;
+        repeated string tag = 2;
+    }
+    
+    enum FilterMode {
+        UNKNOWN = 0;
+        MATCH_ANY = 1;
+        MATCH_ALL = 2;
+        EXCLUDE_ANY = 3;
+        EXCLUDE_ALL = 4;
+    }
+}

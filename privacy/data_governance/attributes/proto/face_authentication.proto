@@ -1,0 +1,15 @@
+syntax = "proto2";
+
+package privacy.data_governance.attributes;
+
+import "privacy/data_governance/attributes/proto/classification.proto";
+
+option java_multiple_files = true;
+option java_package = "com.google.privacy.datagovernance.attributes";
+
+message FaceAuthentication {
+    message Data {
+        optional classification.Category.HasCategory face_data = 1;
+        optional classification.Category.HasCategory face_derived_data = 2;
+    }
+}

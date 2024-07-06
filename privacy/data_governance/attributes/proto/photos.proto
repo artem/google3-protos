@@ -1,0 +1,56 @@
+syntax = "proto3";
+
+package privacy.data_governance.attributes;
+
+import "privacy/data_governance/attributes/proto/classification.proto";
+
+option java_package = "com.google.privacy.datagovernance.attributes";
+
+message Photos {
+    message Data {
+        MediaType media_type = 1 [deprecated = true];
+        enum MediaType {
+            MEDIA_TYPE_UNSET = 0;
+            MEDIA_TYPE_CONTENT = 1;
+            MEDIA_TYPE_ATTRIBUTES = 2;
+            MEDIA_TYPE_DERIVED_ATTRIBUTES = 3;
+            MEDIA_TYPE_NONE = 4;
+        }
+        
+        repeated MediaType media_types = 3;
+        
+        DataContents data_contents = 2;
+        message DataContents {
+            classification.Category.HasCategory derived_resource_data = 1;
+            
+            FaceRelatedContents face_contents = 2;
+            message FaceRelatedContents {
+                classification.Category.HasCategory face_related = 1;
+                classification.Category.HasCategory face_landmark = 2;
+                classification.Category.HasCategory face_template = 3;
+                classification.Category.HasCategory further_derived_fields = 4;
+            }
+            
+            LocationRelatedContents location_contents = 3;
+            message LocationRelatedContents {
+                classification.Category.HasCategory media_location = 1;
+                classification.Category.GeoLocation.Coarse media_location_coarse = 2;
+            }
+            
+            classification.Category.HasCategory sharing_or_ownership_state = 4;
+        }
+        
+        Benchmarks benchmarks = 4;
+        message Benchmarks {
+            classification.Category.HasCategory benchmarks = 1;
+            
+            Donated donated = 2;
+            enum Donated {
+                UNDEFINED = 0;
+                DONATED_YES = 1;
+                DONATED_NO = 2;
+                DONATED_MIXED = 3;
+            }
+        }
+    }
+}

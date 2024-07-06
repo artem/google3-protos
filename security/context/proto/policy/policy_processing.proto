@@ -1,0 +1,92 @@
+syntax = "proto2";
+
+package rpcsp;
+
+import "google/iam/v1/rule.proto";
+import "google/protobuf/empty.proto";
+import "net/proto2/proto/descriptor.proto";
+import "security/context/proto/policy/policy_bundle_types.proto";
+
+option cc_enable_arenas = true;
+option java_multiple_files = true;
+option java_package = "com.google.security.context";
+
+message PolicyRewrite {
+    optional PolicyRewriteName name = 1;
+    optional PolicyRewriteTarget target = 2;
+    optional google.iam.v1.Rule central_repo_rule = 3;
+    optional google.iam.v1.Rule scaffolding_rule = 4;
+    optional google.iam.v1.Rule af_rule = 5;
+    optional google.iam.v1.Rule goa_rule = 6;
+    repeated google.iam.v1.Rule historical_autorules = 7;
+}
+
+message PolicyRewriteList {
+    repeated PolicyRewrite rewrites = 1;
+}
+
+message PolicyProcessingAlwaysRequired {
+    
+}
+
+message UserConfigurationRestriction {
+    repeated Framework applicable_frameworks = 1 [packed = true];
+    optional google.protobuf.Empty applicable_to_all_but_presubmit = 5;
+    optional bool exempt_v1 = 2 [default = false];
+    
+    oneof restrictions {
+        string requires_exemption_in_file = 3;
+        NeverUserConfigurable never_user_configurable = 4;
+    }
+    
+    message NeverUserConfigurable {
+        
+    }
+}
+
+message PolicyProcessingMetadata {
+    repeated Environment default_enabled_envs = 1 [packed = true];
+    repeated UserConfigurationRestriction user_configuration_restrictions = 2;
+}
+
+enum PolicyRewriteName {
+    REWRITE_UNSPECIFIED = 0;
+    REWRITE_ALLOW_EUC_PRESENTER_SELF = 1;
+    REWRITE_DENY_EUC_PRESENTER_NON_BCID3_ROLES = 2;
+    REWRITE_DENY_EUC_PRESENTER_UNTRUSTED_PROXY_ROLES = 3;
+    REWRITE_DENY_PRIVILEGED_ACCESS_FORGE = 4;
+    REWRITE_DENY_PRIVILEGED_ACCESS_RPCSTUDIO = 5;
+    REWRITE_ALLOW_EUC_PRESENTER_RPCSTUDIO = 6;
+    REWRITE_INSERT_DEFAULT_AUDIT_POLICY = 7;
+}
+
+enum PolicyCheckName {
+    CHECK_UNSPECIFIED = 0;
+    CHECK_DENY_EUC_PRESENTER_ADMIN = 1;
+    CHECK_REQUIRE_ORDER_INDEPENDENT_BINDINGS = 3;
+    CHECK_DENY_UNPRIVILEGED_USER_NARROW_BINDING = 4;
+    CHECK_LANGUAGE_SUPPORT = 5;
+    CHECK_EXCLUDE_INSECURE_USERS_CONDITION = 6;
+    CHECK_ADMIN_ACCESS_CONTROLS = 7;
+    CHECK_CONFLICTING_GIN_LOGGING_BEHAVIORS = 9;
+    CHECK_NO_HTTP_HANDLERS_FIELD = 10;
+    CHECK_NO_OAUTH_IN_BINDINGS = 11;
+    CHECK_CORP_GROUPS_HTTPSP_ONLY = 12;
+    CHECK_REQUIRE_DG_ANNOTATIONS = 13;
+    CHECK_CORP_GROUPS_ALLOWED_BINDINGS_ONLY = 14;
+    CHECK_NO_LOCAL_ACLS = 15;
+    CHECK_NO_stubby_APPLICATION_AUTHORIZATION = 16;
+    CHECK_HTTPSP_AUDIT_ONLY_ENABLE_OR_DISABLE = 17;
+    CHECK_NO_EXCLUDE_PEER_USER_CONDITION = 18;
+    CHECK_REQUIRE_RPC_SERVICES_FIELD = 19;
+}
+
+enum PolicyRewriteTarget {
+    REWRITE_TARGET_UNSPECIFIED = 0;
+    REWRITE_TARGET_CREDS_POLICY = 1;
+    REWRITE_TARGET_AUTHZ_POLICY = 2;
+}
+
+extend proto2.EnumValueOptions {
+    optional PolicyProcessingMetadata policy_processing_metadata = 476166315;
+}

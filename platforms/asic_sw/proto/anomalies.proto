@@ -1,0 +1,86 @@
+syntax = "editions";
+
+package asic_sw.proto;
+
+option optimize_for = CODE_SIZE;
+
+message Anomaly {
+    optional string location = 1;
+    optional string detailed_location = 2;
+    
+    oneof details {
+        GeneralErrorAnomaly general_error = 3;
+        EccErrorAnomaly ecc_error = 4;
+        UnknownErrorAnomaly unknown_error = 5;
+        CustomAnomaly custom = 6;
+    }
+}
+
+message EccErrorAnomaly {
+    optional Category category = 1;
+    enum Category {
+        UNKNOWN = 0;
+        ECC_CORRECTABLE = 1;
+        ECC_UNCORRECTABLE = 2;
+    }
+    
+    optional uint64 count = 2;
+    optional uint64 ram = 3;
+    optional string mnemonic = 4;
+    
+    optional FirstErrorInfo first_error_info = 5;
+    message FirstErrorInfo {
+        optional uint64 timestamp = 1 [default = 0xffffffffffffffff];
+        optional uint64 syndrome = 2;
+        optional uint64 address = 3;
+    }
+    
+    optional string memory_class = 6;
+}
+
+message GeneralErrorAnomaly {
+    optional Category category = 1;
+    enum Category {
+        UNKNOWN = 0;
+        USER = 1;
+        INTERNAL = 2;
+        FIRMWARE = 3;
+        PCIE = 4;
+        THERMAL = 5;
+        ICI_LINK_FATAL = 6;
+        SYSTEM_SOFTWARE = 7;
+        SYSTEM_HARDWARE = 8;
+    }
+    
+    optional uint64 error_bits = 2;
+    optional uint64 raw_value = 3;
+    optional string description = 4;
+    
+    optional FirstErrorInfo first_error_info = 5;
+    message FirstErrorInfo {
+        optional uint64 timestamp = 1 [default = 0xffffffffffffffff];
+    }
+    
+    optional int32 location_index = 6;
+    map<uint64, uint64> scratch_registers = 7;
+}
+
+message UnknownErrorAnomaly {
+    optional uint64 unexplained_bits = 3;
+    optional uint64 raw_value = 4;
+    optional string additional_info = 5;
+    
+    oneof category {
+        EccErrorAnomaly.Category ecc = 1;
+        GeneralErrorAnomaly.Category general = 2;
+    }
+}
+
+message CustomAnomaly {
+    map<string, string> info = 1;
+    optional string description = 2;
+}
+
+message Anomalies {
+    repeated Anomaly anomalies = 1;
+}

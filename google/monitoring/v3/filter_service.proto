@@ -1,0 +1,46 @@
+syntax = "proto3";
+
+package google.monitoring.v3;
+
+import "google/api/annotations.proto";
+import "google/api/policy.proto";
+import "google/api/visibility.proto";
+import "google/logging/data_governance.proto";
+import "google/monitoring/v3/filter.proto";
+
+option ruby_package = "Google::Cloud::Monitoring::V3";
+option php_namespace = "Google\\Cloud\\Monitoring\\V3";
+option csharp_namespace = "Google.Cloud.Monitoring.V3";
+option go_package = "cloud.google.com/go/monitoring/apiv3/v2/monitoringpb;monitoringpb";
+option java_multiple_files = true;
+option java_outer_classname = "FilterServiceProto";
+option java_package = "com.google.monitoring.v3";
+
+service TimeSeriesFilterService {
+    rpc ParseTimeSeriesFilter(ParseTimeSeriesFilterRequest) returns (ParseTimeSeriesFilterResponse);
+    rpc FormatTimeSeriesFilter(FormatTimeSeriesFilterRequest) returns (FormatTimeSeriesFilterResponse);
+}
+
+message ParseTimeSeriesFilterRequest {
+    string name = 1;
+    TimeSeriesFilterString filter = 2;
+    bool include_monitored_resource_container_label = 3;
+}
+
+message ParseTimeSeriesFilterResponse {
+    TimeSeriesFilter filter = 1;
+}
+
+message FormatTimeSeriesFilterRequest {
+    string name = 1;
+    TimeSeriesFilter filter = 2;
+    bool include_monitored_resource_container_label = 3;
+}
+
+message FormatTimeSeriesFilterResponse {
+    string filter = 1;
+}
+
+message TimeSeriesFilterString {
+    string filter = 1;
+}

@@ -1,0 +1,18 @@
+syntax = "proto3";
+
+package privacy.data_governance.attributes;
+
+import "privacy/data_governance/attributes/proto/classification.proto";
+
+option java_multiple_files = true;
+option java_package = "com.google.privacy.datagovernance.attributes";
+
+message ConsumerTrust {
+    message Storage {
+        repeated PolicyEnforcementState policy_enforcement_state = 1;
+        enum PolicyEnforcementState {
+            ENFORCEMENT_UNKNOWN = 0;
+            ENFORCEMENT_VIA_SALSA = 1;
+        }
+    }
+}

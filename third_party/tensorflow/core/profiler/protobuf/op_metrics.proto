@@ -1,0 +1,94 @@
+syntax = "proto3";
+
+package tensorflow.profiler;
+
+message LayoutAnalysis {
+    repeated Dimension dimensions = 1;
+    message Dimension {
+        int32 size = 1;
+        int32 alignment = 2;
+        LayoutDimensionSemantics semantics = 3;
+    }
+}
+
+message MemoryAccessBreakdown {
+    repeated OpMetrics.MemoryAccessed memory_accessed = 1;
+}
+
+message OpMetrics {
+    uint64 hlo_module_id = 13;
+    string name = 6;
+    string long_name = 20;
+    string category = 11;
+    string provenance = 12;
+    bool is_eager = 18;
+    uint32 occurrences = 3;
+    uint64 time_ps = 7;
+    uint64 min_time_ps = 17;
+    uint64 self_time_ps = 1;
+    uint64 flops = 2;
+    uint64 model_flops = 24;
+    uint64 bytes_accessed = 5;
+    
+    repeated MemoryAccessed memory_accessed_breakdown = 19;
+    message MemoryAccessed {
+        OperationType operation_type = 1;
+        enum OperationType {
+            UNKNOWN = 0;
+            READ = 1;
+            WRITE = 2;
+        }
+        
+        uint64 memory_space = 2;
+        uint64 bytes_accessed = 3;
+    }
+    
+    uint64 dma_stall_ps = 10;
+    LayoutAnalysis layout = 14;
+    string deduplicated_name = 15;
+    OpMetricsDb children = 16;
+    uint32 num_cores = 21;
+    uint32 computation_primitive_size = 22;
+    bool autotuned = 23;
+    
+    reserved 4, 8, 9;
+}
+
+message PrecisionStats {
+    uint64 compute_16bit_ps = 1;
+    uint64 compute_32bit_ps = 2;
+}
+
+message OpMetricsDb {
+    repeated OpMetrics metrics_db = 10;
+    uint64 total_host_infeed_enq_duration_ps = 2;
+    uint64 total_host_infeed_enq_start_timestamp_ps_diff = 3;
+    uint64 total_time_ps = 11;
+    uint64 total_op_time_ps = 12;
+    PrecisionStats precision_stats = 13;
+    
+    reserved 1, 4, 5, 6, 7, 8, 9;
+}
+
+enum MemBwType {
+    option allow_alias = true;
+    MEM_BW_TYPE_FIRST = 0;
+    MEM_BW_TYPE_HBM_RW = 0;
+    MEM_BW_TYPE_SRAM_RD = 1;
+    MEM_BW_TYPE_SRAM_WR = 2;
+    MEM_BW_TYPE_MAX = 2;
+}
+
+enum MemorySpace {
+    MEMORY_SPACE_UNDEFINED = 0;
+    MEMORY_SPACE_HBM = 1;
+    MEMORY_SPACE_ON_CHIP = 2147483646;
+    MEMORY_SPACE_ALL = 2147483647;
+}
+
+enum LayoutDimensionSemantics {
+    UNKNOWN_SEMANTICS = 0;
+    FEATURE = 1;
+    BATCH = 2;
+    SPATIAL = 3;
+}

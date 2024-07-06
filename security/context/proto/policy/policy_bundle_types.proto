@@ -1,0 +1,86 @@
+syntax = "proto2";
+
+package rpcsp;
+
+import "apps/security/rpcsecuritypolicy/presubmit/protos/analyzer_config.proto";
+import "net/proto2/contrib/validator/annotations.proto";
+
+option cc_enable_arenas = true;
+option java_multiple_files = true;
+option java_package = "com.google.security.context";
+
+message AXTPresubmitConfig {
+    repeated com.google.apps.security.rpcsecuritypolicy.presubmit.JobInfo job_infos = 1;
+}
+
+message ComplianceMetadata {
+    repeated string borg_role = 1;
+    
+    optional NoBorgRole no_borg_role = 3;
+    message NoBorgRole {
+        optional NoBorgRoleReason reason = 1;
+    }
+    
+    optional AXTPresubmitConfig axt_presubmit_config = 4;
+    optional bool use_regression_safe_policy_evaluator = 5 [default = true];
+    optional string tenant_policy_owner = 6;
+    
+    reserved 2;
+    
+    enum NoBorgRoleReason {
+        NO_BORG_ROLE_REASON_UNSPECIFIED = 0;
+        NOT_USED_ON_BORG = 1;
+        PENDING_BORG_ROLE = 2;
+        ANY_BORG_ROLE = 3;
+        INSECURE = 4;
+        COMPILER_LIBRARY_INTEGRATION = 5;
+    }
+}
+
+message MetricsCollection {
+    optional RpcSecurityEventCollectionMode.Value rpc_security_events = 1;
+    
+    message RpcSecurityEventCollectionMode {
+        enum Value {
+            UNSPECIFIED = 0;
+            ON = 1;
+            OFF = 2;
+        }
+    }
+}
+
+enum Environment {
+    ENV_UNSPECIFIED = 0;
+    PROD = 1;
+    TEST = 2;
+    FAKE = 3;
+}
+
+enum Framework {
+    FRAMEWORK_UNSPECIFIED = 0;
+    FRAMEWORK_AF = 1;
+    FRAMEWORK_GOA = 2;
+    FRAMEWORK_SCAFFOLDING = 3;
+    FRAMEWORK_CC_stubby = 4;
+    FRAMEWORK_JAVA_stubby = 5;
+    FRAMEWORK_GO_stubby = 7;
+    FRAMEWORK_CC_CUSTOM = 6;
+    FRAMEWORK_GO_CUSTOM = 9;
+    FRAMEWORK_ESF_HTTP = 10;
+    FRAMEWORK_CPE_BACKEND = 11;
+    FRAMEWORK_PRESUBMIT = 8;
+}
+
+enum CompatibilityMode {
+    COMPATIBILITY_UNSPECIFIED = 0;
+    FAIL_ON_CONFLICT = 1;
+    DEPLOYMENT_CONFIG_IGNORED = 2;
+}
+
+enum LegacyPolicyMode {
+    LEGACY_POLICY_MODE_UNSPECIFIED = 0;
+    NO_LEGACY_POLICY = 1;
+    IGNORE_LEGACY_POLICY = 2;
+    MUST_MATCH_LIVE_POLICY = 3;
+    ENFORCE_AS_LIVE_POLICY = 4;
+}

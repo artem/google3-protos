@@ -1,0 +1,30 @@
+syntax = "proto3";
+
+package tensorflow;
+
+import "third_party/tensorflow/core/framework/graph.proto";
+import "third_party/tensorflow/core/framework/types.proto";
+
+message OptimizedFunctionGraph {
+    string name = 1;
+    GraphDef function_graph = 2;
+    map<string, string> node_name_to_control_ret = 3;
+    repeated DataType ret_types = 4;
+    uint32 num_return_nodes = 5;
+    
+    oneof _source {
+        OptimizationSource source = 7;
+    }
+    
+    oneof _optimization_time_usecs {
+        uint64 optimization_time_usecs = 8;
+    }
+    
+    reserved 6;
+    
+    enum OptimizationSource {
+        SOURCE_UNSPECIFIED = 0;
+        AOT = 1;
+        JIT = 2;
+    }
+}

@@ -1,0 +1,18 @@
+syntax = "proto3";
+
+package google.type;
+
+import "google/protobuf/timestamp.proto";
+import "storage/datapol/annotations/proto/semantic_annotations.proto";
+
+option objc_class_prefix = "GTP";
+option cc_enable_arenas = true;
+option go_package = "google.golang.org/genproto/googleapis/type/interval;interval";
+option java_multiple_files = true;
+option java_outer_classname = "IntervalProto";
+option java_package = "com.google.type";
+
+message Interval {
+    protobuf.Timestamp start_time = 1;
+    protobuf.Timestamp end_time = 2;
+}

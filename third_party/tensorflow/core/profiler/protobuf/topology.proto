@@ -1,0 +1,26 @@
+syntax = "proto3";
+
+package tensorflow.profiler;
+
+message TopologyDimension {
+    int32 x = 1;
+    int32 y = 2;
+    int32 z = 3;
+}
+
+message TopologyLocation {
+    int32 x = 1;
+    int32 y = 2;
+    int32 z = 3;
+    int32 host_x = 4;
+    int32 host_y = 5;
+    int32 host_z = 6;
+    int32 index_on_host = 7;
+    int32 global_id = 8;
+}
+
+message Topology {
+    TopologyDimension chips_per_host_bounds = 1;
+    TopologyDimension host_bounds = 2;
+    repeated TopologyLocation mesh_location = 3;
+}

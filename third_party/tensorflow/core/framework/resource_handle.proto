@@ -1,0 +1,28 @@
+syntax = "proto3";
+
+package tensorflow;
+
+import "third_party/tensorflow/core/framework/tensor_shape.proto";
+import "third_party/tensorflow/core/framework/types.proto";
+
+option cc_enable_arenas = true;
+option go_package = "github.com/tensorflow/tensorflow/tensorflow/go/core/framework/resource_handle_go_proto";
+option java_multiple_files = true;
+option java_outer_classname = "ResourceHandle";
+option java_package = "org.tensorflow.framework";
+
+message ResourceHandleProto {
+    string device = 1;
+    string container = 2;
+    string name = 3;
+    uint64 hash_code = 4;
+    string maybe_type_name = 5;
+    
+    repeated DtypeAndShape dtypes_and_shapes = 6;
+    message DtypeAndShape {
+        DataType dtype = 1;
+        TensorShapeProto shape = 2;
+    }
+    
+    reserved 7;
+}

@@ -1,0 +1,228 @@
+syntax = "proto3";
+
+package google.monitoring.v3.widgets;
+
+import "google/api/resource.proto";
+import "google/api/visibility.proto";
+import "google/logging/data_governance.proto";
+import "google/monitoring/v3/widgets/charting.proto";
+import "google/monitoring/v3/widgets/geomap.proto";
+import "google/monitoring/v3/widgets/piechart.proto";
+import "google/monitoring/v3/widgets/resource_list.proto";
+import "google/monitoring/v3/widgets/resources.proto";
+import "google/monitoring/v3/widgets/scorecard.proto";
+import "google/monitoring/v3/widgets/tabular.proto";
+import "google/monitoring/v3/widgets/topology.proto";
+import "google/monitoring/v3/widgets/treemap.proto";
+import "google/protobuf/any.proto";
+import "storage/datapol/annotations/proto/semantic_annotations.proto";
+
+option ruby_package = "Google::Cloud::Monitoring::V3::Widgets";
+option php_namespace = "Google\\Cloud\\Monitoring\\V3\\Widgets";
+option csharp_namespace = "Google.Cloud.Monitoring.V3.Widgets";
+option java_multiple_files = true;
+option java_outer_classname = "WidgetProto";
+option java_package = "com.google.monitoring.v3.widgets";
+
+message Widget {
+    string title = 1;
+    int32 visual_element_id = 22;
+    
+    FrontendAddition frontend_addition = 27;
+    message FrontendAddition {
+        protobuf.Any extras = 1;
+    }
+    
+    string domain_object_deprecation_id = 29 [deprecated = true];
+    string id = 33;
+    
+    oneof content {
+        GridLayout grid_layout = 2;
+        ColumnLayout column_layout = 3;
+        RowLayout row_layout = 4;
+        TabbedLayout tabbed_layout = 5;
+        MosaicLayout mosaic_layout = 15;
+        Blank blank = 6;
+        XYChart xy_chart = 7;
+        Table table = 8;
+        GroupList group_list = 9;
+        GroupMemberList group_member_list = 10;
+        EventList event_list = 17;
+        ResourceAction resource_action = 21;
+        IncidentList incident_list = 19;
+        Text text = 16;
+        Scorecard scorecard = 18;
+        ResourceDetails resource_details = 20;
+        AlertChart alert_chart = 23;
+        PublicTimeSeriesTable time_series_table = 24;
+        CollapsibleGroup collapsible_group = 25;
+        LogsPanel logs_panel = 26;
+        ClientComponent client_component = 28;
+        PieChart pie_chart = 30;
+        ResourceList resource_list = 31;
+        Geomap geomap = 32;
+        Treemap treemap = 34;
+        ErrorReportingPanel error_reporting_panel = 35;
+        SingleViewGroup single_view_group = 36;
+        SectionHeader section_header = 37;
+        Topology topology = 38;
+    }
+}
+
+message GridLayout {
+    int64 columns = 1;
+    repeated Widget widgets = 2;
+}
+
+message ColumnLayout {
+    repeated Column columns = 1;
+    message Column {
+        int64 weight = 1;
+        repeated Widget widgets = 2;
+    }
+}
+
+message RowLayout {
+    repeated Row rows = 1;
+    message Row {
+        int64 weight = 1;
+        repeated Widget widgets = 2;
+    }
+}
+
+message TabbedLayout {
+    repeated Tab tabs = 3;
+    message Tab {
+        string label = 1;
+        Widget content = 2;
+    }
+    
+    TabDisplayOptions display_options = 4;
+    message TabDisplayOptions {
+        TabControl control_as = 1;
+        enum TabControl {
+            DEFAULT = 0;
+            BUTTONS_GROUP = 1;
+            SELECTION = 2;
+        }
+    }
+}
+
+message MosaicLayout {
+    int32 columns = 1;
+    int32 rows = 2;
+    
+    repeated Tile tiles = 3;
+    message Tile {
+        int32 x_pos = 1;
+        int32 y_pos = 2;
+        int32 width = 3;
+        int32 height = 4;
+        Widget content = 5;
+    }
+}
+
+message Text {
+    string content = 1;
+    
+    Format format = 2;
+    enum Format {
+        MARKDOWN = 0;
+        RAW = 1;
+    }
+    
+    TextStyle style = 3;
+    message TextStyle {
+        string background_color = 1;
+        string text_color = 2;
+        
+        HorizontalAlignment horizontal_alignment = 3;
+        enum HorizontalAlignment {
+            HORIZONTAL_ALIGNMENT_UNSPECIFIED = 0;
+            H_LEFT = 1;
+            H_CENTER = 2;
+            H_RIGHT = 3;
+        }
+        
+        VerticalAlignment vertical_alignment = 4;
+        enum VerticalAlignment {
+            VERTICAL_ALIGNMENT_UNSPECIFIED = 0;
+            V_TOP = 1;
+            V_CENTER = 2;
+            V_BOTTOM = 3;
+        }
+        
+        PaddingSize padding = 5;
+        enum PaddingSize {
+            PADDING_SIZE_UNSPECIFIED = 0;
+            P_EXTRA_SMALL = 1;
+            P_SMALL = 2;
+            P_MEDIUM = 3;
+            P_LARGE = 4;
+            P_EXTRA_LARGE = 5;
+        }
+        
+        FontSize font_size = 6;
+        enum FontSize {
+            FONT_SIZE_UNSPECIFIED = 0;
+            FS_EXTRA_SMALL = 1;
+            FS_SMALL = 2;
+            FS_MEDIUM = 3;
+            FS_LARGE = 4;
+            FS_EXTRA_LARGE = 5;
+        }
+        
+        PointerLocation pointer_location = 7;
+        enum PointerLocation {
+            POINTER_LOCATION_UNSPECIFIED = 0;
+            PL_TOP = 1;
+            PL_RIGHT = 2;
+            PL_BOTTOM = 3;
+            PL_LEFT = 4;
+            PL_TOP_LEFT = 5;
+            PL_TOP_RIGHT = 6;
+            PL_RIGHT_TOP = 7;
+            PL_RIGHT_BOTTOM = 8;
+            PL_BOTTOM_RIGHT = 9;
+            PL_BOTTOM_LEFT = 10;
+            PL_LEFT_BOTTOM = 11;
+            PL_LEFT_TOP = 12;
+        }
+    }
+}
+
+message Blank {
+    
+}
+
+message AlertChart {
+    string name = 1;
+}
+
+message CollapsibleGroup {
+    bool collapsed = 1;
+}
+
+message SingleViewGroup {
+    
+}
+
+message LogsPanel {
+    string filter = 1;
+    repeated string resource_names = 2;
+}
+
+message ErrorReportingPanel {
+    repeated string project_names = 1;
+    repeated string services = 2;
+    repeated string versions = 3;
+}
+
+message SectionHeader {
+    string subtitle = 1;
+    bool divider_below = 2;
+}
+
+message ClientComponent {
+    string reference_id = 1;
+}

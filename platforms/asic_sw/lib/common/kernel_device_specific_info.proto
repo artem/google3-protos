@@ -1,0 +1,7 @@
+syntax = "proto2";
+
+package asic_sw;
+
+message KernelDeviceSpecificInfo {
+    extensions 100000000 to max;
+}

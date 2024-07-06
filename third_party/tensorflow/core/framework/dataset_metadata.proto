@@ -1,0 +1,9 @@
+syntax = "proto3";
+
+package tensorflow.data;
+
+option go_package = "github.com/tensorflow/tensorflow/tensorflow/go/core/framework/dataset_metadata_go_proto";
+
+message Metadata {
+    bytes name = 1;
+}

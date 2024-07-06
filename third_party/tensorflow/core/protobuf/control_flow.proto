@@ -1,0 +1,45 @@
+syntax = "proto3";
+
+package tensorflow;
+
+option cc_enable_arenas = true;
+option go_package = "github.com/tensorflow/tensorflow/tensorflow/go/core/protobuf/for_core_protos_go_proto";
+option java_multiple_files = true;
+option java_outer_classname = "ControlFlowProtos";
+option java_package = "org.tensorflow.framework";
+
+message ValuesDef {
+    repeated string values = 1;
+    map<string, string> external_values = 2;
+}
+
+message ControlFlowContextDef {
+    oneof ctxt {
+        CondContextDef cond_ctxt = 1;
+        WhileContextDef while_ctxt = 2;
+    }
+}
+
+message CondContextDef {
+    string context_name = 1;
+    string pred_name = 2;
+    string pivot_name = 3;
+    int32 branch = 4;
+    ValuesDef values_def = 5;
+    repeated ControlFlowContextDef nested_contexts = 6;
+}
+
+message WhileContextDef {
+    string context_name = 1;
+    int32 parallel_iterations = 2;
+    bool back_prop = 3;
+    bool swap_memory = 4;
+    string pivot_name = 5;
+    string pivot_for_pred_name = 6;
+    string pivot_for_body_name = 7;
+    repeated string loop_exit_names = 8;
+    repeated string loop_enter_names = 10;
+    ValuesDef values_def = 9;
+    string maximum_iterations_name = 11;
+    repeated ControlFlowContextDef nested_contexts = 12;
+}

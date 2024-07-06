@@ -1,0 +1,93 @@
+syntax = "proto3";
+
+package tensorflow;
+
+import "third_party/tensorflow/core/framework/tensor.proto";
+import "third_party/tensorflow/core/framework/tensor_shape.proto";
+import "third_party/tensorflow/core/framework/types.proto";
+
+option go_package = "github.com/tensorflow/tensorflow/tensorflow/go/core/protobuf/for_core_protos_go_proto";
+
+message StructuredValue {
+    oneof kind {
+        NoneValue none_value = 1;
+        double float64_value = 11;
+        sint64 int64_value = 12;
+        string string_value = 13;
+        bool bool_value = 14;
+        TensorShapeProto tensor_shape_value = 31;
+        DataType tensor_dtype_value = 32;
+        TensorSpecProto tensor_spec_value = 33;
+        TypeSpecProto type_spec_value = 34;
+        BoundedTensorSpecProto bounded_tensor_spec_value = 35;
+        ListValue list_value = 51;
+        TupleValue tuple_value = 52;
+        DictValue dict_value = 53;
+        NamedTupleValue named_tuple_value = 54;
+        TensorProto tensor_value = 55;
+        TensorProto numpy_value = 56;
+    }
+}
+
+message NoneValue {
+    
+}
+
+message ListValue {
+    repeated StructuredValue values = 1;
+}
+
+message TupleValue {
+    repeated StructuredValue values = 1;
+}
+
+message DictValue {
+    map<string, StructuredValue> fields = 1;
+}
+
+message PairValue {
+    string key = 1;
+    StructuredValue value = 2;
+}
+
+message NamedTupleValue {
+    string name = 1;
+    repeated PairValue values = 2;
+}
+
+message TensorSpecProto {
+    string name = 1;
+    TensorShapeProto shape = 2;
+    DataType dtype = 3;
+}
+
+message BoundedTensorSpecProto {
+    string name = 1;
+    TensorShapeProto shape = 2;
+    DataType dtype = 3;
+    TensorProto minimum = 4;
+    TensorProto maximum = 5;
+}
+
+message TypeSpecProto {
+    TypeSpecClass type_spec_class = 1;
+    enum TypeSpecClass {
+        UNKNOWN = 0;
+        SPARSE_TENSOR_SPEC = 1;
+        INDEXED_SLICES_SPEC = 2;
+        RAGGED_TENSOR_SPEC = 3;
+        TENSOR_ARRAY_SPEC = 4;
+        DATA_DATASET_SPEC = 5;
+        DATA_ITERATOR_SPEC = 6;
+        OPTIONAL_SPEC = 7;
+        PER_REPLICA_SPEC = 8;
+        VARIABLE_SPEC = 9;
+        ROW_PARTITION_SPEC = 10;
+        REGISTERED_TYPE_SPEC = 12;
+        EXTENSION_TYPE_SPEC = 13;
+    }
+    
+    StructuredValue type_state = 2;
+    string type_spec_class_name = 3;
+    int32 num_flat_components = 4;
+}

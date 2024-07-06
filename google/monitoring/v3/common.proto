@@ -1,0 +1,209 @@
+syntax = "proto3";
+
+package google.monitoring.v3;
+
+import "google/api/auditing.proto";
+import "google/api/distribution.proto";
+import "google/api/visibility.proto";
+import "google/logging/data_governance.proto";
+import "google/protobuf/duration.proto";
+import "google/protobuf/timestamp.proto";
+import "google/type/interval.proto";
+import "storage/datapol/annotations/proto/semantic_annotations.proto";
+
+option ruby_package = "Google::Cloud::Monitoring::V3";
+option php_namespace = "Google\\Cloud\\Monitoring\\V3";
+option csharp_namespace = "Google.Cloud.Monitoring.V3";
+option objc_class_prefix = "GMON";
+option go_package = "cloud.google.com/go/monitoring/apiv3/v2/monitoringpb;monitoringpb";
+option java_multiple_files = true;
+option java_outer_classname = "CommonProto";
+option java_package = "com.google.monitoring.v3";
+
+message TypedValue {
+    oneof value {
+        bool bool_value = 1;
+        int64 int64_value = 2;
+        double double_value = 3;
+        string string_value = 4;
+        api.Distribution distribution_value = 5;
+    }
+}
+
+message TimeInterval {
+    protobuf.Timestamp end_time = 2;
+    protobuf.Timestamp start_time = 1;
+}
+
+message Aggregation {
+    protobuf.Duration alignment_period = 1;
+    
+    Aligner per_series_aligner = 2;
+    enum Aligner {
+        ALIGN_NONE = 0;
+        ALIGN_DELTA = 1;
+        ALIGN_RATE = 2;
+        ALIGN_INTERPOLATE = 3;
+        ALIGN_NEXT_OLDER = 4;
+        ALIGN_MIN = 10;
+        ALIGN_MAX = 11;
+        ALIGN_MEAN = 12;
+        ALIGN_COUNT = 13;
+        ALIGN_SUM = 14;
+        ALIGN_STDDEV = 15;
+        ALIGN_COUNT_TRUE = 16;
+        ALIGN_COUNT_FALSE = 24;
+        ALIGN_FRACTION_TRUE = 17;
+        ALIGN_PERCENTILE_99 = 18;
+        ALIGN_PERCENTILE_95 = 19;
+        ALIGN_PERCENTILE_50 = 20;
+        ALIGN_PERCENTILE_05 = 21;
+        ALIGN_MAKE_DISTRIBUTION = 22;
+        ALIGN_PERCENT_CHANGE = 23;
+    }
+    
+    Reducer cross_series_reducer = 4;
+    enum Reducer {
+        REDUCE_NONE = 0;
+        REDUCE_MEAN = 1;
+        REDUCE_MIN = 2;
+        REDUCE_MAX = 3;
+        REDUCE_SUM = 4;
+        REDUCE_STDDEV = 5;
+        REDUCE_COUNT = 6;
+        REDUCE_COUNT_TRUE = 7;
+        REDUCE_COUNT_FALSE = 15;
+        REDUCE_FRACTION_TRUE = 8;
+        REDUCE_PERCENTILE_99 = 9;
+        REDUCE_PERCENTILE_95 = 10;
+        REDUCE_PERCENTILE_50 = 11;
+        REDUCE_PERCENTILE_05 = 12;
+        REDUCE_FRACTION_LESS_THAN = 13;
+        REDUCE_MAKE_DISTRIBUTION = 14;
+    }
+    
+    repeated string group_by_fields = 5;
+    
+    oneof params {
+        FractionLessThanParams reduce_fraction_less_than_params = 6;
+        MakeDistributionParams reduce_make_distribution_params = 7;
+    }
+    
+    message FractionLessThanParams {
+        double threshold = 1;
+    }
+    
+    message MakeDistributionParams {
+        api.Distribution.BucketOptions bucket_options = 1;
+        
+        ExemplarSampling exemplar_sampling = 2;
+        message ExemplarSampling {
+            float minimum_value = 1;
+        }
+    }
+}
+
+message ForecastQueryOptions {
+    protobuf.Duration training_duration = 1;
+    protobuf.Duration downsampling_period = 2;
+}
+
+message TimeSeriesQuery {
+    oneof query {
+        QueryFilter query_filter = 1;
+        QueryNotation query_notation = 2;
+    }
+    
+    message QueryFilter {
+        string filter = 1;
+        repeated Aggregation aggregations = 2;
+        TimeInterval interval = 3;
+        ForecastQueryOptions forecast_options = 4;
+    }
+}
+
+message QueryNotation {
+    string query_text = 1;
+    string monitored_resource_query_text = 2 [deprecated = true];
+    string object_name = 3;
+}
+
+message PickTimeSeriesFilter {
+    Method ranking_method = 1;
+    enum Method {
+        METHOD_UNSPECIFIED = 0;
+        METHOD_MEAN = 1;
+        METHOD_MAX = 2;
+        METHOD_MIN = 3;
+        METHOD_SUM = 4;
+        METHOD_LATEST = 5;
+    }
+    
+    int32 num_time_series = 2;
+    
+    Direction direction = 3;
+    enum Direction {
+        DIRECTION_UNSPECIFIED = 0;
+        TOP = 1;
+        BOTTOM = 2;
+    }
+    
+    type.Interval interval = 4;
+}
+
+message StatisticalTimeSeriesFilter {
+    Method ranking_method = 1;
+    enum Method {
+        METHOD_UNSPECIFIED = 0;
+        METHOD_CLUSTER_OUTLIER = 1;
+    }
+    
+    int32 num_time_series = 2;
+}
+
+message ComplianceFeatureSettings {
+    UptimeSetting uptime_setting = 3;
+    enum UptimeSetting {
+        UPTIME_SETTING_UNSPECIFIED = 0;
+        UPTIME_SETTING_DISABLED = 1;
+        UPTIME_SETTING_ENABLED = 2;
+    }
+    
+    SensitiveWidgetSetting sensitive_widget_setting = 4;
+    enum SensitiveWidgetSetting {
+        SENSITIVE_WIDGET_SETTING_UNSPECIFIED = 0;
+        SENSITIVE_WIDGET_SETTING_DISABLED = 1;
+        SENSITIVE_WIDGET_SETTING_ENABLED = 2;
+    }
+    
+    OpsAnalyticsAlertingSetting oa_alerting_setting = 5;
+    enum OpsAnalyticsAlertingSetting {
+        OPS_ANALYTICS_ALERTING_SETTING_UNSPECIFIED = 0;
+        OPS_ANALYTICS_ALERTING_SETTING_DISABLED = 1;
+        OPS_ANALYTICS_ALERTING_SETTING_ENABLED = 2;
+    }
+    
+    reserved 1, 2, "disable_uptime", "disable_sensitive_dashboard_widgets";
+}
+
+message GCPMonitoringQueryInfo {
+    string product_source = 1;
+    string dashboard_id = 2;
+}
+
+enum ComparisonType {
+    COMPARISON_UNSPECIFIED = 0;
+    COMPARISON_GT = 1;
+    COMPARISON_GE = 2;
+    COMPARISON_LT = 3;
+    COMPARISON_LE = 4;
+    COMPARISON_EQ = 5;
+    COMPARISON_NE = 6;
+}
+
+enum ServiceTier {
+    option deprecated = true;
+    SERVICE_TIER_UNSPECIFIED = 0;
+    SERVICE_TIER_BASIC = 1;
+    SERVICE_TIER_PREMIUM = 2;
+}

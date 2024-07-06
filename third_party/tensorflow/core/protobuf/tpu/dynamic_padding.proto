@@ -1,0 +1,11 @@
+syntax = "proto3";
+
+package tensorflow.tpu;
+
+option cc_enable_arenas = true;
+
+message PaddingMap {
+    int32 arg_index = 1;
+    int32 sha26a136ac = 2;
+    int32 padding_arg_index = 3;
+}

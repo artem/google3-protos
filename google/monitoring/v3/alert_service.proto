@@ -1,0 +1,93 @@
+syntax = "proto3";
+
+package google.monitoring.v3;
+
+import "google/api/annotations.proto";
+import "google/api/auditing.proto";
+import "google/api/authz.proto";
+import "google/api/client.proto";
+import "google/api/field_behavior.proto";
+import "google/api/policy.proto";
+import "google/api/resource.proto";
+import "google/api/visibility.proto";
+import "google/logging/data_governance.proto";
+import "google/monitoring/v3/alert.proto";
+import "google/protobuf/empty.proto";
+import "google/protobuf/field_mask.proto";
+import "storage/datapol/annotations/proto/semantic_annotations.proto";
+
+option ruby_package = "Google::Cloud::Monitoring::V3";
+option php_namespace = "Google\\Cloud\\Monitoring\\V3";
+option csharp_namespace = "Google.Cloud.Monitoring.V3";
+option go_package = "cloud.google.com/go/monitoring/apiv3/v2/monitoringpb;monitoringpb";
+option java_multiple_files = true;
+option java_outer_classname = "AlertServiceProto";
+option java_package = "com.google.monitoring.v3";
+
+service AlertPolicyService {
+    rpc ListAlertPolicies(ListAlertPoliciesRequest) returns (ListAlertPoliciesResponse);
+    rpc SearchAlertPolicies(SearchAlertPoliciesRequest) returns (SearchAlertPoliciesResponse);
+    rpc GetAlertPolicy(GetAlertPolicyRequest) returns (AlertPolicy);
+    rpc CreateAlertPolicy(CreateAlertPolicyRequest) returns (AlertPolicy);
+    rpc DeleteAlertPolicy(DeleteAlertPolicyRequest) returns (protobuf.Empty);
+    rpc UpdateAlertPolicy(UpdateAlertPolicyRequest) returns (AlertPolicy);
+}
+
+message CreateAlertPolicyRequest {
+    string name = 3;
+    AlertPolicy alert_policy = 2;
+    bool validate_only = 5;
+    bool force_metric_threshold = 4;
+}
+
+message GetAlertPolicyRequest {
+    string name = 3;
+    bool force_metric_threshold = 4;
+}
+
+message ListAlertPoliciesRequest {
+    string name = 4;
+    string filter = 5;
+    string order_by = 6;
+    int32 page_size = 2;
+    string page_token = 3;
+    bool force_metric_threshold = 7;
+}
+
+message ListAlertPoliciesResponse {
+    repeated AlertPolicy alert_policies = 3;
+    string next_page_token = 2;
+    int32 total_size = 4;
+    
+    reserved 1, "alert_policy";
+}
+
+message SearchAlertPoliciesRequest {
+    string name = 1;
+    string order_by = 3;
+    int32 page_size = 4;
+    string page_token = 5;
+    bool force_metric_threshold = 6;
+    
+    oneof restriction {
+        string filter = 2;
+        AlertPolicy alert_policy = 7;
+    }
+}
+
+message SearchAlertPoliciesResponse {
+    repeated AlertPolicy alert_policies = 1;
+    string next_page_token = 2;
+    int32 total_size = 3;
+}
+
+message UpdateAlertPolicyRequest {
+    protobuf.FieldMask update_mask = 2;
+    AlertPolicy alert_policy = 3;
+    bool validate_only = 5;
+    bool force_metric_threshold = 4;
+}
+
+message DeleteAlertPolicyRequest {
+    string name = 3;
+}

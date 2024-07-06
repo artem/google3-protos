@@ -1,0 +1,18 @@
+syntax = "proto3";
+
+package tensorflow;
+
+option cc_enable_arenas = true;
+option go_package = "github.com/tensorflow/tensorflow/tensorflow/go/core/protobuf/for_core_protos_go_proto";
+option java_multiple_files = true;
+option java_outer_classname = "ClusterProtos";
+option java_package = "org.tensorflow.distruntime";
+
+message JobDef {
+    string name = 1;
+    map<int32, string> tasks = 2;
+}
+
+message ClusterDef {
+    repeated JobDef job = 1;
+}

@@ -1,0 +1,19 @@
+syntax = "editions";
+
+package asic_sw.driver;
+
+message PerformanceCounter {
+    optional uint64 value = 1;
+    optional string description = 2;
+    optional uint64 name = 5;
+    repeated int32 sets = 6;
+    
+    reserved 3, 4, 7;
+}
+
+message PerformanceCounters {
+    optional int32 chip_id = 1;
+    map<uint64, PerformanceCounter> counters = 2;
+    
+    reserved 3, 4;
+}

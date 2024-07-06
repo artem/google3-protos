@@ -1,0 +1,23 @@
+syntax = "proto3";
+
+package google.rpc.context;
+
+import "storage/datapol/annotations/proto/semantic_annotations.proto";
+
+option objc_class_prefix = "RPC";
+option java_multiple_files = true;
+option java_outer_classname = "OriginContextProto";
+option java_package = "com.google.rpc.context";
+
+message OriginContext {
+    string remote_ip = 1;
+    string origin = 2;
+    string user_agent = 3;
+    string accept_language = 4;
+    string region_code = 5;
+    string network_project = 7;
+    string vnid = 8;
+    string gfe_signed_request_headers = 9;
+    
+    reserved 6;
+}

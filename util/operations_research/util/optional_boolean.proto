@@ -1,0 +1,9 @@
+syntax = "proto3";
+
+package operations_research;
+
+enum OptionalBoolean {
+    BOOL_UNSPECIFIED = 0;
+    BOOL_FALSE = 2;
+    BOOL_TRUE = 3;
+}

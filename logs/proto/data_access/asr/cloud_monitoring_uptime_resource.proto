@@ -1,0 +1,24 @@
+syntax = "proto2";
+
+package security.data_access.asr;
+
+import "logs/proto/data_access/app_specific_resources.proto";
+import "net/proto2/proto/descriptor.proto";
+import "storage/datapol/annotations/proto/semantic_annotations.proto";
+
+option java_multiple_files = true;
+
+message CloudMonitoringUptimeResource {
+    optional string resource_name = 1;
+    optional int64 project_number = 2;
+    optional string project_id = 3;
+    optional string uptime_check_id = 4;
+    
+    extend proto2.FieldOptions {
+        optional string path = 535801027;
+    }
+}
+
+extend AppSpecificResources {
+    repeated CloudMonitoringUptimeResource cloud_monitoring_uptime_resource = 118;
+}

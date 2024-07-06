@@ -1,0 +1,131 @@
+syntax = "proto3";
+
+package google.monitoring.v3;
+
+import "google/api/annotations.proto";
+import "google/api/auditing.proto";
+import "google/api/field_behavior.proto";
+import "google/api/policy.proto";
+import "google/api/visibility.proto";
+import "google/logging/data_governance.proto";
+import "google/monitoring/v3/incident.proto";
+import "google/monitoring/v3/metric.proto";
+import "google/protobuf/field_mask.proto";
+import "google/protobuf/timestamp.proto";
+import "storage/datapol/annotations/proto/semantic_annotations.proto";
+
+option ruby_package = "Google::Cloud::Monitoring::V3";
+option php_namespace = "Google\\Cloud\\Monitoring\\V3";
+option csharp_namespace = "Google.Cloud.Monitoring.V3";
+option go_package = "cloud.google.com/go/monitoring/apiv3/v2/monitoringpb;monitoringpb";
+option java_multiple_files = true;
+option java_outer_classname = "IncidentServiceProto";
+option java_package = "com.google.monitoring.v3";
+
+service IncidentService {
+    rpc ListIncidents(ListIncidentsRequest) returns (ListIncidentsResponse);
+    rpc GetIncident(GetIncidentRequest) returns (Incident);
+    rpc PatchIncident(PatchIncidentRequest) returns (Incident);
+    rpc ListViolations(ListViolationsRequest) returns (ListViolationsResponse);
+    rpc CreateAnnotation(CreateAnnotationRequest) returns (Annotation);
+    rpc ListAnnotations(ListAnnotationsRequest) returns (ListAnnotationsResponse);
+    rpc CalculateViolationForecastSignal(CalculateViolationForecastSignalRequest) returns (CalculateViolationForecastSignalResponse);
+    rpc GenerateIncidentRenderedDocumentation(GenerateIncidentRenderedDocumentationRequest) returns (GenerateIncidentRenderedDocumentationResponse);
+}
+
+message ListIncidentsRequest {
+    string name = 1;
+    string filter = 2;
+    string order_by = 3;
+    int32 page_size = 4;
+    string page_token = 5;
+    
+    RequestClass request_class = 6;
+    enum RequestClass {
+        REQUEST_CLASS_UNSPECIFIED = 0;
+        REQUEST_CLASS_INTERACTIVE = 1;
+        REQUEST_CLASS_BATCH = 2;
+    }
+}
+
+message ListIncidentsResponse {
+    repeated Incident incidents = 1;
+    string next_page_token = 2;
+    int32 total_size = 3;
+}
+
+message GetIncidentRequest {
+    string name = 1;
+    
+    RequestClass request_class = 2;
+    enum RequestClass {
+        REQUEST_CLASS_UNSPECIFIED = 0;
+        REQUEST_CLASS_INTERACTIVE = 1;
+        REQUEST_CLASS_BATCH = 2;
+    }
+}
+
+message PatchIncidentRequest {
+    protobuf.FieldMask update_mask = 1;
+    Incident incident = 2;
+}
+
+message ListViolationsRequest {
+    string name = 1;
+    string filter = 2;
+    string order_by = 3;
+    int32 page_size = 4;
+    string page_token = 5;
+    
+    RequestClass request_class = 6;
+    enum RequestClass {
+        REQUEST_CLASS_UNSPECIFIED = 0;
+        REQUEST_CLASS_INTERACTIVE = 1;
+        REQUEST_CLASS_BATCH = 2;
+    }
+}
+
+message ListViolationsResponse {
+    repeated Violation violations = 1;
+    string next_page_token = 2;
+    int32 total_size = 3;
+}
+
+message CreateAnnotationRequest {
+    string name = 1;
+    Annotation annotation = 3;
+}
+
+message ListAnnotationsRequest {
+    string name = 5;
+    int32 page_size = 3;
+    string page_token = 4;
+}
+
+message ListAnnotationsResponse {
+    repeated Annotation annotations = 1;
+    string next_page_token = 2;
+}
+
+message CalculateViolationForecastSignalRequest {
+    string violation = 1;
+}
+
+message CalculateViolationForecastSignalResponse {
+    TimeSeries forecast_signal = 1;
+    ForecastWithState.ForecastState forecast_state = 2;
+    protobuf.Timestamp training_completion_time = 3;
+}
+
+message GenerateIncidentRenderedDocumentationRequest {
+    string name = 1;
+}
+
+message GenerateIncidentRenderedDocumentationResponse {
+    RenderedDocumentation rendered_documentation = 1;
+    message RenderedDocumentation {
+        oneof _content {
+            string content = 1;
+        }
+    }
+}

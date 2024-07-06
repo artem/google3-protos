@@ -1,0 +1,23 @@
+syntax = "proto3";
+
+package privacy.data_governance.attributes;
+
+import "privacy/data_governance/attributes/proto/classification.proto";
+
+option java_multiple_files = true;
+option java_package = "com.google.privacy.datagovernance.attributes";
+
+message Finance {
+    Data data = 1;
+    message Data {
+        repeated TablePurpose table_purpose = 1;
+        enum TablePurpose {
+            UNKNOWN_USAGE_PURPOSE = 0;
+            SINGLE_SOURCE_OF_TRUTH = 1;
+            DOMAIN_SPECIFIC_SOURCE_OF_TRUTH = 2;
+            REPORTING = 3;
+            PIPELINE_AND_DEVELOPMENT = 4;
+            PERSONAL_ANALYSIS_AND_PROTOTYPING = 5;
+        }
+    }
+}

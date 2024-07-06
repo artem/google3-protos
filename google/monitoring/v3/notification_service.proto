@@ -1,0 +1,153 @@
+syntax = "proto3";
+
+package google.monitoring.v3;
+
+import "google/api/annotations.proto";
+import "google/api/auditing.proto";
+import "google/api/authz.proto";
+import "google/api/client.proto";
+import "google/api/field_behavior.proto";
+import "google/api/policy.proto";
+import "google/api/resource.proto";
+import "google/api/visibility.proto";
+import "google/logging/data_governance.proto";
+import "google/monitoring/v3/notification.proto";
+import "google/protobuf/empty.proto";
+import "google/protobuf/field_mask.proto";
+import "google/protobuf/struct.proto";
+import "google/protobuf/timestamp.proto";
+import "storage/datapol/annotations/proto/semantic_annotations.proto";
+
+option ruby_package = "Google::Cloud::Monitoring::V3";
+option php_namespace = "Google\\Cloud\\Monitoring\\V3";
+option csharp_namespace = "Google.Cloud.Monitoring.V3";
+option go_package = "cloud.google.com/go/monitoring/apiv3/v2/monitoringpb;monitoringpb";
+option java_multiple_files = true;
+option java_outer_classname = "NotificationServiceProto";
+option java_package = "com.google.monitoring.v3";
+
+service NotificationChannelService {
+    rpc ListNotificationChannelDescriptors(ListNotificationChannelDescriptorsRequest) returns (ListNotificationChannelDescriptorsResponse);
+    rpc GetNotificationChannelDescriptor(GetNotificationChannelDescriptorRequest) returns (NotificationChannelDescriptor);
+    rpc ProvisionPublisherServiceAccount(ProvisionPublisherServiceAccountRequest) returns (ProvisionPublisherServiceAccountResponse);
+    rpc ListNotificationChannels(ListNotificationChannelsRequest) returns (ListNotificationChannelsResponse);
+    rpc GetNotificationChannel(GetNotificationChannelRequest) returns (NotificationChannel);
+    rpc CreateNotificationChannel(CreateNotificationChannelRequest) returns (NotificationChannel);
+    rpc UpdateNotificationChannel(UpdateNotificationChannelRequest) returns (NotificationChannel);
+    rpc DeleteNotificationChannel(DeleteNotificationChannelRequest) returns (protobuf.Empty);
+    rpc SendNotificationChannelVerificationCode(SendNotificationChannelVerificationCodeRequest) returns (protobuf.Empty);
+    rpc GetNotificationChannelVerificationCode(GetNotificationChannelVerificationCodeRequest) returns (GetNotificationChannelVerificationCodeResponse);
+    rpc VerifyNotificationChannel(VerifyNotificationChannelRequest) returns (NotificationChannel);
+    rpc TestNotificationChannel(TestNotificationChannelRequest) returns (protobuf.Empty);
+    rpc SendNotification(SendNotificationRequest) returns (protobuf.Empty);
+    rpc SendSMSVerificationToken(SendSMSVerificationTokenRequest) returns (SendSMSVerificationTokenResponse);
+    rpc GetPagerDutySyncData(GetPagerDutySyncDataRequest) returns (PagerDutySyncData);
+    rpc UpdatePagerDutySyncData(UpdatePagerDutySyncDataRequest) returns (PagerDutySyncData);
+}
+
+message ListNotificationChannelDescriptorsRequest {
+    string name = 4;
+    int32 page_size = 2;
+    string page_token = 3;
+}
+
+message ListNotificationChannelDescriptorsResponse {
+    repeated NotificationChannelDescriptor channel_descriptors = 1;
+    string next_page_token = 2;
+}
+
+message GetNotificationChannelDescriptorRequest {
+    string name = 3;
+}
+
+message ProvisionPublisherServiceAccountRequest {
+    string name = 1;
+}
+
+message ProvisionPublisherServiceAccountResponse {
+    string created_service_account = 1;
+}
+
+message CreateNotificationChannelRequest {
+    string name = 3;
+    NotificationChannel notification_channel = 2;
+}
+
+message ListNotificationChannelsRequest {
+    string name = 5;
+    string filter = 6;
+    string order_by = 7;
+    int32 page_size = 3;
+    string page_token = 4;
+}
+
+message ListNotificationChannelsResponse {
+    repeated NotificationChannel notification_channels = 3;
+    string next_page_token = 2;
+    int32 total_size = 4;
+    
+    reserved 1, "notification_channel";
+}
+
+message GetNotificationChannelRequest {
+    string name = 3;
+}
+
+message UpdateNotificationChannelRequest {
+    protobuf.FieldMask update_mask = 2;
+    NotificationChannel notification_channel = 3;
+}
+
+message DeleteNotificationChannelRequest {
+    string name = 3;
+    bool force = 5;
+}
+
+message SendNotificationChannelVerificationCodeRequest {
+    string name = 1;
+}
+
+message GetNotificationChannelVerificationCodeRequest {
+    string name = 1;
+    protobuf.Timestamp expire_time = 2;
+}
+
+message GetNotificationChannelVerificationCodeResponse {
+    string code = 1;
+    protobuf.Timestamp expire_time = 2;
+}
+
+message VerifyNotificationChannelRequest {
+    string name = 1;
+    string code = 2;
+}
+
+message TestNotificationChannelRequest {
+    string name = 1;
+    NotificationChannel notification_channel = 2;
+}
+
+message SendNotificationRequest {
+    string name = 1;
+    string subject = 2;
+    string body = 3;
+    map<string, protobuf.Value> params = 4;
+}
+
+message SendSMSVerificationTokenRequest {
+    string name = 1;
+    string number = 2;
+}
+
+message SendSMSVerificationTokenResponse {
+    string verification_request_id = 1;
+}
+
+message GetPagerDutySyncDataRequest {
+    string name = 1;
+}
+
+message UpdatePagerDutySyncDataRequest {
+    string name = 1;
+    PagerDutySyncData pager_duty_sync_data = 2;
+}

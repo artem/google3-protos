@@ -1,0 +1,27 @@
+syntax = "proto3";
+
+package google.monitoring.v3.widgets;
+
+import "google/monitoring/v3/widgets/common.proto";
+
+option ruby_package = "Google::Cloud::Monitoring::V3::Widgets";
+option php_namespace = "Google\\Cloud\\Monitoring\\V3\\Widgets";
+option csharp_namespace = "Google.Cloud.Monitoring.V3.Widgets";
+option java_multiple_files = true;
+option java_outer_classname = "TopologyProto";
+option java_package = "com.google.monitoring.v3.widgets";
+
+message Topology {
+    repeated TopologyDataSet data_sets = 1;
+    message TopologyDataSet {
+        oneof data_source {
+            TimeSeriesDataSource time_series_data_source = 1;
+        }
+    }
+    
+    message TimeSeriesDataSource {
+        TimeSeriesQuery time_series_query = 1;
+        repeated string source_labels = 2;
+        repeated string target_labels = 3;
+    }
+}

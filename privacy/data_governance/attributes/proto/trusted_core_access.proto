@@ -1,0 +1,27 @@
+syntax = "proto3";
+
+package privacy.data_governance.attributes;
+
+import "privacy/data_governance/attributes/proto/classification.proto";
+
+option java_multiple_files = true;
+option java_package = "com.google.privacy.datagovernance.attributes";
+
+message TrustedCoreAccess {
+    oneof _rpc {
+        Rpc rpc = 1;
+    }
+    
+    message Rpc {
+        oneof _tca_status {
+            TcaStatus tca_status = 1;
+        }
+        
+        enum TcaStatus {
+            TCA_STATUS_UNDEFINED = 0;
+            NOT_ANNOTATION_COMPATIBLE = 1;
+            NO_ACCESS_IN_SCOPE = 2;
+            PRIVILEGED_ACCESS_IN_SCOPE = 3;
+        }
+    }
+}

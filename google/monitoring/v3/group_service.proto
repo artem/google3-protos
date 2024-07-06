@@ -1,0 +1,99 @@
+syntax = "proto3";
+
+package google.monitoring.v3;
+
+import "google/api/annotations.proto";
+import "google/api/client.proto";
+import "google/api/field_behavior.proto";
+import "google/api/monitored_resource.proto";
+import "google/api/policy.proto";
+import "google/api/resource.proto";
+import "google/api/visibility.proto";
+import "google/logging/data_governance.proto";
+import "google/monitoring/v3/common.proto";
+import "google/monitoring/v3/group.proto";
+import "google/protobuf/empty.proto";
+
+option ruby_package = "Google::Cloud::Monitoring::V3";
+option php_namespace = "Google\\Cloud\\Monitoring\\V3";
+option csharp_namespace = "Google.Cloud.Monitoring.V3";
+option go_package = "cloud.google.com/go/monitoring/apiv3/v2/monitoringpb;monitoringpb";
+option java_multiple_files = true;
+option java_outer_classname = "GroupServiceProto";
+option java_package = "com.google.monitoring.v3";
+
+service GroupService {
+    rpc ListGroups(ListGroupsRequest) returns (ListGroupsResponse);
+    rpc ListGroupsForResource(ListGroupsForResourceRequest) returns (ListGroupsResponse);
+    rpc GetGroup(GetGroupRequest) returns (Group);
+    rpc CreateGroup(CreateGroupRequest) returns (Group);
+    rpc UpdateGroup(UpdateGroupRequest) returns (Group);
+    rpc DeleteGroup(DeleteGroupRequest) returns (protobuf.Empty);
+    rpc ListGroupMembers(ListGroupMembersRequest) returns (ListGroupMembersResponse);
+    rpc ListPreviewGroupMembers(ListPreviewGroupMembersRequest) returns (ListGroupMembersResponse);
+}
+
+message ListGroupsRequest {
+    string name = 7;
+    int32 page_size = 5;
+    string page_token = 6;
+    
+    oneof filter {
+        string children_of_group = 2;
+        string ancestors_of_group = 3;
+        string descendants_of_group = 4;
+    }
+}
+
+message ListGroupsForResourceRequest {
+    string name = 5;
+    api.MonitoredResource monitored_resource = 2;
+    int32 page_size = 3;
+    string page_token = 4;
+}
+
+message ListGroupsResponse {
+    repeated Group group = 1;
+    string next_page_token = 2;
+}
+
+message GetGroupRequest {
+    string name = 3;
+}
+
+message CreateGroupRequest {
+    string name = 4;
+    Group group = 2;
+    bool validate_only = 3;
+}
+
+message UpdateGroupRequest {
+    Group group = 2;
+    bool validate_only = 3;
+}
+
+message DeleteGroupRequest {
+    string name = 3;
+    bool recursive = 4;
+}
+
+message ListGroupMembersRequest {
+    string name = 7;
+    int32 page_size = 3;
+    string page_token = 4;
+    string filter = 5;
+    TimeInterval interval = 6;
+}
+
+message ListPreviewGroupMembersRequest {
+    string name = 1;
+    Group preview_group = 2;
+    int32 page_size = 3;
+    string page_token = 4;
+}
+
+message ListGroupMembersResponse {
+    repeated api.MonitoredResource members = 1;
+    string next_page_token = 2;
+    int32 total_size = 3;
+}

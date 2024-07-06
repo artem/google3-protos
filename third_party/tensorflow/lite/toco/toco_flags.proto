@@ -1,0 +1,76 @@
+syntax = "proto2";
+
+package toco;
+
+import "third_party/tensorflow/compiler/mlir/lite/debug/debug_options.proto";
+import "third_party/tensorflow/compiler/mlir/quantization/stablehlo/quantization_config.proto";
+import "third_party/tensorflow/compiler/mlir/quantization/stablehlo/quantization_options.proto";
+import "third_party/tensorflow/lite/toco/types.proto";
+
+message TocoFlags {
+    optional FileFormat input_format = 1;
+    optional FileFormat output_format = 2;
+    optional IODataType inference_input_type = 11;
+    optional IODataType inference_type = 4;
+    optional float default_ranges_min = 5;
+    optional float default_ranges_max = 6;
+    optional float default_int16_ranges_min = 15;
+    optional float default_int16_ranges_max = 16;
+    optional bool drop_fake_quant = 7;
+    optional bool reorder_across_fake_quant = 8;
+    optional bool allow_custom_ops = 10;
+    optional bool drop_control_dependency = 12;
+    optional bool debug_disable_recurrent_cell_fusion = 13;
+    optional bool propagate_fake_quant_num_bits = 14;
+    optional bool allow_nudging_weights_to_use_fast_gemm_kernel = 17;
+    optional int64 dedupe_array_min_size_bytes = 18 [default = 64];
+    optional bool split_tflite_lstm_inputs = 19 [default = true];
+    optional bool quantize_weights = 20 [default = false];
+    optional string dump_graphviz_dir = 24;
+    optional bool dump_graphviz_include_video = 25;
+    optional bool post_training_quantize = 26 [default = false];
+    optional bool enable_select_tf_ops = 27 [default = false];
+    optional bool force_select_tf_ops = 28 [default = false];
+    optional bool quantize_to_float16 = 29 [default = false];
+    optional bool allow_dynamic_tensors = 30 [default = true];
+    optional string conversion_summary_dir = 31;
+    repeated string custom_opdefs = 32 [deprecated = true];
+    repeated string select_user_tf_ops = 33;
+    optional bool enable_tflite_resource_variables = 34 [default = true];
+    optional bool unfold_batchmatmul = 35 [default = false];
+    optional bool lower_tensor_list_ops = 36 [default = true];
+    optional IODataType accumulation_type = 37;
+    optional bool allow_bfloat16 = 38 [default = false];
+    optional bool allow_all_select_tf_ops = 39;
+    optional bool unfold_large_splat_constant = 40 [default = false];
+    repeated string supported_backends = 41;
+    optional bool default_to_single_batch_in_tensor_list_ops = 42 [default = false];
+    optional bool disable_per_channel_quantization = 43 [default = false];
+    optional bool enable_mlir_dynamic_range_quantizer = 44 [default = false];
+    optional string tf_quantization_mode = 45;
+    optional bool disable_infer_tensor_range = 46 [default = false];
+    optional bool use_fake_quant_num_bits = 47 [default = false];
+    optional bool enable_dynamic_update_slice = 48 [default = false];
+    optional bool preserve_assert_op = 49 [default = false];
+    optional bool guarantee_all_funcs_one_use = 50 [default = false];
+    optional bool convert_to_stablehlo = 51 [default = false];
+    optional bool enable_mlir_variable_quantization = 52 [default = false];
+    optional bool disable_fuse_mul_and_fc = 53 [default = false];
+    optional .stablehlo.quantization.QuantizationOptions quantization_options = 54 [deprecated = true];
+    optional bool enable_hlo_to_tf_conversion = 55 [default = false, deprecated = true];
+    optional .tensorflow.converter.DebugOptions debug_options = 56;
+    optional bool use_buffer_offset = 57 [default = false];
+    optional bool legalize_custom_tensor_list_ops = 58 [default = false];
+    optional bool reduce_type_precision = 59 [default = false];
+    optional string qdq_conversion_mode = 60 [default = "NONE"];
+    optional .stablehlo.quantization.QuantizationConfig quantization_config = 61;
+    optional bool disable_per_channel_quantization_for_dense_layers = 62 [default = false];
+    optional bool enable_composite_direct_lowering = 63 [default = false];
+}
+
+enum FileFormat {
+    FILE_FORMAT_UNKNOWN = 0;
+    TENSORFLOW_GRAPHDEF = 1;
+    TFLITE = 2;
+    GRAPHVIZ_DOT = 3;
+}

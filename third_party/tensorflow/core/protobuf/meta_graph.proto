@@ -1,0 +1,104 @@
+syntax = "proto3";
+
+package tensorflow;
+
+import "google/protobuf/any.proto";
+import "third_party/tensorflow/core/framework/graph.proto";
+import "third_party/tensorflow/core/framework/op_def.proto";
+import "third_party/tensorflow/core/framework/tensor.proto";
+import "third_party/tensorflow/core/framework/tensor_shape.proto";
+import "third_party/tensorflow/core/framework/types.proto";
+import "third_party/tensorflow/core/protobuf/saved_object_graph.proto";
+import "third_party/tensorflow/core/protobuf/saver.proto";
+import "third_party/tensorflow/core/protobuf/struct.proto";
+
+option cc_enable_arenas = true;
+option go_package = "github.com/tensorflow/tensorflow/tensorflow/go/core/protobuf/for_core_protos_go_proto";
+option java_multiple_files = true;
+option java_outer_classname = "MetaGraphProtos";
+option java_package = "org.tensorflow.framework";
+
+message MetaGraphDef {
+    MetaInfoDef meta_info_def = 1;
+    message MetaInfoDef {
+        string meta_graph_version = 1;
+        OpList stripped_op_list = 2;
+        google.protobuf.Any any_info = 3;
+        repeated string tags = 4;
+        string tensorflow_version = 5;
+        string tensorflow_git_version = 6;
+        bool stripped_default_attrs = 7;
+        map<string, string> function_aliases = 8;
+    }
+    
+    GraphDef graph_def = 2;
+    SaverDef saver_def = 3;
+    map<string, CollectionDef> collection_def = 4;
+    map<string, SignatureDef> signature_def = 5;
+    repeated AssetFileDef asset_file_def = 6;
+    SavedObjectGraph object_graph_def = 7;
+}
+
+message CollectionDef {
+    oneof kind {
+        NodeList node_list = 1;
+        BytesList bytes_list = 2;
+        Int64List int64_list = 3;
+        FloatList float_list = 4;
+        AnyList any_list = 5;
+    }
+    
+    message NodeList {
+        repeated string value = 1;
+    }
+    
+    message BytesList {
+        repeated bytes value = 1;
+    }
+    
+    message Int64List {
+        repeated int64 value = 1 [packed = true];
+    }
+    
+    message FloatList {
+        repeated float value = 1 [packed = true];
+    }
+    
+    message AnyList {
+        repeated google.protobuf.Any value = 1;
+    }
+}
+
+message TensorInfo {
+    DataType dtype = 2;
+    TensorShapeProto tensor_shape = 3;
+    
+    oneof encoding {
+        string name = 1;
+        CooSparse coo_sparse = 4;
+        CompositeTensor composite_tensor = 5;
+    }
+    
+    message CooSparse {
+        string values_tensor_name = 1;
+        string indices_tensor_name = 2;
+        string dense_shape_tensor_name = 3;
+    }
+    
+    message CompositeTensor {
+        TypeSpecProto type_spec = 1;
+        repeated TensorInfo components = 2;
+    }
+}
+
+message SignatureDef {
+    map<string, TensorInfo> inputs = 1;
+    map<string, TensorInfo> outputs = 2;
+    string method_name = 3;
+    map<string, TensorProto> defaults = 4;
+}
+
+message AssetFileDef {
+    TensorInfo tensor_info = 1;
+    string filename = 2;
+}

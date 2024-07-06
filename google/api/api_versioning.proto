@@ -1,0 +1,174 @@
+syntax = "proto3";
+
+package google.api;
+
+import "google/api/visibility.proto";
+import "net/proto2/proto/descriptor.proto";
+
+option objc_class_prefix = "GAPI";
+option cc_enable_arenas = true;
+option go_package = "google.golang.org/genproto/googleapis/api/api_versioning;api_versioning";
+option java_multiple_files = true;
+option java_outer_classname = "ApiVersioningProto";
+option java_package = "com.google.api";
+
+message ApiVersioning {
+    repeated ApiVersionsRule rules = 1;
+    repeated ApiVersion api_versions = 2;
+    repeated Bundle bundles = 3;
+    
+    oneof _enabled {
+        bool enabled = 4;
+    }
+}
+
+message ApiVersionsRule {
+    string selector = 1;
+    string restriction = 2;
+}
+
+message ApiVersion {
+    string api = 1;
+    string api_version = 2;
+    repeated ApiVersionParent parents = 3;
+    repeated ApiVersionConstraint constraints = 4;
+    Screen screen = 5;
+    repeated ApiVersionNote notes = 6;
+    Screen effective_screen = 7;
+    bool default_api_version = 8;
+}
+
+message ApiVersionRef {
+    string api = 1;
+    string api_version = 2;
+}
+
+message ApiVersionParent {
+    string api_version = 1;
+}
+
+message ApiVersionConstraint {
+    oneof constraint {
+        ApiVersionAllOfConstraint all_true = 1;
+        ApiVersionAnyOfConstraint any_true = 2;
+        string visibility = 3;
+        string capability = 4;
+    }
+}
+
+message ApiVersionAllOfConstraint {
+    repeated ApiVersionConstraint constraints = 1;
+}
+
+message ApiVersionAnyOfConstraint {
+    repeated ApiVersionConstraint constraints = 1;
+}
+
+message ApiVersionNote {
+    string link = 5;
+    
+    oneof note {
+        string description = 1;
+        string fix = 2;
+        string new_feature = 3;
+        string breaking = 4;
+    }
+}
+
+message Screen {
+    ScreenContentType content_type = 1;
+    repeated ScreenPackage packages = 2;
+}
+
+message ScreenPackage {
+    string name = 1;
+    bool removed = 2;
+    repeated ScreenService services = 3;
+    repeated ScreenMessage messages = 4;
+    repeated ScreenEnum enums = 5;
+}
+
+message ScreenService {
+    string name = 1;
+    bool removed = 2;
+    repeated ScreenMethod methods = 3;
+}
+
+message ScreenMethod {
+    string name = 1;
+    bool removed = 2;
+}
+
+message ScreenMessage {
+    string name = 1;
+    bool removed = 2;
+    repeated ScreenField fields = 3;
+    repeated ScreenMessage messages = 4;
+    repeated ScreenEnum enums = 5;
+}
+
+message ScreenField {
+    string name = 1;
+    int32 number = 2;
+    bool removed = 3;
+}
+
+message ScreenEnum {
+    string name = 1;
+    bool removed = 2;
+    repeated ScreenEnumValue values = 3;
+}
+
+message ScreenEnumValue {
+    string name = 1;
+    int32 number = 2;
+    bool removed = 3;
+}
+
+message Bundle {
+    string name = 1;
+    repeated BundleInclude includes = 2;
+    repeated ApiVersionRef apis = 3;
+    BundleType type = 4;
+    repeated ApiVersionRef effective_apis = 5;
+}
+
+message BundleInclude {
+    string bundle = 1;
+}
+
+enum BundleType {
+    BUNDLE_TYPE_UNSPECIFIED = 0;
+    BUNDLE_TYPE_FULL = 1;
+    BUNDLE_TYPE_GROUPING_ONLY = 2;
+}
+
+enum ScreenContentType {
+    SCREEN_CONTENT_TYPE_UNSPECIFIED = 0;
+    DIFFERENCE = 1;
+    COMPLETE = 2;
+}
+
+extend proto2.ServiceOptions {
+    ApiVersionsRule api_versions = 525000000;
+}
+
+extend proto2.MethodOptions {
+    ApiVersionsRule method_api_versions = 525000004;
+}
+
+extend proto2.MessageOptions {
+    ApiVersionsRule message_api_versions = 525000020;
+}
+
+extend proto2.FieldOptions {
+    ApiVersionsRule field_api_versions = 525000037;
+}
+
+extend proto2.EnumOptions {
+    ApiVersionsRule enum_api_versions = 525000018;
+}
+
+extend proto2.EnumValueOptions {
+    ApiVersionsRule enum_value_api_versions = 525000123;
+}

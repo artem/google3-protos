@@ -1,0 +1,15 @@
+syntax = "proto3";
+
+package tensorflow;
+
+option cc_enable_arenas = true;
+option go_package = "github.com/tensorflow/tensorflow/tensorflow/go/core/framework/versions_go_proto";
+option java_multiple_files = true;
+option java_outer_classname = "VersionsProtos";
+option java_package = "org.tensorflow.framework";
+
+message VersionDef {
+    int32 producer = 1;
+    int32 min_consumer = 2;
+    repeated int32 bad_consumers = 3;
+}

@@ -1,0 +1,20 @@
+syntax = "proto3";
+
+package privacy.data_governance.attributes;
+
+import "privacy/data_governance/attributes/proto/classification.proto";
+
+message Youtube {
+    message Data {
+        DataCategory data_category = 1;
+        message DataCategory {
+            classification.Category.HasCategory creator_data = 1;
+            classification.Category.HasCategory revenue = 2;
+            classification.Category.HasCategory partner_revenue = 3;
+            classification.Category.HasCategory viewer_data = 4;
+            classification.Category.HasCategory platform_stats = 5 [deprecated = true];
+            classification.Category.HasCategory global_revenue = 6;
+            classification.Category.HasCategory regional_revenue = 7;
+        }
+    }
+}

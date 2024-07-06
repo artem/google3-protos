@@ -1,0 +1,29 @@
+syntax = "proto2";
+
+package asic_sw.proto;
+
+import "platforms/asic_sw/proto/chip_location.proto";
+import "platforms/asic_sw/proto/errors.proto";
+
+option optimize_for = CODE_SIZE;
+
+message Error {
+    oneof type {
+        MemoryEccError ecc_correctable = 1;
+        MemoryEccError ecc_uncorrectable = 2;
+        GeneralError user = 3;
+        GeneralError internal = 4;
+        GeneralError firmware = 5;
+        GeneralError pcie = 6;
+        GeneralError thermal = 7;
+        GeneralError ici_link_fatal = 8;
+        GeneralError system_software = 9;
+        GeneralError system_hardware = 10;
+        GeneralError network = 11;
+    }
+}
+
+message ErrorReport {
+    optional ChipLocation chip_location = 1;
+    repeated Error errors = 2;
+}

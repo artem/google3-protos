@@ -1,0 +1,30 @@
+syntax = "proto2";
+
+package tensorflow;
+
+option cc_enable_arenas = true;
+option go_package = "github.com/tensorflow/tensorflow/tensorflow/go/core/protobuf/for_core_protos_go_proto";
+option java_multiple_files = true;
+option java_outer_classname = "GraphDebugInfoProtos";
+option java_package = "org.tensorflow.framework";
+
+message GraphDebugInfo {
+    repeated string files = 1;
+    map<fixed64, FileLineCol> frames_by_id = 4;
+    map<fixed64, StackTrace> traces_by_id = 6;
+    map<string, StackTrace> traces = 2;
+    map<string, fixed64> name_to_trace_id = 5;
+    
+    message FileLineCol {
+        optional int32 file_index = 1;
+        optional int32 line = 2;
+        optional int32 col = 3;
+        optional string func = 4;
+        optional string code = 5;
+    }
+    
+    message StackTrace {
+        repeated FileLineCol file_line_cols = 1;
+        repeated fixed64 frame_id = 2 [packed = true];
+    }
+}

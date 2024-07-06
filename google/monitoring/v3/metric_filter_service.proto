@@ -1,0 +1,55 @@
+syntax = "proto3";
+
+package google.monitoring.v3;
+
+import "google/api/annotations.proto";
+import "google/api/client.proto";
+import "google/api/field_behavior.proto";
+import "google/api/policy.proto";
+import "google/api/resource.proto";
+import "google/api/visibility.proto";
+import "google/logging/data_governance.proto";
+import "google/protobuf/empty.proto";
+import "google/protobuf/timestamp.proto";
+import "storage/datapol/annotations/proto/semantic_annotations.proto";
+
+option ruby_package = "Google::Cloud::Monitoring::V3";
+option php_namespace = "Google\\Cloud\\Monitoring\\V3";
+option csharp_namespace = "Google.Cloud.Monitoring.V3";
+option go_package = "cloud.google.com/go/monitoring/apiv3/v2/monitoringpb;monitoringpb";
+option java_multiple_files = true;
+option java_outer_classname = "MetricFilterServiceProto";
+option java_package = "com.google.monitoring.v3";
+
+service MetricFilterService {
+    rpc ListMetricFilters(ListMetricFiltersRequest) returns (ListMetricFiltersResponse);
+    rpc CreateMetricFilter(CreateMetricFilterRequest) returns (MetricFilter);
+    rpc DeleteMetricFilter(DeleteMetricFilterRequest) returns (protobuf.Empty);
+}
+
+message MetricFilter {
+    string name = 1;
+    protobuf.Timestamp create_time = 4;
+    
+    oneof filter_type {
+        string exact_filter = 2;
+        string regex_filter = 3;
+    }
+}
+
+message ListMetricFiltersRequest {
+    string name = 1;
+}
+
+message ListMetricFiltersResponse {
+    repeated MetricFilter metric_filters = 1;
+}
+
+message CreateMetricFilterRequest {
+    string parent = 1;
+    MetricFilter metric_filter = 2;
+}
+
+message DeleteMetricFilterRequest {
+    string name = 1;
+}

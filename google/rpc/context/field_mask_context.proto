@@ -1,0 +1,15 @@
+syntax = "proto3";
+
+package google.rpc.context;
+
+import "google/protobuf/field_mask.proto";
+
+option objc_class_prefix = "RPC";
+option java_multiple_files = true;
+option java_outer_classname = "FieldMaskContextProto";
+option java_package = "com.google.rpc.context";
+
+message FieldMaskContext {
+    protobuf.FieldMask request_mask = 1;
+    protobuf.FieldMask response_mask = 2;
+}

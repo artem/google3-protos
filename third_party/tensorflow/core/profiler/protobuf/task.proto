@@ -1,0 +1,24 @@
+syntax = "proto2";
+
+package tensorflow.profiler;
+
+option cc_enable_arenas = true;
+
+message Task {
+    optional int64 changelist = 1;
+    optional bool clean_build = 2;
+    optional int64 build_time = 3;
+    optional string build_target = 4;
+    optional string command_line = 5;
+    optional int64 start_time = 6;
+    optional string task_address = 7;
+    optional uint64 profile_time_ns = 8;
+    optional uint32 profile_duration_ms = 9;
+    optional uint32 host_trace_level = 10;
+    optional uint64 tensor_core_freq_hz = 11;
+    optional uint64 sparse_core_freq_hz = 12;
+    optional uint64 gtc_freq_hz = 13;
+    optional uint64 peak_memory_usage = 14;
+    optional double cpu_limit = 15;
+    optional double cpu_usage = 16;
+}

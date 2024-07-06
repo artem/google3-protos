@@ -1,0 +1,5 @@
+syntax = "proto3";
+
+import public "third_party/tensorflow/tsl/protobuf/error_codes.proto";
+
+

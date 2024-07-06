@@ -1,0 +1,135 @@
+syntax = "proto3";
+
+package google.api;
+
+import "google/api/launch_stage.proto";
+import "google/api/visibility.proto";
+import "google/protobuf/duration.proto";
+import "net/proto2/proto/descriptor.proto";
+import "storage/datapol/annotations/proto/semantic_annotations.proto";
+
+option objc_class_prefix = "GAPI";
+option go_package = "google.golang.org/genproto/googleapis/api/annotations;annotations";
+option java_multiple_files = true;
+option java_outer_classname = "ClientProto";
+option java_package = "com.google.api";
+
+message CommonLanguageSettings {
+    string reference_docs_uri = 1 [deprecated = true];
+    repeated ClientLibraryDestination destinations = 2;
+}
+
+message ClientLibrarySettings {
+    string version = 1;
+    LaunchStage launch_stage = 2;
+    bool rest_numeric_enums = 3;
+    string bundle = 4;
+    JavaSettings java_settings = 21;
+    CppSettings cpp_settings = 22;
+    PhpSettings php_settings = 23;
+    PythonSettings python_settings = 24;
+    NodeSettings node_settings = 25;
+    DotnetSettings dotnet_settings = 26;
+    RubySettings ruby_settings = 27;
+    GoSettings go_settings = 28;
+    
+    reserved 5 to 20;
+}
+
+message Publishing {
+    protobuf.Duration publishing_delay = 1 [deprecated = true];
+    repeated MethodSettings method_settings = 2;
+    string bug_assignee_email = 11;
+    string new_issue_uri = 101;
+    string documentation_uri = 102;
+    string api_short_name = 103;
+    string github_label = 104;
+    repeated string codeowner_github_teams = 105;
+    string doc_tag_prefix = 106;
+    ClientLibraryOrganization organization = 107;
+    repeated ClientLibrarySettings library_settings = 109;
+    string proto_reference_documentation_uri = 110;
+    string rest_reference_documentation_uri = 111;
+    
+    reserved 3 to 10, 12 to 100, 108;
+}
+
+message JavaSettings {
+    string library_package = 1;
+    map<string, string> service_class_names = 2;
+    CommonLanguageSettings common = 3;
+}
+
+message CppSettings {
+    CommonLanguageSettings common = 1;
+}
+
+message PhpSettings {
+    CommonLanguageSettings common = 1;
+}
+
+message PythonSettings {
+    CommonLanguageSettings common = 1;
+}
+
+message NodeSettings {
+    CommonLanguageSettings common = 1;
+}
+
+message DotnetSettings {
+    CommonLanguageSettings common = 1;
+    map<string, string> renamed_services = 2;
+    map<string, string> renamed_resources = 3;
+    repeated string ignored_resources = 4;
+    repeated string forced_namespace_aliases = 5;
+    repeated string handwritten_signatures = 6;
+}
+
+message RubySettings {
+    CommonLanguageSettings common = 1;
+}
+
+message GoSettings {
+    CommonLanguageSettings common = 1;
+}
+
+message MethodSettings {
+    string selector = 1;
+    
+    LongRunning long_running = 2;
+    message LongRunning {
+        protobuf.Duration initial_poll_delay = 1;
+        float poll_delay_multiplier = 2;
+        protobuf.Duration max_poll_delay = 3;
+        protobuf.Duration total_poll_timeout = 4;
+    }
+    
+    repeated string auto_populated_fields = 3;
+}
+
+enum ClientLibraryOrganization {
+    CLIENT_LIBRARY_ORGANIZATION_UNSPECIFIED = 0;
+    CLOUD = 1;
+    ADS = 2;
+    PHOTOS = 3;
+    STREET_VIEW = 4;
+    SHOPPING = 5;
+    GEO = 6;
+    GENERATIVE_AI = 7;
+}
+
+enum ClientLibraryDestination {
+    CLIENT_LIBRARY_DESTINATION_UNSPECIFIED = 0;
+    GITHUB = 10;
+    PACKAGE_MANAGER = 20;
+}
+
+extend proto2.ServiceOptions {
+    string default_host = 1049;
+    string oauth_scopes = 1050;
+    string api_version = 525000001;
+}
+
+extend proto2.MethodOptions {
+    repeated string method_signature = 1051;
+}

@@ -1,0 +1,18 @@
+syntax = "proto3";
+
+package tensorflow.core.platform;
+
+option cc_enable_arenas = true;
+option go_package = "github.com/tensorflow/tensorflow/tensorflow/go/core/protobuf/for_core_protos_go_proto";
+
+message ErrorSourceProto {
+    ErrorSource error_source = 1;
+    enum ErrorSource {
+        UNKNOWN = 0;
+        TPU_COMPILE_OP = 1;
+        TF_XLA_BRIDGE = 2;
+        MLIR_BRIDGE_PHASE_1 = 3;
+        MLIR_BRIDGE_PHASE_2 = 4;
+        EAGER_REMOTE_MGR = 5;
+    }
+}

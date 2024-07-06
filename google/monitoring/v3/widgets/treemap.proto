@@ -1,0 +1,24 @@
+syntax = "proto3";
+
+package google.monitoring.v3.widgets;
+
+import "google/api/field_behavior.proto";
+import "google/monitoring/v3/widgets/common.proto";
+
+option ruby_package = "Google::Cloud::Monitoring::V3::Widgets";
+option php_namespace = "Google\\Cloud\\Monitoring\\V3\\Widgets";
+option csharp_namespace = "Google.Cloud.Monitoring.V3.Widgets";
+option java_multiple_files = true;
+option java_outer_classname = "TreemapProto";
+option java_package = "com.google.monitoring.v3.widgets";
+
+message Treemap {
+    repeated TreemapDataSet data_sets = 1;
+    message TreemapDataSet {
+        TimeSeriesQuery time_series_query = 1;
+        
+        reserved 2;
+    }
+    
+    repeated string treemap_hierarchy = 3;
+}

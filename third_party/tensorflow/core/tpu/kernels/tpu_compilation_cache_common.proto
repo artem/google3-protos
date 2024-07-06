@@ -1,0 +1,24 @@
+syntax = "proto3";
+
+package tensorflow.tpu;
+
+message TpuCompilationUidAndIndex {
+    int64 uid = 1;
+    int32 proto_index = 2;
+}
+
+message GetTpuProgramRequest {
+    CompilationCacheFetchTarget fetch_target = 3;
+    
+    oneof key_oneof {
+        string key = 1;
+        TpuCompilationUidAndIndex uid_and_index = 2;
+    }
+}
+
+enum CompilationCacheFetchTarget {
+    INVALID = 0;
+    MAIN = 1;
+    SHARDING = 2;
+    UNSHARDING = 3;
+}

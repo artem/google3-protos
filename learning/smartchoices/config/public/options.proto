@@ -1,0 +1,257 @@
+syntax = "proto2";
+
+package smartchoices;
+
+import "learning/smartchoices/config/public/transform.proto";
+import "net/proto2/proto/descriptor.proto";
+
+option java_multiple_files = true;
+option java_package = "com.google.smartchoices.config";
+
+message NoParamOpts {
+    
+}
+
+message ThrottlingEnumOpts {
+    optional uint32 action_arm = 1;
+    optional uint32 skip_arm = 2;
+}
+
+message ContextFieldOpts {
+    repeated int32 shape = 1 [packed = true];
+    optional bool log_only = 2;
+    
+    oneof type {
+        CategoricalFieldContextOpts categorical_opts = 3;
+        EnumFieldContextOpts enum_opts = 4;
+        StringFieldContextOpts string_opts = 5;
+        NumericFieldContextOpts int32_opts = 6;
+        NumericFieldContextOpts int64_opts = 7;
+        NumericFieldContextOpts float_opts = 8;
+        BoolFieldContextOpts bool_opts = 9;
+    }
+}
+
+message HashOpts {
+    optional int32 cardinality = 1;
+}
+
+message FeatureHashOpts {
+    optional uint32 num_features = 1;
+    optional uint32 num_hashes = 2;
+}
+
+message CategoricalOneHotOpts {
+    optional NoParamOpts unordered = 1;
+}
+
+message CategoricalFieldContextOpts {
+    optional int64 num_categories = 1;
+    
+    oneof representation {
+        CategoricalOneHotOpts one_hot = 2;
+        NoParamOpts binary = 3;
+        HashOpts hashed_one_hot = 4;
+        FeatureHashOpts feature_hash = 5;
+    }
+}
+
+message EnumFieldContextOpts {
+    optional NoParamOpts unordered = 1;
+}
+
+message StringFieldContextOpts {
+    optional int32 max_length = 1;
+    
+    oneof representation {
+        HashOpts hashed_bag_of_words = 2;
+        FeatureHashOpts feature_hash = 3;
+        NoParamOpts automatic = 4;
+    }
+}
+
+message NumericFieldContextOpts {
+    optional Transform transform = 1;
+}
+
+message BoolFieldContextOpts {
+    
+}
+
+message ArmFieldOpts {
+    repeated int32 shape = 1 [packed = true];
+    optional bool log_only = 2;
+    
+    oneof type {
+        CategoricalFieldArmOpts categorical_opts = 3;
+        EnumFieldArmOpts enum_opts = 4;
+        StringFieldArmOpts string_opts = 5;
+        Int32FieldArmOpts int32_opts = 6;
+        Int64FieldArmOpts int64_opts = 7;
+        FloatFieldArmOpts float_opts = 8;
+        BoolFieldArmOpts bool_opts = 9;
+    }
+}
+
+message CategoricalFieldArmOpts {
+    optional int64 num_categories = 1;
+    
+    optional CandidateOpts candidate_opts = 2;
+    message CandidateOpts {
+        optional int64 default_value = 1;
+    }
+    
+    oneof representation {
+        CategoricalOneHotOpts one_hot = 3;
+        NoParamOpts binary = 4;
+        HashOpts hashed_one_hot = 5;
+        FeatureHashOpts feature_hash = 6;
+    }
+}
+
+message EnumFieldArmOpts {
+    optional CandidateOpts candidate_opts = 2;
+    message CandidateOpts {
+        optional int32 default_value = 1;
+        repeated int32 values = 2 [packed = true];
+    }
+    
+    optional NoParamOpts unordered = 3;
+}
+
+message StringFieldArmOpts {
+    optional int32 max_length = 1;
+    
+    oneof representation {
+        HashOpts hashed_bag_of_words = 3;
+        FeatureHashOpts feature_hash = 4;
+        NoParamOpts automatic = 5;
+    }
+    
+    reserved 2;
+}
+
+message Int32FieldArmOpts {
+    optional Transform transform = 1;
+    
+    optional CandidateOpts candidate_opts = 2;
+    message CandidateOpts {
+        optional int32 default_value = 1;
+        
+        oneof candidate_desc {
+            CandidateSet set = 2;
+            CandidateRange range = 3;
+        }
+        
+        message CandidateSet {
+            repeated int32 values = 1 [packed = true];
+        }
+        
+        message CandidateRange {
+            optional int32 min_value = 1;
+            optional int32 max_value = 2;
+        }
+    }
+    
+    reserved 3;
+}
+
+message Int64FieldArmOpts {
+    optional Transform transform = 1;
+    
+    optional CandidateOpts candidate_opts = 2;
+    message CandidateOpts {
+        optional int64 default_value = 1;
+        
+        oneof candidate_desc {
+            CandidateSet set = 2;
+            CandidateRange range = 3;
+        }
+        
+        message CandidateSet {
+            repeated int64 values = 1 [packed = true];
+        }
+        
+        message CandidateRange {
+            optional int64 min_value = 1;
+            optional int64 max_value = 2;
+        }
+    }
+    
+    reserved 3;
+}
+
+message FloatFieldArmOpts {
+    optional Transform transform = 1;
+    
+    optional CandidateOpts candidate_opts = 2;
+    message CandidateOpts {
+        optional float default_value = 1;
+        
+        oneof candidate_desc {
+            CandidateSet set = 2;
+            CandidateRange range = 3;
+        }
+        
+        message CandidateSet {
+            repeated float values = 1 [packed = true];
+        }
+        
+        message CandidateRange {
+            optional float min_value = 1;
+            optional float max_value = 2;
+        }
+    }
+}
+
+message BoolFieldArmOpts {
+    optional CandidateOpts candidate_opts = 2;
+    message CandidateOpts {
+        optional bool default_value = 1;
+        repeated bool values = 2 [packed = true];
+    }
+}
+
+message ArmEnumOpts {
+    optional int32 default_arm = 1;
+    repeated int32 candidate_arms = 2 [packed = true];
+    optional NoParamOpts ordered_values = 3;
+}
+
+message ArmMessageOpts {
+    optional int32 max_num_arms = 1;
+    optional bool enable_arm_generation = 2;
+    optional bool enable_arm_update = 3;
+}
+
+message FeedbackFieldOpts {
+    oneof type {
+        NoParamOpts log_only = 1;
+        NoParamOpts eval_only = 2;
+        NumericGoalOpt maximize_goal = 3;
+        NumericGoalOpt minimize_goal = 4;
+    }
+    
+    reserved 5, 6;
+    
+    message NumericGoalOpt {
+        optional Transform transform = 1;
+        
+        reserved 2, 3;
+    }
+}
+
+extend proto2.FieldOptions {
+    optional ContextFieldOpts context_field_opts = 422813671;
+    optional ArmFieldOpts arm_field_opts = 422815285;
+    optional FeedbackFieldOpts feedback_field_opts = 481915546;
+}
+
+extend proto2.EnumOptions {
+    optional ArmEnumOpts arm_enum_opts = 507463704;
+    optional ThrottlingEnumOpts throttle_opts = 457519569;
+}
+
+extend proto2.MessageOptions {
+    optional ArmMessageOpts arm_msg_opts = 422815286;
+}

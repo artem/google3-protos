@@ -1,0 +1,119 @@
+syntax = "proto2";
+
+package privacy.data_governance.attributes;
+
+import "privacy/data_governance/attributes/proto/classification.proto";
+
+option java_multiple_files = true;
+option java_package = "com.google.privacy.datagovernance.attributes";
+
+message Apps {
+    message DataType {
+        optional AppsCommon apps_common = 1;
+        optional Gmail gmail = 2;
+        
+        extensions 100 to max;
+    }
+    
+    message Data {
+        repeated Product product = 1;
+        optional DataType data = 2;
+    }
+    
+    enum Product {
+        UNKNOWN_APP = 0;
+        OTHER_APP = 1;
+        GMAIL = 2;
+        CALENDAR = 3;
+        DRIVE = 4;
+        HANGOUTS_CHAT = 5;
+        CLOUD_SEARCH = 6;
+    }
+}
+
+message AppsCommon {
+    repeated ContentType content = 1;
+    enum ContentType {
+        CONTENT_TYPE_UNKNOWN = 0;
+        CONTENT_TYPE_OTHER = 1;
+        CONTENT_EMAIL = 2;
+    }
+    
+    repeated MetadataType metadata = 2;
+    enum MetadataType {
+        METADATA_TYPE_UNKNOWN = 0;
+        METADATA_TYPE_OTHER = 1;
+        METADATA_EMAIL = 2;
+        GAIA_ID = 3;
+    }
+    
+    repeated WorkspaceClass workspace_class = 3;
+    message WorkspaceClass {
+        optional DataClass data_class = 1;
+    }
+    
+    repeated ResourceLevelScope resource_level_scope = 4 [packed = true];
+    enum ResourceLevelScope {
+        UNKNOWN_SCOPE = 0;
+        OLYMPUS_USERS_RESOURCE = 3;
+        NON_OLYMPUS_USERS_RESOURCE = 4;
+    }
+    
+    repeated ResourceStatus resource_status = 5 [packed = true];
+    enum ResourceStatus {
+        UNKNOWN_STATUS = 0;
+        OLYMPUS_EXEMPTED_RESOURCE = 1;
+        OLYMPUS_SQL_TRANSLATOR_COMPUTED = 2;
+    }
+    
+    enum DataClass {
+        DATA_CLASS_UNKNOWN = 0;
+        DATA_CLASS_PRIMARY_CONTENT = 1;
+        DATA_CLASS_TRANSFORMED_PRIMARY_CONTENT = 2;
+        DATA_CLASS_CONTENT_DESCRIPTORS = 3;
+        DATA_CLASS_TRAFFIC_DATA = 4;
+        DATA_CLASS_ENTITY_RELATIONSHIPS = 5;
+        DATA_CLASS_COMPLEX_ADMIN_POLICIES = 6;
+        DATA_CLASS_COMPLEX_USER_SETTINGS = 7;
+        DATA_CLASS_METADATA = 8;
+        DATA_CLASS_INTERACTION_DATA = 9;
+        DATA_CLASS_IDENTITIES = 10;
+        DATA_CLASS_NON_IDENTIFIABLE_DERIVED_DATA = 11;
+        DATA_CLASS_SIMPLE_SETTINGS = 12;
+        DATA_CLASS_SYSTEM_DATA = 13;
+    }
+    
+    extend Apps.DataType {
+        optional AppsCommon data = 100 [deprecated = true];
+    }
+}
+
+message Gmail {
+    repeated ContentType content = 1;
+    enum ContentType {
+        CONTENT_TYPE_UNKNOWN = 0;
+        CONTENT_TYPE_OTHER = 1;
+        HISTORY_RECORD = 2;
+        LABEL = 3;
+        MESSAGE = 4;
+        FILTER = 5;
+        ATTACHMENT = 6;
+        THREAD = 7;
+    }
+    
+    repeated MetadataType metadata = 2;
+    enum MetadataType {
+        METADATA_TYPE_UNKNOWN = 0;
+        METADATA_TYPE_OTHER = 1;
+        HISTORY_ID = 2;
+        LABEL_ID = 3;
+        MESSAGE_ID = 4;
+        FILTER_ID = 5;
+        ATTACHMENT_ID = 6;
+        THREAD_ID = 7;
+    }
+    
+    extend Apps.DataType {
+        optional Gmail data = 101 [deprecated = true];
+    }
+}

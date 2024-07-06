@@ -1,0 +1,30 @@
+syntax = "proto3";
+
+package privacy.data_governance.attributes;
+
+import "privacy/data_governance/attributes/proto/classification.proto";
+
+option java_multiple_files = true;
+option java_package = "com.google.privacy.datagovernance.attributes";
+
+message Experimental {
+    Data data = 1;
+    message Data {
+        DataCopy data_copy = 1;
+        enum DataCopy {
+            DATA_COPY_UNDEFINED = 0;
+            DATA_COPY_DISALLOWED = 1;
+            DATA_COPY_DISALLOWED_ON_PII = 2;
+            DATA_COPY_DISALLOWED_ON_PII_WITHOUT_TTL = 3;
+        }
+        
+        DatasetTag dataset_tag = 2 [deprecated = true];
+        enum DatasetTag {
+            option deprecated = true;
+            UNKNOWN_DATASET = 0;
+            OTHER_DATASET = 1;
+            HULK = 2;
+            OOLONG = 3;
+        }
+    }
+}

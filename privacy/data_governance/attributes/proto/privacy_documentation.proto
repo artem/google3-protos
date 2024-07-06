@@ -1,0 +1,33 @@
+syntax = "proto2";
+
+package privacy.data_governance.attributes;
+
+import "privacy/data_governance/attributes/proto/classification.proto";
+
+option java_multiple_files = true;
+option java_package = "com.google.privacy.datagovernance.attributes";
+
+message PrivacyDocument {
+    oneof documentation {
+        Eldar eldar = 1;
+        Buganizer buganizer = 2;
+        Ariane ariane = 3;
+    }
+    
+    message Eldar {
+        optional int64 id = 1;
+        optional int64 revision = 2;
+    }
+    
+    message Buganizer {
+        optional int64 id = 1;
+    }
+    
+    message Ariane {
+        optional int64 id = 1;
+    }
+}
+
+message PrivacyDocumentation {
+    repeated PrivacyDocument document = 1;
+}

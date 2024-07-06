@@ -1,0 +1,15 @@
+syntax = "proto3";
+
+package privacy.data_governance.attributes;
+
+option java_multiple_files = true;
+option java_package = "com.google.privacy.datagovernance.attributes";
+
+enum ExemptReason {
+    REASON_UNKNOWN = 0;
+    ANONYMOUS_DATA = 1;
+    EMPLOYEE_DATA = 2;
+    INTERNAL_BUSINESS_DATA = 3;
+    PUBLIC_DATA = 4;
+    SIMULATED_TEST_DATA = 5;
+}

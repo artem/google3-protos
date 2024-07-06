@@ -1,0 +1,20 @@
+syntax = "proto3";
+
+package privacy.data_governance.attributes;
+
+import "net/proto2/proto/descriptor.proto";
+import "privacy/data_governance/attributes/proto/version_specification.proto";
+
+option java_multiple_files = true;
+option java_package = "com.google.privacy.datagovernance.attributes";
+
+enum AnnotationsVersion {
+    VERSION_UNDEFINED = 0;
+    V1 = 1;
+}
+
+extend proto2.EnumValueOptions {
+    string go_link = 318995083;
+    bool released = 321131782;
+    VersionSpecification specification = 322344309;
+}

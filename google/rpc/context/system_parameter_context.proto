@@ -1,0 +1,27 @@
+syntax = "proto3";
+
+package google.rpc.context;
+
+option objc_class_prefix = "RPC";
+option java_multiple_files = true;
+option java_outer_classname = "SystemParameterContextProto";
+option java_package = "com.google.rpc.context";
+
+message SystemParameterContext {
+    string api_key = 1;
+    string alt = 2;
+    string callback = 3;
+    string quota_user = 4;
+    string field_mask = 6;
+    string visibilities = 7;
+    string request_reason = 8;
+    string api_client = 9;
+    string user_project = 10;
+    string pretty_print = 11;
+    string project_override = 12;
+    string first_party_reauth = 13;
+    string allowed_resources = 14;
+    string api_version = 15;
+    
+    reserved 5;
+}

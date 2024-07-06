@@ -1,0 +1,46 @@
+syntax = "proto2";
+
+package tensorflow.profiler;
+
+option cc_enable_arenas = true;
+
+message RawData {
+    oneof raw_data {
+        DmaActivity dma_activity = 1;
+        TraceEventArguments args = 2;
+        TpuTraceData tpu_data = 3;
+    }
+}
+
+message DmaActivity {
+    optional uint64 start_time_cycles = 1;
+    optional uint64 end_time_cycles = 2;
+    optional uint64 kilobytes = 4;
+    optional uint32 mesh_chip_id = 5;
+    optional uint32 core_id = 11;
+    optional uint64 dma_address = 6;
+    optional uint32 multicast = 8;
+    optional uint32 segmented = 9;
+    optional uint64 temporary = 10;
+    
+    reserved 3;
+}
+
+message TraceEventArguments {
+    repeated Argument arg = 1;
+    message Argument {
+        optional string name = 1;
+        
+        oneof value {
+            string str_value = 2;
+            uint64 uint_value = 3;
+            int64 int_value = 5;
+            double double_value = 4;
+            fixed64 ref_value = 6;
+        }
+    }
+}
+
+message TpuTraceData {
+    optional uint32 dummy = 1;
+}

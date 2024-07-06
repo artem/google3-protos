@@ -1,0 +1,53 @@
+syntax = "proto3";
+
+package tensorflow;
+
+import "third_party/tensorflow/core/framework/tensor_shape.proto";
+import "third_party/tensorflow/core/framework/types.proto";
+
+option cc_enable_arenas = true;
+option go_package = "github.com/tensorflow/tensorflow/tensorflow/go/core/framework/cost_graph_go_proto";
+option java_multiple_files = true;
+option java_outer_classname = "CostGraphProtos";
+option java_package = "org.tensorflow.framework";
+
+message CostGraphDef {
+    repeated Node node = 1;
+    message Node {
+        string name = 1;
+        string device = 2;
+        int32 id = 3;
+        
+        repeated InputInfo input_info = 4;
+        message InputInfo {
+            int32 preceding_node = 1;
+            int32 preceding_port = 2;
+        }
+        
+        repeated OutputInfo output_info = 5;
+        message OutputInfo {
+            int64 size = 1;
+            int64 alias_input_port = 2;
+            TensorShapeProto shape = 3;
+            DataType dtype = 4;
+        }
+        
+        int64 temporary_memory_size = 6;
+        int64 persistent_memory_size = 12;
+        int64 host_temp_memory_size = 10 [deprecated = true];
+        int64 device_temp_memory_size = 11 [deprecated = true];
+        int64 device_persistent_memory_size = 16 [deprecated = true];
+        int64 compute_cost = 9;
+        int64 compute_time = 14;
+        int64 memory_time = 15;
+        bool is_final = 7;
+        repeated int32 control_input = 8;
+        bool inaccurate = 17;
+    }
+    
+    repeated AggregatedCost cost = 2;
+    message AggregatedCost {
+        float cost = 1;
+        string dimension = 2;
+    }
+}

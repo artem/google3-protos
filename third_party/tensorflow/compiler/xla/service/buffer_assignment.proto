@@ -1,0 +1,11 @@
+syntax = "proto3";
+
+package xla.buffer_assignment;
+
+message BufferIsolationConfig {
+    int64 base_offset_bytes = 1;
+    int64 isolation_fuel = 2;
+    int64 isolation_padding_bytes = 3;
+    uint64 isolation_order_salt = 4;
+    repeated int32 isolation_colors = 5;
+}

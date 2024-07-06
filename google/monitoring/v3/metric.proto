@@ -1,0 +1,212 @@
+syntax = "proto3";
+
+package google.monitoring.v3;
+
+import "google/api/distribution.proto";
+import "google/api/label.proto";
+import "google/api/metric.proto";
+import "google/api/monitored_resource.proto";
+import "google/api/visibility.proto";
+import "google/logging/data_governance.proto";
+import "google/monitoring/v3/common.proto";
+import "google/monitoring/v3/mql_editor.proto";
+import "google/protobuf/duration.proto";
+
+option ruby_package = "Google::Cloud::Monitoring::V3";
+option php_namespace = "Google\\Cloud\\Monitoring\\V3";
+option csharp_namespace = "Google.Cloud.Monitoring.V3";
+option go_package = "cloud.google.com/go/monitoring/apiv3/v2/monitoringpb;monitoringpb";
+option java_multiple_files = true;
+option java_outer_classname = "MetricProto";
+option java_package = "com.google.monitoring.v3";
+
+message Point {
+    TimeInterval interval = 1;
+    TypedValue value = 2;
+}
+
+message TimeSeries {
+    api.Metric metric = 1;
+    api.MonitoredResource resource = 2;
+    api.MonitoredResourceMetadata metadata = 7;
+    api.MetricDescriptor.MetricKind metric_kind = 3;
+    api.MetricDescriptor.ValueType value_type = 4;
+    repeated Point points = 5;
+    string unit = 8;
+    string description = 9;
+}
+
+message TimeSeriesDescriptor {
+    repeated api.LabelDescriptor label_descriptors = 1;
+    
+    repeated ValueDescriptor value_descriptors = 2 [deprecated = true];
+    message ValueDescriptor {
+        string key = 1;
+        api.MetricDescriptor.ValueType value_type = 2;
+        api.MetricDescriptor.MetricKind metric_kind = 3;
+        string unit = 4;
+    }
+    
+    repeated ValueDescriptor point_descriptors = 5;
+    string resource_type = 3;
+    string metric_type = 4;
+}
+
+message TimeSeriesTable {
+    TimeSeriesDescriptor time_series_descriptor = 1;
+    repeated TimeSeriesData time_series_data = 2;
+    
+    repeated PackedTimeSeriesData packed_time_series_data = 3;
+    message PackedTimeSeriesData {
+        repeated LabelValue label_values = 1;
+        repeated int64 end_time_micros = 2;
+        repeated int64 start_time_micros = 3;
+        
+        repeated TypedValueColumn value_columns = 4;
+        message TypedValueColumn {
+            repeated bool bool_values = 1;
+            repeated int64 int64_values = 2;
+            repeated double double_values = 3;
+            repeated string string_values = 4;
+            repeated api.Distribution distribution_values = 5;
+        }
+    }
+}
+
+message TimeSeriesData {
+    repeated LabelValue label_values = 1;
+    
+    repeated PointData point_data = 2;
+    message PointData {
+        repeated TypedValue values = 1;
+        TimeInterval time_interval = 2;
+    }
+}
+
+message LabelValue {
+    oneof value {
+        bool bool_value = 1;
+        int64 int64_value = 2;
+        string string_value = 3;
+    }
+}
+
+message QueryNotationCompletion {
+    string completion = 1;
+    int32 input_tail_truncation_length = 2;
+    bool is_partial = 3;
+    string full_completion_kind = 4;
+    IconKind icon_kind = 7;
+    string completion_pattern_label = 8;
+    int32 full_completion_count = 5;
+    QueryNotationHelpTopic help_topic = 6;
+}
+
+message QueryNotationHelpTopic {
+    TextLocator locator = 1;
+    string topic = 2;
+    string text = 3;
+}
+
+message QueryError {
+    TextLocator locator = 1;
+    string message = 2;
+}
+
+message TextLocator {
+    string source = 1;
+    
+    Position start_position = 2;
+    message Position {
+        int32 line = 1;
+        int32 column = 2;
+    }
+    
+    Position end_position = 3;
+    TextLocator nested_locator = 4;
+    string nesting_reason = 5;
+}
+
+message QueryDrilldownState {
+    string label_key = 1;
+    
+    Restriction restriction = 2;
+    message Restriction {
+        Comparator comparator = 1;
+        enum Comparator {
+            COMPARATOR_UNSPECIFIED = 0;
+            NO_COMPARATOR = 1;
+            EQUALS = 2;
+            NOT_EQUALS = 3;
+            LESS_THAN = 4;
+            GREATER_THAN = 5;
+            LESS_THAN_EQUALS = 6;
+            GREATER_THAN_EQUALS = 7;
+            REGEX_FULL_MATCH = 8;
+            NOT_REGEX_FULL_MATCH = 9;
+        }
+        
+        TypedValue value = 2;
+    }
+    
+    AggregationState aggregation = 3;
+    enum AggregationState {
+        AGGREGATION_STATE_UNSPECIFIED = 0;
+        LABEL_REMOVED = 1;
+        LABEL_RETAINED = 2;
+    }
+}
+
+message QueryOutlierState {
+    int64 num_time_series = 1;
+    
+    Direction direction = 2;
+    enum Direction {
+        DIRECTION_UNSPECIFIED = 0;
+        DIRECTION_TOP = 1;
+        DIRECTION_BOTTOM = 2;
+    }
+}
+
+message QueryTimingState {
+    protobuf.Duration graph_period = 1;
+    protobuf.Duration query_period = 4;
+    
+    oneof query_window {
+        TimeInterval absolute_window = 2;
+        RelativeTimeInterval relative_window = 3;
+    }
+    
+    message RelativeTimeInterval {
+        protobuf.Duration end_time = 1;
+        protobuf.Duration start_time = 2;
+    }
+}
+
+message QueryTransformationSpec {
+    repeated QueryDrilldownState drilldown_state = 1;
+    QueryOutlierState outlier_state = 2;
+    QueryTimingState timing_state = 3;
+}
+
+message QueryDataQuality {
+    repeated Point incomplete_regions_point = 1;
+    
+    repeated IncompleteCloudRegion incomplete_cloud_regions = 2;
+    message IncompleteCloudRegion {
+        string cloud_region = 1;
+        TimeInterval retriable_error_free_time_interval = 2;
+        repeated IncompleteReason incomplete_reasons = 3 [packed = true];
+    }
+    
+    repeated IncompletePointsPerReason incomplete_points_per_reason = 3;
+    message IncompletePointsPerReason {
+        IncompleteReason incomplete_reason = 1;
+        repeated Point incomplete_regions_point = 2;
+    }
+    
+    enum IncompleteReason {
+        INCOMPLETE_REASON_UNSPECIFIED = 0;
+        INCOMPLETE_HISTORICAL_INPUT = 1;
+    }
+}

@@ -1,0 +1,41 @@
+syntax = "proto2";
+
+package asic_sw;
+
+message U16Array {
+    repeated uint32 data = 1;
+}
+
+message U32Array {
+    repeated uint32 data = 1;
+}
+
+message U64Array {
+    repeated uint64 data = 1;
+}
+
+message ArchitecturalStateData {
+    optional uint64 first_index = 1;
+    optional uint64 offset_at_first_index = 2;
+    
+    oneof state_data {
+        bytes as_u8 = 3;
+        U16Array as_u16 = 4;
+        U32Array as_u32 = 5;
+        U64Array as_u64 = 6;
+    }
+}
+
+message ArchitecturalState {
+    optional uint32 resource_id = 1;
+    optional string name = 2;
+    repeated uint32 dimensions = 3;
+    repeated string dimension_names = 4;
+    optional bool is_destructive = 6;
+    optional uint64 element_size = 7;
+    repeated ArchitecturalStateData data = 5;
+}
+
+message ArchitecturalStateLookup {
+    map<uint32, ArchitecturalState> architectural_resources = 1;
+}

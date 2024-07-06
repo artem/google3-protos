@@ -1,0 +1,33 @@
+syntax = "proto2";
+
+package privacy.data_governance.attributes;
+
+import "privacy/data_governance/attributes/proto/classification.proto";
+import "privacy/ptoken/public/core/logical_policy.proto";
+import "privacy/ptoken/public/core/ptoken_type.proto";
+
+option java_multiple_files = true;
+option java_outer_classname = "PTokenProtoFile";
+option java_package = "com.google.privacy.datagovernance.attributes";
+
+message PToken {
+    message Storage {
+        optional string extraction_spec = 1;
+        repeated .ptoken.PTokenType.Enum types = 2 [packed = true];
+        
+        optional RowLevelProductProvenance row_level_product_provenance = 3;
+        enum RowLevelProductProvenance {
+            PROVENANCE_IN_PTOKENS_UNSPECIFIED = 0;
+            PROVENANCE_AVAILABLE_IN_PTOKENS = 1;
+            PROVENANCE_MISSING_IN_PTOKENS = 2;
+        }
+    }
+    
+    message Process {
+        repeated .ptoken.LogicalPolicy.Enum request_policy_enforcement = 1 [packed = true];
+        repeated .ptoken.LogicalPolicy.Enum request_policy_global_rampup = 2 [packed = true];
+        repeated .ptoken.LogicalPolicy.Enum request_policy_enforcement_optout = 3 [packed = true];
+        repeated .ptoken.LogicalPolicy.Enum request_policy_enforcement_optout_from_filtering = 4 [packed = true];
+        repeated .ptoken.LogicalPolicy.Enum request_policy_enforcement_discovery_opt_in = 5 [packed = true];
+    }
+}

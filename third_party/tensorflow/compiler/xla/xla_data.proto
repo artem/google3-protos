@@ -1,0 +1,423 @@
+syntax = "proto3";
+
+package xla;
+
+option cc_enable_arenas = true;
+
+message PaddingConfig {
+    repeated PaddingConfigDimension dimensions = 1;
+    message PaddingConfigDimension {
+        int64 edge_padding_low = 1;
+        int64 edge_padding_high = 2;
+        int64 interior_padding = 3;
+    }
+}
+
+message TileProto {
+    repeated int64 dimensions = 1;
+}
+
+message SplitConfigProto {
+    int64 dimension = 1;
+    repeated int64 split_indices = 2;
+}
+
+message LayoutProto {
+    repeated DimLevelType dim_level_types = 9;
+    repeated bool dim_unique = 13;
+    repeated bool dim_ordered = 14;
+    repeated int64 minor_to_major = 1;
+    repeated TileProto tiles = 6;
+    int64 tail_padding_alignment_in_elements = 16;
+    int64 element_size_in_bits = 7;
+    int64 memory_space = 8;
+    PrimitiveType index_primitive_type = 11;
+    PrimitiveType pointer_primitive_type = 12;
+    ShapeProto physical_shape = 10;
+    int64 dynamic_shape_metadata_prefix_bytes = 15;
+    repeated SplitConfigProto split_configs = 17;
+    
+    reserved 2, 3, 4, 5, "padded_dimensions", "padding_value", "format", "max_sparse_elements";
+}
+
+message ShapeProto {
+    PrimitiveType element_type = 2;
+    repeated int64 dimensions = 3;
+    repeated ShapeProto tuple_shapes = 4;
+    LayoutProto layout = 5;
+    repeated bool is_dynamic_dimension = 6;
+    
+    reserved 1, "rank";
+}
+
+message ProgramShapeProto {
+    repeated ShapeProto parameters = 1;
+    ShapeProto result = 2;
+    repeated string parameter_names = 3;
+}
+
+message ComputationStats {
+    double flop_count = 1;
+    double transcendental_count = 2;
+}
+
+message OpMetadata {
+    string op_type = 1;
+    string op_name = 2;
+    string source_file = 3;
+    int32 source_line = 4;
+    repeated ProfileType profile_type = 5 [deprecated = true];
+    int64 size_of_generated_code_in_bytes = 8;
+    int64 size_of_memory_working_set_in_bytes = 9;
+    
+    ProfileInfo profile_info = 10;
+    message ProfileInfo {
+        repeated ProfileType profile_type = 1;
+        double relative_speedup = 2;
+        ProfileSource profile_source = 3;
+        CompilationEvent compilation_event = 4;
+    }
+    
+    string deduplicated_name = 12;
+    bool preserve_layout = 13;
+    int32 stack_frame_id = 15;
+    
+    reserved 6, 7, 14, "creation_pass_id", "logical_creation_pass_id";
+}
+
+message ExecutionProfile {
+    bool compilation_cache_hit = 1;
+    int64 compile_time_ms = 2;
+    int64 compute_cycle_count = 3;
+    int64 compute_time_ns = 4;
+    int64 compute_and_transfer_time_ns = 5;
+    int64 executable_size_in_bytes = 6;
+    bool profile_cache_hit = 7;
+    bool warmup_run_executed = 8;
+}
+
+message ExecutionHandle {
+    int64 handle = 1;
+}
+
+message GlobalDataHandle {
+    int64 handle = 1;
+}
+
+message DeviceHandle {
+    int64 handle = 1;
+    int64 device_count = 2;
+}
+
+message ChannelHandle {
+    int64 handle = 1;
+    
+    ChannelType type = 2;
+    enum ChannelType {
+        CHANNEL_TYPE_INVALID = 0;
+        DEVICE_TO_DEVICE = 1;
+        DEVICE_TO_HOST = 2;
+        HOST_TO_DEVICE = 3;
+    }
+}
+
+message DeviceAssignmentProto {
+    int32 replica_count = 1;
+    int32 computation_count = 2;
+    
+    repeated ComputationDevice computation_devices = 3;
+    message ComputationDevice {
+        repeated int64 replica_device_ids = 1;
+    }
+}
+
+message LiteralProto {
+    ShapeProto shape = 1;
+    repeated bool preds = 2;
+    bytes s2s = 26;
+    bytes s4s = 21;
+    bytes s8s = 15;
+    bytes u2s = 27;
+    bytes u4s = 22;
+    bytes u8s = 3;
+    repeated int32 s32s = 4;
+    repeated int64 s64s = 5;
+    repeated uint32 u32s = 6;
+    repeated uint64 u64s = 7;
+    repeated float f32s = 8;
+    repeated double f64s = 9;
+    repeated float c64s = 12;
+    repeated double c128s = 18;
+    repeated LiteralProto tuple_literals = 10;
+    bytes f16s = 11;
+    bytes bf16s = 13;
+    bytes u16s = 16;
+    bytes s16s = 17;
+    bytes f8e5m2s = 19;
+    bytes f8e4m3fns = 20;
+    bytes f8e4m3b11fnuzs = 23;
+    bytes f8e5m2fnuzs = 24;
+    bytes f8e4m3fnuzs = 25;
+    repeated int64 sparse_indices = 14;
+}
+
+message WindowDimension {
+    int64 size = 1;
+    int64 stride = 2;
+    int64 padding_low = 3;
+    int64 padding_high = 4;
+    int64 window_dilation = 5;
+    int64 base_dilation = 6;
+    bool window_reversal = 7;
+}
+
+message Window {
+    repeated WindowDimension dimensions = 1;
+}
+
+message GatherDimensionNumbers {
+    repeated int64 offset_dims = 1;
+    repeated int64 collapsed_slice_dims = 2;
+    repeated int64 start_index_map = 3;
+    int64 index_vector_dim = 4;
+}
+
+message ScatterDimensionNumbers {
+    repeated int64 update_window_dims = 1;
+    repeated int64 inserted_window_dims = 2;
+    repeated int64 scatter_dims_to_operand_dims = 3;
+    int64 index_vector_dim = 4;
+}
+
+message ConvolutionDimensionNumbers {
+    int64 input_batch_dimension = 7;
+    int64 input_feature_dimension = 8;
+    repeated int64 input_spatial_dimensions = 11;
+    int64 kernel_input_feature_dimension = 3;
+    int64 kernel_output_feature_dimension = 4;
+    repeated int64 kernel_spatial_dimensions = 6;
+    int64 output_batch_dimension = 9;
+    int64 output_feature_dimension = 10;
+    repeated int64 output_spatial_dimensions = 12;
+}
+
+message DotDimensionNumbers {
+    repeated int64 lhs_contracting_dimensions = 1;
+    repeated int64 rhs_contracting_dimensions = 2;
+    repeated int64 lhs_batch_dimensions = 3;
+    repeated int64 rhs_batch_dimensions = 4;
+}
+
+message SparsityDescriptor {
+    SparsityType type = 1;
+    int32 index = 2;
+    int32 dimension = 3;
+    int32 n = 4;
+    int32 m = 5;
+}
+
+message TriangularSolveOptions {
+    bool left_side = 1;
+    bool lower = 2;
+    bool unit_diagonal = 3;
+    
+    Transpose transpose_a = 4;
+    enum Transpose {
+        TRANSPOSE_INVALID = 0;
+        NO_TRANSPOSE = 1;
+        TRANSPOSE = 2;
+        ADJOINT = 3;
+    }
+}
+
+message CholeskyOptions {
+    bool lower = 1;
+}
+
+message SortOptions {
+    bool descending = 1;
+}
+
+message FrontendAttributes {
+    map<string, string> map = 1;
+}
+
+message Statistic {
+    string stat_name = 1;
+    double stat_val = 2;
+}
+
+message StatisticsViz {
+    int64 stat_index_to_visualize = 1;
+    repeated Statistic statistics = 2;
+}
+
+message OpSharding {
+    Type type = 1;
+    enum Type {
+        REPLICATED = 0;
+        MAXIMAL = 1;
+        TUPLE = 2;
+        OTHER = 3;
+        MANUAL = 4;
+        UNKNOWN = 5;
+    }
+    
+    ShapeProto tile_shape = 2;
+    repeated int64 tile_assignment_dimensions = 3;
+    repeated int64 tile_assignment_devices = 4;
+    repeated OpSharding tuple_shardings = 5;
+    bool replicate_on_last_tile_dim = 6;
+    repeated OpMetadata metadata = 7;
+    repeated Type last_tile_dims = 8;
+    repeated int64 iota_reshape_dims = 9;
+    repeated int32 iota_transpose_perm = 10;
+    bool is_shard_group = 11;
+    int64 shard_group_id = 12;
+    
+    ShardGroupType shard_group_type = 13;
+    enum ShardGroupType {
+        AS = 0;
+        LIKE = 1;
+    }
+}
+
+message ReplicaGroup {
+    repeated int64 replica_ids = 1;
+}
+
+message SourceTarget {
+    int64 source = 1;
+    int64 target = 2;
+}
+
+message PrecisionConfig {
+    repeated Precision operand_precision = 1;
+    enum Precision {
+        DEFAULT = 0;
+        HIGH = 1;
+        HIGHEST = 2;
+        PACKED_NIBBLE = 3;
+    }
+    
+    Algorithm algorithm = 2;
+    enum Algorithm {
+        ALG_UNSET = 0;
+        ALG_DOT_ANY_F8_ANY_F8_F32 = 1;
+        ALG_DOT_ANY_F8_ANY_F8_F32_FAST_ACCUM = 2;
+        ALG_DOT_F16_F16_F16 = 3;
+        ALG_DOT_F16_F16_F32 = 4;
+        ALG_DOT_BF16_BF16_BF16 = 5;
+        ALG_DOT_BF16_BF16_F32 = 6;
+        ALG_DOT_BF16_BF16_F32_X3 = 7;
+        ALG_DOT_BF16_BF16_F32_X6 = 8;
+        ALG_DOT_TF32_TF32_F32 = 9;
+        ALG_DOT_TF32_TF32_F32_X3 = 10;
+        ALG_DOT_F32_F32_F32 = 11;
+        ALG_DOT_F64_F64_F64 = 12;
+    }
+}
+
+message ParameterReplication {
+    repeated bool replicated_at_leaf_buffers = 1;
+}
+
+message WhileLoopBackendConfig {
+    KnownTripCount known_trip_count = 1;
+    message KnownTripCount {
+        int64 n = 1;
+    }
+}
+
+message OutputOperandAliasing {
+    repeated int64 output_sha26a136ac = 1;
+    int64 operand_index = 2;
+    repeated int64 operand_sha26a136ac = 3;
+}
+
+enum PrimitiveType {
+    PRIMITIVE_TYPE_INVALID = 0;
+    PRED = 1;
+    S2 = 26;
+    S4 = 21;
+    S8 = 2;
+    S16 = 3;
+    S32 = 4;
+    S64 = 5;
+    U2 = 27;
+    U4 = 22;
+    U8 = 6;
+    U16 = 7;
+    U32 = 8;
+    U64 = 9;
+    F16 = 10;
+    F32 = 11;
+    BF16 = 16;
+    F64 = 12;
+    F8E5M2 = 19;
+    F8E4M3FN = 20;
+    F8E4M3B11FNUZ = 23;
+    F8E5M2FNUZ = 24;
+    F8E4M3FNUZ = 25;
+    C64 = 15;
+    C128 = 18;
+    TUPLE = 13;
+    OPAQUE_TYPE = 14;
+    TOKEN = 17;
+}
+
+enum DimLevelType {
+    DIM_DENSE = 0;
+    DIM_COMPRESSED = 1;
+    DIM_SINGLETON = 2;
+    DIM_LOOSE_COMPRESSED = 3;
+}
+
+enum ProfileType {
+    INVALID = 0;
+    WINDOW = 1;
+    FLAG = 2;
+    INTEGER = 3;
+}
+
+enum ProfileSource {
+    PROFILE_SOURCE_UNKNOWN_SOURCE = 0;
+    PROFILE_SOURCE_EMBEDDED = 1;
+    PROFILE_SOURCE_REMOTE = 2;
+}
+
+enum CompilationEvent {
+    COMPILATION_EVENT_UNKNOWN_EVENT = 0;
+    COMPILATION_EVENT_FIRST_COMPILATION = 1;
+    COMPILATION_EVENT_RECOMPILATION = 2;
+}
+
+enum PaddingType {
+    PADDING_INVALID = 0;
+    PADDING_VALID = 1;
+    PADDING_SAME = 2;
+}
+
+enum FftType {
+    FFT = 0;
+    IFFT = 1;
+    RFFT = 2;
+    IRFFT = 3;
+}
+
+enum SparsityType {
+    SPARSITY_INVALID = 0;
+    SPARSITY_STRUCTURED_N_M = 1;
+}
+
+enum RandomDistribution {
+    RNG_INVALID = 0;
+    RNG_UNIFORM = 1;
+    RNG_NORMAL = 2;
+}
+
+enum RandomAlgorithm {
+    RNG_DEFAULT = 0;
+    RNG_THREE_FRY = 1;
+    RNG_PHILOX = 2;
+}

@@ -1,0 +1,22 @@
+syntax = "proto3";
+
+package google.rpc.context;
+
+import "google/protobuf/timestamp.proto";
+
+option objc_class_prefix = "RPC";
+option cc_enable_arenas = true;
+option java_multiple_files = true;
+option java_outer_classname = "ProjectContextProto";
+option java_package = "com.google.rpc.context";
+
+message ProjectContext {
+    uint64 project_number = 1;
+    string project_id = 3;
+    map<string, ProjectProperty> properties = 2;
+    protobuf.Timestamp read_time = 4;
+}
+
+message ProjectProperty {
+    repeated string values = 1;
+}

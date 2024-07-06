@@ -1,0 +1,21 @@
+syntax = "proto3";
+
+package google.api.servicecontrol.v1;
+
+import "google/api/visibility.proto";
+import "google/rpc/context/project_context.proto";
+import "google/rpc/context/visibility_context.proto";
+
+option ruby_package = "Google::Cloud::ServiceControl::V1";
+option php_namespace = "Google\\Cloud\\ServiceControl\\V1";
+option csharp_namespace = "Google.Cloud.ServiceControl.V1";
+option cc_enable_arenas = true;
+option java_multiple_files = true;
+option java_outer_classname = "ProjectSettingsProto";
+option java_package = "com.google.api.servicecontrol.v1";
+
+message ProjectSettings {
+    rpc.context.ProjectContext project_properties = 1;
+    rpc.context.VisibilityContext visibility = 2;
+    bytes spatula_extra = 3;
+}

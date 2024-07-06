@@ -1,0 +1,59 @@
+syntax = "proto3";
+
+package tensorflow;
+
+import "third_party/tensorflow/core/framework/attr_value.proto";
+
+option cc_enable_arenas = true;
+option go_package = "github.com/tensorflow/tensorflow/tensorflow/go/core/framework/api_def_go_proto";
+option java_multiple_files = true;
+option java_outer_classname = "ApiDefProtos";
+option java_package = "org.tensorflow.framework";
+
+message ApiDef {
+    string graph_op_name = 1;
+    string deprecation_message = 12;
+    int32 deprecation_version = 13;
+    
+    Visibility visibility = 2;
+    enum Visibility {
+        DEFAULT_VISIBILITY = 0;
+        VISIBLE = 1;
+        SKIP = 2;
+        HIDDEN = 3;
+    }
+    
+    repeated Endpoint endpoint = 3;
+    message Endpoint {
+        string name = 1;
+        bool deprecated = 3;
+        int32 deprecation_version = 4;
+    }
+    
+    repeated Arg in_arg = 4;
+    message Arg {
+        string name = 1;
+        string rename_to = 2;
+        string description = 3;
+    }
+    
+    repeated Arg out_arg = 5;
+    repeated string arg_order = 11;
+    
+    repeated Attr attr = 6;
+    message Attr {
+        string name = 1;
+        string rename_to = 2;
+        AttrValue default_value = 3;
+        string description = 4;
+    }
+    
+    string summary = 7;
+    string description = 8;
+    string description_prefix = 9;
+    string description_suffix = 10;
+}
+
+message ApiDefs {
+    repeated ApiDef op = 1;
+}

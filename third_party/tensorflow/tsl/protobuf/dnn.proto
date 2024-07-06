@@ -1,0 +1,139 @@
+syntax = "proto3";
+
+package stream_executor.dnn;
+
+import "google/protobuf/wrappers.proto";
+
+option go_package = "github.com/google/tsl/tsl/go/stream_executor";
+
+message TensorDescriptorProto {
+    repeated int64 dimensions = 1;
+    DataType data_type = 2;
+    
+    oneof layout_oneof {
+        DataLayout data_layout = 3;
+        FilterLayout filter_layout = 4;
+    }
+}
+
+message AlgorithmProto {
+    int64 algo_id = 1;
+    
+    MathType math_type = 2;
+    enum MathType {
+        DEFAULT_MATH = 0;
+        TENSOR_OP_MATH = 1;
+    }
+    
+    map<int64, int64> tuning_knobs = 4;
+    bool is_cudnn_frontend = 5;
+    google.protobuf.UInt64Value workspace_size = 6;
+    
+    reserved 3;
+}
+
+message AlgorithmConfigProto {
+    oneof optional_algorithm {
+        AlgorithmProto algorithm = 1;
+    }
+    
+    oneof optional_algorithm_no_scratch {
+        AlgorithmProto algorithm_no_scratch = 2;
+    }
+    
+    oneof optional_scratch_size {
+        int64 scratch_size = 3;
+    }
+}
+
+message ConvolutionDescriptorProto {
+    repeated int64 paddings = 1;
+    repeated int64 strides = 2;
+    repeated int64 dilations = 3;
+    DataType compute_mode = 4;
+    int32 group_count = 5;
+    ConvolutionMode convolution_mode = 6;
+    string name = 7;
+}
+
+enum DataType {
+    kFloat = 0;
+    kDouble = 1;
+    kHalf = 2;
+    kInt8 = 3;
+    kInt32 = 4;
+    kComplexFloat = 5;
+    kComplexDouble = 6;
+    kBF16 = 7;
+    kF8E5M2 = 8;
+    kF8E4M3FN = 9;
+    kF8E5M2FNUZ = 10;
+    kF8E4M3FNUZ = 11;
+    kInt64 = 12;
+}
+
+enum DataLayout {
+    kYXDepthBatch = 0;
+    kYXBatchDepth = 1;
+    kBatchYXDepth = 2;
+    kBatchDepthYX = 3;
+    kBatchDepthYX4 = 4;
+    kBatchDepthYX32 = 5;
+}
+
+enum FilterLayout {
+    kOutputInputYX = 0;
+    kOutputYXInput = 1;
+    kOutputInputYX4 = 2;
+    kOutputInputYX32 = 5;
+    kOutputInputYX32_CudnnReordered = 6;
+    kInputYXOutput = 3;
+    kYXInputOutput = 4;
+}
+
+enum ActivationMode {
+    kNone = 0;
+    kSigmoid = 1;
+    kRelu = 2;
+    kRelu6 = 3;
+    kReluX = 4;
+    kTanh = 5;
+    kBandPass = 6;
+    kElu = 7;
+    kLeakyRelu = 8;
+    kGeluExact = 9;
+}
+
+enum ConvolutionMode {
+    CROSS_CORRELATION = 0;
+    CONVOLUTION = 1;
+}
+
+enum ConvolutionKind {
+    INVALID = 0;
+    FORWARD = 1;
+    BACKWARD_FILTER = 2;
+    BACKWARD_DATA = 3;
+    FORWARD_BIAS_ACTIVATION = 4;
+    FORWARD_GRAPH = 5;
+}
+
+enum NormKind {
+    LAYER_FWD_INFER = 0;
+    LAYER_FWD_TRAIN = 1;
+    LAYER_BWD = 2;
+}
+
+enum FusedMHAKind {
+    BMM1_OUTPUT_UNKNOWN = 0;
+    BMM1_OUTPUT_INPUT_TYPE = 1;
+    BMM1_OUTPUT_FLOAT = 2;
+}
+
+enum FMHAMaskKind {
+    NO_MASK = 0;
+    PADDING = 1;
+    CAUSAL = 2;
+    PADDING_CAUSAL = 3;
+    ALIBI = 4;
+}

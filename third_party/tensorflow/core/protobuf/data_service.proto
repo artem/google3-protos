@@ -1,0 +1,47 @@
+syntax = "proto3";
+
+package tensorflow.data;
+
+option go_package = "github.com/tensorflow/tensorflow/tensorflow/go/core/protobuf/for_core_protos_go_proto";
+
+message ProcessingModeDef {
+    ShardingPolicy sharding_policy = 1;
+    enum ShardingPolicy {
+        OFF = 0;
+        DYNAMIC = 1;
+        FILE = 2;
+        DATA = 3;
+        FILE_OR_DATA = 4;
+        HINT = 5;
+    }
+}
+
+message DataServiceMetadata {
+    Compression compression = 2;
+    enum Compression {
+        COMPRESSION_UNSPECIFIED = 0;
+        COMPRESSION_OFF = 1;
+        COMPRESSION_SNAPPY = 2;
+    }
+    
+    int64 cardinality = 3;
+    
+    oneof optional_element_spec {
+        bytes element_spec = 1;
+    }
+}
+
+message CrossTrainerCacheOptions {
+    string trainer_id = 1;
+}
+
+message DataServiceConfig {
+    DeploymentMode deployment_mode = 1;
+}
+
+enum DeploymentMode {
+    DEPLOYMENT_MODE_UNSPECIFIED = 0;
+    DEPLOYMENT_MODE_COLOCATED = 1;
+    DEPLOYMENT_MODE_REMOTE = 2;
+    DEPLOYMENT_MODE_HYBRID = 3;
+}

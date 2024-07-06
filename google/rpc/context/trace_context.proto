@@ -1,0 +1,23 @@
+syntax = "proto3";
+
+package google.rpc.context;
+
+option objc_class_prefix = "RPC";
+option cc_enable_arenas = true;
+option java_multiple_files = true;
+option java_outer_classname = "TraceContextProto";
+option java_package = "com.google.rpc.context";
+
+message TraceContext {
+    string trace_context = 2;
+    string trace_id = 3;
+    TraceMessage trace_messages = 4;
+    
+    reserved 1;
+}
+
+message TraceMessage {
+    repeated string messages = 1;
+    int64 start_time = 2;
+    int64 end_time = 3;
+}

@@ -1,0 +1,52 @@
+syntax = "proto3";
+
+package google.monitoring.v3;
+
+import "storage/datapol/annotations/proto/semantic_annotations.proto";
+
+option ruby_package = "Google::Cloud::Monitoring::V3";
+option php_namespace = "Google\\Cloud\\Monitoring\\V3";
+option csharp_namespace = "Google.Cloud.Monitoring.V3";
+option go_package = "cloud.google.com/go/monitoring/apiv3/v2/monitoringpb;monitoringpb";
+option java_multiple_files = true;
+option java_outer_classname = "DashboardAnnotationsProto";
+option java_package = "com.google.monitoring.v3";
+
+message DashboardAnnotations {
+    repeated string default_resource_names = 1;
+    repeated EventAnnotation event_annotations = 2;
+}
+
+message EventAnnotation {
+    string display_name = 1;
+    
+    EventType event_type = 2;
+    enum EventType {
+        EVENT_TYPE_UNSPECIFIED = 0;
+        GKE_WORKLOAD_DEPLOYMENT = 1;
+        GKE_POD_CRASH = 2;
+        GKE_POD_UNSCHEDULABLE = 3;
+        GKE_CONTAINER_CREATION_FAILED = 4;
+        GKE_CLUSTER_CREATE_DELETE = 5;
+        GKE_CLUSTER_UPDATE = 6;
+        GKE_NODE_POOL_UPDATE = 7;
+        GKE_CLUSTER_AUTOSCALER = 8;
+        GKE_POD_AUTOSCALER = 9;
+        VM_TERMINATION = 10;
+        VM_GUEST_OS_ERROR = 11;
+        VM_START_FAILED = 12;
+        MIG_UPDATE = 13;
+        MIG_AUTOSCALER = 14;
+        CLOUD_RUN_DEPLOYMENT = 15;
+        CLOUD_SQL_FAILOVER = 16;
+        CLOUD_SQL_START_STOP = 17;
+        CLOUD_SQL_STORAGE = 18;
+        UPTIME_CHECK_FAILURE = 19;
+        CLOUD_ALERTING_ALERT = 22;
+        SERVICE_HEALTH_INCIDENT = 23;
+    }
+    
+    string filter = 3;
+    bool enabled = 4;
+    repeated string resource_names = 5;
+}

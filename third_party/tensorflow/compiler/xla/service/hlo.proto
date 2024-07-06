@@ -1,0 +1,326 @@
+syntax = "proto3";
+
+package xla;
+
+import "google/protobuf/any.proto";
+import "third_party/tensorflow/compiler/xla/xla_data.proto";
+
+option cc_enable_arenas = true;
+
+message HloInstructionProto {
+    string name = 1;
+    string opcode = 2;
+    ShapeProto shape = 3;
+    OpMetadata metadata = 7;
+    LiteralProto literal = 8;
+    int64 parameter_number = 9;
+    string fusion_kind = 11;
+    int64 tuple_index = 13;
+    repeated int64 dimensions = 14;
+    Window window = 15;
+    ConvolutionDimensionNumbers convolution_dimension_numbers = 16;
+    int64 feature_group_count = 50;
+    int64 batch_group_count = 58;
+    
+    repeated SliceDimensions slice_dimensions = 17;
+    message SliceDimensions {
+        int64 start = 1;
+        int64 limit = 2;
+        int64 stride = 3;
+    }
+    
+    int32 exponent_bits = 18;
+    int32 mantissa_bits = 19;
+    repeated int64 dynamic_slice_sizes = 20;
+    PaddingConfig padding_config = 21;
+    bytes outfeed_config = 22;
+    RandomDistribution distribution = 23;
+    float epsilon = 24;
+    int64 feature_index = 25;
+    int64 channel_id = 26;
+    bytes infeed_config = 27;
+    string custom_call_target = 28;
+    ShapeProto outfeed_shape = 29;
+    DotDimensionNumbers dot_dimension_numbers = 30;
+    FftType fft_type = 31;
+    repeated int64 fft_length = 32;
+    string comparison_direction = 63;
+    GatherDimensionNumbers gather_dimension_numbers = 33;
+    repeated int64 gather_slice_sizes = 34;
+    int64 id = 35;
+    repeated int64 operand_ids = 36;
+    repeated int64 control_predecessor_ids = 37;
+    repeated int64 called_computation_ids = 38;
+    OpSharding sharding = 40;
+    bytes backend_config = 43;
+    repeated ReplicaGroup replica_groups = 49;
+    int64 all_reduce_id = 45 [deprecated = true];
+    bool use_global_device_ids = 71;
+    bool is_host_transfer = 47;
+    bool is_stable = 60;
+    ScatterDimensionNumbers scatter_dimension_numbers = 48;
+    PrecisionConfig precision_config = 51;
+    repeated SourceTarget source_target_pairs = 52;
+    OpSharding domain_entry_sharding = 54;
+    OpSharding domain_exit_sharding = 55;
+    bool constrain_layout = 56;
+    repeated ShapeProto operand_shapes_with_layout = 57;
+    TriangularSolveOptions triangular_solve_options = 59;
+    CholeskyOptions cholesky_options = 62;
+    ParameterReplication parameter_replication = 61;
+    bool custom_call_has_side_effect = 65;
+    repeated OutputOperandAliasing output_operand_aliasing = 74;
+    CustomCallSchedule custom_call_schedule = 76;
+    int64 delta = 66;
+    bool indices_are_sorted = 67;
+    FrontendAttributes frontend_attributes = 68;
+    bool unique_indices = 69;
+    RandomAlgorithm rng_algorithm = 70;
+    string comparison_type = 72;
+    bool is_cross_program_prefetch = 73 [deprecated = true];
+    PaddingType padding_type = 75;
+    CustomCallApiVersion custom_call_api_version = 77;
+    string async_execution_thread = 79;
+    int64 k = 81;
+    bool largest = 85;
+    StatisticsViz statistics_viz = 82;
+    repeated SparsityDescriptor dot_sparsity = 86;
+    
+    oneof optional_cross_program_prefetch_index {
+        int32 cross_program_prefetch_index = 80;
+    }
+    
+    reserved 10, 12, 4, 5, 6, 44, 53, 46, 41, 42, 64, 78, 83, 84, "parameter_name", "fused_instructions_computation", "operand_names", "control_predecessor_names", "called_computation_names", "replica_group_ids", "custom_call_opaque", "all_reduce_barrier";
+}
+
+message HloComputationProto {
+    string name = 1;
+    repeated HloInstructionProto instructions = 2;
+    ProgramShapeProto program_shape = 4;
+    int64 id = 5;
+    int64 root_id = 6;
+    bool is_fusion_computation = 7;
+    string execution_thread = 8;
+    
+    reserved 3, "root_name";
+}
+
+message HloScheduleProto {
+    map<int64, InstructionSequence> sequences = 1;
+    
+    message InstructionSequence {
+        repeated int64 instruction_ids = 1;
+    }
+}
+
+message HloInputOutputAliasProto {
+    repeated AliasEntryProto entries = 1;
+    message AliasEntryProto {
+        repeated int64 output_sha26a136ac = 1;
+        int64 parameter_number = 2;
+        repeated int64 parameter_sha26a136ac = 3;
+        Kind kind = 4;
+    }
+}
+
+message HloBufferDonorProto {
+    repeated BufferDonorEntryProto entries = 1;
+    message BufferDonorEntryProto {
+        int64 parameter_number = 1;
+        repeated int64 parameter_sha26a136ac = 2;
+    }
+}
+
+message CrossProgramPrefetch {
+    int64 parameter = 1;
+    repeated int64 index = 2;
+    int64 offset = 3;
+}
+
+message StackFrameIndexProto {
+    repeated string file_names = 1;
+    repeated string function_names = 2;
+    
+    repeated FileLocation file_locations = 3;
+    message FileLocation {
+        int32 file_name_id = 1;
+        int32 function_name_id = 2;
+        int32 line = 3;
+        int32 column = 4;
+    }
+    
+    repeated StackFrame stack_frames = 4;
+    message StackFrame {
+        int32 file_location_id = 1;
+        int32 parent_frame_id = 2;
+    }
+}
+
+message HloModuleProto {
+    string name = 1;
+    string entry_computation_name = 2;
+    int64 entry_computation_id = 6;
+    repeated HloComputationProto computations = 3;
+    ProgramShapeProto host_program_shape = 4;
+    int64 id = 5;
+    HloScheduleProto schedule = 7;
+    HloInputOutputAliasProto input_output_alias = 8;
+    HloBufferDonorProto buffer_donor = 18;
+    repeated CrossProgramPrefetch cross_program_prefetches = 10;
+    bool is_dynamic = 11;
+    OpSharding spmd_output_sharding = 12;
+    repeated OpSharding spmd_parameters_shardings = 14;
+    bool use_auto_spmd_partitioning = 16;
+    
+    repeated ProfileInfo profile_info = 13;
+    message ProfileInfo {
+        ProfileType profile_type = 1;
+        double relative_speedup = 2;
+        ProfileSource profile_source = 3;
+        CompilationEvent compilation_event = 4;
+        string fingerprint = 5;
+    }
+    
+    DeviceAssignmentProto device_assignment = 15;
+    StackFrameIndexProto stack_frame_index = 17;
+    FrontendAttributes frontend_attributes = 19;
+    
+    reserved 9, "dynamic_parameter_binding";
+    
+    enum ProfileType {
+        INVALID = 0;
+        FLAG = 1;
+        FUSION = 2;
+        LAYOUT = 3;
+        DOT = 4;
+    }
+}
+
+message LogicalBufferProto {
+    int64 id = 1;
+    int64 size = 2;
+    
+    Location defined_at = 3;
+    message Location {
+        string instruction_name = 2 [deprecated = true];
+        int64 instruction_id = 4;
+        repeated int64 sha26a136ac = 3;
+        
+        reserved 1;
+    }
+    
+    int64 color = 4;
+}
+
+message BufferAllocationProto {
+    int64 index = 1;
+    int64 size = 2;
+    bool is_thread_local = 3;
+    bool is_tuple = 11;
+    bool is_entry_computation_parameter = 5;
+    bool is_constant = 12;
+    int64 parameter_number = 6;
+    repeated int64 parameter_sha26a136ac = 10;
+    bool maybe_live_out = 7;
+    int64 color = 8;
+    
+    repeated Assigned assigned = 9;
+    message Assigned {
+        int64 logical_buffer_id = 1;
+        int64 offset = 2;
+        int64 size = 3;
+    }
+}
+
+message HeapSimulatorTrace {
+    repeated Event events = 1;
+    message Event {
+        Kind kind = 1;
+        enum Kind {
+            ALLOC = 0;
+            FREE = 1;
+            SHARE_WITH = 2;
+        }
+        
+        int64 buffer_id = 2;
+        string computation_name = 3;
+        string instruction_name = 4;
+        int64 share_with_canonical_id = 5;
+    }
+    
+    bool whole_module_simulation = 2;
+    int64 buffer_allocation_index = 3;
+}
+
+message HloModuleGroupProto {
+    string name = 1;
+    repeated HloModuleProto hlo_modules = 2;
+}
+
+message BufferAssignmentProto {
+    repeated LogicalBufferProto logical_buffers = 1;
+    
+    repeated BufferAlias buffer_aliases = 2;
+    message BufferAlias {
+        int64 source_buffer_id = 1;
+        LogicalBufferProto.Location location = 2;
+    }
+    
+    repeated BufferAllocationProto buffer_allocations = 3;
+    repeated HeapSimulatorTrace heap_simulator_traces = 4;
+}
+
+message HloProto {
+    HloModuleProto hlo_module = 1;
+    BufferAssignmentProto buffer_assignment = 3;
+    
+    reserved 2, "hlo_ordering";
+}
+
+message HloSnapshot {
+    HloProto hlo = 1;
+    repeated LiteralProto arguments = 2;
+    LiteralProto result = 3;
+    string execution_platform = 4;
+}
+
+message HloModuleMetadataProto {
+    int64 canonical_module_id = 1;
+    string module_group_name = 2;
+    int64 original_module_id = 3;
+    repeated int64 partitioned_module_ids = 4;
+    repeated HloPassMetadata pass_metadata = 5;
+}
+
+message HloPassMetadata {
+    int64 pass_id = 1;
+    string pass_name = 2;
+    string pipeline_name = 3;
+    repeated string dump_filenames = 4;
+    bool module_changed = 5;
+    int64 module_id = 6;
+    repeated int64 module_group_module_ids = 7;
+    int64 start_timestamp_usec = 8;
+    int64 end_timestamp_usec = 9;
+    google.protobuf.Any custom_metadata = 10;
+}
+
+enum CustomCallSchedule {
+    SCHEDULE_NONE = 0;
+    SCHEDULE_LATEST = 1;
+    SCHEDULE_EARLIEST = 2;
+}
+
+enum CustomCallApiVersion {
+    API_VERSION_UNSPECIFIED = 0;
+    API_VERSION_ORIGINAL = 1;
+    API_VERSION_STATUS_RETURNING = 2;
+    API_VERSION_STATUS_RETURNING_UNIFIED = 3;
+    API_VERSION_TYPED_FFI = 4;
+}
+
+enum Kind {
+    UNDEFINED_ALIAS = 0;
+    MAY_ALIAS = 1;
+    MUST_ALIAS = 2;
+}

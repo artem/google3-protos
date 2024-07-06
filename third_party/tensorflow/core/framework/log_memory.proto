@@ -1,0 +1,51 @@
+syntax = "proto3";
+
+package tensorflow;
+
+import "third_party/tensorflow/core/framework/tensor_description.proto";
+
+option cc_enable_arenas = true;
+option go_package = "github.com/tensorflow/tensorflow/tensorflow/go/core/framework/log_memory_go_proto";
+option java_multiple_files = true;
+option java_outer_classname = "LogMemoryProtos";
+option java_package = "org.tensorflow.framework";
+
+message MemoryLogStep {
+    int64 step_id = 1;
+    string handle = 2;
+}
+
+message MemoryLogTensorAllocation {
+    int64 step_id = 1;
+    string kernel_name = 2;
+    TensorDescription tensor = 3;
+}
+
+message MemoryLogTensorDeallocation {
+    int64 allocation_id = 1;
+    string allocator_name = 2;
+}
+
+message MemoryLogTensorOutput {
+    int64 step_id = 1;
+    string kernel_name = 2;
+    int32 index = 3;
+    TensorDescription tensor = 4;
+}
+
+message MemoryLogRawAllocation {
+    int64 step_id = 1;
+    string operation = 2;
+    int64 num_bytes = 3;
+    uint64 ptr = 4;
+    int64 allocation_id = 5;
+    string allocator_name = 6;
+}
+
+message MemoryLogRawDeallocation {
+    int64 step_id = 1;
+    string operation = 2;
+    int64 allocation_id = 3;
+    string allocator_name = 4;
+    bool deferred = 5;
+}

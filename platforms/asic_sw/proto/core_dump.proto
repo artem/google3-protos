@@ -1,0 +1,12 @@
+syntax = "proto2";
+
+package asic_sw.proto;
+
+import "platforms/asic_sw/proto/chip_location.proto";
+
+option optimize_for = CODE_SIZE;
+
+message ChipCoreDump {
+    optional ChipLocation location = 1;
+    optional bytes core_dump_recordio = 2;
+}

@@ -1,0 +1,134 @@
+syntax = "proto3";
+
+package google.api;
+
+import "google/protobuf/wrappers.proto";
+import "net/proto2/proto/descriptor.proto";
+
+option objc_class_prefix = "GAPI";
+option go_package = "google.golang.org/genproto/googleapis/api/serviceconfig;serviceconfig";
+option java_multiple_files = true;
+option java_outer_classname = "TexProto";
+option java_package = "com.google.api";
+
+message Tex {
+    BackendProtoTranslation backend_proto_translation = 1;
+    repeated ParameterRule parameters = 2 [deprecated = true];
+    ETag etag = 3;
+    repeated StrictParsingRule strict_parsing_rules = 4;
+    repeated TemplateSource template_sources = 900;
+    proto2.FileDescriptorSet frontend_proto_descriptors = 901;
+    proto2.FileDescriptorSet backend_proto_descriptors = 902;
+}
+
+message StrictParsingRule {
+    string selector = 1;
+    repeated StrictParsingChecks strict_parsing_checks = 2;
+    bool hide_merge_conflict_values = 3;
+    bool resolve_multiple_values_for_singular_fields = 4 [deprecated = true];
+}
+
+message ParameterRule {
+    string selector = 1;
+    repeated Parameter parameters = 2;
+}
+
+message Parameter {
+    string path = 1;
+    bool required = 2;
+    protobuf.Int64Value max_value = 6;
+    protobuf.Int64Value min_value = 7;
+    string pattern = 5;
+    bool repeated = 8;
+    protobuf.StringValue default_value = 9;
+    ParameterType type = 10;
+    
+    reserved 3, 4;
+}
+
+message TemplateSource {
+    string path = 1;
+    string content = 2;
+}
+
+message BackendProtoTranslation {
+    repeated TemplateReference templates = 1;
+    repeated BackendProtoTranslationRule rules = 2;
+}
+
+message TemplateReference {
+    string name = 1;
+    map<string, TemplateInfo> info = 2;
+}
+
+message TemplateInfo {
+    string path = 1;
+    
+    AssignmentDirection assignment_direction = 2;
+    enum AssignmentDirection {
+        ASSIGNMENT_DIRECTION_UNSPECIFIED = 0;
+        BACKEND_TO_FRONTEND = 1;
+        FRONTEND_TO_BACKEND = 2;
+    }
+}
+
+message BackendProtoTranslationRule {
+    string selector = 1;
+    repeated TemplateInvocation request_templates = 2;
+    repeated TemplateInvocation response_templates = 4;
+    bool enable_partial_response = 6;
+    
+    reserved 5;
+}
+
+message TemplateInvocation {
+    string template = 1;
+    repeated string args = 2;
+    string output = 3;
+}
+
+message ETag {
+    repeated ETagRule rules = 2;
+}
+
+message ETagRule {
+    string selector = 1;
+    bool enabled = 2;
+    string source_field = 3;
+    
+    ETagFormat etag_format = 4;
+    enum ETagFormat {
+        UNSPECIFIED = 0;
+        CONFIG_AND_RESOURCE = 1;
+        RESOURCE_ONLY = 2;
+        QUOTED_RESOURCE_ONLY = 3;
+        AUTO_RESOURCE_ONLY = 4;
+    }
+    
+    bool suppress_header = 5;
+    bool pass_star_to_backend = 6;
+    bool use_body_resource_etag = 7;
+}
+
+enum StrictParsingChecks {
+    STRICT_PARSING_CHECKS_UNSPECIFIED = 0;
+    UNKNOWN_NAME = 1;
+    INVALID_VALUE = 2;
+    MISSING_FIELD = 3;
+}
+
+enum ParameterType {
+    PARAMETER_TYPE_UNSPECIFIED = 0;
+    STRING = 1;
+    BOOLEAN = 2;
+    INT32 = 3;
+    INT64 = 4;
+    UINT32 = 5;
+    UINT64 = 6;
+    FLOAT = 7;
+    DOUBLE = 8;
+    BYTES = 9;
+    DATETIME = 10;
+    DATE = 11;
+    ETAG = 12;
+}

@@ -1,0 +1,161 @@
+syntax = "proto3";
+
+package google.api.servicecontrol.v1;
+
+import "google/api/annotations.proto";
+import "google/api/authz.proto";
+import "google/api/servicecontrol/v1/metric_value.proto";
+import "google/api/visibility.proto";
+import "google/rpc/status.proto";
+import "logs/proto/logs_annotations/logs_annotations.proto";
+
+option ruby_package = "Google::Cloud::ServiceControl::V1";
+option php_namespace = "Google\\Cloud\\ServiceControl\\V1";
+option csharp_namespace = "Google.Cloud.ServiceControl.V1";
+option cc_enable_arenas = true;
+option java_multiple_files = true;
+option java_outer_classname = "QuotaControllerProto";
+option java_package = "com.google.api.servicecontrol.v1";
+
+service QuotaController {
+    rpc AllocateQuota(AllocateQuotaRequest) returns (AllocateQuotaResponse);
+    rpc ReleaseQuota(ReleaseQuotaRequest) returns (ReleaseQuotaResponse);
+    rpc StartReconciliation(StartReconciliationRequest) returns (StartReconciliationResponse);
+    rpc EndReconciliation(EndReconciliationRequest) returns (EndReconciliationResponse);
+    rpc ReportQuota(ReportQuotaRequest) returns (ReportQuotaResponse);
+    rpc QueryLimits(QueryLimitsRequest) returns (QueryLimitsResponse);
+}
+
+message AllocateQuotaRequest {
+    string service_name = 1;
+    QuotaOperation allocate_operation = 2;
+    string service_config_id = 4;
+    bytes credential_mint = 5;
+}
+
+message QuotaOperation {
+    string operation_id = 1;
+    string method_name = 2;
+    string consumer_id = 3;
+    map<string, string> labels = 4;
+    repeated MetricValueSet quota_metrics = 5;
+    
+    QuotaMode quota_mode = 6;
+    enum QuotaMode {
+        UNSPECIFIED = 0;
+        NORMAL = 1;
+        BEST_EFFORT = 2;
+        CHECK_ONLY = 3;
+        QUERY_ONLY = 4 [deprecated = true];
+        ADJUST_ONLY = 5;
+        REPORT_USAGE = 6;
+        REPORT_EXCEEDED = 7;
+        REPORT_LIMIT = 8;
+    }
+}
+
+message AllocateQuotaResponse {
+    string operation_id = 1;
+    repeated QuotaError allocate_errors = 2;
+    repeated MetricValueSet quota_metrics = 3;
+    string service_config_id = 4;
+    
+    AllocateInfo allocate_info = 5;
+    message AllocateInfo {
+        repeated string unused_arguments = 1;
+    }
+}
+
+message QuotaError {
+    Code code = 1;
+    enum Code {
+        UNSPECIFIED = 0;
+        RESOURCE_EXHAUSTED = 8;
+        OUT_OF_RANGE = 11;
+        BILLING_NOT_ACTIVE = 107;
+        PROJECT_DELETED = 108;
+        API_KEY_INVALID = 105;
+        API_KEY_EXPIRED = 112;
+        SPATULA_HEADER_INVALID = 115;
+        LOAS_ROLE_INVALID = 118;
+        NO_LOAS_PROJECT = 119;
+        PROJECT_STATUS_UNAVAILABLE = 300;
+        SERVICE_STATUS_UNAVAILABLE = 301;
+        BILLING_STATUS_UNAVAILABLE = 302;
+        QUOTA_SYSTEM_UNAVAILABLE = 303;
+    }
+    
+    string subject = 2;
+    string description = 3;
+    rpc.Status status = 4;
+}
+
+message ReleaseQuotaRequest {
+    string service_name = 1;
+    QuotaOperation release_operation = 2;
+    string service_config_id = 3;
+    bytes credential_mint = 4;
+}
+
+message ReleaseQuotaResponse {
+    string operation_id = 1;
+    repeated QuotaError release_errors = 2;
+    repeated MetricValueSet quota_metrics = 3;
+    string service_config_id = 4;
+}
+
+message StartReconciliationRequest {
+    string service_name = 1;
+    QuotaOperation reconciliation_operation = 2;
+    string service_config_id = 3;
+    bytes credential_mint = 4;
+}
+
+message StartReconciliationResponse {
+    string operation_id = 1;
+    repeated QuotaError reconciliation_errors = 2;
+    repeated MetricValueSet quota_metrics = 3;
+    string service_config_id = 4;
+}
+
+message EndReconciliationRequest {
+    string service_name = 1;
+    QuotaOperation reconciliation_operation = 2;
+    string service_config_id = 3;
+    bytes credential_mint = 4;
+}
+
+message EndReconciliationResponse {
+    string operation_id = 1;
+    repeated QuotaError reconciliation_errors = 2;
+    repeated MetricValueSet quota_metrics = 3;
+    string service_config_id = 4;
+}
+
+message ReportQuotaRequest {
+    string service_name = 1;
+    repeated QuotaOperation report_operations = 2;
+    string service_config_id = 3;
+    bytes credential_mint = 4;
+}
+
+message ReportQuotaResponse {
+    string operation_id = 1;
+    string service_config_id = 2;
+    repeated QuotaError report_errors = 3;
+    repeated MetricValueSet quota_metrics = 4;
+}
+
+message QueryLimitsRequest {
+    string service_name = 1;
+    QuotaOperation query_operation = 2;
+    string service_config_id = 3;
+    bytes end_user_creds = 4;
+}
+
+message QueryLimitsResponse {
+    string operation_id = 1;
+    string service_config_id = 2;
+    repeated QuotaError query_errors = 3;
+    repeated MetricValueSet quota_metrics = 4;
+}

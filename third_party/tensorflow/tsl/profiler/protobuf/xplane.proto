@@ -1,0 +1,72 @@
+syntax = "proto3";
+
+package tensorflow.profiler;
+
+option cc_enable_arenas = true;
+
+message XSpace {
+    repeated XPlane planes = 1;
+    repeated string errors = 2;
+    repeated string warnings = 3;
+    repeated string hostnames = 4;
+}
+
+message XPlane {
+    int64 id = 1;
+    string name = 2;
+    repeated XLine lines = 3;
+    map<int64, XEventMetadata> event_metadata = 4;
+    map<int64, XStatMetadata> stat_metadata = 5;
+    repeated XStat stats = 6;
+}
+
+message XLine {
+    int64 id = 1;
+    int64 display_id = 10;
+    string name = 2;
+    string display_name = 11;
+    int64 timestamp_ns = 3;
+    int64 duration_ps = 9;
+    repeated XEvent events = 4;
+    
+    reserved 5, 6, 7, 8;
+}
+
+message XEvent {
+    int64 metadata_id = 1;
+    int64 duration_ps = 3;
+    repeated XStat stats = 4;
+    
+    oneof data {
+        int64 offset_ps = 2;
+        int64 num_occurrences = 5;
+    }
+}
+
+message XStat {
+    int64 metadata_id = 1;
+    
+    oneof value {
+        double double_value = 2;
+        uint64 uint64_value = 3;
+        int64 int64_value = 4;
+        string str_value = 5;
+        bytes bytes_value = 6;
+        uint64 ref_value = 7;
+    }
+}
+
+message XEventMetadata {
+    int64 id = 1;
+    string name = 2;
+    string display_name = 4;
+    bytes metadata = 3;
+    repeated XStat stats = 5;
+    repeated int64 child_id = 6;
+}
+
+message XStatMetadata {
+    int64 id = 1;
+    string name = 2;
+    string description = 3;
+}

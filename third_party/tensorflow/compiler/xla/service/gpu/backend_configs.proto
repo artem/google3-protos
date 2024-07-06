@@ -1,0 +1,161 @@
+syntax = "proto3";
+
+package xla.gpu;
+
+import "third_party/tensorflow/compiler/xla/autotuning.proto";
+import "third_party/tensorflow/compiler/xla/xla_data.proto";
+import "third_party/tensorflow/tsl/protobuf/dnn.proto";
+
+message CudnnConvBackendConfig {
+    stream_executor.dnn.AlgorithmProto algorithm = 6;
+    double conv_result_scale = 4;
+    stream_executor.dnn.ActivationMode activation_mode = 3;
+    double side_input_scale = 5;
+    double leakyrelu_alpha = 8;
+    
+    oneof filter_and_bias_reordering_oneof {
+        bool reordered_int8_nchw_vect = 7;
+    }
+    
+    oneof _serialized_graph {
+        string serialized_graph = 9;
+    }
+    
+    reserved 1, 2;
+}
+
+message GemmBackendConfig {
+    double alpha_real = 2;
+    double alpha_imag = 9;
+    double beta = 3;
+    DotDimensionNumbers dot_dimension_numbers = 7;
+    PrecisionConfig precision_config = 12;
+    
+    Epilogue epilogue = 13;
+    enum Epilogue {
+        DEFAULT = 0;
+        BIAS = 1;
+        RELU = 2;
+        BIAS_RELU = 3;
+        GELU = 4;
+        GELU_AUX = 5;
+        BIAS_GELU = 6;
+        BIAS_GELU_AUX = 7;
+    }
+    
+    bool damax_output = 18;
+    
+    oneof algorithm {
+        int64 selected_algorithm = 1;
+    }
+    
+    oneof _lhs_stride {
+        int64 lhs_stride = 14;
+    }
+    
+    oneof _rhs_stride {
+        int64 rhs_stride = 15;
+    }
+    
+    oneof _grad_x {
+        bool grad_x = 16;
+    }
+    
+    oneof _grad_y {
+        bool grad_y = 17;
+    }
+}
+
+message BitcastBackendConfig {
+    LayoutProto source_layout = 1;
+    LayoutProto result_layout = 2;
+}
+
+message CollectiveBackendConfig {
+    bool is_sync = 1;
+    bool no_parallel_custom_call = 2;
+}
+
+message ReificationCost {
+    double end_to_end_cycles = 1;
+    double exec_time_us = 2;
+    double compute_time_us = 3;
+    double memory_access_time_us = 4;
+}
+
+message CustomFusionConfig {
+    string name = 1;
+}
+
+message CuDnnFusionConfig {
+    int64 plan_id = 1;
+}
+
+message BlockLevelFusionConfig {
+    repeated int64 output_tile_sizes = 1;
+    int64 num_warps = 2;
+}
+
+message FusionBackendConfig {
+    string kind = 1;
+    AutotuneResult.TritonGemmKey triton_gemm_config = 2;
+    BlockLevelFusionConfig block_level_fusion_config = 6;
+    CustomFusionConfig custom_fusion_config = 4;
+    ReificationCost reification_cost = 3;
+    CuDnnFusionConfig cudnn_fusion_config = 5;
+}
+
+message CudnnNormBackendConfig {
+    double epsilon = 1;
+    stream_executor.dnn.AlgorithmProto algorithm = 2;
+    
+    Kind kind = 3;
+    enum Kind {
+        LAYER_FWD_INFER = 0;
+        LAYER_FWD_TRAIN = 1;
+        LAYER_BWD = 2;
+    }
+}
+
+message CudnnfMHABackendConfig {
+    stream_executor.dnn.AlgorithmProto algorithm = 8;
+    double fmha_scale = 10;
+    double dropout_rate = 13;
+    DotDimensionNumbers bmm1_dot_dimension_numbers = 11;
+    DotDimensionNumbers bmm2_dot_dimension_numbers = 12;
+    ShapeProto intermediate_tensor_shape = 14;
+    DotDimensionNumbers bmm1_grad_gemm1_dot_dimension_numbers = 16;
+    DotDimensionNumbers bmm1_grad_gemm2_dot_dimension_numbers = 17;
+    DotDimensionNumbers bmm2_grad_gemm1_dot_dimension_numbers = 18;
+    DotDimensionNumbers bmm2_grad_gemm2_dot_dimension_numbers = 19;
+    int64 seed = 15;
+    bool is_flash_attention = 20;
+    bool is_causal_mask = 21;
+    
+    MaskType mask_type = 22;
+    enum MaskType {
+        NO_MASK = 0;
+        PADDING = 1;
+        CAUSAL = 2;
+        PADDING_CAUSAL = 3;
+        ALIBI = 4;
+    }
+    
+    bool force_deterministic = 23;
+}
+
+message GpuBackendConfig {
+    int64 operation_queue_id = 1;
+    repeated int64 wait_on_operation_queues = 2;
+    bool force_earliest_schedule = 10;
+    
+    oneof backend_config {
+        CudnnConvBackendConfig cudnn_conv_backend_config = 3;
+        GemmBackendConfig gemm_backend_config = 4;
+        BitcastBackendConfig bitcast_backend_config = 5;
+        CollectiveBackendConfig collective_backend_config = 6;
+        FusionBackendConfig fusion_backend_config = 7;
+        CudnnNormBackendConfig cudnn_norm_backend_config = 8;
+        CudnnfMHABackendConfig cudnn_fmha_backend_config = 9;
+    }
+}

@@ -1,0 +1,229 @@
+syntax = "proto3";
+
+package tensorflow;
+
+import "third_party/tensorflow/core/framework/cost_graph.proto";
+import "third_party/tensorflow/core/framework/graph.proto";
+import "third_party/tensorflow/core/framework/step_stats.proto";
+import "third_party/tensorflow/core/protobuf/cluster.proto";
+import "third_party/tensorflow/core/protobuf/debug.proto";
+import "third_party/tensorflow/core/protobuf/rewriter_config.proto";
+import "third_party/tensorflow/core/protobuf/rpc_options.proto";
+import "third_party/tensorflow/tsl/protobuf/coordination_config.proto";
+
+option cc_enable_arenas = true;
+option go_package = "github.com/tensorflow/tensorflow/tensorflow/go/core/protobuf/for_core_protos_go_proto";
+option java_multiple_files = true;
+option java_outer_classname = "ConfigProtos";
+option java_package = "org.tensorflow.framework";
+
+message GPUOptions {
+    double per_process_gpu_memory_fraction = 1;
+    bool allow_growth = 4;
+    string allocator_type = 2;
+    int64 deferred_deletion_bytes = 3;
+    string visible_device_list = 5;
+    int32 polling_active_delay_usecs = 6;
+    int32 polling_inactive_delay_msecs = 7;
+    bool force_gpu_compatible = 8;
+    
+    Experimental experimental = 9;
+    message Experimental {
+        repeated VirtualDevices virtual_devices = 1;
+        message VirtualDevices {
+            repeated float memory_limit_mb = 1;
+            repeated int32 priority = 2;
+            repeated int32 device_ordinal = 3;
+        }
+        
+        int32 num_virtual_devices_per_gpu = 15;
+        bool use_unified_memory = 2;
+        int32 num_dev_to_dev_copy_streams = 3;
+        string collective_ring_order = 4;
+        bool timestamped_allocator = 5;
+        int32 kernel_tracker_max_interval = 7;
+        int32 kernel_tracker_max_bytes = 8;
+        int32 kernel_tracker_max_pending = 9;
+        double internal_fragmentation_fraction = 10;
+        bool use_cuda_malloc_async = 11;
+        bool disallow_retry_on_allocation_failure = 12;
+        float gpu_host_mem_limit_in_mb = 13;
+        bool gpu_host_mem_disallow_growth = 14;
+        int32 gpu_system_memory_size_in_mb = 16;
+        bool populate_pjrt_gpu_client_creation_info = 17;
+        int32 node_id = 18;
+        
+        StreamMergeOptions stream_merge_options = 19;
+        message StreamMergeOptions {
+            bool merge_host_to_device_stream = 1;
+            bool merge_device_to_host_stream = 2;
+            bool merge_device_to_device_stream = 3;
+        }
+    }
+}
+
+message OptimizerOptions {
+    bool do_common_subexpression_elimination = 1;
+    bool do_constant_folding = 2;
+    int64 max_folded_constant_in_bytes = 6;
+    bool do_function_inlining = 4;
+    
+    Level opt_level = 3;
+    enum Level {
+        L1 = 0;
+        L0 = -1;
+    }
+    
+    GlobalJitLevel global_jit_level = 5;
+    enum GlobalJitLevel {
+        DEFAULT = 0;
+        OFF = -1;
+        ON_1 = 1;
+        ON_2 = 2;
+    }
+    
+    bool cpu_global_jit = 7;
+}
+
+message GraphOptions {
+    bool enable_recv_scheduling = 2;
+    OptimizerOptions optimizer_options = 3;
+    int64 build_cost_model = 4;
+    int64 build_cost_model_after = 9;
+    bool infer_shapes = 5;
+    bool place_pruned_graph = 6;
+    bool enable_bfloat16_sendrecv = 7;
+    int32 timeline_step = 8;
+    RewriterConfig rewrite_options = 10;
+    
+    reserved 1, "skip_common_subexpression_elimination";
+}
+
+message ThreadPoolOptionProto {
+    int32 num_threads = 1;
+    string global_name = 2;
+}
+
+message SessionMetadata {
+    string name = 1;
+    int64 version = 2;
+}
+
+message ConfigProto {
+    map<string, int32> device_count = 1;
+    int32 intra_op_parallelism_threads = 2;
+    int32 inter_op_parallelism_threads = 5;
+    bool use_per_session_threads = 9;
+    repeated ThreadPoolOptionProto session_inter_op_thread_pool = 12;
+    int32 placement_period = 3;
+    repeated string device_filters = 4;
+    GPUOptions gpu_options = 6;
+    bool allow_soft_placement = 7;
+    bool log_device_placement = 8;
+    GraphOptions graph_options = 10;
+    int64 operation_timeout_in_ms = 11;
+    RPCOptions rpc_options = 13;
+    ClusterDef cluster_def = 14;
+    bool isolate_session_state = 15;
+    bool share_cluster_devices_in_session = 17;
+    
+    Experimental experimental = 16;
+    message Experimental {
+        string collective_group_leader = 1;
+        string executor_type = 3;
+        int32 recv_buf_max_chunk = 4;
+        bool use_numa_affinity = 5;
+        bool collective_deterministic_sequential_execution = 6;
+        bool collective_nccl = 7;
+        bool share_session_state_in_clusterspec_propagation = 8;
+        bool disable_thread_spinning = 9;
+        bool share_cluster_devices_in_session = 10;
+        SessionMetadata session_metadata = 11;
+        bool optimize_for_static_graph = 12;
+        bool enable_mlir_bridge = 13;
+        
+        MlirBridgeRollout mlir_bridge_rollout = 17;
+        enum MlirBridgeRollout {
+            MLIR_BRIDGE_ROLLOUT_UNSPECIFIED = 0;
+            MLIR_BRIDGE_ROLLOUT_ENABLED = 1;
+            MLIR_BRIDGE_ROLLOUT_DISABLED = 2;
+        }
+        
+        bool enable_mlir_graph_optimization = 16;
+        bool disable_output_partition_graphs = 14;
+        int64 xla_fusion_autotuner_thresh = 15;
+        bool use_tfrt = 18;
+        bool enable_multi_host = 27;
+        int32 backend_server_port = 28;
+        bool target_tpu = 29;
+        bool target_gpu = 30;
+        int32 stream_merge_threshold = 31;
+        bool disable_functional_ops_lowering = 21;
+        bool xla_prefer_single_graph_cluster = 22;
+        CoordinationServiceConfig coordination_config = 23;
+        bool disable_optimize_for_static_graph = 24;
+        bool disable_eager_executor_streaming_enqueue = 26;
+        
+        reserved 2, 19, 20, 25;
+    }
+}
+
+message RunOptions {
+    TraceLevel trace_level = 1;
+    enum TraceLevel {
+        NO_TRACE = 0;
+        SOFTWARE_TRACE = 1;
+        HARDWARE_TRACE = 2;
+        FULL_TRACE = 3;
+    }
+    
+    int64 timeout_in_ms = 2;
+    int32 inter_op_thread_pool = 3;
+    bool output_partition_graphs = 5;
+    DebugOptions debug_options = 6;
+    bool report_tensor_allocations_upon_oom = 7;
+    
+    Experimental experimental = 8;
+    message Experimental {
+        int64 collective_graph_key = 1;
+        bool use_run_handler_pool = 2;
+        
+        RunHandlerPoolOptions run_handler_pool_options = 3;
+        message RunHandlerPoolOptions {
+            int64 priority = 1;
+        }
+    }
+    
+    reserved 4;
+}
+
+message RunMetadata {
+    StepStats step_stats = 1;
+    CostGraphDef cost_graph = 2;
+    repeated GraphDef partition_graphs = 3;
+    
+    repeated FunctionGraphs function_graphs = 4;
+    message FunctionGraphs {
+        repeated GraphDef partition_graphs = 1;
+        GraphDef pre_optimization_graph = 2;
+        GraphDef post_optimization_graph = 3;
+    }
+    
+    SessionMetadata session_metadata = 5;
+}
+
+message TensorConnection {
+    string from_tensor = 1;
+    string to_tensor = 2;
+}
+
+message CallableOptions {
+    repeated string feed = 1;
+    repeated string fetch = 2;
+    repeated string target = 3;
+    RunOptions run_options = 4;
+    repeated TensorConnection tensor_connection = 5;
+    map<string, string> feed_devices = 6;
+    map<string, string> fetch_devices = 7;
+    bool fetch_skip_sync = 8;
+}

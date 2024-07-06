@@ -1,0 +1,45 @@
+syntax = "proto3";
+
+package google.monitoring.v3.widgets;
+
+import "google/api/field_behavior.proto";
+import "google/api/visibility.proto";
+import "google/monitoring/v3/widgets/common.proto";
+import "storage/datapol/annotations/proto/semantic_annotations.proto";
+
+option ruby_package = "Google::Cloud::Monitoring::V3::Widgets";
+option php_namespace = "Google\\Cloud\\Monitoring\\V3\\Widgets";
+option csharp_namespace = "Google.Cloud.Monitoring.V3.Widgets";
+option java_multiple_files = true;
+option java_outer_classname = "PieChartProto";
+option java_package = "com.google.monitoring.v3.widgets";
+
+message PieChart {
+    repeated PieChartDataSet data_sets = 1;
+    message PieChartDataSet {
+        string slice_name_template = 6;
+        string unit_override = 7;
+        bool output_full_duration = 8;
+        repeated Dimension dimensions = 10;
+        repeated Measure measures = 11;
+        
+        oneof source {
+            TimeSeriesFilter time_series_filter = 1;
+            TimeSeriesFilterRatio time_series_filter_ratio = 2;
+            string time_series_query = 4;
+            string prometheus_query = 5;
+            OpsAnalyticsQuery ops_analytics_query = 9;
+        }
+    }
+    
+    PieChartType chart_type = 2;
+    enum PieChartType {
+        PIE_CHART_TYPE_UNSPECIFIED = 0;
+        PIE = 1;
+        DONUT = 2;
+    }
+    
+    bool show_total = 3;
+    bool show_labels = 4;
+    float slice_aggregated_threshold = 5;
+}

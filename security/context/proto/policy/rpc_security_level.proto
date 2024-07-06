@@ -1,0 +1,22 @@
+syntax = "proto2";
+
+package rpcsp;
+
+import "storage/datapol/annotations/proto/semantic_annotations.proto";
+
+option java_package = "com.google.protos.security.rpcsp";
+
+message RpcSPLadder {
+    enum Level {
+        LEVEL_UNSPECIFIED = 0;
+        L0_UNPROTECTED = 50;
+        L1_PRODUCTION_HYGIENE = 100;
+        L2_CONTROLLED_ACCESS = 200;
+        L3_FULL_AUDITING = 300;
+        L3_1_ADMIN_ACCESS_INPUTS_PROVIDED = 310;
+        L3_2_AUDITING_WITH_JUSTIFICATIONS = 320;
+        L3_3_HUMAN_ACCESS_RESTRICTIONS = 330;
+        L4_NO_UNILATERAL_ACCESS = 400;
+        L5_NO_UNILATERAL_ACCESS_BREAKGLASS_RESTRICTED = 500;
+    }
+}

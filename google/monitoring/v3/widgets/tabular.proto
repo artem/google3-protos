@@ -1,0 +1,133 @@
+syntax = "proto3";
+
+package google.monitoring.v3.widgets;
+
+import "google/api/field_behavior.proto";
+import "google/api/visibility.proto";
+import "google/monitoring/v3/widgets/common.proto";
+import "google/protobuf/duration.proto";
+import "storage/datapol/annotations/proto/semantic_annotations.proto";
+
+option ruby_package = "Google::Cloud::Monitoring::V3::Widgets";
+option php_namespace = "Google\\Cloud\\Monitoring\\V3\\Widgets";
+option csharp_namespace = "Google.Cloud.Monitoring.V3.Widgets";
+option java_multiple_files = true;
+option java_outer_classname = "TabularWidgetsProto";
+option java_package = "com.google.monitoring.v3.widgets";
+
+message ListDisplayOptions {
+    int32 page_size = 1;
+}
+
+message TableDisplayOptions {
+    int32 page_size = 1;
+    bool use_virtual_scroll = 2;
+}
+
+message TableCellDisplayOptions {
+    string component = 1;
+    map<string, string> component_options = 3;
+    
+    TimeSeriesOptions time_series = 2;
+    message TimeSeriesOptions {
+        DisplayAs display_as = 1;
+        enum DisplayAs {
+            LATEST_VALUE = 0;
+            SPARK_LINE = 1;
+            SPARK_BAR = 2;
+        }
+        
+        string unit = 2;
+    }
+}
+
+message TableInteractionOptions {
+    string onselect_row = 1;
+}
+
+message Table {
+    repeated TableColumn show_columns = 1;
+    message TableColumn {
+        string title = 1;
+        DataSourceValue data_source_value = 2;
+        string help_text = 3;
+        TableCellDisplayOptions display_options = 4;
+        string from_data_set = 5;
+        bool sortable = 6;
+        string sort_by_key = 7;
+    }
+    
+    DataSourceSet dataset = 2;
+    TableDisplayOptions display_options = 4;
+    TableInteractionOptions interaction_options = 5;
+    repeated string label_hierarchy = 6;
+}
+
+message GroupList {
+    ListDisplayOptions display_options = 1;
+}
+
+message GroupMemberList {
+    string group_id = 1;
+    ListDisplayOptions display_options = 2;
+}
+
+message PublicTimeSeriesTable {
+    repeated TableDataSet data_sets = 1;
+    message TableDataSet {
+        string table_template = 5;
+        protobuf.Duration min_alignment_period = 6;
+        PublicTimeSeriesTableDisplayOptions table_display_options = 7;
+        bool output_full_duration = 10;
+        string unit_override = 12;
+        
+        oneof source {
+            TimeSeriesFilter time_series_filter = 1;
+            TimeSeriesFilterRatio time_series_filter_ratio = 2;
+            TimeSeriesQueryLanguage time_series_query_language = 3 [deprecated = true];
+            string time_series_query = 4;
+            string prometheus_query = 8;
+            OpsAnalyticsQuery ops_analytics_query = 11;
+        }
+    }
+    
+    MetricVisualization metric_visualization = 2;
+    enum MetricVisualization {
+        METRIC_VISUALIZATION_UNSPECIFIED = 0;
+        NUMBER = 1;
+        BAR = 2;
+    }
+    
+    ColumnSortingOptions sorting_options = 3;
+    message ColumnSortingOptions {
+        string column = 1;
+        SortDirection direction = 2;
+    }
+    
+    repeated ColumnSettings column_settings = 4;
+    message ColumnSettings {
+        string column = 1;
+        bool visible = 2;
+        
+        CellAlignment alignment = 3;
+        enum CellAlignment {
+            CELL_ALIGNMENT_UNSPECIFIED = 0;
+            LEFT = 1;
+            CENTER = 2;
+            RIGHT = 3;
+        }
+        
+        string display_name = 4;
+        repeated Threshold thresholds = 5;
+    }
+    
+    enum SortDirection {
+        SORT_DIRECTION_UNSPECIFIED = 0;
+        ASCENDING = 1;
+        DESCENDING = 2;
+    }
+}
+
+message PublicTimeSeriesTableDisplayOptions {
+    
+}

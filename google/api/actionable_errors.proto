@@ -1,0 +1,31 @@
+syntax = "proto3";
+
+package google.api;
+
+import "google/api/visibility.proto";
+import "google/rpc/code.proto";
+import "net/proto2/proto/descriptor.proto";
+
+option objc_class_prefix = "GAPI";
+option cc_enable_arenas = true;
+option go_package = "google.golang.org/genproto/googleapis/api/serviceconfig;serviceconfig";
+option java_multiple_files = true;
+option java_outer_classname = "ActionableErrorsProto";
+option java_package = "com.google.api";
+
+message Errors {
+    string domain = 1;
+    repeated ErrorMessage error_messages = 2;
+}
+
+message ErrorMessage {
+    string name = 1;
+    int32 http_code = 2;
+    rpc.Code canonical_code = 9;
+    string message = 3;
+    string localized_message = 4;
+    repeated string fields = 5;
+    string troubleshooting_link = 6;
+    string api_versions = 7;
+    string name_suffix = 8;
+}

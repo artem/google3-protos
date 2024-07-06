@@ -1,0 +1,22 @@
+syntax = "proto3";
+
+package tensorflow;
+
+message ProfilerServiceMonitorResult {
+    ResponseType response_type = 1;
+    enum ResponseType {
+        EMPTY_RESULT = 0;
+        UTIL_ONLY = 1;
+        UTIL_IDLE = 2;
+        UTIL_IDLE_STEP = 3;
+    }
+    
+    double device_idle_time_percent = 2;
+    double matrix_unit_utilization_percent = 3;
+    double step_time_ms_avg = 4;
+    double step_time_ms_min = 5;
+    double step_time_ms_max = 6;
+    double infeed_percent_avg = 7;
+    double infeed_percent_min = 8;
+    double infeed_percent_max = 9;
+}

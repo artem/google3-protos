@@ -1,0 +1,99 @@
+syntax = "proto3";
+
+package google.monitoring.v3;
+
+import "google/api/visibility.proto";
+import "google/logging/data_governance.proto";
+
+option ruby_package = "Google::Cloud::Monitoring::V3";
+option php_namespace = "Google\\Cloud\\Monitoring\\V3";
+option csharp_namespace = "Google.Cloud.Monitoring.V3";
+option go_package = "cloud.google.com/go/monitoring/apiv3/v2/monitoringpb;monitoringpb";
+option java_multiple_files = true;
+option java_outer_classname = "FilterProto";
+option java_package = "com.google.monitoring.v3";
+
+message TimeSeriesFilter {
+    repeated string resource_containers = 1;
+    string group_id = 2;
+    ResourceSelector resource = 3;
+    MetricSelector metric = 4;
+    
+    oneof metadata_type {
+        MetadataLabelComparisons metadata_conjunction = 5;
+        MetadataLabelComparisons metadata_disjunction = 6;
+    }
+}
+
+message ResourceSelector {
+    ValueRestriction type = 1;
+    
+    oneof labels_type {
+        LabelComparisons labels_conjunction = 2;
+        LabelComparisons labels_disjunction = 3;
+    }
+}
+
+message MetricSelector {
+    oneof metric_type {
+        ValueRestriction type = 1;
+        TimeSeriesSelector selector = 2;
+    }
+    
+    oneof labels_type {
+        LabelComparisons labels_conjunction = 3;
+        LabelComparisons labels_disjunction = 4;
+    }
+}
+
+message TimeSeriesSelector {
+    string name = 1;
+    repeated TimeSeriesSelectorArgument arguments = 2;
+}
+
+message TimeSeriesSelectorArgument {
+    string value = 1;
+}
+
+message LabelComparisons {
+    repeated LabelComparison comparisons = 1;
+}
+
+message MetadataLabelComparisons {
+    repeated LabelComparison system_labels = 1;
+    repeated LabelComparison user_labels = 2;
+}
+
+message LabelComparison {
+    string key = 1;
+    
+    oneof type {
+        ValueRestriction value_restriction = 2;
+        bool as_presence = 3;
+    }
+}
+
+message ValueRestriction {
+    RestrictionComparator comparator = 1;
+    repeated string operands = 2;
+}
+
+enum RestrictionComparator {
+    RESTRICTION_COMPARATOR_UNSPECIFIED = 0;
+    EQUALS = 1;
+    NOT_EQUALS = 2;
+    LESS_THAN = 3;
+    LESS_THAN_EQUALS = 4;
+    GREATER_THAN = 5;
+    GREATER_THAN_EQUALS = 6;
+    STARTS_WITH = 7;
+    ENDS_WITH = 8;
+    HAS_SUBSTRING = 9;
+    ONE_OF = 10;
+    MATCHES_REGEX = 11;
+    NOT_STARTS_WITH = 12;
+    NOT_ENDS_WITH = 13;
+    NOT_HAS_SUBSTRING = 14;
+    NOT_ONE_OF = 15;
+    NOT_MATCHES_REGEX = 16;
+}

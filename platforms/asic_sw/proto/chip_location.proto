@@ -1,0 +1,9 @@
+syntax = "proto2";
+
+package asic_sw.proto;
+
+message ChipLocation {
+    optional string host_name = 1;
+    optional int32 26a136ac = 2;
+    optional int32 chip_index = 3;
+}

@@ -1,0 +1,162 @@
+syntax = "proto3";
+
+package stablehlo.quantization;
+
+option cc_enable_arenas = true;
+
+message TfRecordFile {
+    string path = 1;
+}
+
+message RepresentativeDatasetConfig {
+    oneof file {
+        TfRecordFile tf_record = 1;
+    }
+    
+    oneof _signature_key {
+        string signature_key = 2;
+    }
+}
+
+message StaticRangePtqPreset {
+    repeated RepresentativeDatasetConfig representative_datasets = 1;
+    bool enable_per_channel_quantized_weight = 2 [deprecated = true];
+    bool enable_full_int_quantization = 3;
+}
+
+message WeightOnlyPtqPreset {
+    
+}
+
+message TfSavedModelConfig {
+    repeated string tags = 1;
+}
+
+message PipelineConfig {
+    bool merge_fusion_with_dequantize = 2;
+    
+    oneof _unpack_quantized_types {
+        bool unpack_quantized_types = 1;
+    }
+}
+
+message QuantizableUnit {
+    string name = 1;
+}
+
+message QuantizationResult {
+    QuantizableUnit quantizable_unit = 1;
+    Method method = 2;
+}
+
+message QuantizationResults {
+    repeated QuantizationResult results = 1;
+}
+
+message QuantizedDimension {
+    oneof _dimension {
+        int32 dimension = 1;
+    }
+}
+
+message PerTensor {
+    
+}
+
+message QuantizedType {
+    oneof type {
+        QuantizedDimension dimension_specs = 1;
+        PerTensor per_tensor = 2;
+    }
+}
+
+message NoQuantization {
+    
+}
+
+message StaticRangePtq {
+    map<int32, QuantizedType> input_quantized_types = 1;
+}
+
+message WeightOnlyPtq {
+    map<int32, QuantizedType> input_quantized_types = 1;
+}
+
+message FunctionNameMatcherSpec {
+    string regex = 1;
+}
+
+message MatcherSpec {
+    FunctionNameMatcherSpec function_name = 1;
+}
+
+message Method {
+    oneof method {
+        NoQuantization no_quantization = 1;
+        StaticRangePtq static_range_ptq = 2;
+        WeightOnlyPtq weight_only_ptq = 3;
+    }
+}
+
+message QuantizationSpec {
+    MatcherSpec matcher = 1;
+    Method method = 2;
+}
+
+message QuantizationSpecs {
+    repeated QuantizationSpec specs = 1;
+}
+
+message DebuggerConfig {
+    DebuggerType debugger_type = 1;
+    enum DebuggerType {
+        DEBUGGER_TYPE_UNSPECIFIED = 0;
+        DEBUGGER_TYPE_WHOLE_MODEL = 1;
+        DEBUGGER_TYPE_INT_PER_LAYER = 2;
+        DEBUGGER_TYPE_FLOAT_PER_LAYER = 3;
+    }
+    
+    string unquantized_dump_model_path = 2;
+    string log_dir_path = 3;
+}
+
+message CalibrationOptions {
+    CalibrationMethod calibration_method = 1;
+    enum CalibrationMethod {
+        CALIBRATION_METHOD_UNSPECIFIED = 0;
+        CALIBRATION_METHOD_MIN_MAX = 1;
+        CALIBRATION_METHOD_AVERAGE_MIN_MAX = 2;
+        CALIBRATION_METHOD_HISTOGRAM_PERCENTILE = 3;
+        CALIBRATION_METHOD_HISTOGRAM_MSE_BRUTEFORCE = 4;
+        CALIBRATION_METHOD_HISTOGRAM_MSE_MAX_FREQUENCY = 5;
+        CALIBRATION_METHOD_HISTOGRAM_MSE_SYMMETRIC = 6;
+    }
+    
+    CalibrationParameters calibration_parameters = 2;
+    message CalibrationParameters {
+        int32 num_bins = 1;
+        float min_percentile = 2;
+        float max_percentile = 3;
+    }
+    
+    repeated RepresentativeDatasetConfig representative_datasets = 3;
+    string calibration_data_dir = 4;
+    bool force_regenerate_calibration_data = 5;
+}
+
+message QuantizationConfig {
+    TfSavedModelConfig tf_saved_model = 2;
+    PipelineConfig pipeline_config = 3;
+    QuantizationSpecs specs = 4;
+    DebuggerConfig debugger_config = 5;
+    CalibrationOptions calibration_options = 6;
+    
+    oneof preset {
+        StaticRangePtqPreset static_range_ptq_preset = 1;
+        WeightOnlyPtqPreset weight_only_ptq_preset = 7;
+    }
+    
+    oneof _report_file_path {
+        string report_file_path = 8;
+    }
+}

@@ -1,0 +1,27 @@
+syntax = "proto3";
+
+package tensorflow.tf2xla;
+
+import "third_party/tensorflow/core/framework/tensor_shape.proto";
+import "third_party/tensorflow/core/framework/types.proto";
+
+option cc_enable_arenas = true;
+option java_multiple_files = true;
+option java_outer_classname = "Tf2XlaProtos";
+option java_package = "org.tensorflow.tf2xla";
+
+message TensorMetadata {
+    DataType type = 1;
+    TensorShapeProto shape = 2;
+    int64 channel_id = 3;
+}
+
+message HostTransferMetadata {
+    string key = 1;
+    repeated TensorMetadata metadata = 2;
+}
+
+message HostComputeMetadata {
+    repeated HostTransferMetadata device_to_host = 1;
+    repeated HostTransferMetadata host_to_device = 2;
+}

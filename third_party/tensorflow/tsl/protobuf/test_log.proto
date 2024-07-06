@@ -1,0 +1,131 @@
+syntax = "proto3";
+
+package tensorflow;
+
+import "google/protobuf/any.proto";
+import "google/protobuf/wrappers.proto";
+
+option cc_enable_arenas = true;
+option java_multiple_files = true;
+option java_outer_classname = "TestLogProtos";
+option java_package = "org.tensorflow.util.testlog";
+
+message EntryValue {
+    oneof kind {
+        double double_value = 1;
+        string string_value = 2;
+    }
+}
+
+message MetricEntry {
+    string name = 1;
+    double value = 2;
+    google.protobuf.DoubleValue min_value = 3;
+    google.protobuf.DoubleValue max_value = 4;
+}
+
+message BenchmarkEntry {
+    string name = 1;
+    int64 iters = 2;
+    double cpu_time = 3;
+    double wall_time = 4;
+    double throughput = 5;
+    map<string, EntryValue> extras = 6;
+    repeated MetricEntry metrics = 7;
+}
+
+message BenchmarkEntries {
+    repeated BenchmarkEntry entry = 1;
+}
+
+message BuildConfiguration {
+    string mode = 1;
+    repeated string cc_flags = 2;
+    repeated string opts = 3;
+}
+
+message CommitId {
+    string snapshot = 3;
+    int64 pending_changelist = 4;
+    
+    oneof kind {
+        int64 changelist = 1;
+        string hash = 2;
+    }
+}
+
+message CPUInfo {
+    int64 num_cores = 1;
+    int64 num_cores_allowed = 2;
+    double mhz_per_cpu = 3;
+    string cpu_info = 4;
+    string cpu_governor = 5;
+    map<string, int64> cache_size = 6;
+}
+
+message MemoryInfo {
+    int64 total = 1;
+    int64 available = 2;
+}
+
+message GPUInfo {
+    string model = 1;
+    string uuid = 2;
+    string bus_id = 3;
+}
+
+message PlatformInfo {
+    string bits = 1;
+    string linkage = 2;
+    string machine = 3;
+    string release = 4;
+    string system = 5;
+    string version = 6;
+}
+
+message AvailableDeviceInfo {
+    string name = 1;
+    string type = 2;
+    int64 memory_limit = 3;
+    string physical_description = 4;
+}
+
+message MachineConfiguration {
+    string hostname = 1;
+    string serial_identifier = 7;
+    PlatformInfo platform_info = 2;
+    CPUInfo cpu_info = 3;
+    repeated google.protobuf.Any device_info = 4;
+    repeated AvailableDeviceInfo available_device_info = 5;
+    MemoryInfo memory_info = 6;
+}
+
+message RunConfiguration {
+    repeated string argument = 1;
+    map<string, string> env_vars = 2;
+}
+
+message TestResults {
+    string target = 1;
+    BenchmarkEntries entries = 2;
+    BuildConfiguration build_configuration = 3;
+    CommitId commit_id = 4;
+    int64 start_time = 5;
+    double run_time = 6;
+    MachineConfiguration machine_configuration = 7;
+    RunConfiguration run_configuration = 8;
+    string name = 9;
+    
+    BenchmarkType benchmark_type = 10;
+    enum BenchmarkType {
+        UNKNOWN = 0;
+        CPP_MICROBENCHMARK = 1;
+        PYTHON_BENCHMARK = 2;
+        ANDROID_BENCHMARK = 3;
+        EDGE_BENCHMARK = 4;
+        IOS_BENCHMARK = 5;
+    }
+    
+    string run_mode = 11;
+    string tf_version = 12;
+}

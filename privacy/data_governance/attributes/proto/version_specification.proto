@@ -1,0 +1,39 @@
+syntax = "proto3";
+
+package privacy.data_governance.attributes;
+
+option java_multiple_files = true;
+option java_package = "com.google.privacy.datagovernance.attributes";
+
+message VersionSpecification {
+    repeated string new_mandatory_field = 1;
+    repeated string new_optional_field = 2;
+    repeated string field_becomes_mandatory = 3;
+    
+    repeated RenamedField renamed_field = 4;
+    message RenamedField {
+        string old_name = 1;
+        string new_name = 2;
+    }
+    
+    repeated RenamedValue renamed_value = 5;
+    message RenamedValue {
+        string field = 1;
+        string old_value_name = 2;
+        string new_value_name = 3;
+    }
+    
+    repeated NewValue new_value = 6;
+    message NewValue {
+        string field = 1;
+        string value = 2;
+    }
+    
+    repeated DeprecatedValue deprecated_value = 7;
+    message DeprecatedValue {
+        string field = 1;
+        string value = 2;
+    }
+    
+    repeated string misc_change = 8;
+}

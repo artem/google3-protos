@@ -1,0 +1,17 @@
+syntax = "proto2";
+
+package file.bundle;
+
+message BundleMetaData {
+    required int64 diroffset = 1;
+    required int64 dirchecksum = 2;
+    required int64 magic = 3;
+    required int64 size = 9;
+    
+    repeated group DirEntry = 4 {
+        required int32 key = 5;
+        required int64 offset = 6;
+        required int64 size = 7;
+        required int64 checksum = 8;
+    }
+}

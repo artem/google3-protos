@@ -1,0 +1,146 @@
+syntax = "proto3";
+
+package smartchoices;
+
+message Raw {
+    
+}
+
+message Log1p {
+    
+}
+
+message Clip {
+    oneof _clip_value_min {
+        float clip_value_min = 1;
+    }
+    
+    oneof _clip_value_max {
+        float clip_value_max = 2;
+    }
+}
+
+message Log1pClip {
+    oneof _clip_value_min {
+        float clip_value_min = 1;
+    }
+    
+    oneof _clip_value_max {
+        float clip_value_max = 2;
+    }
+}
+
+message Log1pTemp {
+    oneof _tau {
+        float tau = 1;
+    }
+}
+
+message LogTempScaling {
+    oneof _tau {
+        float tau = 1;
+    }
+    
+    oneof _offset {
+        float offset = 2;
+    }
+    
+    oneof _scale {
+        float scale = 3;
+    }
+}
+
+message LogLinear {
+    oneof _log_scale {
+        float log_scale = 3;
+    }
+    
+    oneof _symmetric_log_scale {
+        float symmetric_log_scale = 6;
+    }
+    
+    oneof _linear_offset {
+        float linear_offset = 4;
+    }
+    
+    oneof _linear_scale {
+        float linear_scale = 5;
+    }
+    
+    reserved 2;
+}
+
+message Log1pTempClip {
+    oneof _tau {
+        float tau = 1;
+    }
+    
+    oneof _clip_value_min {
+        float clip_value_min = 2;
+    }
+    
+    oneof _clip_value_max {
+        float clip_value_max = 3;
+    }
+}
+
+message LinearScaling {
+    oneof _scaling_parameter {
+        float scaling_parameter = 1;
+    }
+}
+
+message LinearScalingClip {
+    oneof _scaling_parameter {
+        float scaling_parameter = 1;
+    }
+    
+    oneof _clip_value_min {
+        float clip_value_min = 2;
+    }
+    
+    oneof _clip_value_max {
+        float clip_value_max = 3;
+    }
+}
+
+message LinearScalingOffset {
+    oneof _scaling_parameter {
+        float scaling_parameter = 1;
+    }
+    
+    oneof _offset {
+        float offset = 2;
+    }
+}
+
+message LinearScalingOffsetSqrt {
+    oneof _linear_scale {
+        float linear_scale = 1;
+    }
+    
+    oneof _linear_offset {
+        float linear_offset = 2;
+    }
+    
+    oneof _apply_sqrt {
+        float apply_sqrt = 3;
+    }
+}
+
+message Transform {
+    oneof transform {
+        Raw raw = 1;
+        Log1p log1p = 2;
+        Clip clip = 3;
+        Log1pClip log1p_clip = 4;
+        Log1pTemp log1p_temp = 5;
+        Log1pTempClip log1p_temp_clip = 6;
+        LinearScaling linear_scaling = 7;
+        LinearScalingClip linear_scaling_clip = 8;
+        LinearScalingOffset linear_scaling_offset = 9;
+        LogTempScaling log_temp_scaling = 10;
+        LogLinear log_linear = 11;
+        LinearScalingOffsetSqrt linear_scaling_offset_sqrt = 12;
+    }
+}

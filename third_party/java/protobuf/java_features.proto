@@ -1,0 +1,25 @@
+syntax = "proto2";
+
+package pb;
+
+import "net/proto2/proto/descriptor.proto";
+
+option java_outer_classname = "JavaFeaturesProto";
+option java_package = "com.google.protobuf";
+
+message JavaFeatures {
+    optional bool legacy_closed_enum = 1;
+    
+    optional Utf8Validation utf8_validation = 2;
+    enum Utf8Validation {
+        UTF8_VALIDATION_UNKNOWN = 0;
+        DEFAULT = 1;
+        VERIFY = 2;
+    }
+    
+    optional bool large_enum = 3;
+}
+
+extend proto2.FeatureSet {
+    optional JavaFeatures java = 1001;
+}

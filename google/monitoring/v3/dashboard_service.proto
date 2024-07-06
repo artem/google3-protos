@@ -1,0 +1,65 @@
+syntax = "proto3";
+
+package google.monitoring.v3;
+
+import "google/api/annotations.proto";
+import "google/api/authz.proto";
+import "google/api/policy.proto";
+import "google/monitoring/v3/dashboard.proto";
+import "google/protobuf/empty.proto";
+import "google/protobuf/field_mask.proto";
+
+option ruby_package = "Google::Cloud::Monitoring::V3";
+option php_namespace = "Google\\Cloud\\Monitoring\\V3";
+option csharp_namespace = "Google.Cloud.Monitoring.V3";
+option go_package = "cloud.google.com/go/monitoring/apiv3/v2/monitoringpb;monitoringpb";
+option java_multiple_files = true;
+option java_outer_classname = "DashboardServiceProto";
+option java_package = "com.google.monitoring.v3";
+
+service DashboardService {
+    rpc CreateDashboard(CreateDashboardRequest) returns (Dashboard);
+    rpc ListDashboards(ListDashboardsRequest) returns (ListDashboardsResponse);
+    rpc GetDashboard(GetDashboardRequest) returns (Dashboard);
+    rpc DeleteDashboard(DeleteDashboardRequest) returns (protobuf.Empty);
+    rpc UpdateDashboard(UpdateDashboardRequest) returns (Dashboard);
+}
+
+message CreateDashboardRequest {
+    string parent = 1;
+    Dashboard dashboard = 2;
+}
+
+message ListDashboardsRequest {
+    string parent = 1;
+    
+    View view = 2;
+    enum View {
+        FULL = 0;
+        IDENTITY_ONLY = 1;
+    }
+    
+    string category = 5;
+    int32 page_size = 3;
+    string page_token = 4;
+}
+
+message ListDashboardsResponse {
+    repeated Dashboard dashboards = 1;
+    string next_page_token = 2;
+}
+
+message GetDashboardRequest {
+    string name = 1;
+    string category = 5;
+}
+
+message DeleteDashboardRequest {
+    string name = 1;
+    string category = 5;
+}
+
+message UpdateDashboardRequest {
+    Dashboard dashboard = 2;
+    protobuf.FieldMask update_mask = 3;
+}

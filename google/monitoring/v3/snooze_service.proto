@@ -1,0 +1,57 @@
+syntax = "proto3";
+
+package google.monitoring.v3;
+
+import "google/api/annotations.proto";
+import "google/api/auditing.proto";
+import "google/api/client.proto";
+import "google/api/field_behavior.proto";
+import "google/api/policy.proto";
+import "google/api/resource.proto";
+import "google/api/visibility.proto";
+import "google/logging/data_governance.proto";
+import "google/monitoring/v3/snooze.proto";
+import "google/protobuf/field_mask.proto";
+import "storage/datapol/annotations/proto/semantic_annotations.proto";
+
+option ruby_package = "Google::Cloud::Monitoring::V3";
+option php_namespace = "Google\\Cloud\\Monitoring\\V3";
+option csharp_namespace = "Google.Cloud.Monitoring.V3";
+option go_package = "cloud.google.com/go/monitoring/apiv3/v2/monitoringpb;monitoringpb";
+option java_multiple_files = true;
+option java_outer_classname = "SnoozeServiceProto";
+option java_package = "com.google.monitoring.v3";
+
+service SnoozeService {
+    rpc CreateSnooze(CreateSnoozeRequest) returns (Snooze);
+    rpc ListSnoozes(ListSnoozesRequest) returns (ListSnoozesResponse);
+    rpc GetSnooze(GetSnoozeRequest) returns (Snooze);
+    rpc UpdateSnooze(UpdateSnoozeRequest) returns (Snooze);
+}
+
+message CreateSnoozeRequest {
+    string parent = 1;
+    Snooze snooze = 2;
+}
+
+message ListSnoozesRequest {
+    string parent = 1;
+    string filter = 2;
+    string order_by = 3;
+    int32 page_size = 4;
+    string page_token = 5;
+}
+
+message ListSnoozesResponse {
+    repeated Snooze snoozes = 1;
+    string next_page_token = 2;
+}
+
+message GetSnoozeRequest {
+    string name = 1;
+}
+
+message UpdateSnoozeRequest {
+    Snooze snooze = 1;
+    protobuf.FieldMask update_mask = 2;
+}

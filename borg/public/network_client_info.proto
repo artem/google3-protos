@@ -1,0 +1,50 @@
+syntax = "proto2";
+
+package borg.network;
+
+option java_multiple_files = true;
+
+message LogicalTrafficMatrix {
+    oneof kind {
+        SliceToSliceAdjacencyList slice_to_slice_adjacency_list = 2;
+        DefaultUniformTrafficMatrix default_uniform_traffic_matrix = 3;
+        VmToVmTrafficMatrix vm_to_vm_traffic_matrix = 4;
+    }
+    
+    reserved 1;
+}
+
+message DefaultUniformTrafficMatrix {
+    
+}
+
+message Traffic {
+    optional PeakTraffic peak_traffic = 1;
+}
+
+message PeakTraffic {
+    optional double peak_traffic_gbps = 1;
+}
+
+message SliceToSliceAdjacencyList {
+    repeated SrcSliceTraffic src_traffic = 1;
+    message SrcSliceTraffic {
+        optional int32 slice_coord = 1;
+        repeated DstSliceTraffic dst_traffic = 2;
+    }
+    
+    message DstSliceTraffic {
+        optional int32 slice_coord = 1;
+        optional Traffic traffic = 2;
+    }
+}
+
+message VmToVmTraffic {
+    optional int32 src_coord = 1;
+    optional int32 dst_coord = 2;
+    optional double peak_traffic_gbps = 3;
+}
+
+message VmToVmTrafficMatrix {
+    repeated VmToVmTraffic edges = 1;
+}

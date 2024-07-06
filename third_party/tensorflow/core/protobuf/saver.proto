@@ -1,0 +1,25 @@
+syntax = "proto3";
+
+package tensorflow;
+
+option cc_enable_arenas = true;
+option go_package = "github.com/tensorflow/tensorflow/tensorflow/go/core/protobuf/for_core_protos_go_proto";
+option java_multiple_files = true;
+option java_outer_classname = "SaverProtos";
+option java_package = "org.tensorflow.util";
+
+message SaverDef {
+    string filename_tensor_name = 1;
+    string save_tensor_name = 2;
+    string restore_op_name = 3;
+    int32 max_to_keep = 4;
+    bool sharded = 5;
+    float keep_checkpoint_every_n_hours = 6;
+    
+    CheckpointFormatVersion version = 7;
+    enum CheckpointFormatVersion {
+        LEGACY = 0;
+        V1 = 1;
+        V2 = 2;
+    }
+}

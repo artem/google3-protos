@@ -1,0 +1,71 @@
+syntax = "proto2";
+
+package toco;
+
+import "third_party/tensorflow/lite/toco/types.proto";
+
+message InputArrayShape {
+    repeated int32 dims = 2;
+    optional bool unknown_rank = 3;
+}
+
+message InputArray {
+    optional string name = 1;
+    optional InputArrayShape shape = 6;
+    optional float mean_value = 3;
+    optional float std_value = 4 [default = 1];
+    optional IODataType data_type = 5;
+}
+
+message RnnState {
+    optional string state_array = 1;
+    optional string back_edge_source_array = 2;
+    optional bool discardable = 5;
+    optional int32 size = 3;
+    optional int32 num_dims = 4;
+}
+
+message ArraysExtraInfo {
+    repeated Entry entries = 1;
+    message Entry {
+        optional string name = 1;
+        optional string name_regexp = 7;
+        optional double min = 2;
+        optional double max = 3;
+        optional IODataType data_type = 4;
+        optional InputArrayShape shape = 5;
+        optional float constant_float_value = 6;
+    }
+}
+
+message ModelFlags {
+    repeated InputArray input_arrays = 1;
+    repeated string output_arrays = 2;
+    repeated string control_output_arrays = 24;
+    optional bool variable_batch = 10;
+    repeated RnnState rnn_states = 12;
+    
+    repeated ModelCheck model_checks = 14;
+    message ModelCheck {
+        optional string count_type = 1 [default = "None"];
+        optional int32 count_min = 2 [default = -1];
+        optional int32 count_max = 3 [default = -1];
+    }
+    
+    optional bool allow_nonexistent_arrays = 16;
+    optional bool allow_nonascii_arrays = 17;
+    optional ArraysExtraInfo arrays_extra_info = 18;
+    optional bool change_concat_input_ranges = 19 [default = true];
+    optional string saved_model_dir = 20;
+    optional int32 saved_model_version = 21;
+    repeated string saved_model_tags = 22;
+    repeated string saved_model_exported_names = 23;
+    optional bool use_hlo_import = 25;
+    
+    optional HloFileType hlo_file_type = 26;
+    enum HloFileType {
+        UNKNOWN = 0;
+        HLO_TEXT = 1;
+        HLO_PROTO = 2;
+    }
+}

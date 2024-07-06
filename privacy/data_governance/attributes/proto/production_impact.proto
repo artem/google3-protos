@@ -1,0 +1,26 @@
+syntax = "proto3";
+
+package privacy.data_governance.attributes;
+
+import "net/proto2/proto/descriptor.proto";
+import "privacy/data_governance/attributes/proto/classification.proto";
+
+option java_multiple_files = true;
+option java_package = "com.google.privacy.datagovernance.attributes";
+
+message ProductionImpact {
+    HasImpact tamper_primary_data = 1;
+    enum HasImpact {
+        IMPACT_UNDEFINED = 0;
+        YES = 1;
+        NO = 2;
+    }
+    
+    HasImpact bypass_access_controls = 2;
+    HasImpact bypass_production_controls = 3;
+    HasImpact bypass_logging = 4;
+    HasImpact change_production_environment = 5;
+    HasImpact unconstrained_access = 6;
+    bool other = 7;
+    repeated int64 impacted_team_product_id = 8 [deprecated = true];
+}

@@ -1,0 +1,13 @@
+syntax = "proto3";
+
+package xla;
+
+message CpuTopologyProto {
+    repeated CpuDevice cpu_devices = 1;
+    message CpuDevice {
+        int32 process_index = 2;
+        int32 local_hardware_id = 3;
+    }
+    
+    repeated string machine_attributes = 4;
+}

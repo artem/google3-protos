@@ -1,0 +1,41 @@
+syntax = "proto3";
+
+package google.monitoring.v3;
+
+import "google/logging/data_governance.proto";
+import "google/monitoring/v3/common.proto";
+import "google/protobuf/timestamp.proto";
+
+option ruby_package = "Google::Cloud::Monitoring::V3";
+option php_namespace = "Google\\Cloud\\Monitoring\\V3";
+option csharp_namespace = "Google.Cloud.Monitoring.V3";
+option go_package = "cloud.google.com/go/monitoring/apiv3/v2/monitoringpb;monitoringpb";
+option java_multiple_files = true;
+option java_outer_classname = "AgentProto";
+option java_package = "com.google.monitoring.v3";
+
+message CollectdValue {
+    string data_source_name = 1;
+    
+    DataSourceType data_source_type = 2;
+    enum DataSourceType {
+        UNSPECIFIED_DATA_SOURCE_TYPE = 0;
+        GAUGE = 1;
+        COUNTER = 2;
+        DERIVE = 3;
+        ABSOLUTE = 4;
+    }
+    
+    TypedValue value = 3;
+}
+
+message CollectdPayload {
+    repeated CollectdValue values = 1;
+    protobuf.Timestamp start_time = 2;
+    protobuf.Timestamp end_time = 3;
+    string plugin = 4;
+    string plugin_instance = 5;
+    string type = 6;
+    string type_instance = 7;
+    map<string, TypedValue> metadata = 8;
+}

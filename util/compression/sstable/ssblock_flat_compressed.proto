@@ -1,0 +1,13 @@
+syntax = "editions";
+
+package sstable;
+
+option java_package = "com.google.sstable";
+
+message FlatCompressedBlockTrailer {
+    optional uint32 num_entries = 1;
+    optional uint32 key_bytes = 2;
+    optional uint32 value_bytes = 3;
+    optional uint32 fixed_key_width = 4;
+    optional uint32 fixed_val_width = 5;
+}

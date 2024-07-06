@@ -1,0 +1,31 @@
+syntax = "proto3";
+
+package tensorflow.calibrator;
+
+option cc_enable_arenas = true;
+
+message CalibrationStatistics {
+    MinMaxStatistics min_max_statistics = 1;
+    message MinMaxStatistics {
+        float global_min = 1;
+        float global_max = 2;
+    }
+    
+    AverageMinMaxStatistics average_min_max_statistics = 2;
+    message AverageMinMaxStatistics {
+        float min_sum = 1;
+        float max_sum = 2;
+        int32 num_samples = 3;
+    }
+    
+    HistogramStatistics histogram_statistics = 3;
+    message HistogramStatistics {
+        float bin_width = 1;
+        float lower_bound = 2;
+        repeated float hist_freq = 3;
+    }
+}
+
+message CalibrationStatisticsMap {
+    map<string, CalibrationStatistics> statistics = 1;
+}

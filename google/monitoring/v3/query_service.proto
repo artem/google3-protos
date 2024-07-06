@@ -1,0 +1,91 @@
+syntax = "proto3";
+
+package google.monitoring.v3;
+
+import "google/api/annotations.proto";
+import "google/api/auditing.proto";
+import "google/api/label.proto";
+import "google/api/policy.proto";
+import "google/api/visibility.proto";
+import "google/logging/data_governance.proto";
+import "google/monitoring/v3/metric.proto";
+import "google/monitoring/v3/metric_service.proto";
+import "storage/datapol/annotations/proto/semantic_annotations.proto";
+
+option ruby_package = "Google::Cloud::Monitoring::V3";
+option php_namespace = "Google\\Cloud\\Monitoring\\V3";
+option csharp_namespace = "Google.Cloud.Monitoring.V3";
+option go_package = "cloud.google.com/go/monitoring/apiv3/v2/monitoringpb;monitoringpb";
+option java_multiple_files = true;
+option java_outer_classname = "QueryServiceProto";
+option java_package = "com.google.monitoring.v3";
+
+service QueryService {
+    rpc QueryTimeSeries(QueryTimeSeriesRequest) returns (QueryTimeSeriesResponse);
+    rpc ListQueryNotationCompletions(ListQueryNotationCompletionsRequest) returns (ListQueryNotationCompletionsResponse);
+    rpc ListQueryNotationHelpTopics(ListQueryNotationHelpTopicsRequest) returns (ListQueryNotationHelpTopicsResponse);
+    rpc ConvertTimeSeriesQuery(ConvertTimeSeriesQueryRequest) returns (ConvertTimeSeriesQueryResponse);
+    rpc ValidateTimeSeriesQuery(ValidateTimeSeriesQueryRequest) returns (ValidateTimeSeriesQueryResponse);
+    rpc AnnotateQuery(AnnotateQueryRequest) returns (AnnotateQueryResponse);
+}
+
+message ValidateTimeSeriesQueryRequest {
+    string name = 1;
+    string query = 2;
+    bool strict_mode = 3;
+    
+    QueryType query_type = 4;
+    enum QueryType {
+        QUERY_TYPE_UNSPECIFIED = 0;
+        DEFAULT = 1;
+        ALERT = 2;
+    }
+    
+    bool include_monitored_resource_container_label = 5;
+}
+
+message ValidateTimeSeriesQueryResponse {
+    repeated QueryError validation_errors = 1;
+}
+
+message AnnotateQueryRequest {
+    string name = 1;
+    string query = 2;
+    bool add_drilldown_annotation = 3;
+    bool add_outlier_annotation = 4;
+    bool include_monitored_resource_container_label = 5;
+}
+
+message AnnotateQueryResponse {
+    string annotated_query = 1;
+    TimeSeriesDescriptor time_series_descriptor = 2;
+    repeated api.LabelDescriptor additional_label_descriptors = 3;
+    
+    repeated DrilldownAnalysis drilldown_analysis = 4;
+    message DrilldownAnalysis {
+        QueryDrilldownState initial_state = 1;
+        bool can_change_filter = 2;
+        bool can_change_aggregation = 3;
+        bool can_filter_if_label_removed = 4;
+    }
+    
+    OutlierAnalysis outlier_analysis = 5;
+    message OutlierAnalysis {
+        QueryOutlierState initial_state = 1;
+        bool can_change_outlier = 2;
+    }
+    
+    TimingAnalysis timing_analysis = 6;
+    message TimingAnalysis {
+        QueryTimingState initial_state = 1;
+        bool can_change_graph_period = 2;
+        bool can_change_query_window = 3;
+    }
+    
+    TilingAnalysis tiling_analysis = 7;
+    message TilingAnalysis {
+        oneof _non_tileable {
+            bool non_tileable = 1;
+        }
+    }
+}

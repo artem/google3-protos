@@ -1,0 +1,310 @@
+syntax = "proto3";
+
+package privacy.data_governance.attributes;
+
+import "privacy/data_governance/attributes/proto/classification.proto";
+import "privacy/data_governance/attributes/proto/identifier.proto";
+
+option java_multiple_files = true;
+option java_package = "com.google.privacy.datagovernance.attributes";
+
+message Ads {
+    Data data = 1;
+    message Data {
+        Environment environment = 1;
+        enum Environment {
+            UNKNOWN_ENV = 0;
+            OTHER_ENV = 1 [deprecated = true];
+            PRODUCTION_ENV = 2;
+            STAGING_ENV = 3;
+            TESTING_ENV = 4;
+            DEVELOPMENT_ENV = 5;
+        }
+        
+        UsagePurpose usage_purpose = 2;
+        enum UsagePurpose {
+            UNKNOWN_USAGE_PURPOSE = 0;
+            OTHER_USAGE_PURPOSE = 1 [deprecated = true];
+            REVENUE_GENERATION = 2;
+            SPAM_AND_SECURITY = 4;
+            PRODUCT_IMPROVEMENT = 3;
+            SEASONAL_ANALYSIS = 27;
+            COMPLIANCE = 5;
+            DISPUTE_RESOLUTION = 6;
+            LITIGATION_HOLD = 7;
+            SUGGESTIONS_RECOMMENDATIONS_AND_P13N = 8;
+            ACCOUNT_MANAGEMENT = 9;
+            UX_STUDIES_AND_OTHER_RESEARCH_STUDIES = 10;
+            USER_DATA_BACKUPS = 11;
+            ML_MODELING_VIA_FLOGS = 12;
+            SALES = 13;
+            MARKETING = 14;
+            CASES_CUSTOMER_SUPPORT = 15;
+            GOOGLE_FEEDBACK = 16;
+            HATS_SURVEYS = 17;
+            SURVEYS_402 = 18;
+            SOX_COMPLIANCE = 20;
+            TAX_BILLING_FINANCE_AND_COMMERCIAL_COMPLIANCE = 21;
+            CHANGE_HISTORY_AND_AUDITING = 22;
+            IDENTITY_VERIFICATION = 23;
+            REPORTING_IDENTIFIABLE_DATA = 24 [deprecated = true];
+            AGGREGATE_REPORTING = 25 [deprecated = true];
+            REPORTING = 26;
+            POLICY_ENFORCEMENT_DECISION_AND_AUDIT = 19;
+            GENERAL_USAGE_FOR_WORKFORCE_DATA = 28;
+            CONTRACTS_FINANCIAL_RECORDS_AND_COMPLIANCE = 29;
+        }
+        
+        DataCategory data_category = 3;
+        enum DataCategory {
+            UNKNOWN_CATEGORY = 0;
+            OTHER_CATEGORY = 1 [deprecated = true];
+            NON_USER_DATA = 2;
+            ANONYMIZED_USER_DATA = 4;
+            INDIVIDUAL_USER_DATA = 3;
+        }
+        
+        UserType user_type = 4;
+        enum UserType {
+            UNKNOWN_USER_TYPE = 0;
+            OTHER_USER_TYPE = 1 [deprecated = true];
+            INTERNAL_GOOGLER = 2;
+            CUSTOMER = 4;
+            END_USER = 3;
+            PARTNER = 5;
+            VENDOR = 6;
+        }
+        
+        Survey402 survey_402 = 5 [deprecated = true];
+        message Survey402 {
+            Survey402DataType survey_data_type = 1;
+            enum Survey402DataType {
+                NON_SURVEY_DATA_TYPE = 0;
+                OTHER_SURVEY_DATA_TYPE = 1;
+                SURVEY_QUESTION_AND_ANSWER = 2;
+                SURVEY_SERVING_DATA = 3;
+                USER_PROFILE_DATA = 4;
+            }
+            
+            Survey402DataSource survey_data_source = 2;
+            enum Survey402DataSource {
+                OTHER_SURVEY_DATA_SOURCE = 0;
+                GOOGLE_OPINION_REWARDS = 1;
+                WEB_PLATFORM = 2;
+            }
+        }
+        
+        pfacts.kb.retention.Identifier identifier = 6;
+        
+        UserContract user_contract = 7;
+        enum UserContract {
+            USER_CONTRACT_UNSPECIFIED = 0;
+            SURVEY_402_QUESTION_AND_ANSWER = 1;
+        }
+        
+        EventualAction eventual_action = 8;
+        enum EventualAction {
+            EVENTUAL_ACTION_UNSPECIFIED = 0;
+            EVENTUALLY_ANONYMIZE = 1;
+            EVENTUALLY_DELETE = 2;
+        }
+        
+        int64 anonymization_bug_id = 9;
+        
+        repeated DataType data_type = 10;
+        enum DataType {
+            DATA_TYPE_UNKNOWN = 0;
+            DT_SPII_IDENTIFIER = 1;
+            DT_PII_IDENTIFIER = 2;
+            DT_PSEUDONYMOUS_IDENTIFIER = 3;
+            DT_ID_LINK = 4;
+            DT_PRIVACY_CONTROL = 5;
+            DT_SETTING = 6;
+            DT_INSTALL = 7;
+            DT_VISIT = 8;
+            DT_QUERY = 9;
+            DT_VIEW = 10;
+            DT_CLICK = 11;
+            DT_PURCHASE = 12;
+            DT_AD_REQUEST = 13;
+            DT_AD_BID = 14;
+            DT_AD_CONVERSION = 15;
+            DT_LOCATION = 16;
+            DT_USER_FEEDBACK_INSTRUCTIONS = 18;
+            DT_USER_GENERATED_CONTENT = 17;
+            DT_DEMOGRAPHICS = 19;
+            DT_BEHAVIORAL_USER_PROFILE = 20;
+            DT_NON_SEMANTIC_USER_LIST = 21;
+            DT_DEVICE_INFO = 22;
+            DT_ATTRIBUTION = 23;
+            DT_REACH = 24;
+            DT_ENGAGEMENT = 25;
+            DT_LIFT = 26;
+            DT_REPORT = 27;
+        }
+        
+        repeated DataOrigin data_origin = 11;
+        enum DataOrigin {
+            DATA_ORIGIN_UNKNOWN = 0;
+            DO_SEARCH = 1;
+            DO_YOUTUBE = 2;
+            DO_GMAIL = 3;
+            DO_PLAY = 4;
+            DO_SEARCH_ADS = 5;
+            DO_YOUTUBE_ADS = 6;
+            DO_GMAIL_ADS = 7;
+            DO_PLAY_ADS = 8;
+            DO_FEEDS_ADS = 9;
+            DO_HULK = 10;
+            DO_CHROME = 11;
+            DO_ACCOUNT = 12;
+            DO_DEVICE = 13;
+            DO_NETWORK = 14;
+            DO_PLATFORM = 15;
+            DO_GOOGLE_ANALYTICS = 16;
+            DO_ADVERTISER_1P = 17;
+            DO_PUBLISHER_1P = 18;
+            DO_ADS_INDUSTRY_ORG = 19;
+            DO_LENS = 20;
+            DO_GOOGLE_ASSISTANT = 21;
+            DO_GOOGLE_TV_ADS = 22;
+            DO_PANELS_CPS_JOIN = 23;
+            DO_PANELS_NO_CPS_JOIN = 24;
+        }
+    }
+    
+    Storage storage = 2;
+    message Storage {
+        CustomerControl customer_control = 1 [deprecated = true];
+        enum CustomerControl {
+            NO_CUSTOMER_CONTROL = 0;
+            OTHER_CUSTOMER_CONTROL = 1;
+            ADVERTISER_CONTROL = 2;
+        }
+        
+        UserControl user_control = 2 [deprecated = true];
+        enum UserControl {
+            NO_USER_CONTROL = 0;
+            OTHER_USER_CONTROL = 1;
+            FOOTPRINTS_UI = 2;
+            CUSTOM_SEARCH_ENGINE = 3;
+            WHY_THIS_AD = 4;
+            ADS_PREFERENCE_MANAGER = 5;
+            GOOGLE_ANALYTICS = 6;
+            MUTE_ADS = 7;
+            GAIA_ACCOUNT_MANAGEMENT_SERVICE = 8;
+            GOOGLE_SHOPPING = 9;
+            GOOGLE_FLIGHTS = 10;
+            GOOGLE_TRIPS = 11;
+        }
+        
+        TTLControl ttl_control = 3 [deprecated = true];
+        enum TTLControl {
+            UNKNOWN_TTL_CONTROL = 0;
+            OTHER_TTL_CONTROL = 1;
+            KANSAS_GCLIFE = 2;
+            JOB_DELETION = 3;
+            INDIRECT_TTL = 4;
+            FOOTPRINTS_TTL = 5;
+        }
+        
+        RetentionControl retention_control = 4;
+        enum RetentionControl {
+            RETENTION_CONTROL_UNSPECIFIED = 0;
+            CUSTOMER_CONTROL = 1;
+            GRANULAR_USER_CONTROL = 2;
+            GRANULAR_USER_CONTROL_WITH_TTL = 5;
+            GRANULAR_USER_CONTROL_WITHOUT_TTL = 6;
+            INDIRECT_RETENTION_CONTROL = 3;
+            SHORT_LIVED_RETENTION_CONTROL = 4;
+        }
+    }
+    
+    Process process = 3;
+    message Process {
+        repeated JobProcessingPurpose intended_job_purposes = 1;
+        enum JobProcessingPurpose {
+            JOB_PROCESSING_PURPOSE_UNKNOWN = 0;
+            JOB_PROCESSING_PURPOSE_OTHER = 1;
+            PRIVACY_AND_SECURITY = 10;
+            PRIVACY_AND_SECURITY_AUTHENTICATION_AUTHORIZATION_AUDIT_ENCRYPTION = 11;
+            PRIVACY_AND_SECURITY_POLICY_ENFORCEMENT = 12;
+            PRIVACY_AND_SECURITY_INTERNAL_FACING_SECURITY_AND_PRIVACY = 13;
+            PRIVACY_AND_SECURITY_EXTERNAL_FACING_SECURITY_AND_PRIVACY = 14;
+            INFRASTRUCTURE = 20;
+            INFRASTRUCTURE_JOB_MANAGEMENT = 21;
+        }
+        
+        ExternallyExchangedData data_sent_outside_google = 2;
+        message ExternallyExchangedData {
+            repeated EntityDataOwnerExchangedWithExternal entity_data_type = 1;
+            classification.Category data_properties = 2;
+            repeated ExternalExchangedDataGroupings data_groupings = 3;
+            repeated ExternalDataExchanger external_data_exchanger = 4;
+        }
+        
+        ExternallyExchangedData data_received_from_outside_google = 3;
+        
+        repeated DataOriginPA providing_pa = 4;
+        enum DataOriginPA {
+            PA_UNKNOWN = 0;
+            PA_NONE = 1;
+            PA_ADS = 2;
+            PA_ANDROID = 3;
+            PA_APPS_GSUITE = 4;
+            PA_BETS = 5;
+            PA_CHROME = 6;
+            PA_COMMS = 7;
+            PA_CORP_ENG = 8;
+            PA_DAYDREAM = 9;
+            PA_FINANCE = 10;
+            PA_FIREBASE = 11;
+            PA_GBO = 12;
+            PA_GCP = 13;
+            PA_GPI = 14;
+            PA_GEO = 15;
+            PA_HARDWARE = 16;
+            PA_JIGSAW = 17;
+            PA_LEGAL = 18;
+            PA_MARKETING = 19;
+            PA_PAYMENTS = 20;
+            PA_PHOTOS = 21;
+            PA_PLAY = 22;
+            PA_RESEARCH = 23;
+            PA_SEARCH = 24;
+            PA_TRAVEL = 25;
+            PA_WAZE = 26;
+            PA_YOUTUBE = 27;
+        }
+        
+        enum EntityDataOwnerExchangedWithExternal {
+            UNKNOWN_ENTITY_DATA_EXCHANGED = 0;
+            OTHER_ENTITY_DATA_EXCHANGED = 1;
+            NO_ENTITY_DATA_EXCHANGED = 2;
+            END_USER_DATA_EXCHANGED = 3;
+            PUBLISHER_DATA_EXCHANGED = 4;
+            ADVERTISER_DATA_EXCHANGED = 5;
+        }
+        
+        enum ExternalExchangedDataGroupings {
+            UNKNOWN_CATEGORY = 0;
+            OTHER_CATEGORY = 1;
+            NON_USER_DATA = 2;
+            INDIVIDUAL_USER_DATA = 3;
+            ANONYMIZED_USER_DATA = 4;
+            AGGREGATED_USER_DATA = 5;
+        }
+        
+        enum ExternalDataExchanger {
+            ENTITY_TYPE_UNKNOWN_EXTERNAL_ENTITY = 0;
+            ENTITY_TYPE_OTHER_ENTITY = 1;
+            ENTITY_TYPE_NO_DIRECT_DATA_EXCHANGING_EXTERNAL_ENTITY = 2;
+            ENTITY_TYPE_END_USER = 3;
+            ENTITY_TYPE_ADVERTISER = 4;
+            ENTITY_TYPE_PUBLISHER = 5;
+            ENTITY_TYPE_PLATFORM = 6;
+            ENTITY_TYPE_NETWORK = 7;
+            ENTITY_TYPE_EXCHANGES = 8;
+        }
+    }
+}

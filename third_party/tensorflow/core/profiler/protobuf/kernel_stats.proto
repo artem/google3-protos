@@ -1,0 +1,24 @@
+syntax = "proto3";
+
+package tensorflow.profiler;
+
+message KernelReport {
+    string name = 1;
+    uint32 registers_per_thread = 2;
+    uint32 static_shmem_bytes = 3;
+    uint32 dynamic_shmem_bytes = 4;
+    repeated uint32 block_dim = 5;
+    repeated uint32 grid_dim = 6;
+    uint64 total_duration_ns = 7;
+    uint64 min_duration_ns = 8;
+    uint64 max_duration_ns = 9;
+    bool is_kernel_using_tensor_core = 10;
+    bool is_op_tensor_core_eligible = 11;
+    string op_name = 12;
+    uint32 occurrences = 13;
+    float occupancy_pct = 14;
+}
+
+message KernelStatsDb {
+    repeated KernelReport reports = 1;
+}

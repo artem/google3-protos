@@ -1,0 +1,50 @@
+syntax = "editions";
+
+import "storage/datapol/annotations/proto/semantic_annotations.proto";
+
+message CompressorProto {
+    optional Algorithm algorithm = 1 [default = DO_NOTHING];
+    enum Algorithm {
+        DO_NOTHING = 1;
+        ZLIB = 2;
+        FLATE = 3;
+        BZIP2 = 4;
+        RADIXZIP = 5;
+    }
+    
+    optional int32 zlib_level = 2 [default = 6];
+    optional int32 zlib_log2_window_size = 3 [default = 15];
+    optional int32 flate_level = 4 [default = 6];
+    optional int32 flate_log2_window_size = 5 [default = 22];
+    optional int32 bzip2_level = 6 [default = 1];
+    
+    optional WireType radixzip_transort_type = 7 [default = STRING];
+    enum WireType {
+        NUMERIC = 0;
+        DOUBLE = 1;
+        STRING = 2;
+        FLOAT = 5;
+        FIXED_WIDTH = 7;
+    }
+    
+    optional fixed32 radixzip_width = 8 [default = 4];
+    
+    optional MoveToFrontType radixzip_mtf_type = 9 [default = MTF_PREDICTIVE];
+    enum MoveToFrontType {
+        MTF_NONE = 0;
+        MTF_SIMPLE = 1;
+        MTF_TWO_STAGE = 2;
+        MTF_PREDICTIVE = 3;
+    }
+    
+    optional RunLengthType radixzip_rle_type = 10 [default = RLE_ZEROS];
+    enum RunLengthType {
+        RLE_ZEROS = 0;
+    }
+    
+    optional fixed32 radixzip_max_huff_length = 11 [default = 15];
+    optional fixed32 radixzip_group_segment_size = 12 [default = 80];
+    optional fixed32 radixzip_group_min_tables = 13 [default = 1];
+    optional fixed32 radixzip_group_max_tables = 14 [default = 9];
+    optional fixed32 radixzip_group_start_tables = 15 [default = 5];
+}

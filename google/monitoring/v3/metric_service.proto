@@ -1,0 +1,312 @@
+syntax = "proto3";
+
+package google.monitoring.v3;
+
+import "google/api/annotations.proto";
+import "google/api/auditing.proto";
+import "google/api/client.proto";
+import "google/api/field_behavior.proto";
+import "google/api/metric.proto";
+import "google/api/monitored_resource.proto";
+import "google/api/policy.proto";
+import "google/api/resource.proto";
+import "google/api/visibility.proto";
+import "google/logging/data_governance.proto";
+import "google/monitoring/v3/alert.proto";
+import "google/monitoring/v3/common.proto";
+import "google/monitoring/v3/metric.proto";
+import "google/protobuf/duration.proto";
+import "google/protobuf/empty.proto";
+import "google/rpc/status.proto";
+import "storage/datapol/annotations/proto/semantic_annotations.proto";
+
+option ruby_package = "Google::Cloud::Monitoring::V3";
+option php_namespace = "Google\\Cloud\\Monitoring\\V3";
+option csharp_namespace = "Google.Cloud.Monitoring.V3";
+option go_package = "cloud.google.com/go/monitoring/apiv3/v2/monitoringpb;monitoringpb";
+option java_multiple_files = true;
+option java_outer_classname = "MetricServiceProto";
+option java_package = "com.google.monitoring.v3";
+
+service MetricService {
+    rpc ListMonitoredResourceDescriptors(ListMonitoredResourceDescriptorsRequest) returns (ListMonitoredResourceDescriptorsResponse);
+    rpc GetMonitoredResourceDescriptor(GetMonitoredResourceDescriptorRequest) returns (api.MonitoredResourceDescriptor);
+    rpc ListMetricDescriptors(ListMetricDescriptorsRequest) returns (ListMetricDescriptorsResponse);
+    rpc GetMetricDescriptor(GetMetricDescriptorRequest) returns (api.MetricDescriptor);
+    rpc CreateMetricDescriptor(CreateMetricDescriptorRequest) returns (api.MetricDescriptor);
+    rpc DeleteMetricDescriptor(DeleteMetricDescriptorRequest) returns (protobuf.Empty);
+    rpc ListTimeSeries(ListTimeSeriesRequest) returns (ListTimeSeriesResponse);
+    rpc ListTimeSeriesStreaming(ListTimeSeriesStreamingRequest) returns (stream ListTimeSeriesStreamingResponse);
+    rpc DebugListTimeSeries(ListTimeSeriesRequest) returns (DebugListTimeSeriesResponse);
+    rpc CreateTimeSeries(CreateTimeSeriesRequest) returns (protobuf.Empty);
+    rpc CreateServiceTimeSeries(CreateTimeSeriesRequest) returns (protobuf.Empty);
+}
+
+message ListMonitoredResourceDescriptorsRequest {
+    string name = 5;
+    string filter = 2;
+    int32 page_size = 3;
+    string page_token = 4;
+    bool include_monitored_resource_container_label = 6;
+}
+
+message ListMonitoredResourceDescriptorsResponse {
+    repeated api.MonitoredResourceDescriptor resource_descriptors = 1;
+    string next_page_token = 2;
+}
+
+message GetMonitoredResourceDescriptorRequest {
+    string name = 3;
+    bool include_monitored_resource_container_label = 4;
+}
+
+message ListMetricDescriptorsRequest {
+    string name = 5;
+    string filter = 2;
+    int32 page_size = 3;
+    string page_token = 4;
+}
+
+message ListMetricDescriptorsResponse {
+    repeated api.MetricDescriptor metric_descriptors = 1;
+    string next_page_token = 2;
+}
+
+message GetMetricDescriptorRequest {
+    string name = 3;
+}
+
+message CreateMetricDescriptorRequest {
+    string name = 3;
+    api.MetricDescriptor metric_descriptor = 2;
+    
+    reserved 1, 4;
+}
+
+message DeleteMetricDescriptorRequest {
+    string name = 3;
+}
+
+message ListTimeSeriesRequest {
+    string name = 10;
+    string filter = 2;
+    TimeInterval interval = 4;
+    Aggregation aggregation = 5;
+    string denominator_filter = 13;
+    Aggregation denominator_aggregation = 14;
+    Aggregation secondary_aggregation = 11;
+    string order_by = 6;
+    
+    TimeSeriesView view = 7;
+    enum TimeSeriesView {
+        FULL = 0;
+        HEADERS = 1;
+    }
+    
+    int32 page_size = 8;
+    string page_token = 9;
+    protobuf.Duration output_period = 12;
+    bool validate_only = 16;
+    string client_request_id = 17;
+    bool request_prism = 18;
+    bool include_monitored_resource_container_label = 19;
+    GCPMonitoringQueryInfo gcp_monitoring_query_information = 20;
+    
+    oneof OutputTimeSeriesFilter {
+        PickTimeSeriesFilter pick_time_series_filter = 15;
+    }
+    
+    reserved 1;
+}
+
+message ListTimeSeriesResponse {
+    repeated TimeSeries time_series = 1;
+    string next_page_token = 2;
+    repeated rpc.Status execution_errors = 3;
+    string unit = 5;
+    QueryDataQuality query_data_quality = 6;
+    
+    reserved 4;
+}
+
+message ListTimeSeriesStreamingRequest {
+    string name = 1;
+    string filter = 2;
+    TimeInterval interval = 3;
+    Aggregation aggregation = 4;
+    string denominator_filter = 5;
+    Aggregation denominator_aggregation = 6;
+    Aggregation secondary_aggregation = 7;
+    protobuf.Duration output_period = 9;
+    string client_request_id = 10;
+    bool include_monitored_resource_container_label = 11;
+    
+    oneof OutputTimeSeriesFilter {
+        PickTimeSeriesFilter pick_time_series_filter = 8;
+    }
+}
+
+message ListTimeSeriesStreamingResponse {
+    TimeSeries time_series = 1;
+    repeated rpc.Status execution_errors = 2;
+    string unit = 3;
+    QueryDataQuality query_data_quality = 4;
+    repeated rpc.Status partial_errors = 5;
+    TimeSeriesTable time_series_table = 6;
+}
+
+message DebugListTimeSeriesResponse {
+    repeated string backend_queries = 1;
+    repeated string monarch_metric_descriptors = 2;
+    repeated string monarch_storage_metric = 3;
+}
+
+message CreateTimeSeriesRequest {
+    string name = 3;
+    repeated TimeSeries time_series = 2;
+}
+
+message CreateTimeSeriesError {
+    TimeSeries time_series = 1 [deprecated = true];
+    rpc.Status status = 2 [deprecated = true];
+}
+
+message CreateTimeSeriesSummary {
+    int32 total_point_count = 1;
+    int32 success_point_count = 2;
+    
+    repeated Error errors = 3;
+    message Error {
+        rpc.Status status = 1;
+        int32 point_count = 2;
+    }
+}
+
+message QueryTimeSeriesRequest {
+    string name = 1;
+    string query = 7;
+    bool validate_only = 3 [deprecated = true];
+    int32 page_size = 9;
+    string page_token = 10;
+    QueryNotation query_notation = 2 [deprecated = true];
+    string time_zone = 4;
+    bool report_periodic_stats = 5;
+    bool report_query_plan = 6;
+    string client_request_id = 8;
+    QueryTransformationSpec query_transformation_spec = 11;
+    bool request_prism = 12;
+    bool allow_dynamic_cross_project_querying = 13;
+    bool include_monitored_resource_container_label = 14;
+}
+
+message QueryTimeSeriesResponse {
+    TimeSeriesTable time_series_table = 1 [deprecated = true];
+    TimeSeriesDescriptor time_series_descriptor = 8;
+    repeated TimeSeriesData time_series_data = 9;
+    string next_page_token = 10;
+    repeated QueryError dynamic_errors = 2;
+    repeated rpc.Status partial_errors = 11;
+    repeated QueryError warnings = 12;
+    QueryDataQuality query_data_quality = 13;
+    TimeSeriesTable internal_time_series_table = 101 [deprecated = true];
+    bytes stats = 5;
+    bytes final_stats = 6;
+    
+    AlertInfo alert_info = 7;
+    message AlertInfo {
+        AlertPolicy.Condition.Trigger trigger = 3;
+        protobuf.Duration query_horizon = 4;
+        
+        oneof alert_info {
+            ThresholdAlertInfo threshold = 1;
+            AbsenceAlertInfo absence = 2;
+        }
+        
+        message ThresholdAlertInfo {
+            ComparisonType comparison = 1;
+            double threshold_value = 2;
+            protobuf.Duration duration = 3;
+        }
+        
+        message AbsenceAlertInfo {
+            protobuf.Duration duration = 1;
+        }
+    }
+}
+
+message ListQueryNotationCompletionsRequest {
+    string name = 1;
+    QueryNotation query_notation = 2;
+    
+    CompletionType completion_type = 3;
+    enum CompletionType {
+        QUERY_TEXT = 0;
+        MONITORED_RESOURCE_QUERY_TEXT = 1 [deprecated = true];
+        OBJECT_NAME = 2;
+        DRILLDOWN_FILTER = 3;
+    }
+    
+    bool include_help_topics = 4;
+    bool allow_narrowing = 5;
+    string drilldown_filter_label = 6;
+    string drilldown_filter_token = 7;
+    QueryTransformationSpec query_transformation_spec = 8;
+    bool include_monitored_resource_container_label = 9;
+}
+
+message ListQueryNotationCompletionsResponse {
+    repeated QueryNotationCompletion completions = 1;
+    repeated QueryError query_errors = 2;
+    repeated QueryNotationHelpTopic help_topics = 3;
+}
+
+message ListQueryNotationHelpTopicsRequest {
+    string name = 1;
+    QueryNotation query_notation = 2;
+    bool show_complete_query = 3;
+    bool include_monitored_resource_container_label = 4;
+}
+
+message ListQueryNotationHelpTopicsResponse {
+    repeated QueryNotationHelpTopic help_topics = 1;
+    repeated QueryError query_errors = 2;
+}
+
+message ConvertTimeSeriesQueryRequest {
+    string name = 1;
+    TimeSeriesQuery time_series_query = 2;
+    
+    OutputFormat output_format = 3;
+    message OutputFormat {
+        oneof format {
+            QueryNotationFormat query_notation = 1;
+        }
+        
+        message QueryNotationFormat {
+            bool strict = 1;
+            bool remove_within_table_operation = 3;
+            int32 width = 2;
+        }
+    }
+    
+    AlertConfig alert_config = 4;
+    message AlertConfig {
+        protobuf.Duration duration = 1;
+        double threshold_value = 2;
+        string threshold_unit_type = 6;
+        ComparisonType comparison_type = 3;
+        bool absence_alert = 4;
+        bool rate_change_alert = 5;
+    }
+    
+    bool include_monitored_resource_container_label = 5;
+}
+
+message ConvertTimeSeriesQueryResponse {
+    TimeSeriesQuery time_series_query = 1;
+}
+
+message QueryErrorList {
+    repeated QueryError errors = 1;
+    string error_summary = 2;
+}

@@ -1,0 +1,43 @@
+syntax = "proto3";
+
+package tensorflow;
+
+import "google/protobuf/wrappers.proto";
+
+option cc_enable_arenas = true;
+option go_package = "github.com/tensorflow/tensorflow/tensorflow/go/core/protobuf/for_core_protos_go_proto";
+
+message TrackableObjectGraph {
+    repeated TrackableObject nodes = 1;
+    message TrackableObject {
+        repeated ObjectReference children = 1;
+        message ObjectReference {
+            int32 node_id = 1;
+            string local_name = 2;
+        }
+        
+        repeated SerializedTensor attributes = 2;
+        message SerializedTensor {
+            string name = 1;
+            string full_name = 2;
+            string checkpoint_key = 3;
+            
+            reserved 4, "optional_restore";
+        }
+        
+        repeated SlotVariableReference slot_variables = 3;
+        message SlotVariableReference {
+            int32 original_variable_node_id = 1;
+            string slot_name = 2;
+            int32 slot_variable_node_id = 3;
+        }
+        
+        RegisteredSaver registered_saver = 4;
+        google.protobuf.BoolValue has_checkpoint_values = 5;
+    }
+}
+
+message RegisteredSaver {
+    string name = 1;
+    string object_name = 2;
+}

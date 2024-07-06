@@ -1,0 +1,111 @@
+syntax = "proto3";
+
+package google.api;
+
+import "google/api/launch_stage.proto";
+import "google/api/visibility.proto";
+
+option objc_class_prefix = "GAPI";
+option cc_enable_arenas = true;
+option go_package = "google.golang.org/genproto/googleapis/api/serviceconfig;serviceconfig";
+option java_multiple_files = true;
+option java_outer_classname = "IamProto";
+option java_package = "com.google.api";
+
+message Iam {
+    LaunchStage launch_stage = 7;
+    repeated IamResourceDescriptor resources = 1;
+    string environment = 2;
+    repeated IamRole roles = 3;
+    string reader = 4;
+    string writer = 5;
+    
+    IamServiceConfigInternal internal = 6;
+    message IamServiceConfigInternal {
+        string role_group = 1;
+    }
+}
+
+message IamResourceDescriptor {
+    string type = 1;
+    repeated IamResourceNameMapping resource_name_mappings = 2;
+    repeated IamPermission permissions = 3;
+    
+    IamResourceDescriptorInternal internal = 4;
+    message IamResourceDescriptorInternal {
+        string name_for_resource = 1;
+        bool single_parent_override = 2;
+        bool disable_convert_project_id_or_number = 3;
+    }
+    
+    MemberTypeRestriction member_type_restriction = 5;
+    enum MemberTypeRestriction {
+        MEMBER_TYPE_RESTRICTION_UNSPECIFIED = 0;
+        ALLOW_ALL_USERS = 1;
+        ALLOW_ALL_AUTHENTICATED_USERS = 2;
+        ALLOW_ONLY_SPECIFIC_MEMBERS = 3;
+    }
+    
+    LaunchStage launch_stage = 6;
+}
+
+message IamResourceNameMapping {
+    string resource_name_pattern = 1;
+    string policy_name_extractor = 2;
+    string policy_location_extractor = 3;
+}
+
+message IamPermission {
+    string name = 1;
+    string display_name = 2;
+    string description = 3;
+    
+    BasicRole basic_role = 8;
+    enum BasicRole {
+        BASIC_ROLE_UNSPECIFIED = 0;
+        READER = 1;
+        WRITER = 2;
+        ADMIN = 3;
+    }
+    
+    PermissionType type = 4;
+    enum PermissionType {
+        PERMISSION_TYPE_UNSPECIFIED = 0;
+        META_DATA_READ = 1;
+        META_DATA_WRITE = 2;
+        DATA_READ = 3;
+        DATA_WRITE = 4;
+    }
+    
+    PermissionScope scope = 5 [deprecated = true];
+    enum PermissionScope {
+        PERMISSION_SCOPE_UNSPECIFIED = 0;
+        USER_SCOPE = 1;
+        ADMIN_SCOPE = 2;
+    }
+    
+    LaunchStage launch_stage = 6;
+    bool parent_only = 7;
+    
+    IamPermissionInternal internal = 9;
+    message IamPermissionInternal {
+        CustomRoleSupportLevel custom_role_support_level_override = 1;
+        enum CustomRoleSupportLevel {
+            CUSTOM_ROLE_SUPPORT_LEVEL_UNSPECIFIED = 0;
+            NOT_SUPPORTED = 1;
+            SUPPORTED = 2;
+        }
+        
+        string cal_onboarding_ticket = 2;
+        bool used_for_rpc_security_policy = 3;
+    }
+}
+
+message IamRole {
+    string name = 1;
+    string display_name = 2;
+    string description = 3;
+    LaunchStage launch_stage = 4;
+    repeated string permissions = 5;
+    repeated string roles = 6;
+}

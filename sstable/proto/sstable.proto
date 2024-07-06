@@ -1,0 +1,122 @@
+syntax = "proto2";
+
+package sstable;
+
+import "net/proto2/bridge/proto/message_set.proto";
+
+option java_multiple_files = true;
+option java_package = "com.google.sstable";
+
+message IndexBlockExtension {
+    optional Type type = 1;
+    enum Type {
+        SSBLOCK = 0;
+        RAW_VALUE = 1;
+    }
+}
+
+message TmpIndexEntry {
+    optional bytes firstkey = 6;
+    required bytes lastkey = 1;
+    required int64 offset = 2;
+    required int64 size = 3;
+    required fixed32 csum = 4;
+    optional IndexBlockExtension extension = 5;
+}
+
+message Section {
+    required int64 offset = 1;
+    required int64 size = 2;
+    required fixed32 checksum = 3;
+}
+
+message Creator {
+    required string userid = 1;
+    required string hostname = 2;
+    optional int64 when = 3;
+    required string build_info = 4;
+    required string build_target = 5;
+    required int64 build_timestamp = 6;
+    optional string command_line = 7;
+}
+
+message Stats {
+    required int64 file_size = 1;
+    required int64 data_size = 2;
+    required int64 index_size = 3;
+    required int64 key_size = 4;
+    required int64 value_size = 5;
+    required int64 entries = 6;
+    optional int64 blocks = 7;
+}
+
+message DiskSSTableInfo {
+    optional int64 blocks = 1;
+    optional int64 blocksize = 2;
+    optional string options = 3;
+    optional int64 level1_index_offset = 4;
+    optional int64 level1_index_size = 5;
+    
+    extend proto2.bridge.MessageSet {
+        optional DiskSSTableInfo message_set_extension = 7748790;
+    }
+}
+
+message ExistenceFilterStats {
+    optional int64 bytes = 1;
+    optional int64 count_set_bits = 2;
+    optional int64 num_hashes = 3;
+    optional double current_estimated_false_positive_rate = 4;
+    optional double estimated_false_positive_rate = 5;
+    optional double estimated_unique_insertions = 6;
+    optional double estimated_unique_insertions_error_percentage = 7;
+}
+
+message Metadata {
+    optional string type = 1;
+    optional Creator creator = 15;
+    required Stats stats = 2;
+    optional proto2.bridge.MessageSet info = 3;
+    optional string sharder = 4;
+    optional ExistenceFilterStats existence_filter_stats = 5;
+}
+
+message PayloadDescriptor {
+    optional group ExistenceFilter = 1 {
+        required int64 offset = 2;
+        required int64 size = 3;
+        required fixed32 checksum = 4;
+    }
+    
+    optional Section ShortKeyIndex = 5;
+    optional fixed32 footer_checksum = 6;
+    optional Metadata metadata = 7;
+    optional Section userinfo = 8;
+    optional Section Level0Index = 9;
+    optional int64 level1_index_offset = 10;
+    optional int64 level1_index_size = 11;
+    optional bool crc32c_checksums = 12;
+}
+
+enum SSBlockType {
+    SSBLOCK_PREFIX_COMPRESSED = 0;
+    SSBLOCK_FLATE_COMPRESSED = 1;
+    SSBLOCK_OBSOLETE_LZO_PREFIX_COMPRESSED = 2;
+    SSBLOCK_OBSOLETE_BMDIFF = 3;
+    SSBLOCK_BMDIFF_COMPRESSED = 4;
+    SSBLOCK_UNKNOWN = 5;
+    SSBLOCK_ZIPPY_PREFIX_COMPRESSED = 6;
+    SSBLOCK_FLATE_BMDIFF_COMPRESSED = 7;
+    SSBLOCK_MIXED = 8;
+    SSBLOCK_OBSOLETE_FINDREP_ZIPPY_COMPRESSED = 9;
+    SSBLOCK_OBSOLETE_FINDREP_FLATE_COMPRESSED = 10;
+    SSBLOCK_RECORD_COMPRESSED = 11;
+    SSBLOCK_DICT_COMPRESSED = 12;
+    SSBLOCK_GIPFELI_PREFIX_COMPRESSED = 13;
+    SSBLOCK_GIPFELI_BMDIFF_COMPRESSED = 14;
+    BROTLI_COMPRESSED = 15;
+    ZSTD_COMPRESSED = 16;
+    BROTLI_COMPRESSED_TRANSPOSED = 17;
+    ZSTD_COMPRESSED_TRANSPOSED = 18;
+    UNSUPPORTED_ZIPPY_FLAT_COMPRESSED = 19;
+}

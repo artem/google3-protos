@@ -1,0 +1,22 @@
+syntax = "proto3";
+
+package tensorflow.tpu;
+
+import "third_party/tensorflow/compiler/tf2xla/host_compute_metadata.proto";
+import "third_party/tensorflow/core/tpu/kernels/tpu_compilation_cache_common.proto";
+
+service TpuCompilationCacheServiceExternal {
+    rpc GetTpuProgram(GetTpuProgramRequest) returns (GetTpuProgramResponseExternal);
+}
+
+message GetTpuProgramResponseExternal {
+    Blob proto = 1;
+    message Blob {
+        bytes data = 1;
+    }
+    
+    .tensorflow.tf2xla.HostComputeMetadata host_compute_metadata = 2;
+    bool may_modify_variables = 3;
+    Blob compiler_metadata = 4;
+    bool is_empty = 5;
+}

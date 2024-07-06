@@ -1,0 +1,44 @@
+syntax = "proto3";
+
+package google.monitoring.v3.widgets;
+
+import "google/api/auditing.proto";
+import "google/api/field_behavior.proto";
+import "google/api/visibility.proto";
+import "google/protobuf/duration.proto";
+import "storage/datapol/annotations/proto/semantic_annotations.proto";
+
+option ruby_package = "Google::Cloud::Monitoring::V3::Widgets";
+option php_namespace = "Google\\Cloud\\Monitoring\\V3\\Widgets";
+option csharp_namespace = "Google.Cloud.Monitoring.V3.Widgets";
+option java_multiple_files = true;
+option java_outer_classname = "TraceProto";
+option java_package = "com.google.monitoring.v3.widgets";
+
+message TraceQuery {
+    SpanDataValue span_data_value = 1;
+    enum SpanDataValue {
+        SPAN_DATA_VALUE_UNSPECIFIED = 0;
+        SPAN_COUNT = 1;
+        SPAN_DURATION = 2;
+        SPAN_DURATION_PERCENTILES = 3;
+    }
+    
+    SpanFilters span_filters = 2;
+    message SpanFilters {
+        repeated string services = 1;
+        repeated string display_names = 2;
+        repeated string status = 3;
+        repeated string kinds = 4;
+        protobuf.Duration min_duration = 5;
+        protobuf.Duration max_duration = 6;
+        
+        repeated SpanAttributeFilter attributes = 7;
+        message SpanAttributeFilter {
+            string key = 1;
+            repeated string value = 2;
+        }
+        
+        bool is_root_span = 8;
+    }
+}

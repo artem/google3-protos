@@ -1,0 +1,19 @@
+syntax = "proto3";
+
+package privacy.data_governance.attributes;
+
+import "net/proto2/proto/descriptor.proto";
+import "privacy/data_governance/attributes/proto/classification.proto";
+
+option java_multiple_files = true;
+option java_package = "com.google.privacy.datagovernance.attributes";
+
+message PrimaryForPortability {
+    map<int32, IsPrimaryForPortability> is_primary_for_tg_id = 1;
+}
+
+enum IsPrimaryForPortability {
+    PRIMARY_FOR_PORTABILITY_UNDEFINED = 0;
+    PRIMARY_FOR_PORTABILITY_YES = 1;
+    PRIMARY_FOR_PORTABILITY_NO = 2;
+}

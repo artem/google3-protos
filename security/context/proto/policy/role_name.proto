@@ -1,0 +1,26 @@
+syntax = "proto2";
+
+package security.context;
+
+import "security/context/proto/policy/usage_restriction.proto";
+
+option java_multiple_files = true;
+option java_outer_classname = "RoleNameProto";
+option java_package = "com.google.security.context";
+
+enum RoleName {
+    UNSPECIFIED_ROLE_NAME = 0;
+    ADMIN = 2;
+    IMPERSONATOR_ADMIN = 11;
+    EUC_PRESENTER_ADMIN = 12;
+    SYSTEM = 13;
+    IMPERSONATOR_SYSTEM = 14;
+    EUC_PRESENTER_SYSTEM = 15;
+    MPA_REVIEWER_ADMIN = 18;
+    UNPRIVILEGED_USER = 10;
+    CLOUD_IAM_USER = 16;
+    CPE_USER = 17;
+    thinmint_PRESENTER_ADMIN = 19;
+    thinmint_PRESENTER_SYSTEM = 20;
+    GRPC_PEER_DELEGATE_SYSTEM = 21;
+}

@@ -1,0 +1,38 @@
+syntax = "proto2";
+
+package asic_sw.proto;
+
+message DeviceIdentifiers {
+    optional uint32 vendor_id = 1;
+    optional uint32 device_id = 2;
+    optional uint32 subsystem_vendor_id = 3;
+    optional uint32 subsystem_device_id = 4;
+    optional PciClassCode class_code = 5;
+    optional uint32 subclass = 6;
+    optional uint32 programming_interface = 7;
+    optional uint32 revision_id = 8;
+}
+
+enum PciClassCode {
+    BUILT_BEFORE_CLASS_CODE = 0;
+    MASS_STORAGE_CONTROLLER = 1;
+    NETWORK_CONTROLLER = 2;
+    DISPLAY_CONTROLLER = 3;
+    MULTIMEDIA_CONTROLLER = 4;
+    MEMORY_CONTROLLER = 5;
+    BRIDGE_DEVICE = 6;
+    SIMPLE_COMMUNICATIONS_CONTROLLER = 7;
+    BASE_SYSTEM_PERIPHERAL = 8;
+    INPUT_DEVICE = 9;
+    DOCKING_STATION = 10;
+    PROCESSOR = 11;
+    SERIAL_BUS_CONTROLLER = 12;
+    WIRELESS_CONTROLLER = 13;
+    INTELLIGENT_IO_CONTROLLER = 14;
+    SATELLITE_COMMUNICATION_CONTROLLER = 15;
+    ENCRYPTION_DECRYPTION_CONTROLLER = 16;
+    DATA_ACQUISITION_AND_SIGNAL_PROCESSING_CONTROLLER = 17;
+    PROCESSING_ACCELERATORS = 18;
+    NON_ESSENTIAL_INSTRUMENTATION = 19;
+    DOES_NOT_FIT_INTO_ANY_DEVICE_CLASS = 255;
+}

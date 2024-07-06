@@ -1,0 +1,20 @@
+syntax = "proto3";
+
+package tensorflow;
+
+option cc_enable_arenas = true;
+option go_package = "github.com/tensorflow/tensorflow/tensorflow/go/core/framework/tensor_slice_go_proto";
+option java_multiple_files = true;
+option java_outer_classname = "TensorSliceProtos";
+option java_package = "org.tensorflow.framework";
+
+message TensorSliceProto {
+    repeated Extent extent = 1;
+    message Extent {
+        int64 start = 1;
+        
+        oneof has_length {
+            int64 length = 2;
+        }
+    }
+}

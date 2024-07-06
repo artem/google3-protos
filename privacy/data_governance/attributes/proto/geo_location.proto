@@ -1,0 +1,30 @@
+syntax = "proto3";
+
+package privacy.data_governance.attributes.classification;
+
+import "privacy/data_governance/attributes/proto/classification.proto";
+
+option java_multiple_files = true;
+option java_package = "com.google.privacy.datagovernance.attributes";
+
+message GeoLocation {
+    message Process {
+        enum LocationType {
+            LOCATION_UNDEFINED = 0;
+            CURRENT_USER_LOCATION = 1;
+            HISTORICAL_USER_LOCATION = 2;
+            NOT_A_USER_LOCATION = 3;
+            LOCATION_OTHER = 4;
+        }
+        
+        enum CoarseningTransformation {
+            COARSENING_TRANSFORMATION_UNDEFINED = 0;
+            UNCOARSENED = 1;
+            COARSENED_AT_3_PLUS_1_LEVEL = 2;
+            COARSENED_AT_COUNTRY_LEVEL = 3;
+            LOCATION_REMOVED = 4;
+            LOCATION_FORWARDED = 5;
+            COARSENING_TRANSFORMATION_OTHER = 6;
+        }
+    }
+}

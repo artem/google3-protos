@@ -1,0 +1,16 @@
+syntax = "proto3";
+
+package privacy.data_governance.attributes;
+
+import "privacy/data_governance/attributes/proto/classification.proto";
+
+option java_multiple_files = true;
+option java_package = "com.google.privacy.datagovernance.attributes";
+
+message EncryptionKeyProperties {
+    ProtectedData protected_data = 1;
+    message ProtectedData {
+        repeated classification.Source source = 1;
+        classification.SemanticContext semantic_context = 2;
+    }
+}

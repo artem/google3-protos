@@ -1,0 +1,100 @@
+syntax = "proto3";
+
+package tensorflow;
+
+import "third_party/tensorflow/core/framework/attr_value.proto";
+import "third_party/tensorflow/core/protobuf/verifier_config.proto";
+
+option cc_enable_arenas = true;
+option go_package = "github.com/tensorflow/tensorflow/tensorflow/go/core/protobuf/for_core_protos_go_proto";
+option java_multiple_files = true;
+option java_outer_classname = "RewriterConfigProtos";
+option java_package = "org.tensorflow.framework";
+
+message AutoParallelOptions {
+    bool enable = 1;
+    int32 num_replicas = 2;
+}
+
+message ScopedAllocatorOptions {
+    repeated string enable_op = 1;
+}
+
+message RewriterConfig {
+    CpuLayout cpu_layout_conversion = 50;
+    enum CpuLayout {
+        NO_CONVERSION_ON_CPU = 0;
+        NCHW_TO_NHWC = 1;
+        NHWC_TO_NCHW = 2;
+    }
+    
+    Toggle layout_optimizer = 1;
+    enum Toggle {
+        DEFAULT = 0;
+        ON = 1;
+        OFF = 2;
+        AGGRESSIVE = 3;
+        EXPERIMENTAL_MLIR = 4;
+        EXPERIMENTAL_BOTH = 5;
+    }
+    
+    Toggle constant_folding = 3;
+    Toggle shape_optimization = 13;
+    Toggle remapping = 14;
+    Toggle common_subgraph_elimination = 24;
+    Toggle arithmetic_optimization = 7;
+    Toggle dependency_optimization = 8;
+    Toggle loop_optimization = 9;
+    Toggle function_optimization = 10;
+    Toggle debug_stripper = 11;
+    bool disable_model_pruning = 2;
+    Toggle scoped_allocator_optimization = 15;
+    Toggle pin_to_host_optimization = 18;
+    Toggle implementation_selector = 22;
+    Toggle auto_mixed_precision = 23;
+    Toggle auto_mixed_precision_mkl = 25;
+    Toggle auto_mixed_precision_onednn_bfloat16 = 31;
+    Toggle auto_mixed_precision_cpu = 29;
+    bool disable_meta_optimizer = 19;
+    bool disable_tfg_optimizer = 32;
+    Toggle use_plugin_optimizers = 28;
+    Toggle experimental_conditional_code_motion = 30;
+    
+    NumIterationsType meta_optimizer_iterations = 12;
+    enum NumIterationsType {
+        DEFAULT_NUM_ITERS = 0;
+        ONE = 1;
+        TWO = 2;
+    }
+    
+    int32 min_graph_nodes = 17;
+    bool experimental_disable_compressed_tensor_optimization = 26;
+    bool experimental_disable_folding_quantization_emulation = 27;
+    
+    MemOptType memory_optimization = 4;
+    enum MemOptType {
+        DEFAULT_MEM_OPT = 0;
+        NO_MEM_OPT = 1;
+        MANUAL = 2;
+        SWAPPING_HEURISTICS = 4;
+        RECOMPUTATION_HEURISTICS = 5;
+        SCHEDULING_HEURISTICS = 6;
+        HEURISTICS = 3;
+    }
+    
+    string memory_optimizer_target_node_name_scope = 6;
+    int64 meta_optimizer_timeout_ms = 20;
+    AutoParallelOptions auto_parallel = 5;
+    bool fail_on_optimizer_errors = 21;
+    ScopedAllocatorOptions scoped_allocator_opts = 16;
+    repeated string optimizers = 100;
+    
+    repeated CustomGraphOptimizer custom_optimizers = 200;
+    message CustomGraphOptimizer {
+        string name = 1;
+        map<string, AttrValue> parameter_map = 2;
+    }
+    
+    VerifierConfig inter_optimizer_verifier_config = 300;
+    VerifierConfig post_optimization_verifier_config = 301;
+}

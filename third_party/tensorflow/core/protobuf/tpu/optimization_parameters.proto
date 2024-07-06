@@ -1,0 +1,244 @@
+syntax = "proto3";
+
+package tensorflow.tpu;
+
+import "google/protobuf/wrappers.proto";
+import "third_party/tensorflow/compiler/xla/service/hlo.proto";
+
+message ClippingLimits {
+    google.protobuf.FloatValue lower = 1;
+    google.protobuf.FloatValue upper = 2;
+}
+
+message SimulatedQuantization {
+    bool enabled = 1;
+    ClippingLimits clipping_limits = 2;
+    int32 num_buckets = 3;
+}
+
+message DynamicLearningRate {
+    int32 tag = 1;
+}
+
+message LearningRate {
+    oneof learning_rate {
+        float constant = 1;
+        DynamicLearningRate dynamic = 2;
+    }
+}
+
+message AdagradParameters {
+    reserved 1, "initial_accumulator";
+}
+
+message AdagradMomentumParameters {
+    float momentum = 1;
+    bool use_nesterov = 2;
+    float exponent = 3;
+    float beta2 = 4;
+    float epsilon = 5;
+}
+
+message BoundedAdagradParameters {
+    bool update_accumulator_first = 1;
+    float max_var_update = 2;
+    float max_accumulator = 3;
+}
+
+message StochasticGradientDescentParameters {
+    
+}
+
+message FtrlParameters {
+    float l1 = 1;
+    float l2 = 2;
+    float lr_power = 3;
+    float beta = 7;
+    bool multiply_linear_by_lr = 6;
+    bool allow_zero_accumulator = 8 [deprecated = true];
+    
+    reserved 4, 5, "initial_accum", "initial_linear";
+}
+
+message AdamParameters {
+    float beta1 = 3;
+    float beta2 = 4;
+    float epsilon = 5;
+    bool use_non_lazy_adam = 8;
+    bool use_sum_inside_sqrt = 10;
+    
+    reserved 6, 7, "initial_m", "initial_v";
+}
+
+message MomentumParameters {
+    float momentum = 1;
+    bool use_nesterov = 2;
+    
+    reserved 3, "initial_accum";
+}
+
+message LionParameters {
+    float beta1 = 1;
+    float beta2 = 2;
+    bool use_non_lazy_lion = 3;
+}
+
+message RmsPropParameters {
+    float rho = 1;
+    float momentum = 2;
+    float epsilon = 3;
+    
+    reserved 4, 5, "initial_ms", "initial_mom";
+}
+
+message CenteredRmsPropParameters {
+    float rho = 1;
+    float momentum = 2;
+    float epsilon = 3;
+    
+    reserved 4, 5, 6, "initial_ms", "initial_mom", "initial_mg";
+}
+
+message MdlAdagradLightParameters {
+    float l2 = 1;
+    float lr_power = 2;
+    float min_servable_mdl_benefit = 3;
+    float mdl_mix_in_margin = 4;
+    float mdl_benefit_rampup_coeff = 5;
+    float mdl_min_weight = 6;
+    float benefit_revisit_scale = 7;
+    float max_event_benefit = 8;
+    float max_total_benefit = 9;
+    float mdl_hard_limit = 10;
+    bool hard_limit_min_benefit = 11;
+    bool mdl_regularize = 12;
+    
+    reserved 13, 14, 15, "initial_accumulator", "initial_weight", "initial_benefit";
+}
+
+message AdadeltaParameters {
+    float rho = 1;
+    float epsilon = 2;
+    
+    reserved 3, 4, "initial_accumulator", "initial_update";
+}
+
+message ProximalAdagradParameters {
+    float l1 = 1;
+    float l2 = 2;
+    
+    reserved 3, "initial_accumulator";
+}
+
+message OnlineYogiParameters {
+    float l1 = 1;
+    float l2 = 2;
+    float beta2 = 3;
+    
+    reserved 6, 7;
+}
+
+message ProximalYogiParameters {
+    float l1 = 1;
+    float l2 = 2;
+    float beta1 = 3;
+    float beta2 = 4;
+    float epsilon = 5;
+    
+    reserved 8, 9;
+}
+
+message FrequencyEstimatorParameters {
+    float tau = 1;
+    float max_delta = 2;
+    float outlier_threshold = 3;
+    float weight_exponent = 4;
+}
+
+message UserDefinedProgramParameters {
+    .xla.HloModuleProto program = 1;
+    
+    reserved 2;
+}
+
+message AssignParameters {
+    
+}
+
+message GradientAccumulationStatus {
+    enum Status {
+        UNSPECIFIED = 0;
+        ENABLED = 1;
+        DISABLED = 2;
+    }
+}
+
+message LowDimensionalPackingStatus {
+    enum Status {
+        UNSPECIFIED = 0;
+        ENABLED = 1;
+        DISABLED = 2;
+    }
+}
+
+message HotIdReplicationConfiguration {
+    Status status = 1;
+    enum Status {
+        UNSPECIFIED = 0;
+        ENABLED = 1;
+        DISABLED = 2;
+        MIGRATION_ONLY = 3;
+    }
+}
+
+message OptimizationParameters {
+    LearningRate learning_rate = 13;
+    ClippingLimits clipping_limits = 2;
+    ClippingLimits gradient_clipping_limits = 7;
+    float weight_decay_factor = 16;
+    bool multiply_weight_decay_factor_by_learning_rate = 22;
+    SimulatedQuantization simulated_quantization = 27;
+    GradientAccumulationStatus.Status gradient_accumulation_status = 17;
+    LowDimensionalPackingStatus.Status low_dimensional_packing_status = 28;
+    HotIdReplicationConfiguration hot_id_replication_configuration = 18;
+    
+    oneof parameters {
+        AdagradParameters adagrad = 3;
+        AdagradMomentumParameters adagrad_momentum = 26;
+        BoundedAdagradParameters bounded_adagrad = 19;
+        StochasticGradientDescentParameters stochastic_gradient_descent = 4;
+        FtrlParameters ftrl = 5;
+        AdamParameters adam = 6;
+        MomentumParameters momentum = 8;
+        LionParameters lion = 29;
+        RmsPropParameters rms_prop = 9;
+        CenteredRmsPropParameters centered_rms_prop = 10;
+        MdlAdagradLightParameters mdl_adagrad_light = 11;
+        AdadeltaParameters adadelta = 12;
+        ProximalAdagradParameters proximal_adagrad = 14;
+        OnlineYogiParameters online_yogi = 20;
+        ProximalYogiParameters proximal_yogi = 21;
+        FrequencyEstimatorParameters frequency_estimator = 23;
+        UserDefinedProgramParameters user_defined_program = 24;
+        AssignParameters assign = 25;
+    }
+    
+    reserved 1, 15;
+}
+
+message StateVariableSpecification {
+    string name = 1;
+    
+    oneof usage {
+        UserDefined user_defined = 2;
+        FillWithConstant fill_with_constant = 3;
+    }
+    
+    message UserDefined {
+        reserved 1;
+    }
+    
+    message FillWithConstant {
+        double initial_value = 1;
+    }
+}

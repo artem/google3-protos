@@ -1,0 +1,10 @@
+syntax = "proto2";
+
+package coroner.collection;
+
+enum Language {
+    UNKNOWN_LANGUAGE = 0;
+    C_PLUS_PLUS = 1;
+    JAVA = 2;
+    GO = 3;
+}

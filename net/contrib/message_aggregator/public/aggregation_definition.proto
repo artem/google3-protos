@@ -1,0 +1,73 @@
+syntax = "proto2";
+
+package proto2.contrib.message_aggregator;
+
+import "net/proto2/proto/descriptor.proto";
+import "stats/histogram/proto/histogram.proto";
+
+message AggregationDefinitionProto {
+    optional string input_message_type = 1;
+    optional string output_message_type = 2;
+    optional bool disable_default_aggregation = 10;
+    
+    optional AggregationType numeric_default_aggregation = 3 [default = AVERAGE];
+    enum AggregationType {
+        NONE = 0;
+        AVERAGE = 1;
+        MAXIMUM = 2;
+        MINIMUM = 3;
+        ADD = 4;
+        SUBTRACT = 10;
+        RANDOM_SAMPLE = 5;
+        INTERSECT = 6;
+        UNION = 14;
+        HISTOGRAM = 7;
+        GROUP_BY = 8;
+        MAJORITY = 9;
+        EXACT = 11;
+        LATEST = 12;
+        DIFF = 13;
+        CUSTOM = 15;
+    }
+    
+    optional AggregationType bool_enum_default_aggregation = 4 [default = INTERSECT];
+    optional AggregationType string_default_aggregation = 5 [default = INTERSECT];
+    optional AggregationType histogram_default_aggregation = 6 [default = ADD];
+    optional AggregationType repeated_default_aggregation = 9 [default = NONE];
+    optional bool aggregate_unset_nested_messages = 8 [default = true];
+    
+    repeated FieldAggregation field_aggregation = 7;
+    message FieldAggregation {
+        required AggregationType agg_type = 1;
+        optional string custom_agg_type = 9;
+        required string source_field_path = 2;
+        optional string destination_field_path = 3;
+        optional string message_type = 4;
+        
+        optional UnionOptions union_options = 7;
+        message UnionOptions {
+            optional int32 limit_repeated_values = 1;
+        }
+        
+        optional stats.HistogramOptionsState histogram_options = 5;
+        
+        optional GroupByOptions group_by_options = 6;
+        message GroupByOptions {
+            repeated string key_field_paths = 3;
+            optional bool merge_duplicated_keys = 4;
+            optional bool disallow_duplicated_keys = 5;
+            optional bool remove_empty_values = 6;
+            optional AggregationDefinitionProto aggregation_definition = 2;
+            optional string key_field_path = 1 [deprecated = true];
+        }
+        
+        optional FilterOptions filter_options = 8;
+        message FilterOptions {
+            optional string master_field_path = 1;
+        }
+    }
+}
+
+extend FieldOptions {
+    optional AggregationDefinitionProto.AggregationType agg_type = 76685959;
+}

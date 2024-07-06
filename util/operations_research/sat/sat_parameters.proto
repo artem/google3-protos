@@ -1,0 +1,351 @@
+syntax = "proto2";
+
+package operations_research.sat;
+
+option java_multiple_files = true;
+option java_package = "com.google.operationsresearch.sat";
+
+message SatParameters {
+    optional string name = 171;
+    
+    optional VariableOrder preferred_variable_order = 1 [default = IN_ORDER];
+    enum VariableOrder {
+        IN_ORDER = 0;
+        IN_REVERSE_ORDER = 1;
+        IN_RANDOM_ORDER = 2;
+    }
+    
+    optional Polarity initial_polarity = 2 [default = POLARITY_FALSE];
+    enum Polarity {
+        POLARITY_TRUE = 0;
+        POLARITY_FALSE = 1;
+        POLARITY_RANDOM = 2;
+    }
+    
+    optional bool use_phase_saving = 44 [default = true];
+    optional int32 polarity_rephase_increment = 168 [default = 1000];
+    optional double random_polarity_ratio = 45 [default = 0];
+    optional double random_branches_ratio = 32 [default = 0];
+    optional bool use_erwa_heuristic = 75 [default = false];
+    optional double initial_variables_activity = 76 [default = 0];
+    optional bool also_bump_variables_in_conflict_reasons = 77 [default = false];
+    
+    optional ConflictMinimizationAlgorithm minimization_algorithm = 4 [default = RECURSIVE];
+    enum ConflictMinimizationAlgorithm {
+        NONE = 0;
+        SIMPLE = 1;
+        RECURSIVE = 2;
+        EXPERIMENTAL = 3;
+    }
+    
+    optional BinaryMinizationAlgorithm binary_minimization_algorithm = 34 [default = BINARY_MINIMIZATION_FIRST];
+    enum BinaryMinizationAlgorithm {
+        NO_BINARY_MINIMIZATION = 0;
+        BINARY_MINIMIZATION_FIRST = 1;
+        BINARY_MINIMIZATION_FIRST_WITH_TRANSITIVE_REDUCTION = 4;
+        BINARY_MINIMIZATION_WITH_REACHABILITY = 2;
+        EXPERIMENTAL_BINARY_MINIMIZATION = 3;
+    }
+    
+    optional bool subsumption_during_conflict_analysis = 56 [default = true];
+    optional int32 clause_cleanup_period = 11 [default = 10000];
+    optional int32 clause_cleanup_target = 13 [default = 0];
+    optional double clause_cleanup_ratio = 190 [default = 0.5];
+    
+    optional ClauseProtection clause_cleanup_protection = 58 [default = PROTECTION_NONE];
+    enum ClauseProtection {
+        PROTECTION_NONE = 0;
+        PROTECTION_ALWAYS = 1;
+        PROTECTION_LBD = 2;
+    }
+    
+    optional int32 clause_cleanup_lbd_bound = 59 [default = 5];
+    
+    optional ClauseOrdering clause_cleanup_ordering = 60 [default = CLAUSE_ACTIVITY];
+    enum ClauseOrdering {
+        CLAUSE_ACTIVITY = 0;
+        CLAUSE_LBD = 1;
+    }
+    
+    optional int32 pb_cleanup_increment = 46 [default = 200];
+    optional double pb_cleanup_ratio = 47 [default = 0.5];
+    optional double variable_activity_decay = 15 [default = 0.8];
+    optional double max_variable_activity_value = 16 [default = 1e+100];
+    optional double glucose_max_decay = 22 [default = 0.95];
+    optional double glucose_decay_increment = 23 [default = 0.01];
+    optional int32 glucose_decay_increment_period = 24 [default = 5000];
+    optional double clause_activity_decay = 17 [default = 0.999];
+    optional double max_clause_activity_value = 18 [default = 1e+20];
+    
+    repeated RestartAlgorithm restart_algorithms = 61;
+    enum RestartAlgorithm {
+        NO_RESTART = 0;
+        LUBY_RESTART = 1;
+        DL_MOVING_AVERAGE_RESTART = 2;
+        LBD_MOVING_AVERAGE_RESTART = 3;
+        FIXED_RESTART = 4;
+    }
+    
+    optional string default_restart_algorithms = 70 [default = "LUBY_RESTART,LBD_MOVING_AVERAGE_RESTART,DL_MOVING_AVERAGE_RESTART"];
+    optional int32 restart_period = 30 [default = 50];
+    optional int32 restart_running_window_size = 62 [default = 50];
+    optional double restart_dl_average_ratio = 63 [default = 1];
+    optional double restart_lbd_average_ratio = 71 [default = 1];
+    optional bool use_blocking_restart = 64 [default = false];
+    optional int32 blocking_restart_window_size = 65 [default = 5000];
+    optional double blocking_restart_multiplier = 66 [default = 1.4];
+    optional int32 num_conflicts_before_strategy_changes = 68 [default = 0];
+    optional double strategy_change_increase_ratio = 69 [default = 0];
+    optional double max_time_in_seconds = 36 [default = inf];
+    optional double max_deterministic_time = 67 [default = inf];
+    optional int32 max_num_deterministic_batches = 291 [default = 0];
+    optional int64 max_number_of_conflicts = 37 [default = 0x7fffffffffffffff];
+    optional int64 max_memory_in_mb = 40 [default = 10000];
+    optional double absolute_gap_limit = 159 [default = 0.0001];
+    optional double relative_gap_limit = 160 [default = 0];
+    optional int32 random_seed = 31 [default = 1];
+    optional bool permute_variable_randomly = 178 [default = false];
+    optional bool permute_presolve_constraint_order = 179 [default = false];
+    optional bool use_absl_random = 180 [default = false];
+    optional bool log_search_progress = 41 [default = false];
+    optional bool log_subsolver_statistics = 189 [default = false];
+    optional string log_prefix = 185;
+    optional bool log_to_stdout = 186 [default = true];
+    optional bool log_to_response = 187 [default = false];
+    optional bool use_pb_resolution = 43 [default = false];
+    optional bool minimize_reduction_during_pb_resolution = 48 [default = false];
+    optional bool count_assumption_levels_in_lbd = 49 [default = true];
+    optional int32 presolve_bve_threshold = 54 [default = 500];
+    optional int32 presolve_bve_clause_weight = 55 [default = 3];
+    optional double probing_deterministic_time_limit = 226 [default = 1];
+    optional double presolve_probing_deterministic_time_limit = 57 [default = 30];
+    optional bool presolve_blocked_clause = 88 [default = true];
+    optional bool presolve_use_bva = 72 [default = true];
+    optional int32 presolve_bva_threshold = 73 [default = 1];
+    optional int32 max_presolve_iterations = 138 [default = 3];
+    optional bool cp_model_presolve = 86 [default = true];
+    optional int32 cp_model_probing_level = 110 [default = 2];
+    optional bool cp_model_use_sat_presolve = 93 [default = true];
+    optional bool detect_table_with_cost = 216 [default = false];
+    optional int32 table_compression_level = 217 [default = 2];
+    optional bool expand_alldiff_constraints = 170 [default = false];
+    optional bool expand_reservoir_constraints = 182 [default = true];
+    optional bool expand_reservoir_using_circuit = 288 [default = false];
+    optional bool encode_cumulative_as_reservoir = 287 [default = false];
+    optional int32 max_lin_max_size_for_expansion = 280 [default = 0];
+    optional bool disable_constraint_expansion = 181 [default = false];
+    optional bool encode_complex_linear_constraint_with_integer = 223 [default = false];
+    optional double merge_no_overlap_work_limit = 145 [default = 1000000000000];
+    optional double merge_at_most_one_work_limit = 146 [default = 100000000];
+    optional int32 presolve_substitution_level = 147 [default = 1];
+    optional bool presolve_extract_integer_enforcement = 174 [default = false];
+    optional int64 presolve_inclusion_work_limit = 201 [default = 100000000];
+    optional bool ignore_names = 202 [default = true];
+    optional bool infer_all_diffs = 233 [default = true];
+    optional bool find_big_linear_overlap = 234 [default = true];
+    optional bool use_sat_inprocessing = 163 [default = true];
+    optional double inprocessing_dtime_ratio = 273 [default = 0.2];
+    optional double inprocessing_probing_dtime = 274 [default = 1];
+    optional double inprocessing_minimization_dtime = 275 [default = 1];
+    optional int32 num_workers = 206 [default = 0];
+    optional int32 num_search_workers = 100 [default = 0];
+    optional int32 num_full_subsolvers = 294 [default = 0];
+    repeated string subsolvers = 207;
+    repeated string extra_subsolvers = 219;
+    repeated string ignore_subsolvers = 209;
+    repeated string filter_subsolvers = 293;
+    repeated SatParameters subsolver_params = 210;
+    optional bool interleave_search = 136 [default = false];
+    optional int32 interleave_batch_size = 134 [default = 0];
+    optional bool share_objective_bounds = 113 [default = true];
+    optional bool share_level_zero_bounds = 114 [default = true];
+    optional bool share_binary_clauses = 203 [default = true];
+    optional bool share_glue_clauses = 285 [default = false];
+    optional bool debug_postsolve_with_full_solver = 162 [default = false];
+    optional int32 debug_max_num_presolve_operations = 151 [default = 0];
+    optional bool debug_crash_on_bad_hint = 195 [default = false];
+    optional bool use_optimization_hints = 35 [default = true];
+    optional int32 core_minimization_level = 50 [default = 2];
+    optional bool find_multiple_cores = 84 [default = true];
+    optional bool cover_optimization = 89 [default = true];
+    
+    optional MaxSatAssumptionOrder max_sat_assumption_order = 51 [default = DEFAULT_ASSUMPTION_ORDER];
+    enum MaxSatAssumptionOrder {
+        DEFAULT_ASSUMPTION_ORDER = 0;
+        ORDER_ASSUMPTION_BY_DEPTH = 1;
+        ORDER_ASSUMPTION_BY_WEIGHT = 2;
+    }
+    
+    optional bool max_sat_reverse_assumption_order = 52 [default = false];
+    
+    optional MaxSatStratificationAlgorithm max_sat_stratification = 53 [default = STRATIFICATION_DESCENT];
+    enum MaxSatStratificationAlgorithm {
+        STRATIFICATION_NONE = 0;
+        STRATIFICATION_DESCENT = 1;
+        STRATIFICATION_ASCENT = 2;
+    }
+    
+    optional double propagation_loop_detection_factor = 221 [default = 10];
+    optional bool use_precedences_in_disjunctive_constraint = 74 [default = true];
+    optional int32 max_size_to_create_precedence_literals_in_disjunctive = 229 [default = 60];
+    optional bool use_strong_propagation_in_disjunctive = 230 [default = false];
+    optional bool use_dynamic_precedence_in_disjunctive = 263 [default = false];
+    optional bool use_dynamic_precedence_in_cumulative = 268 [default = false];
+    optional bool use_overload_checker_in_cumulative = 78 [default = false];
+    optional bool use_conservative_scale_overload_checker = 286 [default = false];
+    optional bool use_timetable_edge_finding_in_cumulative = 79 [default = false];
+    optional int32 max_num_intervals_for_timetable_edge_finding = 260 [default = 100];
+    optional bool use_hard_precedences_in_cumulative = 215 [default = false];
+    optional bool exploit_all_precedences = 220 [default = false];
+    optional bool use_disjunctive_constraint_in_cumulative = 80 [default = true];
+    optional bool use_timetabling_in_no_overlap_2d = 200 [default = false];
+    optional bool use_energetic_reasoning_in_no_overlap_2d = 213 [default = false];
+    optional bool use_area_energetic_reasoning_in_no_overlap_2d = 271 [default = false];
+    optional int32 max_pairs_pairwise_reasoning_in_no_overlap_2d = 276 [default = 1250];
+    optional bool use_dual_scheduling_heuristics = 214 [default = true];
+    
+    optional SearchBranching search_branching = 82 [default = AUTOMATIC_SEARCH];
+    enum SearchBranching {
+        AUTOMATIC_SEARCH = 0;
+        FIXED_SEARCH = 1;
+        PORTFOLIO_SEARCH = 2;
+        LP_SEARCH = 3;
+        PSEUDO_COST_SEARCH = 4;
+        PORTFOLIO_WITH_QUICK_RESTART_SEARCH = 5;
+        HINT_SEARCH = 6;
+        PARTIAL_FIXED_SEARCH = 7;
+        RANDOMIZED_SEARCH = 8;
+    }
+    
+    optional int32 hint_conflict_limit = 153 [default = 10];
+    optional bool repair_hint = 167 [default = false];
+    optional bool fix_variables_to_their_hinted_value = 192 [default = false];
+    optional bool use_probing_search = 176 [default = false];
+    optional bool use_extended_probing = 269 [default = true];
+    optional int32 probing_num_combinations_limit = 272 [default = 20000];
+    optional bool use_shaving_in_probing_search = 204 [default = true];
+    optional double shaving_search_deterministic_time = 205 [default = 0.001];
+    optional int64 shaving_search_threshold = 290 [default = 64];
+    optional bool use_objective_lb_search = 228 [default = false];
+    optional bool use_objective_shaving_search = 253 [default = false];
+    optional bool use_variables_shaving_search = 289 [default = false];
+    optional int64 pseudo_cost_reliability_threshold = 123 [default = 100];
+    optional bool optimize_with_core = 83 [default = false];
+    optional bool optimize_with_lb_tree_search = 188 [default = false];
+    optional bool save_lp_basis_in_lb_tree_search = 284 [default = false];
+    optional int32 binary_search_num_conflicts = 99 [default = -1];
+    optional bool optimize_with_max_hs = 85 [default = false];
+    optional bool use_feasibility_jump = 265 [default = true];
+    optional bool use_ls_only = 240 [default = false];
+    optional double feasibility_jump_decay = 242 [default = 0.95];
+    optional int32 feasibility_jump_linearization_level = 257 [default = 2];
+    optional int32 feasibility_jump_restart_factor = 258 [default = 1];
+    optional double feasibility_jump_batch_dtime = 292 [default = 0.1];
+    optional double feasibility_jump_var_randomization_probability = 247 [default = 0.05];
+    optional double feasibility_jump_var_perburbation_range_ratio = 248 [default = 0.2];
+    optional bool feasibility_jump_enable_restarts = 250 [default = true];
+    optional int32 feasibility_jump_max_expanded_constraint_size = 264 [default = 500];
+    optional int32 num_violation_ls = 244 [default = 0];
+    optional int32 violation_ls_perturbation_period = 249 [default = 100];
+    optional double violation_ls_compound_move_probability = 259 [default = 0.5];
+    optional int32 shared_tree_num_workers = 235 [default = 0];
+    optional bool use_shared_tree_search = 236 [default = false];
+    optional double shared_tree_worker_objective_split_probability = 237 [default = 0.5];
+    optional int32 shared_tree_worker_min_restarts_per_subtree = 282 [default = 32];
+    optional double shared_tree_open_leaves_per_worker = 281 [default = 2];
+    optional int32 shared_tree_max_nodes_per_worker = 238 [default = 100000];
+    
+    optional SharedTreeSplitStrategy shared_tree_split_strategy = 239 [default = SPLIT_STRATEGY_AUTO];
+    enum SharedTreeSplitStrategy {
+        SPLIT_STRATEGY_AUTO = 0;
+        SPLIT_STRATEGY_DISCREPANCY = 1;
+        SPLIT_STRATEGY_OBJECTIVE_LB = 2;
+        SPLIT_STRATEGY_BALANCED_TREE = 3;
+        SPLIT_STRATEGY_FIRST_PROPOSAL = 4;
+    }
+    
+    optional bool enumerate_all_solutions = 87 [default = false];
+    optional bool keep_all_feasible_solutions_in_presolve = 173 [default = false];
+    optional bool fill_tightened_domains_in_response = 132 [default = false];
+    optional bool fill_additional_solutions_in_response = 194 [default = false];
+    optional bool instantiate_all_variables = 106 [default = true];
+    optional bool auto_detect_greater_than_at_least_one_of = 95 [default = true];
+    optional bool stop_after_first_solution = 98 [default = false];
+    optional bool stop_after_presolve = 149 [default = false];
+    optional bool stop_after_root_propagation = 252 [default = false];
+    optional bool use_lns = 283 [default = true];
+    optional bool use_lns_only = 101 [default = false];
+    optional int32 solution_pool_size = 193 [default = 3];
+    optional bool use_rins_lns = 129 [default = true];
+    optional bool use_feasibility_pump = 164 [default = true];
+    optional bool use_lb_relax_lns = 255 [default = false];
+    
+    optional FPRoundingMethod fp_rounding = 165 [default = PROPAGATION_ASSISTED];
+    enum FPRoundingMethod {
+        NEAREST_INTEGER = 0;
+        LOCK_BASED = 1;
+        ACTIVE_LOCK_BASED = 3;
+        PROPAGATION_ASSISTED = 2;
+    }
+    
+    optional bool diversify_lns_params = 137 [default = false];
+    optional bool randomize_search = 103 [default = false];
+    optional int64 search_random_variable_pool_size = 104 [default = 0];
+    optional bool push_all_tasks_toward_start = 262 [default = false];
+    optional bool use_optional_variables = 108 [default = false];
+    optional bool use_exact_lp_reason = 109 [default = true];
+    optional bool use_combined_no_overlap = 133 [default = false];
+    optional int32 at_most_one_max_expansion_size = 270 [default = 3];
+    optional bool catch_sigint_signal = 135 [default = true];
+    optional bool use_implied_bounds = 144 [default = true];
+    optional bool polish_lp_solution = 175 [default = false];
+    optional double lp_primal_tolerance = 266 [default = 1e-07];
+    optional double lp_dual_tolerance = 267 [default = 1e-07];
+    optional bool convert_intervals = 177 [default = true];
+    optional int32 symmetry_level = 183 [default = 2];
+    optional bool new_linear_propagation = 224 [default = true];
+    optional int32 linear_split_size = 256 [default = 100];
+    optional int32 linearization_level = 90 [default = 1];
+    optional int32 boolean_encoding_level = 107 [default = 1];
+    optional int32 max_domain_size_when_encoding_eq_neq_constraints = 191 [default = 16];
+    optional int32 max_num_cuts = 91 [default = 10000];
+    optional int32 cut_level = 196 [default = 1];
+    optional bool only_add_cuts_at_level_zero = 92 [default = false];
+    optional bool add_objective_cut = 197 [default = false];
+    optional bool add_cg_cuts = 117 [default = true];
+    optional bool add_mir_cuts = 120 [default = true];
+    optional bool add_zero_half_cuts = 169 [default = true];
+    optional bool add_clique_cuts = 172 [default = true];
+    optional bool add_rlt_cuts = 279 [default = true];
+    optional int32 max_all_diff_cut_size = 148 [default = 64];
+    optional bool add_lin_max_cuts = 152 [default = true];
+    optional int32 max_integer_rounding_scaling = 119 [default = 600];
+    optional bool add_lp_constraints_lazily = 112 [default = true];
+    optional int32 root_lp_iterations = 227 [default = 2000];
+    optional double min_orthogonality_for_lp_constraints = 115 [default = 0.05];
+    optional int32 max_cut_rounds_at_level_zero = 154 [default = 1];
+    optional int32 max_consecutive_inactive_count = 121 [default = 100];
+    optional double cut_max_active_count_value = 155 [default = 10000000000];
+    optional double cut_active_count_decay = 156 [default = 0.8];
+    optional int32 cut_cleanup_target = 157 [default = 1000];
+    optional int32 new_constraints_batch_size = 122 [default = 50];
+    optional bool exploit_integer_lp_solution = 94 [default = true];
+    optional bool exploit_all_lp_solution = 116 [default = true];
+    optional bool exploit_best_solution = 130 [default = false];
+    optional bool exploit_relaxation_solution = 161 [default = false];
+    optional bool exploit_objective = 131 [default = true];
+    optional bool detect_linearized_product = 277 [default = false];
+    optional double mip_max_bound = 124 [default = 10000000];
+    optional double mip_var_scaling = 125 [default = 1];
+    optional bool mip_scale_large_domain = 225 [default = false];
+    optional bool mip_automatically_scale_variables = 166 [default = true];
+    optional bool only_solve_ip = 222 [default = false];
+    optional double mip_wanted_precision = 126 [default = 1e-06];
+    optional int32 mip_max_activity_exponent = 127 [default = 53];
+    optional double mip_check_precision = 128 [default = 0.0001];
+    optional bool mip_compute_true_objective_bound = 198 [default = true];
+    optional double mip_max_valid_magnitude = 199 [default = 1e+20];
+    optional bool mip_treat_high_magnitude_bounds_as_infinity = 278 [default = false];
+    optional double mip_drop_tolerance = 232 [default = 1e-16];
+    optional int32 mip_presolve_level = 261 [default = 2];
+}

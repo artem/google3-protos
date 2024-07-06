@@ -1,0 +1,17 @@
+syntax = "editions";
+
+package util;
+
+import "net/proto2/bridge/proto/message_set.proto";
+
+message StackTrace {
+    repeated uint64 addresses = 1;
+}
+
+message StackTraces {
+    repeated StackTrace traces = 1;
+    
+    extend proto2.bridge.MessageSet {
+        optional StackTraces message_set_extension = 181005703;
+    }
+}

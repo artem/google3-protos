@@ -1,0 +1,19 @@
+syntax = "proto3";
+
+package tensorflow;
+
+import "third_party/tensorflow/core/protobuf/error_codes.proto";
+
+option cc_enable_arenas = true;
+option go_package = "github.com/tensorflow/tensorflow/tensorflow/go/core/protobuf/for_core_protos_go_proto";
+option java_multiple_files = true;
+option java_outer_classname = "QueueRunnerProtos";
+option java_package = "org.tensorflow.framework";
+
+message QueueRunnerDef {
+    string queue_name = 1;
+    repeated string enqueue_op_name = 2;
+    string close_op_name = 3;
+    string cancel_op_name = 4;
+    repeated error.Code queue_closed_exception_types = 5;
+}

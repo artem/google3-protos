@@ -1,0 +1,94 @@
+syntax = "proto2";
+
+package com.google.apps.security.rpcsecuritypolicy.presubmit;
+
+import "security/context/proto/policy/rpc_security_level.proto";
+import "storage/datapol/annotations/proto/semantic_annotations.proto";
+
+option java_multiple_files = true;
+option java_package = "com.google.apps.security.rpcsecuritypolicy.presubmit";
+
+message AnalyzerConfig {
+    optional bool use_analyzer = 1;
+    optional int32 minimum_rpcsp_level = 2 [deprecated = true];
+    repeated ExemptJobFilter exempt_job = 3;
+    optional PodOptions pod_options = 4;
+    optional TextProtoOptions text_proto_options = 5;
+    optional GclOptions gcl_options = 6;
+    optional bool check_axt_compliance = 7;
+    optional bool check_ual_compliance = 14;
+    optional TinOptions tin_options = 8;
+    optional ApiServiceOptions api_service_options = 9;
+    optional BclOptions bcl_options = 10;
+    optional PiccoloOptions piccolo_options = 11;
+    optional rpcsp.RpcSPLadder.Level minimum_rpcsp_ladder_level = 12;
+    optional bool diff_only = 13;
+    optional bool onboarding_mode_pilot = 15;
+}
+
+message ExemptJobFilter {
+    optional string job = 1;
+    optional string borg_role = 2;
+    optional string cell = 3;
+}
+
+message PodOptions {
+    optional string base_path = 1;
+    repeated FileJobMapping job_mappings = 2;
+    repeated string exclude_jobs_prefixes = 3;
+    repeated string exclude_mdbs = 4;
+    optional string rpcsp_flag = 5;
+}
+
+message TextProtoOptions {
+    repeated FileJobMapping job_mappings = 1;
+}
+
+message ApiServiceOptions {
+    optional ApiMapping esf_job_mapping = 5;
+    repeated ApiMapping api_backend_job_mappings = 6;
+    repeated string exclude_job_prefixes = 3;
+    repeated string exclude_mdbs = 4;
+    
+    reserved 1, 2;
+}
+
+message GclOptions {
+    repeated FileJobMapping job_mappings = 1;
+}
+
+message TinOptions {
+    optional string base_path = 1;
+    repeated JobInfo job_infos = 2;
+    optional bool use_centigrate = 3;
+    optional string target = 4;
+}
+
+message FileJobMapping {
+    optional string file_name = 1;
+    optional JobInfo job_info = 2;
+    optional string obj = 3;
+}
+
+message JobInfo {
+    optional string job_name = 1;
+    optional string mdb = 2;
+    optional string job_name_prefix = 3;
+    optional string mdb_prefix = 4;
+}
+
+message ApiMapping {
+    optional string file_name = 1;
+    optional string mdb = 2;
+    repeated string job_names = 3;
+}
+
+message BclOptions {
+    repeated string exclude_jobs_prefixes = 1;
+    repeated string exclude_mdbs = 2;
+    repeated JobInfo only_include_jobinfos = 3;
+}
+
+message PiccoloOptions {
+    repeated FileJobMapping job_mappings = 1;
+}

@@ -1,0 +1,13 @@
+syntax = "editions";
+
+package asic_sw;
+
+import "google/protobuf/any.proto";
+import "platforms/asic_sw/lib/common/device_coredump.proto";
+
+option optimize_for = CODE_SIZE;
+
+message CoreDump {
+    optional Results generic_results = 1;
+    optional google.protobuf.Any chip_specific = 2;
+}

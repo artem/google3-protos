@@ -1,0 +1,20 @@
+syntax = "proto3";
+
+package google.api;
+
+option objc_class_prefix = "GAPI";
+option cc_enable_arenas = true;
+option go_package = "google.golang.org/genproto/googleapis/api/operation;operation";
+option java_multiple_files = true;
+option java_outer_classname = "OperationProto";
+option java_package = "com.google.api";
+
+message Operations {
+    repeated OperationRule rules = 1;
+}
+
+message OperationRule {
+    string selector = 1;
+    string lro_response_type = 2;
+    string lro_metadata_type = 3;
+}

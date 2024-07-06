@@ -1,0 +1,28 @@
+syntax = "proto3";
+
+package google.api;
+
+import "google/api/visibility.proto";
+
+option objc_class_prefix = "GAPI";
+option java_multiple_files = true;
+option java_outer_classname = "MediationConfigProto";
+option java_package = "com.google.api";
+
+message MediationConfig {
+    repeated MediationRule rules = 1;
+    int32 mediation_server_startup_delay = 2;
+}
+
+message MediationRule {
+    string selector = 1;
+    MediationMethodConfig request = 2;
+    MediationMethodConfig response = 3;
+}
+
+message MediationMethodConfig {
+    bool enabled = 1;
+    string message_type_url = 4 [ctype = STRING_PIECE];
+    repeated string requested_contexts = 2;
+    repeated string provided_contexts = 3;
+}

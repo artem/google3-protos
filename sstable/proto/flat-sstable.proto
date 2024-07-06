@@ -1,0 +1,36 @@
+syntax = "proto2";
+
+package sstable;
+
+import "sstable/proto/sstable.proto";
+
+option java_multiple_files = true;
+option java_package = "com.google.sstable";
+
+message FlatSSTableBuilderOptionsProto {
+    optional ShardingFunction sharding_function = 7 [default = MOD_SHARDING];
+    enum ShardingFunction {
+        MOD_SHARDING = 0;
+        RANGE_SHARDING = 1;
+    }
+    
+    optional int32 num_shards = 8 [default = 1];
+    optional int64 estimated_entries = 1 [default = 1000000];
+    optional int32 inmemory_key_bytes = 2;
+    optional int32 inmemory_top_key_bytes = 9;
+    optional int32 buffer_size = 3 [default = 0x100000];
+    optional int32 aio_budget = 4 [default = 0];
+    optional bool attribute_file = 5 [default = true, deprecated = true];
+    optional bool record_creator = 10 [default = true];
+    optional bool record_command_line = 6 [default = false];
+}
+
+message FlatSSTableHeader {
+    required fixed64 magic_number = 1;
+    required int32 top_index_bytes = 2;
+    required int32 middle_index_bytes = 3;
+    required int64 num_entries = 4;
+    optional int64 top_index_start = 6 [default = 0];
+    optional int64 top_index_size = 7;
+    optional Metadata metadata = 5;
+}

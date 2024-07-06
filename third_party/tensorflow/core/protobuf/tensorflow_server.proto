@@ -1,0 +1,24 @@
+syntax = "proto3";
+
+package tensorflow;
+
+import "third_party/tensorflow/core/protobuf/cluster.proto";
+import "third_party/tensorflow/core/protobuf/config.proto";
+import "third_party/tensorflow/core/protobuf/device_filters.proto";
+
+option cc_enable_arenas = true;
+option go_package = "github.com/tensorflow/tensorflow/tensorflow/go/core/protobuf/for_core_protos_go_proto";
+option java_multiple_files = true;
+option java_outer_classname = "ServerProtos";
+option java_package = "org.tensorflow.distruntime";
+
+message ServerDef {
+    ClusterDef cluster = 1;
+    string job_name = 2;
+    int32 replica = 8;
+    int32 task_index = 3;
+    ConfigProto default_session_config = 4;
+    string protocol = 5;
+    int32 port = 6;
+    ClusterDeviceFilters cluster_device_filters = 7;
+}

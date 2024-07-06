@@ -1,0 +1,62 @@
+syntax = "proto3";
+
+package google.monitoring.v3;
+
+import "google/api/auditing.proto";
+import "google/api/field_behavior.proto";
+import "google/api/label.proto";
+import "google/api/launch_stage.proto";
+import "google/api/resource.proto";
+import "google/api/visibility.proto";
+import "google/logging/data_governance.proto";
+import "google/monitoring/v3/common.proto";
+import "google/monitoring/v3/mutation_record.proto";
+import "google/protobuf/wrappers.proto";
+import "storage/datapol/annotations/proto/semantic_annotations.proto";
+
+option ruby_package = "Google::Cloud::Monitoring::V3";
+option php_namespace = "Google\\Cloud\\Monitoring\\V3";
+option csharp_namespace = "Google.Cloud.Monitoring.V3";
+option go_package = "cloud.google.com/go/monitoring/apiv3/v2/monitoringpb;monitoringpb";
+option java_multiple_files = true;
+option java_outer_classname = "NotificationProto";
+option java_package = "com.google.monitoring.v3";
+
+message NotificationChannelDescriptor {
+    string name = 6;
+    string type = 1;
+    string display_name = 2;
+    string description = 3;
+    repeated api.LabelDescriptor labels = 4;
+    repeated ServiceTier supported_tiers = 5 [deprecated = true];
+    api.LaunchStage launch_stage = 7;
+}
+
+message NotificationChannel {
+    string type = 1;
+    string name = 6;
+    string display_name = 3;
+    string description = 4;
+    map<string, string> labels = 5;
+    map<string, string> user_labels = 8;
+    
+    VerificationStatus verification_status = 9;
+    enum VerificationStatus {
+        VERIFICATION_STATUS_UNSPECIFIED = 0;
+        UNVERIFIED = 1;
+        VERIFIED = 2;
+    }
+    
+    protobuf.BoolValue enabled = 11;
+    map<string, string> metadata = 7;
+    MutationRecord creation_record = 12;
+    repeated MutationRecord mutation_records = 13;
+    
+    reserved 10, "disabled";
+}
+
+message PagerDutySyncData {
+    string subdomain = 1;
+    string api_access_key = 2;
+    string alert_sync_user = 3;
+}

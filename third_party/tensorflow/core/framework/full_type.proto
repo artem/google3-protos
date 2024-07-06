@@ -1,0 +1,56 @@
+syntax = "proto3";
+
+package tensorflow;
+
+option cc_enable_arenas = true;
+option go_package = "github.com/tensorflow/tensorflow/tensorflow/go/core/framework/full_type_go_proto";
+option java_multiple_files = true;
+option java_outer_classname = "FullTypeProtos";
+option java_package = "org.tensorflow.framework";
+
+message FullTypeDef {
+    FullTypeId type_id = 1;
+    repeated FullTypeDef args = 2;
+    
+    oneof attr {
+        string s = 3;
+        int64 i = 4;
+    }
+}
+
+enum FullTypeId {
+    TFT_UNSET = 0;
+    TFT_VAR = 1;
+    TFT_ANY = 2;
+    TFT_PRODUCT = 3;
+    TFT_NAMED = 4;
+    TFT_FOR_EACH = 20;
+    TFT_CALLABLE = 100;
+    TFT_TENSOR = 1000;
+    TFT_ARRAY = 1001;
+    TFT_OPTIONAL = 1002;
+    TFT_LITERAL = 1003;
+    TFT_ENCODED = 1004;
+    TFT_SHAPE_TENSOR = 1005;
+    TFT_BOOL = 200;
+    TFT_UINT8 = 201;
+    TFT_UINT16 = 202;
+    TFT_UINT32 = 203;
+    TFT_UINT64 = 204;
+    TFT_INT8 = 205;
+    TFT_INT16 = 206;
+    TFT_INT32 = 207;
+    TFT_INT64 = 208;
+    TFT_HALF = 209;
+    TFT_FLOAT = 210;
+    TFT_DOUBLE = 211;
+    TFT_BFLOAT16 = 215;
+    TFT_COMPLEX64 = 212;
+    TFT_COMPLEX128 = 213;
+    TFT_STRING = 214;
+    TFT_DATASET = 10102;
+    TFT_RAGGED = 10103;
+    TFT_ITERATOR = 10104;
+    TFT_MUTEX_LOCK = 10202;
+    TFT_LEGACY_VARIANT = 10203;
+}

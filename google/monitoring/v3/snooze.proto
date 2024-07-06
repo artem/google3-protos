@@ -1,0 +1,31 @@
+syntax = "proto3";
+
+package google.monitoring.v3;
+
+import "google/api/auditing.proto";
+import "google/api/field_behavior.proto";
+import "google/api/policy.proto";
+import "google/api/resource.proto";
+import "google/logging/data_governance.proto";
+import "google/monitoring/v3/common.proto";
+import "storage/datapol/annotations/proto/semantic_annotations.proto";
+
+option ruby_package = "Google::Cloud::Monitoring::V3";
+option php_namespace = "Google\\Cloud\\Monitoring\\V3";
+option csharp_namespace = "Google.Cloud.Monitoring.V3";
+option go_package = "cloud.google.com/go/monitoring/apiv3/v2/monitoringpb;monitoringpb";
+option java_multiple_files = true;
+option java_outer_classname = "SnoozeProto";
+option java_package = "com.google.monitoring.v3";
+
+message Snooze {
+    string name = 1;
+    
+    Criteria criteria = 3;
+    message Criteria {
+        repeated string policies = 1;
+    }
+    
+    TimeInterval interval = 4;
+    string display_name = 5;
+}

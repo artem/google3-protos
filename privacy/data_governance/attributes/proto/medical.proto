@@ -1,0 +1,138 @@
+syntax = "proto3";
+
+package privacy.data_governance.attributes;
+
+import "privacy/data_governance/attributes/proto/classification.proto";
+
+option java_multiple_files = true;
+option java_package = "com.google.privacy.datagovernance.attributes";
+
+message Medical {
+    message Sandbox {
+        Prefix prefix = 1 [deprecated = true];
+        enum Prefix {
+            PREFIX_UNKNOWN = 0;
+            HEALTH_RESEARCH = 1;
+            MEDICAL_RECORDS_PROD = 2;
+            MI6 = 3;
+            AUDIO_BIOMARKERS = 4;
+            HEALTH_SENSING = 5;
+            MEDICAL_ENDOSCOPY = 6;
+            MEDICAL_IVF = 7;
+            RAD_VALIDATION = 8;
+            DMHR = 9;
+            GENOMICS = 10;
+            VICO = 11;
+            GAS = 12;
+            G4C_AUDIO = 13;
+            CONSUMER_HEALTH_RESEARCH = 14;
+            MEDICAL_RECORDS = 15;
+            CHR_ARDS = 16;
+        }
+        
+        Codename codename = 2 [deprecated = true];
+        enum Codename {
+            CODENAME_UNKNOWN = 0;
+            ANDROMEDA = 1;
+            BONN = 2;
+            CALLISTO = 3;
+            CARME = 4;
+            CENTAURI = 5;
+            CHBMIT = 6;
+            CTU_UHB_CTGDB = 7;
+            DIONE = 8;
+            DRACONIS = 9;
+            ELARA = 10;
+            ENDOSCOPY = 11;
+            ERSA = 12;
+            EUROPA = 13;
+            GALLIFREY = 14;
+            GANYMEDE = 15;
+            GOOGLERSKINDRIVE = 16;
+            GREIP = 17;
+            HELIOS = 18;
+            HIPPO = 19;
+            I2B2 = 20;
+            JANUS = 21;
+            JUGGLE = 22;
+            JUPITER = 23;
+            KARI = 24;
+            LOCUST = 25;
+            LUSITANIA = 26;
+            MARS = 27;
+            MEDLINE = 28;
+            MEDOCR = 29;
+            MERCURY = 30;
+            MI6_DERM = 31;
+            MI6_RADIOLOGY = 32;
+            MI6_RADIOLOGY_COLLABORATORS = 33;
+            MI6_RADIOLOGY_MAMMO = 34;
+            MI6_RETINA = 35;
+            MI6_SMILY = 36;
+            MIMIC3 = 37;
+            MIMIC3_CALLISTO = 38;
+            MIMIC3_WAVEFORM = 39;
+            MIMIC4 = 40;
+            NDAR = 41;
+            NEPTUNE = 42;
+            OCTANE_MOORFIELDS = 43;
+            POLARIS = 44;
+            RADICAL_UCLH = 45;
+            SHHS = 47;
+            SPIRO = 48;
+            SURTUR = 49;
+            TELESTO = 50;
+            TEMPLEF = 51;
+            TEST = 52;
+            TITAN = 53;
+            TYCHO = 54;
+            UK_BIOBANK_WF = 55;
+            URANUS = 56;
+            VENUS = 57;
+            VIVO = 58;
+            VULCAN = 59;
+            WAVEFORMS = 60;
+            WOLF = 61;
+            YMIR = 62;
+            TASSEO = 63;
+            BIDMC = 64;
+            SNOWBOURN = 65;
+        }
+        
+        DataType data_type = 3 [deprecated = true];
+        enum DataType {
+            DATATYPE_UNKNOWN = 0;
+            DEID = 10;
+            ID = 20;
+        }
+        
+        RiskLevel risk_level = 4 [deprecated = true];
+        enum RiskLevel {
+            RISK_LEVEL_UNKNOWN = 0;
+            L10_NON_SENSITIVE = 10;
+            L20_PUBLIC_DEID_WITH_DAP = 20;
+            L30_PRIVATE_DEID_SAMPLE = 30;
+            L40_PRIVATE_DEID = 40;
+            L50_PSEUDONYMOUS = 50;
+            L60_PRIVATE_ID_RESEARCH = 60;
+            L70_PRIVATE_ID_PRODUCTION = 70;
+            L70_PLUS_USER_DATA = 80;
+        }
+        
+        SensitivityLevel sensitivity_level = 5 [deprecated = true];
+        enum SensitivityLevel {
+            SENSITIVITY_LEVEL_UNKNOWN = 0;
+            L100_NON_SENSITIVE = 100;
+            L200_PUBLIC_DEID_WITH_DAP = 200;
+            L300_PRIVATE_DEID_SAMPLE = 300;
+            L400_PRIVATE_DEID_PUBLIC_PSEUDO = 400;
+            L500_PRIVATE_ID_RESEARCH_PSEUDO = 500;
+            L600_PRIVATE_ID_PRODUCTION = 600;
+            L700_PRIVATE_USER_DATA = 700;
+        }
+    }
+    
+    message Data {
+        Sandbox sandbox = 1 [deprecated = true];
+    }
+}

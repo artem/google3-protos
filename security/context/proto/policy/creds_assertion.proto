@@ -1,0 +1,43 @@
+syntax = "proto2";
+
+package security.context;
+
+option java_multiple_files = true;
+option java_outer_classname = "CredsAssertionProto";
+option java_package = "com.google.security.context.credentialassertion";
+
+message CredsAssertion {
+    optional string name = 1;
+    
+    oneof assertion {
+        DeviceTrustLevelAssertion device_trust_level = 2;
+        OauthScopeAssertion oauth_scope = 3;
+        OsidDomainAssertion osid_domain = 4;
+    }
+}
+
+message DeviceTrustLevelAssertion {
+    optional TrustLevel minimum = 1;
+    enum TrustLevel {
+        INDETERMINATE = 0;
+        UNTRUSTED_DEVICE = 2;
+        REMEDIATION_TRUSTED_DEVICE = 5;
+        MINIMALLY_TRUSTED_DEVICE = 10;
+        MOSTLY_TRUSTED_DEVICE = 20;
+        FULLY_TRUSTED_DEVICE = 30;
+        HIT_TRUSTED_DEVICE = 35;
+        RIX_TRUSTED_DEVICE = 40;
+        RMG_TRUSTED_DEVICE = 50 [deprecated = true];
+    }
+    
+    optional bool loas_origin_trusted = 2;
+}
+
+message OauthScopeAssertion {
+    repeated int32 allow_scope = 1;
+    optional bool allow_non_oauth = 2;
+}
+
+message OsidDomainAssertion {
+    repeated string allow_domain = 1;
+}

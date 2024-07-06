@@ -1,0 +1,103 @@
+syntax = "proto3";
+
+package google.api.servicecontrol.v1;
+
+import "google/api/annotations.proto";
+import "google/api/authz.proto";
+import "google/api/servicecontrol/v1/check_error.proto";
+import "google/api/servicecontrol/v1/operation.proto";
+import "google/api/servicecontrol/v1/project_settings.proto";
+import "google/api/servicecontrol/v1/quota_info.proto";
+import "google/api/servicecontrol/v2/esf_migration_server_override.proto";
+import "google/api/visibility.proto";
+import "google/protobuf/timestamp.proto";
+import "google/rpc/status.proto";
+import "third_party/boundary_proxy/proto_compare/annotation.proto";
+
+option ruby_package = "Google::Cloud::ServiceControl::V1";
+option php_namespace = "Google\\Cloud\\ServiceControl\\V1";
+option csharp_namespace = "Google.Cloud.ServiceControl.V1";
+option objc_class_prefix = "GASC";
+option cc_enable_arenas = true;
+option java_multiple_files = true;
+option java_outer_classname = "ServiceControllerProto";
+option java_package = "com.google.api.servicecontrol.v1";
+
+service ServiceController {
+    rpc Check(CheckRequest) returns (CheckResponse);
+    rpc Report(ReportRequest) returns (ReportResponse);
+}
+
+message CheckRequest {
+    string service_name = 1;
+    Operation operation = 2;
+    bool request_project_settings = 3;
+    string service_config_id = 4;
+    bool skip_activation_check = 5;
+    bool skip_vpc_service_controls_check = 10;
+    string override_billing_status_check = 11;
+    bytes end_user_creds = 12;
+    bool has_paired_v2_dark_launch = 13;
+    
+    reserved 6, 7, 8, 9;
+}
+
+message CheckResponse {
+    string operation_id = 1;
+    repeated CheckError check_errors = 2;
+    ProjectSettings project_settings = 3;
+    QuotaInfo quota_info = 4;
+    string service_config_id = 5;
+    string service_rollout_id = 11;
+    
+    CheckInfo check_info = 6;
+    message CheckInfo {
+        repeated string unused_arguments = 1;
+        ConsumerInfo consumer_info = 2;
+        repeated string restricted_containers = 3;
+        repeated string unrestricted_containers = 4;
+        string api_key_uid = 5;
+    }
+    
+    bytes service_control_token = 8;
+    protobuf.Timestamp check_time = 9;
+    bool resource_is_restricted_by_vpc_service_controls = 10;
+    v2.EsfMigrationServerOverride esf_migration_server_override = 12;
+    
+    reserved 7;
+    
+    message ConsumerInfo {
+        int64 project_number = 1;
+        
+        ConsumerType type = 2;
+        enum ConsumerType {
+            CONSUMER_TYPE_UNSPECIFIED = 0;
+            PROJECT = 1;
+            FOLDER = 2;
+            ORGANIZATION = 3;
+            SERVICE_SPECIFIC = 4;
+        }
+        
+        int64 consumer_number = 3;
+    }
+}
+
+message ReportRequest {
+    string service_name = 1;
+    repeated Operation operations = 2;
+    string service_config_id = 3;
+}
+
+message ReportResponse {
+    repeated ReportError report_errors = 1;
+    message ReportError {
+        string operation_id = 1;
+        rpc.Status status = 2;
+    }
+    
+    string service_config_id = 2;
+    string service_rollout_id = 4;
+    v2.EsfReportMigrationServerOverride esf_report_migration_server_override = 5;
+    
+    reserved 3;
+}

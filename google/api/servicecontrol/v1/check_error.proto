@@ -1,0 +1,61 @@
+syntax = "proto3";
+
+package google.api.servicecontrol.v1;
+
+import "google/rpc/status.proto";
+import "logs/proto/logs_annotations/logs_annotations.proto";
+
+option ruby_package = "Google::Cloud::ServiceControl::V1";
+option php_namespace = "Google\\Cloud\\ServiceControl\\V1";
+option csharp_namespace = "Google.Cloud.ServiceControl.V1";
+option cc_enable_arenas = true;
+option java_multiple_files = true;
+option java_outer_classname = "CheckErrorProto";
+option java_package = "com.google.api.servicecontrol.v1";
+
+message CheckError {
+    Code code = 1;
+    enum Code {
+        ERROR_CODE_UNSPECIFIED = 0;
+        NOT_FOUND = 5;
+        PERMISSION_DENIED = 7;
+        RESOURCE_EXHAUSTED = 8;
+        BUDGET_EXCEEDED = 100;
+        DENIAL_OF_SERVICE_DETECTED = 101;
+        LOAD_SHEDDING = 102;
+        ABUSER_DETECTED = 103;
+        SERVICE_NOT_ACTIVATED = 104;
+        VISIBILITY_DENIED = 106;
+        BILLING_DISABLED = 107;
+        PROJECT_DELETED = 108;
+        PROJECT_INVALID = 114;
+        CONSUMER_INVALID = 125;
+        IP_ADDRESS_BLOCKED = 109;
+        REFERER_BLOCKED = 110;
+        CLIENT_APP_BLOCKED = 111;
+        API_TARGET_BLOCKED = 122;
+        API_KEY_INVALID = 105;
+        API_KEY_EXPIRED = 112;
+        API_KEY_NOT_FOUND = 113;
+        SPATULA_HEADER_INVALID = 115;
+        LOAS_ROLE_INVALID = 118;
+        NO_LOAS_PROJECT = 119;
+        LOAS_PROJECT_DISABLED = 120;
+        SECURITY_POLICY_VIOLATED = 121;
+        INVALID_CREDENTIAL = 123;
+        LOCATION_POLICY_VIOLATED = 124;
+        NAMESPACE_LOOKUP_UNAVAILABLE = 300;
+        SERVICE_STATUS_UNAVAILABLE = 301;
+        BILLING_STATUS_UNAVAILABLE = 302;
+        QUOTA_CHECK_UNAVAILABLE = 303;
+        LOAS_PROJECT_LOOKUP_UNAVAILABLE = 304;
+        CLOUD_RESOURCE_MANAGER_BACKEND_UNAVAILABLE = 305;
+        SECURITY_POLICY_BACKEND_UNAVAILABLE = 306;
+        LOCATION_POLICY_BACKEND_UNAVAILABLE = 307;
+        INJECTED_ERROR = 308;
+    }
+    
+    string subject = 4;
+    string detail = 2;
+    rpc.Status status = 3;
+}

@@ -1,0 +1,42 @@
+syntax = "proto3";
+
+package privacy.data_governance.attributes;
+
+import "moma/teams/graph/external/proto/node_type.proto";
+import "privacy/data_governance/attributes/proto/classification.proto";
+
+option java_multiple_files = true;
+option java_package = "com.google.privacy.datagovernance.attributes";
+
+message DataProductAssociation {
+    oneof product_association {
+        ProductComputationParams computation_params = 3;
+        AnyProduct any_product = 2;
+        Products products = 1;
+    }
+    
+    message ProductComputationParams {
+        repeated int32 baseline_products = 1;
+        string ignore_observations_before = 2;
+    }
+    
+    message Products {
+        repeated int32 product_id = 1;
+    }
+    
+    message AnyProduct {
+        bool dummy_field_do_not_use = 20 [deprecated = true];
+    }
+}
+
+message ProcessProductAssociation {
+    int32 default_product_id = 1;
+}
+
+message StorageProductAssociation {
+    int32 default_product_id = 1;
+}
+
+message FineGrainedProductAssociation {
+    repeated int32 product_id = 1;
+}

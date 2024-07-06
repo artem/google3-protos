@@ -1,0 +1,167 @@
+syntax = "proto3";
+
+package google.api;
+
+import "google/api/visibility.proto";
+
+option objc_class_prefix = "GAPI";
+option cc_enable_arenas = true;
+option go_package = "google.golang.org/genproto/googleapis/api/serviceconfig;serviceconfig";
+option java_multiple_files = true;
+option java_outer_classname = "UrlMapProto";
+option java_package = "com.google.api";
+
+message UrlMap {
+    string name = 1;
+    string description = 2;
+    GfeTarget default_backend = 3;
+    
+    repeated UrlMapRule rules = 4;
+    message UrlMapRule {
+        string selector = 1;
+        repeated string example_paths = 3;
+        repeated string path_regex = 5;
+        string grpc_location = 7;
+        
+        oneof specifier {
+            GfeTarget backend = 2;
+            LegacyGfeService legacy_gfe_service = 6;
+            EasyApisRoutingConfig easyapis_routing_config = 8;
+        }
+        
+        reserved 4;
+    }
+    
+    HttpFrontendOptions http_config = 5;
+    RLSTarget rls = 6;
+}
+
+message BackendOptions {
+    string healthz_string = 1;
+    
+    MaxConnections max_connections = 2;
+    enum MaxConnections {
+        MAX_CONNECTIONS_DEFAULT = 0;
+        MAX_CONNECTIONS_LOW = 1;
+        MAX_CONNECTIONS_MEDIUM = 2;
+        MAX_CONNECTIONS_HIGH = 3;
+    }
+    
+    BackendResponsiveness backend_responsiveness = 3;
+    enum BackendResponsiveness {
+        BACKEND_RESPONSIVENESS_DEFAULT = 0;
+        BACKEND_RESPONSIVENESS_FAST = 1;
+        BACKEND_RESPONSIVENESS_MEDIUM = 2;
+        BACKEND_RESPONSIVENESS_SLOW = 3;
+    }
+    
+    BackendPickingAlgorithm backend_picking_algorithm = 4;
+    enum BackendPickingAlgorithm {
+        PICKING_ALGORITHM_DEFAULT = 0;
+        PICKING_ALGORITHM_WEIGHTED_ROUND_ROBIN = 1;
+        PICKING_ALGORITHM_LEAST_LOADED = 2;
+    }
+    
+    StickinessOption stickiness_option = 5;
+    enum StickinessOption {
+        STICKINESS_NONE = 0;
+        STICKINESS_SOFT_CLIENT_IP_PORT = 1;
+        STICKINESS_HARD_TASK_LEVEL = 10;
+    }
+}
+
+message GfeTarget {
+    string target = 1;
+    BackendOptions backend_options = 2;
+}
+
+message LegacyGfeService {
+    string service = 1;
+}
+
+message EasyApisRoutingConfig {
+    string backend_target_template = 1;
+    repeated string locations = 2;
+}
+
+message HttpFrontendOptions {
+    QosClass qos_class = 1;
+    enum QosClass {
+        QOS_CLASS_DEFAULT = 0;
+        QOS_CLASS_AF2 = 4;
+        QOS_CLASS_AF3 = 5;
+        QOS_CLASS_AF4 = 6;
+    }
+    
+    GrpcMode grpc_mode = 2;
+    enum GrpcMode {
+        GRPC_DEFAULT = 0;
+        GRPC_DISABLED = 1;
+        GRPC_ENABLED_SIMPLE = 2;
+        GRPC_ENABLED_WITH_BACKEND_GRPC = 3;
+    }
+    
+    RequestSize request_size = 3;
+    enum RequestSize {
+        REQUEST_SIZE_DEFAULT = 0;
+        REQUEST_SIZE_LOW = 1;
+        REQUEST_SIZE_MEDIUM = 2;
+        REQUEST_SIZE_HIGH = 3;
+    }
+    
+    int32 cache_hit_log_fallthrough_denom = 4;
+    string dos_service = 5;
+    bool block_in_embargoed_countries = 6;
+    bool allow_internal_redirects = 7;
+    string cookie_policy = 8;
+    bool allow_websocket_upgrade = 9;
+    
+    ResponseEncoding response_encoding = 10;
+    enum ResponseEncoding {
+        RESPONSE_ENCODING_DEFAULT = 0;
+        RESPONSE_ENCODING_SMART_GZIP = 1;
+        RESPONSE_ENCODING_ORIGINAL = 2;
+    }
+}
+
+message RLSTarget {
+    repeated HttpKeyBuilder http_keybuilders = 1;
+    repeated GrpcKeyBuilder grpc_keybuilders = 2;
+    string lookup_service = 3;
+    string namespace = 4;
+    repeated string valid_lb_services = 5;
+    string default_lb_service = 6;
+    BackendOptions backend_options = 7;
+}
+
+message HttpKeyBuilder {
+    repeated string host_patterns = 1;
+    repeated string path_patterns = 2;
+    repeated NameMatcher query_parameters = 3;
+    repeated NameMatcher headers = 4;
+    map<string, string> constant_keys = 5;
+}
+
+message NameMatcher {
+    string key = 1;
+    repeated string names = 2;
+    bool required_match = 3;
+}
+
+message GrpcKeyBuilder {
+    repeated Name names = 1;
+    message Name {
+        string service = 1;
+        string method = 2;
+    }
+    
+    ExtraKeys extra_keys = 3;
+    message ExtraKeys {
+        string host = 1;
+        string service = 2;
+        string method = 3;
+    }
+    
+    repeated NameMatcher headers = 2;
+    map<string, string> constant_keys = 4;
+}

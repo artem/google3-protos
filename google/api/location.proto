@@ -1,0 +1,38 @@
+syntax = "proto3";
+
+package google.api;
+
+import "google/api/visibility.proto";
+
+option objc_class_prefix = "GAPI";
+option cc_enable_arenas = true;
+option go_package = "google.golang.org/genproto/googleapis/api/serviceconfig;serviceconfig";
+option java_multiple_files = true;
+option java_outer_classname = "LocationProto";
+option java_package = "com.google.api";
+
+message SupportedLocation {
+    string location_id = 1 [deprecated = true];
+    string regions = 5;
+    string zones = 6;
+    
+    repeated LocationGroup groups = 7;
+    message LocationGroup {
+        string group_id = 1;
+        string locations = 2;
+    }
+    
+    LocationPolicy location_policy_override = 8;
+    message LocationPolicy {
+        repeated LocationProperties location_properties = 1;
+    }
+    
+    reserved 2, 3, 4;
+    
+    message LocationProperties {
+        string location_id = 1;
+        string display_name = 2;
+        map<string, string> labels = 3;
+        bool for_testing = 4;
+    }
+}

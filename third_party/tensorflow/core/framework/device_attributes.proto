@@ -1,0 +1,35 @@
+syntax = "proto3";
+
+package tensorflow;
+
+option cc_enable_arenas = true;
+option go_package = "github.com/tensorflow/tensorflow/tensorflow/go/core/framework/device_attributes_go_proto";
+option java_multiple_files = true;
+option java_outer_classname = "DeviceAttributesProtos";
+option java_package = "org.tensorflow.framework";
+
+message InterconnectLink {
+    int32 device_id = 1;
+    string type = 2;
+    int32 strength = 3;
+}
+
+message LocalLinks {
+    repeated InterconnectLink link = 1;
+}
+
+message DeviceLocality {
+    int32 bus_id = 1;
+    int32 numa_node = 2;
+    LocalLinks links = 3;
+}
+
+message DeviceAttributes {
+    string name = 1;
+    string device_type = 2;
+    int64 memory_limit = 4;
+    DeviceLocality locality = 5;
+    fixed64 incarnation = 6;
+    string physical_device_desc = 7;
+    int64 xla_global_id = 8;
+}

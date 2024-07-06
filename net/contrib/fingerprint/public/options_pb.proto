@@ -1,0 +1,25 @@
+syntax = "proto2";
+
+package proto2.contrib.fingerprint;
+
+option cc_enable_arenas = true;
+
+message NormalizationSpec {
+    optional int32 floating_point_rounding_length = 1 [default = 9];
+    
+    optional FloatingPointRoundingMode floating_point_rounding_mode = 10 [default = NUM_DIGITS_AFTER_DECIMAL_POINT];
+    enum FloatingPointRoundingMode {
+        UNSPECIFIED = 0;
+        NUM_DIGITS_AFTER_DECIMAL_POINT = 1;
+        NUM_SIGNIFICANT_DIGITS = 2;
+    }
+    
+    optional bool treat_repeated_field_as_bag = 2 [default = false];
+    optional bool allow_implicit_defaults = 8 [default = false];
+    optional bool fill_default_value_if_empty = 3 [default = false];
+    optional bool remove_unknown_fields = 4 [default = false];
+    optional string cleared_fields = 5;
+    optional bool clear_value_if_default = 6 [default = false];
+    optional bool remove_empty_fields = 7 [default = false];
+    optional bool enable_class_local_cache = 9 [default = false];
+}

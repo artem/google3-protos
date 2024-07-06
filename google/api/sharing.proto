@@ -1,0 +1,17 @@
+syntax = "proto3";
+
+package google.api;
+
+option objc_class_prefix = "GAPI";
+option cc_enable_arenas = true;
+option go_package = "google.golang.org/genproto/googleapis/api/serviceconfig;serviceconfig";
+option java_multiple_files = true;
+option java_outer_classname = "EntityReferenceProto";
+option java_package = "com.google.api";
+
+message Sharing {
+    repeated string target_services = 1;
+    repeated string resource_types = 2;
+    repeated string iam_permissions = 3;
+    repeated string iam_roles = 4;
+}

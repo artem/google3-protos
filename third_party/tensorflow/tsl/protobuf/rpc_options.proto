@@ -1,0 +1,14 @@
+syntax = "proto3";
+
+package tensorflow;
+
+option go_package = "github.com/google/tsl/tsl/go/protobuf/for_core_protos_go_proto";
+
+message RPCOptions {
+    bool use_rpc_for_inprocess_master = 1;
+    string compression_algorithm = 2;
+    int32 compression_level = 3;
+    bool cache_rpc_response = 4;
+    bool disable_session_connection_sharing = 5;
+    int32 num_channels_per_target = 6;
+}

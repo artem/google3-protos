@@ -1,0 +1,35 @@
+syntax = "proto3";
+
+package tensorflow;
+
+import "third_party/tensorflow/compiler/xla/service/hlo.proto";
+import "third_party/tensorflow/compiler/xla/xla_data.proto";
+import "third_party/tensorflow/core/framework/tensor_shape.proto";
+
+message TPUExecutableInfoProto {
+    repeated .xla.ShapeProto input_shapes = 2;
+    .xla.ShapeProto output_shape = 3;
+    
+    repeated ShapeIndex dynamic_output_indices = 11;
+    message ShapeIndex {
+        repeated int32 index = 1;
+    }
+    
+    repeated UpdateIndexPair variable_indices = 10;
+    message UpdateIndexPair {
+        int32 index = 1;
+        bool updated = 2;
+    }
+    
+    repeated TensorShapeProto output_tensor_shapes = 8;
+    .xla.HloSnapshot session_module = 5;
+    .xla.DeviceAssignmentProto device_assignment = 6;
+    
+    reserved 1, 7, 4;
+}
+
+message TPUHostTransferInfoProto {
+    repeated bytes serialized_transfers = 2 [ctype = CORD];
+    
+    reserved 1;
+}

@@ -1,0 +1,35 @@
+syntax = "proto3";
+
+package tensorflow.profiler;
+
+message TfFunctionMetrics {
+    uint64 count = 1;
+    uint64 self_time_ps = 2;
+}
+
+message TfFunction {
+    map<int32, TfFunctionMetrics> metrics = 1;
+    int64 total_tracing_count = 2;
+    TfFunctionCompiler compiler = 3;
+    double expensive_call_percent = 4;
+}
+
+message TfFunctionDb {
+    map<string, TfFunction> tf_functions = 1;
+}
+
+enum TfFunctionExecutionMode {
+    INVALID_MODE = 0;
+    EAGER_MODE = 1;
+    TRACED_MODE = 2;
+    NOT_TRACED_MODE = 3;
+    CONCRETE_MODE = 4;
+}
+
+enum TfFunctionCompiler {
+    INVALID_COMPILER = 0;
+    OTHER_COMPILER = 1;
+    MIXED_COMPILER = 2;
+    XLA_COMPILER = 3;
+    MLIR_COMPILER = 4;
+}

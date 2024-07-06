@@ -1,0 +1,14 @@
+syntax = "proto2";
+
+package tensorflow.converter;
+
+message DebugOptions {
+    optional string ir_dump_dir = 1;
+    optional string ir_dump_pass_regex = 2 [default = ".*"];
+    optional string ir_dump_func_regex = 3 [default = ".*"];
+    optional bool enable_timing = 4 [default = false];
+    optional string print_ir_before = 5;
+    optional string print_ir_after = 6;
+    optional bool print_ir_module_scope = 7 [default = true];
+    optional int64 elide_elementsattrs_if_larger = 8;
+}

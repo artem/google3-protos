@@ -1,0 +1,13 @@
+syntax = "proto3";
+
+package privacy.data_governance.attributes;
+
+import "privacy/data_governance/attributes/proto/classification.proto";
+
+option java_multiple_files = true;
+
+message Faroe {
+    message Data {
+        classification.Category.HasCategory has_mbd_or_hfald = 1;
+    }
+}

@@ -1,0 +1,26 @@
+syntax = "proto3";
+
+package privacy.data_governance.attributes;
+
+import "net/proto2/proto/descriptor.proto";
+import "privacy/data_governance/attributes/proto/classification.proto";
+import "privacy/data_governance/attributes/proto/production_impact.proto";
+
+option java_multiple_files = true;
+option java_package = "com.google.privacy.datagovernance.attributes";
+
+message ProductionInfrastructure {
+    Environment environment = 1;
+    enum Environment {
+        ENVIRONMENT_UNDEFINED = 0;
+        PROD = 1;
+        NONPROD = 2;
+    }
+    
+    repeated int64 impacted_team_product_id = 2;
+    ProductionImpact reason = 3;
+    bool grants_read_access_only = 4;
+    bool grants_access_to_mpa_protected_endpoint_only = 5;
+    bool blast_radius_contained = 6;
+    bool grants_innocuous_write_access_only = 7 [deprecated = true];
+}

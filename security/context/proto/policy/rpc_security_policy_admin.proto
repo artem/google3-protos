@@ -1,0 +1,64 @@
+syntax = "proto2";
+
+package security.context;
+
+import "google/protobuf/duration.proto";
+import "storage/datapol/annotations/proto/semantic_annotations.proto";
+
+option java_multiple_files = true;
+option java_package = "com.google.security.context";
+
+message AdminPolicy {
+    repeated string emergency_admins = 1;
+    optional bool disable_implicit_person_logging = 3;
+    optional bool enable_fail_closed_gin_logging = 6;
+    
+    optional PolicyValidationLevel policy_validation_level = 4 [default = DEFAULT_VALIDATION];
+    enum PolicyValidationLevel {
+        DEFAULT_VALIDATION = 0;
+        RELAXED_VALIDATION = 1;
+    }
+    
+    optional Enforcement enforcement = 5 [default = DEFAULT_ENFORCEMENT];
+    enum Enforcement {
+        DEFAULT_ENFORCEMENT = 0;
+        NO_ADMIN_ACCESS = 1;
+        DRY_RUN = 2;
+    }
+    
+    optional Container.BaselineControls baseline_controls = 10;
+    
+    optional BreakGlassConfigV1 allow_break_glass_access = 9;
+    message BreakGlassConfigV1 {
+        optional BreakGlassMpaConfigV1 require_mpa = 1;
+        repeated string emergency_admins = 2;
+        optional bool require_omg = 3;
+    }
+    
+    oneof non_unilateral_access_controls {
+        MultiPartyAuthorizationConfigV1 require_mpa = 7;
+    }
+    
+    reserved 8, 2;
+    
+    message Container {
+        enum BaselineControls {
+            AUTOMATIC = 0;
+            INPUT_PRESENCE = 1;
+            BREAK_GLASS_ONLY = 2;
+        }
+    }
+}
+
+message BreakGlassMpaConfigV1 {
+    repeated string reviewers = 1;
+    optional string review_guidance = 2;
+}
+
+message MultiPartyAuthorizationConfigV1 {
+    repeated string reviewers = 1;
+    optional string review_guidance = 2;
+    repeated string preferred_reviewers = 3;
+    repeated string preferred_reviewers_from_rotations = 4;
+    optional google.protobuf.Duration approval_cache_duration = 5;
+}

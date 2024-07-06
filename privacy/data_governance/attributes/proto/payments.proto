@@ -1,0 +1,32 @@
+syntax = "proto3";
+
+package privacy.data_governance.attributes;
+
+import "privacy/data_governance/attributes/proto/classification.proto";
+
+option java_package = "com.google.privacy.datagovernance.attributes";
+
+message Payments {
+    message Data {
+        Environment environment = 1;
+        enum Environment {
+            UNKNOWN_ENV = 0;
+            PRODUCTION_ENV = 1;
+            SHADOW_ENV = 2;
+            TESTING_ENV = 3;
+            DEVELOPMENT_ENV = 4;
+        }
+        
+        repeated DataType data_type = 2;
+        enum DataType {
+            DT_UNKNOWN = 0;
+            DT_PAYMENTS_RISK_DATA = 1;
+            DT_PAYMENTS_SUPERCLASS_PROFILE = 2;
+            DT_PAYMENTS_SUPERCLASS_TRANSACTION = 3;
+            DT_PAYMENTS_SUPERCLASS_USER_ACTIVITY = 4;
+            DT_PAYMENTS_SPII = 10;
+            DT_PAYMENTS_EPHEMERAL = 9;
+            DT_OTHER = 8;
+        }
+    }
+}

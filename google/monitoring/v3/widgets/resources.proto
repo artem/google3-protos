@@ -1,0 +1,64 @@
+syntax = "proto3";
+
+package google.monitoring.v3.widgets;
+
+import "google/api/field_behavior.proto";
+import "google/api/monitored_resource.proto";
+import "google/monitoring/v3/widgets/common.proto";
+
+option ruby_package = "Google::Cloud::Monitoring::V3::Widgets";
+option php_namespace = "Google\\Cloud\\Monitoring\\V3\\Widgets";
+option csharp_namespace = "Google.Cloud.Monitoring.V3.Widgets";
+option java_multiple_files = true;
+option java_outer_classname = "ResourceWidgetsProto";
+option java_package = "com.google.monitoring.v3.widgets";
+
+message EventList {
+    repeated api.MonitoredResource monitored_resources = 1;
+}
+
+message IncidentList {
+    repeated api.MonitoredResource monitored_resources = 1;
+    repeated string policy_names = 2;
+}
+
+message ResourceAction {
+    api.MonitoredResource monitored_resource = 1;
+    MonitoredResourceMetadataFilter resource_metadata_filter = 2;
+}
+
+message ResourceDetails {
+    DataSourceSet dataset = 1;
+    
+    repeated ResourceDetailSection sections = 2;
+    message ResourceDetailSection {
+        string title = 1;
+        repeated ResourceDetailItem items = 2;
+    }
+    
+    ResourceDetailsDisplayOptions display_options = 3;
+    message ResourceDetailsDisplayOptions {
+        SectionDisplay section_display_as = 1;
+        enum SectionDisplay {
+            DEFAULT = 0;
+            LIST = 1;
+            TABS = 2;
+        }
+    }
+    
+    message DetailCellDisplayOptions {
+        string component = 1;
+        map<string, string> component_options = 3;
+    }
+    
+    message ResourceDetailValue {
+        DataSourceValue data_source_value = 1;
+        DetailCellDisplayOptions display_options = 2;
+    }
+    
+    message ResourceDetailItem {
+        string label = 1;
+        repeated ResourceDetailValue values = 2;
+        string help_text = 3;
+    }
+}

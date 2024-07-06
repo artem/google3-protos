@@ -1,0 +1,478 @@
+syntax = "proto3";
+
+package google.monitoring.v3;
+
+import "google/api/auditing.proto";
+import "google/api/field_behavior.proto";
+import "google/api/field_info.proto";
+import "google/api/monitored_resource.proto";
+import "google/api/policy.proto";
+import "google/api/resource.proto";
+import "google/api/visibility.proto";
+import "google/logging/data_governance.proto";
+import "google/protobuf/duration.proto";
+import "google/protobuf/timestamp.proto";
+import "logs/proto/data_access/asr/cloud_monitoring_uptime_resource.proto";
+import "storage/datapol/annotations/proto/semantic_annotations.proto";
+
+option ruby_package = "Google::Cloud::Monitoring::V3";
+option php_namespace = "Google\\Cloud\\Monitoring\\V3";
+option csharp_namespace = "Google.Cloud.Monitoring.V3";
+option go_package = "cloud.google.com/go/monitoring/apiv3/v2/monitoringpb;monitoringpb";
+option java_multiple_files = true;
+option java_outer_classname = "UptimeProto";
+option java_package = "com.google.monitoring.v3";
+
+message InternalChecker {
+    option deprecated = true;
+    string name = 1;
+    string display_name = 2;
+    string network = 3;
+    string gcp_zone = 4;
+    string peer_project_id = 6;
+    
+    State state = 7;
+    enum State {
+        UNSPECIFIED = 0;
+        CREATING = 1;
+        RUNNING = 2;
+    }
+    
+    reserved 5;
+}
+
+message UptimePrivateChecker {
+    string name = 1;
+    string display_name = 2;
+    string network = 3;
+    string gcp_zone = 4;
+    string peer_project_id = 5;
+    
+    State state = 6;
+    enum State {
+        UNSPECIFIED = 0;
+        CREATING = 1;
+        RUNNING = 2;
+        DELETING = 3;
+        ERROR_CREATING = 4;
+        ERROR_DELETING = 5;
+    }
+}
+
+message SyntheticMonitorTarget {
+    oneof target {
+        CloudFunctionV2Target cloud_function_v2 = 1;
+    }
+    
+    message CloudFunctionV2Target {
+        string name = 1;
+        api.MonitoredResource cloud_run_revision = 2;
+    }
+}
+
+message UptimeCheckConfig {
+    string name = 1;
+    string display_name = 2;
+    protobuf.Duration period = 7;
+    protobuf.Duration timeout = 8;
+    
+    repeated ContentMatcher content_matchers = 9;
+    message ContentMatcher {
+        string content = 1;
+        
+        ContentMatcherOption matcher = 2;
+        enum ContentMatcherOption {
+            CONTENT_MATCHER_OPTION_UNSPECIFIED = 0;
+            CONTAINS_STRING = 1;
+            NOT_CONTAINS_STRING = 2;
+            MATCHES_REGEX = 3;
+            NOT_MATCHES_REGEX = 4;
+            MATCHES_JSON_PATH = 5;
+            NOT_MATCHES_JSON_PATH = 6;
+        }
+        
+        oneof additional_matcher_info {
+            JsonPathMatcher json_path_matcher = 3;
+        }
+        
+        message JsonPathMatcher {
+            string json_path = 1;
+            
+            JsonPathMatcherOption json_matcher = 2;
+            enum JsonPathMatcherOption {
+                JSON_PATH_MATCHER_OPTION_UNSPECIFIED = 0;
+                EXACT_MATCH = 1;
+                REGEX_MATCH = 2;
+            }
+        }
+    }
+    
+    CheckerType checker_type = 17;
+    enum CheckerType {
+        CHECKER_TYPE_UNSPECIFIED = 0;
+        STATIC_IP_CHECKERS = 1;
+        PRIVATE_CHECKERS = 2;
+        VPC_CHECKERS = 3;
+    }
+    
+    repeated string private_checkers = 18;
+    repeated UptimeCheckRegion selected_regions = 10;
+    repeated string regions = 24;
+    bool log_check_failures = 16;
+    bool disable_log_check_failures = 22;
+    string legacy_check_id = 11 [deprecated = true];
+    int64 customer_id = 12 [deprecated = true];
+    int64 project_number = 13;
+    bool is_internal = 15 [deprecated = true];
+    repeated InternalChecker internal_checkers = 14 [deprecated = true];
+    map<string, string> user_labels = 20;
+    
+    oneof resource {
+        api.MonitoredResource monitored_resource = 3;
+        ResourceGroup resource_group = 4;
+        K8sIngress k8s_ingress = 19;
+        SyntheticMonitorTarget synthetic_monitor = 21;
+    }
+    
+    oneof check_request_type {
+        HttpCheck http_check = 5;
+        TcpCheck tcp_check = 6;
+    }
+    
+    message ResourceGroup {
+        string group_id = 1;
+        GroupResourceType resource_type = 2;
+    }
+    
+    message K8sIngress {
+        api.MonitoredResource monitored_resource = 1;
+        string host = 2;
+    }
+    
+    message PingConfig {
+        int32 pings_count = 1;
+    }
+    
+    message HttpCheck {
+        RequestMethod request_method = 8;
+        enum RequestMethod {
+            METHOD_UNSPECIFIED = 0;
+            GET = 1;
+            POST = 2;
+        }
+        
+        bool use_ssl = 1;
+        string path = 2;
+        int32 port = 3;
+        
+        BasicAuthentication auth_info = 4;
+        message BasicAuthentication {
+            string username = 1;
+            string password = 2;
+        }
+        
+        bool mask_headers = 5;
+        map<string, string> headers = 6;
+        
+        ContentType content_type = 9;
+        enum ContentType {
+            TYPE_UNSPECIFIED = 0;
+            URL_ENCODED = 1;
+            USER_PROVIDED = 2;
+        }
+        
+        string custom_content_type = 13;
+        bool validate_ssl = 7;
+        bytes body = 10;
+        
+        repeated ResponseStatusCode accepted_response_status_codes = 11;
+        message ResponseStatusCode {
+            oneof status_code {
+                int32 status_value = 1;
+                StatusClass status_class = 2;
+            }
+            
+            enum StatusClass {
+                STATUS_CLASS_UNSPECIFIED = 0;
+                STATUS_CLASS_1XX = 100;
+                STATUS_CLASS_2XX = 200;
+                STATUS_CLASS_3XX = 300;
+                STATUS_CLASS_4XX = 400;
+                STATUS_CLASS_5XX = 500;
+                STATUS_CLASS_ANY = 1000;
+            }
+        }
+        
+        PingConfig ping_config = 12;
+        
+        oneof auth_method {
+            ServiceAgentAuthentication service_agent_authentication = 14;
+        }
+        
+        reserved 15, "oidc_token_authentication";
+        
+        message ServiceAgentAuthentication {
+            ServiceAgentAuthenticationType type = 1;
+            enum ServiceAgentAuthenticationType {
+                SERVICE_AGENT_AUTHENTICATION_TYPE_UNSPECIFIED = 0;
+                OIDC_TOKEN = 1;
+                OAUTH = 2;
+            }
+            
+            oneof authentication_fields {
+                OAuthFields oauth_fields = 2;
+            }
+            
+            message OAuthFields {
+                repeated string scopes = 1;
+            }
+        }
+    }
+    
+    message TcpCheck {
+        int32 port = 1;
+        PingConfig ping_config = 2;
+    }
+}
+
+message UptimeCheckIp {
+    UptimeCheckRegion region = 1;
+    string location = 2;
+    string ip_address = 3;
+    int32 pod_id = 4;
+}
+
+message ExpandedUptimeCheckIp {
+    string region = 1;
+    repeated string ip_addresses = 2;
+}
+
+message UptimeFlooefiLocation {
+    string debug_string = 1;
+    string zone = 2;
+    string peer_project_id = 4;
+    string network = 3;
+}
+
+message UptimePrivateCheckerLocation {
+    string parent = 1;
+    repeated string checker_locations = 2;
+    repeated UptimeFlooefiLocation flooefi_locations = 3;
+}
+
+message UptimeCheckResult {
+    api.MonitoredResource monitored_resource = 1;
+    bool check_passed = 2;
+    bool content_mismatch = 3;
+    string error_code = 4;
+    int32 http_status = 5;
+    protobuf.Duration request_latency = 6;
+    SyntheticResult synthetic_result = 7;
+}
+
+message SyntheticResult {
+    map<string, string> runtime_metadata = 3;
+    protobuf.Timestamp start_time = 4;
+    protobuf.Timestamp end_time = 5;
+    
+    oneof result {
+        TestFrameworkResultV1 synthetic_test_framework_result_v1 = 1;
+        GenericResultV1 synthetic_generic_result_v1 = 2;
+        BrokenLinksResultV1 synthetic_broken_links_result_v1 = 6;
+    }
+}
+
+message TestFrameworkResultV1 {
+    oneof _suite_count {
+        int64 suite_count = 1;
+    }
+    
+    oneof _test_count {
+        int64 test_count = 2;
+    }
+    
+    oneof _passing_test_count {
+        int64 passing_test_count = 3;
+    }
+    
+    oneof _failing_test_count {
+        int64 failing_test_count = 4;
+    }
+    
+    oneof _pending_test_count {
+        int64 pending_test_count = 5;
+    }
+}
+
+message SyntheticTestResult {
+    string title = 1;
+    repeated string title_paths = 3;
+    protobuf.Timestamp test_start_time = 4;
+    protobuf.Timestamp test_end_time = 5;
+    
+    TestError test_error = 6;
+    message TestError {
+        string error_type = 1;
+        string error_message = 2;
+        
+        repeated StackFrame stack_frames = 3;
+        message StackFrame {
+            string function_name = 1;
+            string file_path = 2;
+            int64 line = 3;
+            
+            oneof _column {
+                int64 column = 4;
+            }
+        }
+        
+        string stack_trace = 4;
+    }
+    
+    oneof _test_passed {
+        bool test_passed = 2;
+    }
+}
+
+message BaseError {
+    string error_type = 1;
+    string error_message = 2;
+}
+
+message BrokenLinksResultV1 {
+    BrokenLinkCheckerOptions options = 9;
+    message BrokenLinkCheckerOptions {
+        string origin_uri = 1;
+        string query_selector_all = 3;
+        repeated string get_attributes = 4;
+        string link_order = 5;
+        protobuf.Duration link_timeout = 6;
+        string wait_for_selector = 9;
+        map<string, PerLinkOption> per_link_options = 10;
+        protobuf.Duration total_synthetic_timeout = 11;
+        
+        ScreenshotOptions screenshot_options = 12;
+        message ScreenshotOptions {
+            string storage_location = 1;
+            string capture_condition = 2;
+        }
+        
+        oneof _link_limit {
+            int64 link_limit = 2;
+        }
+        
+        oneof _max_retries {
+            int64 max_retries = 7;
+        }
+        
+        reserved 8, "max_redirects";
+        
+        message PerLinkOption {
+            string expected_status_code = 1;
+            protobuf.Duration link_timeout = 2;
+        }
+    }
+    
+    SyntheticLinkResult origin_link_result = 10;
+    string execution_data_storage_path = 11;
+    repeated BaseError errors = 12;
+    
+    oneof _link_count {
+        int64 link_count = 1;
+    }
+    
+    oneof _passing_link_count {
+        int64 passing_link_count = 2;
+    }
+    
+    oneof _failing_link_count {
+        int64 failing_link_count = 3;
+    }
+    
+    oneof _unreachable_count {
+        int64 unreachable_count = 4;
+    }
+    
+    oneof _status2xx_count {
+        int64 status2xx_count = 5;
+    }
+    
+    oneof _status3xx_count {
+        int64 status3xx_count = 6;
+    }
+    
+    oneof _status4xx_count {
+        int64 status4xx_count = 7;
+    }
+    
+    oneof _status5xx_count {
+        int64 status5xx_count = 8;
+    }
+}
+
+message SyntheticLinkResult {
+    string expected_status_code = 2;
+    string source_uri = 3;
+    string target_uri = 4;
+    string anchor_text = 5;
+    string html_element = 6;
+    string error_type = 8;
+    string error_message = 9;
+    protobuf.Timestamp link_start_time = 10;
+    protobuf.Timestamp link_end_time = 11;
+    
+    ScreenshotOutput screenshot_output = 13;
+    message ScreenshotOutput {
+        string screenshot_file = 1;
+        BaseError screenshot_error = 2;
+    }
+    
+    oneof _link_passed {
+        bool link_passed = 1;
+    }
+    
+    oneof _status_code {
+        int64 status_code = 7;
+    }
+    
+    oneof _is_origin {
+        bool is_origin = 12;
+    }
+}
+
+message FollowedSyntheticLinkResults {
+    repeated SyntheticLinkResult synthetic_link_results = 1;
+}
+
+message GenericResultV1 {
+    GenericError generic_error = 2;
+    message GenericError {
+        string error_type = 1;
+        string error_message = 2;
+        string function_name = 3;
+        string file_path = 4;
+        int64 line = 5;
+        string stack_trace = 6;
+    }
+    
+    oneof _ok {
+        bool ok = 1;
+    }
+}
+
+enum UptimeCheckRegion {
+    REGION_UNSPECIFIED = 0;
+    USA = 1;
+    EUROPE = 2;
+    SOUTH_AMERICA = 3;
+    ASIA_PACIFIC = 4;
+    USA_OREGON = 5;
+    USA_IOWA = 6;
+    USA_VIRGINIA = 7;
+}
+
+enum GroupResourceType {
+    RESOURCE_TYPE_UNSPECIFIED = 0;
+    INSTANCE = 1;
+    AWS_ELB_LOAD_BALANCER = 2;
+}

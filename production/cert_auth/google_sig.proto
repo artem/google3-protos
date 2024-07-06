@@ -1,0 +1,11 @@
+syntax = "proto2";
+
+message GoogleSignature {
+    required int32 Version = 1;
+    optional string CryptoContext = 2;
+    optional bytes Payload = 3;
+    required bytes Signature = 4;
+    optional int32 NotValidBefore = 5;
+    optional int32 NotValidAfter = 6;
+    optional bytes Certificate = 7;
+}

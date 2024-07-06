@@ -1,0 +1,28 @@
+syntax = "proto3";
+
+package tensorflow;
+
+option cc_enable_arenas = true;
+option go_package = "github.com/tensorflow/tensorflow/tensorflow/go/core/protobuf/for_core_protos_go_proto";
+option java_outer_classname = "DevicePropertiesProtos";
+
+message DeviceProperties {
+    string type = 1;
+    string vendor = 2;
+    string model = 3;
+    int64 frequency = 4;
+    int64 num_cores = 5;
+    map<string, string> environment = 6;
+    int64 num_registers = 7;
+    int64 l1_cache_size = 8;
+    int64 l2_cache_size = 9;
+    int64 l3_cache_size = 10;
+    int64 shared_memory_size_per_multiprocessor = 11;
+    int64 memory_size = 12;
+    int64 bandwidth = 13;
+}
+
+message NamedDevice {
+    string name = 1;
+    DeviceProperties properties = 2;
+}

@@ -1,0 +1,100 @@
+syntax = "proto3";
+
+package tensorflow;
+
+import "third_party/tensorflow/core/framework/summary.proto";
+
+option cc_enable_arenas = true;
+option go_package = "github.com/tensorflow/tensorflow/tensorflow/go/core/util/event_go_proto";
+option java_multiple_files = true;
+option java_outer_classname = "EventProtos";
+option java_package = "org.tensorflow.util";
+
+message Event {
+    double wall_time = 1;
+    int64 step = 2;
+    SourceMetadata source_metadata = 10;
+    
+    oneof what {
+        string file_version = 3;
+        bytes graph_def = 4;
+        Summary summary = 5;
+        LogMessage log_message = 6 [deprecated = true];
+        SessionLog session_log = 7;
+        TaggedRunMetadata tagged_run_metadata = 8;
+        bytes meta_graph_def = 9;
+    }
+}
+
+message SourceMetadata {
+    string writer = 1;
+}
+
+message LogMessage {
+    option deprecated = true;
+    
+    Level level = 1;
+    enum Level {
+        option deprecated = true;
+        UNKNOWN = 0;
+        DEBUGGING = 10;
+        INFO = 20;
+        WARN = 30;
+        ERROR = 40;
+        FATAL = 50;
+    }
+    
+    string message = 2;
+}
+
+message SessionLog {
+    SessionStatus status = 1;
+    enum SessionStatus {
+        STATUS_UNSPECIFIED = 0;
+        START = 1;
+        STOP = 2;
+        CHECKPOINT = 3;
+    }
+    
+    string checkpoint_path = 2;
+    string msg = 3;
+}
+
+message TaggedRunMetadata {
+    string tag = 1;
+    bytes run_metadata = 2;
+}
+
+message WatchdogConfig {
+    int64 timeout_ms = 1;
+}
+
+message RequestedExitCode {
+    int32 exit_code = 1;
+}
+
+message WorkerHeartbeatRequest {
+    WorkerShutdownMode shutdown_mode = 1;
+    WatchdogConfig watchdog_config = 2;
+    RequestedExitCode exit_code = 3;
+}
+
+message WorkerHeartbeatResponse {
+    WorkerHealth health_status = 1;
+    repeated Event worker_log = 2;
+    string hostname = 3;
+}
+
+enum WorkerHealth {
+    OK = 0;
+    RECEIVED_SHUTDOWN_SIGNAL = 1;
+    INTERNAL_ERROR = 2;
+    SHUTTING_DOWN = 3;
+}
+
+enum WorkerShutdownMode {
+    DEFAULT = 0;
+    NOT_CONFIGURED = 1;
+    WAIT_FOR_COORDINATOR = 2;
+    SHUTDOWN_AFTER_TIMEOUT = 3;
+}

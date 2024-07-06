@@ -1,0 +1,371 @@
+syntax = "proto3";
+
+package xla;
+
+import "google/protobuf/any.proto";
+import "third_party/tensorflow/compiler/xla/service/hlo.proto";
+import "third_party/tensorflow/compiler/xla/xla_data.proto";
+
+message CompilationEnvironmentsProto {
+    repeated google.protobuf.Any environments = 1;
+}
+
+message DebugOptions {
+    bool xla_hlo_graph_addresses = 2;
+    bool xla_hlo_profile = 9;
+    repeated string xla_disable_hlo_passes = 30;
+    repeated string xla_enable_hlo_passes_only = 124;
+    bool xla_disable_all_hlo_passes = 104;
+    int32 xla_backend_optimization_level = 31;
+    bool xla_embed_ir_in_executable = 33;
+    bool xla_eliminate_hlo_implicit_broadcast = 35;
+    bool xla_cpu_multi_thread_eigen = 60;
+    string xla_gpu_cuda_data_dir = 61;
+    bool xla_gpu_ftz = 62;
+    bool xla_llvm_enable_alias_scope_metadata = 70;
+    bool xla_llvm_enable_noalias_metadata = 71;
+    bool xla_llvm_enable_invariant_load_metadata = 72;
+    bool xla_llvm_disable_expensive_passes = 73;
+    bool xla_test_all_output_layouts = 90;
+    bool xla_test_all_input_layouts = 91;
+    bool xla_hlo_graph_sharding_color = 92;
+    bool xla_cpu_use_mkl_dnn = 97;
+    bool xla_cpu_use_thunk_runtime = 298;
+    bool xla_cpu_enable_concurrency_optimized_scheduler = 307;
+    int32 xla_cpu_prefer_vector_width = 308;
+    bool xla_cpu_enable_fast_math = 99;
+    bool xla_cpu_fast_math_honor_nans = 120;
+    bool xla_cpu_fast_math_honor_infs = 121;
+    bool xla_cpu_fast_math_honor_division = 126;
+    bool xla_cpu_fast_math_honor_functions = 129;
+    bool xla_cpu_enable_fast_min_max = 140;
+    bool xla_gpu_enable_fast_min_max = 100;
+    bool xla_allow_excess_precision = 122;
+    bool xla_gpu_crash_on_verification_failures = 101;
+    int32 xla_gpu_autotune_level = 123;
+    int32 xla_force_host_platform_device_count = 102;
+    bool xla_gpu_disable_gpuasm_optimizations = 103;
+    
+    ShapeChecks xla_gpu_shape_checks = 170;
+    enum ShapeChecks {
+        IGNORE = 0;
+        RUNTIME = 1;
+        COMPILE_TIME = 2;
+    }
+    
+    bool xla_hlo_evaluator_use_fast_path = 106;
+    bool xla_allow_scalar_index_dynamic_ops = 107;
+    
+    StepMarkerLocation xla_step_marker_location = 108;
+    enum StepMarkerLocation {
+        STEP_MARK_AT_ENTRY = 0;
+        STEP_MARK_AT_TOP_LEVEL_WHILE_LOOP = 1;
+        STEP_MARK_AT_SECOND_LEVEL_WHILE_LOOP = 3;
+        STEP_MARK_NONE = 2;
+    }
+    
+    string xla_dump_to = 109;
+    string xla_dump_hlo_module_re = 110;
+    string xla_dump_hlo_pass_re = 111;
+    bool xla_dump_hlo_as_text = 112;
+    bool xla_dump_hlo_as_proto = 113;
+    bool xla_dump_hlo_as_dot = 114;
+    bool xla_dump_hlo_as_url = 115;
+    bool xla_dump_hlo_as_html = 116;
+    bool xla_dump_fusion_visualization = 149;
+    bool xla_dump_hlo_snapshots = 118;
+    bool xla_dump_include_timestamp = 131;
+    int32 xla_dump_max_hlo_modules = 132;
+    bool xla_dump_module_metadata = 144;
+    bool xla_dump_compress_protos = 151;
+    bool xla_dump_hlo_as_long_text = 164;
+    bool xla_gpu_force_conv_nchw = 125;
+    bool xla_gpu_force_conv_nhwc = 146;
+    repeated string xla_gpu_ptx_file = 127;
+    bool xla_gpu_dump_llvmir = 155;
+    bool xla_dump_enable_mlir_pretty_form = 185;
+    string xla_gpu_algorithm_denylist_path = 128;
+    bool xla_tpu_detect_nan = 135;
+    bool xla_tpu_detect_inf = 136;
+    bool xla_cpu_enable_xprof_traceme = 137;
+    bool xla_gpu_unsafe_fallback_to_driver_on_ptxas_not_found = 138;
+    string xla_gpu_asm_extra_flags = 141;
+    int32 xla_multiheap_size_constraint_per_heap = 142;
+    bool xla_detailed_logging = 252;
+    bool xla_enable_dumping = 253;
+    int32 xla_gpu_force_compilation_parallelism = 147;
+    bool xla_gpu_enable_llvm_module_compilation_parallelism = 268;
+    bool xla_gpu_deterministic_ops = 148;
+    repeated string xla_gpu_llvm_ir_file = 150;
+    
+    repeated CollectiveOpType xla_gpu_disable_async_collectives = 289;
+    enum CollectiveOpType {
+        NOOP = 0;
+        ALLREDUCE = 1;
+        ALLGATHER = 2;
+        REDUCESCATTER = 3;
+        COLLECTIVEBROADCAST = 4;
+        ALLTOALL = 5;
+        COLLECTIVEPERMUTE = 6;
+    }
+    
+    int64 xla_gpu_all_reduce_combine_threshold_bytes = 157;
+    int64 xla_gpu_all_gather_combine_threshold_bytes = 212;
+    int64 xla_gpu_reduce_scatter_combine_threshold_bytes = 213;
+    bool xla_gpu_enable_all_gather_combine_by_dim = 254;
+    bool xla_gpu_enable_reduce_scatter_combine_by_dim = 257;
+    bool xla_gpu_enable_all_reduce_splitter = 299;
+    bool xla_gpu_enable_reassociation_for_converted_ar = 209;
+    int32 xla_gpu_all_reduce_blueconnect_num_devices_per_host = 159;
+    bool xla_gpu_enable_while_loop_reduce_scatter_code_motion = 203;
+    int32 xla_gpu_collective_inflation_factor = 205;
+    bool xla_llvm_force_inline_before_split = 300;
+    bool xla_gpu_enable_cudnn_frontend = 160;
+    bool xla_gpu_enable_cudnn_fmha = 218;
+    bool xla_gpu_fused_attention_use_cudnn_rng = 235;
+    bool xla_gpu_enable_cudnn_layer_norm = 262;
+    bool xla_dump_disable_metadata = 153;
+    string xla_dump_hlo_pipeline_re = 154;
+    bool xla_gpu_strict_conv_algorithm_picker = 156;
+    bool xla_gpu_enable_custom_fusions = 263;
+    string xla_gpu_enable_custom_fusions_re = 264;
+    bool xla_gpu_enable_address_computation_fusion = 105;
+    int64 xla_gpu_nccl_termination_timeout_seconds = 163;
+    bool xla_gpu_enable_shared_constants = 165;
+    bool xla_gpu_enable_cublaslt = 166;
+    
+    repeated CommandBufferCmdType xla_gpu_enable_command_buffer = 258;
+    enum CommandBufferCmdType {
+        INVALID = 0;
+        FUSION = 1;
+        CUBLAS = 2;
+        CUDNN = 3;
+        COLLECTIVES = 4;
+        CONDITIONALS = 5;
+        CUSTOM_CALL = 6;
+        CUBLASLT = 7;
+    }
+    
+    int32 xla_gpu_graph_min_graph_size = 208;
+    bool xla_gpu_graph_enable_concurrent_region = 215;
+    int64 xla_gpu_redzone_scratch_max_megabytes = 167;
+    int64 xla_gpu_redzone_padding_bytes = 228;
+    bool xla_cpu_use_acl = 174;
+    bool xla_cpu_strict_dot_conv_math = 175;
+    bool xla_gpu_use_runtime_fusion = 181;
+    bool xla_dump_latency_hiding_schedule = 182;
+    bool xla_cpu_enable_mlir_tiling_and_fusion = 184;
+    bool xla_cpu_enable_custom_matmul_tiling = 195;
+    int64 xla_cpu_matmul_tiling_m_dim = 196;
+    int64 xla_cpu_matmul_tiling_n_dim = 197;
+    int64 xla_cpu_matmul_tiling_k_dim = 198;
+    bool xla_cpu_enable_mlir_fusion_outlining = 192;
+    bool xla_cpu_enable_experimental_deallocation = 191;
+    bool xla_gpu_enable_latency_hiding_scheduler = 186;
+    bool xla_gpu_enable_highest_priority_async_stream = 216;
+    bool xla_gpu_enable_analytical_latency_estimator = 255;
+    bool xla_gpu_lhs_enable_gpu_async_tracker = 204;
+    string xla_gpu_pgle_profile_file_or_directory_path = 210;
+    int32 xla_gpu_memory_limit_slop_factor = 260;
+    bool xla_gpu_enable_pipelined_collectives = 239;
+    bool xla_gpu_enable_pipelined_all_reduce = 217;
+    bool xla_gpu_enable_pipelined_all_gather = 227;
+    bool xla_gpu_enable_pipelined_reduce_scatter = 231;
+    bool xla_gpu_enable_pipelined_p2p = 246;
+    bool xla_gpu_run_post_layout_collective_pipeliner = 313;
+    int64 xla_gpu_collective_permute_decomposer_threshold = 237;
+    
+    PartitioningAlgorithm xla_partitioning_algorithm = 187;
+    enum PartitioningAlgorithm {
+        PARTITIONING_ALGORITHM_NOOP = 0;
+        PARTITIONING_ALGORITHM_EXP0 = 1;
+        PARTITIONING_ALGORITHM_EXP1 = 2;
+        PARTITIONING_ALGORITHM_EXP2 = 3;
+    }
+    
+    bool xla_gpu_enable_triton_gemm = 188;
+    bool xla_gpu_enable_cudnn_int8x32_convolution_reordering = 189;
+    bool xla_gpu_triton_gemm_any = 190;
+    bool xla_gpu_exhaustive_tiling_search = 219;
+    bool xla_gpu_enable_triton_softmax_fusion = 220;
+    bool xla_gpu_enable_priority_fusion = 221;
+    bool xla_gpu_enable_triton_softmax_priority_fusion = 286;
+    string xla_gpu_dump_autotune_results_to = 222;
+    string xla_gpu_load_autotune_results_from = 223;
+    string xla_gpu_target_config_filename = 261;
+    int32 xla_gpu_auto_spmd_partitioning_memory_budget_gb = 224;
+    float xla_gpu_auto_spmd_partitioning_memory_budget_ratio = 225;
+    bool xla_gpu_triton_gemm_disable_reduced_precision_reduction = 226;
+    int32 xla_gpu_triton_fusion_level = 229;
+    bool xla_gpu_dump_autotuned_gemm_fusions = 232;
+    string xla_gpu_override_gemm_autotuner = 295;
+    bool xla_gpu_copy_insertion_use_region_analysis = 236;
+    bool xla_gpu_collect_cost_model_stats = 240;
+    bool xla_gpu_enable_split_k_autotuning = 241;
+    bool xla_gpu_enable_reduction_epilogue_fusion = 243;
+    bool xla_gpu_enable_nccl_clique_optimization = 244;
+    bool xla_gpu_mock_custom_calls = 245;
+    bool xla_gpu_cublas_fallback = 247;
+    bool xla_gpu_enable_while_loop_double_buffering = 248;
+    
+    WhileLoopUnrolling xla_gpu_enable_while_loop_unrolling = 294;
+    enum WhileLoopUnrolling {
+        WHILE_LOOP_UNROLLING_NO_UNROLL = 0;
+        WHILE_LOOP_UNROLLING_DOUBLE_BUFFER = 1;
+        WHILE_LOOP_UNROLLING_FULL_UNROLL = 2;
+    }
+    
+    bool xla_gpu_ensure_minor_dot_contraction_dims = 249;
+    bool xla_gpu_filter_kernels_spilling_registers_on_autotuning = 250;
+    int64 xla_debug_buffer_assignment_show_max = 251;
+    int32 xla_gpu_llvm_verification_level = 256;
+    bool xla_gpu_enable_cub_radix_sort = 259;
+    int64 xla_gpu_threshold_for_windowed_einsum_mib = 265;
+    bool xla_gpu_enable_triton_hopper = 266;
+    bool xla_gpu_enable_nccl_user_buffers = 267;
+    bool xla_gpu_enable_nccl_comm_splitting = 272;
+    bool xla_gpu_enable_nccl_per_stream_comms = 276;
+    bool xla_gpu_enable_libnvptxcompiler = 269;
+    bool xla_gpu_enable_dot_strength_reduction = 270;
+    bool xla_gpu_multi_streamed_windowed_einsum = 280;
+    bool xla_gpu_enable_bf16_6way_gemm = 271;
+    bool xla_gpu_enable_bf16_3way_gemm = 279;
+    int64 xla_gpu_nccl_collective_max_nchannels = 273;
+    int64 xla_gpu_nccl_p2p_max_nchannels = 274;
+    int64 xla_gpu_mlir_emitter_level = 303;
+    int64 xla_gpu_gemm_rewrite_size_threshold = 283;
+    bool xla_gpu_require_complete_aot_autotune_results = 284;
+    int32 xla_gpu_cudnn_gemm_fusion_level = 285;
+    bool xla_gpu_use_memcpy_local_p2p = 287;
+    int64 xla_gpu_autotune_max_solutions = 288;
+    bool xla_dump_large_constants = 290;
+    bool xla_gpu_verify_triton_fusion_numerics = 291;
+    string xla_gpu_dump_autotune_logs_to = 292;
+    int64 xla_reduce_window_rewrite_base_length = 293;
+    bool xla_gpu_enable_host_memory_offloading = 296;
+    bool xla_gpu_exclude_nondeterministic_ops = 297;
+    bool xla_gpu_nccl_terminate_on_error = 301;
+    bool xla_use_shardonnay = 302;
+    bool xla_gpu_shard_autotuning = 304;
+    bool xla_gpu_enable_approx_costly_collectives = 305;
+    string xla_gpu_kernel_cache_file = 306;
+    bool xla_gpu_unsafe_pipelined_loop_annotator = 309;
+    string xla_gpu_per_fusion_autotune_cache_dir = 310;
+    int64 xla_cmd_buffer_trace_cache_size = 311;
+    bool xla_gpu_temp_buffer_use_separate_color = 312;
+    repeated string legacy_command_buffer_custom_call_targets = 314;
+    map<string, string> xla_backend_extra_options = 500;
+    
+    reserved 63, 134, 80, 93, 94, 177, 98, 207, 171, 173, 179, 130, 143, 152, 278, 183, 199, 200, 201, 238, 158, 161, 162, 169, 233, 234, 202, 230, 168, 172, 211, 275, 281, 282, 5, 117, 133, 139, 176, 178, 180, 193, 214, 194, 242, 206;
+}
+
+message GpuCompilationEnvironment {
+    int64 dummy_flag = 1;
+}
+
+message ShardableValueUpdatePairProto {
+    int64 input_parameter_number = 1;
+    repeated int64 parameter_sha26a136ac = 2;
+    repeated int64 output_sha26a136ac = 3;
+}
+
+message ExecutionOptions {
+    ShapeProto shape_with_output_layout = 2;
+    uint64 seed = 3;
+    DebugOptions debug_options = 4;
+    repeated DeviceHandle device_handles = 5;
+    int32 num_replicas = 6;
+    DeviceAssignmentProto device_assignment = 7;
+    bool alias_passthrough_params = 8;
+    int32 num_partitions = 9;
+    int32 launch_id = 10;
+    bool use_spmd_partitioning = 11;
+    bool use_auto_spmd_partitioning = 15;
+    repeated int64 auto_spmd_partitioning_mesh_shape = 16;
+    repeated int64 auto_spmd_partitioning_mesh_ids = 17;
+    bool deduplicate_hlo = 12;
+    repeated bool allow_spmd_sharding_propagation_to_parameters = 23;
+    repeated bool allow_spmd_sharding_propagation_to_output = 14;
+    repeated bool param_requires_broadcast_via_collectives = 18;
+    bool allow_separate_sharding_programs = 19;
+    repeated ShardableValueUpdatePairProto shardable_value_update_pairs = 20;
+    bytes fdo_profile = 21;
+    int64 device_memory_size = 22;
+    
+    reserved 13;
+}
+
+message HloModuleConfigProto {
+    ProgramShapeProto entry_computation_layout = 1;
+    uint64 seed = 2;
+    int32 launch_id = 3;
+    int64 replica_count = 4;
+    int64 num_partitions = 5;
+    repeated bool param_requires_broadcast_via_collectives = 6;
+    bool use_spmd_partitioning = 7;
+    bool use_auto_spmd_partitioning = 8;
+    repeated int64 auto_spmd_partitioning_mesh_shape = 9;
+    repeated int64 auto_spmd_partitioning_mesh_ids = 10;
+    bool deduplicate_hlo = 11;
+    int64 intra_op_parallelism_threads = 12;
+    string device_type = 13;
+    DebugOptions debug_options = 14;
+    DeviceAssignmentProto static_device_assignment = 15;
+    bool allow_separate_sharding_programs = 30;
+    repeated ShardableValueUpdatePairProto shardable_value_update_pairs = 16;
+    bool alias_passthrough_params = 17;
+    bool content_aware_computation_sorting = 18;
+    
+    FusionConfigCollection fusion_config_collection = 19;
+    enum FusionConfigCollection {
+        OFF = 0;
+        PER_EDGE = 1;
+        PER_NODE = 2;
+    }
+    
+    repeated BoolList fusion_config = 20;
+    message BoolList {
+        repeated bool vals = 1;
+    }
+    
+    map<string, Int64List> dot_config = 21;
+    
+    repeated Int64ListList layout_config = 22;
+    message Int64ListList {
+        repeated Int64List lists = 1;
+    }
+    
+    repeated uint64 memory_space_assignment_config = 23;
+    repeated BoolList phase_ordering_config = 24;
+    int32 phase_index = 25;
+    repeated bool allow_spmd_sharding_propagation_to_parameters = 33;
+    repeated bool allow_spmd_sharding_propagation_to_output = 27;
+    map<string, int64> analysis_allowance_map = 28;
+    PrecisionConfig.Precision matrix_unit_operand_precision = 29;
+    bytes fdo_profile = 31;
+    int64 device_memory_size = 32;
+    
+    reserved 26;
+    
+    message Int64List {
+        repeated int64 vals = 1;
+    }
+}
+
+message HloModuleProtoWithConfig {
+    HloModuleProto hlo_module = 1;
+    HloModuleConfigProto config = 2;
+}
+
+message ScheduleProto {
+    repeated Instruction instructions = 1;
+    message Instruction {
+        int64 id = 1;
+        double start_timestamp_cycles = 2;
+        double end_timestamp_cycles = 3;
+    }
+    
+    int64 computation_id = 2;
+    HloModuleProto hlo_module = 3;
+    int64 cycles_per_microsecond = 4;
+}

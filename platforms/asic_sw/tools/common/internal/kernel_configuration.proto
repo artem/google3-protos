@@ -1,0 +1,11 @@
+syntax = "editions";
+
+package asic_sw.tools;
+
+message KernelConfiguration {
+    enum DriverType {
+        UNDEFINED = 0;
+        GASKET = 1;
+        VFIO = 2;
+    }
+}

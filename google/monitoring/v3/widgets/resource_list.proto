@@ -1,0 +1,23 @@
+syntax = "proto3";
+
+package google.monitoring.v3.widgets;
+
+import "google/api/field_behavior.proto";
+
+option ruby_package = "Google::Cloud::Monitoring::V3::Widgets";
+option php_namespace = "Google\\Cloud\\Monitoring\\V3\\Widgets";
+option csharp_namespace = "Google.Cloud.Monitoring.V3.Widgets";
+option java_multiple_files = true;
+option java_outer_classname = "ResourceListProto";
+option java_package = "com.google.monitoring.v3.widgets";
+
+message ResourceList {
+    repeated ResourceType resource_types = 1;
+    enum ResourceType {
+        RESOURCE_TYPE_UNSPECIFIED = 0;
+        DASHBOARD = 1;
+        OPEN_TELEMETRY_SERVICE = 2;
+    }
+    
+    string filter = 2;
+}

@@ -1,0 +1,42 @@
+syntax = "proto3";
+
+package tensorflow;
+
+option cc_enable_arenas = true;
+option go_package = "github.com/tensorflow/tensorflow/tensorflow/go/core/framework/variable_go_proto";
+option java_multiple_files = true;
+option java_outer_classname = "VariableProtos";
+option java_package = "org.tensorflow.framework";
+
+message VariableDef {
+    string variable_name = 1;
+    string initial_value_name = 6;
+    string initializer_name = 2;
+    string snapshot_name = 3;
+    SaveSliceInfoDef save_slice_info_def = 4;
+    bool is_resource = 5;
+    bool trainable = 7;
+    VariableSynchronization synchronization = 8;
+    VariableAggregation aggregation = 9;
+}
+
+message SaveSliceInfoDef {
+    string full_name = 1;
+    repeated int64 full_shape = 2;
+    repeated int64 var_offset = 3;
+    repeated int64 var_shape = 4;
+}
+
+enum VariableSynchronization {
+    VARIABLE_SYNCHRONIZATION_AUTO = 0;
+    VARIABLE_SYNCHRONIZATION_NONE = 1;
+    VARIABLE_SYNCHRONIZATION_ON_WRITE = 2;
+    VARIABLE_SYNCHRONIZATION_ON_READ = 3;
+}
+
+enum VariableAggregation {
+    VARIABLE_AGGREGATION_NONE = 0;
+    VARIABLE_AGGREGATION_SUM = 1;
+    VARIABLE_AGGREGATION_MEAN = 2;
+    VARIABLE_AGGREGATION_ONLY_FIRST_REPLICA = 3;
+}
