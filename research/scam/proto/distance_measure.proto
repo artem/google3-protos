@@ -1,0 +1,14 @@
+syntax = "proto2";
+
+package research_scam;
+
+option java_package = "com.google.research.scam";
+
+message DistanceMeasureConfig {
+    optional string distance_measure = 1 [default = "SquaredL2Distance"];
+    optional DistanceMeasureParamsConfig distance_measure_params = 2;
+}
+
+message DistanceMeasureParamsConfig {
+    optional string filename = 1;
+}

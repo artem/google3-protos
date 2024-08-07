@@ -1,0 +1,23 @@
+syntax = "proto3";
+
+package research_scam.generalized_hash;
+
+import "storage/datapol/annotations/proto/semantic_annotations.proto";
+
+message NormalizedInnerProductToL2Type {
+    enum Enum {
+        UNKNOWN = 0;
+        DATABASE = 1;
+        QUERY = 2;
+    }
+}
+
+message NormalizedInnerProductToL2MapConfig {
+    NormalizedInnerProductToL2Type.Enum type = 1;
+    float divisor_override = 2;
+}
+
+message NormalizedInnerProductToL2MapModel {
+    NormalizedInnerProductToL2Type.Enum type = 1;
+    float divisor = 2;
+}

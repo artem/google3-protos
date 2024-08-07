@@ -1,0 +1,15 @@
+syntax = "proto2";
+
+package research_scam;
+
+option java_multiple_files = true;
+
+message ConductorConfig {
+    optional bool enabled = 1 [default = false];
+    optional string pusher_domain = 2;
+    optional string depot_namespace = 3;
+    optional string dest_path_dir = 4;
+    optional bool willing_to_canary = 5 [default = false];
+    optional bool allow_non_atomic_multi_dataset_per_pusher_domain = 6 [default = false];
+    optional bool continue_on_reload_error = 7 [default = false];
+}

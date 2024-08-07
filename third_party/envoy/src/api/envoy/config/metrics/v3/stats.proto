@@ -1,0 +1,79 @@
+syntax = "proto3";
+
+package envoy.config.metrics.v3;
+
+import "third_party/envoy/src/api/envoy/config/core/v3/address.proto";
+import "third_party/envoy/src/api/envoy/type/matcher/v3/string.proto";
+import "google/protobuf/any.proto";
+import "google/protobuf/wrappers.proto";
+import "third_party/udpa/udpa/annotations/status.proto";
+import "third_party/udpa/udpa/annotations/versioning.proto";
+import "third_party/protoc_gen_validate/validate/validate.proto";
+
+option go_package = "github.com/envoyproxy/go-control-plane/envoy/config/metrics/v3;metricsv3";
+option java_multiple_files = true;
+option java_outer_classname = "StatsProto";
+option java_package = "io.envoyproxy.envoy.config.metrics.v3";
+
+message StatsSink {
+    string name = 1;
+    
+    oneof config_type {
+        google.protobuf.Any typed_config = 3;
+    }
+    
+    reserved 2, "config";
+}
+
+message StatsConfig {
+    repeated TagSpecifier stats_tags = 1;
+    google.protobuf.BoolValue use_all_default_tags = 2;
+    StatsMatcher stats_matcher = 3;
+    repeated HistogramBucketSettings histogram_bucket_settings = 4;
+}
+
+message StatsMatcher {
+    oneof stats_matcher {
+        bool reject_all = 1;
+        .envoy.type.matcher.v3.ListStringMatcher exclusion_list = 2;
+        .envoy.type.matcher.v3.ListStringMatcher inclusion_list = 3;
+    }
+}
+
+message TagSpecifier {
+    string tag_name = 1;
+    
+    oneof tag_value {
+        string regex = 2;
+        string fixed_value = 3;
+    }
+}
+
+message HistogramBucketSettings {
+    .envoy.type.matcher.v3.StringMatcher match = 1;
+    repeated double buckets = 2;
+}
+
+message StatsdSink {
+    string prefix = 3;
+    
+    oneof statsd_specifier {
+        .envoy.config.core.v3.Address address = 1;
+        string tcp_cluster_name = 2;
+    }
+}
+
+message DogStatsdSink {
+    string prefix = 3;
+    google.protobuf.UInt64Value max_bytes_per_datagram = 4;
+    
+    oneof dog_statsd_specifier {
+        .envoy.config.core.v3.Address address = 1;
+    }
+    
+    reserved 2;
+}
+
+message HystrixSink {
+    int64 num_buckets = 1;
+}

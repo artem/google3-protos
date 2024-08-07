@@ -73,6 +73,7 @@ message Expr {
     
     message Comprehension {
         string iter_var = 1;
+        string iter_var2 = 8;
         Expr iter_range = 2;
         string accu_var = 3;
         Expr accu_init = 4;

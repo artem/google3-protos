@@ -1,6 +1,9 @@
-syntax = "proto2";
+syntax = "editions";
 
 package coroner.collection;
+
+option java_multiple_files = true;
+option java_package = "com.google.prod.crashanalysis";
 
 enum CrashSource {
     UNKNOWN_CRASH_SOURCE = 0;

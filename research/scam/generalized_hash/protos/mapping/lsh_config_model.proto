@@ -1,0 +1,19 @@
+syntax = "proto3";
+
+package research_scam.generalized_hash;
+
+import "research/scam/data_format/features.proto";
+import "storage/datapol/annotations/proto/semantic_annotations.proto";
+
+message LshMapConfig {
+    uint64 input_dimension = 1;
+    float width = 2;
+    int32 number_output_bits = 3;
+}
+
+message LshMapModel {
+    GenericFeatureVector weights = 1;
+    float bias = 2;
+    float width = 3;
+    int32 number_output_bits = 4;
+}

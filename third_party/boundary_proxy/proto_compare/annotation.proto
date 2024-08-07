@@ -45,7 +45,11 @@ message RedactionOptions {
         TP_HOUR = 2;
         TP_MINUTE = 3;
         TP_SECOND = 4;
+        TP_MILLISECOND = 5;
     }
+    
+    optional double min_double_value = 9;
+    optional double max_double_value = 10;
 }
 
 enum FieldDisposition {

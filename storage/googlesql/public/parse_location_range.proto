@@ -1,0 +1,13 @@
+syntax = "proto2";
+
+package googlesql;
+
+option java_multiple_files = true;
+option java_outer_classname = "GoogleSqlParseLocationProtos";
+option java_package = "com.google.storage.googlesql";
+
+message ParseLocationRangeProto {
+    optional string filename = 1;
+    optional int32 start = 2;
+    optional int32 end = 3;
+}

@@ -39,4 +39,5 @@ message OutlierDetection {
     google.protobuf.Duration max_ejection_time_jitter = 22;
     google.protobuf.BoolValue successful_active_health_check_uneject_host = 23;
     repeated .envoy.config.core.v3.TypedExtensionConfig monitors = 24;
+    google.protobuf.BoolValue always_eject_one_host = 25;
 }

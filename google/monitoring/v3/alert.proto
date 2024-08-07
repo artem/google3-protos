@@ -4,6 +4,7 @@ package google.monitoring.v3;
 
 import "google/api/auditing.proto";
 import "google/api/field_behavior.proto";
+import "google/api/policy.proto";
 import "google/api/resource.proto";
 import "google/api/visibility.proto";
 import "google/logging/data_governance.proto";
@@ -163,13 +164,6 @@ message AlertPolicy {
         
         message SqlCondition {
             string query = 1;
-            
-            ConditionStats stats = 7;
-            message ConditionStats {
-                int64 estimate_bytes_scanned = 1;
-                float condition_quota_usage = 2;
-                float overall_quota_usage = 3;
-            }
             
             oneof schedule {
                 Minutes minutes = 2;

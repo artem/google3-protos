@@ -1,0 +1,163 @@
+syntax = "proto2";
+
+package voxel;
+
+import "storage/lightning/shared/voxel/proto/voxel_functions.proto";
+import "storage/lightning/shared/voxel/proto/voxel_value.proto";
+
+message StandardPseudocolumnSourceProto {
+    optional PseudocolumnKind kind = 1;
+    enum PseudocolumnKind {
+        PSEUDOCOLUMN_INVALID = 0;
+        PSEUDOCOLUMN_PARTITION_NAME = 1;
+        PSEUDOCOLUMN_PARTITION_DATE = 2;
+        PSEUDOCOLUMN_FILE_SHARD_NUMBER = 3;
+        PSEUDOCOLUMN_FILE_ROW_NUMBER = 4;
+        PSEUDOCOLUMN_IMPORT_SHARD_NUMBER = 5;
+        PSEUDOCOLUMN_PARTITION_DATE_STRING = 6;
+        PSEUDOCOLUMN_VERSION = 7;
+        PSEUDOCOLUMN_INDEX_KEY_ARRAY = 8;
+        PSEUDOCOLUMN_IMPORT_CELL = 9;
+    }
+}
+
+message LogsPseudocolumnSourceProto {
+    optional PseudocolumnKind kind = 1;
+    enum PseudocolumnKind {
+        PSEUDOCOLUMN_INVALID = 0;
+        PSEUDOCOLUMN_LOG_FILE_MACHINE = 1;
+        PSEUDOCOLUMN_LOG_FILE_SHARD = 2;
+        PSEUDOCOLUMN_LOG_IMPORT_TIME = 3;
+        PSEUDOCOLUMN_LOG_METADATA_ERROR_CODE = 4;
+        PSEUDOCOLUMN_LOG_METADATA_FILENAME = 5;
+        PSEUDOCOLUMN_LOG_METADATA_BEGIN_OFFSET = 6;
+        PSEUDOCOLUMN_LOG_METADATA_END_OFFSET = 7;
+        PSEUDOCOLUMN_LOG_DIFF_LOG_KEY = 8;
+        PSEUDOCOLUMN_LOG_DIFF_LOG_TIMESTAMP = 9;
+    }
+}
+
+message CustomPseudocolumnSourceProto {
+    optional string column_name = 1;
+}
+
+message PseudocolumnSourceProto {
+    optional StandardPseudocolumnSourceProto standard_pseudocolumn = 1;
+    
+    extensions 1000 to max;
+}
+
+message ColumnSourceProto {
+    optional int64 column_index = 1;
+}
+
+message ExtensionInfoProto {
+    optional string extension_scope = 1;
+    optional bool extends_message_set = 2;
+}
+
+message FieldIdentifierProto {
+    optional string field_name = 1;
+    optional int64 tag_number = 2;
+    optional ExtensionInfoProto extension_info = 3;
+}
+
+message SubfieldPathProto {
+    optional FieldPathProto field_path = 3;
+    optional ReadModeProto read_mode = 4;
+    
+    reserved 1, 2;
+}
+
+message MessageParentFieldProto {
+    optional FieldIdentifierProto field = 1;
+}
+
+message ArrayElementParentFieldProto {
+    optional FieldIdentifierProto field = 1;
+    optional int64 offset = 2;
+    optional bool is_safe = 3;
+}
+
+message ParentFieldProto {
+    oneof field_type {
+        MessageParentFieldProto message = 1;
+        ArrayElementParentFieldProto array_element = 2;
+    }
+}
+
+message ReadValueProto {
+    
+}
+
+message ReadFullElementProto {
+    
+}
+
+message ReadArrayElementProto {
+    optional int64 offset = 1;
+    optional bool is_safe = 4;
+    
+    oneof read_type {
+        ReadFullElementProto full_element = 2;
+        ReadPartialMessageProto partial_message_element = 3;
+    }
+}
+
+message ReadPartialMessageProto {
+    repeated SubfieldPathProto subfield_to_read = 1;
+}
+
+message ReadHasValueProto {
+    
+}
+
+message FieldPathProto {
+    repeated ParentFieldProto parent_path = 1;
+    optional FieldIdentifierProto field = 2;
+}
+
+message ReadUnaryFunctionProto {
+    optional FunctionId unary_function_id = 1;
+}
+
+message ReadPartialArrayProto {
+    repeated VoxelValueProto values = 1;
+}
+
+message ReadArrayWithSubfieldElementProto {
+    optional SubfieldPathProto element_path = 1;
+}
+
+message ScanColumnDescriptorProto {
+    optional FieldPathProto field_path = 3;
+    optional ReadModeProto read_mode = 8;
+    
+    oneof read_source {
+        ColumnSourceProto column_source = 1;
+        PseudocolumnSourceProto pseudocolumn_source = 2;
+    }
+    
+    reserved 4, 5, 6, 7;
+}
+
+message ReadModeProto {
+    oneof read_mode {
+        ReadValueProto read_value = 4;
+        ReadHasValueProto read_has_value = 5;
+        ReadArrayElementProto read_array_element = 6;
+        ReadPartialMessageProto read_partial_message = 7;
+        ReadUnaryFunctionProto read_unary_function = 8;
+        ReadPartialArrayProto read_partial_array = 9;
+        ReadArrayWithSubfieldElementProto read_array_with_subfield_element = 10;
+    }
+}
+
+message ScanDescriptorProto {
+    repeated ScanColumnDescriptorProto column = 1;
+}
+
+extend PseudocolumnSourceProto {
+    optional LogsPseudocolumnSourceProto logs_pseudocolumn = 321376457;
+    optional CustomPseudocolumnSourceProto custom_pseudocolumn = 1001;
+}

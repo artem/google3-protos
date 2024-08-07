@@ -1,0 +1,21 @@
+syntax = "editions";
+
+package borg;
+
+message MemBwData {
+    repeated SocketMemBandwidthData socket_reading = 1;
+    message SocketMemBandwidthData {
+        optional int32 socket_id = 1;
+        optional double local_bandwidth = 2 [deprecated = true];
+        optional double remote_bandwidth = 3 [deprecated = true];
+        optional double socket_total_usage = 4;
+        optional double socket_total_capacity = 5;
+        optional double task_bandwidth_usage = 6;
+        optional double recommended_bandwidth_usage = 7;
+    }
+    
+    optional bool is_throttled = 2;
+    optional bool throttle_risk = 3 [deprecated = true];
+    optional bool impending_membw_qos_action = 4;
+    optional uint64 grace_period_sec = 5;
+}

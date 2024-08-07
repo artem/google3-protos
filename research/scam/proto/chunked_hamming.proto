@@ -1,0 +1,10 @@
+syntax = "proto2";
+
+package research_scam;
+
+message ChunkedHammingConfig {
+    optional int32 num_chunks = 1 [default = 0];
+    optional bool use_dense_lookup_table = 2 [default = true];
+    optional bool use_cached_code = 3 [default = true];
+    optional bool permute_bits = 4 [default = false];
+}

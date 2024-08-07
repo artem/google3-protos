@@ -1,0 +1,31 @@
+syntax = "proto3";
+
+package envoy.type.matcher.v3;
+
+import "third_party/udpa/udpa/annotations/status.proto";
+import "third_party/protoc_gen_validate/validate/validate.proto";
+
+option go_package = "github.com/envoyproxy/go-control-plane/envoy/type/matcher/v3;matcherv3";
+option java_multiple_files = true;
+option java_outer_classname = "HttpInputsProto";
+option java_package = "io.envoyproxy.envoy.type.matcher.v3";
+
+message HttpRequestHeaderMatchInput {
+    string header_name = 1;
+}
+
+message HttpRequestTrailerMatchInput {
+    string header_name = 1;
+}
+
+message HttpResponseHeaderMatchInput {
+    string header_name = 1;
+}
+
+message HttpResponseTrailerMatchInput {
+    string header_name = 1;
+}
+
+message HttpRequestQueryParamMatchInput {
+    string query_param = 1;
+}

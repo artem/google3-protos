@@ -27,6 +27,7 @@ message AuditLog {
     AuthenticationInfo authentication_info = 3;
     repeated AuthorizationInfo authorization_info = 9;
     PolicyViolationInfo policy_violation_info = 25;
+    repeated PolicyViolationInfo policy_violations = 26;
     RequestMetadata request_metadata = 4;
     protobuf.Struct request = 16;
     protobuf.Struct response = 17;
@@ -67,6 +68,10 @@ message AuthorizationInfo {
         ADMIN_WRITE = 2;
         DATA_READ = 3;
         DATA_WRITE = 4;
+    }
+    
+    oneof _direct_auth {
+        bool direct_auth = 8;
     }
 }
 

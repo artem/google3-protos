@@ -1,0 +1,19 @@
+syntax = "proto2";
+
+package research_scam;
+
+message OfflineDistributedConfig {
+    optional string cell = 1;
+    optional int32 ram_gb = 2 [default = 4];
+    optional int32 master_ram_gb = 15 [default = 4];
+    optional int32 disk_gb = 3 [default = 1];
+    optional int32 num_mapper_machines = 5;
+    optional int32 num_querying_threads = 6 [default = 1];
+    optional int32 batch_size = 12 [default = -1];
+    optional int32 timeout = 8 [default = -1];
+    optional bool allow_abort_map_tasks = 7 [default = true];
+    optional bool merge_query_shards = 4 [default = false];
+    optional string mapreduce_sharding_function = 10;
+    optional string mapreduce_sharding_parameters = 11;
+    optional string mapreduce_job_name = 13;
+}

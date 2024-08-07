@@ -1,0 +1,21 @@
+syntax = "proto2";
+
+package smartass.datasync.proto;
+
+import "storage/datapol/annotations/proto/semantic_annotations.proto";
+
+message Resources {
+    repeated Resource resources = 1;
+    message Resource {
+        optional Type type = 1;
+        optional Quantity quantity = 2;
+    }
+    
+    message Type {
+        optional string type = 1;
+    }
+    
+    message Quantity {
+        optional int64 quantity = 1;
+    }
+}

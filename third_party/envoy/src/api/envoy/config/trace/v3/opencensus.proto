@@ -1,0 +1,42 @@
+syntax = "proto3";
+
+package envoy.config.trace.v3;
+
+import "third_party/envoy/src/api/envoy/config/core/v3/grpc_service.proto";
+import "third_party/opencensus_proto/trace/v1/trace_config.proto";
+import "third_party/envoy/src/api/envoy/annotations/deprecation.proto";
+import "third_party/udpa/udpa/annotations/migrate.proto";
+import "third_party/udpa/udpa/annotations/status.proto";
+import "third_party/udpa/udpa/annotations/versioning.proto";
+
+option go_package = "github.com/envoyproxy/go-control-plane/envoy/config/trace/v3;tracev3";
+option java_multiple_files = true;
+option java_outer_classname = "OpencensusProto";
+option java_package = "io.envoyproxy.envoy.config.trace.v3";
+
+message OpenCensusConfig {
+    opencensus.proto.trace.v1.TraceConfig trace_config = 1 [deprecated = true];
+    bool stdout_exporter_enabled = 2 [deprecated = true];
+    bool stackdriver_exporter_enabled = 3 [deprecated = true];
+    string stackdriver_project_id = 4 [deprecated = true];
+    string stackdriver_address = 10 [deprecated = true];
+    .envoy.config.core.v3.GrpcService stackdriver_grpc_service = 13 [deprecated = true];
+    bool zipkin_exporter_enabled = 5 [deprecated = true];
+    string zipkin_url = 6 [deprecated = true];
+    bool ocagent_exporter_enabled = 11 [deprecated = true];
+    string ocagent_address = 12 [deprecated = true];
+    .envoy.config.core.v3.GrpcService ocagent_grpc_service = 14 [deprecated = true];
+    
+    repeated TraceContext incoming_trace_context = 8 [deprecated = true];
+    enum TraceContext {
+        NONE = 0;
+        TRACE_CONTEXT = 1;
+        GRPC_TRACE_BIN = 2;
+        CLOUD_TRACE_CONTEXT = 3;
+        B3 = 4;
+    }
+    
+    repeated TraceContext outgoing_trace_context = 9 [deprecated = true];
+    
+    reserved 7;
+}

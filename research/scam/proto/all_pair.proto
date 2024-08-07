@@ -1,0 +1,62 @@
+syntax = "proto2";
+
+package research_scam;
+
+import "research/scam/proto/hash.proto";
+
+message NeighborExpansionConfig {
+    optional float neighbor_sampling_fraction = 1 [default = 1];
+    
+    optional InitializationType init_type = 3 [default = RANDOM];
+    enum InitializationType {
+        RANDOM = 0;
+        RANDOM_CENTROID = 3;
+        PARTITION_RANDOM_CENTROID = 4;
+        LSH = 1;
+        PCAH = 2;
+        USER_DEFINED = -1;
+    }
+    
+    optional AlgorithmType algorithm_type = 9 [default = NEIGHBOR_EXPANSION];
+    enum AlgorithmType {
+        UNDEFINED = 0;
+        NEIGHBOR_EXPANSION = 1;
+        NEIGHBOR_EXPANSION_HYBRID = 6;
+        NEIGHBOR_EXPANSION_LONG_EDGES = 7;
+        TWO_HOPS_NEIGHBOR_EXPANSION = 3;
+        TWO_HOPS_NEIGHBOR_EXPANSION_AGGRESSIVE = 4;
+        BRUTE_FORCE = 2;
+    }
+    
+    optional int32 max_reverse_neighbors = 5 [default = -1];
+    optional float initial_centroid_sample_rate = 8;
+    optional uint32 num_mini_batches = 10 [default = 1];
+    optional uint32 num_shards = 11 [default = 1];
+    optional string sstable_service_user = 12;
+    optional string sstable_service_charged_user = 13;
+    repeated string sstable_service_cells = 14;
+    optional uint32 sstable_service_replicas = 15 [default = 2];
+    optional uint32 max_iterations = 16 [default = 10];
+    optional float early_stopping_recall = 17 [default = 10000];
+    optional bool evaluate_recall = 18 [default = false];
+    optional string state_dir = 19;
+    optional string ground_truth_path = 20;
+    optional uint32 num_sample_for_ground_truth = 21 [default = 1000000];
+    optional uint32 override_intermediate_sstable_shards = 22 [default = 0];
+    optional uint32 num_sstable_leaf_servers = 23 [default = 1000];
+    optional float min_update_fraction = 2 [default = 1e-05];
+    optional int32 num_bits = 4;
+    optional HashConfig hash = 6;
+    optional bool use_exact_distance_pass = 7 [default = false];
+}
+
+message AllPairInvertedIndexConfig {
+    optional float removed_squared_norm = 1 [default = 0];
+    optional bool binary = 2 [default = false];
+    optional bool use_max_weight_sorting = 3 [default = false];
+}
+
+message AllPairSearchConfig {
+    optional NeighborExpansionConfig neighbor_expansion = 3;
+    optional AllPairInvertedIndexConfig inverted_index = 4;
+}

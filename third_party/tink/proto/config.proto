@@ -1,0 +1,22 @@
+syntax = "proto3";
+
+package google.crypto.tink;
+
+option go_package = "github.com/tink-crypto/tink-go/v2/proto/config_go_proto";
+option java_multiple_files = true;
+option java_package = "com.google.crypto.tink.proto";
+
+message KeyTypeEntry {
+    option deprecated = true;
+    string primitive_name = 1;
+    string type_url = 2;
+    uint32 key_manager_version = 3;
+    bool new_key_allowed = 4;
+    string catalogue_name = 5;
+}
+
+message RegistryConfig {
+    option deprecated = true;
+    string config_name = 1;
+    repeated KeyTypeEntry entry = 2;
+}

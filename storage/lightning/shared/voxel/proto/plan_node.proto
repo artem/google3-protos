@@ -1,0 +1,109 @@
+syntax = "proto2";
+
+package voxel;
+
+import "storage/lightning/shared/voxel/proto/expression.proto";
+import "storage/lightning/shared/voxel/proto/scan_descriptor.proto";
+import "storage/lightning/shared/voxel/proto/table_descriptor.proto";
+
+message PlanNodeProto {
+    optional TableDescriptorProto output_table_descriptor = 1;
+    optional int64 limit = 2 [default = -1];
+    optional int64 offset = 3;
+    
+    oneof node {
+        AggregatePlanNodeInfo aggregate = 4;
+        AnyPlanNodeInfo any = 10;
+        ArrayJoinPlanNodeInfo array_join = 5;
+        ProjectPlanNodeInfo project = 6;
+        ScanPlanNodeInfo scan = 9;
+        SingleRowPlanNodeInfo single_row = 7;
+        UnionAllPlanNodeInfo union_all = 8;
+        JoinPlanNodeInfo join = 11;
+        AnalyticPlanNodeInfo analytic = 12;
+        SortPlanNodeInfo sort = 13;
+        SharedSubplanReferencePlanNodeInfo shared_subplan_reference = 14;
+        DagPlanNodeInfo dag = 15;
+    }
+    
+    extensions 65536 to max;
+}
+
+message ProjectPlanNodeInfo {
+    optional ProjectProto project = 1;
+    optional PlanNodeProto input = 2;
+}
+
+message AggregatePlanNodeInfo {
+    optional AggregateProto aggregate = 1;
+    optional bool input_clustered_by_grouping_key = 2 [deprecated = true];
+    optional PlanNodeProto input = 3;
+    optional AggregateInfoProto aggregate_info = 4;
+}
+
+message AggregateInfoProto {
+    optional bool input_clustered_by_grouping_key = 1;
+    optional bool returns_partial_result = 3;
+    
+    reserved 2;
+}
+
+message ArrayJoinPlanNodeInfo {
+    optional ArrayJoinProto array_join = 1;
+    optional PlanNodeProto input = 2;
+}
+
+message UnionAllPlanNodeInfo {
+    repeated PlanNodeProto input = 1;
+}
+
+message SingleRowPlanNodeInfo {
+    
+}
+
+message ScanPlanNodeInfo {
+    optional ScanInfoProto scan_info = 1;
+    optional ScanDescriptorProto scan_descriptor = 2;
+}
+
+message ScanInfoProto {
+    extensions 1, 2, 65536 to 524999999, 525000000 to max;
+}
+
+message AnyPlanNodeInfo {
+    extensions 65536 to max;
+}
+
+message JoinPlanNodeInfo {
+    optional JoinProto join = 1;
+    optional PlanNodeProto left_input = 2;
+    optional PlanNodeProto right_input = 3;
+}
+
+message AnalyticPlanNodeInfo {
+    optional AnalyticProto analytic = 1;
+    optional PlanNodeProto input = 2;
+}
+
+message SortPlanNodeInfo {
+    repeated SortFieldInfoProto sort_field_info = 1;
+    optional PlanNodeProto input = 2;
+}
+
+message SharedSubplanReferencePlanNodeInfo {
+    optional int64 shared_subplan_id = 1;
+}
+
+message DagPlanNodeInfo {
+    optional PlanNodeProto input = 1;
+    repeated SharedSubplanProto shared_subplan = 2;
+}
+
+message SharedSubplanProto {
+    optional PlanNodeProto plan = 1;
+    optional int64 id = 2;
+}
+
+message PlanNodeSerializationContextProto {
+    optional SerializationContextProto expression_operator_serialization_context = 1;
+}

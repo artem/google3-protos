@@ -1,0 +1,32 @@
+syntax = "proto2";
+
+package voxel;
+
+import "net/proto2/proto/descriptor.proto";
+import "storage/googlesql/public/type_annotation.proto";
+
+message SignatureOptions {
+    optional SignatureVisibility visibility = 1;
+    optional int64 version_id = 2;
+    optional int64 external_version_id = 3;
+    optional int32 last_change_date = 4;
+}
+
+enum AbstractArgumentFormat {
+    ARG_FORMAT_INVALID = 0;
+    ARG_FORMAT_ANY_1 = 1;
+    ARG_FORMAT_ANY_2 = 2;
+    ARG_FORMAT_ARBITRARY = 3;
+}
+
+enum SignatureVisibility {
+    SIGNATURE_VISIBILITY_UNSPECIFIED = 0;
+    DISABLE = 1;
+    PRIVATE = 2;
+    PROTECTED = 3;
+    PUBLIC = 4;
+}
+
+extend .proto2.EnumValueOptions {
+    optional SignatureOptions signature_options = 237664370;
+}

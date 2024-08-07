@@ -1,0 +1,33 @@
+syntax = "proto2";
+
+package googlesql;
+
+import "net/proto2/bridge/proto/message_set.proto";
+import "storage/googlesql/public/error_location.proto";
+
+option java_outer_classname = "DeprecationWarningProtos";
+option java_package = "com.google.storage.googlesql";
+
+message DeprecationWarning {
+    optional Kind kind = 1;
+    enum Kind {
+        __Kind__switch_must_have_a_default__ = -1;
+        UNKNOWN = 0;
+        DEPRECATED_FUNCTION = 1;
+        DEPRECATED_FUNCTION_SIGNATURE = 2;
+        PROTO3_FIELD_PRESENCE = 3;
+        QUERY_TOO_COMPLEX = 4;
+        DEPRECATED_ANONYMIZATION_OPTION_KAPPA = 5;
+    }
+    
+    extend .proto2.bridge.MessageSet {
+        optional DeprecationWarning message_set_extension = 184338327;
+    }
+}
+
+message FreestandingDeprecationWarning {
+    optional string message = 1;
+    optional string caret_string = 2;
+    optional ErrorLocation error_location = 3;
+    optional DeprecationWarning deprecation_warning = 4;
+}

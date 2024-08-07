@@ -1,0 +1,15 @@
+syntax = "proto2";
+
+package voxel;
+
+import "storage/lightning/shared/voxel/proto/type.proto";
+
+message ColumnDescriptorProto {
+    optional int64 column_id = 1;
+    optional string name = 2;
+    optional TypeProto type = 3;
+}
+
+message TableDescriptorProto {
+    repeated ColumnDescriptorProto column = 1;
+}

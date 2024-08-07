@@ -1,0 +1,28 @@
+syntax = "proto3";
+
+package envoy.config.trace.v3;
+
+import "third_party/envoy/src/api/envoy/config/core/v3/address.proto";
+import "third_party/envoy/src/api/envoy/config/core/v3/base.proto";
+import "google/protobuf/struct.proto";
+import "third_party/udpa/udpa/annotations/migrate.proto";
+import "third_party/udpa/udpa/annotations/status.proto";
+import "third_party/udpa/udpa/annotations/versioning.proto";
+import "third_party/protoc_gen_validate/validate/validate.proto";
+
+option go_package = "github.com/envoyproxy/go-control-plane/envoy/config/trace/v3;tracev3";
+option java_multiple_files = true;
+option java_outer_classname = "XrayProto";
+option java_package = "io.envoyproxy.envoy.config.trace.v3";
+
+message XRayConfig {
+    .envoy.config.core.v3.SocketAddress daemon_endpoint = 1;
+    string segment_name = 2;
+    .envoy.config.core.v3.DataSource sampling_rule_manifest = 3;
+    
+    SegmentFields segment_fields = 4;
+    message SegmentFields {
+        string origin = 1;
+        google.protobuf.Struct aws = 2;
+    }
+}

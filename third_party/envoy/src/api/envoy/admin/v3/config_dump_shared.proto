@@ -1,0 +1,139 @@
+syntax = "proto3";
+
+package envoy.admin.v3;
+
+import "google/protobuf/any.proto";
+import "google/protobuf/timestamp.proto";
+import "third_party/udpa/udpa/annotations/status.proto";
+import "third_party/udpa/udpa/annotations/versioning.proto";
+
+option go_package = "github.com/envoyproxy/go-control-plane/envoy/admin/v3;adminv3";
+option java_multiple_files = true;
+option java_outer_classname = "ConfigDumpSharedProto";
+option java_package = "io.envoyproxy.envoy.admin.v3";
+
+message UpdateFailureState {
+    google.protobuf.Any failed_configuration = 1;
+    google.protobuf.Timestamp last_update_attempt = 2;
+    string details = 3;
+    string version_info = 4;
+}
+
+message ListenersConfigDump {
+    string version_info = 1;
+    
+    repeated StaticListener static_listeners = 2;
+    message StaticListener {
+        google.protobuf.Any listener = 1;
+        google.protobuf.Timestamp last_updated = 2;
+    }
+    
+    repeated DynamicListener dynamic_listeners = 3;
+    message DynamicListener {
+        string name = 1;
+        DynamicListenerState active_state = 2;
+        DynamicListenerState warming_state = 3;
+        DynamicListenerState draining_state = 4;
+        UpdateFailureState error_state = 5;
+        ClientResourceStatus client_status = 6;
+    }
+    
+    message DynamicListenerState {
+        string version_info = 1;
+        google.protobuf.Any listener = 2;
+        google.protobuf.Timestamp last_updated = 3;
+    }
+}
+
+message ClustersConfigDump {
+    string version_info = 1;
+    
+    repeated StaticCluster static_clusters = 2;
+    message StaticCluster {
+        google.protobuf.Any cluster = 1;
+        google.protobuf.Timestamp last_updated = 2;
+    }
+    
+    repeated DynamicCluster dynamic_active_clusters = 3;
+    message DynamicCluster {
+        string version_info = 1;
+        google.protobuf.Any cluster = 2;
+        google.protobuf.Timestamp last_updated = 3;
+        UpdateFailureState error_state = 4;
+        ClientResourceStatus client_status = 5;
+    }
+    
+    repeated DynamicCluster dynamic_warming_clusters = 4;
+}
+
+message RoutesConfigDump {
+    repeated StaticRouteConfig static_route_configs = 2;
+    message StaticRouteConfig {
+        google.protobuf.Any route_config = 1;
+        google.protobuf.Timestamp last_updated = 2;
+    }
+    
+    repeated DynamicRouteConfig dynamic_route_configs = 3;
+    message DynamicRouteConfig {
+        string version_info = 1;
+        google.protobuf.Any route_config = 2;
+        google.protobuf.Timestamp last_updated = 3;
+        UpdateFailureState error_state = 4;
+        ClientResourceStatus client_status = 5;
+    }
+}
+
+message ScopedRoutesConfigDump {
+    repeated InlineScopedRouteConfigs inline_scoped_route_configs = 1;
+    message InlineScopedRouteConfigs {
+        string name = 1;
+        repeated google.protobuf.Any scoped_route_configs = 2;
+        google.protobuf.Timestamp last_updated = 3;
+    }
+    
+    repeated DynamicScopedRouteConfigs dynamic_scoped_route_configs = 2;
+    message DynamicScopedRouteConfigs {
+        string name = 1;
+        string version_info = 2;
+        repeated google.protobuf.Any scoped_route_configs = 3;
+        google.protobuf.Timestamp last_updated = 4;
+        UpdateFailureState error_state = 5;
+        ClientResourceStatus client_status = 6;
+    }
+}
+
+message EndpointsConfigDump {
+    repeated StaticEndpointConfig static_endpoint_configs = 2;
+    message StaticEndpointConfig {
+        google.protobuf.Any endpoint_config = 1;
+        google.protobuf.Timestamp last_updated = 2;
+    }
+    
+    repeated DynamicEndpointConfig dynamic_endpoint_configs = 3;
+    message DynamicEndpointConfig {
+        string version_info = 1;
+        google.protobuf.Any endpoint_config = 2;
+        google.protobuf.Timestamp last_updated = 3;
+        UpdateFailureState error_state = 4;
+        ClientResourceStatus client_status = 5;
+    }
+}
+
+message EcdsConfigDump {
+    repeated EcdsFilterConfig ecds_filters = 1;
+    message EcdsFilterConfig {
+        string version_info = 1;
+        google.protobuf.Any ecds_filter = 2;
+        google.protobuf.Timestamp last_updated = 3;
+        UpdateFailureState error_state = 4;
+        ClientResourceStatus client_status = 5;
+    }
+}
+
+enum ClientResourceStatus {
+    UNKNOWN = 0;
+    REQUESTED = 1;
+    DOES_NOT_EXIST = 2;
+    ACKED = 3;
+    NACKED = 4;
+}

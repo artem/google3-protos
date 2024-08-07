@@ -1,0 +1,63 @@
+syntax = "proto2";
+
+package research_scam;
+
+import "research/scam/proto/scam.proto";
+import "smartass/datasync/base/resources.proto";
+
+message ServiceConfig {
+    repeated ScamConfig single_machine_config = 1;
+    optional DatasyncConfig datasync = 21;
+    optional int32 service_fanout = 3 [default = 11];
+    optional float service_deadline_level_decrement = 5 [default = 0.25];
+    optional int32 n_worker_threads = 6;
+    optional int32 n_shard_updater_threads = 10;
+    optional int32 n_incremental_update_threads = 17;
+    optional ShardUpdatePollingConfig shard_update_polling_config = 16;
+    optional bool enable_utilization_based_balancing = 12 [default = false];
+    optional bool enable_ubb_query_cost_aggregation = 24 [default = false];
+    optional bool enable_replica_failover = 13 [default = false];
+    optional double child_failover_deadline_fraction = 15 [default = 1];
+    optional CrossJobFailover cross_job_failover = 23;
+    optional bool enable_dummy_shards_on_startup_error = 20 [default = false];
+    optional MonitoringConfig monitoring = 11;
+    optional bool parallel_load_on_startup = 22;
+    optional bool root_partitioning = 7 [default = false, deprecated = true];
+    optional int32 n_server_replicas = 8 [default = 1, deprecated = true];
+}
+
+message ShardUpdatePollingConfig {
+    optional int32 shard_update_polling_seconds = 1 [default = -1];
+    
+    optional PollingType polling_type = 2 [default = SAME_FILE];
+    enum PollingType {
+        UNKNOWN = 0;
+        SAME_FILE = 1;
+        SSTABLE_MAP_FINDER = 3;
+        COPY_SUCCESSFUL = 2 [deprecated = true];
+    }
+}
+
+message DatasyncConfig {
+    optional string synchronizer_address = 5;
+    optional string subscriber_channel = 7;
+    repeated string scam_config_file_paths = 8;
+    optional int32 polling_interval_seconds = 2 [default = 60];
+    optional int32 num_shards = 4;
+    optional smartass.datasync.proto.Resources resources = 1;
+    optional bool read_only_mode = 9;
+    
+    oneof JobPerShardOrShardNum {
+        int32 shard_num = 3;
+        bool job_per_shard = 6 [default = true];
+    }
+}
+
+message CrossJobFailover {
+    repeated string failover_bns_addresses = 1;
+}
+
+message MonitoringConfig {
+    repeated double neighbor_distance_bins = 1;
+    optional bool enable_per_dataset_stats = 2 [default = true];
+}

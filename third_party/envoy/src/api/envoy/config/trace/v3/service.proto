@@ -1,0 +1,17 @@
+syntax = "proto3";
+
+package envoy.config.trace.v3;
+
+import "third_party/envoy/src/api/envoy/config/core/v3/grpc_service.proto";
+import "third_party/udpa/udpa/annotations/status.proto";
+import "third_party/udpa/udpa/annotations/versioning.proto";
+import "third_party/protoc_gen_validate/validate/validate.proto";
+
+option go_package = "github.com/envoyproxy/go-control-plane/envoy/config/trace/v3;tracev3";
+option java_multiple_files = true;
+option java_outer_classname = "ServiceProto";
+option java_package = "io.envoyproxy.envoy.config.trace.v3";
+
+message TraceServiceConfig {
+    .envoy.config.core.v3.GrpcService grpc_service = 1;
+}

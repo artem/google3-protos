@@ -1,0 +1,34 @@
+syntax = "proto3";
+
+package research_scam.generalized_hash;
+
+import "research/scam/data_format/features.proto";
+import "storage/datapol/annotations/proto/semantic_annotations.proto";
+
+message BinaryProjectionType {
+    enum Enum {
+        UNKNOWN = 0;
+        DENSE = 1;
+        SPARSE = 2;
+        DYNAMIC = 3;
+        SPARSE_UNPACKED = 4;
+    }
+}
+
+message BinaryProjectionConfig {
+    BinaryProjectionType.Enum type = 1;
+    uint64 input_dimension = 2;
+    uint64 number_directions = 3;
+    float probability_zero = 4;
+    bool sparse_unpacked = 5;
+}
+
+message BinaryProjectionModel {
+    BinaryProjectionType.Enum type = 1;
+    uint64 input_dimension = 2;
+    uint64 number_directions = 3;
+    int32 seed = 4;
+    repeated bool positives = 5;
+    repeated bool zeros = 6;
+    repeated GenericFeatureVector sparse_directions = 7;
+}

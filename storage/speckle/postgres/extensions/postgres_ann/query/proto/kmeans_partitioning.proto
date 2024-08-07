@@ -1,0 +1,24 @@
+syntax = "proto2";
+
+package postgres.extensions.postgres_ann;
+
+import "storage/datapol/annotations/proto/semantic_annotations.proto";
+
+message KMeansPartitioningConfig {
+    optional int32 num_children = 1 [default = 2];
+    optional int32 max_num_levels = 2 [default = 1];
+    optional int32 min_cluster_size = 3 [default = 1];
+    optional int32 max_cluster_size = 4;
+    optional int32 max_clustering_iterations = 5 [default = 12];
+    optional bool spilling = 6 [default = true];
+    optional int64 expected_sample_size = 7;
+    optional bool spherical = 8;
+    optional bool random_init_centers = 9 [default = true];
+    optional int32 num_threads = 10 [default = 1];
+    optional int32 num_leaves = 11 [default = 2];
+    optional string distance_measure = 12;
+    optional bool use_pca = 13 [default = false];
+    optional int32 num_tokenized_branch = 15 [default = 1];
+    
+    reserved 14;
+}

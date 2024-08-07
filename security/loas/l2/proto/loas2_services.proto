@@ -1,0 +1,31 @@
+syntax = "proto2";
+
+package security_loas_l2;
+
+import "security/loas/l2/proto/loas2_service_messages.proto";
+
+option java_package = "com.google.net.loas.l2.genfiles";
+
+service CertManager {
+    rpc GenerateKeypair(GenerateKeypairReq) returns (GenerateKeypairResp);
+    rpc InstallMachineCert(InstallMachineCertReq) returns (InstallMachineCertResp);
+    rpc GetMachineCert(GetMachineCertReq) returns (GetMachineCertResp);
+}
+
+service RevocationStatus {
+    rpc GetRevocationStatus(GetRevocationStatusReq) returns (GetRevocationStatusResp);
+}
+
+service Loas2Policy {
+    rpc GetLoas2Policy(GetLoas2PolicyReq) returns (GetLoas2PolicyResp);
+}
+
+service ServerAuthz {
+    rpc RecordServerAuthorizationDenial(RecordServerAuthorizationDenialReq) returns (RecordServerAuthorizationDenialResp);
+}
+
+service Attestation {
+    rpc StoreAttestationPolicy(StoreAttestationPolicyRequest) returns (StoreAttestationPolicyResponse);
+    rpc RemoveAttestationPolicy(RemoveAttestationPolicyRequest) returns (RemoveAttestationPolicyResponse);
+    rpc GetAttestationPolicy(GetAttestationPolicyRequest) returns (GetAttestationPolicyResponse);
+}

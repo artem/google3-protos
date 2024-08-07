@@ -6,6 +6,7 @@ import "google/api/auditing.proto";
 import "google/api/field_behavior.proto";
 import "google/api/label.proto";
 import "google/api/launch_stage.proto";
+import "google/api/policy.proto";
 import "google/api/resource.proto";
 import "google/api/visibility.proto";
 import "google/logging/data_governance.proto";

@@ -1,0 +1,14 @@
+syntax = "editions";
+
+package sherlog;
+
+option java_multiple_files = true;
+
+message ProcessorBehavior {
+    enum Type {
+        PROCESSOR_NOT_LINKED = 0;
+        PROCESSOR_DISABLES_TRACER = 1;
+        PROCESSOR_DISABLED_BY_TRACER = 2;
+        PROCESSOR_AS_OPERATION_SPAN = 3;
+    }
+}

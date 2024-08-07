@@ -1,0 +1,15 @@
+syntax = "proto3";
+
+package envoy.annotations;
+
+import "net/proto2/proto/descriptor.proto";
+
+option go_package = "github.com/envoyproxy/go-control-plane/envoy/annotations";
+
+message ResourceAnnotation {
+    string type = 1;
+}
+
+extend .proto2.ServiceOptions {
+    ResourceAnnotation resource = 265073217;
+}

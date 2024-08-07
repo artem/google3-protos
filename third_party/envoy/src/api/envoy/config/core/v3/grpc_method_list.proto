@@ -1,0 +1,20 @@
+syntax = "proto3";
+
+package envoy.config.core.v3;
+
+import "third_party/udpa/udpa/annotations/status.proto";
+import "third_party/udpa/udpa/annotations/versioning.proto";
+import "third_party/protoc_gen_validate/validate/validate.proto";
+
+option go_package = "github.com/envoyproxy/go-control-plane/envoy/config/core/v3;corev3";
+option java_multiple_files = true;
+option java_outer_classname = "GrpcMethodListProto";
+option java_package = "io.envoyproxy.envoy.config.core.v3";
+
+message GrpcMethodList {
+    repeated Service services = 1;
+    message Service {
+        string name = 1;
+        repeated string method_names = 2;
+    }
+}

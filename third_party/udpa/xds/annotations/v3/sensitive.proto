@@ -1,0 +1,11 @@
+syntax = "proto3";
+
+package xds.annotations.v3;
+
+import "net/proto2/proto/descriptor.proto";
+
+option go_package = "github.com/cncf/xds/go/xds/annotations/v3";
+
+extend .proto2.FieldOptions {
+    bool sensitive = 61008053;
+}

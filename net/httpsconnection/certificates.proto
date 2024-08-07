@@ -52,6 +52,8 @@ message CertificateConfig {
     message Host {
         optional string name = 1;
         repeated string ip_and_port = 3;
+        optional string googleapis_pattern_rooted_at = 12;
+        repeated string googleapis_service = 13;
         
         optional ClientCertificateRequestType client_cert_request = 2;
         enum ClientCertificateRequestType {

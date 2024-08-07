@@ -1,0 +1,27 @@
+syntax = "proto3";
+
+package envoy.type.v3;
+
+import "third_party/udpa/udpa/annotations/status.proto";
+import "third_party/udpa/udpa/annotations/versioning.proto";
+import "third_party/protoc_gen_validate/validate/validate.proto";
+
+option go_package = "github.com/envoyproxy/go-control-plane/envoy/type/v3;typev3";
+option java_multiple_files = true;
+option java_outer_classname = "HashPolicyProto";
+option java_package = "io.envoyproxy.envoy.type.v3";
+
+message HashPolicy {
+    oneof policy_specifier {
+        SourceIp source_ip = 1;
+        FilterState filter_state = 2;
+    }
+    
+    message SourceIp {
+        
+    }
+    
+    message FilterState {
+        string key = 1;
+    }
+}

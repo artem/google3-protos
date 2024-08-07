@@ -1,18 +1,17 @@
-syntax = "proto2";
+syntax = "editions";
 
 package monitoring.streamz;
 
 import "google/protobuf/any.proto";
 import "monitoring/streamz/proto/distribution.proto";
 
-option cc_enable_arenas = true;
 option java_multiple_files = true;
 option java_outer_classname = "DistributionProtoExemplarExtensions";
 option java_package = "com.google.monitoring.streamz.proto";
 
 message TraceRecordID {
-    required fixed64 span_id = 1;
-    required fixed64 trace_id = 2;
+    optional fixed64 span_id = 1;
+    optional fixed64 trace_id = 2;
 }
 
 extend DistributionProto.Exemplar {

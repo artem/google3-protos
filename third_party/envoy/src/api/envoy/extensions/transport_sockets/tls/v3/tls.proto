@@ -41,6 +41,7 @@ message DownstreamTlsContext {
     }
     
     google.protobuf.BoolValue full_scan_certs_on_sni_mismatch = 9;
+    bool prefer_client_ciphers = 11;
     
     oneof session_ticket_keys_type {
         TlsSessionTicketKeys session_ticket_keys = 4;
@@ -60,6 +61,7 @@ message CommonTlsContext {
     repeated TlsCertificate tls_certificates = 2;
     repeated SdsSecretConfig tls_certificate_sds_secret_configs = 6;
     CertificateProviderPluginInstance tls_certificate_provider_instance = 14;
+    .envoy.config.core.v3.TypedExtensionConfig custom_tls_certificate_selector = 16;
     
     CertificateProvider tls_certificate_certificate_provider = 9 [deprecated = true];
     message CertificateProvider {

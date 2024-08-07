@@ -1,0 +1,9 @@
+syntax = "proto2";
+
+package research_scam;
+
+import "research/scam/trees/kmeans_tree/kmeans_tree.proto";
+
+message SerializedKMeansTreePartitioner {
+    optional SerializedKMeansTree kmeans_tree = 1;
+}

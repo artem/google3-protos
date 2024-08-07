@@ -1,0 +1,20 @@
+syntax = "proto3";
+
+package envoy.config.trace.v3;
+
+import "google/protobuf/struct.proto";
+import "third_party/envoy/src/api/envoy/annotations/deprecation.proto";
+import "third_party/udpa/udpa/annotations/migrate.proto";
+import "third_party/udpa/udpa/annotations/status.proto";
+import "third_party/udpa/udpa/annotations/versioning.proto";
+import "third_party/protoc_gen_validate/validate/validate.proto";
+
+option go_package = "github.com/envoyproxy/go-control-plane/envoy/config/trace/v3;tracev3";
+option java_multiple_files = true;
+option java_outer_classname = "DynamicOtProto";
+option java_package = "io.envoyproxy.envoy.config.trace.v3";
+
+message DynamicOtConfig {
+    string library = 1 [deprecated = true];
+    google.protobuf.Struct config = 2 [deprecated = true];
+}

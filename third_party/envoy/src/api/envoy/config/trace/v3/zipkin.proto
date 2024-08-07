@@ -1,0 +1,33 @@
+syntax = "proto3";
+
+package envoy.config.trace.v3;
+
+import "google/protobuf/wrappers.proto";
+import "third_party/envoy/src/api/envoy/annotations/deprecation.proto";
+import "third_party/udpa/udpa/annotations/migrate.proto";
+import "third_party/udpa/udpa/annotations/status.proto";
+import "third_party/udpa/udpa/annotations/versioning.proto";
+import "third_party/protoc_gen_validate/validate/validate.proto";
+
+option go_package = "github.com/envoyproxy/go-control-plane/envoy/config/trace/v3;tracev3";
+option java_multiple_files = true;
+option java_outer_classname = "ZipkinProto";
+option java_package = "io.envoyproxy.envoy.config.trace.v3";
+
+message ZipkinConfig {
+    string collector_cluster = 1;
+    string collector_endpoint = 2;
+    bool trace_id_128bit = 3;
+    google.protobuf.BoolValue shared_span_context = 4;
+    
+    CollectorEndpointVersion collector_endpoint_version = 5;
+    enum CollectorEndpointVersion {
+        DEPRECATED_AND_UNAVAILABLE_DO_NOT_USE = 0 [deprecated = true];
+        HTTP_JSON = 1;
+        HTTP_PROTO = 2;
+        GRPC = 3;
+    }
+    
+    string collector_hostname = 6;
+    bool split_spans_for_request = 7 [deprecated = true];
+}

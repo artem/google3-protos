@@ -1,0 +1,17 @@
+syntax = "proto2";
+
+package research_scam;
+
+option java_multiple_files = true;
+
+message ScoringExtensionConfig {
+    extensions 525000000, 525000001;
+}
+
+message TestScoringExtensionConfig {
+    
+}
+
+extend ScoringExtensionConfig {
+    optional TestScoringExtensionConfig test_scoring_extension_config = 525000000;
+}

@@ -1,0 +1,21 @@
+syntax = "proto3";
+
+package envoy.service.discovery.v3;
+
+import "third_party/envoy/src/api/envoy/service/discovery/v3/discovery.proto";
+import "third_party/udpa/udpa/annotations/status.proto";
+import "third_party/udpa/udpa/annotations/versioning.proto";
+
+option go_package = "github.com/envoyproxy/go-control-plane/envoy/service/discovery/v3;discoveryv3";
+option java_multiple_files = true;
+option java_outer_classname = "AdsProto";
+option java_package = "io.envoyproxy.envoy.service.discovery.v3";
+
+service AggregatedDiscoveryService {
+    rpc StreamAggregatedResources(stream DiscoveryRequest) returns (stream DiscoveryResponse);
+    rpc DeltaAggregatedResources(stream DeltaDiscoveryRequest) returns (stream DeltaDiscoveryResponse);
+}
+
+message AdsDummy {
+    
+}

@@ -1,0 +1,24 @@
+syntax = "proto2";
+
+package net.util.googleip;
+
+option java_multiple_files = true;
+
+message Range {
+    optional string cidr = 1;
+    optional Region region = 2;
+}
+
+message Ranges {
+    repeated Range ranges = 1;
+}
+
+enum Region {
+    REGION_INVALID = 0;
+    REGION_LOOPBACK = 1;
+    REGION_PRODUCTION = 2;
+    REGION_CORP = 3;
+    REGION_UNKNOWN = 4;
+    REGION_V6_CORP_OR_GUEST = 5;
+    REGION_ISLAND = 6;
+}

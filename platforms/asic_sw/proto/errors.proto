@@ -2,6 +2,8 @@ syntax = "proto2";
 
 package asic_sw.proto;
 
+import "google/api/inclusion.proto";
+
 option optimize_for = CODE_SIZE;
 
 message MemoryEccError {

@@ -10,6 +10,7 @@ import "privacy/data_governance/attributes/proto/audio.proto";
 import "privacy/data_governance/attributes/proto/classification.proto";
 import "privacy/data_governance/attributes/proto/common.proto";
 import "privacy/data_governance/attributes/proto/consumer_trust.proto";
+import "privacy/data_governance/attributes/proto/data_residency_handling.proto";
 import "privacy/data_governance/attributes/proto/datapol.proto";
 import "privacy/data_governance/attributes/proto/digital_markets_act.proto";
 import "privacy/data_governance/attributes/proto/encryption_key_properties.proto";
@@ -58,6 +59,7 @@ message Annotations {
         DataProductAssociation product_association = 11;
         repeated ProcessingPurpose.Purpose limited_purposes = 12;
         repeated DatapolAnnotations datapol = 13;
+        IntendedDataResidencyLocations intended_data_residency_locations = 14;
         
         Custom custom = 101;
         message Custom {

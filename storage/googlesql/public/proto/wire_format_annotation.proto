@@ -1,0 +1,30 @@
+syntax = "proto2";
+
+package googlesql;
+
+import "net/proto2/proto/descriptor.proto";
+
+option java_outer_classname = "WireFormatAnnotationProto";
+option java_package = "com.google.storage.googlesql";
+
+message WireFormatAnnotationEmptyMessage {
+    
+}
+
+enum TableType {
+    DEFAULT_TABLE_TYPE = 0;
+    SQL_TABLE = 1;
+    VALUE_TABLE = 2;
+}
+
+extend .proto2.FieldOptions {
+    optional string struct_field_name = 69661525;
+    optional bool is_raw_proto = 163760138;
+    optional bool is_hidden_column = 337961191;
+}
+
+extend .proto2.MessageOptions {
+    optional bool is_wrapper = 49730018;
+    optional bool is_struct = 49727810;
+    optional TableType table_type = 86830980;
+}

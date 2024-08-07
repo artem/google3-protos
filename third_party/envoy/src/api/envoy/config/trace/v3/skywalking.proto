@@ -1,0 +1,30 @@
+syntax = "proto3";
+
+package envoy.config.trace.v3;
+
+import "third_party/envoy/src/api/envoy/config/core/v3/grpc_service.proto";
+import "google/protobuf/wrappers.proto";
+import "third_party/udpa/udpa/annotations/migrate.proto";
+import "third_party/udpa/udpa/annotations/sensitive.proto";
+import "third_party/udpa/udpa/annotations/status.proto";
+import "third_party/protoc_gen_validate/validate/validate.proto";
+
+option go_package = "github.com/envoyproxy/go-control-plane/envoy/config/trace/v3;tracev3";
+option java_multiple_files = true;
+option java_outer_classname = "SkywalkingProto";
+option java_package = "io.envoyproxy.envoy.config.trace.v3";
+
+message SkyWalkingConfig {
+    .envoy.config.core.v3.GrpcService grpc_service = 1;
+    ClientConfig client_config = 2;
+}
+
+message ClientConfig {
+    string service_name = 1;
+    string instance_name = 2;
+    google.protobuf.UInt32Value max_cache_size = 4;
+    
+    oneof backend_token_specifier {
+        string backend_token = 3;
+    }
+}

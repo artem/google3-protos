@@ -1,0 +1,13 @@
+syntax = "proto2";
+
+package voxel;
+
+message FunctionCatalogInfo {
+    optional string catalog_name = 1;
+    
+    repeated SignatureVersion signature_versions = 2;
+    message SignatureVersion {
+        optional int64 signature_id = 1;
+        optional int64 external_version_id = 2;
+    }
+}

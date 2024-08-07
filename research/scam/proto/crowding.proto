@@ -1,0 +1,15 @@
+syntax = "proto2";
+
+package research_scam;
+
+option java_package = "com.google.research.scam";
+
+message Crowding {
+    optional bool enabled = 1 [default = false];
+    
+    optional Offline offline = 2;
+    message Offline {
+        optional int32 per_crowding_attribute_pre_reordering_num_neighbors = 1 [default = 0x7fffffff];
+        optional int32 per_crowding_attribute_post_reordering_num_neighbors = 2 [default = 0x7fffffff];
+    }
+}

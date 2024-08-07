@@ -35,6 +35,7 @@ message GrpcService {
         string authority = 2;
         RetryPolicy retry_policy = 3;
         google.protobuf.UInt32Value max_receive_message_length = 4;
+        bool skip_envoy_headers = 5;
     }
     
     message GoogleGrpc {

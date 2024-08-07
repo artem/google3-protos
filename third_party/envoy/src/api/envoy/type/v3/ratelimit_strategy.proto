@@ -1,0 +1,32 @@
+syntax = "proto3";
+
+package envoy.type.v3;
+
+import "third_party/envoy/src/api/envoy/type/v3/ratelimit_unit.proto";
+import "third_party/envoy/src/api/envoy/type/v3/token_bucket.proto";
+import "third_party/udpa/xds/annotations/v3/status.proto";
+import "third_party/udpa/udpa/annotations/status.proto";
+import "third_party/protoc_gen_validate/validate/validate.proto";
+
+option go_package = "github.com/envoyproxy/go-control-plane/envoy/type/v3;typev3";
+option java_multiple_files = true;
+option java_outer_classname = "RatelimitStrategyProto";
+option java_package = "io.envoyproxy.envoy.type.v3";
+
+message RateLimitStrategy {
+    oneof strategy {
+        BlanketRule blanket_rule = 1;
+        RequestsPerTimeUnit requests_per_time_unit = 2;
+        TokenBucket token_bucket = 3;
+    }
+    
+    message RequestsPerTimeUnit {
+        uint64 requests_per_time_unit = 1;
+        RateLimitUnit time_unit = 2;
+    }
+    
+    enum BlanketRule {
+        ALLOW_ALL = 0;
+        DENY_ALL = 1;
+    }
+}

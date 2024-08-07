@@ -44,4 +44,5 @@ message BlobV2ObjectStat {
     optional string kms_key_name = 6;
     optional int64 custom_time_nano = 7;
     optional string storage_class = 8;
+    optional string next_marker = 9;
 }

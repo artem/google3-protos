@@ -1,0 +1,40 @@
+syntax = "proto2";
+
+package research_scam;
+
+import "research/scam/proto/distance_measure.proto";
+
+message MetadataConfig {
+    oneof metadata_type {
+        SparseIntersectionConfig sparse_intersection = 1;
+        DistanceMeasureConfig exact_distance = 2;
+        UserInfoMetadataConfig userinfo = 3;
+        ClassLabelMetadataConfig class_label = 6;
+        DatabaseVectorMetadataConfig database_vector = 5;
+        bytes custom_metadata = 4;
+    }
+}
+
+message SparseIntersectionConfig {
+    optional uint32 max_to_return = 1 [default = 0xffffffff];
+}
+
+message SparseIntersectionResult {
+    repeated uint64 intersecting_dimension = 1;
+    repeated double value = 2;
+    optional uint32 num_intersecting_dimensions = 3;
+}
+
+message UserInfoMetadataConfig {
+    optional bool set_user_info_for_query = 1 [default = false];
+    optional bool set_user_info_for_neighbor = 2 [default = true];
+}
+
+message ClassLabelMetadataConfig {
+    
+}
+
+message DatabaseVectorMetadataConfig {
+    optional bool return_database_vector = 1 [default = false];
+    optional bool verbatim_gfv = 2 [default = false];
+}

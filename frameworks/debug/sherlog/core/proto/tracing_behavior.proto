@@ -1,0 +1,15 @@
+syntax = "editions";
+
+package sherlog;
+
+option java_multiple_files = true;
+option java_package = "com.google.frameworks.debug.sherlog.core.proto";
+
+message TracingBehavior {
+    enum Type {
+        DEFAULT = 0;
+        ALLOW_ALL_TRACING = 1;
+        ALLOW_METADATA_ONLY_WITH_UNVALIDATED_SECURITY_CONTEXT = 2;
+        DENY = 3;
+    }
+}

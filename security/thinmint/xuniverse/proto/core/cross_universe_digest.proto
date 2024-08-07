@@ -1,0 +1,10 @@
+syntax = "proto2";
+
+package xuniverse;
+
+import "security/thinmint/xuniverse/proto/core/cross_universe_digest_type.proto";
+
+message CrossUniverseSigningDigest {
+    optional CrossUniverseSigningDigestType digest_type = 1;
+    optional bytes digest_value = 2;
+}

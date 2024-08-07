@@ -1,0 +1,219 @@
+syntax = "proto3";
+
+package envoy.config.bootstrap.v3;
+
+import "third_party/envoy/src/api/envoy/config/accesslog/v3/accesslog.proto";
+import "third_party/envoy/src/api/envoy/config/cluster/v3/cluster.proto";
+import "third_party/envoy/src/api/envoy/config/core/v3/address.proto";
+import "third_party/envoy/src/api/envoy/config/core/v3/base.proto";
+import "third_party/envoy/src/api/envoy/config/core/v3/config_source.proto";
+import "third_party/envoy/src/api/envoy/config/core/v3/event_service_config.proto";
+import "third_party/envoy/src/api/envoy/config/core/v3/extension.proto";
+import "third_party/envoy/src/api/envoy/config/core/v3/resolver.proto";
+import "third_party/envoy/src/api/envoy/config/core/v3/socket_option.proto";
+import "third_party/envoy/src/api/envoy/config/listener/v3/listener.proto";
+import "third_party/envoy/src/api/envoy/config/metrics/v3/stats.proto";
+import "third_party/envoy/src/api/envoy/config/overload/v3/overload.proto";
+import "third_party/envoy/src/api/envoy/config/trace/v3/http_tracer.proto";
+import "third_party/envoy/src/api/envoy/extensions/transport_sockets/tls/v3/secret.proto";
+import "third_party/envoy/src/api/envoy/type/v3/percent.proto";
+import "google/protobuf/duration.proto";
+import "google/protobuf/struct.proto";
+import "google/protobuf/wrappers.proto";
+import "third_party/envoy/src/api/envoy/annotations/deprecation.proto";
+import "third_party/udpa/udpa/annotations/migrate.proto";
+import "third_party/udpa/udpa/annotations/security.proto";
+import "third_party/udpa/udpa/annotations/status.proto";
+import "third_party/udpa/udpa/annotations/versioning.proto";
+import "third_party/protoc_gen_validate/validate/validate.proto";
+
+option go_package = "github.com/envoyproxy/go-control-plane/envoy/config/bootstrap/v3;bootstrapv3";
+option java_multiple_files = true;
+option java_outer_classname = "BootstrapProto";
+option java_package = "io.envoyproxy.envoy.config.bootstrap.v3";
+
+message Bootstrap {
+    .envoy.config.core.v3.Node node = 1;
+    repeated string node_context_params = 26;
+    
+    StaticResources static_resources = 2;
+    message StaticResources {
+        repeated .envoy.config.listener.v3.Listener listeners = 1;
+        repeated .envoy.config.cluster.v3.Cluster clusters = 2;
+        repeated .envoy.extensions.transport_sockets.tls.v3.Secret secrets = 3;
+    }
+    
+    DynamicResources dynamic_resources = 3;
+    message DynamicResources {
+        .envoy.config.core.v3.ConfigSource lds_config = 1;
+        string lds_resources_locator = 5;
+        .envoy.config.core.v3.ConfigSource cds_config = 2;
+        string cds_resources_locator = 6;
+        .envoy.config.core.v3.ApiConfigSource ads_config = 3;
+        
+        reserved 4;
+    }
+    
+    ClusterManager cluster_manager = 4;
+    .envoy.config.core.v3.ApiConfigSource hds_config = 14;
+    string flags_path = 5;
+    repeated .envoy.config.metrics.v3.StatsSink stats_sinks = 6;
+    
+    DeferredStatOptions deferred_stat_options = 39;
+    message DeferredStatOptions {
+        bool enable_deferred_creation_stats = 1;
+    }
+    
+    .envoy.config.metrics.v3.StatsConfig stats_config = 13;
+    google.protobuf.Duration stats_flush_interval = 7;
+    Watchdog watchdog = 8 [deprecated = true];
+    Watchdogs watchdogs = 27;
+    .envoy.config.trace.v3.Tracing tracing = 9 [deprecated = true];
+    LayeredRuntime layered_runtime = 17;
+    Admin admin = 12;
+    .envoy.config.overload.v3.OverloadManager overload_manager = 15;
+    bool enable_dispatcher_stats = 16;
+    string header_prefix = 18;
+    google.protobuf.UInt64Value stats_server_version_override = 19;
+    bool use_tcp_for_dns_lookups = 20 [deprecated = true];
+    .envoy.config.core.v3.DnsResolutionConfig dns_resolution_config = 30 [deprecated = true];
+    .envoy.config.core.v3.TypedExtensionConfig typed_dns_resolver_config = 31;
+    repeated .envoy.config.core.v3.TypedExtensionConfig bootstrap_extensions = 21;
+    repeated FatalAction fatal_actions = 28;
+    repeated .envoy.config.core.v3.ConfigSource config_sources = 22;
+    .envoy.config.core.v3.ConfigSource default_config_source = 23;
+    string default_socket_interface = 24;
+    map<string, .envoy.config.core.v3.TypedExtensionConfig> certificate_provider_instances = 25;
+    repeated CustomInlineHeader inline_headers = 32;
+    string perf_tracing_file_path = 33;
+    .envoy.config.core.v3.TypedExtensionConfig default_regex_engine = 34;
+    .envoy.config.core.v3.TypedExtensionConfig xds_delegate_extension = 35;
+    .envoy.config.core.v3.TypedExtensionConfig xds_config_tracker_extension = 36;
+    .envoy.config.core.v3.TypedExtensionConfig listener_manager = 37;
+    
+    ApplicationLogConfig application_log_config = 38;
+    message ApplicationLogConfig {
+        LogFormat log_format = 1;
+        message LogFormat {
+            oneof log_format {
+                google.protobuf.Struct json_format = 1;
+                string text_format = 2;
+            }
+        }
+    }
+    
+    GrpcAsyncClientManagerConfig grpc_async_client_manager_config = 40;
+    message GrpcAsyncClientManagerConfig {
+        google.protobuf.Duration max_cached_entry_idle_duration = 1;
+    }
+    
+    oneof stats_flush {
+        bool stats_flush_on_admin = 29;
+    }
+    
+    reserved 10, 11, "runtime";
+}
+
+message Admin {
+    repeated .envoy.config.accesslog.v3.AccessLog access_log = 5;
+    string access_log_path = 1 [deprecated = true];
+    string profile_path = 2;
+    .envoy.config.core.v3.Address address = 3;
+    repeated .envoy.config.core.v3.SocketOption socket_options = 4;
+    bool ignore_global_conn_limit = 6;
+}
+
+message ClusterManager {
+    string local_cluster_name = 1;
+    
+    OutlierDetection outlier_detection = 2;
+    message OutlierDetection {
+        string event_log_path = 1;
+        .envoy.config.core.v3.EventServiceConfig event_service = 2;
+    }
+    
+    .envoy.config.core.v3.BindConfig upstream_bind_config = 3;
+    .envoy.config.core.v3.ApiConfigSource load_stats_config = 4;
+    bool enable_deferred_cluster_creation = 5;
+}
+
+message Watchdogs {
+    Watchdog main_thread_watchdog = 1;
+    Watchdog worker_watchdog = 2;
+}
+
+message Watchdog {
+    repeated WatchdogAction actions = 7;
+    message WatchdogAction {
+        .envoy.config.core.v3.TypedExtensionConfig config = 1;
+        
+        WatchdogEvent event = 2;
+        enum WatchdogEvent {
+            UNKNOWN = 0;
+            KILL = 1;
+            MULTIKILL = 2;
+            MEGAMISS = 3;
+            MISS = 4;
+        }
+    }
+    
+    google.protobuf.Duration miss_timeout = 1;
+    google.protobuf.Duration megamiss_timeout = 2;
+    google.protobuf.Duration kill_timeout = 3;
+    google.protobuf.Duration max_kill_timeout_jitter = 6;
+    google.protobuf.Duration multikill_timeout = 4;
+    .envoy.type.v3.Percent multikill_threshold = 5;
+}
+
+message FatalAction {
+    .envoy.config.core.v3.TypedExtensionConfig config = 1;
+}
+
+message Runtime {
+    string symlink_root = 1;
+    string subdirectory = 2;
+    string override_subdirectory = 3;
+    google.protobuf.Struct base = 4;
+}
+
+message RuntimeLayer {
+    string name = 1;
+    
+    oneof layer_specifier {
+        google.protobuf.Struct static_layer = 2;
+        DiskLayer disk_layer = 3;
+        AdminLayer admin_layer = 4;
+        RtdsLayer rtds_layer = 5;
+    }
+    
+    message DiskLayer {
+        string symlink_root = 1;
+        string subdirectory = 3;
+        bool append_service_cluster = 2;
+    }
+    
+    message AdminLayer {
+        
+    }
+    
+    message RtdsLayer {
+        string name = 1;
+        .envoy.config.core.v3.ConfigSource rtds_config = 2;
+    }
+}
+
+message LayeredRuntime {
+    repeated RuntimeLayer layers = 1;
+}
+
+message CustomInlineHeader {
+    string inline_header_name = 1;
+    
+    InlineHeaderType inline_header_type = 2;
+    enum InlineHeaderType {
+        REQUEST_HEADER = 0;
+        REQUEST_TRAILER = 1;
+        RESPONSE_HEADER = 2;
+        RESPONSE_TRAILER = 3;
+    }
+}

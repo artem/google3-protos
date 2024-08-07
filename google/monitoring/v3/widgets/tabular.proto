@@ -121,6 +121,15 @@ message PublicTimeSeriesTable {
         repeated Threshold thresholds = 5;
     }
     
+    OpsAnalyticsSettings ops_analytics_settings = 5;
+    message OpsAnalyticsSettings {
+        int64 max_rows = 1;
+        bool show_filter_bar = 2;
+        int64 page_size = 3;
+    }
+    
+    bool display_column_type = 6;
+    
     enum SortDirection {
         SORT_DIRECTION_UNSPECIFIED = 0;
         ASCENDING = 1;

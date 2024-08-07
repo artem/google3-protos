@@ -1,0 +1,55 @@
+syntax = "proto3";
+
+package envoy.admin.v3;
+
+import "third_party/envoy/src/api/envoy/admin/v3/metrics.proto";
+import "third_party/envoy/src/api/envoy/config/cluster/v3/circuit_breaker.proto";
+import "third_party/envoy/src/api/envoy/config/core/v3/address.proto";
+import "third_party/envoy/src/api/envoy/config/core/v3/base.proto";
+import "third_party/envoy/src/api/envoy/config/core/v3/health_check.proto";
+import "third_party/envoy/src/api/envoy/type/v3/percent.proto";
+import "third_party/udpa/udpa/annotations/status.proto";
+import "third_party/udpa/udpa/annotations/versioning.proto";
+
+option go_package = "github.com/envoyproxy/go-control-plane/envoy/admin/v3;adminv3";
+option java_multiple_files = true;
+option java_outer_classname = "ClustersProto";
+option java_package = "io.envoyproxy.envoy.admin.v3";
+
+message Clusters {
+    repeated ClusterStatus cluster_statuses = 1;
+}
+
+message ClusterStatus {
+    string name = 1;
+    bool added_via_api = 2;
+    .envoy.type.v3.Percent success_rate_ejection_threshold = 3;
+    repeated HostStatus host_statuses = 4;
+    .envoy.type.v3.Percent local_origin_success_rate_ejection_threshold = 5;
+    .envoy.config.cluster.v3.CircuitBreakers circuit_breakers = 6;
+    string observability_name = 7;
+    string eds_service_name = 8;
+}
+
+message HostStatus {
+    .envoy.config.core.v3.Address address = 1;
+    repeated SimpleMetric stats = 2;
+    HostHealthStatus health_status = 3;
+    .envoy.type.v3.Percent success_rate = 4;
+    uint32 weight = 5;
+    string hostname = 6;
+    uint32 priority = 7;
+    .envoy.type.v3.Percent local_origin_success_rate = 8;
+    .envoy.config.core.v3.Locality locality = 9;
+}
+
+message HostHealthStatus {
+    bool failed_active_health_check = 1;
+    bool failed_outlier_check = 2;
+    bool failed_active_degraded_check = 4;
+    bool pending_dynamic_removal = 5;
+    bool pending_active_hc = 6;
+    bool excluded_via_immediate_hc_fail = 7;
+    bool active_hc_timeout = 8;
+    .envoy.config.core.v3.HealthStatus eds_health_status = 3;
+}

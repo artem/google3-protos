@@ -52,6 +52,7 @@ message DiskTimeBucket {
         BEST_EFFORT = 1;
         THROUGHPUT = 2;
         LOW_LATENCY = 3;
+        BEST_EFFORT_PLUS = 4;
     }
 }
 
@@ -335,6 +336,8 @@ enum EncryptionMode {
     AES_GCM = 3;
     AES_SHA256_HMAC = 4;
     AES_XTS = 5;
-    AES_GCM_CRC = 6;
-    AES_CTR_SHA256_HMAC_CRC = 7;
+    AES_GCM_PER_STRIPE_CRC = 6;
+    AES_CTR_SHA256_HMAC_PER_STRIPE_CRC = 7;
+    AES_GCM_PER_FILE_CRC = 8;
+    AES_CTR_SHA256_HMAC_PER_FILE_CRC = 9;
 }

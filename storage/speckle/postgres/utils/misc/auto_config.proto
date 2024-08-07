@@ -1,0 +1,50 @@
+syntax = "proto3";
+
+package storage_speckle_postgres_utils_misc;
+
+import "google/protobuf/timestamp.proto";
+import "storage/datapol/annotations/proto/semantic_annotations.proto";
+
+message VMSize {
+    int32 cpu_count = 1;
+}
+
+message DatabaseAutoConfigs {
+    repeated DatabaseAutoConfig configs = 1;
+}
+
+message DatabaseAutoConfig {
+    string instance_id = 1;
+    VMSize vm_size = 2;
+    ColumnarEngineAutoConfig columnar_engine_auto_config = 3;
+    ResourceUsage resource_usage = 4;
+    ColumnarAdvisorConfig columnar_advisor_config = 5;
+}
+
+message ColumnarEngineAutoConfig {
+    EnableDecision enable_decision = 1;
+    int64 memory_size_in_mb = 2;
+    int64 local_storage_size_in_mb = 3;
+}
+
+message ResourceUsage {
+    double peak_used_cpu = 1;
+    double total_cpu = 2;
+    double peak_used_memory = 3;
+    double total_memory = 4;
+    double peak_used_local_storage = 5;
+    double total_local_storage = 6;
+    double peak_backends = 7;
+    google.protobuf.Timestamp monitoring_start_time = 8;
+}
+
+message ColumnarAdvisorConfig {
+    EnableDecision recommend_enable = 1;
+    int64 recommended_size_in_mb = 2;
+}
+
+enum EnableDecision {
+    UNKNOWN = 0;
+    ENABLE = 1;
+    DISABLE = 2;
+}

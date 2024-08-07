@@ -1,0 +1,17 @@
+syntax = "proto3";
+
+package xds.annotations.v3;
+
+import "third_party/udpa/xds/annotations/v3/status.proto";
+import "net/proto2/proto/descriptor.proto";
+
+option go_package = "github.com/cncf/xds/go/xds/annotations/v3";
+
+message FieldSecurityAnnotation {
+    bool configure_for_untrusted_downstream = 1;
+    bool configure_for_untrusted_upstream = 2;
+}
+
+extend .proto2.FieldOptions {
+    FieldSecurityAnnotation security = 99044135;
+}

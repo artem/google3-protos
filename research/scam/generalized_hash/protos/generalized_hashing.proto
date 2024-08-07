@@ -1,0 +1,40 @@
+syntax = "proto3";
+
+package research_scam.generalized_hash;
+
+import "research/scam/generalized_hash/protos/generalized_mapping.proto";
+import "research/scam/proto/chunked_hamming.proto";
+import "storage/datapol/annotations/proto/semantic_annotations.proto";
+
+message GenHashConfig {
+    repeated MapConfig configs = 1;
+    string name = 2;
+    bool enable_serialization = 3;
+    string large_object_serialization_path = 4;
+}
+
+message GenHashModel {
+    repeated MapModel models = 1;
+    string name = 2;
+}
+
+message GenHashSearchConfig {
+    string hash_model = 1;
+    GenHashConfig hash_config = 2;
+    
+    SearchAlgorithm search_algorithm = 3;
+    enum SearchAlgorithm {
+        SIMD_LINEAR = 0;
+        LINEAR = 1;
+        CHUNKED_HAMMING = 2;
+    }
+    
+    SearchDistanceType search_distance_type = 4;
+    enum SearchDistanceType {
+        HAMMING = 0;
+        SPHERICAL = 1;
+    }
+    
+    string serialization_file_trained_models = 5;
+    ChunkedHammingConfig chunked_hamming = 6;
+}

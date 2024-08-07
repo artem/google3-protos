@@ -1,0 +1,81 @@
+syntax = "proto2";
+
+package research_scam;
+
+import "google/protobuf/timestamp.proto";
+import "net/proto2/bridge/proto/message_set.proto";
+import "research/scam/coscam/v2_restricts.proto";
+import "research/scam/proto/query_metadata.proto";
+import "research/scam/proto/restricts.proto";
+import "storage/datapol/annotations/proto/semantic_annotations.proto";
+
+option cc_enable_arenas = true;
+option java_package = "com.google.research.scam";
+
+message GenericFeatureVector {
+    required FeatureType feature_type = 1;
+    enum FeatureType {
+        UNKNOWN = 0;
+        INT64 = 1;
+        FLOAT = 2;
+        DOUBLE = 3;
+        STRING = 4;
+        BINARY = 5;
+    }
+    
+    optional bytes data_id_str = 2;
+    repeated float feature_value_float = 4 [packed = true];
+    repeated double feature_value_double = 5 [packed = true];
+    repeated int64 feature_value_int64 = 3 [packed = true];
+    optional bytes feature_value_string = 13;
+    repeated uint64 feature_index = 6 [packed = true];
+    
+    optional FeatureNorm norm_type = 9 [default = NONE];
+    enum FeatureNorm {
+        NONE = 0;
+        UNITL2NORM = 1;
+        STDGAUSSNORM = 2;
+        UNITL1NORM = 3;
+    }
+    
+    optional string class_label = 16;
+    
+    optional Crowding crowding = 18;
+    message Crowding {
+        optional int64 crowding_attribute = 1;
+    }
+    
+    optional RestrictTokens restrict_tokens = 15;
+    message RestrictTokens {
+        optional V3Restrict v3 = 7;
+        repeated int64 token_membership = 1 [packed = true];
+        repeated int64 whitelist_token = 2 [packed = true];
+        repeated int64 blacklist_token = 3 [packed = true];
+        optional string v3_compatible_namespace = 8;
+        
+        oneof v2_restricts {
+            research_scam.coscam.EasyRestrictDefinition easy_definition = 6;
+            research_scam.coscam.RestrictTokensV2 tokens = 5;
+            research_scam.coscam.RestrictDefinition definition = 4;
+        }
+    }
+    
+    optional FixedPointMetadata fixed_point_metadata = 19;
+    message FixedPointMetadata {
+        optional float squared_l2_norm = 1;
+    }
+    
+    optional bytes userinfo = 17 [ctype = CORD];
+    optional google.protobuf.Timestamp expiration_timestamp = 20;
+    optional QueryMetadata query_metadata = 22;
+    optional uint64 feature_dim = 10 [default = 0xffffffffffffffff];
+    optional float weight = 8 [deprecated = true];
+    repeated int32 tokens = 14 [packed = true, deprecated = true];
+    optional bool internal_only_is_secondary_partition = 24 [default = false];
+    
+    extensions 1000 to max;
+    
+    extend .proto2.bridge.MessageSet {
+        optional GenericFeatureVector message_set_extension = 111412305;
+    }
+}

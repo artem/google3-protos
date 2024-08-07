@@ -1,0 +1,29 @@
+syntax = "proto3";
+
+package envoy.config.trace.v3;
+
+import "third_party/envoy/src/api/envoy/config/core/v3/base.proto";
+import "third_party/envoy/src/api/envoy/annotations/deprecation.proto";
+import "third_party/udpa/udpa/annotations/migrate.proto";
+import "third_party/udpa/udpa/annotations/status.proto";
+import "third_party/udpa/udpa/annotations/versioning.proto";
+import "third_party/protoc_gen_validate/validate/validate.proto";
+
+option go_package = "github.com/envoyproxy/go-control-plane/envoy/config/trace/v3;tracev3";
+option java_multiple_files = true;
+option java_outer_classname = "LightstepProto";
+option java_package = "io.envoyproxy.envoy.config.trace.v3";
+
+message LightstepConfig {
+    string collector_cluster = 1;
+    string access_token_file = 2 [deprecated = true];
+    .envoy.config.core.v3.DataSource access_token = 4;
+    
+    repeated PropagationMode propagation_modes = 3;
+    enum PropagationMode {
+        ENVOY = 0;
+        LIGHTSTEP = 1;
+        B3 = 2;
+        TRACE_CONTEXT = 3;
+    }
+}

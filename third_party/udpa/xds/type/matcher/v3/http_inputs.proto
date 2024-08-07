@@ -1,0 +1,14 @@
+syntax = "proto3";
+
+package xds.type.matcher.v3;
+
+import "third_party/udpa/xds/annotations/v3/status.proto";
+
+option go_package = "github.com/cncf/xds/go/xds/type/matcher/v3";
+option java_multiple_files = true;
+option java_outer_classname = "HttpInputsProto";
+option java_package = "com.github.xds.type.matcher.v3";
+
+message HttpAttributesCelMatchInput {
+    
+}

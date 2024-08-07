@@ -21,6 +21,7 @@ message CoordinationServiceConfig {
     repeated string recoverable_jobs = 9;
     bool allow_new_incarnation_to_reconnect = 11;
     bool force_disable = 12;
+    bool poll_for_error_from_service_at_startup = 13;
     
     reserved 6;
 }

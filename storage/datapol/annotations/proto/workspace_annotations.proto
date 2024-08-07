@@ -32,6 +32,20 @@ message FieldDetails {
 
 message MessageDetails {
     repeated SemanticType semantic_type = 1;
+    repeated PolicyTargetEntityInfo policy_target_entity_info = 2;
+}
+
+message PolicyTargetEntityInfo {
+    oneof info {
+        string field_proto_path = 1;
+        EucEntityType policy_target_entity_type_derived_from_euc = 2;
+    }
+    
+    enum EucEntityType {
+        EUC_ENTITY_TYPE_UNSPECIFIED = 0;
+        EUC_ENTITY_TYPE_GAIA_ID = 1;
+        EUC_ENTITY_TYPE_CUSTOMER_ID = 2;
+    }
 }
 
 message EnumDetails {

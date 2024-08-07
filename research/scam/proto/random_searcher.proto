@@ -1,0 +1,7 @@
+syntax = "proto2";
+
+package research_scam;
+
+message RandomSearcherConfig {
+    optional uint32 seed = 1 [default = 42];
+}

@@ -1,0 +1,43 @@
+syntax = "proto2";
+
+package voxel;
+
+import "storage/lightning/shared/voxel/proto/data_format.proto";
+import "storage/lightning/shared/voxel/proto/scan_descriptor.proto";
+
+message TypeProto {
+    optional DataFormat format = 1;
+    optional bool nullable = 2;
+    
+    oneof info {
+        ArrayTypeProto array_type = 3;
+        StructTypeProto struct_type = 4;
+        ProtoTypeProto proto_type = 5;
+        EnumTypeProto enum_type = 6;
+    }
+}
+
+message ArrayTypeProto {
+    optional TypeProto element_type = 1;
+}
+
+message ProtoTypeProto {
+    optional int64 descriptor_pool_index = 1;
+    optional string proto_name = 2;
+}
+
+message ProtoInfoProto {
+    repeated FieldPathProto field_path = 1;
+    optional ProtoTypeProto proto_type = 2;
+}
+
+message StructTypeProto {
+    repeated TypeProto field_type = 1;
+    repeated string field_name = 2;
+    optional ProtoInfoProto proto_info = 3;
+}
+
+message EnumTypeProto {
+    optional int64 descriptor_pool_index = 1;
+    optional string enum_name = 2;
+}

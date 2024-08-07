@@ -1,0 +1,88 @@
+syntax = "editions";
+
+package storage.speckle.postgres.extensions.google_plan_diagnosis.engine;
+
+import "google/protobuf/timestamp.proto";
+import "storage/datapol/annotations/proto/semantic_annotations.proto";
+
+message ResourceUsage {
+    optional uint64 vm_peak = 1;
+    optional uint64 vm_size = 2;
+    optional uint64 vm_lck = 3;
+    optional uint64 vm_pin = 4;
+    optional uint64 vm_hwm = 5;
+    optional uint64 vm_rss = 6;
+    optional uint64 rss_annon = 7;
+    optional uint64 rss_file = 8;
+    optional uint64 rss_shmem = 9;
+    optional uint64 vm_data = 10;
+    optional uint64 vm_stk = 11;
+    optional uint64 vm_exe = 12;
+    optional uint64 vm_lib = 13;
+    optional uint64 vm_pte = 14;
+    optional uint64 vm_swap = 15;
+    optional uint64 fd_size = 16;
+    optional uint64 p_pid = 17;
+}
+
+message QueryStatus {
+    optional string status = 1;
+}
+
+message PlanNode {
+    optional string text = 1;
+}
+
+message QueryTrace {
+    optional uint64 pid = 1;
+    optional uint64 query_template_id = 2;
+    optional uint64 query_plan_hash = 3;
+    optional string query = 4;
+    optional string plan = 5;
+    optional QueryStatus status = 6;
+    optional PlanNode last_executed_plan_node = 7;
+    optional google.protobuf.Timestamp start_time = 8;
+    optional google.protobuf.Timestamp end_time = 9;
+    optional ResourceUsage start_usage = 10;
+    optional ResourceUsage end_usage = 11;
+    optional uint64 leader_pid = 12;
+}
+
+message QuerySnap {
+    optional uint32 user_id = 1;
+    optional uint32 db_id = 2;
+    optional uint64 query_id = 3;
+    optional uint64 plan_id = 4;
+    optional uint64 num_calls = 5;
+    optional double total_time = 6;
+}
+
+message WorkloadSnap {
+    repeated QuerySnap query_snap = 1;
+    optional google.protobuf.Timestamp snap_time = 2;
+}
+
+message SelectivityNode {
+    optional string alias = 1;
+    optional uint64 plan_rows = 2;
+    optional uint64 live_tuples = 3;
+    optional uint64 dead_tuples = 4;
+}
+
+message SelectivitySummary {
+    repeated SelectivityNode selectivity_nodes = 1;
+}
+
+message QueryInstance {
+    optional uint64 pid = 1;
+    optional uint64 leader_pid = 2;
+    optional uint64 query_instance_id = 3;
+    optional uint64 query_template_id = 4;
+    optional uint64 query_plan_hash = 5;
+    optional string query = 6;
+    optional string plan = 7;
+    optional QueryStatus status = 8;
+    optional google.protobuf.Timestamp start_time = 9;
+    optional google.protobuf.Timestamp end_time = 10;
+    optional SelectivitySummary selectivity_summary = 11;
+}

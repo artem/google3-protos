@@ -9,7 +9,7 @@ option java_multiple_files = true;
 option java_package = "com.google.security.context";
 
 message AdminPolicy {
-    repeated string emergency_admins = 1;
+    repeated string emergency_admins = 1 [deprecated = true];
     optional bool disable_implicit_person_logging = 3;
     optional bool enable_fail_closed_gin_logging = 6;
     

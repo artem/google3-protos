@@ -1,0 +1,44 @@
+syntax = "proto3";
+
+package envoy.admin.v3;
+
+import "google/protobuf/timestamp.proto";
+import "third_party/udpa/udpa/annotations/status.proto";
+import "third_party/udpa/udpa/annotations/versioning.proto";
+
+option go_package = "github.com/envoyproxy/go-control-plane/envoy/admin/v3;adminv3";
+option java_multiple_files = true;
+option java_outer_classname = "CertsProto";
+option java_package = "io.envoyproxy.envoy.admin.v3";
+
+message Certificates {
+    repeated Certificate certificates = 1;
+}
+
+message Certificate {
+    repeated CertificateDetails ca_cert = 1;
+    repeated CertificateDetails cert_chain = 2;
+}
+
+message CertificateDetails {
+    string path = 1;
+    string serial_number = 2;
+    repeated SubjectAlternateName subject_alt_names = 3;
+    uint64 days_until_expiration = 4;
+    google.protobuf.Timestamp valid_from = 5;
+    google.protobuf.Timestamp expiration_time = 6;
+    
+    OcspDetails ocsp_details = 7;
+    message OcspDetails {
+        google.protobuf.Timestamp valid_from = 1;
+        google.protobuf.Timestamp expiration = 2;
+    }
+}
+
+message SubjectAlternateName {
+    oneof name {
+        string dns = 1;
+        string uri = 2;
+        string ip_address = 3;
+    }
+}

@@ -1,0 +1,285 @@
+syntax = "proto2";
+
+package research_scam;
+
+import public "research/scam/proto/query_metadata.proto";
+import "net/proto2/bridge/proto/message_set.proto";
+import "research/scam/data_format/features.proto";
+import "research/scam/online_search/debug_protos.proto";
+import "research/scam/proto/results.proto";
+import "storage/datapol/annotations/proto/semantic_annotations.proto";
+import "util/task/status.proto";
+
+option cc_enable_arenas = true;
+
+service OnlineSearchService {
+    rpc Query(QueryRequest) returns (QueryResponse);
+    rpc QueryBatched(QueryRequestBatched) returns (QueryResponseBatched);
+    rpc ReadMetadataByDocid(MetadataByDocidRequest) returns (MetadataByDocidResponse);
+    rpc UpdateShard(ShardUpdateRequest) returns (ShardUpdateResponse);
+    rpc RetrainAndReindex(RetrainAndReindexRequest) returns (RetrainAndReindexResponse);
+    rpc IncrementalUpdate(IncrementalUpdateRequest) returns (EmptyProto);
+    rpc IncrementalDelete(DeletionRequest) returns (EmptyProto);
+    rpc QuerySerialized(QueryRequestSerialized) returns (QueryResponse);
+    rpc QuerySerializedBatched(QueryRequestSerialized) returns (QueryResponseBatched);
+    rpc RemotePreprocess(PreprocessRequest) returns (PreprocessResponse);
+    rpc QuerySerializedInternal1(QueryRequestSerialized) returns (QueryResponse);
+    rpc QuerySerializedInternal2(QueryRequestSerialized) returns (QueryResponse);
+    rpc QuerySerializedInternal3(QueryRequestSerialized) returns (QueryResponse);
+    rpc QuerySerializedInternal4(QueryRequestSerialized) returns (QueryResponse);
+    rpc QuerySerializedInternal5(QueryRequestSerialized) returns (QueryResponse);
+    rpc QuerySerializedInternal6(QueryRequestSerialized) returns (QueryResponse);
+    rpc QuerySerializedInternal7(QueryRequestSerialized) returns (QueryResponse);
+    rpc QuerySerializedBatchedInternal1(QueryRequestSerialized) returns (QueryResponseBatched);
+    rpc QuerySerializedBatchedInternal2(QueryRequestSerialized) returns (QueryResponseBatched);
+    rpc QuerySerializedBatchedInternal3(QueryRequestSerialized) returns (QueryResponseBatched);
+    rpc QuerySerializedBatchedInternal4(QueryRequestSerialized) returns (QueryResponseBatched);
+    rpc QuerySerializedBatchedInternal5(QueryRequestSerialized) returns (QueryResponseBatched);
+    rpc QuerySerializedBatchedInternal6(QueryRequestSerialized) returns (QueryResponseBatched);
+    rpc QuerySerializedBatchedInternal7(QueryRequestSerialized) returns (QueryResponseBatched);
+    rpc ReadMetadataByDocidInternal1(MetadataByDocidRequest) returns (MetadataByDocidResponse);
+    rpc ReadMetadataByDocidInternal2(MetadataByDocidRequest) returns (MetadataByDocidResponse);
+    rpc ReadMetadataByDocidInternal3(MetadataByDocidRequest) returns (MetadataByDocidResponse);
+    rpc ReadMetadataByDocidInternal4(MetadataByDocidRequest) returns (MetadataByDocidResponse);
+    rpc ReadMetadataByDocidInternal5(MetadataByDocidRequest) returns (MetadataByDocidResponse);
+    rpc ReadMetadataByDocidInternal6(MetadataByDocidRequest) returns (MetadataByDocidResponse);
+    rpc ReadMetadataByDocidInternal7(MetadataByDocidRequest) returns (MetadataByDocidResponse);
+}
+
+service OnlineSearchServiceInternal {
+    rpc QuerySerializedInternal1(QueryRequestSerialized) returns (QueryResponse);
+    rpc QuerySerializedInternal2(QueryRequestSerialized) returns (QueryResponse);
+    rpc QuerySerializedInternal3(QueryRequestSerialized) returns (QueryResponse);
+    rpc QuerySerializedInternal4(QueryRequestSerialized) returns (QueryResponse);
+    rpc QuerySerializedInternal5(QueryRequestSerialized) returns (QueryResponse);
+    rpc QuerySerializedInternal6(QueryRequestSerialized) returns (QueryResponse);
+    rpc QuerySerializedInternal7(QueryRequestSerialized) returns (QueryResponse);
+    rpc QuerySerializedBatchedInternal1(QueryRequestSerialized) returns (QueryResponseBatched);
+    rpc QuerySerializedBatchedInternal2(QueryRequestSerialized) returns (QueryResponseBatched);
+    rpc QuerySerializedBatchedInternal3(QueryRequestSerialized) returns (QueryResponseBatched);
+    rpc QuerySerializedBatchedInternal4(QueryRequestSerialized) returns (QueryResponseBatched);
+    rpc QuerySerializedBatchedInternal5(QueryRequestSerialized) returns (QueryResponseBatched);
+    rpc QuerySerializedBatchedInternal6(QueryRequestSerialized) returns (QueryResponseBatched);
+    rpc QuerySerializedBatchedInternal7(QueryRequestSerialized) returns (QueryResponseBatched);
+    rpc ReadMetadataByDocidInternal1(MetadataByDocidRequest) returns (MetadataByDocidResponse);
+    rpc ReadMetadataByDocidInternal2(MetadataByDocidRequest) returns (MetadataByDocidResponse);
+    rpc ReadMetadataByDocidInternal3(MetadataByDocidRequest) returns (MetadataByDocidResponse);
+    rpc ReadMetadataByDocidInternal4(MetadataByDocidRequest) returns (MetadataByDocidResponse);
+    rpc ReadMetadataByDocidInternal5(MetadataByDocidRequest) returns (MetadataByDocidResponse);
+    rpc ReadMetadataByDocidInternal6(MetadataByDocidRequest) returns (MetadataByDocidResponse);
+    rpc ReadMetadataByDocidInternal7(MetadataByDocidRequest) returns (MetadataByDocidResponse);
+}
+
+message QueryRequest {
+    required GenericFeatureVector gfv = 1;
+    repeated PerDatasetParameters per_dataset_parameters = 9;
+    optional bool enable_latency_stats = 7 [default = false];
+    optional bool enable_restrict_stats = 10 [default = false];
+    optional bool enable_restrict_evaluation_info = 15 [default = false];
+    optional bool local_only = 11 [default = false];
+    optional bool parallel_sqmd = 12 [default = false];
+    repeated GenericFeatureVector additional_version_gfvs = 13;
+    optional bool force_brute_force = 14 [default = false];
+    optional bool saturate = 6 [default = false, deprecated = true];
+    
+    extend .proto2.bridge.MessageSet {
+        optional QueryRequest message_set_extension = 169951260;
+    }
+}
+
+message PerDatasetParameters {
+    optional string dataset_name = 5;
+    optional string version = 7 [default = "*"];
+    optional bool ignore_missing = 9 [default = false];
+    optional bool return_metadata = 3 [default = true];
+    optional bytes userinfo = 4;
+    optional NeighborSelectionOverride neighbor_selection_override = 2;
+    
+    optional LiquidBatching liquid_batching = 6;
+    message LiquidBatching {
+        optional bool enabled = 1 [default = false];
+        optional int32 max_liquid_batch_size = 2 [default = -1];
+        optional int32 liquid_batching_window_usecs = 3 [default = 1000];
+    }
+    
+    optional uint32 dataset_index = 1 [default = 0];
+    repeated string additional_versions = 8;
+}
+
+message QueryRequestBatched {
+    repeated QueryRequest subquery = 1;
+    
+    optional LowLevelBatchingPolicy low_level_batching_policy = 2 [default = NO_LOW_LEVEL_BATCHING];
+    enum LowLevelBatchingPolicy {
+        NO_LOW_LEVEL_BATCHING = 0;
+        SATURATE_THREADS_FIRST = 1;
+        OPTIMIZE_LOW_LEVEL_BATCH_SIZES_FIRST = 2;
+    }
+    
+    optional int32 low_level_batch_size = 3 [default = -1];
+    optional bool return_subquery_statuses = 6 [default = false];
+    optional bytes request_id = 4 [ctype = CORD];
+    optional bool local_only = 5 [default = false];
+    
+    extend .proto2.bridge.MessageSet {
+        optional QueryRequestBatched message_set_extension = 365016831;
+    }
+}
+
+message QueryResponse {
+    repeated NearestNeighbors results = 1;
+    optional uint32 num_ok_machines = 3 [default = 0];
+    optional uint32 num_total_machines = 4 [default = 0];
+    optional uint32 num_unreachable_machines = 6 [default = 0];
+    optional uint32 num_deadline_exceeded_machines = 7 [default = 0];
+    repeated OnlineSearchLatencyStats latency = 2;
+    repeated RestrictStats restrict_stats = 5;
+    optional util.StatusProto status = 8;
+    
+    extend .proto2.bridge.MessageSet {
+        optional QueryResponse message_set_extension = 169577723;
+    }
+}
+
+message QueryResponseBatched {
+    repeated QueryResponse subquery_response = 1;
+    optional bytes request_id = 2 [ctype = CORD];
+    
+    extend .proto2.bridge.MessageSet {
+        optional QueryResponseBatched message_set_extension = 365016339;
+    }
+}
+
+message ShardUpdateRequest {
+    optional string dataset_name = 2;
+    optional uint32 dataset_index = 1 [default = 0];
+}
+
+message RetrainAndReindexRequest {
+    optional string dataset_name = 1;
+    optional uint32 dataset_index = 2 [default = 0];
+    optional string version = 3 [default = "*"];
+}
+
+message RetrainAndReindexResponse {
+    
+}
+
+message ShardUpdateResponse {
+    optional int64 pre_update_heap_size_bytes = 1;
+    optional int64 approx_peak_heap_size_bytes = 2;
+}
+
+message IncrementalUpdateRequest {
+    repeated GenericFeatureVector gfv = 3;
+    
+    optional MutationIntention mutation_intention = 6;
+    message MutationIntention {
+        optional Mask mask = 1 [default = ALL];
+        enum Mask {
+            UNSPECIFIED_OR_NONE = 0;
+            VALUE_VECTOR = 1;
+            RESTRICTS = 2;
+            CROWDING = 4;
+            METADATA = 8;
+            ALL = 15;
+            VALUE_VECTOR_RESTRICTS = 3;
+            VALUE_VECTOR_CROWDING = 5;
+            RESTRICTS_CROWDING = 6;
+            VALUE_VECTOR_RESTRICTS_CROWDING = 7;
+            VALUE_VECTOR_METADATA = 9;
+            RESTRICTS_METADATA = 10;
+            VALUE_VECTOR_RESTRICTS_METADATA = 11;
+            CROWDING_METADATA = 12;
+            VALUE_VECTOR_CROWDING_METADATA = 13;
+            RESTRICTS_CROWDING_METADATA = 14;
+        }
+    }
+    
+    optional int32 destination_shard = 4 [default = -1];
+    optional string version = 5 [default = "*"];
+    
+    oneof Dataset {
+        int32 dataset_index = 1;
+        string dataset_name = 2;
+    }
+}
+
+message DeletionRequest {
+    repeated bytes docid = 3;
+    optional string version = 4 [default = "*"];
+    
+    oneof Dataset {
+        int32 dataset_index = 1;
+        string dataset_name = 2;
+    }
+}
+
+message UpdateOrDeletionRequest {
+    oneof UpdateOrDeletion {
+        IncrementalUpdateRequest update = 1;
+        DeletionRequest deletion = 2;
+    }
+}
+
+message MetadataByDocidRequest {
+    repeated bytes docids = 3;
+    optional string version = 6 [default = "*"];
+    optional bool fanout = 4 [default = false];
+    optional int32 root_machine_id = 5 [default = -1];
+    
+    oneof Dataset {
+        int32 dataset_index = 1;
+        string dataset_name = 2;
+    }
+}
+
+message MetadataByDocidResponse {
+    repeated bytes metadata = 1;
+    optional int32 num_ok_machines = 2 [default = 0];
+    optional int32 num_total_machines = 3 [default = 0];
+    optional uint32 num_unreachable_machines = 6 [default = 0];
+    optional uint32 num_deadline_exceeded_machines = 7 [default = 0];
+}
+
+message PreprocessRequest {
+    optional GenericFeatureVector gfv = 1;
+    repeated string datasets_by_name = 2;
+    repeated uint32 datasets_by_index = 3;
+    optional bool parallel_sqmd = 4 [default = false];
+    optional bool enable_latency_stats = 7 [default = false];
+}
+
+message PreprocessedQuery {
+    optional string dataset_name = 1;
+    optional uint32 dataset_index = 2 [default = 0];
+    optional GenericFeatureVector gfv = 3;
+    optional string dataset_version = 4;
+}
+
+message PreprocessResponse {
+    repeated PreprocessedQuery preprocessed_queries = 1;
+    optional OnlineSearchLatencyStats latency = 2;
+}
+
+message QueryRequestSerialized {
+    optional bytes serialized_request = 1 [ctype = CORD];
+    optional int32 root_machine_id = 2 [default = -1];
+    
+    enum SpecialRootMachineIds {
+        LOCAL_QUERYING_ONLY = -2;
+        NOT_SET = -1;
+    }
+}
+
+message EmptyProto {
+    
+}
+
+enum ResponseCode {
+    OK = 0;
+    INVALID_DATASET = 1;
+    INVALID_QUERY = 2;
+    MISSING_SUBRPCS = 3;
+    SHARD_UPDATE_FAILURE = 4;
+}

@@ -5,6 +5,8 @@ package util;
 import "google/protobuf/any.proto";
 import "net/proto2/bridge/proto/message_set.proto";
 
+option java_package = "com.google.net.util";
+
 message NonMessageSetPayload {
     repeated google.protobuf.Any payloads = 1;
     

@@ -1,0 +1,26 @@
+syntax = "proto2";
+
+package research_scam;
+
+message SparseDenseHybridBatchedConfig {
+    repeated uint64 zeroed_dimension = 3;
+    repeated uint64 forced_sparse_dimension = 4;
+    optional int32 max_sparse_datapoints_per_dimension = 5 [default = -1];
+    optional float sparse_dynamic_pruning_fraction = 6 [default = 0];
+    optional int32 num_sparse_residual_reordering_neighbors = 7 [default = 0];
+    
+    oneof dense_implementation {
+        BatchedAHDenseConfig batched_ah = 1;
+        BatchedExactDenseConfig exact = 2;
+    }
+}
+
+message BatchedExactDenseConfig {
+    
+}
+
+message BatchedAHDenseConfig {
+    optional int32 num_dims_per_block = 6 [default = 2];
+    optional int32 num_dense_residual_reordering_neighbors = 7 [default = 0];
+    optional bool dense_exact = 1 [default = true];
+}

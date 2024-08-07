@@ -1,0 +1,105 @@
+syntax = "proto2";
+
+package research_scam;
+
+import "research/scam/proto/conductor.proto";
+import "research/scam/proto/incremental_updates.proto";
+import "research/vision/knn/input_handlers/input-handler-options.proto";
+
+option java_package = "com.google.research.scam";
+
+message InputOutputConfig {
+    optional InMemoryTypes in_memory_data_type = 2 [default = IN_MEMORY_DATA_TYPE_NOT_SPECIFIED];
+    enum InMemoryTypes {
+        INT8 = 0;
+        UINT8 = 1;
+        INT16 = 2;
+        INT32 = 4;
+        UINT32 = 5;
+        INT64 = 6;
+        FLOAT = 8;
+        DOUBLE = 9;
+        IN_MEMORY_DATA_TYPE_NOT_SPECIFIED = 255;
+        UINT16 = 3 [deprecated = true];
+        UINT64 = 7 [deprecated = true];
+    }
+    
+    optional string database_wildcard = 3;
+    optional bool allow_two_pass_read = 15 [default = false];
+    optional string query_wildcard = 8;
+    optional string output_sstable_wildcard = 11;
+    optional string preprocessed_artifacts_dir = 18;
+    
+    optional ArtifactsNamingOption artifacts_naming_option = 23 [default = HASHED];
+    enum ArtifactsNamingOption {
+        HASHED = 0;
+        NO_HASH = 1;
+    }
+    
+    optional PureDynamicConfig pure_dynamic_config = 21;
+    message PureDynamicConfig {
+        optional int32 num_shards = 1 [default = 1];
+        
+        optional VectorType vector_type = 2 [default = UNSPECIFIED_VECTOR_TYPE];
+        enum VectorType {
+            UNSPECIFIED_VECTOR_TYPE = 0;
+            SPARSE = 1;
+            DENSE = 2;
+        }
+        
+        optional uint64 dimensionality = 3;
+    }
+    
+    optional FeatureNorm norm_type = 5 [default = NONE];
+    enum FeatureNorm {
+        NONE = 0;
+        UNITL2NORM = 1;
+        STDGAUSSNORM = 2;
+        UNITL1NORM = 3;
+    }
+    
+    optional bool non_negative = 6 [default = false];
+    optional bool is_dense = 7;
+    
+    optional PreprocessingFunction query_preprocessing_function = 16;
+    message PreprocessingFunction {
+        optional string name = 1;
+        optional string config_ascii = 2;
+    }
+    
+    optional string hashed_database_wildcard = 12;
+    optional string fixed_point_database_wildcard = 17;
+    optional string tokenized_database_wildcard = 14;
+    optional string memory_consumption_estimate_filename = 24;
+    
+    optional DataIdStrFormat data_id_str_format = 26;
+    message DataIdStrFormat {
+        optional uint32 fixed_len = 1;
+    }
+    
+    optional research_vision.InputHandlerOptions input_handler = 1 [deprecated = true];
+    optional bool saturate = 10 [default = false, deprecated = true];
+    optional uint64 dimensionality = 4 [deprecated = true];
+    
+    oneof IncrementalUpdateMetadataOneof {
+        string incremental_update_metadata_location = 19;
+        IncrementalUpdateMetadata incremental_update_metadata = 22;
+    }
+    
+    oneof DataPushSystemsOneof {
+        TeamsterConfig teamster = 20;
+        ConductorConfig conductor = 25;
+    }
+    
+    reserved 13;
+    
+    message TeamsterConfig {
+        optional bool enabled = 1 [default = false];
+        optional int32 num_shards = 2 [default = 1];
+        optional int32 shard_num = 3 [default = -1];
+        optional string teamster_loader_bns = 4;
+        optional string data_family_name = 5;
+        optional string data_stream_name = 6;
+        optional string db_prefix_override = 7 [default = "database"];
+    }
+}

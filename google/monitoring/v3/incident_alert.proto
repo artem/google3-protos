@@ -1,0 +1,49 @@
+syntax = "proto3";
+
+package google.monitoring.v3;
+
+import "google/api/field_behavior.proto";
+import "google/api/metric.proto";
+import "google/api/monitored_resource.proto";
+import "google/api/resource.proto";
+import "google/api/visibility.proto";
+import "google/protobuf/timestamp.proto";
+import "storage/datapol/annotations/proto/semantic_annotations.proto";
+
+option ruby_package = "Google::Cloud::Monitoring::V3";
+option php_namespace = "Google\\Cloud\\Monitoring\\V3";
+option csharp_namespace = "Google.Cloud.Monitoring.V3";
+option go_package = "cloud.google.com/go/monitoring/apiv3/v2/monitoringpb;monitoringpb";
+option java_multiple_files = true;
+option java_outer_classname = "IncidentAlertProto";
+option java_package = "com.google.monitoring.v3";
+
+message Alert {
+    string name = 1;
+    
+    State state = 2;
+    enum State {
+        STATE_UNSPECIFIED = 0;
+        OPENED = 1;
+        CLOSED = 2;
+    }
+    
+    protobuf.Timestamp open_time = 3;
+    protobuf.Timestamp close_time = 4;
+    api.MonitoredResource resource = 5;
+    api.MonitoredResourceMetadata metadata = 6;
+    api.Metric metric = 7;
+    
+    LogMetadata log = 8;
+    message LogMetadata {
+        map<string, string> extracted_labels = 1;
+    }
+    
+    Severity severity = 9;
+    enum Severity {
+        SEVERITY_UNSPECIFIED = 0;
+        CRITICAL = 1;
+        ERROR = 2;
+        WARNING = 3;
+    }
+}

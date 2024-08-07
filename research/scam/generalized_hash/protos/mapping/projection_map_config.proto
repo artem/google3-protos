@@ -1,0 +1,40 @@
+syntax = "proto3";
+
+package research_scam.generalized_hash;
+
+import "research/scam/generalized_hash/protos/generalized_training.proto";
+import "storage/datapol/annotations/proto/semantic_annotations.proto";
+
+message RandomProjectionConfig {
+    uint64 input_dimension = 1;
+    uint64 number_directions = 2;
+    bool orthogonalize = 3;
+}
+
+message CirculantProjectionConfig {
+    uint64 input_dimension = 1;
+    uint64 number_directions = 2;
+}
+
+message ProjectionMapConfig {
+    uint64 number_directions = 1;
+    
+    InputRequirement input_requirement = 3;
+    enum InputRequirement {
+        FULL = 0;
+        SAMPLED = 1;
+    }
+    
+    TrainingSamplingConfig sampling_config = 4;
+}
+
+message PcaMapConfig {
+    ProjectionMapConfig proj_config = 1;
+    bool rotate_projections = 2;
+}
+
+message ItqMapConfig {
+    ProjectionMapConfig proj_config = 1;
+    bool rotate_projections = 2;
+    TrainingOptimizationConfig optimization_config = 3;
+}

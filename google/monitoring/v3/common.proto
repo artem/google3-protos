@@ -4,6 +4,7 @@ package google.monitoring.v3;
 
 import "google/api/auditing.proto";
 import "google/api/distribution.proto";
+import "google/api/policy.proto";
 import "google/api/visibility.proto";
 import "google/logging/data_governance.proto";
 import "google/protobuf/duration.proto";

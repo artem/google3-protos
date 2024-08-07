@@ -1,0 +1,81 @@
+syntax = "proto3";
+
+package envoy.service.status.v3;
+
+import "third_party/envoy/src/api/envoy/admin/v3/config_dump_shared.proto";
+import "third_party/envoy/src/api/envoy/config/core/v3/base.proto";
+import "third_party/envoy/src/api/envoy/type/matcher/v3/node.proto";
+import "google/api/annotations.proto";
+import "google/protobuf/any.proto";
+import "google/protobuf/timestamp.proto";
+import "third_party/envoy/src/api/envoy/annotations/deprecation.proto";
+import "third_party/udpa/udpa/annotations/status.proto";
+import "third_party/udpa/udpa/annotations/versioning.proto";
+
+option go_package = "github.com/envoyproxy/go-control-plane/envoy/service/status/v3;statusv3";
+option java_multiple_files = true;
+option java_outer_classname = "CsdsProto";
+option java_package = "io.envoyproxy.envoy.service.status.v3";
+
+service ClientStatusDiscoveryService {
+    rpc StreamClientStatus(stream ClientStatusRequest) returns (stream ClientStatusResponse);
+    rpc FetchClientStatus(ClientStatusRequest) returns (ClientStatusResponse);
+}
+
+message ClientStatusRequest {
+    repeated .envoy.type.matcher.v3.NodeMatcher node_matchers = 1;
+    .envoy.config.core.v3.Node node = 2;
+    bool exclude_resource_contents = 3;
+}
+
+message PerXdsConfig {
+    ConfigStatus status = 1;
+    ClientConfigStatus client_status = 7 [deprecated = true];
+    
+    oneof per_xds_config {
+        .envoy.admin.v3.ListenersConfigDump listener_config = 2;
+        .envoy.admin.v3.ClustersConfigDump cluster_config = 3;
+        .envoy.admin.v3.RoutesConfigDump route_config = 4;
+        .envoy.admin.v3.ScopedRoutesConfigDump scoped_route_config = 5;
+        .envoy.admin.v3.EndpointsConfigDump endpoint_config = 6;
+    }
+}
+
+message ClientConfig {
+    .envoy.config.core.v3.Node node = 1;
+    repeated PerXdsConfig xds_config = 2 [deprecated = true];
+    
+    repeated GenericXdsConfig generic_xds_configs = 3;
+    message GenericXdsConfig {
+        string type_url = 1;
+        string name = 2;
+        string version_info = 3;
+        google.protobuf.Any xds_config = 4;
+        google.protobuf.Timestamp last_updated = 5;
+        ConfigStatus config_status = 6;
+        .envoy.admin.v3.ClientResourceStatus client_status = 7;
+        .envoy.admin.v3.UpdateFailureState error_state = 8;
+        bool is_static_resource = 9;
+    }
+    
+    string client_scope = 4;
+}
+
+message ClientStatusResponse {
+    repeated ClientConfig config = 1;
+}
+
+enum ConfigStatus {
+    UNKNOWN = 0;
+    SYNCED = 1;
+    NOT_SENT = 2;
+    STALE = 3;
+    ERROR = 4;
+}
+
+enum ClientConfigStatus {
+    CLIENT_UNKNOWN = 0;
+    CLIENT_REQUESTED = 1;
+    CLIENT_ACKED = 2;
+    CLIENT_NACKED = 3;
+}

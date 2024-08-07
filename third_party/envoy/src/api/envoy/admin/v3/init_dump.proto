@@ -1,0 +1,18 @@
+syntax = "proto3";
+
+package envoy.admin.v3;
+
+import "third_party/udpa/udpa/annotations/status.proto";
+
+option go_package = "github.com/envoyproxy/go-control-plane/envoy/admin/v3;adminv3";
+option java_multiple_files = true;
+option java_outer_classname = "InitDumpProto";
+option java_package = "io.envoyproxy.envoy.admin.v3";
+
+message UnreadyTargetsDumps {
+    repeated UnreadyTargetsDump unready_targets_dumps = 1;
+    message UnreadyTargetsDump {
+        string name = 1;
+        repeated string target_names = 2;
+    }
+}

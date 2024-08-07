@@ -2,6 +2,7 @@ syntax = "proto3";
 
 package google.monitoring.v3;
 
+import "google/api/visibility.proto";
 import "storage/datapol/annotations/proto/semantic_annotations.proto";
 
 option ruby_package = "Google::Cloud::Monitoring::V3";
@@ -44,6 +45,7 @@ message EventAnnotation {
         UPTIME_CHECK_FAILURE = 19;
         CLOUD_ALERTING_ALERT = 22;
         SERVICE_HEALTH_INCIDENT = 23;
+        SAP_BACKINT = 24;
     }
     
     string filter = 3;

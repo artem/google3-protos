@@ -1,54 +1,55 @@
 syntax = "proto2";
 
-import "net/proto2/proto/descriptor.proto";
 package googlesql;
 
-option java_package = "com.google.storage.googlesql";
+import "net/proto2/proto/descriptor.proto";
+
+option cc_enable_arenas = true;
 option java_outer_classname = "TypeAnnotationProto";
+option java_package = "com.google.storage.googlesql";
 
 message FieldFormat {
-  enum Format {
-    DEFAULT_FORMAT = 0;
-    DATE = 1;
-    TIMESTAMP_SECONDS = 2;
-    TIMESTAMP_MILLIS = 3;
-    TIMESTAMP_MICROS = 4;
-    TIMESTAMP_NANOS = 5;
-    DATE_DECIMAL = 6;
-    TIME_MICROS = 7;
-    DATETIME_MICROS = 8;
-    __FieldFormat_Type__switch_must_have_a_default__ = -1;
-  }
+    enum Format {
+        DEFAULT_FORMAT = 0;
+        DATE = 1;
+        TIMESTAMP_SECONDS = 2;
+        TIMESTAMP_MILLIS = 3;
+        TIMESTAMP_MICROS = 4;
+        TIMESTAMP_NANOS = 5;
+        DATE_DECIMAL = 6;
+        TIME_MICROS = 7;
+        DATETIME_MICROS = 8;
+        ST_GEOGRAPHY_ENCODED = 9;
+        NUMERIC = 10;
+        BIGNUMERIC = 11;
+        JSON = 12;
+        INTERVAL = 14;
+        TOKENLIST = 15;
+        RANGE_DATES_ENCODED = 16;
+        RANGE_DATETIMES_ENCODED = 17;
+        RANGE_TIMESTAMPS_ENCODED = 18;
+        UUID = 19;
+        __FieldFormat_Type__switch_must_have_a_default__ = -1;
+    }
 }
 
 message DeprecatedEncoding {
-  enum Encoding {
-    option allow_alias = true;
-    DEFAULT_ENCODING = 0;
-    DATE_PACKED32 = 1;
-    DATE_DECIMAL = 1;
-    __FieldFormat_Encoding__switch_must_have_a_default__ = -1;
-  }
+    enum Encoding {
+        option allow_alias = true;
+        DEFAULT_ENCODING = 0;
+        DATE_DECIMAL = 1;
+        DATE_PACKED32 = 1 [deprecated = true];
+        __FieldFormat_Encoding__switch_must_have_a_default__ = -1;
+    }
 }
 
 extend .proto2.FieldOptions {
-  optional .googlesql.FieldFormat.Format format = 68711883;
-}
-
-extend .proto2.FieldOptions {
-  optional .googlesql.FieldFormat.Format type = 49796453;
-}
-
-extend .proto2.FieldOptions {
-  optional .googlesql.DeprecatedEncoding.Encoding encoding = 62897319;
-}
-
-extend .proto2.FieldOptions {
-  optional bool use_defaults = 49779519 [default = true];
+    optional FieldFormat.Format format = 68711883;
+    optional FieldFormat.Format type = 49796453;
+    optional DeprecatedEncoding.Encoding encoding = 62897319;
+    optional bool use_defaults = 49779519 [default = true];
 }
 
 extend .proto2.MessageOptions {
-  optional bool use_field_defaults = 49659010 [default = true];
+    optional bool use_field_defaults = 49659010 [default = true];
 }
-
-

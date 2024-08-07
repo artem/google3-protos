@@ -28,6 +28,7 @@ message OpMetrics {
     uint64 self_time_ps = 1;
     uint64 flops = 2;
     uint64 model_flops = 24;
+    uint64 fingerprint = 25;
     uint64 bytes_accessed = 5;
     
     repeated MemoryAccessed memory_accessed_breakdown = 19;

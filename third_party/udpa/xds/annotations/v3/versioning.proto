@@ -1,0 +1,15 @@
+syntax = "proto3";
+
+package xds.annotations.v3;
+
+import "net/proto2/proto/descriptor.proto";
+
+option go_package = "github.com/cncf/xds/go/xds/annotations/v3";
+
+message VersioningAnnotation {
+    string previous_message_type = 1;
+}
+
+extend .proto2.MessageOptions {
+    VersioningAnnotation versioning = 92389011;
+}

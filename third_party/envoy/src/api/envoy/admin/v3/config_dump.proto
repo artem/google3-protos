@@ -1,0 +1,45 @@
+syntax = "proto3";
+
+package envoy.admin.v3;
+
+import "third_party/envoy/src/api/envoy/admin/v3/config_dump_shared.proto";
+import "third_party/envoy/src/api/envoy/config/bootstrap/v3/bootstrap.proto";
+import "google/protobuf/any.proto";
+import "google/protobuf/timestamp.proto";
+import "third_party/udpa/udpa/annotations/status.proto";
+import "third_party/udpa/udpa/annotations/versioning.proto";
+
+option go_package = "github.com/envoyproxy/go-control-plane/envoy/admin/v3;adminv3";
+option java_multiple_files = true;
+option java_outer_classname = "ConfigDumpProto";
+option java_package = "io.envoyproxy.envoy.admin.v3";
+
+message ConfigDump {
+    repeated google.protobuf.Any configs = 1;
+}
+
+message BootstrapConfigDump {
+    .envoy.config.bootstrap.v3.Bootstrap bootstrap = 1;
+    google.protobuf.Timestamp last_updated = 2;
+}
+
+message SecretsConfigDump {
+    repeated StaticSecret static_secrets = 1;
+    message StaticSecret {
+        string name = 1;
+        google.protobuf.Timestamp last_updated = 2;
+        google.protobuf.Any secret = 3;
+    }
+    
+    repeated DynamicSecret dynamic_active_secrets = 2;
+    message DynamicSecret {
+        string name = 1;
+        string version_info = 2;
+        google.protobuf.Timestamp last_updated = 3;
+        google.protobuf.Any secret = 4;
+        UpdateFailureState error_state = 5;
+        ClientResourceStatus client_status = 6;
+    }
+    
+    repeated DynamicSecret dynamic_warming_secrets = 3;
+}

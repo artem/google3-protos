@@ -1,0 +1,23 @@
+syntax = "proto2";
+
+package research_scam;
+
+import "research/scam/data_format/features.proto";
+
+message AllHashParameters {
+    optional HashingMethod hashing_method = 1;
+    enum HashingMethod {
+        ASYMMETRIC_HASH = 0;
+        MIN_HASH = 1;
+        LSH = 2;
+        PCA_HASH = 3;
+    }
+    
+    repeated PerBitParameters per_bit_parameters = 2;
+}
+
+message PerBitParameters {
+    optional GenericFeatureVector projection_direction = 1;
+    optional float threshold = 2;
+    optional float frequency = 3;
+}

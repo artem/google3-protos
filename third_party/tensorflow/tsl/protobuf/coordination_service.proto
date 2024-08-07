@@ -22,6 +22,7 @@ service CoordinationService {
     rpc DeleteKeyValue(DeleteKeyValueRequest) returns (DeleteKeyValueResponse);
     rpc Barrier(BarrierRequest) returns (BarrierResponse);
     rpc CancelBarrier(CancelBarrierRequest) returns (CancelBarrierResponse);
+    rpc PollForError(PollForErrorRequest) returns (PollForErrorResponse);
 }
 
 message CoordinatedTask {
@@ -68,6 +69,14 @@ message HeartbeatRequest {
 
 message HeartbeatResponse {
     fixed64 leader_incarnation = 1;
+}
+
+message PollForErrorRequest {
+    CoordinatedTask source_task = 1;
+}
+
+message PollForErrorResponse {
+    
 }
 
 message WaitForAllTasksRequest {

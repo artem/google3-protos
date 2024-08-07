@@ -1,0 +1,20 @@
+syntax = "proto3";
+
+package envoy.extensions.transport_sockets.tls.v3;
+
+import "third_party/envoy/src/api/envoy/config/core/v3/base.proto";
+import "third_party/udpa/udpa/annotations/status.proto";
+import "third_party/protoc_gen_validate/validate/validate.proto";
+
+option go_package = "github.com/envoyproxy/go-control-plane/envoy/extensions/transport_sockets/tls/v3;tlsv3";
+option java_multiple_files = true;
+option java_outer_classname = "TlsSpiffeValidatorConfigProto";
+option java_package = "io.envoyproxy.envoy.extensions.transport_sockets.tls.v3";
+
+message SPIFFECertValidatorConfig {
+    repeated TrustDomain trust_domains = 1;
+    message TrustDomain {
+        string name = 1;
+        .envoy.config.core.v3.DataSource trust_bundle = 2;
+    }
+}

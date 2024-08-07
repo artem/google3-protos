@@ -1,0 +1,17 @@
+syntax = "proto3";
+
+package envoy.config.trace.v3;
+
+import public "third_party/envoy/src/api/envoy/config/trace/v3/datadog.proto";
+import public "third_party/envoy/src/api/envoy/config/trace/v3/dynamic_ot.proto";
+import public "third_party/envoy/src/api/envoy/config/trace/v3/http_tracer.proto";
+import public "third_party/envoy/src/api/envoy/config/trace/v3/lightstep.proto";
+import public "third_party/envoy/src/api/envoy/config/trace/v3/opencensus.proto";
+import public "third_party/envoy/src/api/envoy/config/trace/v3/opentelemetry.proto";
+import public "third_party/envoy/src/api/envoy/config/trace/v3/service.proto";
+import public "third_party/envoy/src/api/envoy/config/trace/v3/zipkin.proto";
+
+option go_package = "github.com/envoyproxy/go-control-plane/envoy/config/trace/v3;tracev3";
+option java_multiple_files = true;
+option java_outer_classname = "TraceProto";
+option java_package = "io.envoyproxy.envoy.config.trace.v3";

@@ -1,0 +1,85 @@
+syntax = "proto3";
+
+package envoy.config.overload.v3;
+
+import "third_party/envoy/src/api/envoy/type/v3/percent.proto";
+import "google/protobuf/any.proto";
+import "google/protobuf/duration.proto";
+import "third_party/udpa/udpa/annotations/status.proto";
+import "third_party/udpa/udpa/annotations/versioning.proto";
+import "third_party/protoc_gen_validate/validate/validate.proto";
+
+option go_package = "github.com/envoyproxy/go-control-plane/envoy/config/overload/v3;overloadv3";
+option java_multiple_files = true;
+option java_outer_classname = "OverloadProto";
+option java_package = "io.envoyproxy.envoy.config.overload.v3";
+
+message ResourceMonitor {
+    string name = 1;
+    
+    oneof config_type {
+        google.protobuf.Any typed_config = 3;
+    }
+    
+    reserved 2, "config";
+}
+
+message ThresholdTrigger {
+    double value = 1;
+}
+
+message ScaledTrigger {
+    double scaling_threshold = 1;
+    double saturation_threshold = 2;
+}
+
+message Trigger {
+    string name = 1;
+    
+    oneof trigger_oneof {
+        ThresholdTrigger threshold = 2;
+        ScaledTrigger scaled = 3;
+    }
+}
+
+message ScaleTimersOverloadActionConfig {
+    repeated ScaleTimer timer_scale_factors = 1;
+    message ScaleTimer {
+        TimerType timer = 1;
+        
+        oneof overload_adjust {
+            google.protobuf.Duration min_timeout = 2;
+            .envoy.type.v3.Percent min_scale = 3;
+        }
+    }
+    
+    enum TimerType {
+        UNSPECIFIED = 0;
+        HTTP_DOWNSTREAM_CONNECTION_IDLE = 1;
+        HTTP_DOWNSTREAM_STREAM_IDLE = 2;
+        TRANSPORT_SOCKET_CONNECT = 3;
+    }
+}
+
+message OverloadAction {
+    string name = 1;
+    repeated Trigger triggers = 2;
+    google.protobuf.Any typed_config = 3;
+}
+
+message LoadShedPoint {
+    string name = 1;
+    repeated Trigger triggers = 2;
+}
+
+message BufferFactoryConfig {
+    uint32 minimum_account_to_track_power_of_two = 1;
+}
+
+message OverloadManager {
+    google.protobuf.Duration refresh_interval = 1;
+    repeated ResourceMonitor resource_monitors = 2;
+    repeated OverloadAction actions = 3;
+    repeated LoadShedPoint loadshed_points = 5;
+    BufferFactoryConfig buffer_factory_config = 4;
+}

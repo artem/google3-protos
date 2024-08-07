@@ -1,0 +1,99 @@
+syntax = "proto2";
+
+package f1.query;
+
+import "net/proto2/proto/descriptor.proto";
+import "storage/f1/proto/value.proto";
+
+option java_outer_classname = "Path";
+option java_package = "com.google.storage.f1";
+
+message DecodePathElementInfo {
+    optional int32 proto_field_number = 1 [default = -1];
+    optional int32 index = 2 [default = -1];
+    optional bool is_has_value = 3;
+    optional Value default_value = 5;
+    
+    optional DecodePathElementFieldType field_type = 6 [default = FIELD_TYPE_UNKNOWN];
+    enum DecodePathElementFieldType {
+        FIELD_TYPE_UNKNOWN = 1;
+        FIELD_TYPE_PROTO = 2;
+        FIELD_TYPE_SUBQUERY_COLUMN = 4;
+        FIELD_TYPE_STATS_COLUMN = 5;
+        FIELD_TYPE_SPANNER_COLUMN = 6;
+        FIELD_TYPE_TABLE_READER_COLUMN = 7;
+        FIELD_TYPE_SPANNER_INDEX_KEY = 8;
+        FIELD_TYPE_ARRAY_ROOT_FIELD = 9;
+        FIELD_TYPE_SELECTABLE_ROOT_FIELD = 10;
+        FIELD_TYPE_SPANNER_INDEX_COLUMN = 11;
+        FIELD_TYPE_RECORDIO_METADATA_COLUMN = 12;
+        FIELD_TYPE_COLUMNIO_PSEUDO_COLUMN = 13;
+        FIELD_TYPE_LOGS_PSEUDO_COLUMN = 14;
+        FIELD_TYPE_SPANNER_PSEUDO_COLUMN = 15;
+        FIELD_TYPE_LIGHTNING_PSEUDO_COLUMN = 16;
+        FIELD_TYPE_CSV_PSEUDO_COLUMN = 18;
+        FIELD_TYPE_EXECUTION_ONLY_COLUMN = 17;
+        FIELD_TYPE_SSTABLE_PSEUDO_COLUMN = 19;
+        FIELD_TYPE_BIGTABLE_PSEUDO_COLUMN = 20;
+        FIELD_TYPE_QUERY_PSEUDO_COLUMN = 21;
+    }
+    
+    optional int32 column_number = 7 [default = -1];
+    optional string proto_field_name = 8;
+    repeated int32 known_enum_value = 9;
+    optional bool proto_data_is_normalized_and_valid = 10;
+    optional .proto2.FieldDescriptorProto.Type proto_field_type = 11;
+    repeated int32 oneof_sibling_proto_field_number = 12;
+    optional .proto2.FieldDescriptorProto.Label proto_field_label = 14;
+    optional int32 message_set_extension_number = 15;
+    optional string extension_scope = 16;
+    optional bool is_extension = 17;
+    
+    optional PseudoColumnType pseudo_column_type = 18;
+    enum PseudoColumnType {
+        PARTITION_NAME_COLUMN = 0;
+        PARTITION_DATE_COLUMN = 1;
+        HIDDEN_SHARD_ID_COLUMN = 2;
+        FILE_SHARD_NUMBER_COLUMN = 3;
+        FILE_ROW_NUMBER_COLUMN = 4;
+        LOG_FILE_MACHINE_COLUMN = 5;
+        LOG_FILE_SHARD_COLUMN = 6;
+        LOG_METADATA_ERROR_CODE = 7;
+        LOG_METADATA_FILENAME = 8;
+        LOG_METADATA_BEGIN_OFFSET = 9;
+        LOG_METADATA_END_OFFSET = 10;
+        INDEX_KEY = 11;
+        LOG_IMPORT_TIME_COLUMN = 12;
+        F1_QUERY_OPTIMIZED_VERSION_COLUMN = 13;
+        F1_QUERY_OPTIMIZED_IMPORT_SHARD_COLUMN = 14;
+        BIGTABLE_METADATA_ERROR_CODE = 15;
+        INDEX_KEY_ARRAY = 16;
+        PARTITION_DATE_STRING_COLUMN = 17;
+        LOG_DIFF_LOG_KEY = 18;
+        LOG_DIFF_LOG_TIMESTAMP = 19;
+        F1_QUERY_OPTIMIZED_IMPORT_CELL_COLUMN = 20;
+        PTOKEN = 21;
+        CUSTOM_PSEUDO_COLUMN = 22;
+    }
+    
+    optional string full_field_name = 19;
+    
+    optional FieldPathList proto_subfields_to_read = 20;
+    message FieldPathList {
+        repeated FieldPath field_path = 1;
+        message FieldPath {
+            repeated FieldPathElementInfo path_element = 1;
+            message FieldPathElementInfo {
+                optional string field_name = 1;
+                optional string extension_scope = 2;
+                optional int32 tag_number = 3;
+                optional bool extends_message_set = 4;
+            }
+            
+            optional bool include_all_descendants = 2;
+        }
+    }
+    
+    optional bool only_used_in_scan_conjunct = 21;
+    optional bool scan_from_array = 22;
+}

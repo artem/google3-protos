@@ -1,0 +1,20 @@
+syntax = "proto3";
+
+package envoy.admin.v3;
+
+import "third_party/udpa/udpa/annotations/status.proto";
+import "third_party/udpa/udpa/annotations/versioning.proto";
+
+option go_package = "github.com/envoyproxy/go-control-plane/envoy/admin/v3;adminv3";
+option java_multiple_files = true;
+option java_outer_classname = "MemoryProto";
+option java_package = "io.envoyproxy.envoy.admin.v3";
+
+message Memory {
+    uint64 allocated = 1;
+    uint64 heap_size = 2;
+    uint64 pageheap_unmapped = 3;
+    uint64 pageheap_free = 4;
+    uint64 total_thread_cache = 5;
+    uint64 total_physical_bytes = 6;
+}

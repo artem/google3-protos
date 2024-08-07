@@ -1,0 +1,7 @@
+syntax = "proto2";
+
+package research_scam;
+
+message MinDistanceConfig {
+    optional float min_distance = 1 [default = -inf];
+}

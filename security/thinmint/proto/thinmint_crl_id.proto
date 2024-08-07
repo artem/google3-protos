@@ -1,0 +1,31 @@
+syntax = "proto2";
+
+package thinmint;
+
+option java_package = "com.google.protos.thinmint";
+
+enum RevocationIdPrefix {
+    THINMINT_PER_USER = 32;
+    LOAS2_MACHINE_CERT = 34;
+    LOAS2_USER_CERT = 36;
+    LOAS2_NET_CERT = 38;
+    LOAS2_PRODID_MACHINE_CERT = 43;
+    LOAS2_TRANSIENT_MACHINE_CERT = 69;
+    CMCA_CERT = 52;
+    RANDOM_NON_CONTAGIOUS_THINMINT_SERIAL = 74;
+    RANDOM_CONTAGIOUS_THINMINT_SERIAL = 83;
+}
+
+enum RevocationApplicationId {
+    UNIT_TEST = 1;
+    CONGA = 2;
+    SIGNED_RECORD = 3 [deprecated = true];
+    BRIA = 4;
+    KHARON = 5;
+    MONARCH_PUSHER = 6;
+    UNION = 7;
+    COLABORATORY = 8;
+    PLACER = 9;
+    RAPID = 10;
+    CRL_PERFGATE = 11;
+}

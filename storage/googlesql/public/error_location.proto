@@ -1,0 +1,26 @@
+syntax = "proto2";
+
+package googlesql;
+
+import "net/proto2/bridge/proto/message_set.proto";
+
+option java_package = "com.google.storage.googlesql";
+
+message ErrorLocation {
+    optional int32 line = 1 [default = 1];
+    optional int32 column = 2 [default = 1];
+    optional string filename = 3;
+    optional int32 input_start_line_offset = 5;
+    optional int32 input_start_column_offset = 6;
+    repeated ErrorSource error_source = 4;
+    
+    extend .proto2.bridge.MessageSet {
+        optional ErrorLocation message_set_extension = 65215595;
+    }
+}
+
+message ErrorSource {
+    optional string error_message = 1;
+    optional string error_message_caret_string = 2;
+    optional ErrorLocation error_location = 3;
+}

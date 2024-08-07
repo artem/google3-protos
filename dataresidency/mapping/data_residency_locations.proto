@@ -1,0 +1,44 @@
+syntax = "proto3";
+
+package data_residency.mapping;
+
+import "dataresidency/mapping/cloud/cloud_locations_enum.proto";
+import "dataresidency/mapping/workspace/workspace_locations_enum.proto";
+import "privacy/data_governance/attributes/proto/classification.proto";
+
+option java_multiple_files = true;
+option java_package = "com.google.dataresidency.mapping";
+
+message DataResidencyLocationProto {
+    DataResidencyNamespace data_residency_namespace = 1;
+    string location_key = 2;
+}
+
+message DataResidencyLocationEnum {
+    oneof enum_value {
+        workspace.WorkspaceDataResidencyLocation workspace_enum = 1;
+        cloud.CloudDataResidencyLocation cloud_enum = 2;
+    }
+}
+
+message DataResidencyLocationInfo {
+    repeated string prod_region = 1;
+    DataResidencyLocationEnum location_enum = 2;
+}
+
+message DataResidencyLocations {
+    DataResidencyNamespace data_residency_namespace = 1;
+    map<string, DataResidencyLocationInfo> location_info = 2;
+    bool allow_overlapping_locations = 3;
+}
+
+message DataResidencyLocationsBundle {
+    repeated DataResidencyLocations all_data_residency_locations = 1;
+}
+
+enum DataResidencyNamespace {
+    UNDEFINED = 0;
+    TEST = 1;
+    WORKSPACE = 2;
+    CLOUD = 3;
+}

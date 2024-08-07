@@ -40,7 +40,6 @@ message AuthorityFromEnvironment {
     enum EnvVars {
         END_USER_CREDS_FILE = 1;
         IAM_REQUEST_ATTRS_FILE = 2;
-        DATA_ACCESS_REASON_FILE = 3;
         DATA_ACCESS_REASONS_FILE = 4;
         DATA_ACCESS_TARGET_RESOURCES_FILE = 5;
     }

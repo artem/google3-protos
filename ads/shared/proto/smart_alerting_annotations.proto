@@ -1,0 +1,27 @@
+syntax = "proto2";
+
+package ads_proto;
+
+import "logs/proto/logs_annotations/logs_annotations.proto";
+import "storage/datapol/annotations/proto/semantic_annotations.proto";
+
+option cc_enable_arenas = true;
+
+message TrafficSliceOwnershipMetadata {
+    optional string description = 2;
+    optional string endpoint_identifier = 14;
+    repeated string alert_contacts = 3;
+    repeated string slice_monitoring_owners = 5;
+    optional int64 team_buganizer_component_id = 6;
+    optional int64 team_buganizer_component_smart_alerting = 8;
+    optional int64 team_id = 7;
+    optional bool is_paging_mode_only = 12;
+    repeated string alert_contacts_cc = 9;
+    repeated string alert_contacts_paging = 4;
+    repeated string escalation_ladder = 10;
+    optional string escalation_notes = 11;
+    optional bool is_receiving_alerts = 15 [default = true];
+    repeated int64 subscriber_team_ids = 17 [packed = true];
+    
+    reserved 1, 13, 16, 18;
+}

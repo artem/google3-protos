@@ -1,0 +1,18 @@
+syntax = "proto3";
+
+package research_scam.generalized_hash;
+
+import "research/scam/data_format/features.proto";
+import "research/scam/generalized_hash/protos/generalized_vector_collection.proto";
+import "storage/datapol/annotations/proto/semantic_annotations.proto";
+
+message SikhMapConfig {
+    uint64 input_dimension = 1;
+    uint64 number_directions = 2;
+    float gamma = 3;
+}
+
+message SikhMapModel {
+    GeneralizedVectorCollection weights = 1;
+    GenericFeatureVector bias_vector = 2;
+}

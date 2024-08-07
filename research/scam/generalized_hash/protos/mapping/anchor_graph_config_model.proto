@@ -1,0 +1,33 @@
+syntax = "proto3";
+
+package research_scam.generalized_hash;
+
+import "research/scam/generalized_hash/protos/generalized_training.proto";
+import "research/scam/generalized_hash/protos/generalized_vector_collection.proto";
+import "research/scam/proto/distance_measure.proto";
+import "storage/datapol/annotations/proto/semantic_annotations.proto";
+
+message AnchorGraphMapConfig {
+    int32 number_anchors = 1;
+    int32 number_nearest_anchors = 2;
+    int32 number_output_bits = 3;
+    DistanceMeasureConfig distance = 4;
+    float width = 5;
+    KmeansConfig kmeans_config = 6;
+    
+    InputRequirement input_requirement = 7;
+    enum InputRequirement {
+        FULL = 0;
+        SAMPLED = 1;
+    }
+    
+    TrainingSamplingConfig sampling_config = 8;
+}
+
+message AnchorGraphMapModel {
+    GeneralizedVectorCollection anchors = 1;
+    int32 number_nearest_anchors = 2;
+    GeneralizedVectorCollection embedding_matrix = 3;
+    DistanceMeasureConfig distance = 4;
+    float width = 5;
+}

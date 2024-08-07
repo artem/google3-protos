@@ -9,6 +9,7 @@ import "platforms/asic_sw/lib/common/architectural_state_collection_config.proto
 import "platforms/asic_sw/lib/common/arm/results.proto";
 import "platforms/asic_sw/lib/common/csr_snapshot.proto";
 import "platforms/asic_sw/lib/common/kernel_device_info.proto";
+import "platforms/asic_sw/proto/chip_location.proto";
 import "platforms/asic_sw/proto/device_identifiers.proto";
 import "platforms/asic_sw/tools/common/register_dump.proto";
 
@@ -36,6 +37,7 @@ message GeneralInfo {
     optional string kernel_version = 4;
     optional google.protobuf.Timestamp boot_time = 5;
     optional string ae33_devpath = 6;
+    optional .asic_sw.proto.ChipLocation chip_location = 7;
 }
 
 message Info {

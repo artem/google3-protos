@@ -404,13 +404,15 @@ message MethodOptions {
     optional bool go_legacy_channel_api = 29;
     optional int64 legacy_client_initial_tokens = 24 [default = -1];
     optional int64 legacy_server_initial_tokens = 25 [default = -1];
+    optional int64 client_max_tokens = 30 [default = 16000000];
+    optional int64 server_max_tokens = 31 [default = 16000000];
     
     optional TokenUnit legacy_token_unit = 28 [default = BYTE];
     enum TokenUnit {
         MESSAGE = 0;
         BYTE = 1;
         BYTEGRACE = 2;
-        AUTOMATIC = 3;
+        AUTOMATIC = 3 [deprecated = true];
     }
     
     optional LogLevel log_level = 27 [default = LOG_HEADER_AND_NON_PRIVATE_PAYLOAD_INTERNAL];
@@ -448,7 +450,7 @@ message StreamOptions {
         MESSAGE = 0;
         BYTE = 1;
         BYTEGRACE = 2;
-        AUTOMATIC = 3;
+        AUTOMATIC = 3 [deprecated = true];
     }
     
     optional MethodOptions.SecurityLevel security_level = 4 [default = NONE];

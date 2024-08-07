@@ -1,0 +1,16 @@
+syntax = "proto3";
+
+package research_scam.generalized_hash;
+
+import "research/scam/generalized_hash/protos/generalized_training.proto";
+import "research/scam/generalized_hash/protos/generalized_vector_collection.proto";
+import "storage/datapol/annotations/proto/semantic_annotations.proto";
+
+message AqbeMapConfig {
+    int32 number_output_bits = 1;
+    TrainingOptimizationConfig rotation_config = 2;
+}
+
+message AqbeMapModel {
+    GeneralizedVectorCollection rotation_matrix = 1;
+}

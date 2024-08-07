@@ -1,0 +1,32 @@
+syntax = "proto3";
+
+package research_scam.generalized_hash;
+
+import "research/scam/data_format/features.proto";
+import "research/scam/generalized_hash/protos/generalized_training.proto";
+import "research/scam/generalized_hash/protos/generalized_vector_collection.proto";
+import "research/scam/proto/distance_measure.proto";
+import "storage/datapol/annotations/proto/semantic_annotations.proto";
+
+message SphericalMapConfig {
+    int32 number_spheres = 1;
+    float error_tolerance_average = 2;
+    float error_tolerance_stdev = 3;
+    int32 max_number_iterations = 4;
+    DistanceMeasureConfig distance = 5;
+    KmeansConfig kmeans_config = 6;
+    
+    InputRequirement input_requirement = 7;
+    enum InputRequirement {
+        FULL = 0;
+        SAMPLED = 1;
+    }
+    
+    TrainingSamplingConfig sampling_config = 8;
+}
+
+message SphericalMapModel {
+    GeneralizedVectorCollection centers = 1;
+    GenericFeatureVector radii = 2;
+    DistanceMeasureConfig distance = 3;
+}

@@ -114,7 +114,6 @@ message DebugOptions {
     int64 xla_gpu_reduce_scatter_combine_threshold_bytes = 213;
     bool xla_gpu_enable_all_gather_combine_by_dim = 254;
     bool xla_gpu_enable_reduce_scatter_combine_by_dim = 257;
-    bool xla_gpu_enable_all_reduce_splitter = 299;
     bool xla_gpu_enable_reassociation_for_converted_ar = 209;
     int32 xla_gpu_all_reduce_blueconnect_num_devices_per_host = 159;
     bool xla_gpu_enable_while_loop_reduce_scatter_code_motion = 203;
@@ -129,7 +128,7 @@ message DebugOptions {
     bool xla_gpu_strict_conv_algorithm_picker = 156;
     bool xla_gpu_enable_custom_fusions = 263;
     string xla_gpu_enable_custom_fusions_re = 264;
-    bool xla_gpu_enable_address_computation_fusion = 105;
+    bool xla_gpu_enable_dynamic_slice_fusion = 105;
     int64 xla_gpu_nccl_termination_timeout_seconds = 163;
     bool xla_gpu_enable_shared_constants = 165;
     bool xla_gpu_enable_cublaslt = 166;
@@ -245,7 +244,6 @@ message DebugOptions {
     bool xla_gpu_enable_host_memory_offloading = 296;
     bool xla_gpu_exclude_nondeterministic_ops = 297;
     bool xla_gpu_nccl_terminate_on_error = 301;
-    bool xla_use_shardonnay = 302;
     bool xla_gpu_shard_autotuning = 304;
     bool xla_gpu_enable_approx_costly_collectives = 305;
     string xla_gpu_kernel_cache_file = 306;
@@ -254,9 +252,13 @@ message DebugOptions {
     int64 xla_cmd_buffer_trace_cache_size = 311;
     bool xla_gpu_temp_buffer_use_separate_color = 312;
     repeated string legacy_command_buffer_custom_call_targets = 314;
+    bool xla_syntax_sugar_async_ops = 315;
+    float xla_gpu_autotune_gemm_rtol = 316;
+    bool xla_enable_command_buffers_during_profiling = 317;
+    int32 xla_gpu_cudnn_gemm_max_plans = 318;
     map<string, string> xla_backend_extra_options = 500;
     
-    reserved 63, 134, 80, 93, 94, 177, 98, 207, 171, 173, 179, 130, 143, 152, 278, 183, 199, 200, 201, 238, 158, 161, 162, 169, 233, 234, 202, 230, 168, 172, 211, 275, 281, 282, 5, 117, 133, 139, 176, 178, 180, 193, 214, 194, 242, 206;
+    reserved 63, 134, 80, 93, 94, 177, 98, 207, 171, 173, 179, 130, 143, 152, 278, 183, 199, 200, 201, 238, 158, 299, 161, 162, 169, 233, 234, 202, 230, 168, 172, 211, 275, 281, 282, 302, 5, 117, 133, 139, 176, 178, 180, 193, 214, 194, 242, 206;
 }
 
 message GpuCompilationEnvironment {
@@ -291,6 +293,7 @@ message ExecutionOptions {
     repeated ShardableValueUpdatePairProto shardable_value_update_pairs = 20;
     bytes fdo_profile = 21;
     int64 device_memory_size = 22;
+    bool use_shardy_partitioner = 24;
     
     reserved 13;
 }
@@ -344,6 +347,7 @@ message HloModuleConfigProto {
     PrecisionConfig.Precision matrix_unit_operand_precision = 29;
     bytes fdo_profile = 31;
     int64 device_memory_size = 32;
+    bool use_shardy_partitioner = 34;
     
     reserved 26;
     

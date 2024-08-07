@@ -1,0 +1,21 @@
+syntax = "proto2";
+
+package research_scam;
+
+import "research/scam/data_format/features.proto";
+
+message HashedItem {
+    optional bytes data_id_str = 1;
+    required bytes indicator_vars = 2;
+    optional bytes soar_indicator_vars = 6;
+    optional int32 soar_partition_idx = 7 [default = -1];
+    optional GenericFeatureVector.RestrictTokens restrict = 4;
+    repeated int64 deprecated_token_membership = 3;
+    
+    optional PackingStrategy packing_strategy = 5 [default = BINARY];
+    enum PackingStrategy {
+        NONE = 0;
+        NIBBLE = 1;
+        BINARY = 2;
+    }
+}

@@ -1,0 +1,21 @@
+syntax = "proto3";
+
+package research_scam.generalized_hash;
+
+import "storage/datapol/annotations/proto/semantic_annotations.proto";
+
+message NormalizationType {
+    enum Enum {
+        UNKNOWN = 0;
+        L2 = 1;
+        L1 = 2;
+    }
+}
+
+message NormalizationMapConfig {
+    NormalizationType.Enum type = 1;
+}
+
+message NormalizationMapModel {
+    NormalizationType.Enum type = 1;
+}

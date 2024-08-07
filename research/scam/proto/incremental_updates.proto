@@ -1,0 +1,50 @@
+syntax = "proto2";
+
+package research_scam;
+
+import "google/protobuf/duration.proto";
+import "google/protobuf/timestamp.proto";
+
+message IncrementalUpdateConfig {
+    optional bool enabled = 1 [default = false];
+    optional uint64 num_datapoints_to_reserve = 5 [default = 0];
+    optional google.protobuf.Duration last_update_timestamp_lifetime = 2;
+    optional bool enable_expiration_timestamps = 4 [default = false];
+    
+    optional Reindexing reindexing = 9;
+    message Reindexing {
+        optional bool enable_manual_retraining_and_reindexing = 1 [default = false];
+    }
+    
+    optional string sharder = 6;
+    optional google.protobuf.Duration startup_catchup_threshold = 7;
+    optional uint32 num_updates_between_garbage_collections = 8 [default = 100000];
+    
+    oneof DurabilityReplication {
+        Pubsub2 pubsub2 = 3;
+    }
+    
+    message Pubsub2 {
+        optional string topic = 1;
+        optional string subscriber_id_base = 2;
+        optional string publisher_id_base = 3;
+        optional bool seek_back_enabled = 4 [default = true];
+        optional bool publish_rpc_updates = 5 [default = true];
+        optional string filter = 6;
+        optional bool use_mod_term_filter = 7 [default = false];
+        optional string mod_term_filter_signature = 8 [default = "fprint"];
+        
+        optional Fifo fifo = 9;
+        message Fifo {
+            optional bool enabled = 1 [default = false];
+            optional google.protobuf.Duration max_msg_pending_time = 2;
+            optional google.protobuf.Duration initial_msg_buffering_period = 3;
+        }
+    }
+}
+
+message IncrementalUpdateMetadata {
+    optional google.protobuf.Timestamp epoch_timestamp = 1;
+    optional google.protobuf.Duration max_epoch_age = 3;
+    optional string version = 2;
+}

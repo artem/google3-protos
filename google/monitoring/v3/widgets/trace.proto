@@ -5,6 +5,7 @@ package google.monitoring.v3.widgets;
 import "google/api/auditing.proto";
 import "google/api/field_behavior.proto";
 import "google/api/visibility.proto";
+import "google/logging/data_governance.proto";
 import "google/protobuf/duration.proto";
 import "storage/datapol/annotations/proto/semantic_annotations.proto";
 
@@ -41,4 +42,6 @@ message TraceQuery {
         
         bool is_root_span = 8;
     }
+    
+    string resource_container = 3;
 }

@@ -143,4 +143,6 @@ message Transform {
         LogLinear log_linear = 11;
         LinearScalingOffsetSqrt linear_scaling_offset_sqrt = 12;
     }
+    
+    reserved 13;
 }

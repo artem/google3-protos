@@ -1,0 +1,39 @@
+syntax = "proto3";
+
+package opencensus.proto.trace.v1;
+
+option ruby_package = "OpenCensus.Proto.Trace.V1";
+option go_package = "github.com/census-instrumentation/opencensus-proto/gen-go/trace/v1";
+option java_multiple_files = true;
+option java_outer_classname = "TraceConfigProto";
+option java_package = "io.opencensus.proto.trace.v1";
+
+message TraceConfig {
+    int64 max_number_of_attributes = 4;
+    int64 max_number_of_annotations = 5;
+    int64 max_number_of_message_events = 6;
+    int64 max_number_of_links = 7;
+    
+    oneof sampler {
+        ProbabilitySampler probability_sampler = 1;
+        ConstantSampler constant_sampler = 2;
+        RateLimitingSampler rate_limiting_sampler = 3;
+    }
+}
+
+message ProbabilitySampler {
+    double samplingProbability = 1;
+}
+
+message ConstantSampler {
+    ConstantDecision decision = 1;
+    enum ConstantDecision {
+        ALWAYS_OFF = 0;
+        ALWAYS_ON = 1;
+        ALWAYS_PARENT = 2;
+    }
+}
+
+message RateLimitingSampler {
+    int64 qps = 1;
+}

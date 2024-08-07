@@ -1,0 +1,110 @@
+syntax = "proto3";
+
+package storage_speckle_postgres_utils_query_stats;
+
+import "storage/datapol/annotations/proto/semantic_annotations.proto";
+
+message Histogram {
+    repeated double bounds = 1;
+    repeated uint64 buckets = 2;
+}
+
+message IndexScanStat {
+    string scan_type = 1;
+    string access_method = 2;
+    Histogram histogram = 3;
+}
+
+message ScanStats {
+    uint64 voxel_scan_count = 1;
+    uint64 native_scan_count = 2;
+    uint64 rowstore_scan_count = 3;
+    uint64 unsupported_func_count = 4;
+    uint64 unsupported_expr_count = 5;
+    uint64 cheaper_index_scan_count = 6;
+    uint64 unsupported_array_count = 7;
+    uint64 seq_scan_count = 8;
+    uint64 index_scan_count = 9;
+    uint64 index_only_scan_count = 10;
+    uint64 bitmap_index_scan_count = 11;
+    uint64 bitmap_heap_scan_count = 12;
+    uint64 too_small_table = 13;
+    uint64 inherit_table = 14;
+    uint64 sample_table = 15;
+    uint64 derived_table = 16;
+    uint64 non_ordinary_table = 17;
+    uint64 catalog_table = 18;
+    uint64 non_persistent_table = 19;
+    uint64 non_columnar_table = 20;
+    uint64 non_columnar_column = 21;
+    uint64 ce_qualified = 22;
+    uint64 expensive_ce_scan = 23;
+    uint64 unsupported_data_type = 24;
+    uint64 ce_total_count = 25;
+    uint64 ce_scan_count = 26;
+    uint64 ce_planned_count = 27;
+    uint64 serializable_xact = 28;
+    uint64 error_extract_minmax = 29;
+    uint64 unqualified_minmax_col = 30;
+    uint64 hashed_inlist = 31;
+    uint64 unexpected_errors_native_scan = 32;
+    uint64 unexpected_errors_voxel_scan = 33;
+    uint64 unexpected_errors_rowstore_scan = 34;
+    uint64 unexpected_errors_voxel_agg = 35;
+    uint64 unexpected_errors_ce = 36;
+    uint64 ce_mv_total_scan_count = 37;
+}
+
+message JoinStats {
+    uint64 hash_join_count = 1;
+}
+
+message QueryStats {
+    ScanStats scan_stats = 1;
+    uint64 query_count = 2;
+    uint64 ce_query_count = 3;
+    ColumnarEngineStats columnar_engine_stats = 4;
+    JoinStats join_stats = 5;
+    repeated IndexScanStat index_scan_stats = 6;
+    uint64 ce_qualified = 7;
+    uint64 ce_total_query_count = 8;
+    uint64 ce_planned_query_count = 9;
+    uint64 auto_hints_planned_query_count = 10;
+    uint64 ri_based_join_elimination_query_count = 11;
+    uint64 mv_regular_refresh_count = 12;
+    uint64 mv_concurrent_refresh_count = 13;
+}
+
+message ExprStats {
+    map<string, uint64> eeop_count = 1;
+    map<string, uint64> func_count = 2;
+    uint64 subplan_use_hash_table_count = 3;
+}
+
+message ColumnarEngineStats {
+    uint64 vectorized_join_count = 1;
+    uint64 vectorized_join_fallback_count = 2;
+    uint64 vectorized_agg_count = 3;
+    uint64 vectorized_part_count = 4;
+    uint64 vectorized_part_fallback_count = 5;
+    uint64 vectorized_part_spill_ssd_count = 6;
+    uint64 vectorized_part_spill_temp_count = 7;
+    uint64 vectorized_part_spill_ssd_bytes = 8;
+    uint64 vectorized_part_spill_temp_bytes = 9;
+    ExprStats native_scan_stats = 10;
+    ExprStats native_agg_stats = 11;
+    uint64 vectorized_part_spill_ssd_temp_count = 12;
+    uint64 materialized_view_scanned_count = 13;
+    uint64 vectorized_aggvj_count = 14;
+    uint64 materialized_view_refreshed_count = 15;
+    uint64 vectorized_aggvj_fallback_count = 16;
+    uint64 select_distinct_optimization_count = 17;
+    uint64 select_agg_distinct_optimization_count = 18;
+    uint64 adaptive_auto_refresh_count = 19;
+    Histogram columnar_unit_scan_count = 20;
+    uint64 mv_concurrent_refresh_ce_count = 21;
+}
+
+message WorkloadStats {
+    QueryStats query_stats = 1;
+}

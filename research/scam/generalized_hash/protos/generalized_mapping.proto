@@ -1,0 +1,71 @@
+syntax = "proto3";
+
+package research_scam.generalized_hash;
+
+import "google/protobuf/empty.proto";
+import "research/scam/generalized_hash/protos/mapping/anchor_graph_config_model.proto";
+import "research/scam/generalized_hash/protos/mapping/aqbe_config_model.proto";
+import "research/scam/generalized_hash/protos/mapping/bilinear_projection_config_model.proto";
+import "research/scam/generalized_hash/protos/mapping/binary_projection_config_model.proto";
+import "research/scam/generalized_hash/protos/mapping/hadamard_diagonal_projection_config_model.proto";
+import "research/scam/generalized_hash/protos/mapping/linear_projection_model.proto";
+import "research/scam/generalized_hash/protos/mapping/lsh_config_model.proto";
+import "research/scam/generalized_hash/protos/mapping/meanstd_config_model.proto";
+import "research/scam/generalized_hash/protos/mapping/normalization_config_model.proto";
+import "research/scam/generalized_hash/protos/mapping/normalized_inner_product_to_l2_config_model.proto";
+import "research/scam/generalized_hash/protos/mapping/projection_map_config.proto";
+import "research/scam/generalized_hash/protos/mapping/sikh_config_model.proto";
+import "research/scam/generalized_hash/protos/mapping/sparse_hashing_config_model.proto";
+import "research/scam/generalized_hash/protos/mapping/spherical_config_model.proto";
+import "research/scam/generalized_hash/protos/mapping/thresh_config_model.proto";
+import "storage/datapol/annotations/proto/semantic_annotations.proto";
+
+message MapConfig {
+    int32 seed = 1;
+    string name = 2000;
+    
+    oneof config {
+        ItqMapConfig itq = 4;
+        LshMapConfig lsh = 5;
+        PcaMapConfig pca = 6;
+        RandomProjectionConfig random_proj = 7;
+        ThreshMapConfig thresh = 8;
+        AnchorGraphMapConfig anchor_graph = 9;
+        AqbeMapConfig aqbe = 10;
+        SparseHashingConfig sparse_hashing = 11;
+        NormalizationMapConfig normalization = 12;
+        google.protobuf.Empty sparsity_flipping = 13;
+        SphericalMapConfig spherical = 14;
+        BilinearProjectionConfig bilinear_proj = 15;
+        BinaryProjectionConfig binary_proj = 16;
+        MeanstdMapConfig meanstd = 17;
+        SikhMapConfig sikh = 19;
+        HadamardDiagonalProjectionConfig hadamard_diagonal_proj = 20;
+        NormalizedInnerProductToL2MapConfig normalized_ip_to_l2 = 21;
+    }
+    
+    reserved 2, 3;
+}
+
+message MapModel {
+    string name = 2000;
+    
+    oneof model {
+        LinearProjectionModel linear_proj = 2;
+        LshMapModel lsh = 3;
+        ThreshMapModel thresh = 4;
+        AnchorGraphMapModel anchor_graph = 5;
+        AqbeMapModel aqbe = 6;
+        SparseHashingModel sparse_hashing = 7;
+        NormalizationMapModel normalization = 8;
+        google.protobuf.Empty sparsity_flipping = 9;
+        SphericalMapModel spherical = 10;
+        BilinearProjectionModel bilinear_proj = 11;
+        BinaryProjectionModel binary_proj = 12;
+        MeanstdMapModel meanstd = 13;
+        SikhMapModel sikh = 14;
+        NormalizedInnerProductToL2MapModel normalized_ip_to_l2 = 16;
+    }
+    
+    reserved 1;
+}

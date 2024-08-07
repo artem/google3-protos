@@ -2,6 +2,9 @@ syntax = "proto2";
 
 package coroner.collection;
 
+option java_multiple_files = true;
+option java_package = "com.google.prod.crashanalysis";
+
 enum CrashReason {
     UNKNOWN_REASON = 0;
     KILLED_BY_SIGNAL = 1;

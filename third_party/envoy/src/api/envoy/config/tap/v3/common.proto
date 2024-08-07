@@ -1,0 +1,106 @@
+syntax = "proto3";
+
+package envoy.config.tap.v3;
+
+import "third_party/envoy/src/api/envoy/config/common/matcher/v3/matcher.proto";
+import "third_party/envoy/src/api/envoy/config/core/v3/base.proto";
+import "third_party/envoy/src/api/envoy/config/core/v3/extension.proto";
+import "third_party/envoy/src/api/envoy/config/core/v3/grpc_service.proto";
+import "third_party/envoy/src/api/envoy/config/route/v3/route_components.proto";
+import "google/protobuf/duration.proto";
+import "google/protobuf/wrappers.proto";
+import "third_party/envoy/src/api/envoy/annotations/deprecation.proto";
+import "third_party/udpa/udpa/annotations/status.proto";
+import "third_party/udpa/udpa/annotations/versioning.proto";
+import "third_party/protoc_gen_validate/validate/validate.proto";
+
+option go_package = "github.com/envoyproxy/go-control-plane/envoy/config/tap/v3;tapv3";
+option java_multiple_files = true;
+option java_outer_classname = "CommonProto";
+option java_package = "io.envoyproxy.envoy.config.tap.v3";
+
+message TapConfig {
+    MatchPredicate match_config = 1 [deprecated = true];
+    .envoy.config.common.matcher.v3.MatchPredicate match = 4;
+    OutputConfig output_config = 2;
+    .envoy.config.core.v3.RuntimeFractionalPercent tap_enabled = 3;
+}
+
+message MatchPredicate {
+    oneof rule {
+        MatchSet or_match = 1;
+        MatchSet and_match = 2;
+        MatchPredicate not_match = 3;
+        bool any_match = 4;
+        HttpHeadersMatch http_request_headers_match = 5;
+        HttpHeadersMatch http_request_trailers_match = 6;
+        HttpHeadersMatch http_response_headers_match = 7;
+        HttpHeadersMatch http_response_trailers_match = 8;
+        HttpGenericBodyMatch http_request_generic_body_match = 9;
+        HttpGenericBodyMatch http_response_generic_body_match = 10;
+    }
+    
+    message MatchSet {
+        repeated MatchPredicate rules = 1;
+    }
+}
+
+message HttpHeadersMatch {
+    repeated .envoy.config.route.v3.HeaderMatcher headers = 1;
+}
+
+message HttpGenericBodyMatch {
+    uint32 bytes_limit = 1;
+    
+    repeated GenericTextMatch patterns = 2;
+    message GenericTextMatch {
+        oneof rule {
+            string string_match = 1;
+            bytes binary_match = 2;
+        }
+    }
+}
+
+message OutputConfig {
+    repeated OutputSink sinks = 1;
+    google.protobuf.UInt32Value max_buffered_rx_bytes = 2;
+    google.protobuf.UInt32Value max_buffered_tx_bytes = 3;
+    bool streaming = 4;
+}
+
+message OutputSink {
+    Format format = 1;
+    enum Format {
+        JSON_BODY_AS_BYTES = 0;
+        JSON_BODY_AS_STRING = 1;
+        PROTO_BINARY = 2;
+        PROTO_BINARY_LENGTH_DELIMITED = 3;
+        PROTO_TEXT = 4;
+    }
+    
+    oneof output_sink_type {
+        StreamingAdminSink streaming_admin = 2;
+        FilePerTapSink file_per_tap = 3;
+        StreamingGrpcSink streaming_grpc = 4;
+        BufferedAdminSink buffered_admin = 5;
+        .envoy.config.core.v3.TypedExtensionConfig custom_sink = 6;
+    }
+}
+
+message StreamingAdminSink {
+    
+}
+
+message BufferedAdminSink {
+    uint64 max_traces = 1;
+    google.protobuf.Duration timeout = 2;
+}
+
+message FilePerTapSink {
+    string path_prefix = 1;
+}
+
+message StreamingGrpcSink {
+    string tap_id = 1;
+    .envoy.config.core.v3.GrpcService grpc_service = 2;
+}

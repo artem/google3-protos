@@ -1,16 +1,15 @@
 syntax = "proto2";
 
-import "net/proto2/proto/descriptor.proto";
 package proto2.util;
 
+import "net/proto2/proto/descriptor.proto";
+
 message JsonFormatOption {
-  optional string name = 1;
-  optional bool inline_json = 2;
-  optional bool ignore = 3 [default = false];
+    optional string name = 1;
+    optional bool inline_json = 2;
+    optional bool ignore = 3 [default = false];
 }
 
-extend .proto2.FieldOptions {
-  optional .proto2.util.JsonFormatOption json_opt = 255512;
+extend FieldOptions {
+    optional JsonFormatOption json_opt = 255512;
 }
-
-

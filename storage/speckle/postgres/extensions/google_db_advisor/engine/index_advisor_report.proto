@@ -1,0 +1,332 @@
+syntax = "editions";
+
+package storage.speckle.postgres.extensions.google_db_advisor.engine;
+
+import "google/protobuf/timestamp.proto";
+import "storage/datapol/annotations/proto/semantic_annotations.proto";
+
+message Index {
+    optional string schema_name = 1;
+    optional string relation_name = 2;
+    repeated string column_names = 3;
+    optional uint64 size = 4;
+}
+
+message IndexStats {
+    optional Index index = 1;
+    optional uint32 num_impacted_queries = 2;
+    repeated int64 impacted_query_hashes = 3;
+}
+
+message IndexAuxiliaryInfo {
+    optional uint64 index_scan_count = 1;
+    optional bool is_valid = 2;
+    optional bool is_unique = 3;
+    optional google.protobuf.Timestamp last_scanned = 4;
+}
+
+message ColumnarColumn {
+    optional string schema_name = 1;
+    optional string relation_name = 2;
+    optional string column_name = 3;
+    
+    optional ColumnFormat column_format = 4;
+    enum ColumnFormat {
+        UNKNOWN_FORMAT = 0;
+        DICTIONARY = 1;
+        RAW = 2;
+        MIN_MAX = 3;
+    }
+    
+    optional CompressionLevel compression_level = 5;
+    enum CompressionLevel {
+        UNKNOWN_LEVEL = 0;
+        NONE = 1;
+        ZSTD = 2;
+        ZLIB = 3;
+    }
+    
+    optional uint64 estimated_size_in_bytes = 6;
+}
+
+message ColumnarEngineInfo {
+    repeated ColumnarColumns columns = 2;
+    
+    reserved 1, "columnar_columns";
+}
+
+message ColumnarColumns {
+    optional string database_name = 1;
+    optional string schema_name = 2;
+    optional string relation_name = 3;
+    repeated ColumnarColumn columns = 4;
+}
+
+message ColumnarEngineReport {
+    repeated ColumnarColumns recommended_columns = 1;
+    optional uint64 recommended_memory_size_in_mb = 2;
+    optional uint32 runtime_in_seconds = 3;
+    optional double new_workload_cost = 4;
+    optional string recommended_relations_flag = 5;
+    optional SelectionStatus selection_status = 6;
+    optional uint64 num_columnarizable_columns = 7;
+    optional uint64 total_columnarizable_columns_size_in_mb = 8;
+}
+
+message QueryReport {
+    optional uint64 query_id = 1;
+    optional uint32 num_calls = 2;
+    optional bool is_explainable = 3;
+    repeated Index recommended_indexes = 4;
+    optional double init_cost = 5;
+    optional double new_cost = 6;
+    optional uint32 user_id = 7;
+    optional uint32 database_id = 8;
+    optional double total_time_in_seconds = 9;
+    optional string normalized_query_text = 10;
+    optional string user_name = 11;
+    optional string database_name = 12;
+    optional int64 query_hash = 13;
+    optional ColumnarEngineInfo columnar_info = 14;
+    optional double new_columnar_cost = 15;
+}
+
+message WorkloadReport {
+    repeated QueryReport query_reports = 1;
+    optional uint32 user_id = 3;
+    optional uint32 database_id = 4;
+    optional uint32 num_indexable_cols = 5;
+    optional uint32 num_statements = 6;
+    optional uint32 num_explainable_statements = 7;
+    optional uint32 num_iterations = 8;
+    optional uint32 startup_time_in_seconds = 9;
+    optional uint32 runtime_in_seconds = 10;
+    optional uint32 max_num_cached_query_costs = 11;
+    optional uint32 total_num_explains = 12;
+    optional uint32 num_skipped_explains = 13;
+    optional uint32 num_cached_explains = 14;
+    optional uint32 num_failed_cache_inserts = 15;
+    optional double init_workload_cost = 16;
+    optional double new_workload_cost = 17;
+    optional uint32 total_num_statements = 18;
+    optional string user_name = 19;
+    optional string database_name = 20;
+    repeated IndexStats recommended_index_stats = 21;
+    optional uint32 num_indexable_cols_evaluated = 22;
+    optional google.protobuf.Timestamp start_time = 23;
+    optional google.protobuf.Timestamp end_time = 24;
+    optional SelectionStatus selection_status = 25;
+    optional ColumnarEngineReport columnar_engine_report = 26;
+    
+    reserved 2;
+}
+
+message IndexToDrop {
+    optional uint32 oid = 1;
+    optional google.protobuf.Timestamp last_scanned = 2;
+    optional uint64 size_in_mb = 3;
+    optional uint64 index_scan_count = 4;
+    optional bool is_valid = 7;
+    optional double dml_cost_reduction = 5;
+    optional string relation_name = 6;
+}
+
+message DropIndexReport {
+    repeated IndexToDrop indexes_to_drop = 1;
+}
+
+message IndexAdvisory {
+    optional Index recommended_index = 1;
+    optional bool is_created = 2;
+}
+
+message ColumnarAdvisory {
+    optional bool recommend_enable = 1;
+    optional uint64 recommend_memory_size_in_mb = 2;
+    optional bool recommend_enable_and_enabled = 3;
+}
+
+message DatabaseWorkloadAdvisory {
+    optional string database_name = 1;
+    repeated IndexAdvisory index_advisory = 2;
+    optional ColumnarAdvisory columnar_advisory = 3;
+}
+
+message WorkloadAdvisory {
+    repeated DatabaseWorkloadAdvisory advices = 1;
+}
+
+message IndexStateKey {
+    optional uint32 database_id = 1;
+    optional uint32 index_id = 2;
+}
+
+message IndexStateEntry {
+    optional IndexStateKey key = 1;
+    optional IndexStateType state = 2;
+}
+
+message Histogram {
+    repeated double bounds = 1;
+    repeated uint64 buckets = 2;
+}
+
+message WorkloadStats {
+    optional uint64 statements = 1;
+    optional uint64 analyzed_statements = 2;
+    optional uint64 explainable_statements = 3;
+    optional uint64 unused_indexes = 4;
+    optional uint64 invalid_indexes = 5;
+    optional uint64 nonunique_unused_indexes = 6;
+    optional uint64 unique_unused_indexes = 7;
+    optional Histogram unique_unused_indexes_hist = 8;
+    optional Histogram nonunique_unused_indexes_hist = 9;
+}
+
+message SelectionStats {
+    optional uint64 total_count = 1;
+    optional uint64 success_count = 2;
+    optional uint64 failed_count = 3;
+    optional uint64 unknown_count = 4;
+    optional uint64 feasible_count = 5;
+    optional uint64 optimal_count = 6;
+}
+
+message WhatIfAnalysisStats {
+    optional uint64 max_num_cached_query_costs = 1;
+    optional uint64 total_num_explains = 2;
+    optional uint64 num_skipped_explains = 3;
+    optional uint64 num_cached_explains = 4;
+}
+
+message IndexSelectionStats {
+    optional SelectionStats selection_stats = 1;
+    optional uint64 indexable_columns = 2;
+    optional uint64 evaluated_indexable_columns = 3;
+    optional uint64 startup_time = 4;
+    optional uint64 runtime = 5;
+    optional uint64 selected_indexes = 6;
+    optional uint64 iterations = 7;
+    optional uint64 workload_cost_reduction_percent = 8;
+    optional uint64 recommended_indexes_created = 9;
+}
+
+message ColumnSelectionStats {
+    optional SelectionStats selection_stats = 1;
+    optional uint64 columnarizable_columns = 2;
+    optional uint64 columnarizable_columns_size = 3;
+    optional uint64 selected_columns = 4;
+    optional uint64 runtime = 5;
+    optional uint64 recommended_size_in_mb = 6;
+    optional uint64 workload_cost_reduction_percent = 7;
+    optional bool recommend_and_enabled = 8;
+}
+
+message AutoCEStats {
+    optional uint64 peak_used_cpu_percent = 1;
+    optional uint64 peak_used_memory_percent = 2;
+    optional uint64 min_available_memory_percent = 3;
+    optional uint64 peak_used_ssd_percent = 4;
+    optional uint64 peak_backends = 5;
+    optional bool recommend_enable_ce = 6;
+    optional bool will_enable_ce = 7;
+    optional bool enabled_ce = 8;
+    optional uint64 ce_memory_size_mb = 9;
+    optional uint64 ce_ssd_size_mb = 10;
+    optional uint64 hours_since_start_monitoring = 11;
+}
+
+message TuneStats {
+    optional uint64 num_scan_vacuum = 1;
+    optional uint64 num_scan_analyze = 2;
+    optional uint64 num_scan_parallel_workers_per_gather = 3;
+    optional uint64 num_gather_parallel_workers = 4;
+    optional uint64 num_hash_mem_multiplier = 5;
+    optional uint64 num_tunes = 6;
+    optional uint64 num_tune_errors = 7;
+}
+
+message QueryAdvisorStats {
+    optional TuneStats manual_tune_stats = 1;
+    optional TuneStats auto_tune_stats = 2;
+}
+
+message DatabaseAdvisorStats {
+    optional IndexSelectionStats index_selection_stats = 1;
+    optional ColumnSelectionStats column_selection_stats = 2;
+    optional WorkloadStats workload_stats = 3;
+    optional WhatIfAnalysisStats what_if_analysis_stats = 4;
+    optional AutoCEStats auto_ce_stats = 5;
+    optional QueryAdvisorStats query_advisor_stats = 6;
+}
+
+message QueryPlanNodeSummary {
+    optional uint32 node_tag = 1;
+    optional string node_tag_name = 2;
+    optional uint32 relid = 3;
+    optional string alias = 4;
+    optional bool is_parallel_aware = 5;
+    optional double startup_cost = 6;
+    optional double total_cost = 7;
+    optional double plan_rows = 8;
+    optional uint32 num_planned_workers = 9;
+    optional uint32 num_launched_workers = 10;
+    optional double total_time_ms = 11;
+    repeated double worker_times = 12;
+    optional int64 n_live_tuples = 13;
+    optional int64 n_dead_tuples = 14;
+    optional google.protobuf.Timestamp last_vacuum = 15;
+    optional google.protobuf.Timestamp last_analyze = 16;
+    optional string schema_name = 17;
+    optional string relation_name = 18;
+    optional double actual_rows = 19;
+}
+
+message QueryPlanSummary {
+    repeated QueryPlanNodeSummary node_summaries = 1;
+    optional double total_time_ms = 2;
+}
+
+message TuneAdvice {
+    repeated string issue = 1;
+    repeated string advice = 2;
+    optional double estimated_new_time_ms = 3;
+    optional TuneAdviceType type = 4;
+}
+
+message TuneAdvices {
+    repeated TuneAdvice tune_advice = 1;
+}
+
+message QueryPlanAnalysis {
+    optional uint64 query_id = 1;
+    optional google.protobuf.Timestamp query_time = 2;
+    optional TuneAdvices tune_advices = 3;
+    optional QueryPlanSummary plan_summary = 4;
+    optional uint32 database_id = 5;
+    optional uint32 user_id = 6;
+    optional string trace_id = 7;
+    optional string span_id = 8;
+    optional string parent_span_id = 9;
+}
+
+enum SelectionStatus {
+    SELECTION_STATUS_UNKNOWN = 0;
+    SELECTION_STATUS_FEASIBLE = 1;
+    SELECTION_STATUS_OPTIMAL = 2;
+    SELECTION_STATUS_FAILED = 3;
+}
+
+enum IndexStateType {
+    INDEX_DEFAULT = 0;
+    INDEX_DEACTIVATED = 1;
+}
+
+enum TuneAdviceType {
+    TUNE_ADVICE_TYPE_UNKNOWN = 0;
+    TUNE_ADVICE_TYPE_SCAN_VACUUM = 1;
+    TUNE_ADVICE_TYPE_SCAN_ANALYZE = 2;
+    TUNE_ADVICE_TYPE_SCAN_PARALLEL_WORKERS_PER_GATHER = 3;
+    TUNE_ADVICE_TYPE_GATHER_PARALLEL_WORKERS = 4;
+    TUNE_ADVICE_TYPE_HASH_MEM_MULTIPLIER = 5;
+}

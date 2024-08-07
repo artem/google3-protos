@@ -1,0 +1,40 @@
+syntax = "proto3";
+
+package google.monitoring.v3;
+
+import "google/api/field_behavior.proto";
+import "google/api/resource.proto";
+import "google/api/visibility.proto";
+import "google/monitoring/v3/incident_alert.proto";
+import "storage/datapol/annotations/proto/semantic_annotations.proto";
+
+option ruby_package = "Google::Cloud::Monitoring::V3";
+option php_namespace = "Google\\Cloud\\Monitoring\\V3";
+option csharp_namespace = "Google.Cloud.Monitoring.V3";
+option go_package = "cloud.google.com/go/monitoring/apiv3/v2/monitoringpb;monitoringpb";
+option java_multiple_files = true;
+option java_outer_classname = "IncidentAlertServiceProto";
+option java_package = "com.google.monitoring.v3";
+
+service AlertService {
+    rpc ListAlerts(ListAlertsRequest) returns (ListAlertsResponse);
+    rpc GetAlert(GetAlertRequest) returns (Alert);
+}
+
+message ListAlertsRequest {
+    string parent = 1;
+    string filter = 2;
+    string order_by = 3;
+    int32 page_size = 4;
+    string page_token = 5;
+}
+
+message ListAlertsResponse {
+    repeated Alert alerts = 1;
+    string next_page_token = 2;
+    int32 total_size = 3;
+}
+
+message GetAlertRequest {
+    string name = 1;
+}

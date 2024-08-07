@@ -54,12 +54,10 @@ enum LocalityKind {
     CLUSTER = 1;
     CLUSTER_PURPOSE = 2;
     CONTINENT = 3;
-    LOGICAL_NETWORK = 6 [deprecated = true];
     METRO = 7;
     BUILDING = 8;
     EDGE_NODE_TYPE = 9;
     EDGE_NODE_NAME = 23;
-    ENB = 25;
     CAMPUS = 10;
     CLOUD_ZONE = 14;
     CLOUD_REGION = 15;
@@ -71,7 +69,6 @@ enum LocalityKind {
     FUTURE_CLUSTER = 20;
     PROD_UNIVERSE = 21;
     CLUSTER_IP = 22;
-    IP_ENB = 24;
     IP_CLUSTER = 11;
     IP_SATELLITE = 12;
 }

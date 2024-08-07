@@ -1,0 +1,20 @@
+syntax = "proto3";
+
+package research_scam.generalized_hash;
+
+import "storage/datapol/annotations/proto/semantic_annotations.proto";
+
+message HadamardDiagonalProjectionModel {
+    repeated BoolVector keep_sign_vector = 1;
+    message BoolVector {
+        repeated bool keep_sign_element = 1;
+    }
+    
+    uint64 number_directions = 2;
+}
+
+message HadamardDiagonalProjectionConfig {
+    uint64 input_dimension = 1;
+    uint64 number_blocks = 2;
+    uint64 number_directions = 3;
+}

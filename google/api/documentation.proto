@@ -48,6 +48,7 @@ message CodeSnippetInclude {
     
     oneof code_snippet_type {
         GitHubInclude github_include = 4;
+        InlineInclude inline_include = 5;
     }
 }
 
@@ -56,6 +57,10 @@ message GitHubInclude {
     string project = 2;
     string file = 3;
     string branch = 4;
+}
+
+message InlineInclude {
+    string content = 1;
 }
 
 message Page {
@@ -87,4 +92,6 @@ enum CodeSnippetLanguage {
     RUBY = 9;
     SHELL = 10;
     TYPESCRIPT = 11;
+    SWIFT = 12;
+    DART = 13;
 }

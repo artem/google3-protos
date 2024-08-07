@@ -1,0 +1,12 @@
+syntax = "proto3";
+
+package research_scam.generalized_hash;
+
+import "research/scam/data_format/features.proto";
+import "research/scam/generalized_hash/protos/generalized_vector_collection.proto";
+import "storage/datapol/annotations/proto/semantic_annotations.proto";
+
+message LinearProjectionModel {
+    GeneralizedVectorCollection weights = 1;
+    GenericFeatureVector bias_vector = 2;
+}

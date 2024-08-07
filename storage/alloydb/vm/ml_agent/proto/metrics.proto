@@ -1,0 +1,30 @@
+syntax = "proto2";
+
+package storage.alloydb.vm.ml_agent.proto;
+
+import "google/api/servicecontrol/v1/distribution.proto";
+import "google/protobuf/timestamp.proto";
+
+service MlAgentMonitor {
+    rpc GetMetrics(MlAgentGetMetricsRequest) returns (MlAgentGetMetricsResponse);
+}
+
+message CumulativeDistributionMetric {
+    map<string, string> labels = 1;
+    optional google.protobuf.Timestamp start_time = 2;
+    optional google.protobuf.Timestamp end_time = 3;
+    optional google.api.servicecontrol.v1.Distribution distribution = 4;
+}
+
+message Metric {
+    optional string metric_name = 1;
+    repeated CumulativeDistributionMetric metric_data = 2;
+}
+
+message MlAgentGetMetricsRequest {
+    
+}
+
+message MlAgentGetMetricsResponse {
+    optional Metric metric = 1;
+}

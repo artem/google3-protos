@@ -1,0 +1,22 @@
+syntax = "proto3";
+
+package research_scam.generalized_hash;
+
+import "research/scam/data_format/features.proto";
+import "storage/datapol/annotations/proto/semantic_annotations.proto";
+
+message GeneralizedVectorCollection {
+    StorageType type = 1;
+    enum StorageType {
+        IN_PROTO = 0;
+        EXTERNAL = 1;
+    }
+    
+    ExternalFileFormat format = 2;
+    enum ExternalFileFormat {
+        SSTABLE = 0;
+    }
+    
+    repeated GenericFeatureVector vectors = 3;
+    string full_path_to_saved_vectors = 4;
+}

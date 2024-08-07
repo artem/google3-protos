@@ -1,0 +1,8 @@
+syntax = "proto2";
+
+package xuniverse;
+
+enum CrossUniverseSigningDigestType {
+    CROSS_UNIVERSE_SIGNING_DIGEST_TYPE_UNSPECIFIED = 0;
+    CROSS_UNIVERSE_SIGNING_DIGEST_TYPE_SHA512 = 1;
+}

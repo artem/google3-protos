@@ -1,0 +1,8 @@
+syntax = "proto2";
+
+package googlesql.storage;
+
+import public "storage/googlesql/public/proto/type_annotation.proto";
+
+option objc_class_prefix = "GOOGLESQL";
+option java_package = "com.google.storage.googlesql";

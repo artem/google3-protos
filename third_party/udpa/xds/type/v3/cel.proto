@@ -1,0 +1,26 @@
+syntax = "proto3";
+
+package xds.type.v3;
+
+import "google/api/expr/checked.proto";
+import "google/api/expr/syntax.proto";
+import "google/protobuf/wrappers.proto";
+import "third_party/udpa/xds/annotations/v3/status.proto";
+import "third_party/protoc_gen_validate/validate/validate.proto";
+
+option go_package = "github.com/cncf/xds/go/xds/type/v3";
+option java_multiple_files = true;
+option java_outer_classname = "CelProto";
+option java_package = "com.github.xds.type.v3";
+
+message CelExpression {
+    oneof expr_specifier {
+        google.api.expr.ParsedExpr parsed_expr = 1;
+        google.api.expr.CheckedExpr checked_expr = 2;
+    }
+}
+
+message CelExtractString {
+    CelExpression expr_extract = 1;
+    google.protobuf.StringValue default_value = 2;
+}

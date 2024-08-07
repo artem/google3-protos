@@ -1,0 +1,22 @@
+syntax = "proto3";
+
+package envoy.admin.v3;
+
+import "third_party/udpa/udpa/annotations/status.proto";
+import "third_party/udpa/udpa/annotations/versioning.proto";
+
+option go_package = "github.com/envoyproxy/go-control-plane/envoy/admin/v3;adminv3";
+option java_multiple_files = true;
+option java_outer_classname = "MetricsProto";
+option java_package = "io.envoyproxy.envoy.admin.v3";
+
+message SimpleMetric {
+    Type type = 1;
+    enum Type {
+        COUNTER = 0;
+        GAUGE = 1;
+    }
+    
+    uint64 value = 2;
+    string name = 3;
+}

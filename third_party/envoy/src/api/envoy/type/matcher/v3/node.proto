@@ -1,0 +1,18 @@
+syntax = "proto3";
+
+package envoy.type.matcher.v3;
+
+import "third_party/envoy/src/api/envoy/type/matcher/v3/string.proto";
+import "third_party/envoy/src/api/envoy/type/matcher/v3/struct.proto";
+import "third_party/udpa/udpa/annotations/status.proto";
+import "third_party/udpa/udpa/annotations/versioning.proto";
+
+option go_package = "github.com/envoyproxy/go-control-plane/envoy/type/matcher/v3;matcherv3";
+option java_multiple_files = true;
+option java_outer_classname = "NodeProto";
+option java_package = "io.envoyproxy.envoy.type.matcher.v3";
+
+message NodeMatcher {
+    StringMatcher node_id = 1;
+    repeated StructMatcher node_metadatas = 2;
+}

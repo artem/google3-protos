@@ -11,4 +11,11 @@ message CompilationResultProto {
     BufferAssignmentProto buffer_assignment = 2;
     string entry_function_name = 3;
     bytes obj_file = 4;
+    
+    ObjFileKind obj_file_kind = 5;
+    enum ObjFileKind {
+        UNKNOWN = 0;
+        CLASSIC = 1;
+        KERNELS = 2;
+    }
 }

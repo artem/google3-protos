@@ -1,0 +1,62 @@
+syntax = "proto2";
+
+package privacy.context;
+
+import "dataresidency/mapping/cloud/cloud_locations_enum.proto";
+import "net/proto2/bridge/proto/message_set.proto";
+import "privacy/ads/user_data_enforcement/data-usage.proto";
+import "privacy/context/proto/privacy_attributes_setter.proto";
+import "privacy/data_governance/attributes/proto/purpose.proto";
+import "privacy/ptoken/public/core/logical_policy.proto";
+import "privacy/ptoken/public/core/request_context_defs.proto";
+import "privacy/ptoken/public/core/sot_mappings.proto";
+
+option java_multiple_files = true;
+
+message PrivacyContextPortability {
+    optional int64 timestamp_micros = 1;
+    optional int32 origin_associated_product_id = 2;
+    repeated data_governance.attributes.ProcessingPurpose.Purpose processing_purpose = 3 [packed = true];
+    repeated ads.user_data_enforcement.DataUsage ads_processing_purpose = 14 [packed = true];
+    optional bool dma52_cross_use_offered_together = 4;
+    optional .ptoken.Dma52ProcessingType dma52_processing_type = 6;
+    repeated .ptoken.LogicalPolicy.Enum poe_enforced_return_policies = 7 [packed = true];
+    repeated .ptoken.PolicyRolloutEnforcementMode request_policy_rollout_enforcement_mode = 8 [packed = true];
+    optional bytes bitfield_value = 10;
+    optional bytes bitfield_set = 11;
+    repeated .ptoken.LogicalPolicy.Enum policies_breakglass = 12 [packed = true];
+    repeated .ptoken.LogicalPolicy.Enum policies_breakglass_still_evaluated = 16 [packed = true];
+    optional .ptoken.SotMappings sot = 13;
+    optional PrivacyAttributesSetter privacy_attributes_setter = 15;
+    optional bool origin_is_end_user = 17;
+    
+    oneof origin_logical_location {
+        data_residency.mapping.cloud.CloudDataResidencyLocation origin_logical_cloud_location = 9;
+    }
+    
+    reserved 5;
+}
+
+message PrivacyContextPortabilityTraceInfo {
+    optional PrivacyContextPortability portability = 1;
+    
+    optional Language language = 2;
+    enum Language {
+        LANGUAGE_UNKNOWN = 0;
+        CPP = 1;
+        JAVA = 2;
+        GOLANG = 3;
+        JNI = 4;
+    }
+    
+    optional Action action = 3;
+    enum Action {
+        ACTION_UNKNOWN = 0;
+        BUILD = 1;
+        MERGE = 2;
+    }
+    
+    extend .proto2.bridge.MessageSet {
+        optional PrivacyContextPortabilityTraceInfo message_set_extension = 525000669;
+    }
+}

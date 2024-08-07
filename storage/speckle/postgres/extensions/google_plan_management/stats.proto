@@ -1,0 +1,41 @@
+syntax = "proto3";
+
+package storage.speckle.postgres.extensions.google_plan_management;
+
+import "storage/datapol/annotations/proto/semantic_annotations.proto";
+
+message PlanSteeringStats {
+    uint64 num_steered_plans = 1;
+    uint64 num_plan_setup_errors = 2;
+    uint64 num_plan_reset_errors = 3;
+    uint64 num_plan_steering_errors = 4;
+    uint64 num_steered_scans = 5;
+    uint64 num_pruned_scan_paths = 6;
+    uint64 num_pruned_scan_partial_paths = 7;
+    uint64 num_pre_scan_errors = 8;
+    uint64 num_post_scan_errors = 9;
+    uint64 num_steered_joins = 10;
+    uint64 num_pruned_join_combs = 11;
+    uint64 num_pruned_join_paths = 12;
+    uint64 num_pruned_join_partial_paths = 13;
+    uint64 num_pre_join_errors = 14;
+    uint64 num_post_join_errors = 15;
+    uint64 num_steered_groupings = 16;
+    uint64 num_pruned_grouping_paths = 17;
+    uint64 num_pruned_grouping_partial_paths = 18;
+    uint64 num_steered_distincts = 19;
+    uint64 num_pruned_distinct_paths = 20;
+    uint64 num_pruned_distinct_partial_paths = 21;
+    uint64 num_steered_orders = 22;
+    uint64 num_pruned_order_paths = 23;
+    uint64 num_pruned_order_partial_paths = 24;
+    uint64 num_steered_windows = 25;
+    uint64 num_pruned_window_paths = 26;
+    uint64 num_pruned_window_partial_paths = 27;
+    uint64 num_pre_window_errors = 28;
+    uint64 num_post_window_errors = 29;
+}
+
+message PlanManagementStats {
+    PlanSteeringStats plan_steering_stats = 1;
+}

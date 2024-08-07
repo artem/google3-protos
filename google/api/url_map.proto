@@ -112,6 +112,7 @@ message HttpFrontendOptions {
     int32 cache_hit_log_fallthrough_denom = 4;
     string dos_service = 5;
     bool block_in_embargoed_countries = 6;
+    bool block_geographically_for_enterprise_management = 11;
     bool allow_internal_redirects = 7;
     string cookie_policy = 8;
     bool allow_websocket_upgrade = 9;

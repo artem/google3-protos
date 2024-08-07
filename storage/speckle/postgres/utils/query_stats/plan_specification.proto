@@ -1,0 +1,146 @@
+syntax = "proto3";
+
+package storage.speckle.postgres.utils.query_stats;
+
+import "storage/datapol/annotations/proto/semantic_annotations.proto";
+
+message RelOptId {
+    string alias = 1;
+    int32 relid = 2;
+}
+
+message GatherOptSpec {
+    GatherType gather_type = 1;
+    enum GatherType {
+        UNKNOWN = 0;
+        GATHER = 1;
+        GATHER_MERGE = 2;
+    }
+    
+    int32 parallel_workers = 2;
+    bool single_copy = 3;
+    bool is_final = 4;
+    bool has_explicit_sort_step = 5;
+    bool is_incremental_sort = 6;
+}
+
+message ScanOptSpec {
+    RelOptId rel_opt_id = 1;
+    
+    ScanType scan_type = 2;
+    enum ScanType {
+        UNKNOWN = 0;
+        SEQ_SCAN = 1;
+        INDEX_SCAN = 2;
+        BITMAP_HEAP_SCAN = 3;
+        TID_SCAN = 4;
+        INDEX_ONLY_SCAN = 5;
+    }
+    
+    repeated string index_names = 3;
+    GatherOptSpec gather_spec = 4;
+    bool has_partial_sort_step = 5;
+}
+
+message ColumnarScanSpec {
+    RelOptId rel_opt_id = 1;
+    int32 scan_mode = 2;
+}
+
+message HybridScanOptSpec {
+    ColumnarScanSpec columnar_scan_spec = 1;
+    ScanOptSpec row_store_scan_spec = 2;
+    GatherOptSpec gather_spec = 3;
+    bool has_partial_sort_step = 4;
+}
+
+message ParallelSpec {
+    bool parallel_aware = 1;
+    bool parallel_safe = 2;
+    int32 parallel_workers = 3;
+}
+
+message JoinOptSpec {
+    repeated RelOptId outer_rel_opt_ids = 1;
+    repeated RelOptId inner_rel_opt_ids = 2;
+    
+    JoinType join_type = 3;
+    enum JoinType {
+        UNKNOWN = 0;
+        HASH_JOIN = 1;
+        MERGE_JOIN = 2;
+        NEST_LOOP_JOIN = 3;
+    }
+    
+    bool is_inner_memoize = 4;
+    GatherOptSpec gather_spec = 5;
+    ParallelSpec inner_parallel_spec = 6;
+    bool has_partial_sort_step = 7;
+}
+
+message DistinctOptSpec {
+    bool is_unique_path = 1;
+    bool is_hash_path = 2;
+}
+
+message GroupingSetOptSpec {
+    AggStrategy agg_strategy = 1;
+    AggSplit agg_split = 2;
+    bool is_incremental_sort = 3;
+    
+    repeated GroupClause group_clauses = 4;
+    message GroupClause {
+        repeated int32 group_clause_index = 1;
+    }
+}
+
+message GroupingOptSpec {
+    GroupingSetOptSpec final_agg_spec = 1;
+    repeated GroupingSetOptSpec grouping_set_specs = 2;
+    GatherOptSpec gather_spec = 3;
+}
+
+message OrderByOptSpec {
+    bool is_incremental_sort = 1;
+}
+
+message WindowAggOptSpec {
+    bool has_explicit_sort_step = 1;
+    bool is_incremental_sort = 2;
+}
+
+message WindowOptSpec {
+    repeated WindowAggOptSpec window_agg_specs = 1;
+}
+
+message SubQueryOptSpec {
+    repeated ScanOptSpec scan_opt_specs = 1;
+    repeated JoinOptSpec join_opt_specs = 2;
+    DistinctOptSpec distinct_opt_spec = 3;
+    GroupingOptSpec grouping_opt_spec = 4;
+    OrderByOptSpec order_by_opt_spec = 5;
+    repeated HybridScanOptSpec hybrid_scan_opt_specs = 6;
+    WindowOptSpec window_opt_spec = 7;
+}
+
+message GucValues {
+    map<string, string> modified_gucs = 1;
+}
+
+message QueryOptSpec {
+    repeated SubQueryOptSpec sub_query_opt_specs = 1;
+    uint64 logical_query_id = 2;
+    GucValues guc_values = 3;
+}
+
+enum AggStrategy {
+    AGG_STRATEGY_UNKNOWN = 0;
+    AGG_STRATEGY_PLAIN = 1;
+    AGG_STRATEGY_SORT = 2;
+    AGG_STRATEGY_HASH = 3;
+    AGG_STRATEGY_MIXED = 4;
+}
+
+enum AggSplit {
+    AGG_SPLIT_UNKNOWN = 0;
+}

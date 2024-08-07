@@ -1,0 +1,46 @@
+syntax = "editions";
+
+package storage.speckle.postgres.extensions.google_db_advisor.insights;
+
+import "google/protobuf/timestamp.proto";
+import "storage/datapol/annotations/proto/semantic_annotations.proto";
+
+message ClusterAdvice {
+    repeated DatabaseAdvice database_advice = 1;
+}
+
+message DatabaseAdvice {
+    optional string database_name = 1;
+    repeated IndexAdvice index_advice = 2;
+    optional google.protobuf.Timestamp recommendation_time = 3;
+    map<int64, AuxiliaryQueryAdvice> query_advice = 4;
+}
+
+message QueryStats {
+    optional double total_time_sec = 1;
+    optional double estimated_new_total_time_sec = 2;
+}
+
+message AuxiliaryQueryAdvice {
+    optional int64 query_hash = 1;
+    repeated uint32 index_advice_slot = 2;
+    optional QueryStats query_stats = 3;
+}
+
+message QueryAdvice {
+    optional string database_name = 1;
+    optional int64 query_hash = 2;
+    repeated IndexAdvice index_advice = 3;
+    optional QueryStats query_stats = 4;
+    optional google.protobuf.Timestamp recommendation_time = 5;
+}
+
+message IndexAdvice {
+    optional string schema_name = 1;
+    optional string relation_name = 2;
+    repeated string column_names = 3;
+    optional uint64 estimated_storage_size_bytes = 4;
+    repeated int64 impacted_query_hashes = 5;
+    optional uint32 num_impacted_queries = 6;
+    optional uint32 index_slot = 7;
+}

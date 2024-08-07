@@ -2,6 +2,7 @@ syntax = "proto2";
 
 package operations_research;
 
+import "google/api/inclusion.proto";
 import "storage/datapol/annotations/proto/semantic_annotations.proto";
 import "util/operations_research/util/optional_boolean.proto";
 import "wireless/android/privacy/annotations/proto/collection_basis_annotations.proto";

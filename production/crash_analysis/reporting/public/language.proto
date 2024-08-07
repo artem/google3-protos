@@ -2,6 +2,9 @@ syntax = "proto2";
 
 package coroner.collection;
 
+option java_multiple_files = true;
+option java_package = "com.google.prod.crashanalysis";
+
 enum Language {
     UNKNOWN_LANGUAGE = 0;
     C_PLUS_PLUS = 1;

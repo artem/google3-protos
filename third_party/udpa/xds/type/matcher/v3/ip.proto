@@ -1,0 +1,22 @@
+syntax = "proto3";
+
+package xds.type.matcher.v3;
+
+import "third_party/udpa/xds/annotations/v3/status.proto";
+import "third_party/udpa/xds/core/v3/cidr.proto";
+import "third_party/udpa/xds/type/matcher/v3/matcher.proto";
+import "third_party/protoc_gen_validate/validate/validate.proto";
+
+option go_package = "github.com/cncf/xds/go/xds/type/matcher/v3";
+option java_multiple_files = true;
+option java_outer_classname = "IPMatcherProto";
+option java_package = "com.github.xds.type.matcher.v3";
+
+message IPMatcher {
+    repeated IPRangeMatcher range_matchers = 1;
+    message IPRangeMatcher {
+        repeated .xds.core.v3.CidrRange ranges = 1;
+        Matcher.OnMatch on_match = 2;
+        bool exclusive = 3;
+    }
+}

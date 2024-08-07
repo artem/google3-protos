@@ -1,0 +1,43 @@
+syntax = "proto2";
+
+package research_scam.kmeans_flume;
+
+import "research/scam/proto/input_output.proto";
+
+message KMeansFlumeConfig {
+    optional int32 input_dim = 2;
+    optional string partitioner_full_path = 3;
+    optional string work_dir = 4;
+    optional int32 num_clusters = 5;
+    optional int32 desired_average_cluster_size = 17 [default = 3000];
+    optional int32 num_epochs = 6 [default = 5];
+    optional int32 mini_batch_num_shards = 7;
+    optional int32 min_cluster_size = 8 [default = 5];
+    optional int32 max_cluster_size = 9 [default = 1000000];
+    optional int32 batch_size = 10 [default = 300];
+    optional bool set_count_to_num_assigned = 11 [default = false];
+    optional bool normalize_centers = 12 [default = false];
+    optional InputOutputConfig.FeatureNorm vector_norm_type = 21 [default = NONE];
+    optional int32 min_split_multiplier = 13 [default = 2];
+    optional float noise_norm = 14 [default = 0.01];
+    optional float split_ratio = 15 [default = 0.1];
+    optional int32 num_mini_batches = 16 [default = 10];
+    optional bool allow_resume = 18 [default = true];
+    optional string error_log_file = 20;
+    
+    oneof InputParams {
+        string input_pattern = 1;
+        int32 num_shards = 19 [default = 10000];
+    }
+}
+
+message Centroid {
+    optional int32 count = 1;
+    optional int32 num_assigned = 2;
+    repeated float vector = 3 [packed = true];
+}
+
+message AssignmentAccumulator {
+    optional int32 count = 1 [default = 1];
+    repeated float vector_sum = 2 [packed = true];
+}

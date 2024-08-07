@@ -12,6 +12,7 @@ message FieldValidationRule {
     repeated string element_predicate = 3;
     optional string one_of = 4;
     optional bool skip_message_validation = 6;
+    optional bool can_report_all_predicate_violations = 7;
     
     oneof field_presence_predicate {
         string is_required = 1;
@@ -33,14 +34,14 @@ message OneOfValidationRule {
     optional string is_required = 1;
 }
 
-extend .proto2.FieldOptions {
+extend proto2.FieldOptions {
     optional FieldValidationRule rule = 127878962;
 }
 
-extend .proto2.MessageOptions {
+extend proto2.MessageOptions {
     optional Definitions defs = 127878962;
 }
 
-extend .proto2.OneofOptions {
+extend proto2.OneofOptions {
     optional OneOfValidationRule one_of = 127878962;
 }

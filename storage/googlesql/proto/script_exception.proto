@@ -1,0 +1,28 @@
+syntax = "proto2";
+
+package googlesql;
+
+import "net/proto2/bridge/proto/message_set.proto";
+
+message ScriptException {
+    optional string message = 1;
+    
+    optional Internal internal = 2;
+    message Internal {
+        optional string statement_text = 1;
+        repeated StackTraceFrame stack_trace = 2;
+    }
+    
+    extensions 10000 to max;
+    
+    message StackTraceFrame {
+        optional int64 line = 1;
+        optional int64 column = 2;
+        optional string filename = 3;
+        optional string location = 4;
+    }
+    
+    extend .proto2.bridge.MessageSet {
+        optional ScriptException message_set_extension = 264277867;
+    }
+}

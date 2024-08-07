@@ -1,0 +1,109 @@
+syntax = "proto2";
+
+package googlesql;
+
+import "storage/googlesql/public/builtin_function.proto";
+import "storage/googlesql/public/options.proto";
+import "storage/googlesql/public/type.proto";
+import "storage/googlesql/resolved_ast/resolved_node_kind.proto";
+
+option java_outer_classname = "GoogleSQLOptionsProto";
+option java_package = "com.google.storage.googlesql";
+
+message GoogleSQLBuiltinFunctionOptionsProto {
+    optional LanguageOptionsProto language_options = 1;
+    repeated FunctionSignatureId include_function_ids = 2;
+    repeated FunctionSignatureId exclude_function_ids = 3;
+    repeated EnabledRewriteProto enabled_rewrites_map_entry = 4;
+}
+
+message EnabledRewriteProto {
+    optional FunctionSignatureId key = 1;
+    optional bool value = 2;
+}
+
+message LanguageOptionsProto {
+    optional NameResolutionMode name_resolution_mode = 2;
+    optional ProductMode product_mode = 3;
+    optional bool error_on_deprecated_syntax = 4;
+    repeated LanguageFeature enabled_language_features = 5;
+    repeated ResolvedNodeKind supported_statement_kinds = 6;
+    repeated string supported_generic_entity_types = 7;
+    repeated string reserved_keywords = 8;
+    repeated string supported_generic_sub_entity_types = 9;
+    
+    reserved 1;
+}
+
+message AllowedHintsAndOptionsProto {
+    optional bool disallow_unknown_options = 1;
+    repeated string disallow_unknown_hints_with_qualifier = 2;
+    
+    repeated HintProto hint = 3;
+    message HintProto {
+        optional string qualifier = 1;
+        optional string name = 2;
+        optional TypeProto type = 3;
+        optional bool allow_unqualified = 4;
+    }
+    
+    repeated OptionProto option = 4;
+    message OptionProto {
+        optional string name = 1;
+        optional TypeProto type = 2;
+        
+        optional ResolvingKind resolving_kind = 3;
+        enum ResolvingKind {
+            CONSTANT_OR_EMPTY_NAME_SCOPE_IDENTIFIER = 0;
+            FROM_NAME_SCOPE_IDENTIFIER = 1;
+        }
+        
+        optional bool allow_alter_array = 4;
+    }
+    
+    repeated OptionProto anonymization_option = 5;
+    repeated OptionProto differential_privacy_option = 6;
+    optional bool disallow_duplicate_option_names = 7;
+}
+
+message AnalyzerOptionsProto {
+    optional LanguageOptionsProto language_options = 1;
+    
+    repeated QueryParameterProto query_parameters = 2;
+    message QueryParameterProto {
+        optional string name = 1;
+        optional TypeProto type = 2;
+    }
+    
+    repeated TypeProto positional_query_parameters = 12;
+    repeated QueryParameterProto expression_columns = 3;
+    optional QueryParameterProto in_scope_expression_column = 4;
+    repeated QueryParameterProto ddl_pseudo_columns = 15;
+    optional ErrorMessageMode error_message_mode = 6;
+    optional string default_timezone = 7;
+    optional bool create_new_column_for_each_projected_output = 20;
+    optional bool prune_unused_columns = 9;
+    optional bool allow_undeclared_parameters = 10;
+    optional ParameterMode parameter_mode = 13;
+    optional AllowedHintsAndOptionsProto allowed_hints_and_options = 11;
+    optional StatementContext statement_context = 14;
+    optional bool preserve_column_aliases = 17;
+    
+    repeated SystemVariableProto system_variables = 18;
+    message SystemVariableProto {
+        repeated string name_path = 1;
+        optional TypeProto type = 2;
+    }
+    
+    repeated TypeProto target_column_types = 19;
+    repeated ResolvedASTRewrite enabled_rewrites = 21;
+    optional ParseLocationRecordType parse_location_record_type = 23;
+    optional bool preserve_unnecessary_cast = 24;
+    optional bool show_function_signature_mismatch_details = 27;
+    optional string default_anon_function_report_format = 25;
+    optional int64 default_anon_kappa_value = 26;
+    optional RewriteOptions rewrite_options = 28;
+    optional bool replace_table_not_found_error_with_tvf_error_if_applicable = 29;
+    
+    reserved 8, 22, 16;
+}

@@ -25,6 +25,7 @@ message ExecutableBuildOptionsProto {
     int64 device_memory_size = 15;
     repeated int64 auto_spmd_partitioning_mesh_shape = 16;
     repeated int64 auto_spmd_partitioning_mesh_ids = 17;
+    bool use_shardy_partitioner = 19;
 }
 
 message OptionOverrideProto {

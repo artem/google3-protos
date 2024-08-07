@@ -10,6 +10,15 @@ message SlicedPrefetchOptions {
     uint64 preferred_slice_size = 5;
 }
 
+message WindowPrefetchDetail {
+    repeated WindowDetail windows = 1;
+    message WindowDetail {
+        int64 operand = 1;
+        int64 size = 2;
+        int64 uid = 3;
+    }
+}
+
 message MemoryBoundLoopOptimizerOptions {
     oneof _enabled {
         bool enabled = 1;

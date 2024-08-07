@@ -23,6 +23,19 @@ message SocketOption {
         STATE_LISTENING = 2;
     }
     
+    SocketType type = 7;
+    message SocketType {
+        Stream stream = 1;
+        message Stream {
+            
+        }
+        
+        Datagram datagram = 2;
+        message Datagram {
+            
+        }
+    }
+    
     oneof value {
         int64 int_value = 4;
         bytes buf_value = 5;

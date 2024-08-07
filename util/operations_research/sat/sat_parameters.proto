@@ -251,7 +251,8 @@ message SatParameters {
     optional int32 shared_tree_num_workers = 235 [default = 0];
     optional bool use_shared_tree_search = 236 [default = false];
     optional double shared_tree_worker_objective_split_probability = 237 [default = 0.5];
-    optional int32 shared_tree_worker_min_restarts_per_subtree = 282 [default = 32];
+    optional int32 shared_tree_worker_min_restarts_per_subtree = 282 [default = 1];
+    optional bool shared_tree_worker_enable_trail_sharing = 295 [default = true];
     optional double shared_tree_open_leaves_per_worker = 281 [default = 2];
     optional int32 shared_tree_max_nodes_per_worker = 238 [default = 100000];
     

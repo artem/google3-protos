@@ -1,0 +1,18 @@
+syntax = "proto3";
+
+package xds.core.v3;
+
+import "google/protobuf/any.proto";
+import "third_party/udpa/xds/annotations/v3/status.proto";
+import "third_party/udpa/xds/core/v3/resource_name.proto";
+
+option go_package = "github.com/cncf/xds/go/xds/core/v3";
+option java_multiple_files = true;
+option java_outer_classname = "ResourceProto";
+option java_package = "com.github.xds.core.v3";
+
+message Resource {
+    ResourceName name = 1;
+    string version = 2;
+    google.protobuf.Any resource = 3;
+}

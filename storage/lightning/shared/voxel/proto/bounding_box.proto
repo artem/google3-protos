@@ -1,0 +1,12 @@
+syntax = "editions";
+
+package voxel;
+
+import "storage/googlesql/public/proto/wire_format_annotation.proto";
+
+message BoundingBox {
+    optional double xmin = 1;
+    optional double ymin = 2;
+    optional double xmax = 3;
+    optional double ymax = 4;
+}

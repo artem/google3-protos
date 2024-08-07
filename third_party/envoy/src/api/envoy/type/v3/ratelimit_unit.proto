@@ -1,0 +1,20 @@
+syntax = "proto3";
+
+package envoy.type.v3;
+
+import "third_party/udpa/udpa/annotations/status.proto";
+
+option go_package = "github.com/envoyproxy/go-control-plane/envoy/type/v3;typev3";
+option java_multiple_files = true;
+option java_outer_classname = "RatelimitUnitProto";
+option java_package = "io.envoyproxy.envoy.type.v3";
+
+enum RateLimitUnit {
+    UNKNOWN = 0;
+    SECOND = 1;
+    MINUTE = 2;
+    HOUR = 3;
+    DAY = 4;
+    MONTH = 5;
+    YEAR = 6;
+}

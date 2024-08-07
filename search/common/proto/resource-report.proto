@@ -1,0 +1,106 @@
+syntax = "proto2";
+
+package search_proto;
+
+import "net/proto2/bridge/proto/message_set.proto";
+import "storage/datapol/annotations/proto/semantic_annotations.proto";
+
+option cc_enable_arenas = true;
+option java_package = "com.google.search_proto";
+
+message ResourceQuantity {
+    optional ResourceId resource_id = 1 [default = RID_NORMALIZED_COST];
+    optional float corrected_use = 2;
+    optional float load_corrected_actual_use = 3;
+    optional float uncorrected_use = 4;
+    map<string, float> max_actual_use_by_fanout = 5;
+}
+
+message ProviderResourceUsage {
+    optional string pool_name = 11;
+    optional int32 provider_count = 12 [default = 1];
+    optional ResourceProviderType provider_type = 2 [default = RPT_UNSPECIFIED];
+    optional int32 aggregation_count = 3 [default = 0];
+    repeated ResourceQuantity resource = 1;
+}
+
+message QueryResourceUsage {
+    repeated ProviderResourceUsage provider = 1;
+    
+    extend .proto2.bridge.MessageSet {
+        optional QueryResourceUsage message_set_extension = 31394298;
+    }
+}
+
+message ResourceRateEstimate {
+    optional ResourceId resource_id = 1 [default = RID_NORMALIZED_COST];
+    optional float resource_per_sec = 2 [default = 0];
+}
+
+message ResourceRates {
+    repeated ResourceRateEstimate resources = 3;
+}
+
+message ProviderPoolSummary {
+    optional string pool_name = 1;
+    optional int32 provider_count = 2 [default = 1];
+    optional ResourceRates capacity = 3;
+    optional ResourceRates query_load = 4;
+    optional ResourceRates non_balanced_load = 5;
+}
+
+message ServiceSummary {
+    repeated ProviderPoolSummary pool_summaries = 1;
+}
+
+message ResourceCapacityEstimate {
+    optional ResourceId resource_id = 1 [default = RID_NORMALIZED_COST];
+    optional float capacity_per_ms = 2 [default = 0];
+}
+
+message ProviderCapacityEstimate {
+    repeated ResourceCapacityEstimate resource = 1;
+    optional ResourceProviderType provider_type = 2 [default = RPT_UNSPECIFIED];
+}
+
+message ServiceCapacityEstimate {
+    repeated ProviderCapacityEstimate provider = 1;
+}
+
+enum ResourceId {
+    RID_NORMALIZED_COST = 1;
+    RID_CPU_KCYCLES = 2;
+    RID_CPU_GCUS = 22;
+    RID_CPU_SHARES = 23;
+    RID_FLASH_1K_READ_EQUIVALENTS = 3;
+    RID_DISK_TIME_MS = 4;
+    RID_CNS_4K_READ_EQUIVALENTS = 5;
+    RID_CNS_FLASH_4K_READ_EQUIVALENTS = 21;
+    RID_DISK_SEEKS = 6;
+    RID_FLASH_BYTES_LOOKED_UP = 7;
+    RID_FLASH_NUM_LOOKUPS = 8;
+    RID_FLASH_BYTES_HIT = 9;
+    RID_FLASH_NUM_HITS = 10;
+    RID_DISK_BYTES_LOOKED_UP = 11;
+    RID_DISK_NUM_LOOKUPS = 12;
+    RID_DISK_BYTES_HIT = 13;
+    RID_DISK_NUM_HITS = 14;
+    RID_GCU_USECS = 20;
+}
+
+enum ResourceProviderType {
+    RPT_UNSPECIFIED = 0;
+    RPT_MUPPET_LEAVES = 10;
+    RPT_MUPPET_ROOTS = 11;
+    RPT_MUPPET_BASE_LEAVES = 20;
+    RPT_MUPPET_EXTENDED_LEAVES = 21;
+    RPT_MUPPET_EXTENDED_DISK_LEAVES = 22;
+    RPT_MUPPET_EXTENDED_NO_DISK_LEAVES = 23;
+    RPT_MUPPET_FLEX_LEAVES = 24;
+    RPT_TERAGOOGLE_TERASERVERS = 30;
+    RPT_TERAGOOGLE_RAMLEAVES = 31;
+    RPT_TERAGOOGLE_QUERYSERVERS = 32;
+    RPT_MUSTANG = 40;
+    RPT_MUSTANG_LEAVES = 41;
+    RPT_MUSTANG_ROOTS = 42;
+}

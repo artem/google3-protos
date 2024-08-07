@@ -10,5 +10,12 @@ option java_package = "com.google.privacy.pgraph.proto.proto1api";
 message DatasetAttributes {
     optional google.protobuf.Timestamp fetch_timestamp = 1 [deprecated = true];
     
+    optional VersionMetadata version = 2;
+    message VersionMetadata {
+        optional uint64 id = 1;
+    }
+    
+    optional string break_glass_reason = 3;
+    
     extensions 1103;
 }

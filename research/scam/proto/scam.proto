@@ -1,0 +1,88 @@
+syntax = "proto2";
+
+package research_scam;
+
+import "research/scam/proto/auto_tuning.proto";
+import "research/scam/proto/brute_force.proto";
+import "research/scam/proto/crowding.proto";
+import "research/scam/proto/disjoint_restrict_token.proto";
+import "research/scam/proto/distance_measure.proto";
+import "research/scam/proto/exact_reordering.proto";
+import "research/scam/proto/hash.proto";
+import "research/scam/proto/input_output.proto";
+import "research/scam/proto/metadata.proto";
+import "research/scam/proto/min_distance.proto";
+import "research/scam/proto/partitioning.proto";
+import "research/scam/generalized_hash/protos/generalized_hashing.proto";
+import "research/scam/proto/all_pair.proto";
+import "research/scam/proto/chunked_hamming.proto";
+import "research/scam/proto/evaluation.proto";
+import "research/scam/proto/incremental_updates.proto";
+import "research/scam/proto/inverted_index.proto";
+import "research/scam/proto/memory_consumption_estimate.proto";
+import "research/scam/proto/offline_distributed.proto";
+import "research/scam/proto/random_searcher.proto";
+import "research/scam/proto/restricts.proto";
+import "research/scam/proto/scoring_extension.proto";
+import "research/scam/proto/sparse_dense_hybrid_batched.proto";
+import "research/scam/proto/sparse_logistic.proto";
+import "research/scam/proto/trees.proto";
+
+option java_package = "com.google.research.scam";
+
+message ScamConfig {
+    optional string dataset_name = 32;
+    optional int32 num_neighbors = 3 [default = 0x7fffffff];
+    optional float epsilon_distance = 4 [default = inf];
+    optional MinDistanceConfig min_distance = 44;
+    optional RestrictsConfig restricts = 39;
+    optional bool restricts_enabled = 24 [default = false];
+    optional V3RestrictsConfig v3_restricts = 37;
+    optional Crowding crowding = 29;
+    optional DistanceMeasureConfig distance_measure = 5;
+    optional ExactReordering exact_reordering = 17;
+    optional InputOutputConfig input_output = 6;
+    optional BruteForceConfig brute_force = 7;
+    optional PartitioningConfig partitioning = 8;
+    optional HashConfig hash = 13;
+    optional MetadataConfig metadata = 20;
+    optional int32 num_single_shard_neighbors = 21;
+    optional bytes custom_search_method = 22;
+    optional DisjointRestrictToken disjoint_restrict_token = 31;
+    optional AutopilotConfig autopilot = 43;
+    optional EvaluationConfig evaluation = 11;
+    optional TreeConfig tree = 14;
+    optional AllPairSearchConfig all_pair = 15;
+    optional OfflineDistributedConfig offline_distributed_config = 19;
+    optional ChunkedHammingConfig chunked_hamming = 26;
+    optional SparseLogisticConfig sparse_logistic = 27;
+    optional research_scam.generalized_hash.GenHashSearchConfig generalized_hash_search_config = 28;
+    optional RandomSearcherConfig random_searcher = 30;
+    optional SparseDenseHybridBatchedConfig sparse_dense_hybrid_batched = 34;
+    optional InvertedIndex inverted_index = 35;
+    optional IncrementalUpdateConfig incremental_updates = 36;
+    optional AutoTuning auto_tuning = 38;
+    optional ScoringExtensionConfig scoring_extension = 42;
+    optional MemoryConsumptionEstimateConfig memory_consumption_estimation = 40;
+    optional string error_log_file = 41;
+    optional ChunkedInvertedIndexConfig chunked_inverted_index = 16;
+    optional LegacyInvertedIndexConfig legacy_inverted_index = 33;
+    optional PrunedInvertedIndexCosineConfig pruned_inverted_index_cosine = 18;
+    
+    optional SearchParadigm search_paradigm = 1;
+    enum SearchParadigm {
+        QUERY_DATABASE = 0;
+        ALL_PAIR = 1;
+    }
+    
+    optional SearchType search_type = 2;
+    enum SearchType {
+        KNN = 0;
+        ENN = 1;
+        HYBRID = 2;
+    }
+    
+    extensions 1000 to max;
+    
+    reserved 23, 25;
+}

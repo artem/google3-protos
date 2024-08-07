@@ -1,0 +1,14 @@
+syntax = "proto3";
+
+package data_residency.mapping.workspace;
+
+import "privacy/data_governance/attributes/proto/classification.proto";
+
+option java_multiple_files = true;
+option java_package = "com.google.dataresidency.mapping.workspace";
+
+enum WorkspaceDataResidencyLocation {
+    WORKSPACE_DATA_RESIDENCY_LOCATION_UNSPECIFIED = 0;
+    EU = 1;
+    US = 2;
+}

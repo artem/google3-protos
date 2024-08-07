@@ -1,0 +1,15 @@
+syntax = "editions";
+
+package vox;
+
+enum DeprecatedScalarDataColumnTypeKind {
+    DEPRECATED_SCALAR_DATA_COLUMN_TYPE_INVALID = 0 [deprecated = true];
+    DEPRECATED_SCALAR_DATA_COLUMN_TYPE_BOOL = 1 [deprecated = true];
+    DEPRECATED_SCALAR_DATA_COLUMN_TYPE_INT32 = 2 [deprecated = true];
+    DEPRECATED_SCALAR_DATA_COLUMN_TYPE_UINT32 = 3 [deprecated = true];
+    DEPRECATED_SCALAR_DATA_COLUMN_TYPE_INT64 = 4 [deprecated = true];
+    DEPRECATED_SCALAR_DATA_COLUMN_TYPE_UINT64 = 5 [deprecated = true];
+    DEPRECATED_SCALAR_DATA_COLUMN_TYPE_FLOAT = 6 [deprecated = true];
+    DEPRECATED_SCALAR_DATA_COLUMN_TYPE_DOUBLE = 7 [deprecated = true];
+    DEPRECATED_SCALAR_DATA_COLUMN_TYPE_BYTES = 8 [deprecated = true];
+}

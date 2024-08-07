@@ -82,6 +82,9 @@ message TraceRecord {
         }
     }
     
+    optional bool skipped_annotations = 55;
+    optional bool annotation_buffer_overflow = 56;
+    
     reserved 3 to 8, 35;
     
     extend proto2.bridge.MessageSet {

@@ -1,0 +1,17 @@
+syntax = "proto2";
+
+package privacy.context;
+
+option java_multiple_files = true;
+option java_package = "com.google.privacy.context";
+
+enum BitfieldIndex {
+    SALSA_LOOKUP_REMOTE_SIGNALS = 0;
+    ASSISTANT_SPECULATIVE = 1;
+    REQUEST_CONTAINS_SENSITIVE_LOCATION = 2;
+    ALLOW_ENFORCEMENT_WITHOUT_CONSENT = 3;
+    VERTEX_TRAFFIC_FOR_GROUNDING = 4;
+    PAYMENTS_TRAFFIC_FOR_NAME_SCREENING = 5;
+    EXAMPLE_FOO = 14;
+    EXAMPLE_BAR = 15;
+}

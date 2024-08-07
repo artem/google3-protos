@@ -1,0 +1,284 @@
+syntax = "proto2";
+
+package voxel;
+
+import "net/proto2/proto/descriptor.proto";
+import "storage/f1/proto/path.proto";
+import "storage/lightning/shared/voxel/proto/type.proto";
+import "storage/lightning/shared/voxel/proto/voxel_value.proto";
+import "storage/lightning/shared/voxel/proto/window_frame.proto";
+
+message ProjectProto {
+    repeated SharedProto shared = 3;
+    optional ExpressionProto filter_expr = 1;
+    repeated ExpressionProto project_expr = 2;
+}
+
+message SortFieldInfoProto {
+    optional ColumnReferenceProto column = 1;
+    optional bool is_asc = 2;
+    optional string collation = 3;
+}
+
+message AnalyticWindowBoundaryInfoProto {
+    optional WindowFrameBoundaryType boundary_type = 1;
+    optional ExpressionProto offset = 2;
+}
+
+message AnalyticWindowFrameInfoProto {
+    optional WindowFrameType frame_type = 1;
+    optional AnalyticWindowBoundaryInfoProto start_boundary = 2;
+    optional AnalyticWindowBoundaryInfoProto end_boundary = 3;
+}
+
+message AnalyticExpressionInfoProto {
+    optional ExpressionProto analytic_expr = 1;
+    optional AnalyticWindowFrameInfoProto window_frame_info = 2;
+}
+
+message AnalyticProto {
+    repeated AnalyticExpressionInfoProto analytic_expr = 1;
+    repeated ColumnReferenceProto scalar_expr = 2;
+    repeated ColumnReferenceProto partitioning_expr = 3;
+    repeated SortFieldInfoProto ordering_info = 4;
+}
+
+message AggregateProto {
+    repeated SharedProto shared = 1;
+    repeated ExpressionProto grouping_expr = 2;
+    repeated ExpressionProto aggregate_expr = 3;
+}
+
+message ArrayJoinProto {
+    optional ArrayJoinType join_type = 1;
+    enum ArrayJoinType {
+        NOT_SET = 0;
+        INNER = 1;
+        OUTER = 2;
+    }
+    
+    repeated SharedProto array_expression_shared = 2;
+    optional ExpressionProto array_expression = 3;
+    repeated SharedProto outer_join_expression_shared = 8;
+    optional ExpressionProto outer_join_expression = 4;
+    optional InternalReferenceProto element_reference = 5;
+    optional InternalReferenceProto offset_reference = 6;
+    optional bool output_offset = 7;
+}
+
+message JoinProto {
+    optional JoinType join_type = 1;
+    enum JoinType {
+        NOT_SET = 0;
+        INNER = 1;
+        LEFT_OUTER = 2;
+        RIGHT_OUTER = 3;
+        FULL_OUTER = 4;
+        LEFT_SEMI = 5;
+        LEFT_MARK = 6;
+    }
+    
+    optional JoinMethod join_method = 2;
+    enum JoinMethod {
+        UNKNOWN = 0;
+        HASH_JOIN = 1;
+        LOOKUP_JOIN = 2;
+        GEOSPATIAL_JOIN = 3;
+        BROADCAST_GEOSPATIAL_JOIN = 4;
+        MERGE_JOIN = 5;
+        GEOSPATIAL_LOOKUP_JOIN = 6;
+    }
+    
+    repeated ColumnReferenceProto left_keys = 3;
+    repeated ColumnReferenceProto right_keys = 4;
+    optional ProjectProto outer_join_conjuncts = 5;
+    optional ProjectProto geospatial_join_conjunct = 6;
+    optional bool treat_nulls_equal_or_nans_equal = 7;
+    optional bool is_single_join = 8;
+    
+    optional JoinCardinality join_cardinality = 9;
+    enum JoinCardinality {
+        JOIN_CARDINALITY_UNKNOWN = 0;
+        ONE_TO_ONE = 1;
+        ONE_TO_MANY = 2;
+        MANY_TO_ONE = 3;
+        MANY_TO_MANY = 4;
+    }
+}
+
+message ExpressionProto {
+    oneof expression {
+        ColumnReferenceProto column_reference = 1;
+        FunctionCallProto function_call = 2;
+        LiteralProto literal = 3;
+        SharedReferenceProto shared_reference = 4;
+        InternalReferenceProto internal_reference = 5;
+        ArrayAggregateProto array_aggregate = 6;
+        GetProtoFieldProto get_proto_field = 7;
+        GetStructFieldProto get_struct_field = 8;
+        DecodeProtoArrayProto decode_proto_array = 9;
+        ExternalFunctionCallProto external_function_call = 10;
+        StructTransformProto struct_transform = 11;
+    }
+}
+
+message ColumnReferenceProto {
+    optional int64 id = 1;
+    optional TypeProto type = 2;
+}
+
+message FunctionCallProto {
+    optional int64 signature_id = 1;
+    optional int64 catalog_id = 2;
+    repeated FunctionCallArgumentProto argument = 3;
+    optional FunctionCallInfoProto function_call_info = 4;
+}
+
+message FunctionCallArgumentProto {
+    repeated ExpressionProto expression = 1;
+    repeated bytes serialized_expression = 2 [ctype = CORD];
+}
+
+message FunctionCallInfoProto {
+    optional int64 extension_id = 1;
+    
+    extensions 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27, 100000 to 524999999, 525000000 to max;
+}
+
+message LiteralProto {
+    optional VoxelValueProto voxel_value = 3;
+    optional TypeProto type = 2;
+    
+    reserved 1;
+}
+
+message SharedProto {
+    optional int64 shared_id = 1;
+    optional bool non_increasing_qualifying_sets = 2;
+    repeated ExpressionProto expression = 3;
+}
+
+message SharedReferenceProto {
+    optional int64 shared_id = 1;
+    optional int64 expression_index = 2;
+}
+
+message InternalReferenceProto {
+    optional int64 internal_id = 1;
+}
+
+message ArrayAggregateScanProto {
+    optional ArrayJoinProto.ArrayJoinType join_type = 5;
+    optional ExpressionProto array_expression = 1;
+    optional InternalReferenceProto element_reference = 2;
+    optional InternalReferenceProto offset_reference = 3;
+    repeated SharedProto outer_join_expression_shared_node = 6;
+    optional ExpressionProto outer_join_expression = 7;
+    repeated SharedProto shared_node = 4;
+}
+
+message ArrayAggregateProto {
+    repeated ExpressionProto correlated_expression = 1;
+    repeated InternalReferenceProto correlated_reference = 2;
+    repeated ArrayAggregateScanProto array_aggregate_scan = 9;
+    optional ExpressionProto filter_expression = 7;
+    optional FunctionCallProto aggregate_expression = 8;
+}
+
+message GetProtoFieldProto {
+    optional ExpressionProto input_expression = 1;
+    repeated .f1.query.DecodePathElementInfo decode_path_element = 2;
+    optional TypeProto type = 3;
+}
+
+message GetStructFieldProto {
+    optional ExpressionProto input_expression = 1;
+    optional int64 field_index = 2;
+}
+
+message ProtoArraySingleFieldInfoProto {
+    repeated .f1.query.DecodePathElementInfo decode_path_element = 1;
+    repeated ProtoArraySingleFieldInfoProto sub_repeated_field = 2;
+}
+
+message DecodeProtoArrayProto {
+    optional ExpressionProto input_expression = 1;
+    repeated ProtoArraySingleFieldInfoProto proto_field = 2;
+    optional TypeProto type = 3;
+}
+
+message ExternalFunctionCallProto {
+    optional string group_name = 1;
+    repeated ExpressionProto arguments = 2;
+    optional TypeProto result_type = 3;
+    optional ExternalFunctionCallInfoProto external_function_call_info = 4;
+}
+
+message ExternalFunctionCallInfoProto {
+    extensions 100000 to max;
+}
+
+message StructFieldProto {
+    optional uint32 field_index = 1;
+}
+
+message StructArrayElementFieldProto {
+    optional StructFieldProto field = 1;
+    optional int64 offset = 2;
+    optional bool is_safe = 3;
+}
+
+message StructFieldElementProto {
+    oneof element {
+        StructFieldProto struct_field = 1;
+        StructArrayElementFieldProto struct_array_element_field = 2;
+    }
+}
+
+message StructFieldPathProto {
+    repeated StructFieldElementProto field_element = 1;
+}
+
+message StructTransformOperationProto {
+    oneof operation {
+        StructAddOperationProto add = 1;
+        StructRemoveOperationProto remove = 2;
+        StructUpdateOperationProto update = 3;
+        StructUpdateArrayElementOperationProto update_array_element = 4;
+    }
+}
+
+message StructAddOperationProto {
+    optional StructFieldPathProto output_field_path = 1;
+    optional ExpressionProto expression = 2;
+}
+
+message StructRemoveOperationProto {
+    optional StructFieldPathProto input_field_path = 1;
+}
+
+message StructUpdateOperationProto {
+    optional StructFieldPathProto output_field_path = 1;
+    optional ExpressionProto expression = 2;
+}
+
+message StructUpdateArrayElementOperationProto {
+    optional StructFieldPathProto output_field_path = 1;
+    optional InternalReferenceProto input_array_reference = 2;
+    optional InternalReferenceProto element_reference = 3;
+    optional ExpressionProto expression = 4;
+}
+
+message StructTransformProto {
+    optional ExpressionProto input_expression = 1;
+    repeated StructFieldPathProto field = 2;
+    repeated InternalReferenceProto field_reference = 3;
+    optional TypeProto output_type = 4;
+    repeated SharedProto shared_node = 5;
+    repeated StructTransformOperationProto operation = 6;
+}
+
+message SerializationContextProto {
+    map<int64, string> catalog_id_to_catalog_name = 1;
+    repeated .proto2.FileDescriptorSet file_descriptor_set = 2;
+}

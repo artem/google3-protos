@@ -1,0 +1,152 @@
+syntax = "proto3";
+
+package opencensus.proto.trace.v1;
+
+import "third_party/opencensus_proto/resource/v1/resource.proto";
+import "google/protobuf/timestamp.proto";
+import "google/protobuf/wrappers.proto";
+
+option ruby_package = "OpenCensus.Proto.Trace.V1";
+option go_package = "github.com/census-instrumentation/opencensus-proto/gen-go/trace/v1";
+option java_multiple_files = true;
+option java_outer_classname = "TraceProto";
+option java_package = "io.opencensus.proto.trace.v1";
+
+message Span {
+    bytes trace_id = 1;
+    bytes span_id = 2;
+    
+    Tracestate tracestate = 15;
+    message Tracestate {
+        repeated Entry entries = 1;
+        message Entry {
+            string key = 1;
+            string value = 2;
+        }
+    }
+    
+    bytes parent_span_id = 3;
+    TruncatableString name = 4;
+    
+    SpanKind kind = 14;
+    enum SpanKind {
+        SPAN_KIND_UNSPECIFIED = 0;
+        SERVER = 1;
+        CLIENT = 2;
+    }
+    
+    google.protobuf.Timestamp start_time = 5;
+    google.protobuf.Timestamp end_time = 6;
+    
+    Attributes attributes = 7;
+    message Attributes {
+        map<string, AttributeValue> attribute_map = 1;
+        int32 dropped_attributes_count = 2;
+    }
+    
+    StackTrace stack_trace = 8;
+    
+    TimeEvents time_events = 9;
+    message TimeEvents {
+        repeated TimeEvent time_event = 1;
+        int32 dropped_annotations_count = 2;
+        int32 dropped_message_events_count = 3;
+    }
+    
+    Links links = 10;
+    message Links {
+        repeated Link link = 1;
+        int32 dropped_links_count = 2;
+    }
+    
+    Status status = 11;
+    resource.v1.Resource resource = 16;
+    google.protobuf.BoolValue same_process_as_parent_span = 12;
+    google.protobuf.UInt32Value child_span_count = 13;
+    
+    message TimeEvent {
+        google.protobuf.Timestamp time = 1;
+        
+        oneof value {
+            Annotation annotation = 2;
+            MessageEvent message_event = 3;
+        }
+        
+        message Annotation {
+            TruncatableString description = 1;
+            Attributes attributes = 2;
+        }
+        
+        message MessageEvent {
+            Type type = 1;
+            enum Type {
+                TYPE_UNSPECIFIED = 0;
+                SENT = 1;
+                RECEIVED = 2;
+            }
+            
+            uint64 id = 2;
+            uint64 uncompressed_size = 3;
+            uint64 compressed_size = 4;
+        }
+    }
+    
+    message Link {
+        bytes trace_id = 1;
+        bytes span_id = 2;
+        
+        Type type = 3;
+        enum Type {
+            TYPE_UNSPECIFIED = 0;
+            CHILD_LINKED_SPAN = 1;
+            PARENT_LINKED_SPAN = 2;
+        }
+        
+        Attributes attributes = 4;
+        Tracestate tracestate = 5;
+    }
+}
+
+message Status {
+    int32 code = 1;
+    string message = 2;
+}
+
+message AttributeValue {
+    oneof value {
+        TruncatableString string_value = 1;
+        int64 int_value = 2;
+        bool bool_value = 3;
+        double double_value = 4;
+    }
+}
+
+message StackTrace {
+    StackFrames stack_frames = 1;
+    message StackFrames {
+        repeated StackFrame frame = 1;
+        int32 dropped_frames_count = 2;
+    }
+    
+    uint64 stack_trace_hash_id = 2;
+    
+    message StackFrame {
+        TruncatableString function_name = 1;
+        TruncatableString original_function_name = 2;
+        TruncatableString file_name = 3;
+        int64 line_number = 4;
+        int64 column_number = 5;
+        Module load_module = 6;
+        TruncatableString source_version = 7;
+    }
+}
+
+message Module {
+    TruncatableString module = 1;
+    TruncatableString build_id = 2;
+}
+
+message TruncatableString {
+    string value = 1;
+    int32 truncated_byte_count = 2;
+}

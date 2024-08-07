@@ -1,0 +1,18 @@
+syntax = "proto2";
+
+package ptoken;
+
+option java_multiple_files = true;
+option java_package = "com.google.privacy.ptoken.core.minting";
+
+message PTokenMintingMetrics {
+    optional Source source = 1 [default = INTERNAL];
+    enum Source {
+        UNKNOWN = 0;
+        INTERNAL = 1;
+        PUBLIC = 2;
+        SPECIAL_HISTORICAL = 3;
+        PROPAGATED = 4;
+        REGISTRY = 5;
+    }
+}

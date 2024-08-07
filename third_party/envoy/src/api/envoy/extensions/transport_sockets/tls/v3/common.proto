@@ -74,9 +74,11 @@ message SubjectAltNameMatcher {
         DNS = 2;
         URI = 3;
         IP_ADDRESS = 4;
+        OTHER_NAME = 5;
     }
     
     .envoy.type.matcher.v3.StringMatcher matcher = 2;
+    string oid = 3;
 }
 
 message CertificateValidationContext {

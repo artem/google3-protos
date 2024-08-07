@@ -1,0 +1,28 @@
+syntax = "proto3";
+
+package research_scam.generalized_hash;
+
+import "storage/datapol/annotations/proto/semantic_annotations.proto";
+
+message TrainingSamplingConfig {
+    int32 sampling_seed = 1;
+    float sampling_fraction = 2;
+    uint64 min_number_samples = 3;
+    uint64 max_number_samples = 4;
+    bool allow_replacement = 5;
+}
+
+message TrainingOptimizationConfig {
+    int32 max_number_iterations = 1;
+    float tolerance_objective = 2;
+    float tolerance_parameter = 3;
+    float learning_rate = 4;
+}
+
+message KmeansConfig {
+    int32 kmeans_seed = 1;
+    int32 max_number_iterations = 2;
+    float tolerance_center = 3;
+    int32 min_cluster_size = 4;
+    float perturbation = 5;
+}

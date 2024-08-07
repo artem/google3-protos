@@ -18,6 +18,8 @@ message CppFeatures {
         STRING = 3;
         STRING_PIECE = 4 [deprecated = true];
     }
+    
+    optional bool enum_name_uses_string_view = 3;
 }
 
 extend proto2.FeatureSet {

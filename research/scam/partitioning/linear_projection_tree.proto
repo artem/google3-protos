@@ -1,0 +1,24 @@
+syntax = "proto2";
+
+package research_scam;
+
+message SerializedLinearProjectionTree {
+    optional Node root = 1;
+    message Node {
+        oneof leaf_or_non_leaf {
+            NonLeafFields non_leaf = 1;
+            LeafFields leaf = 2;
+        }
+        
+        message NonLeafFields {
+            repeated float projection_vector = 1;
+            optional float threshold = 2;
+            optional Node left = 3;
+            optional Node right = 4;
+        }
+        
+        message LeafFields {
+            optional int32 leaf_number = 5;
+        }
+    }
+}

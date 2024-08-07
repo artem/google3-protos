@@ -85,6 +85,7 @@ message ReificationCost {
 
 message CustomFusionConfig {
     string name = 1;
+    int32 kernel_index = 2;
 }
 
 message CuDnnFusionConfig {

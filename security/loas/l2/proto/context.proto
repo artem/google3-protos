@@ -52,6 +52,7 @@ message InternalLoas2Context {
     optional string security_realm = 8;
     optional AcctRestrictions primary_role_restriction = 9;
     optional string unauthenticated_borg_cell = 10;
+    optional string unauthenticated_virtual_borg_cell = 25;
     optional string unauthenticated_borg_jobname = 11;
     optional int32 unauthenticated_borg_taskid = 12;
     optional string unauthenticated_host = 13;

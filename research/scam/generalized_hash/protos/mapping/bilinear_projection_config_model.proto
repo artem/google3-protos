@@ -1,0 +1,18 @@
+syntax = "proto3";
+
+package research_scam.generalized_hash;
+
+import "research/scam/generalized_hash/protos/generalized_vector_collection.proto";
+import "storage/datapol/annotations/proto/semantic_annotations.proto";
+
+message BilinearProjectionConfig {
+    uint64 input_number_rows = 1;
+    uint64 input_number_cols = 2;
+    uint64 output_number_rows = 3;
+    uint64 output_number_cols = 4;
+}
+
+message BilinearProjectionModel {
+    GeneralizedVectorCollection left_matrix = 1;
+    GeneralizedVectorCollection right_matrix = 2;
+}

@@ -1,0 +1,36 @@
+syntax = "proto3";
+
+package xds.type.matcher.v3;
+
+import "third_party/udpa/xds/type/v3/range.proto";
+import "third_party/udpa/xds/type/matcher/v3/matcher.proto";
+import "third_party/protoc_gen_validate/validate/validate.proto";
+
+option go_package = "github.com/cncf/xds/go/xds/type/matcher/v3";
+option java_multiple_files = true;
+option java_outer_classname = "RangeProto";
+option java_package = "com.github.xds.type.matcher.v3";
+
+message Int64RangeMatcher {
+    repeated RangeMatcher range_matchers = 1;
+    message RangeMatcher {
+        repeated .xds.type.v3.Int64Range ranges = 1;
+        Matcher.OnMatch on_match = 2;
+    }
+}
+
+message Int32RangeMatcher {
+    repeated RangeMatcher range_matchers = 1;
+    message RangeMatcher {
+        repeated .xds.type.v3.Int32Range ranges = 1;
+        Matcher.OnMatch on_match = 2;
+    }
+}
+
+message DoubleRangeMatcher {
+    repeated RangeMatcher range_matchers = 1;
+    message RangeMatcher {
+        repeated .xds.type.v3.DoubleRange ranges = 1;
+        Matcher.OnMatch on_match = 2;
+    }
+}

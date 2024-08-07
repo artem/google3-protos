@@ -1,0 +1,19 @@
+syntax = "proto2";
+
+package googlesql;
+
+import "net/proto2/bridge/proto/message_set.proto";
+import "storage/googlesql/public/error_location.proto";
+
+option java_outer_classname = "InternalErrorLocationProtos";
+option java_package = "com.google.storage.googlesql";
+
+message InternalErrorLocation {
+    optional int32 byte_offset = 3;
+    optional string filename = 4;
+    repeated ErrorSource error_source = 5;
+    
+    extend .proto2.bridge.MessageSet {
+        optional InternalErrorLocation message_set_extension = 120123470;
+    }
+}

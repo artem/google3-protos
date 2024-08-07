@@ -1,0 +1,22 @@
+syntax = "proto2";
+
+package proto2.contrib.compression;
+
+option cc_enable_arenas = true;
+option java_outer_classname = "CompressedProto";
+option java_package = "com.google.proto2.contrib.compression";
+
+message Compressed {
+    optional Format format = 1;
+    enum Format {
+        UNKNOWN = 0;
+        IDENTITY = 1;
+        BROTLI = 2;
+        GZIP = 3;
+        ZSTD = 4;
+    }
+    
+    optional bytes data = 15 [ctype = CORD];
+    
+    reserved 2 to 14;
+}

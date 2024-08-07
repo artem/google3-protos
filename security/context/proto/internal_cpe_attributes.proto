@@ -1,0 +1,10 @@
+syntax = "editions";
+
+package security.context;
+
+option java_multiple_files = true;
+option java_package = "com.google.security.context";
+
+message InternalCpeAttributes {
+    optional bytes attribute_context = 1;
+}

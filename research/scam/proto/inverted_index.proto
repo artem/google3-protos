@@ -1,0 +1,139 @@
+syntax = "proto2";
+
+package research_scam;
+
+option java_package = "com.google.research.scam";
+
+message InvertedIndex {
+    oneof inverted_index_type {
+        ChunkedInvertedIndexConfig chunked_inverted_index = 1;
+        PrunedInvertedIndexCosineConfig pruned_inverted_index_cosine = 2;
+        LegacyInvertedIndexConfig legacy_inverted_index = 3;
+        DynamicInvertedIndexConfig dynamic_inverted_index = 4;
+    }
+}
+
+message ChunkedInvertedIndexConfig {
+    repeated uint64 zeroed_dimension = 12;
+    repeated uint64 intercept_dimension = 13;
+    optional bool return_intercept_only_neighbors = 14 [default = true];
+    optional double fixed_point_multiplier = 17 [default = nan];
+    
+    optional FixedPointCompressionType fixed_point_compression_type = 20 [default = INT8_FIXED_POINT];
+    enum FixedPointCompressionType {
+        INT8_FIXED_POINT = 0;
+        UINT8_FIXED_POINT = 1;
+        INT16_FIXED_POINT = 2;
+        UINT16_FIXED_POINT = 3 [deprecated = true];
+    }
+    
+    optional SmallEntryRemovalConfig small_entry_removal = 11;
+    message SmallEntryRemovalConfig {
+        optional double query_removal_fraction = 1 [default = 0];
+        optional double database_removal_fraction = 2 [default = 0];
+        
+        optional WeightingType weighting_type = 3 [default = L2_WEIGHTING];
+        enum WeightingType {
+            UNIFORM_WEIGHTING = 0;
+            L1_WEIGHTING = 1;
+            L2_WEIGHTING = 2;
+        }
+        
+        optional bool process_inverted_index_by_dimension = 4 [default = false];
+        optional uint32 max_query_dimensions = 5 [default = 0xffffffff];
+        optional uint32 min_query_dimensions = 6 [default = 1];
+        optional uint32 max_database_dimensions_or_datapoints = 7 [default = 0xffffffff];
+        optional uint32 min_database_dimensions_or_datapoints = 8 [default = 1];
+        
+        optional RenormalizationType renormalization_type = 9 [default = NO_RENORMALIZATION];
+        enum RenormalizationType {
+            NO_RENORMALIZATION = 0;
+            L1_RENORMALIZATION = 1;
+            L2_RENORMALIZATION = 2;
+        }
+        
+        optional TiedEntryBehavior database_tied_entry_behavior = 10 [default = INCLUDE];
+        enum TiedEntryBehavior {
+            INCLUDE = 0;
+            EXCLUDE = 1;
+            ARBITRARY = 2;
+        }
+        
+        optional TiedEntryBehavior query_tied_entry_behavior = 11 [default = INCLUDE];
+    }
+    
+    optional DirectDistanceImplementation direct_distance_implementation = 19 [default = STANDARD];
+    enum DirectDistanceImplementation {
+        STANDARD = 0;
+        SPARSE_RESTRICT_OPTIMIZED = 1;
+        VERY_SPARSE_MINIMIZE_TEMP_STORAGE = 2;
+    }
+    
+    optional double explicit_zero_threshold_fraction = 16 [default = 1];
+    optional bool allow_two_pass_streaming_building = 18 [default = false];
+    optional bool return_trivially_zero_dot_products = 21 [default = false];
+    optional bool use_sparse_optimized_restrict_implementation = 15 [default = false, deprecated = true];
+    optional uint32 chunk_size = 1 [default = 1];
+    optional bool store_values = 3 [default = true];
+    optional bool binary_search = 2 [default = false];
+    optional int32 min_intersect = 10 [default = 1];
+}
+
+message PrunedInvertedIndexCosineConfig {
+    optional bool use_fixed_point_values = 2 [default = false];
+    optional float indexing_epsilon = 3;
+    optional float min_unindexed_cosine_distance = 4 [default = 0];
+    optional float removed_squared_norm = 1 [default = 0];
+    optional uint32 max_concurrent_queries = 5 [default = 0xffffffff];
+    optional string fast_startup_metadata_wildcard = 6;
+}
+
+message LegacyInvertedIndexConfig {
+    optional uint32 chunk_size = 1 [default = 1];
+    optional bool binary_search = 2 [default = false];
+    optional int32 min_intersect = 10 [default = 1];
+    optional ChunkedInvertedIndexConfig.SmallEntryRemovalConfig small_entry_removal = 11;
+    repeated uint64 zeroed_dimension = 12;
+    repeated uint64 intercept_dimension = 13;
+    optional bool return_intercept_only_neighbors = 14 [default = true];
+}
+
+message DynamicInvertedIndexConfig {
+    optional Type type = 1 [default = SIMPLE];
+    enum Type {
+        TYPE_UNSPECIFIED = 0;
+        SIMPLE = 1;
+        STATIC_DYNAMIC_HYBRID = 2;
+        PRUNED_COSINE = 3;
+    }
+    
+    optional DocidToDatapointIndexMapType docid_to_datapoint_index_map_type = 2 [default = SPARSE_HASH_MAP];
+    enum DocidToDatapointIndexMapType {
+        NONE = 0;
+        SPARSE_HASH_MAP = 1;
+        DENSE_HASH_MAP = 2;
+        FIXED_SIZE_8 = 3;
+    }
+    
+    optional uint32 max_concurrent_queries = 3 [default = 0xffffffff];
+    
+    optional DimensionRemapperOptimizationMode dimension_remapper_optimization_mode = 11;
+    enum DimensionRemapperOptimizationMode {
+        DIMENSION_REMAPPER_OPTIMIZATION_MODE_UNSPECIFIED = 0;
+        SPEED_OPTIMIZED = 1;
+        MEMORY_FOOTPRINT_OPTIMIZED = 2;
+    }
+    
+    repeated uint64 intercept_dimension = 5;
+    optional bool return_intercept_only_neighbors = 6 [default = true];
+    repeated uint64 dimensions_most_to_least_active = 7;
+    optional float indexing_epsilon = 9;
+    
+    optional DistanceImplementation distance_implementation = 10 [default = STANDARD];
+    enum DistanceImplementation {
+        STANDARD = 0;
+        VERY_SPARSE_MINIMIZE_TEMP_STORAGE = 1;
+    }
+    
+    optional uint32 num_updates_between_garbage_collections = 4 [default = 100000, deprecated = true];
+}

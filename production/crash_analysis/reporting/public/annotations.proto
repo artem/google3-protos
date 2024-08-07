@@ -4,6 +4,9 @@ package coroner.collection;
 
 import "storage/datapol/annotations/proto/semantic_annotations.proto";
 
+option java_multiple_files = true;
+option java_package = "com.google.prod.crashanalysis";
+
 message AnnotationKeyValue {
     optional string key = 1 [ctype = STRING_PIECE];
     optional string value = 2 [ctype = STRING_PIECE];

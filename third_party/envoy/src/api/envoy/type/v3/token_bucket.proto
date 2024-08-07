@@ -1,0 +1,20 @@
+syntax = "proto3";
+
+package envoy.type.v3;
+
+import "google/protobuf/duration.proto";
+import "google/protobuf/wrappers.proto";
+import "third_party/udpa/udpa/annotations/status.proto";
+import "third_party/udpa/udpa/annotations/versioning.proto";
+import "third_party/protoc_gen_validate/validate/validate.proto";
+
+option go_package = "github.com/envoyproxy/go-control-plane/envoy/type/v3;typev3";
+option java_multiple_files = true;
+option java_outer_classname = "TokenBucketProto";
+option java_package = "io.envoyproxy.envoy.type.v3";
+
+message TokenBucket {
+    uint32 max_tokens = 1;
+    google.protobuf.UInt32Value tokens_per_fill = 2;
+    google.protobuf.Duration fill_interval = 3;
+}

@@ -53,7 +53,7 @@ message HloInstructionProto {
     repeated int64 called_computation_ids = 38;
     OpSharding sharding = 40;
     bytes backend_config = 43;
-    repeated ReplicaGroup replica_groups = 49;
+    repeated ReplicaGroup replica_groups = 49 [deprecated = true];
     int64 all_reduce_id = 45 [deprecated = true];
     bool use_global_device_ids = 71;
     bool is_host_transfer = 47;
@@ -85,6 +85,9 @@ message HloInstructionProto {
     bool largest = 85;
     StatisticsViz statistics_viz = 82;
     repeated SparsityDescriptor dot_sparsity = 86;
+    CollectiveDeviceListProto collective_device_list = 87;
+    OriginalValueProto original_value = 88;
+    bool is_composite = 89;
     
     oneof optional_cross_program_prefetch_index {
         int32 cross_program_prefetch_index = 80;

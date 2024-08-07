@@ -1,0 +1,18 @@
+syntax = "proto2";
+
+package xuniverse;
+
+import public "google/protobuf/timestamp.proto";
+import "google/protobuf/any.proto";
+
+message NotarizationPayloadWrapper {
+    optional google.protobuf.Any payload = 1;
+}
+
+message Notarization {
+    optional NotarizationPayloadWrapper wrapped_payload = 4;
+    optional bytes signature = 2;
+    optional string keyset_id = 3;
+    
+    reserved 1;
+}

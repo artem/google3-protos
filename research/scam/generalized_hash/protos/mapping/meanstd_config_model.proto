@@ -1,0 +1,25 @@
+syntax = "proto3";
+
+package research_scam.generalized_hash;
+
+import "research/scam/data_format/features.proto";
+import "research/scam/generalized_hash/protos/generalized_training.proto";
+import "storage/datapol/annotations/proto/semantic_annotations.proto";
+
+message MeanstdMapConfig {
+    InputRequirement input_requirement = 1;
+    enum InputRequirement {
+        NONE = 0;
+        FULL = 1;
+        SAMPLED = 2;
+    }
+    
+    TrainingSamplingConfig sampling_config = 2;
+    GenericFeatureVector means = 3;
+    GenericFeatureVector stdevs = 4;
+}
+
+message MeanstdMapModel {
+    GenericFeatureVector means = 1;
+    GenericFeatureVector stdevs = 2;
+}

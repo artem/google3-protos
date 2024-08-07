@@ -81,6 +81,7 @@ message OpMetadata {
     string deduplicated_name = 12;
     bool preserve_layout = 13;
     int32 stack_frame_id = 15;
+    string scheduling_name = 16;
     
     reserved 6, 7, 14, "creation_pass_id", "logical_creation_pass_id";
 }
@@ -286,6 +287,18 @@ message ReplicaGroup {
     repeated int64 replica_ids = 1;
 }
 
+message IotaReplicaGroupListProto {
+    int64 num_replica_groups = 1;
+    int64 num_devices_per_group = 2;
+    repeated int64 iota_reshape_dims = 3;
+    repeated int32 iota_transpose_perm = 4;
+}
+
+message CollectiveDeviceListProto {
+    repeated ReplicaGroup replica_groups = 1;
+    IotaReplicaGroupListProto iota_replica_group_list = 2;
+}
+
 message SourceTarget {
     int64 source = 1;
     int64 target = 2;
@@ -333,6 +346,16 @@ message OutputOperandAliasing {
     repeated int64 output_sha26a136ac = 1;
     int64 operand_index = 2;
     repeated int64 operand_sha26a136ac = 3;
+}
+
+message OriginalArrayProto {
+    repeated int64 leaf_sha26a136ac = 1;
+    string instruction_name = 2;
+    repeated int64 sha26a136ac = 3;
+}
+
+message OriginalValueProto {
+    repeated OriginalArrayProto leaves = 1;
 }
 
 enum PrimitiveType {

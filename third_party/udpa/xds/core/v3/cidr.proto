@@ -1,0 +1,17 @@
+syntax = "proto3";
+
+package xds.core.v3;
+
+import "third_party/udpa/xds/annotations/v3/status.proto";
+import "google/protobuf/wrappers.proto";
+import "third_party/protoc_gen_validate/validate/validate.proto";
+
+option go_package = "github.com/cncf/xds/go/xds/core/v3";
+option java_multiple_files = true;
+option java_outer_classname = "CidrRangeProto";
+option java_package = "com.github.xds.core.v3";
+
+message CidrRange {
+    string address_prefix = 1;
+    google.protobuf.UInt32Value prefix_len = 2;
+}

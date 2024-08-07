@@ -1,4 +1,4 @@
-syntax = "proto2";
+syntax = "editions";
 
 package monitoring.streamz;
 
@@ -11,17 +11,17 @@ option java_outer_classname = "StreamzProtos";
 option java_package = "com.google.monitoring.streamz.proto";
 
 message StreamQuery {
-    required string pattern = 1;
+    optional string pattern = 1;
 }
 
 message MetricAnnotation {
-    required string name = 1;
+    optional string name = 1;
     optional string value = 2;
 }
 
 message Types {
     message ValueTypeDescriptor {
-        required EncodedValueType value_type = 1;
+        optional EncodedValueType value_type = 1;
         optional string message_name = 2;
         optional int32 message_type_id = 3;
     }
@@ -50,10 +50,10 @@ message ExtendedAnnotations {
 }
 
 message MetricDefinition {
-    required string name = 2;
+    optional string name = 2;
     repeated string field_name = 3;
     repeated Types.FieldType field_type = 4;
-    required Types.ValueTypeDescriptor type_descriptor = 11;
+    optional Types.ValueTypeDescriptor type_descriptor = 11;
     repeated MetricAnnotation annotation = 10;
     repeated google.protobuf.Any user_annotation = 13;
     optional ExtendedAnnotations extended_annotations = 12;
@@ -61,7 +61,7 @@ message MetricDefinition {
 
 message StreamDefinition {
     optional MetricDefinition metric_definition = 1;
-    required int32 metric_index = 2;
+    optional int32 metric_index = 2;
     repeated string string_field_values = 3;
     repeated int32 int_field_values = 4;
     repeated bool boolean_field_values = 5;
@@ -69,20 +69,20 @@ message StreamDefinition {
 }
 
 message RootDescriptor {
-    required string name = 1;
-    required string spatial_container = 2;
-    required string spatial_element = 3;
+    optional string name = 1;
+    optional string spatial_container = 2;
+    optional string spatial_element = 3;
     repeated StreamzAnnouncement.Label labels = 4;
 }
 
 message TypedMessage {
     optional int32 type_id = 1;
-    required bytes message = 8 [ctype = CORD];
+    optional bytes message = 8 [ctype = CORD];
 }
 
 message StreamValue {
     optional StreamDefinition stream_definition = 1 [lazy = true];
-    required int32 stream_index = 2;
+    optional int32 stream_index = 2;
     optional int64 timestamp = 3;
     optional bool bool_value = 4;
     optional int64 int64_value = 5;

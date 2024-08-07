@@ -2,6 +2,8 @@ syntax = "proto3";
 
 package data_residency.mapping.cloud;
 
+import "privacy/data_governance/attributes/proto/classification.proto";
+
 option java_multiple_files = true;
 option java_package = "com.google.dataresidency.mapping.cloud";
 
@@ -289,4 +291,16 @@ enum CloudDataResidencyLocation {
     PROD_US_ROA_1 = 280;
     PROD_US_SAT_1 = 281;
     NORTHAMERICA_SOUTH1 = 282;
+    BR = 283;
+    CH = 284;
+    CL = 285;
+    GB = 286;
+    ID = 287;
+    IL = 288;
+    KR = 289;
+    PROD_US_FWA_1 = 290;
+    SG = 291;
+    TW = 292;
+    US_EAST10 = 293;
+    ASIA_SOUTHEAST3 = 294;
 }

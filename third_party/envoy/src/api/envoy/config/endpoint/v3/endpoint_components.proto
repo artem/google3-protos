@@ -53,6 +53,7 @@ message LedsClusterLocalityConfig {
 
 message LocalityLbEndpoints {
     .envoy.config.core.v3.Locality locality = 1;
+    .envoy.config.core.v3.Metadata metadata = 9;
     repeated LbEndpoint lb_endpoints = 2;
     google.protobuf.UInt32Value load_balancing_weight = 3;
     uint32 priority = 5;

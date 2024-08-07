@@ -1,0 +1,13 @@
+syntax = "proto3";
+
+package research_scam.generalized_hash;
+
+import "storage/datapol/annotations/proto/semantic_annotations.proto";
+
+message SparseHashingModel {
+    uint64 output_dimension = 1;
+}
+
+message SparseHashingConfig {
+    uint64 output_dimension = 1;
+}

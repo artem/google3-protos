@@ -1,0 +1,137 @@
+syntax = "proto2";
+
+package research_scam;
+
+option cc_enable_arenas = true;
+option java_package = "com.google.research.scam";
+
+message V3Restrict {
+    repeated TokenNamespace namespaces = 1;
+    repeated NumericRestrictNamespace numeric_namespaces = 2;
+    repeated CustomRestrictNamespace custom_namespaces = 3;
+}
+
+message TokenNamespace {
+    optional string namespace = 1;
+    repeated bytes bytes_tokens = 6;
+    repeated string string_tokens = 3;
+    repeated fixed64 uint64_tokens = 2 [packed = true];
+    repeated bytes bytes_blocklist_tokens = 7;
+    repeated string string_blacklist_tokens = 5;
+    repeated fixed64 uint64_blacklist_tokens = 4 [packed = true];
+}
+
+message NumericRestrictNamespace {
+    optional string namespace = 1;
+    
+    optional Operator op = 5 [default = OP_UNSPECIFIED];
+    enum Operator {
+        OP_UNSPECIFIED = 0;
+        LESS = 1;
+        LESS_EQUAL = 2;
+        EQUAL = 3;
+        GREATER_EQUAL = 4;
+        GREATER = 5;
+        NOT_EQUAL = 6;
+    }
+    
+    oneof Value {
+        int64 value_int = 2;
+        float value_float = 3;
+        double value_double = 4;
+    }
+}
+
+message RestrictsConfig {
+    optional bool enabled = 1 [default = false];
+    optional int32 restrict_cache_size = 2 [default = 0];
+    optional V3RestrictsConfig v3_restricts = 3;
+    optional bool per_partition_restricts = 4 [default = false];
+    
+    optional DirectLookupConfig direct_lookup = 5;
+    message DirectLookupConfig {
+        optional bool enabled = 1;
+        optional string v3_retrict_namespace = 2 [default = "__direct_lookup_docids__"];
+    }
+}
+
+message V3RestrictsConfig {
+    optional EmptyNamespaceMatchingMode empty_namespace_matching_mode = 1 [default = UNSPECIFIED];
+    enum EmptyNamespaceMatchingMode {
+        UNSPECIFIED = 0;
+        FORWARD_MODE = 1;
+        REVERSE_MODE = 2;
+        LAX_SYMMETRIC = 3;
+        STRICT_SYMMETRIC = 4;
+    }
+    
+    repeated CustomRestrictNamespaceConfig custom_restrict_namespace_configs = 6;
+}
+
+message RestrictEvaluationInfo {
+    optional ApplyTokenStats apply_token_stats = 1;
+    message ApplyTokenStats {
+        optional uint64 bijective_matches = 1;
+        optional uint64 vector_matches = 2;
+        optional uint64 vector_datapoint_count = 3;
+        optional uint64 bitmap_matches = 4;
+        optional uint64 non_compact_matches = 5;
+        optional uint64 no_matches = 6;
+    }
+    
+    optional DirectLookupStats direct_lookup_stats = 2;
+    message DirectLookupStats {
+        optional uint64 direct_lookup_docids_count = 1;
+        optional uint64 direct_lookup_matches = 2;
+    }
+    
+    optional CustomRestrictEvaluationStats custom_restrict_stats = 3;
+}
+
+message CustomRestrictNamespaceConfig {
+    optional string extension_registry_name = 1;
+    optional string namespace = 2;
+    optional string data_file_dir = 3;
+    optional int64 estimated_memory_usage_bytes = 4;
+    
+    extensions 100 to 1000;
+}
+
+message CustomRestrictNamespace {
+    optional string namespace = 1;
+    optional bool dry_run = 2;
+    optional bool collect_evaluation_stats = 3;
+    
+    extensions 100 to 1000;
+}
+
+message CustomRestrictEvaluationStats {
+    extensions 100 to 1000;
+}
+
+message TestCustomRestrictNamespaceConfig {
+    optional int32 eligible_value_lower_bound = 1;
+    optional int32 eligible_value_upper_bound = 2;
+}
+
+message TestCustomRestrictNamespace {
+    optional int32 value = 1;
+    repeated bytes docid_allowlist = 2;
+}
+
+message TestCustomRestrictEvaluationStats {
+    optional int32 matched_value_count = 1;
+    optional int32 found_docid_count = 2;
+}
+
+extend CustomRestrictNamespaceConfig {
+    optional TestCustomRestrictNamespaceConfig test_custom_restrict_config = 100;
+}
+
+extend CustomRestrictNamespace {
+    optional TestCustomRestrictNamespace test_custom_restrict = 100;
+}
+
+extend CustomRestrictEvaluationStats {
+    optional TestCustomRestrictEvaluationStats test_custom_restrict_evaluation_stats = 100;
+}

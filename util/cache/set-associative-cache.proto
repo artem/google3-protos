@@ -1,0 +1,23 @@
+syntax = "proto2";
+
+package util;
+
+message SetAssociativeCacheParameters {
+    required int64 num_entries = 1;
+    optional int32 blocks_per_key = 2 [default = 1];
+    optional int32 entries_per_block = 3 [default = 4];
+    optional int32 promotion_ratio = 4 [default = 1];
+    
+    optional BlockEvictionPolicy block_eviction_policy = 5 [default = BLOCK_PSEUDO_RANDOM_EVICTION];
+    enum BlockEvictionPolicy {
+        BLOCK_PSEUDO_RANDOM_EVICTION = 0;
+        NUM_BLOCK_EVICTION_POLICIES = 1;
+    }
+    
+    optional EntryEvictionPolicy entry_eviction_policy = 6 [default = ENTRY_PSEUDO_LFU_EVICTION];
+    enum EntryEvictionPolicy {
+        ENTRY_PSEUDO_LFU_EVICTION = 0;
+        ENTRY_LRU_EVICTION = 1;
+        NUM_ENTRY_EVICTION_POLICIES = 2;
+    }
+}

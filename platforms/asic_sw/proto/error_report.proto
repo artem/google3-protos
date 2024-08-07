@@ -2,6 +2,7 @@ syntax = "proto2";
 
 package asic_sw.proto;
 
+import "google/api/inclusion.proto";
 import "platforms/asic_sw/proto/chip_location.proto";
 import "platforms/asic_sw/proto/errors.proto";
 

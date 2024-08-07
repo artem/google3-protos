@@ -1,0 +1,25 @@
+syntax = "proto2";
+
+package research_scam;
+
+option java_multiple_files = true;
+
+message MemoryConsumptionEstimateConfig {
+    optional bool enabled = 1;
+}
+
+message MemoryConsumptionEstimate {
+    optional int64 total = 1;
+    optional int64 original_vectors = 2;
+    optional int64 docids = 3;
+    optional int64 fixed8_vectors = 4;
+    optional int64 bfloat16_vectors = 12;
+    optional int64 centroids = 5;
+    optional int64 partition_assignments = 6;
+    optional int64 ah_vectors = 7;
+    optional int64 inverted_index = 11;
+    optional int64 crowding = 8;
+    optional int64 restricts = 9;
+    optional int64 restricts_cache = 13;
+    optional int64 userinfo = 10;
+}

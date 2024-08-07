@@ -2,6 +2,7 @@ syntax = "proto3";
 
 package google.monitoring.v3.widgets;
 
+import "google/api/field_behavior.proto";
 import "google/api/resource.proto";
 import "google/api/visibility.proto";
 import "google/logging/data_governance.proto";
@@ -67,6 +68,8 @@ message Widget {
         SectionHeader section_header = 37;
         Topology topology = 38;
     }
+    
+    reserved 11 to 14;
 }
 
 message GridLayout {
@@ -204,7 +207,12 @@ message CollapsibleGroup {
 }
 
 message SingleViewGroup {
-    
+    DisplayType display_type = 1;
+    enum DisplayType {
+        DISPLAY_TYPE_UNSPECIFIED = 0;
+        DROPDOWN = 1;
+        TAB = 2;
+    }
 }
 
 message LogsPanel {

@@ -1,0 +1,43 @@
+syntax = "proto3";
+
+package research_scam.generalized_hash;
+
+import "research/scam/generalized_hash/protos/generalized_training.proto";
+import "storage/datapol/annotations/proto/semantic_annotations.proto";
+
+message MultiCutConfig {
+    float number_stdevs = 1;
+    repeated float emperical_quantiles = 2;
+}
+
+message ThresholdType {
+    enum Enum {
+        UNKNOWN = 0;
+        FLOOR = 1;
+        LEARNED = 2;
+        MEAN = 3;
+        MEDIAN = 4;
+        MULTI_CUT = 5;
+        SIGN = 6;
+    }
+}
+
+message ThreshMapConfig {
+    ThresholdType.Enum threshold_type = 1;
+    MultiCutConfig multi_cut_config = 2;
+    
+    InputRequirement input_requirement = 3;
+    enum InputRequirement {
+        NONE = 0;
+        FULL = 1;
+        SAMPLED = 2;
+    }
+    
+    TrainingSamplingConfig sampling_config = 4;
+}
+
+message ThreshMapModel {
+    ThresholdType.Enum threshold_type = 1;
+    repeated float thresholds = 2;
+    int32 number_cuts_per_dimension = 3;
+}

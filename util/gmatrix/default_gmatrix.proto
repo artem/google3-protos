@@ -1,0 +1,7 @@
+syntax = "editions";
+
+message DefaultGMatrixData {
+    optional int32 number_of_rows = 1;
+    optional int32 number_of_columns = 2;
+    repeated double elt = 3;
+}

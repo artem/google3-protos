@@ -1,0 +1,15 @@
+syntax = "proto2";
+
+package research_vision;
+
+import "storage/datapol/annotations/proto/semantic_annotations.proto";
+
+message InputHandlerOptions {
+    optional string name = 1;
+    optional string config = 2;
+    optional bool handler_returns_multiple_feature_vectors = 3 [default = false];
+    optional string lintrans_filename = 4;
+    optional bool unitl2_normalize = 5 [default = false];
+    optional bool clear_extensions = 6 [default = false];
+    optional uint64 number_of_nodes = 7 [default = 600000000];
+}
