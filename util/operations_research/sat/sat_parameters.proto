@@ -147,6 +147,8 @@ message SatParameters {
     optional double inprocessing_dtime_ratio = 273 [default = 0.2];
     optional double inprocessing_probing_dtime = 274 [default = 1];
     optional double inprocessing_minimization_dtime = 275 [default = 1];
+    optional bool inprocessing_minimization_use_conflict_analysis = 297 [default = true];
+    optional bool inprocessing_minimization_use_all_orderings = 298 [default = false];
     optional int32 num_workers = 206 [default = 0];
     optional int32 num_search_workers = 100 [default = 0];
     optional int32 num_full_subsolvers = 294 [default = 0];
@@ -161,6 +163,7 @@ message SatParameters {
     optional bool share_level_zero_bounds = 114 [default = true];
     optional bool share_binary_clauses = 203 [default = true];
     optional bool share_glue_clauses = 285 [default = false];
+    optional bool minimize_shared_clauses = 300 [default = true];
     optional bool debug_postsolve_with_full_solver = 162 [default = false];
     optional int32 debug_max_num_presolve_operations = 151 [default = 0];
     optional bool debug_crash_on_bad_hint = 195 [default = false];
@@ -201,6 +204,7 @@ message SatParameters {
     optional bool use_timetabling_in_no_overlap_2d = 200 [default = false];
     optional bool use_energetic_reasoning_in_no_overlap_2d = 213 [default = false];
     optional bool use_area_energetic_reasoning_in_no_overlap_2d = 271 [default = false];
+    optional bool use_try_edge_reasoning_in_no_overlap_2d = 299 [default = false];
     optional int32 max_pairs_pairwise_reasoning_in_no_overlap_2d = 276 [default = 1250];
     optional bool use_dual_scheduling_heuristics = 214 [default = true];
     
@@ -279,7 +283,8 @@ message SatParameters {
     optional int32 solution_pool_size = 193 [default = 3];
     optional bool use_rins_lns = 129 [default = true];
     optional bool use_feasibility_pump = 164 [default = true];
-    optional bool use_lb_relax_lns = 255 [default = false];
+    optional bool use_lb_relax_lns = 255 [default = true];
+    optional int32 lb_relax_num_workers_threshold = 296 [default = 16];
     
     optional FPRoundingMethod fp_rounding = 165 [default = PROPAGATION_ASSISTED];
     enum FPRoundingMethod {
@@ -304,6 +309,7 @@ message SatParameters {
     optional double lp_dual_tolerance = 267 [default = 1e-07];
     optional bool convert_intervals = 177 [default = true];
     optional int32 symmetry_level = 183 [default = 2];
+    optional bool use_symmetry_in_lp = 301 [default = false];
     optional bool new_linear_propagation = 224 [default = true];
     optional int32 linear_split_size = 256 [default = 100];
     optional int32 linearization_level = 90 [default = 1];

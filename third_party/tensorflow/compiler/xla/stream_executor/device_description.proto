@@ -51,5 +51,7 @@ message GpuTargetConfigProto {
     .xla.AutotuneResults autotune_results = 6;
     string device_description_str = 7;
     
-    reserved 2, 3, "cuda_compute_capability", "rocm_compute_capability";
+    reserved 2, 3;
+    
+    reserved "cuda_compute_capability", "rocm_compute_capability";
 }

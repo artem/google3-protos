@@ -58,7 +58,9 @@ message Node {
         BuildVersion user_agent_build_version = 8;
     }
     
-    reserved 5, "build_version";
+    reserved 5;
+    
+    reserved "build_version";
 }
 
 message Metadata {
@@ -199,7 +201,9 @@ message TransportSocket {
         google.protobuf.Any typed_config = 3;
     }
     
-    reserved 2, "config";
+    reserved 2;
+    
+    reserved "config";
 }
 
 message RuntimeFractionalPercent {

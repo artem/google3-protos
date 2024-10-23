@@ -1,0 +1,18 @@
+syntax = "proto3";
+
+package tensorflow.distributed_runtime;
+
+option cc_enable_arenas = true;
+option go_package = "github.com/tsl/tsl/go/core/protobuf/for_core_protos_go_proto";
+
+message GrpcPayloadContainer {
+    map<string, bytes> payloads = 1;
+}
+
+message GrpcPayloadsLost {
+    
+}
+
+message WorkerPossiblyRestarted {
+    
+}

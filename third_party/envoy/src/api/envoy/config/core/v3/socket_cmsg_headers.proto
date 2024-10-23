@@ -1,0 +1,17 @@
+syntax = "proto3";
+
+package envoy.config.core.v3;
+
+import "google/protobuf/wrappers.proto";
+import "third_party/udpa/udpa/annotations/status.proto";
+
+option go_package = "github.com/envoyproxy/go-control-plane/envoy/config/core/v3;corev3";
+option java_multiple_files = true;
+option java_outer_classname = "SocketCmsgHeadersProto";
+option java_package = "io.envoyproxy.envoy.config.core.v3";
+
+message SocketCmsgHeaders {
+    google.protobuf.UInt32Value level = 1;
+    google.protobuf.UInt32Value type = 2;
+    uint32 expected_size = 3;
+}

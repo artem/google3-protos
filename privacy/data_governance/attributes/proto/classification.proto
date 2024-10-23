@@ -15,6 +15,12 @@ message Category {
         NO = 2;
     }
     
+    HasCategory financial = 2;
+    HasCategory payment_instrument = 3;
+    HasCategory health = 4;
+    HasCategory hipaa = 5;
+    HasCategory employee = 7;
+    
     GeoLocation geo_location = 8;
     message GeoLocation {
         LocationType location_type = 1;
@@ -48,11 +54,6 @@ message Category {
         }
     }
     
-    HasCategory financial = 2;
-    HasCategory payment_instrument = 3;
-    HasCategory health = 4;
-    HasCategory hipaa = 5;
-    HasCategory employee = 7;
     HasCategory children_data = 9 [deprecated = true];
     HasCategory children_product = 10;
     HasCategory audio_data = 11;

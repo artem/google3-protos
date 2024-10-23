@@ -5,6 +5,7 @@ package envoy.config.listener.v3;
 import "third_party/envoy/src/api/envoy/config/core/v3/base.proto";
 import "third_party/envoy/src/api/envoy/config/core/v3/extension.proto";
 import "third_party/envoy/src/api/envoy/config/core/v3/protocol.proto";
+import "third_party/envoy/src/api/envoy/config/core/v3/socket_cmsg_headers.proto";
 import "google/protobuf/duration.proto";
 import "google/protobuf/wrappers.proto";
 import "third_party/udpa/xds/annotations/v3/status.proto";
@@ -29,4 +30,6 @@ message QuicProtocolOptions {
     .envoy.config.core.v3.TypedExtensionConfig server_preferred_address_config = 9;
     google.protobuf.BoolValue send_disable_active_migration = 10;
     .envoy.config.core.v3.TypedExtensionConfig connection_debug_visitor_config = 11;
+    repeated .envoy.config.core.v3.SocketCmsgHeaders save_cmsg_config = 12;
+    bool reject_new_connections = 13;
 }

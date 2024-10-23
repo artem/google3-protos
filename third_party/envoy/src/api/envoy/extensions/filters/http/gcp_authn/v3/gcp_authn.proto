@@ -1,0 +1,38 @@
+syntax = "proto3";
+
+package envoy.extensions.filters.http.gcp_authn.v3;
+
+import "third_party/envoy/src/api/envoy/config/core/v3/base.proto";
+import "third_party/envoy/src/api/envoy/config/core/v3/http_uri.proto";
+import "google/protobuf/duration.proto";
+import "google/protobuf/wrappers.proto";
+import "third_party/envoy/src/api/envoy/annotations/deprecation.proto";
+import "third_party/udpa/udpa/annotations/status.proto";
+import "third_party/protoc_gen_validate/validate/validate.proto";
+
+option go_package = "github.com/envoyproxy/go-control-plane/envoy/extensions/filters/http/gcp_authn/v3;gcp_authnv3";
+option java_multiple_files = true;
+option java_outer_classname = "GcpAuthnProto";
+option java_package = "io.envoyproxy.envoy.extensions.filters.http.gcp_authn.v3";
+
+message GcpAuthnFilterConfig {
+    .envoy.config.core.v3.HttpUri http_uri = 1 [deprecated = true];
+    .envoy.config.core.v3.RetryPolicy retry_policy = 2;
+    TokenCacheConfig cache_config = 3;
+    TokenHeader token_header = 4;
+    string cluster = 5;
+    google.protobuf.Duration timeout = 6;
+}
+
+message Audience {
+    string url = 1;
+}
+
+message TokenCacheConfig {
+    google.protobuf.UInt64Value cache_size = 1;
+}
+
+message TokenHeader {
+    string name = 1;
+    string value_prefix = 2;
+}

@@ -32,13 +32,24 @@ message ContextFieldOpts {
     }
 }
 
-message HashOpts {
+message CategoricalHashOpts {
+    optional int32 cardinality = 1;
+    optional NoParamOpts unordered = 2;
+}
+
+message StrHashOpts {
     optional int32 cardinality = 1;
 }
 
-message FeatureHashOpts {
+message StrFeatureHashOpts {
     optional uint32 num_features = 1;
     optional uint32 num_hashes = 2;
+}
+
+message CategoricalFeatureHashOpts {
+    optional uint32 num_features = 1;
+    optional uint32 num_hashes = 2;
+    optional NoParamOpts unordered = 3;
 }
 
 message CategoricalOneHotOpts {
@@ -51,8 +62,8 @@ message CategoricalFieldContextOpts {
     oneof representation {
         CategoricalOneHotOpts one_hot = 2;
         NoParamOpts binary = 3;
-        HashOpts hashed_one_hot = 4;
-        FeatureHashOpts feature_hash = 5;
+        CategoricalHashOpts hashed_one_hot = 4;
+        CategoricalFeatureHashOpts feature_hash = 5;
     }
 }
 
@@ -64,8 +75,8 @@ message StringFieldContextOpts {
     optional int32 max_length = 1;
     
     oneof representation {
-        HashOpts hashed_bag_of_words = 2;
-        FeatureHashOpts feature_hash = 3;
+        StrHashOpts hashed_bag_of_words = 2;
+        StrFeatureHashOpts feature_hash = 3;
         NoParamOpts automatic = 4;
     }
 }
@@ -104,8 +115,8 @@ message CategoricalFieldArmOpts {
     oneof representation {
         CategoricalOneHotOpts one_hot = 3;
         NoParamOpts binary = 4;
-        HashOpts hashed_one_hot = 5;
-        FeatureHashOpts feature_hash = 6;
+        CategoricalHashOpts hashed_one_hot = 5;
+        CategoricalFeatureHashOpts feature_hash = 6;
     }
 }
 
@@ -123,8 +134,8 @@ message StringFieldArmOpts {
     optional int32 max_length = 1;
     
     oneof representation {
-        HashOpts hashed_bag_of_words = 3;
-        FeatureHashOpts feature_hash = 4;
+        StrHashOpts hashed_bag_of_words = 3;
+        StrFeatureHashOpts feature_hash = 4;
         NoParamOpts automatic = 5;
     }
     

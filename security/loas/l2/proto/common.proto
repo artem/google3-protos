@@ -76,6 +76,14 @@ message UnauthenticatedBorgRuntimeAttributes {
     }
 }
 
+message BuildCl {
+    optional int64 cl = 1;
+    
+    extend AuthenticatedOptions {
+        optional BuildCl build_cl = 1015;
+    }
+}
+
 enum HandshakeCipher {
     NO_CIPHER = 0;
     TEST_CIPHER = 1;
@@ -88,10 +96,10 @@ enum HandshakeCipher {
     CECPQ2_SHA512_RESUMPTION = 106;
     CECPQ2_SHA512_RESUMPTION_EPHEMERAL = 107;
     CECPQ2_SHA512_RESUMPTION_3DH = 108;
-    KYBER768_SHA512 = 109;
-    KYBER768_SHA512_3DH = 110;
-    KYBER1024_SHA512 = 111;
-    KYBER1024_SHA512_3DH = 112;
+    MLKEM768_SHA512 = 109;
+    MLKEM768_SHA512_3DH = 110;
+    MLKEM1024_SHA512 = 111;
+    MLKEM1024_SHA512_3DH = 112;
     CURVE25519_SHA512_3DH_AEKC = 113;
     CECPQ2_SHA512_RESUMPTION_3DH_AEKC = 114;
 }
@@ -99,8 +107,8 @@ enum HandshakeCipher {
 enum PostQuantumCipherAlgorithm {
     NO_POST_QUANTUM_CIPHER_ALGORITHM = 0;
     CECPQ2_POST_QUANTUM_CIPHER_ALGORITHM = 100;
-    KYBER768_POST_QUANTUM_CIPHER_ALGORITHM = 101;
-    KYBER1024_POST_QUANTUM_CIPHER_ALGORITHM = 102;
+    MLKEM768_POST_QUANTUM_CIPHER_ALGORITHM = 101;
+    MLKEM1024_POST_QUANTUM_CIPHER_ALGORITHM = 102;
 }
 
 enum HashType {

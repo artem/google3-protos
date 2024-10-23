@@ -3,6 +3,7 @@ syntax = "proto3";
 package google.api;
 
 import "google/api/visibility.proto";
+import "storage/datapol/annotations/proto/semantic_annotations.proto";
 
 option objc_class_prefix = "GAPI";
 option cc_enable_arenas = true;
@@ -15,6 +16,7 @@ message SupportedLocation {
     string location_id = 1 [deprecated = true];
     string regions = 5;
     string zones = 6;
+    string geos = 9;
     
     repeated LocationGroup groups = 7;
     message LocationGroup {

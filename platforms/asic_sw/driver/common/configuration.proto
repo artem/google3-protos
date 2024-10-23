@@ -21,7 +21,6 @@ message Configuration {
     optional int32 initialization_timeout_seconds = 5 [default = 60];
     optional int32 virtual_function = 8;
     optional .asic_sw.proto.DeviceIdentifiers cached_device_identifiers = 9;
-    optional bool official_run = 10 [default = true];
     
     oneof Location {
         string device_path = 1;

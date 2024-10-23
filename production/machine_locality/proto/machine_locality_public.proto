@@ -1,4 +1,4 @@
-syntax = "proto3";
+syntax = "editions";
 
 package production.machine_locality;
 
@@ -13,7 +13,7 @@ message Value {
     }
     
     message CloudZones {
-        string primary = 1;
+        optional string primary = 1;
         repeated string fallback = 2;
     }
     

@@ -37,6 +37,11 @@ message Widget {
     string domain_object_deprecation_id = 29 [deprecated = true];
     string id = 33;
     
+    VisibilityCondition visibility_condition = 39;
+    message VisibilityCondition {
+        TemplateVariableCondition template_variable_condition = 1;
+    }
+    
     oneof content {
         GridLayout grid_layout = 2;
         ColumnLayout column_layout = 3;
@@ -70,6 +75,17 @@ message Widget {
     }
     
     reserved 11 to 14;
+    
+    message TemplateVariableCondition {
+        string template_variable = 1;
+        string template_variable_value = 2;
+        
+        Comparator comparator = 3;
+        enum Comparator {
+            COMPARATOR_UNSPECIFIED = 0;
+            REGEX_FULL_MATCH = 1;
+        }
+    }
 }
 
 message GridLayout {

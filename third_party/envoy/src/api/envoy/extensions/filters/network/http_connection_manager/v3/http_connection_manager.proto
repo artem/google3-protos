@@ -54,7 +54,9 @@ message HttpConnectionManager {
         .envoy.config.trace.v3.Tracing.Http provider = 9;
         google.protobuf.BoolValue spawn_upstream_span = 10;
         
-        reserved 1, 2, "operation_name", "request_headers_for_tags";
+        reserved 1, 2;
+        
+        reserved "operation_name", "request_headers_for_tags";
         
         enum OperationName {
             INGRESS = 0;
@@ -63,6 +65,7 @@ message HttpConnectionManager {
     }
     
     .envoy.config.core.v3.HttpProtocolOptions common_http_protocol_options = 35;
+    bool http1_safe_max_connection_duration = 58;
     .envoy.config.core.v3.Http1ProtocolOptions http_protocol_options = 8;
     .envoy.config.core.v3.Http2ProtocolOptions http2_protocol_options = 9;
     .envoy.config.core.v3.Http3ProtocolOptions http3_protocol_options = 44;
@@ -193,7 +196,9 @@ message HttpConnectionManager {
         bool strip_any_host_port = 42;
     }
     
-    reserved 27, 11, "idle_timeout";
+    reserved 27, 11;
+    
+    reserved "idle_timeout";
 }
 
 message LocalReplyConfig {
@@ -269,7 +274,9 @@ message HttpFilter {
         .envoy.config.core.v3.ExtensionConfigSource config_discovery = 5;
     }
     
-    reserved 3, 2, "config";
+    reserved 3, 2;
+    
+    reserved "config";
 }
 
 message RequestIDExtension {

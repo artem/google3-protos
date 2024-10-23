@@ -93,7 +93,9 @@ message HloInstructionProto {
         int32 cross_program_prefetch_index = 80;
     }
     
-    reserved 10, 12, 4, 5, 6, 44, 53, 46, 41, 42, 64, 78, 83, 84, "parameter_name", "fused_instructions_computation", "operand_names", "control_predecessor_names", "called_computation_names", "replica_group_ids", "custom_call_opaque", "all_reduce_barrier";
+    reserved 10, 12, 4, 5, 6, 44, 53, 46, 41, 42, 64, 78, 83, 84;
+    
+    reserved "parameter_name", "fused_instructions_computation", "operand_names", "control_predecessor_names", "called_computation_names", "replica_group_ids", "custom_call_opaque", "all_reduce_barrier";
 }
 
 message HloComputationProto {
@@ -105,7 +107,9 @@ message HloComputationProto {
     bool is_fusion_computation = 7;
     string execution_thread = 8;
     
-    reserved 3, "root_name";
+    reserved 3;
+    
+    reserved "root_name";
 }
 
 message HloScheduleProto {
@@ -188,7 +192,9 @@ message HloModuleProto {
     StackFrameIndexProto stack_frame_index = 17;
     FrontendAttributes frontend_attributes = 19;
     
-    reserved 9, "dynamic_parameter_binding";
+    reserved 9;
+    
+    reserved "dynamic_parameter_binding";
     
     enum ProfileType {
         INVALID = 0;
@@ -196,6 +202,7 @@ message HloModuleProto {
         FUSION = 2;
         LAYOUT = 3;
         DOT = 4;
+        FLAGNET = 5;
     }
 }
 
@@ -277,7 +284,9 @@ message HloProto {
     HloModuleProto hlo_module = 1;
     BufferAssignmentProto buffer_assignment = 3;
     
-    reserved 2, "hlo_ordering";
+    reserved 2;
+    
+    reserved "hlo_ordering";
 }
 
 message HloSnapshot {

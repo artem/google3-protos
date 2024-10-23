@@ -50,6 +50,7 @@ message RedactionOptions {
     
     optional double min_double_value = 9;
     optional double max_double_value = 10;
+    optional string field_reference = 11;
 }
 
 enum FieldDisposition {
@@ -89,6 +90,7 @@ extend proto2.FieldOptions {
     optional ExcludeReason exclude_reason = 482813086;
     optional ComparisonOptions options = 478786899;
     optional RedactionOptions redaction = 485077330;
+    repeated RedactionOptions redactions_by_reference = 425736634;
     optional string comment = 486375988;
 }
 
@@ -99,4 +101,5 @@ extend proto2.FileOptions {
 
 extend proto2.MethodOptions {
     optional TpcType tpc_type = 520991498;
+    optional string method_comment = 522360157;
 }

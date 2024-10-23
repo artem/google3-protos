@@ -107,6 +107,7 @@ message Service {
     IndexedResource indexed_resources = 106;
     Census census = 107;
     Operations operations = 108;
+    string api_service_type = 109;
     protobuf.UInt32Value config_version = 20;
     
     reserved 14, 31, 41;

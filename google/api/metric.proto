@@ -49,6 +49,14 @@ message MetricDescriptor {
         LaunchStage launch_stage = 1 [deprecated = true];
         protobuf.Duration sample_period = 2;
         protobuf.Duration ingest_delay = 3;
+        
+        repeated TimeSeriesResourceHierarchyLevel time_series_resource_hierarchy_level = 4;
+        enum TimeSeriesResourceHierarchyLevel {
+            TIME_SERIES_RESOURCE_HIERARCHY_LEVEL_UNSPECIFIED = 0;
+            PROJECT = 1;
+            ORGANIZATION = 2;
+            FOLDER = 3;
+        }
     }
     
     MonitoringMigration monitoring_migration = 11;

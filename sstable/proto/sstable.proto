@@ -1,4 +1,4 @@
-syntax = "proto2";
+syntax = "editions";
 
 package sstable;
 
@@ -17,36 +17,36 @@ message IndexBlockExtension {
 
 message TmpIndexEntry {
     optional bytes firstkey = 6;
-    required bytes lastkey = 1;
-    required int64 offset = 2;
-    required int64 size = 3;
-    required fixed32 csum = 4;
+    optional bytes lastkey = 1;
+    optional int64 offset = 2;
+    optional int64 size = 3;
+    optional fixed32 csum = 4;
     optional IndexBlockExtension extension = 5;
 }
 
 message Section {
-    required int64 offset = 1;
-    required int64 size = 2;
-    required fixed32 checksum = 3;
+    optional int64 offset = 1;
+    optional int64 size = 2;
+    optional fixed32 checksum = 3;
 }
 
 message Creator {
-    required string userid = 1;
-    required string hostname = 2;
+    optional string userid = 1;
+    optional string hostname = 2;
     optional int64 when = 3;
-    required string build_info = 4;
-    required string build_target = 5;
-    required int64 build_timestamp = 6;
+    optional string build_info = 4;
+    optional string build_target = 5;
+    optional int64 build_timestamp = 6;
     optional string command_line = 7;
 }
 
 message Stats {
-    required int64 file_size = 1;
-    required int64 data_size = 2;
-    required int64 index_size = 3;
-    required int64 key_size = 4;
-    required int64 value_size = 5;
-    required int64 entries = 6;
+    optional int64 file_size = 1;
+    optional int64 data_size = 2;
+    optional int64 index_size = 3;
+    optional int64 key_size = 4;
+    optional int64 value_size = 5;
+    optional int64 entries = 6;
     optional int64 blocks = 7;
 }
 
@@ -75,17 +75,18 @@ message ExistenceFilterStats {
 message Metadata {
     optional string type = 1;
     optional Creator creator = 15;
-    required Stats stats = 2;
+    optional Stats stats = 2;
     optional proto2.bridge.MessageSet info = 3;
     optional string sharder = 4;
     optional ExistenceFilterStats existence_filter_stats = 5;
 }
 
 message PayloadDescriptor {
-    optional group ExistenceFilter = 1 {
-        required int64 offset = 2;
-        required int64 size = 3;
-        required fixed32 checksum = 4;
+    optional ExistenceFilter existencefilter = 1;
+    message ExistenceFilter {
+        optional int64 offset = 2;
+        optional int64 size = 3;
+        optional fixed32 checksum = 4;
     }
     
     optional Section ShortKeyIndex = 5;

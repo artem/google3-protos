@@ -6,8 +6,6 @@ import "third_party/tensorflow/core/framework/graph.proto";
 import "third_party/tensorflow/core/protobuf/meta_graph.proto";
 import "third_party/tensorflow/core/protobuf/saver.proto";
 
-option cc_enable_arenas = true;
-
 message ExportedModel {
     GraphDef graph_def = 1;
     string init_node_name = 2;
@@ -16,5 +14,7 @@ message ExportedModel {
     repeated AssetFileDef asset_file_defs = 8;
     SaverDef saver_def = 10;
     
-    reserved 3, 4, 7, 9, "variable_shared_names", "restore_node_name", "save_node_name", "file_prefix_tensor_name";
+    reserved 3, 4, 7, 9;
+    
+    reserved "variable_shared_names", "restore_node_name", "save_node_name", "file_prefix_tensor_name";
 }

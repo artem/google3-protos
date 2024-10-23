@@ -160,6 +160,7 @@ message AlertPolicy {
             map<string, string> labels = 4;
             string rule_group = 5;
             string alert_rule = 6;
+            bool disable_metric_validation = 7;
         }
         
         message SqlCondition {

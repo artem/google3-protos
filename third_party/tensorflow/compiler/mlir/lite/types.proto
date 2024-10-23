@@ -1,0 +1,27 @@
+syntax = "proto2";
+
+package tflite;
+
+enum IODataType {
+    IO_DATA_TYPE_UNKNOWN = 0;
+    FLOAT = 1;
+    QUANTIZED_UINT8 = 2;
+    INT32 = 3;
+    INT64 = 4;
+    STRING = 5;
+    QUANTIZED_INT16 = 6;
+    BOOL = 7;
+    COMPLEX64 = 8;
+    QUANTIZED_INT8 = 9;
+    FLOAT16 = 10;
+    FLOAT64 = 11;
+    COMPLEX128 = 12;
+    UINT64 = 13;
+    RESOURCE = 14;
+    VARIANT = 15;
+    UINT32 = 16;
+    UINT8 = 17;
+    INT8 = 18;
+    INT16 = 19;
+    UINT16 = 20;
+}

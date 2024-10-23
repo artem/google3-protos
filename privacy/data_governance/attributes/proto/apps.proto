@@ -64,6 +64,7 @@ message AppsCommon {
         UNKNOWN_STATUS = 0;
         OLYMPUS_EXEMPTED_RESOURCE = 1;
         OLYMPUS_SQL_TRANSLATOR_COMPUTED = 2;
+        OLYMPUS_SQL_TRANSLATOR_DETERMINED_OUT_OF_SCOPE = 3;
     }
     
     enum DataClass {

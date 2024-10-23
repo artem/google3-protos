@@ -46,9 +46,12 @@ message TPUEmbeddingConfiguration {
     message SpmdSharding {
         bool enabled = 1;
         int32 num_cores_per_replica = 2;
+        bool use_manual_partitioning = 3;
     }
     
-    reserved 8, "output_layout";
+    reserved 8;
+    
+    reserved "output_layout";
 }
 
 message TPUEmbeddingError {

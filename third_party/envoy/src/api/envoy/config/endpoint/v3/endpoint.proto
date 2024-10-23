@@ -32,6 +32,8 @@ message ClusterLoadAssignment {
         google.protobuf.Duration endpoint_stale_after = 4;
         bool weighted_priority_health = 6;
         
-        reserved 1, 5, "disable_overprovisioning";
+        reserved 1, 5;
+        
+        reserved "disable_overprovisioning";
     }
 }

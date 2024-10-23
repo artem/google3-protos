@@ -9,4 +9,9 @@ option java_package = "com.google.privacy.datagovernance.attributes";
 
 message MlLineage {
     bool is_ml_lineage_workflow = 1;
+    MlIntent ml_intent = 2;
+}
+
+message MlIntent {
+    string guardian_execution_id = 1;
 }

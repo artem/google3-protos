@@ -2,7 +2,7 @@ syntax = "proto3";
 
 package tensorflow;
 
-import public "third_party/tensorflow/tsl/protobuf/histogram.proto";
+import public "third_party/tensorflow/compiler/xla/tsl/protobuf/histogram.proto";
 import "third_party/tensorflow/core/framework/tensor.proto";
 
 option cc_enable_arenas = true;

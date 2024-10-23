@@ -85,7 +85,9 @@ message HealthCheck {
         .envoy.type.matcher.v3.StringMatcher service_name_matcher = 11;
         RequestMethod method = 13;
         
-        reserved 5, 7, "service_name", "use_http2";
+        reserved 5, 7;
+        
+        reserved "service_name", "use_http2";
     }
     
     message TcpHealthCheck {
@@ -111,7 +113,9 @@ message HealthCheck {
             google.protobuf.Any typed_config = 3;
         }
         
-        reserved 2, "config";
+        reserved 2;
+        
+        reserved "config";
     }
 }
 

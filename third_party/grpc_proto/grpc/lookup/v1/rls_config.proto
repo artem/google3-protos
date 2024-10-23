@@ -39,6 +39,7 @@ message HttpKeyBuilder {
     repeated NameMatcher query_parameters = 3;
     repeated NameMatcher headers = 4;
     map<string, string> constant_keys = 5;
+    string method = 6;
 }
 
 message RouteLookupConfig {

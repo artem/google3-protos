@@ -10,6 +10,7 @@ import "security/loas/l2/proto/identity_types.proto";
 import "security/loas/l2/proto/instance.proto";
 import "security/loas/l2/proto/securitylevel.proto";
 import "security/loas/l2/proto/usertype.proto";
+import "security/thinmint/proto/core/thinmint_core.proto";
 import "security/util/proto/permission.proto";
 import "storage/datapol/annotations/proto/semantic_annotations.proto";
 
@@ -67,4 +68,5 @@ message InternalLoas2Context {
     optional DirectPathToken direct_path_token = 22;
     optional HandshakeCipher handshake_cipher = 23;
     optional borg.InternalConfidentialModeConfig.SecurityLevel confidential_security_level = 24;
+    optional .thinmint.ThinMint instance_identity_thinmint = 26;
 }

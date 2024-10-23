@@ -27,7 +27,9 @@ message Filter {
         .envoy.config.core.v3.ExtensionConfigSource config_discovery = 5;
     }
     
-    reserved 3, 2, "config";
+    reserved 3, 2;
+    
+    reserved "config";
 }
 
 message FilterChainMatch {
@@ -67,7 +69,9 @@ message FilterChain {
         google.protobuf.Duration rebuild_timeout = 1;
     }
     
-    reserved 2, "tls_context";
+    reserved 2;
+    
+    reserved "tls_context";
 }
 
 message ListenerFilterChainMatchPredicate {
@@ -93,5 +97,7 @@ message ListenerFilter {
         .envoy.config.core.v3.ExtensionConfigSource config_discovery = 5;
     }
     
-    reserved 2, "config";
+    reserved 2;
+    
+    reserved "config";
 }

@@ -11,6 +11,32 @@ message CompilationEnvironmentsProto {
 }
 
 message DebugOptions {
+    bool xla_cpu_copy_insertion_use_region_analysis = 337;
+    bool xla_cpu_enable_concurrency_optimized_scheduler = 307;
+    bool xla_cpu_enable_fast_math = 99;
+    bool xla_cpu_enable_fast_min_max = 140;
+    bool xla_cpu_fast_math_honor_division = 126;
+    bool xla_cpu_fast_math_honor_functions = 129;
+    bool xla_cpu_fast_math_honor_infs = 121;
+    bool xla_cpu_fast_math_honor_nans = 120;
+    bool xla_cpu_use_thunk_runtime = 298;
+    bool xla_enable_fast_math = 335;
+    int32 xla_cpu_parallel_codegen_split_count = 323;
+    int32 xla_cpu_prefer_vector_width = 308;
+    string xla_cpu_max_isa = 333;
+    
+    AutotuneCacheMode xla_gpu_experimental_autotune_cache_mode = 324;
+    enum AutotuneCacheMode {
+        AUTOTUNE_CACHE_MODE_UNSPECIFIED = 0;
+        AUTOTUNE_CACHE_MODE_UPDATE = 1;
+        AUTOTUNE_CACHE_MODE_READ = 2;
+    }
+    
+    bool xla_gpu_experimental_disable_binary_libraries = 329;
+    bool xla_gpu_experimental_dump_fdo_profiles = 338;
+    bool xla_gpu_experimental_enable_fusion_block_level_rewriter = 334;
+    bool xla_gpu_experimental_enable_triton_softmax_priority_fusion = 325;
+    bool xla_gpu_unsupported_enable_triton_gemm = 322;
     bool xla_hlo_graph_addresses = 2;
     bool xla_hlo_profile = 9;
     repeated string xla_disable_hlo_passes = 30;
@@ -30,15 +56,6 @@ message DebugOptions {
     bool xla_test_all_input_layouts = 91;
     bool xla_hlo_graph_sharding_color = 92;
     bool xla_cpu_use_mkl_dnn = 97;
-    bool xla_cpu_use_thunk_runtime = 298;
-    bool xla_cpu_enable_concurrency_optimized_scheduler = 307;
-    int32 xla_cpu_prefer_vector_width = 308;
-    bool xla_cpu_enable_fast_math = 99;
-    bool xla_cpu_fast_math_honor_nans = 120;
-    bool xla_cpu_fast_math_honor_infs = 121;
-    bool xla_cpu_fast_math_honor_division = 126;
-    bool xla_cpu_fast_math_honor_functions = 129;
-    bool xla_cpu_enable_fast_min_max = 140;
     bool xla_gpu_enable_fast_min_max = 100;
     bool xla_allow_excess_precision = 122;
     bool xla_gpu_crash_on_verification_failures = 101;
@@ -143,6 +160,7 @@ message DebugOptions {
         CONDITIONALS = 5;
         CUSTOM_CALL = 6;
         CUBLASLT = 7;
+        DYNAMIC_SLICE = 8;
     }
     
     int32 xla_gpu_graph_min_graph_size = 208;
@@ -171,7 +189,6 @@ message DebugOptions {
     bool xla_gpu_enable_pipelined_all_gather = 227;
     bool xla_gpu_enable_pipelined_reduce_scatter = 231;
     bool xla_gpu_enable_pipelined_p2p = 246;
-    bool xla_gpu_run_post_layout_collective_pipeliner = 313;
     int64 xla_gpu_collective_permute_decomposer_threshold = 237;
     
     PartitioningAlgorithm xla_partitioning_algorithm = 187;
@@ -186,9 +203,7 @@ message DebugOptions {
     bool xla_gpu_enable_cudnn_int8x32_convolution_reordering = 189;
     bool xla_gpu_triton_gemm_any = 190;
     bool xla_gpu_exhaustive_tiling_search = 219;
-    bool xla_gpu_enable_triton_softmax_fusion = 220;
     bool xla_gpu_enable_priority_fusion = 221;
-    bool xla_gpu_enable_triton_softmax_priority_fusion = 286;
     string xla_gpu_dump_autotune_results_to = 222;
     string xla_gpu_load_autotune_results_from = 223;
     string xla_gpu_target_config_filename = 261;
@@ -212,6 +227,7 @@ message DebugOptions {
         WHILE_LOOP_UNROLLING_NO_UNROLL = 0;
         WHILE_LOOP_UNROLLING_DOUBLE_BUFFER = 1;
         WHILE_LOOP_UNROLLING_FULL_UNROLL = 2;
+        WHILE_LOOP_UNROLLING_AUTO_UNROLL = 3;
     }
     
     bool xla_gpu_ensure_minor_dot_contraction_dims = 249;
@@ -256,9 +272,18 @@ message DebugOptions {
     float xla_gpu_autotune_gemm_rtol = 316;
     bool xla_enable_command_buffers_during_profiling = 317;
     int32 xla_gpu_cudnn_gemm_max_plans = 318;
+    bool xla_gpu_enable_libnvjitlink = 319;
+    bool xla_gpu_async_dot = 321;
+    bool xla_gpu_enable_pgle_accuracy_checker = 326;
+    int32 xla_gpu_executable_warn_stuck_timeout_seconds = 327;
+    int32 xla_gpu_executable_terminate_timeout_seconds = 328;
+    bool xla_experimental_ignore_channel_id = 330;
+    int32 xla_gpu_dot_merger_threshold_mb = 331;
+    bool xla_gpu_enable_heuristic_pass_configuration = 332;
+    int32 xla_gpu_experimental_parallel_collective_overlap_limit = 336;
     map<string, string> xla_backend_extra_options = 500;
     
-    reserved 63, 134, 80, 93, 94, 177, 98, 207, 171, 173, 179, 130, 143, 152, 278, 183, 199, 200, 201, 238, 158, 299, 161, 162, 169, 233, 234, 202, 230, 168, 172, 211, 275, 281, 282, 302, 5, 117, 133, 139, 176, 178, 180, 193, 214, 194, 242, 206;
+    reserved 63, 134, 80, 93, 94, 177, 98, 207, 171, 173, 179, 130, 143, 152, 278, 183, 199, 200, 201, 238, 158, 299, 161, 162, 169, 233, 234, 202, 230, 168, 172, 313, 211, 220, 286, 275, 281, 282, 302, 5, 117, 133, 139, 176, 178, 180, 193, 214, 194, 242, 206, 320;
 }
 
 message GpuCompilationEnvironment {
@@ -285,6 +310,8 @@ message ExecutionOptions {
     bool use_auto_spmd_partitioning = 15;
     repeated int64 auto_spmd_partitioning_mesh_shape = 16;
     repeated int64 auto_spmd_partitioning_mesh_ids = 17;
+    float exec_time_optimization_effort = 25;
+    float memory_fitting_effort = 26;
     bool deduplicate_hlo = 12;
     repeated bool allow_spmd_sharding_propagation_to_parameters = 23;
     repeated bool allow_spmd_sharding_propagation_to_output = 14;
@@ -309,11 +336,14 @@ message HloModuleConfigProto {
     bool use_auto_spmd_partitioning = 8;
     repeated int64 auto_spmd_partitioning_mesh_shape = 9;
     repeated int64 auto_spmd_partitioning_mesh_ids = 10;
+    float exec_time_optimization_effort = 36;
+    float memory_fitting_effort = 37;
     bool deduplicate_hlo = 11;
     int64 intra_op_parallelism_threads = 12;
     string device_type = 13;
     DebugOptions debug_options = 14;
     DeviceAssignmentProto static_device_assignment = 15;
+    DeviceAssignmentProto pre_simulation_device_assignment = 35;
     bool allow_separate_sharding_programs = 30;
     repeated ShardableValueUpdatePairProto shardable_value_update_pairs = 16;
     bool alias_passthrough_params = 17;

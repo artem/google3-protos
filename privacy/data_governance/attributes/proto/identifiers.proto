@@ -32,6 +32,8 @@ enum Identifiers {
     ID_YOUTUBE_EXTERNAL_POST = 16;
     ID_YOUTUBE_SURROGATE_POST = 17;
     ID_CLOUD_PROJECT = 45;
+    ID_CLOUD_RESOURCE_NAME = 96;
+    ID_CLOUD_RESOURCE_NAME_PSEUDONYMOUS = 97;
     ID_SESSION = 18;
     ID_EXPERIMENT = 19;
     ID_VERILY_STUDY = 20;
@@ -100,6 +102,10 @@ enum Identifiers {
     ID_FITBIT = 86;
     ID_GPAY = 87;
     ID_BUYSIDE_PUBLISHER_ID_WITH_ATC_ID = 90;
+    ID_SOFTWARE = 92;
+    ID_WORKSPACE_ITEM = 93;
+    ID_FIFE = 94;
+    ID_BLOBSTORE = 95;
 }
 
 extend proto2.EnumValueOptions {

@@ -21,6 +21,7 @@ message Error {
         GeneralError system_software = 9;
         GeneralError system_hardware = 10;
         GeneralError network = 11;
+        GeneralError power = 12;
     }
 }
 

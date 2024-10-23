@@ -1,0 +1,28 @@
+syntax = "proto3";
+
+package privacy.data_governance.attributes;
+
+import "google/api/inclusion.proto";
+import "privacy/data_governance/attributes/proto/classification.proto";
+
+option java_multiple_files = true;
+option java_package = "com.google.privacy.datagovernance.attributes";
+
+message MalOutAccess {
+    oneof _rpc {
+        Rpc rpc = 1;
+    }
+    
+    message Rpc {
+        oneof _malout_status {
+            MalOutStatus malout_status = 1;
+        }
+        
+        enum MalOutStatus {
+            MALOUT_STATUS_UNDEFINED = 0;
+            NOT_ANNOTATION_COMPATIBLE = 1;
+            NO_ACCESS_IN_SCOPE = 2;
+            PRIVILEGED_ACCESS_IN_SCOPE = 3;
+        }
+    }
+}

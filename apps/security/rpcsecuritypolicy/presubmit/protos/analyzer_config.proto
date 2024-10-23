@@ -23,7 +23,10 @@ message AnalyzerConfig {
     optional PiccoloOptions piccolo_options = 11;
     optional rpcsp.RpcSPLadder.Level minimum_rpcsp_ladder_level = 12;
     optional bool diff_only = 13;
-    optional bool onboarding_mode_pilot = 15;
+    
+    reserved 15;
+    
+    reserved "onboarding_mode_pilot";
 }
 
 message ExemptJobFilter {

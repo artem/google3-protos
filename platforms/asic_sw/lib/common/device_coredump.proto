@@ -26,6 +26,7 @@ message Results {
     repeated CsrCollectionConfig csr_collection_configs = 10;
     repeated ArchitecturalStateCollectionConfig arch_state_configs = 12;
     optional CpuState cpu_state = 13;
+    map<string, AnalyzerInfo> analyzer_info = 14;
     
     reserved 4 to 6, "pcie_devices", "sensors", "errors";
 }
@@ -44,8 +45,15 @@ message Info {
     optional InfoCategory category = 1;
     optional string description = 2;
     repeated string tag = 4;
+    optional bool print = 5;
     
-    reserved 3, "timestamp";
+    reserved 3;
+    
+    reserved "timestamp";
+}
+
+message AnalyzerInfo {
+    repeated Info infos = 1;
 }
 
 message RegisterDump {

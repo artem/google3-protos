@@ -17,6 +17,7 @@ option java_package = "com.google.api";
 message CommonLanguageSettings {
     string reference_docs_uri = 1 [deprecated = true];
     repeated ClientLibraryDestination destinations = 2;
+    SelectiveGapicGeneration selective_gapic_generation = 3;
 }
 
 message ClientLibrarySettings {
@@ -70,6 +71,11 @@ message PhpSettings {
 
 message PythonSettings {
     CommonLanguageSettings common = 1;
+    
+    ExperimentalFeatures experimental_features = 2;
+    message ExperimentalFeatures {
+        bool rest_async_io_enabled = 1;
+    }
 }
 
 message NodeSettings {
@@ -105,6 +111,10 @@ message MethodSettings {
     }
     
     repeated string auto_populated_fields = 3;
+}
+
+message SelectiveGapicGeneration {
+    repeated string methods = 1;
 }
 
 enum ClientLibraryOrganization {

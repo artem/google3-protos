@@ -22,7 +22,9 @@ message TrackableObjectGraph {
             string full_name = 2;
             string checkpoint_key = 3;
             
-            reserved 4, "optional_restore";
+            reserved 4;
+            
+            reserved "optional_restore";
         }
         
         repeated SlotVariableReference slot_variables = 3;

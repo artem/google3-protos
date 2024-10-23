@@ -5,6 +5,7 @@ package google.api;
 import "google/api/visibility.proto";
 import "google/rpc/code.proto";
 import "net/proto2/proto/descriptor.proto";
+import "storage/datapol/annotations/proto/semantic_annotations.proto";
 
 option objc_class_prefix = "GAPI";
 option cc_enable_arenas = true;
@@ -16,10 +17,19 @@ option java_package = "com.google.api";
 message Errors {
     string domain = 1;
     repeated ErrorMessage error_messages = 2;
+    string error_catalog_product_id = 3;
+}
+
+message ApiVersionSelector {
+    repeated string operation_selectors = 1;
+    string api_versions = 2;
 }
 
 message ErrorMessage {
     string name = 1;
+    string domain = 9990 [deprecated = true];
+    string reason = 13;
+    string description = 14;
     int32 http_code = 2;
     rpc.Code canonical_code = 9;
     string message = 3;
@@ -27,5 +37,8 @@ message ErrorMessage {
     repeated string fields = 5;
     string troubleshooting_link = 6;
     string api_versions = 7;
-    string name_suffix = 8;
+    repeated ApiVersionSelector api_version_selectors = 11;
+    string name_suffix = 8 [deprecated = true];
+    string internal_message = 10;
+    repeated string additional_details = 12;
 }

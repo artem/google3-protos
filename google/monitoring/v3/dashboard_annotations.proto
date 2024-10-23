@@ -46,6 +46,8 @@ message EventAnnotation {
         CLOUD_ALERTING_ALERT = 22;
         SERVICE_HEALTH_INCIDENT = 23;
         SAP_BACKINT = 24;
+        SAP_AVAILABILITY = 25;
+        SAP_OPERATIONS = 26;
     }
     
     string filter = 3;

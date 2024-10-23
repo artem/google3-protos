@@ -9,13 +9,13 @@ option java_outer_classname = "WorkspaceAnnotations";
 option java_package = "com.google.apps.annotations.proto";
 
 message AppsQualifier {
-    optional bool is_actor = 1 [default = false];
-    optional bool is_action_target = 2 [default = false];
-    optional bool is_shareable_object = 3 [default = false];
-    optional bool is_action_time = 4 [default = false];
-    optional bool is_user_visible = 8 [default = false];
-    optional bool is_access_grantee = 6 [default = false];
-    optional bool is_derived = 7 [default = false];
+    optional bool is_actor = 1 [default = false, deprecated = true];
+    optional bool is_action_target = 2 [default = false, deprecated = true];
+    optional bool is_shareable_object = 3 [default = false, deprecated = true];
+    optional bool is_action_time = 4 [default = false, deprecated = true];
+    optional bool is_user_visible = 8 [default = false, deprecated = true];
+    optional bool is_access_grantee = 6 [default = false, deprecated = true];
+    optional bool is_derived = 7 [default = false, deprecated = true];
     
     reserved 5;
 }
@@ -32,15 +32,25 @@ message FieldDetails {
 
 message MessageDetails {
     repeated SemanticType semantic_type = 1;
-    repeated PolicyTargetEntityInfo policy_target_entity_info = 2;
+    optional PolicyTargetEntityInfo policy_target_entity_info = 2;
 }
 
 message PolicyTargetEntityInfo {
-    oneof info {
-        string field_proto_path = 1;
-        EucEntityType policy_target_entity_type_derived_from_euc = 2;
+    repeated TargetEntityInfo field_proto_paths = 1;
+    message TargetEntityInfo {
+        optional string path = 1;
+        
+        optional Type type = 2;
+        enum Type {
+            TARGET_ENTITY_TYPE_UNSPECIFIED = 0;
+            GAIA_ID = 1;
+            CUSTOMER_ID = 2;
+            TAKEOUT_ENTITY_ID = 3;
+            VAULT_MATTER_ID = 4;
+        }
     }
     
+    repeated EucEntityType target_euc_ids = 2;
     enum EucEntityType {
         EUC_ENTITY_TYPE_UNSPECIFIED = 0;
         EUC_ENTITY_TYPE_GAIA_ID = 1;
@@ -55,42 +65,42 @@ message EnumDetails {
 enum SemanticType {
     ST_UNSPECIFIED = 0;
     ST_RESERVED_12031 = 12031 [deprecated = true];
-    ST_WORKSPACE_OBJECT_ID = 12001;
-    ST_WORKSPACE_OBJECT_CONTENT_REFERENCE = 12032;
-    ST_STRUCTURED_WORKSPACE_CONTENT_INFO = 12033;
-    ST_LOGICAL_DEVICE_ID = 12002;
-    ST_UNSTRUCTURED_CUSTOMER_ADMIN_SETTING = 12003;
-    ST_STRUCTURED_CUSTOMER_ADMIN_SETTING = 12024;
-    ST_UNSTRUCTURED_USER_SETTING = 12004;
-    ST_STRUCTURED_USER_SETTING = 12012;
-    ST_USER_LABEL = 12005;
-    ST_WORKSPACE_OBJECT_STATE = 12006;
-    ST_SYSTEM_CLASSIFICATION = 12007;
-    ST_USER_ACTION = 12008;
-    ST_STRUCTURED_REQUEST_PARAMETER = 12027;
-    ST_PER_USER_AGGREGATE_VALUE = 12009;
-    ST_CROSS_USER_AGGREGATE_VALUE = 12010;
-    ST_SYSTEM_AGGREGATE_VALUE = 12014;
-    ST_PER_CUSTOMER_AGGREGATE_VALUE = 12038;
-    ST_NON_IDENTIFIABLE_HASH_OR_CHECKSUM = 12011;
-    ST_CLIENT_IDENTIFIER = 12013;
-    ST_SYSTEM_RESOURCE_IDENTIFIER = 12015;
-    ST_VERSION_ID = 12016;
-    ST_SYSTEM_DIAGNOSTIC_INFO = 12017;
-    ST_DEVICE_INFO = 12018;
-    ST_REQUEST_ID = 12019;
+    ST_WORKSPACE_OBJECT_ID = 12001 [deprecated = true];
+    ST_WORKSPACE_OBJECT_CONTENT_REFERENCE = 12032 [deprecated = true];
+    ST_STRUCTURED_WORKSPACE_CONTENT_INFO = 12033 [deprecated = true];
+    ST_LOGICAL_DEVICE_ID = 12002 [deprecated = true];
+    ST_UNSTRUCTURED_CUSTOMER_ADMIN_SETTING = 12003 [deprecated = true];
+    ST_STRUCTURED_CUSTOMER_ADMIN_SETTING = 12024 [deprecated = true];
+    ST_UNSTRUCTURED_USER_SETTING = 12004 [deprecated = true];
+    ST_STRUCTURED_USER_SETTING = 12012 [deprecated = true];
+    ST_USER_LABEL = 12005 [deprecated = true];
+    ST_WORKSPACE_OBJECT_STATE = 12006 [deprecated = true];
+    ST_SYSTEM_CLASSIFICATION = 12007 [deprecated = true];
+    ST_USER_ACTION = 12008 [deprecated = true];
+    ST_STRUCTURED_REQUEST_PARAMETER = 12027 [deprecated = true];
+    ST_PER_USER_AGGREGATE_VALUE = 12009 [deprecated = true];
+    ST_CROSS_USER_AGGREGATE_VALUE = 12010 [deprecated = true];
+    ST_SYSTEM_AGGREGATE_VALUE = 12014 [deprecated = true];
+    ST_PER_CUSTOMER_AGGREGATE_VALUE = 12038 [deprecated = true];
+    ST_NON_IDENTIFIABLE_HASH_OR_CHECKSUM = 12011 [deprecated = true];
+    ST_CLIENT_IDENTIFIER = 12013 [deprecated = true];
+    ST_SYSTEM_RESOURCE_IDENTIFIER = 12015 [deprecated = true];
+    ST_VERSION_ID = 12016 [deprecated = true];
+    ST_SYSTEM_DIAGNOSTIC_INFO = 12017 [deprecated = true];
+    ST_DEVICE_INFO = 12018 [deprecated = true];
+    ST_REQUEST_ID = 12019 [deprecated = true];
     ST_ACL_SCOPE = 12020;
     ST_ACL_ENTRY = 12021;
     ST_ACL = 12022;
-    ST_ACCESS_LEVEL = 12023;
-    ST_DURATION = 12025;
-    ST_WORKSPACE_OBJECT_TYPE = 12026;
-    ST_SYSTEM_CONFIGURATION = 12028;
-    ST_BODY_CONTENT = 12029;
-    ST_TITLE = 12030;
-    ST_CONTENT_SUMMARY = 12034;
-    ST_CALENDAR_EVENT_TIMESTAMP = 12035;
-    ST_GROUP_NAME = 12036;
+    ST_ACCESS_LEVEL = 12023 [deprecated = true];
+    ST_DURATION = 12025 [deprecated = true];
+    ST_WORKSPACE_OBJECT_TYPE = 12026 [deprecated = true];
+    ST_SYSTEM_CONFIGURATION = 12028 [deprecated = true];
+    ST_BODY_CONTENT = 12029 [deprecated = true];
+    ST_TITLE = 12030 [deprecated = true];
+    ST_CONTENT_SUMMARY = 12034 [deprecated = true];
+    ST_CALENDAR_EVENT_TIMESTAMP = 12035 [deprecated = true];
+    ST_GROUP_NAME = 12036 [deprecated = true];
     ST_PTOKEN = 12037;
 }
 

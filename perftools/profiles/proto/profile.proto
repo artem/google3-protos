@@ -20,6 +20,7 @@ message Profile {
     int64 period = 12;
     repeated int64 comment = 13;
     int64 default_sample_type = 14;
+    int64 doc_url = 15;
 }
 
 message ValueType {

@@ -1,4 +1,4 @@
-syntax = "proto2";
+syntax = "editions";
 
 package sstable;
 
@@ -6,7 +6,7 @@ option java_multiple_files = true;
 option java_package = "com.google.sstable";
 
 message BMDiffSSBlockProto {
-    required int32 prefix_offset = 1;
-    required int32 prefix_length = 2;
+    optional int32 prefix_offset = 1;
+    optional int32 prefix_length = 2;
     repeated int32 value_block_offset = 3;
 }

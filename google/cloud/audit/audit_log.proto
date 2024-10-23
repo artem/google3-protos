@@ -73,6 +73,10 @@ message AuthorizationInfo {
     oneof _direct_auth {
         bool direct_auth = 8;
     }
+    
+    oneof _impersonation_peer_borg_role {
+        string impersonation_peer_borg_role = 9;
+    }
 }
 
 message RequestMetadata {

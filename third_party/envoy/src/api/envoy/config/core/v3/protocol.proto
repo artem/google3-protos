@@ -35,6 +35,7 @@ message QuicProtocolOptions {
     string connection_options = 6;
     string client_connection_options = 7;
     google.protobuf.Duration idle_network_timeout = 8;
+    google.protobuf.UInt64Value max_packet_length = 9;
 }
 
 message UpstreamHttpProtocolOptions {
@@ -61,6 +62,7 @@ message HttpProtocolOptions {
     google.protobuf.Duration idle_timeout = 1;
     google.protobuf.Duration max_connection_duration = 3;
     google.protobuf.UInt32Value max_headers_count = 2;
+    google.protobuf.UInt32Value max_response_headers_kb = 7;
     google.protobuf.Duration max_stream_duration = 4;
     
     HeadersWithUnderscoresAction headers_with_underscores_action = 5;

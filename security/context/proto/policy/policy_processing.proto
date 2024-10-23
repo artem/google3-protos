@@ -47,6 +47,7 @@ message UserConfigurationRestriction {
 message PolicyProcessingMetadata {
     repeated Environment default_enabled_envs = 1 [packed = true];
     repeated UserConfigurationRestriction user_configuration_restrictions = 2;
+    optional string documentation_link = 3;
 }
 
 enum PolicyRewriteName {

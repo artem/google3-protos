@@ -3,8 +3,8 @@ syntax = "proto3";
 package xla.gpu;
 
 import "third_party/tensorflow/compiler/xla/autotuning.proto";
+import "third_party/tensorflow/compiler/xla/tsl/protobuf/dnn.proto";
 import "third_party/tensorflow/compiler/xla/xla_data.proto";
-import "third_party/tensorflow/tsl/protobuf/dnn.proto";
 
 message CudnnConvBackendConfig {
     stream_executor.dnn.AlgorithmProto algorithm = 6;
@@ -74,6 +74,7 @@ message BitcastBackendConfig {
 message CollectiveBackendConfig {
     bool is_sync = 1;
     bool no_parallel_custom_call = 2;
+    bool is_pipelined = 3;
 }
 
 message ReificationCost {
@@ -143,6 +144,7 @@ message CudnnfMHABackendConfig {
     }
     
     bool force_deterministic = 23;
+    int32 sliding_window_length = 24;
 }
 
 message GpuBackendConfig {

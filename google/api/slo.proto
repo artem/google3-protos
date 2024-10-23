@@ -31,6 +31,20 @@ message SloObjective {
     double goal = 4;
     string locations = 7;
     
+    SloObjectiveMetadata slo_objective_metadata = 8;
+    message SloObjectiveMetadata {
+        LifecycleStage lifecycle_stage = 1;
+        enum LifecycleStage {
+            LIFECYCLE_STAGE_UNSPECIFIED = 0;
+            EXPERIMENTAL = 1;
+            CURRENT = 2;
+            TARGET = 3;
+            RETIRED = 4;
+        }
+        
+        repeated CustomMetadataPair custom_metadata_pairs = 2;
+    }
+    
     oneof sli {
         AvailabilityCriteria availability = 2;
         LatencyCriteria latency = 3;
@@ -68,6 +82,17 @@ message SloRule {
     string selector = 1;
     repeated string objectives = 2;
     string name = 3;
+    
+    SloRuleMetadata slo_rule_metadata = 4;
+    message SloRuleMetadata {
+        repeated CustomMetadataPair custom_metadata_pairs = 1;
+        
+        repeated SloObjectiveMetadataOverride slo_objective_metadata_overrides = 2;
+        message SloObjectiveMetadataOverride {
+            string objective = 1;
+            SloObjective.SloObjectiveMetadata slo_objective_metadata = 2;
+        }
+    }
 }
 
 message SloRepoMetadata {
@@ -88,4 +113,9 @@ message SloRepoMetadata {
 message SloAccessControl {
     repeated string reader_groups = 1;
     repeated string annotations_writer_groups = 2;
+}
+
+message CustomMetadataPair {
+    string key = 1;
+    repeated string value = 2;
 }

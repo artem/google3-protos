@@ -68,6 +68,7 @@ message MethodPolicy {
     repeated FieldPolicy response_policies = 3;
     map<string, string> metadata = 5;
     repeated PolicyAspect policy_aspects = 10;
+    string policy_set = 11;
 }
 
 message PolicyAspect {

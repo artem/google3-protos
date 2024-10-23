@@ -64,6 +64,12 @@ enum IdentifierType {
     LOGSID_HTTPHEADER = 206;
 }
 
+enum TombstoneType {
+    TOMBSTONE_UNSPECIFIED = 0;
+    TOMBSTONE_RETAIN = 1;
+    TOMBSTONE_DROP = 2;
+}
+
 extend proto2.FieldOptions {
     optional IdentifierType id_type = 21713708 [default = LOGSID_NONE];
     optional bool temp_logs_only = 21623477 [default = false];
@@ -72,6 +78,7 @@ extend proto2.FieldOptions {
     optional bool is_encrypted = 26652850 [default = false];
     optional int32 max_recursion_depth = 53697879;
     optional string sawmill_filter_override_approved_by_logs_access = 56871503;
+    optional TombstoneType tombstone_type = 535801325 [default = TOMBSTONE_UNSPECIFIED];
 }
 
 extend proto2.MessageOptions {

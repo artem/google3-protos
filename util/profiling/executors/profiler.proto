@@ -1,4 +1,4 @@
-syntax = "proto2";
+syntax = "editions";
 
 package util_profiling;
 
@@ -19,7 +19,7 @@ message AutoTuningProfile {
     }
     
     message TeamStats {
-        repeated int64 tasks = 1 [packed = true];
+        repeated int64 tasks = 1;
         optional int64 no_blocking_poller_events = 2;
         optional int64 max_delay_between_polls_usec = 3;
         optional int64 polls = 4;

@@ -2,7 +2,6 @@ syntax = "proto3";
 
 package operations_research.sat;
 
-option csharp_namespace = "Google.OrTools.Sat";
 option java_multiple_files = true;
 option java_outer_classname = "CpModelProtobuf";
 option java_package = "com.google.operationsresearch.sat";
@@ -41,6 +40,9 @@ message ElementConstraintProto {
     int32 index = 1;
     int32 target = 2;
     repeated int32 vars = 3;
+    LinearExpressionProto linear_index = 4;
+    LinearExpressionProto linear_target = 5;
+    repeated LinearExpressionProto exprs = 6;
 }
 
 message IntervalConstraintProto {

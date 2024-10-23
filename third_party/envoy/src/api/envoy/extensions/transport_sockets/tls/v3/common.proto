@@ -43,7 +43,9 @@ message PrivateKeyProvider {
         google.protobuf.Any typed_config = 3;
     }
     
-    reserved 2, "config";
+    reserved 2;
+    
+    reserved "config";
 }
 
 message TlsCertificate {
@@ -109,5 +111,7 @@ message CertificateValidationContext {
     bool only_verify_leaf_cert_crl = 14;
     google.protobuf.UInt32Value max_verify_depth = 16;
     
-    reserved 4, 5, "verify_subject_alt_name";
+    reserved 4, 5;
+    
+    reserved "verify_subject_alt_name";
 }

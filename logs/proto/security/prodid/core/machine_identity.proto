@@ -2,6 +2,7 @@ syntax = "proto2";
 
 package security_prodid;
 
+import "google/api/inclusion.proto";
 import "security/credentials/proto/principal.proto";
 import "storage/datapol/annotations/proto/semantic_annotations.proto";
 

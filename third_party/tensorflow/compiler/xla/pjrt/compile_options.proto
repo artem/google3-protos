@@ -15,6 +15,8 @@ message ExecutableBuildOptionsProto {
     int64 num_partitions = 5;
     bool use_spmd_partitioning = 6;
     bool use_auto_spmd_partitioning = 7;
+    float exec_time_optimization_effort = 20;
+    float memory_fitting_effort = 21;
     bool deduplicate_hlo = 8;
     DeviceAssignmentProto device_assignment = 9;
     bool alias_passthrough_params = 10;

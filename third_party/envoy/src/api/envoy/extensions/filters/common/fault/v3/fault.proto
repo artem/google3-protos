@@ -21,7 +21,9 @@ message FaultDelay {
         HeaderDelay header_delay = 5;
     }
     
-    reserved 2, 1, "type";
+    reserved 2, 1;
+    
+    reserved "type";
     
     message HeaderDelay {
         

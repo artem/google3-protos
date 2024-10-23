@@ -1,0 +1,30 @@
+syntax = "proto3";
+
+package privacy.data_governance.attributes;
+
+import "google/api/inclusion.proto";
+import "privacy/data_governance/attributes/proto/classification.proto";
+
+option java_multiple_files = true;
+option java_package = "com.google.privacy.datagovernance.attributes";
+
+message ThirdParty {
+    Data data = 1;
+    message Data {
+        repeated ThirdPartyDataCategory data_category = 1;
+        enum ThirdPartyDataCategory {
+            DATA_CATEGORY_UNSPECIFIED = 0;
+            DATA_CATEGORY_OPEN_SOURCE_LICENSE = 1;
+            DATA_CATEGORY_PUBLIC_CUSTOM_LICENSE = 2;
+            DATA_CATEGORY_PRIVATE_CONTRACT = 3;
+        }
+        
+        LicenseInfo license_info = 2;
+        message LicenseInfo {
+            string expire_date_time = 1;
+        }
+        
+        classification.Category.HasCategory allowed_for_commercial_use = 3;
+        classification.Category.HasCategory allowed_for_ml = 4;
+    }
+}

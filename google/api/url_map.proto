@@ -27,6 +27,7 @@ message UrlMap {
             GfeTarget backend = 2;
             LegacyGfeService legacy_gfe_service = 6;
             EasyApisRoutingConfig easyapis_routing_config = 8;
+            RLSTarget rls = 9;
         }
         
         reserved 4;
@@ -122,6 +123,13 @@ message HttpFrontendOptions {
         RESPONSE_ENCODING_DEFAULT = 0;
         RESPONSE_ENCODING_SMART_GZIP = 1;
         RESPONSE_ENCODING_ORIGINAL = 2;
+    }
+    
+    TcpKeepalive tcp_keepalive = 12;
+    enum TcpKeepalive {
+        TCP_KEEPALIVE_DEFAULT = 0;
+        TCP_KEEPALIVE_DISABLED = 1;
+        TCP_KEEPALIVE_FAST = 2;
     }
 }
 

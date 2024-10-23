@@ -2,6 +2,9 @@ syntax = "proto2";
 
 package borg;
 
+option java_outer_classname = "InternalConfidentialModeConfigProto";
+option java_package = "com.google.borg.common";
+
 message InternalConfidentialModeConfig {
     optional SecurityLevel security_level = 1;
     enum SecurityLevel {

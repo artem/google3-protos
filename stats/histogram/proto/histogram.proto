@@ -4,7 +4,6 @@ package stats;
 
 import "storage/datapol/annotations/proto/semantic_annotations.proto";
 
-option cc_enable_arenas = true;
 option java_multiple_files = true;
 option java_outer_classname = "HistogramProto";
 option java_package = "com.google.common.stats";

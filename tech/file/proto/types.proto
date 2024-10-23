@@ -53,6 +53,7 @@ message DiskTimeBucket {
         THROUGHPUT = 2;
         LOW_LATENCY = 3;
         BEST_EFFORT_PLUS = 4;
+        ULTRA_LOW_LATENCY = 5;
     }
 }
 
@@ -325,6 +326,7 @@ enum WrappedKeyType {
     EPHEMERAL_KEY = 2;
     KEYMASTER_KEY = 4;
     CLIENT_MANAGED_KEYMASTER_KEYSET = 5;
+    CLIENT_MANAGED_TINK_KEYSET = 7;
     SHARED_KEY = 1;
     CLIENT_MANAGED_KEY = 3;
     SHREDMILL_KEY = 6;
@@ -340,4 +342,5 @@ enum EncryptionMode {
     AES_CTR_SHA256_HMAC_PER_STRIPE_CRC = 7;
     AES_GCM_PER_FILE_CRC = 8;
     AES_CTR_SHA256_HMAC_PER_FILE_CRC = 9;
+    AES_GHAC_PER_FILE_CRC = 10;
 }

@@ -21,6 +21,8 @@ message Tracing {
             google.protobuf.Any typed_config = 3;
         }
         
-        reserved 2, "config";
+        reserved 2;
+        
+        reserved "config";
     }
 }

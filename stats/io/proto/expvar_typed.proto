@@ -2,7 +2,6 @@ syntax = "editions";
 
 package expvar;
 
-option cc_enable_arenas = true;
 option java_package = "com.google.common.stats.proto";
 
 message MapProto {

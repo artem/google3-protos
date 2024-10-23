@@ -172,6 +172,7 @@ message PeerSecurityRealmCondition {
     repeated string includes = 7;
     repeated string realms = 2;
     optional google.protobuf.Empty persons_in_corp = 9;
+    optional google.protobuf.Empty local_realm = 11;
     optional google.protobuf.Empty local_campus = 3;
     optional google.protobuf.Empty local_metro = 4;
     optional google.protobuf.Empty local_cloud_region = 5;

@@ -2,15 +2,11 @@ syntax = "proto3";
 
 package privacy.data_governance.attributes;
 
-import "dataresidency/mapping/data_residency_locations.proto";
+import "privacy/data_governance/attributes/proto/data_residency_location_restriction.proto";
 
 option java_multiple_files = true;
 option java_package = "com.google.privacy.datagovernance.attributes";
 
 message IntendedDataResidencyLocations {
     repeated DataResidencyLocationRestriction location_restrictions = 1;
-}
-
-message DataResidencyLocationRestriction {
-    repeated data_residency.mapping.DataResidencyLocationEnum locations = 1;
 }

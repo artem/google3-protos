@@ -210,6 +210,11 @@ message DataSourceValue {
     string key = 1;
 }
 
+message BigQueryQuery {
+    string project = 1;
+    string sql = 2;
+}
+
 message OpsAnalyticsQuery {
     string sql = 1;
     string query_handle = 2;

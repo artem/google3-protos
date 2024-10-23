@@ -38,7 +38,9 @@ message SavedObject {
         CapturedTensor captured_tensor = 12;
     }
     
-    reserved 2, "attributes";
+    reserved 2;
+    
+    reserved "attributes";
 }
 
 message SavedUserObject {

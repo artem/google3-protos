@@ -1,4 +1,4 @@
-syntax = "proto2";
+syntax = "editions";
 
 package sstable;
 
@@ -26,10 +26,10 @@ message FlatSSTableBuilderOptionsProto {
 }
 
 message FlatSSTableHeader {
-    required fixed64 magic_number = 1;
-    required int32 top_index_bytes = 2;
-    required int32 middle_index_bytes = 3;
-    required int64 num_entries = 4;
+    optional fixed64 magic_number = 1;
+    optional int32 top_index_bytes = 2;
+    optional int32 middle_index_bytes = 3;
+    optional int64 num_entries = 4;
     optional int64 top_index_start = 6 [default = 0];
     optional int64 top_index_size = 7;
     optional Metadata metadata = 5;

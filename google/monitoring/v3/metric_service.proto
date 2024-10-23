@@ -183,6 +183,7 @@ message CreateTimeSeriesSummary {
 }
 
 message QueryTimeSeriesRequest {
+    option deprecated = true;
     string name = 1;
     string query = 7;
     bool validate_only = 3 [deprecated = true];
@@ -200,6 +201,7 @@ message QueryTimeSeriesRequest {
 }
 
 message QueryTimeSeriesResponse {
+    option deprecated = true;
     TimeSeriesTable time_series_table = 1 [deprecated = true];
     TimeSeriesDescriptor time_series_descriptor = 8;
     repeated TimeSeriesData time_series_data = 9;

@@ -23,5 +23,6 @@ message Topology {
         TimeSeriesQuery time_series_query = 1;
         repeated string source_labels = 2;
         repeated string target_labels = 3;
+        repeated Measure measures = 4;
     }
 }

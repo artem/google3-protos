@@ -66,6 +66,17 @@ message TocoFlags {
     optional .stablehlo.quantization.QuantizationConfig quantization_config = 61;
     optional bool disable_per_channel_quantization_for_dense_layers = 62 [default = false];
     optional bool enable_composite_direct_lowering = 63 [default = false];
+    
+    optional ModelOriginFramework model_origin_framework = 64 [default = UNSET];
+    enum ModelOriginFramework {
+        UNSET = 0;
+        TENSORFLOW = 1;
+        KERAS = 2;
+        JAX = 3;
+        PYTORCH = 4;
+    }
+    
+    optional bool canonicalizing_inf_as_min_max_float = 65 [default = false];
 }
 
 enum FileFormat {

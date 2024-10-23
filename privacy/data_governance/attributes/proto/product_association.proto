@@ -29,6 +29,10 @@ message DataProductAssociation {
     }
 }
 
+message DataProductAssociationRestriction {
+    repeated int32 product_id = 1;
+}
+
 message ProcessProductAssociation {
     int32 default_product_id = 1;
 }
@@ -38,5 +42,9 @@ message StorageProductAssociation {
 }
 
 message FineGrainedProductAssociation {
+    repeated int32 product_id = 1;
+}
+
+message DualObservationProductAssociation {
     repeated int32 product_id = 1;
 }

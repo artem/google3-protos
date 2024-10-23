@@ -37,7 +37,9 @@ message LayoutProto {
     int64 dynamic_shape_metadata_prefix_bytes = 15;
     repeated SplitConfigProto split_configs = 17;
     
-    reserved 2, 3, 4, 5, "padded_dimensions", "padding_value", "format", "max_sparse_elements";
+    reserved 2, 3, 4, 5;
+    
+    reserved "padded_dimensions", "padding_value", "format", "max_sparse_elements";
 }
 
 message ShapeProto {
@@ -47,7 +49,9 @@ message ShapeProto {
     LayoutProto layout = 5;
     repeated bool is_dynamic_dimension = 6;
     
-    reserved 1, "rank";
+    reserved 1;
+    
+    reserved "rank";
 }
 
 message ProgramShapeProto {
@@ -83,7 +87,9 @@ message OpMetadata {
     int32 stack_frame_id = 15;
     string scheduling_name = 16;
     
-    reserved 6, 7, 14, "creation_pass_id", "logical_creation_pass_id";
+    reserved 6, 7, 14;
+    
+    reserved "creation_pass_id", "logical_creation_pass_id";
 }
 
 message ExecutionProfile {
@@ -155,10 +161,12 @@ message LiteralProto {
     bytes u16s = 16;
     bytes s16s = 17;
     bytes f8e5m2s = 19;
+    bytes f8e4m3s = 28;
     bytes f8e4m3fns = 20;
     bytes f8e4m3b11fnuzs = 23;
     bytes f8e5m2fnuzs = 24;
     bytes f8e4m3fnuzs = 25;
+    bytes f8e3m4s = 29;
     repeated int64 sparse_indices = 14;
 }
 
@@ -181,6 +189,8 @@ message GatherDimensionNumbers {
     repeated int64 collapsed_slice_dims = 2;
     repeated int64 start_index_map = 3;
     int64 index_vector_dim = 4;
+    repeated int64 operand_batching_dims = 5;
+    repeated int64 start_indices_batching_dims = 6;
 }
 
 message ScatterDimensionNumbers {
@@ -188,6 +198,8 @@ message ScatterDimensionNumbers {
     repeated int64 inserted_window_dims = 2;
     repeated int64 scatter_dims_to_operand_dims = 3;
     int64 index_vector_dim = 4;
+    repeated int64 input_batching_dims = 5;
+    repeated int64 scatter_indices_batching_dims = 6;
 }
 
 message ConvolutionDimensionNumbers {
@@ -378,8 +390,10 @@ enum PrimitiveType {
     BF16 = 16;
     F64 = 12;
     F8E5M2 = 19;
+    F8E4M3 = 28;
     F8E4M3FN = 20;
     F8E4M3B11FNUZ = 23;
+    F8E3M4 = 29;
     F8E5M2FNUZ = 24;
     F8E4M3FNUZ = 25;
     C64 = 15;

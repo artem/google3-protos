@@ -2,6 +2,7 @@ syntax = "proto3";
 
 package tensorflow;
 
+import "third_party/tensorflow/compiler/xla/tsl/protobuf/coordination_config.proto";
 import "third_party/tensorflow/core/framework/cost_graph.proto";
 import "third_party/tensorflow/core/framework/graph.proto";
 import "third_party/tensorflow/core/framework/step_stats.proto";
@@ -9,7 +10,6 @@ import "third_party/tensorflow/core/protobuf/cluster.proto";
 import "third_party/tensorflow/core/protobuf/debug.proto";
 import "third_party/tensorflow/core/protobuf/rewriter_config.proto";
 import "third_party/tensorflow/core/protobuf/rpc_options.proto";
-import "third_party/tensorflow/tsl/protobuf/coordination_config.proto";
 
 option cc_enable_arenas = true;
 option go_package = "github.com/tensorflow/tensorflow/tensorflow/go/core/protobuf/for_core_protos_go_proto";
@@ -96,7 +96,9 @@ message GraphOptions {
     int32 timeline_step = 8;
     RewriterConfig rewrite_options = 10;
     
-    reserved 1, "skip_common_subexpression_elimination";
+    reserved 1;
+    
+    reserved "skip_common_subexpression_elimination";
 }
 
 message ThreadPoolOptionProto {
@@ -118,6 +120,7 @@ message ConfigProto {
     int32 placement_period = 3;
     repeated string device_filters = 4;
     GPUOptions gpu_options = 6;
+    GPUOptions pluggable_device_options = 18;
     bool allow_soft_placement = 7;
     bool log_device_placement = 8;
     GraphOptions graph_options = 10;

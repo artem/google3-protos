@@ -19,5 +19,7 @@ message Finance {
             PIPELINE_AND_DEVELOPMENT = 4;
             PERSONAL_ANALYSIS_AND_PROTOTYPING = 5;
         }
+        
+        repeated string finance_data_steward = 2;
     }
 }

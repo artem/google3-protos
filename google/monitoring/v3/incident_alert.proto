@@ -7,6 +7,7 @@ import "google/api/metric.proto";
 import "google/api/monitored_resource.proto";
 import "google/api/resource.proto";
 import "google/api/visibility.proto";
+import "google/monitoring/v3/alert.proto";
 import "google/protobuf/timestamp.proto";
 import "storage/datapol/annotations/proto/semantic_annotations.proto";
 
@@ -39,11 +40,11 @@ message Alert {
         map<string, string> extracted_labels = 1;
     }
     
-    Severity severity = 9;
-    enum Severity {
-        SEVERITY_UNSPECIFIED = 0;
-        CRITICAL = 1;
-        ERROR = 2;
-        WARNING = 3;
+    PolicySnapshot policy = 9;
+    message PolicySnapshot {
+        string name = 1;
+        string display_name = 2;
+        AlertPolicy.Severity severity = 3;
+        map<string, string> user_labels = 4;
     }
 }

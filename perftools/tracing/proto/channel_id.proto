@@ -1,4 +1,4 @@
-syntax = "proto2";
+syntax = "editions";
 
 package perftools.tracing.channels;
 
@@ -24,6 +24,7 @@ message ChannelIDValues {
         ENCRYPTED_CHANNEL = 30;
         UNENCRYPTED_CHANNEL = 31;
         SPANNER_ENCRYPTED_IMPORTANT_CHANNEL = 32;
+        CENSUS_CHANNEL = 33;
         INTERNAL_CHANNEL = 126;
         COLLECTOR_CHANNEL = 127;
         RESERVED_MAX = 127;

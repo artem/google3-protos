@@ -26,6 +26,11 @@ message Qualifier {
     optional bool auto_delete_within_wipeout = 11 [default = false];
     optional bool auto_delete_within_180_days = 13 [default = false];
     optional bool is_access_target = 12 [default = false];
+    optional bool is_user_visible = 15 [default = false];
+    optional bool is_access_grantee = 16 [default = false];
+    optional bool is_actor = 17 [default = false];
+    optional bool is_action_target = 18 [default = false];
+    optional bool is_action_time = 19 [default = false];
 }
 
 message LocationQualifier {
@@ -38,10 +43,21 @@ message LocationQualifier {
 
 message FieldDetails {
     repeated SemanticType semantic_type = 1;
+    optional AnnotationsDetails key_annotations = 2;
+    optional AnnotationsDetails value_annotations = 3;
 }
 
 message MessageDetails {
     repeated SemanticType semantic_type = 1;
+}
+
+message AnnotationsDetails {
+    repeated SemanticType semantic_type = 1 [packed = true];
+    optional Qualifier qualifier = 2;
+}
+
+message EnumDetails {
+    optional AnnotationsDetails annotations = 1;
 }
 
 enum SemanticType {
@@ -57,6 +73,7 @@ enum SemanticType {
     ST_ACSA_ID = 1007;
     ST_HERREVAD_ID = 1008;
     ST_YOUTUBE_VISITOR_ID = 1009;
+    ST_CLOUD_RESOURCE_NAME_PSEUDONYMOUS = 1010;
     ST_IDENTIFYING_ID = 1100;
     ST_EMAIL_ID = 1102;
     ST_NAME = 1103;
@@ -70,10 +87,14 @@ enum SemanticType {
     ST_CLOUD_PROJECT_ID = 1111;
     ST_CLOUD_PRINCIPAL_ID = 1112;
     ST_FITBIT_ID = 1113;
+    ST_DUSI_ID = 1114;
+    ST_CLOUD_RESOURCE_NAME = 1119;
     ST_GOOGLE_OBJECT_ID = 12031;
     ST_FIFE_URL = 1115;
-    ST_BIGSTORE_PATH = 1116;
     ST_BLOBSTORE_ID = 1117;
+    ST_WORKSPACE_OBJECT_ID = 12001;
+    ST_SYSTEM_RESOURCE_IDENTIFIER = 12015;
+    ST_BIGSTORE_PATH = 1116;
     ST_GOOGLE_FILE_PATH = 1118;
     ST_SPII_ID = 1200;
     ST_GOVERNMENT_ID_NUMBER = 1201;
@@ -96,10 +117,12 @@ enum SemanticType {
     ST_NETWORK_ENDPOINT = 1300;
     ST_IP_ADDRESS = 1301;
     ST_CHIME_REPRESENTATIVE_TARGET_ID = 1302;
+    ST_HARDWARE_INFO = 1402;
     ST_HARDWARE_ID = 1400;
     ST_ANDROID_LOGGING_ID = 1401;
     ST_SOFTWARE_ID = 1500;
     ST_USER_AGENT = 1501;
+    ST_CLIENT_TAG = 1502;
     ST_ANONYMOUS_DATA = 1600;
     ST_DEMOGRAPHIC_INFO = 1601;
     ST_LOCATION = 1700;
@@ -111,6 +134,7 @@ enum SemanticType {
     ST_PUBLISHER_ID = 1803;
     ST_RTB_CUSTOMER_DATA = 1804;
     ST_CLOUD_PROJECT_NUMBER = 1805;
+    ST_CLOUD_FOLDER_ID = 1806;
     ST_USER_CONTENT = 1900;
     ST_USER_QUERY = 1901;
     ST_AUDIO = 1902;
@@ -118,22 +142,33 @@ enum SemanticType {
     ST_TEXT_TO_SPEECH = 1904;
     ST_USER_SECURITY_CONFIGURATION = 1905;
     ST_USER_CONFIGURATION = 1906;
+    ST_UNSTRUCTURED_ADMIN_SETTING = 12003;
+    ST_STRUCTURED_ADMIN_SETTING = 12024;
+    ST_UNSTRUCTURED_USER_SETTING = 12004;
+    ST_STRUCTURED_USER_SETTING = 12012;
     ST_USER_DEFINED_ATTRIBUTE = 1907;
+    ST_USER_LABEL = 12005;
     ST_PERSONAL_DATA = 2400;
     ST_USER_CORE_CONTENT = 1908;
+    ST_DOCUMENT_CONTENT = 1911;
     ST_EMAIL_CONTENT = 2402;
     ST_CALENDAR_CONTENT = 2403;
     ST_CONTACT_CONTENT = 2404;
     ST_USER_MESSAGE = 2405;
+    ST_TITLE = 12030;
+    ST_USER_GROUP_NAME = 12036;
     ST_CREDIT_INFO = 2401;
     ST_BODY_SENSOR_DATA = 2406;
     ST_VOICE = 2407;
     ST_SMART_HOME = 2408;
     ST_USER_IMAGE = 1909;
     ST_USER_IMAGE_REF = 1910;
+    ST_CONTENT_SUMMARY = 12034;
     ST_THIRD_PARTY_DATA = 2000;
     ST_TIMESTAMP = 2100;
     ST_SENSITIVE_TIMESTAMP = 2101;
+    ST_CALENDAR_EVENT_TIMESTAMP = 12035;
+    ST_DURATION = 12025;
     ST_SESSION_ID = 2300;
     ST_EXPERIMENT_ID = 2301;
     ST_AVOCADO_ID = 2500;
@@ -146,10 +181,24 @@ enum SemanticType {
     ST_CLOUD_IAM_ROLE_NAME = 2703;
     ST_CLOUD_IAM_PERMISSION = 2704;
     ST_GOOGLE_OPERATIONAL_DATA = 2800;
+    ST_SYSTEM_DIAGNOSTIC_INFO = 12017;
     ST_GOOGLE_OPERATIONAL_METRICS = 2801;
     ST_GOOGLE_GENERATED_USER_METADATA = 2901;
     ST_GOOGLE_GENERATED_USER_CONTENT_METADATA = 2902;
     ST_GOOGLE_GENERATED_USER_CONTENT = 2903;
+    ST_FRAUD_ABUSE_INFO = 2904;
+    ST_SYSTEM_CONFIGURATION = 12028;
+    ST_GOOGLE_OBJECT_INFO = 3000;
+    ST_GOOGLE_OBJECT_VERSION = 12016;
+    ST_WORKSPACE_OBJECT_INFO = 12033;
+    ST_WORKSPACE_OBJECT_CONTENT_REFERENCE = 12032;
+    ST_METRICS = 3100;
+    ST_PER_USER_METRICS = 12009;
+    ST_CROSS_USER_METRICS = 12010;
+    ST_PER_CUSTOMER_METRICS = 12038;
+    ST_ACCESS_LEVEL = 12023;
+    ST_USER_ACTION = 12008;
+    ST_STRUCTURED_REQUEST_PARAMETER = 12027;
     ST_CONTENT_DEPENDENT = 9900;
     ST_DEBUG_INFO = 9901;
     ST_KEY_VALUE_PAIR = 9902;
@@ -189,4 +238,8 @@ extend proto2.MessageOptions {
 extend proto2.FileOptions {
     optional bool file_vetted_for_datapol_annotations = 43601160 [default = false];
     optional string file_vetting_status = 71304954;
+}
+
+extend proto2.EnumOptions {
+    optional EnumDetails enum_details = 525000035;
 }

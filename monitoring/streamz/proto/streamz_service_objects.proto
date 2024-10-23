@@ -1,4 +1,4 @@
-syntax = "proto2";
+syntax = "editions";
 
 package monitoring.streamz;
 
@@ -23,7 +23,7 @@ message MonitorRequest {
 message MonitorEvent {
     option deprecated = true;
     repeated StreamValue value = 1;
-    required int64 timestamp_micros = 2;
+    optional int64 timestamp_micros = 2;
     optional int64 birth_timestamp_micros = 3;
     optional fixed64 root_id = 5;
     repeated MetricDefinition additional_metric_definition = 4;
@@ -44,7 +44,7 @@ message GetRootListResponse {
 
 message WatchRootRequest {
     option deprecated = true;
-    required string root_name = 1;
+    optional string root_name = 1;
 }
 
 message RootInfo {

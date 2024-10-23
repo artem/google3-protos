@@ -4,6 +4,7 @@ package google.api;
 
 import "google/api/field_behavior.proto";
 import "google/api/visibility.proto";
+import "google/protobuf/any.proto";
 
 option objc_class_prefix = "GAPI";
 option java_multiple_files = true;
@@ -39,4 +40,6 @@ message ServiceManagementConfig {
         string name = 1;
         bool turnup = 2;
     }
+    
+    protobuf.Any proto_dep_info = 7;
 }

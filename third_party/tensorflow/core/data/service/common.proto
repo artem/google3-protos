@@ -2,10 +2,10 @@ syntax = "proto3";
 
 package tensorflow.data;
 
+import "third_party/tensorflow/compiler/xla/tsl/protobuf/status.proto";
 import "third_party/tensorflow/core/framework/graph.proto";
 import "third_party/tensorflow/core/protobuf/data_service.proto";
 import "third_party/tensorflow/core/protobuf/snapshot.proto";
-import "third_party/tensorflow/tsl/protobuf/status.proto";
 
 message DatasetDef {
     GraphDef graph = 1;

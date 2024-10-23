@@ -22,6 +22,8 @@ import "privacy/data_governance/attributes/proto/finance.proto";
 import "privacy/data_governance/attributes/proto/geo.proto";
 import "privacy/data_governance/attributes/proto/geo_location.proto";
 import "privacy/data_governance/attributes/proto/identifiers.proto";
+import "privacy/data_governance/attributes/proto/kansas.proto";
+import "privacy/data_governance/attributes/proto/malout_access.proto";
 import "privacy/data_governance/attributes/proto/medical.proto";
 import "privacy/data_governance/attributes/proto/ml.proto";
 import "privacy/data_governance/attributes/proto/payments.proto";
@@ -37,6 +39,7 @@ import "privacy/data_governance/attributes/proto/purpose.proto";
 import "privacy/data_governance/attributes/proto/residency.proto";
 import "privacy/data_governance/attributes/proto/retention.proto";
 import "privacy/data_governance/attributes/proto/search.proto";
+import "privacy/data_governance/attributes/proto/third_party.proto";
 import "privacy/data_governance/attributes/proto/trusted_core_access.proto";
 import "privacy/data_governance/attributes/proto/youtube.proto";
 
@@ -49,25 +52,26 @@ message Annotations {
         repeated classification.Source source = 1;
         classification.SemanticContext semantic_context = 2;
         classification.Confidentiality confidentiality = 3;
-        repeated classification.DatasetTag dataset_tags = 9;
-        classification.Category category = 5;
+        repeated AllowedLocations allowed_locations = 4 [deprecated = true];
         repeated classification.Identifiers identifiers = 6;
-        classification.Pseudonymization pseudonymization = 10;
         classification.Identifiability identifiability = 7;
         uint64 anonymization_bug_id = 8 [deprecated = true];
-        repeated AllowedLocations allowed_locations = 4 [deprecated = true];
+        repeated classification.DatasetTag dataset_tags = 9;
+        classification.Pseudonymization pseudonymization = 10;
         DataProductAssociation product_association = 11;
         repeated ProcessingPurpose.Purpose limited_purposes = 12;
         repeated DatapolAnnotations datapol = 13;
         IntendedDataResidencyLocations intended_data_residency_locations = 14;
+        DataProductAssociationRestriction product_association_restriction = 15;
+        DualObservationProductAssociation dual_observation_product_association = 16;
         
         Custom custom = 101;
         message Custom {
             Ads.Data ads = 1;
             Apps.Data apps = 2;
-            Medical.Data medical = 5 [deprecated = true];
             repeated Residency.Data residency = 3;
             Search.DataSpecs search = 4;
+            Medical.Data medical = 5 [deprecated = true];
             Assurant.Data assurant = 6;
             Photos.Data photos = 7;
             Payments.Data payments = 8;
@@ -81,8 +85,11 @@ message Annotations {
             Youtube.Data youtube = 16;
             Faroe.Data faroe = 17;
             Finance.Data finance = 18;
+            ThirdParty.Data third_party = 19;
             Experimental.Data experimental = 101;
         }
+        
+        classification.Category category = 5;
     }
     
     AnnotationsVersion version = 6;
@@ -121,6 +128,11 @@ message Annotations {
             Search.Storage search = 3;
             PToken.Storage ptoken = 4;
             ConsumerTrust.Storage consumer_trust = 5;
+            Kansas.Storage kansas = 6;
+        }
+        
+        oneof _used_for_personalization {
+            bool used_for_personalization = 7;
         }
         
         reserved 1;
@@ -136,6 +148,7 @@ message Annotations {
         Custom custom = 101;
         message Custom {
             TrustedCoreAccess.Rpc trusted_core_access = 1;
+            MalOutAccess.Rpc malout_access = 2;
         }
         
         reserved 1;

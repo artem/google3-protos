@@ -1,0 +1,78 @@
+syntax = "editions";
+
+package net_rpc2_networkz;
+
+import "net/util/transport_metrics.proto";
+import "util/task/status.proto";
+
+option java_multiple_files = true;
+
+message TcpInfoMetrics {
+    optional uint32 state = 1;
+    optional uint32 ca_state = 2;
+    optional uint32 retransmits = 3;
+    optional uint32 probes = 4;
+    optional uint32 backoff = 5;
+    optional uint32 options = 6;
+    optional uint32 snd_wscale = 7;
+    optional uint32 rcv_wscale = 8;
+    optional uint32 delivery_rate_app_limited = 9;
+    optional uint32 rto = 11;
+    optional uint32 ato = 12;
+    optional uint32 snd_mss = 13;
+    optional uint32 rcv_mss = 14;
+    optional uint32 unacked = 15;
+    optional uint32 sacked = 16;
+    optional uint32 lost = 17;
+    optional uint32 retrans = 18;
+    optional uint32 packets = 19;
+    optional uint32 last_data_sent = 20;
+    optional uint32 last_ack_sent = 21;
+    optional uint32 last_data_recv = 22;
+    optional uint32 last_ack_recv = 23;
+    optional uint32 pmtu = 24;
+    optional uint32 rcv_ssthresh = 25;
+    optional uint32 rtt = 26;
+    optional uint32 rttvar = 27;
+    optional uint32 snd_ssthresh = 28;
+    optional uint32 snd_cwnd = 29;
+    optional uint32 advmss = 30;
+    optional uint32 reordering = 31;
+    optional uint32 rcv_rtt = 32;
+    optional uint32 rcv_space = 33;
+    optional uint32 total_retrans = 34;
+    optional uint64 pacing_rate = 35;
+    optional uint64 max_pacing_rate = 36;
+    optional uint64 bytes_acked = 37;
+    optional uint64 bytes_received = 38;
+    optional uint32 segs_out = 39;
+    optional uint32 segs_in = 40;
+    optional uint32 notsent_bytes = 41;
+    optional uint32 min_rtt = 42;
+    optional uint32 data_segs_in = 43;
+    optional uint32 data_segs_out = 44;
+    optional uint64 delivery_rate = 45;
+    optional uint64 busy_time = 46;
+    optional uint64 rwnd_limited = 47;
+    optional uint64 sndbuf_limited = 48;
+    optional uint32 delivered = 49;
+    optional uint32 delivered_ce = 50;
+    optional uint64 bytes_sent = 51;
+    optional uint64 bytes_retrans = 52;
+    optional uint32 dsack_dups = 53;
+    optional uint32 reord_seen = 54;
+    optional uint32 rcv_ooopack = 55;
+    optional uint32 snd_wnd = 56;
+    optional uint32 rcv_wnd = 57;
+    optional uint32 rehash = 58;
+    optional uint32 total_rto = 59;
+    optional uint32 total_rto_recoveries = 60;
+    optional uint32 total_rto_time = 61;
+}
+
+message NetworkzResponse {
+    optional .util.StatusProto status = 1;
+    optional TcpInfoMetrics tcp_info_metrics = 2;
+    optional .util.StatusProto timestamp_error = 3;
+    optional transport_metrics_log.Timestamps timestamps = 4;
+}

@@ -1,0 +1,218 @@
+syntax = "proto3";
+
+package tensorflow;
+
+import "google/protobuf/any.proto";
+
+option go_package = "github.com/tensorflow/tensorflow/tensorflow/go/core/protobuf/for_core_protos_go_proto";
+
+service CoordinationService {
+    rpc RegisterTask(RegisterTaskRequest) returns (RegisterTaskResponse);
+    rpc Heartbeat(HeartbeatRequest) returns (HeartbeatResponse);
+    rpc WaitForAllTasks(WaitForAllTasksRequest) returns (WaitForAllTasksResponse);
+    rpc ShutdownTask(ShutdownTaskRequest) returns (ShutdownTaskResponse);
+    rpc ResetTask(ResetTaskRequest) returns (ResetTaskResponse);
+    rpc ReportErrorToTask(ReportErrorToTaskRequest) returns (ReportErrorToTaskResponse);
+    rpc ReportErrorToService(ReportErrorToServiceRequest) returns (ReportErrorToServiceResponse);
+    rpc GetTaskState(GetTaskStateRequest) returns (GetTaskStateResponse);
+    rpc InsertKeyValue(InsertKeyValueRequest) returns (InsertKeyValueResponse);
+    rpc GetKeyValue(GetKeyValueRequest) returns (GetKeyValueResponse);
+    rpc TryGetKeyValue(TryGetKeyValueRequest) returns (TryGetKeyValueResponse);
+    rpc GetKeyValueDir(GetKeyValueDirRequest) returns (GetKeyValueDirResponse);
+    rpc DeleteKeyValue(DeleteKeyValueRequest) returns (DeleteKeyValueResponse);
+    rpc Barrier(BarrierRequest) returns (BarrierResponse);
+    rpc CancelBarrier(CancelBarrierRequest) returns (CancelBarrierResponse);
+    rpc PollForError(PollForErrorRequest) returns (PollForErrorResponse);
+}
+
+message CoordinatedTask {
+    string job_name = 1;
+    int32 task_id = 2;
+}
+
+message CoordinationServiceError {
+    bool is_reported_error = 3;
+    CoordinatedTask source_task = 4;
+    
+    reserved 1, 2;
+}
+
+message CoordinatedTaskStateInfo {
+    CoordinatedTask task = 1;
+    CoordinatedTaskState state = 2;
+    int32 error_code = 3;
+    string error_message = 4;
+    CoordinationServiceError error_payload = 5;
+}
+
+message DeviceInfo {
+    repeated google.protobuf.Any device = 1;
+}
+
+message RegisterTaskRequest {
+    fixed64 incarnation = 3;
+    CoordinatedTask source_task = 5;
+    
+    reserved 1, 2, 4;
+}
+
+message RegisterTaskResponse {
+    fixed64 leader_incarnation = 1;
+}
+
+message HeartbeatRequest {
+    fixed64 incarnation = 3;
+    CoordinatedTask source_task = 4;
+    
+    reserved 1, 2;
+}
+
+message HeartbeatResponse {
+    fixed64 leader_incarnation = 1;
+}
+
+message PollForErrorRequest {
+    CoordinatedTask source_task = 1;
+}
+
+message PollForErrorResponse {
+    
+}
+
+message WaitForAllTasksRequest {
+    CoordinatedTask source_task = 5;
+    DeviceInfo device_info = 6;
+    
+    reserved 1, 2, 3, 4;
+}
+
+message WaitForAllTasksResponse {
+    fixed64 leader_incarnation = 1;
+    DeviceInfo device_info = 4;
+    
+    reserved 2, 3;
+}
+
+message ShutdownTaskRequest {
+    CoordinatedTask source_task = 1;
+}
+
+message ShutdownTaskResponse {
+    
+}
+
+message ResetTaskRequest {
+    CoordinatedTask source_task = 1;
+}
+
+message ResetTaskResponse {
+    
+}
+
+message ReportErrorToTaskRequest {
+    int32 error_code = 1;
+    string error_message = 2;
+    CoordinationServiceError error_payload = 5;
+    
+    reserved 3, 4;
+}
+
+message ReportErrorToTaskResponse {
+    
+}
+
+message ReportErrorToServiceRequest {
+    int32 error_code = 1;
+    string error_message = 2;
+    CoordinatedTask error_origin = 5;
+    
+    reserved 3, 4;
+}
+
+message ReportErrorToServiceResponse {
+    
+}
+
+message GetTaskStateRequest {
+    repeated CoordinatedTask source_task = 1;
+}
+
+message GetTaskStateResponse {
+    repeated CoordinatedTaskStateInfo task_state = 1;
+}
+
+message KeyValueEntry {
+    string key = 1;
+    bytes value = 2;
+}
+
+message InsertKeyValueRequest {
+    KeyValueEntry kv = 1;
+    bool allow_overwrite = 2;
+}
+
+message InsertKeyValueResponse {
+    
+}
+
+message GetKeyValueRequest {
+    string key = 1;
+}
+
+message GetKeyValueResponse {
+    KeyValueEntry kv = 1;
+}
+
+message TryGetKeyValueRequest {
+    string key = 1;
+}
+
+message TryGetKeyValueResponse {
+    KeyValueEntry kv = 1;
+}
+
+message GetKeyValueDirRequest {
+    string directory_key = 1;
+}
+
+message GetKeyValueDirResponse {
+    string directory_key = 1;
+    repeated KeyValueEntry kv = 2;
+}
+
+message DeleteKeyValueRequest {
+    string key = 1;
+    bool is_directory = 2;
+}
+
+message DeleteKeyValueResponse {
+    
+}
+
+message BarrierRequest {
+    string barrier_id = 1;
+    int64 barrier_timeout_in_ms = 2;
+    repeated CoordinatedTask tasks = 3;
+    CoordinatedTask source_task = 4;
+}
+
+message BarrierResponse {
+    
+}
+
+message CancelBarrierRequest {
+    string barrier_id = 1;
+    CoordinatedTask source_task = 2;
+}
+
+message CancelBarrierResponse {
+    
+}
+
+enum CoordinatedTaskState {
+    TASKSTATE_UNSPECIFIED = 0;
+    TASKSTATE_UNINITIALIZED = 1;
+    TASKSTATE_DISCONNECTED = 2;
+    TASKSTATE_CONNECTED = 3;
+    TASKSTATE_ERROR = 4;
+}

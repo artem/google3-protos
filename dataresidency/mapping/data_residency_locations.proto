@@ -24,6 +24,7 @@ message DataResidencyLocationEnum {
 message DataResidencyLocationInfo {
     repeated string prod_region = 1;
     DataResidencyLocationEnum location_enum = 2;
+    DataResidencyLocationState state = 3;
 }
 
 message DataResidencyLocations {
@@ -41,4 +42,10 @@ enum DataResidencyNamespace {
     TEST = 1;
     WORKSPACE = 2;
     CLOUD = 3;
+}
+
+enum DataResidencyLocationState {
+    STATE_UNDEFINED = 0;
+    STATE_ACTIVE = 1;
+    STATE_DEPRECATED = 2;
 }

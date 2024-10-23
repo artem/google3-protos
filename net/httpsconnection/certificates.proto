@@ -73,6 +73,12 @@ message CertificateConfig {
         optional bool retain_only_sha256_of_client_certs = 9;
         repeated uint32 signature_algorithm = 10;
         optional string client_cert_root_file = 11;
+        
+        optional CompliancePolicy compliance_policy = 14;
+        enum CompliancePolicy {
+            INVALID = 0;
+            CNSA_202407 = 1;
+        }
     }
     
     repeated Host host = 8;

@@ -5,13 +5,14 @@ package security.data_access;
 import "security/credentials/proto/data_access_token_scope.proto";
 import "security/credentials/proto/principal.proto";
 import "storage/datapol/annotations/proto/semantic_annotations.proto";
+import "third_party/boundary_proxy/proto_compare/annotation.proto";
 
 option cc_enable_arenas = true;
 option java_package = "com.google.security.data_access.proto";
 
 message UserDataScopeProto {
     optional credentials.PrincipalProto principal_id = 1;
-    optional ProdUserType prod_user_type = 6;
+    optional ProdUserType prod_user_type = 6 [deprecated = true];
     optional bool all_principals_allowed = 2 [default = false];
     repeated DataScopeProto data_scope = 3 [deprecated = true];
     optional bool all_data_scopes_allowed = 4 [default = false, deprecated = true];

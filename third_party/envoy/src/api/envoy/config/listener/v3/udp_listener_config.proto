@@ -18,7 +18,9 @@ message UdpListenerConfig {
     QuicProtocolOptions quic_options = 7;
     .envoy.config.core.v3.TypedExtensionConfig udp_packet_packet_writer_config = 8;
     
-    reserved 1, 2, 3, 4, 6, "config";
+    reserved 1, 2, 3, 4, 6;
+    
+    reserved "config";
 }
 
 message ActiveRawUdpListenerConfig {
