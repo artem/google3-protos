@@ -1,0 +1,51 @@
+syntax = "editions";
+
+package identity_ubermint;
+
+import "cloud/identity/vault/proto/seal/cloud_gaia_seal.proto";
+import "google/protobuf/timestamp.proto";
+import "storage/datapol/annotations/proto/semantic_annotations.proto";
+
+option java_multiple_files = true;
+option java_outer_classname = "IdpSealProto";
+option java_package = "com.google.identity.ubermint.proto";
+
+message IdpSealWrapper {
+    optional IdpType idp_type = 3;
+    optional bytes idp_seal = 1;
+    optional bytes signature = 2;
+}
+
+message IdpSeal {
+    optional google.protobuf.Timestamp expiry_time = 1;
+    
+    oneof idp_data {
+        CoreGaiaSeal core_gaia_seal = 2;
+        identity_cloud.CloudGaiaSeal cloud_gaia_seal = 3;
+    }
+}
+
+message CoreGaiaSeal {
+    optional int64 gaia_id = 1;
+}
+
+enum IdpType {
+    IDP_TYPE_UNSPECIFIED = 0;
+    IDP_TYPE_CORE_GAIA = 1;
+    IDP_TYPE_CLOUD_GAIA = 2;
+}
+
+enum SealValidationResult {
+    SEAL_VALIDATION_RESULT_UNSPECIFIED = 0;
+    SEAL_VALIDATION_RESULT_VALID = 1;
+    SEAL_VALIDATION_RESULT_UNKNOWN_IDP = 2;
+    SEAL_VALIDATION_RESULT_SIGNATURE_INVALID = 3;
+    SEAL_VALIDATION_RESULT_INCONSISTENT_IDP = 4;
+    SEAL_VALIDATION_RESULT_WIRE_INVALID = 5;
+    SEAL_VALIDATION_RESULT_INVALID_SEAL_PAYLOAD = 6;
+    SEAL_VALIDATION_RESULT_SEAL_DOES_NOT_MATCH = 7;
+    SEAL_VALIDATION_RESULT_NO_SEAL = 8;
+    SEAL_VALIDATION_RESULT_INTERNAL_ERROR = 9;
+    SEAL_VALIDATION_RESULT_WRONG_IDP = 10;
+    SEAL_VALIDATION_RESULT_EXPIRED = 11;
+}

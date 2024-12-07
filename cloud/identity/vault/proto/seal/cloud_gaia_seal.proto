@@ -1,0 +1,27 @@
+syntax = "editions";
+
+package identity_cloud;
+
+import "storage/datapol/annotations/proto/semantic_annotations.proto";
+
+option java_multiple_files = true;
+option java_outer_classname = "CloudGaiaSealProto";
+option java_package = "com.google.identity.cloud";
+
+message CloudGaiaSeal {
+    optional int64 gaia_id = 1;
+    optional string idp_seal_id = 2;
+    
+    optional IdpSealVersion idp_seal_version = 5;
+    enum IdpSealVersion {
+        IDP_SEAL_VERSION_UNSPECIFIED = 0;
+        IDP_SEAL_V0 = 1;
+        IDP_SEAL_V1 = 2;
+        IDP_SEAL_V2 = 3;
+    }
+    
+    oneof trust_boundary_spec {
+        bool is_global = 3;
+        bytes trusted_realms_bit_map = 4;
+    }
+}

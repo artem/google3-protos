@@ -1,0 +1,73 @@
+syntax = "proto2";
+
+package gaia.dreamcatcher;
+
+import "analysis/magiceye/dimensions/dimension_enums.proto";
+import "frameworks/testing/rpcreplay/processors/rpc_replay_field_option.proto";
+import "gaia/stats/util/bond_user_agent.proto";
+import "identity/datamodel/annotations/annotations.proto";
+import "storage/datapol/annotations/proto/semantic_annotations.proto";
+
+option cc_enable_arenas = true;
+option java_multiple_files = true;
+option java_package = "com.google.gaia.dreamcatcher.proto1api";
+
+message DeviceIdentifier {
+    oneof id {
+        string android_id = 1;
+        string ios_idfv = 2;
+        string chrome_sync_signin_scoped_device_id = 3;
+        string connected_device_id = 4;
+        string ytlr_device_id = 5;
+        string iddid = 6;
+    }
+}
+
+message DeviceModelIdentifier {
+    oneof type_id {
+        string identity_model_id = 5 [deprecated = true];
+        string android_build_fingerprint = 1;
+        string chrome_os_board_name = 2;
+        string cast_os_project_id = 3 [deprecated = true];
+        string cast_os_client_id = 4;
+        string ios_device_model = 6;
+        string android_device_model = 7;
+        string ytlr_device_model = 8;
+        string chrome_hwid = 9;
+    }
+}
+
+message DeviceCharacteristicsUpdate {
+    optional gaia_stats.BondUserAgent.Os os = 1;
+    optional string device_model = 2;
+    optional DeviceModelIdentifier device_model_identifier = 3;
+    optional string user_given_name = 4;
+    optional DeviceIdentifier unique_identifier = 5;
+    optional int64 update_time_sec = 6;
+    optional BrowserUserAgent browser_user_agent = 8;
+    
+    reserved 7;
+}
+
+message BrowserUserAgent {
+    optional .magiceye.dimensions.OS.Enum os = 1;
+    optional .magiceye.dimensions.Browser.Enum browser = 2;
+    optional string user_agent_model = 3;
+}
+
+message DeviceCharacteristics {
+    optional int64 update_time_sec = 1;
+    optional gaia_stats.BondUserAgent.Os os = 2;
+    optional string device_model = 3;
+    optional DeviceModelIdentifier device_model_identifier = 4;
+    optional string user_given_name = 5;
+    optional BrowserUserAgent browser_user_agent = 7;
+    
+    reserved 6;
+}
+
+message UniqueDeviceIdentifier {
+    optional int64 update_time_sec = 1;
+    optional DeviceIdentifier primary_device_identifier = 2;
+    repeated DeviceIdentifier internal_use_all_device_identifiers = 3;
+}

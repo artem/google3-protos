@@ -1,0 +1,14 @@
+syntax = "editions";
+
+package ubermint.prodaccount;
+
+import "security/credentials/proto/principal.proto";
+import "storage/datapol/annotations/proto/semantic_annotations.proto";
+
+option java_multiple_files = true;
+option java_package = "com.google.identity.ubermint.prodaccount";
+
+message ProdAuthority {
+    optional security.credentials.MdbUserProto user = 1;
+    optional string authority_selector = 2;
+}

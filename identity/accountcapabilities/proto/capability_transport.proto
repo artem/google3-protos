@@ -1,0 +1,25 @@
+syntax = "proto2";
+
+package id.accountcapabilities;
+
+import "identity/accountcapabilities/proto/capability_info_transport.proto";
+import "storage/datapol/annotations/proto/semantic_annotations.proto";
+
+option java_multiple_files = true;
+option java_package = "com.google.identity.accountcapabilities.proto.proto1api";
+
+message CapabilityTransport {
+    optional AccountCapabilityInfoTransport capability_info_transport = 1;
+    
+    optional InfoTransportPresence info_transport_present = 4;
+    enum InfoTransportPresence {
+        NOT_SET = 0;
+        SET = 1;
+    }
+    
+    repeated int32 true_server_override = 2 [packed = true];
+    repeated int32 false_server_override = 3 [packed = true];
+    repeated int32 selected_capabilities_experiment_id = 5 [packed = true];
+    
+    extensions 10 to 99;
+}

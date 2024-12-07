@@ -1,0 +1,28 @@
+syntax = "editions";
+
+package security.data_access;
+
+import "net/proto2/bridge/proto/message_set.proto";
+
+option java_multiple_files = true;
+option java_outer_classname = "VerificationErrorProtoFile";
+option java_package = "com.google.security.data_access.proto";
+
+message VerificationErrorHolder {
+    optional VerificationError verification_error = 1;
+    optional int32 encoded_server_build_label = 2;
+    
+    extend .proto2.bridge.MessageSet {
+        optional VerificationErrorHolder message_set_extension = 262388029;
+    }
+}
+
+enum VerificationError {
+    VERIFICATION_ERROR_UNSPECIFIED = 0;
+    VERIFICATION_ERROR_UNEXPECTED = 1;
+    THINMINT_VERIFY_FAILED = 2;
+    DAT_CREATE_FAILED = 3;
+    DAT_FORMAT_INVALID = 4;
+    OK = 5;
+    OK_FROM_PEER_TONIC = 6;
+}

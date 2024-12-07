@@ -1,4 +1,4 @@
-syntax = "proto2";
+syntax = "editions";
 
 package storage.alloydb.vm.ml_agent.proto;
 

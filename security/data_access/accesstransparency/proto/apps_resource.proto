@@ -1,0 +1,417 @@
+syntax = "editions";
+
+package security.data_access.accesstransparency;
+
+import "security/data_access/accesstransparency/proto/resource.proto";
+import "storage/datapol/annotations/proto/semantic_annotations.proto";
+
+option java_package = "com.google.security.data_access.accesstransparency.proto";
+
+message AppsResource {
+    oneof resource {
+        GmailResource gmail = 1;
+        DriveResource drive = 2;
+        CalendarResource calendar = 3;
+        DirectoryResource directory = 4;
+        HangoutsChatResource hangouts_chat = 5;
+        Groups groups = 6;
+        SharedAddressbook shared_addressbook = 7;
+        CPanel c_panel = 8;
+        Starlight starlight = 9;
+        Category category = 10;
+        TasksResource tasks = 11;
+        DialogflowResource dialogflow = 12;
+        MeetResource meet = 13;
+        ChromeOsResource chromeos = 14;
+    }
+    
+    message GmailResource {
+        optional User user = 1;
+        message User {
+            optional string email_address = 1;
+            optional int64 gaia_id = 2;
+            optional string gaia_id_hex = 7;
+            
+            optional Message message = 3;
+            message Message {
+                optional int64 id = 1;
+                optional string multi_key_textproto = 3;
+                optional string id_hex = 4;
+                
+                optional Attachment attachment = 2;
+                message Attachment {
+                    optional int64 id = 1;
+                    optional string blob_id = 2;
+                }
+            }
+            
+            optional DeliveryMessage delivery_message = 8;
+            message DeliveryMessage {
+                optional string rfc822_message_id = 1;
+            }
+            
+            optional Label label = 4;
+            message Label {
+                optional string label_id = 1;
+            }
+            
+            optional Thread thread = 5;
+            message Thread {
+                optional int64 thread_id = 1;
+                optional string multi_key_textproto = 2;
+                optional string thread_id_hex = 3;
+            }
+            
+            optional Filter filter = 6;
+            message Filter {
+                optional string filter_id = 1;
+            }
+        }
+    }
+    
+    message DriveResource {
+        optional File file = 1;
+        message File {
+            optional string file_id = 1;
+            optional string app_key = 2;
+            optional string version_id_textproto = 5;
+            optional string cosmo_object_id = 6;
+            optional string drive_item_id_textproto = 7;
+            optional string drive_tombstone_id_textproto = 8;
+            optional string drive_external_purge_record_id_textproto = 9;
+            optional string storage_cosmo_id_textproto = 10;
+            
+            optional Comment comment = 3;
+            message Comment {
+                optional string comment_id = 1;
+                
+                optional Reply reply = 2;
+                message Reply {
+                    optional string reply_id = 1;
+                }
+            }
+            
+            optional Revision revision = 4;
+            message Revision {
+                optional string revision_id = 1;
+            }
+        }
+        
+        optional TeamDrive team_drive = 2;
+        message TeamDrive {
+            optional string team_drive_id = 1;
+            optional string version_id_textproto = 2;
+            optional int64 team_drive_gaia_id = 3;
+            optional string drive_team_drive_id_textproto = 4;
+        }
+        
+        optional User user = 3;
+        message User {
+            optional string about = 1;
+            optional int64 gaia_id = 2;
+            optional string drive_user_id_textproto = 4;
+        }
+        
+        optional UserOrTeamDrive user_or_team_drive = 4;
+        message UserOrTeamDrive {
+            optional int64 gaia_id = 1;
+        }
+    }
+    
+    message CalendarResource {
+        optional Calendar calendar = 1;
+        message Calendar {
+            optional string calendar_id = 1;
+            optional int64 gaia_id = 2;
+            optional string obfuscated_gaia_id = 4;
+            
+            optional Event event = 3;
+            message Event {
+                optional string event_id = 1;
+            }
+        }
+        
+        optional CalendarEvent calendar_event = 2;
+        message CalendarEvent {
+            optional string uri = 1;
+            optional string id = 2;
+        }
+        
+        optional StoredCalendarId stored_calendar_id = 3;
+        message StoredCalendarId {
+            optional int64 gaia_id = 1;
+        }
+    }
+    
+    message DirectoryResource {
+        optional Customer customer = 1;
+        message Customer {
+            optional int64 customer_id = 1;
+            
+            optional Role role = 2;
+            message Role {
+                optional int64 role_id = 1;
+            }
+            
+            optional RoleAssignment role_assignment = 3;
+            message RoleAssignment {
+                optional int64 role_assignment_id = 1;
+            }
+            
+            optional Domain domain = 4;
+            message Domain {
+                optional string domain_name = 1;
+                optional int64 gaia_id = 2;
+            }
+            
+            optional Orgunit orgunit = 5;
+            message Orgunit {
+                optional string orgunit_path = 1;
+            }
+            
+            optional string domain_name = 6;
+            
+            optional Schema schema = 7;
+            message Schema {
+                optional string schema_key = 1;
+            }
+            
+            optional Mobiledevice mobiledevice = 8;
+            message Mobiledevice {
+                optional string resource_id = 1;
+            }
+            
+            optional Resource resource = 9;
+            message Resource {
+                optional Calendar calendar = 1;
+                message Calendar {
+                    optional string resource_id = 1;
+                }
+                
+                optional Building building = 2;
+                message Building {
+                    optional string building_id = 1;
+                }
+                
+                optional Feature feature = 3;
+                message Feature {
+                    optional string feature_key = 1;
+                }
+            }
+            
+            optional CalendarResource calendar_resource = 10;
+            message CalendarResource {
+                optional string resource_id = 1;
+            }
+            
+            optional BuildingResource building_resource = 11;
+            message BuildingResource {
+                optional string building_id = 1;
+            }
+            
+            optional FeatureResource feature_resource = 12;
+            message FeatureResource {
+                optional string feature_key = 1;
+            }
+            
+            optional string obfuscated_customer_id = 13;
+        }
+        
+        optional Group group = 2;
+        message Group {
+            optional string group_key = 1;
+            optional int64 gaia_id = 3;
+            
+            optional Member member = 2;
+            message Member {
+                optional string member_key = 1;
+                optional int64 gaia_id = 2;
+            }
+            
+            reserved 4;
+        }
+        
+        optional User user = 3;
+        message User {
+            optional string user_key = 1;
+            optional string user_key_pattern = 2;
+            optional string obfuscated_gaia_id = 3;
+            optional int64 gaia_id = 4;
+            optional bytes gaia_id_bytes = 5;
+            optional string container_id = 6;
+            optional string focus_contact_id = 7;
+            optional string phone_number = 8;
+            optional string contact_email = 9;
+            optional string gaia_id_hex = 10;
+            optional string node_id_textproto = 11;
+        }
+    }
+    
+    message HangoutsChatResource {
+        optional Space space = 1;
+        message Space {
+            optional string name = 1;
+            
+            optional Member member = 2;
+            message Member {
+                optional string name = 1;
+                
+                optional User user = 2;
+                message User {
+                    optional string email = 1;
+                    optional string obfuscated_gaia_id = 2;
+                    optional int64 gaia_id = 3;
+                }
+            }
+            
+            optional Message message = 3 [deprecated = true];
+            message Message {
+                optional string name = 1 [deprecated = true];
+                
+                optional Attachment attachment = 2;
+                message Attachment {
+                    optional string name = 1;
+                }
+            }
+            
+            optional Topic topic = 4;
+            message Topic {
+                optional string name = 1;
+                
+                optional Message message = 2;
+                message Message {
+                    optional string name = 1;
+                }
+            }
+            
+            optional string space_id = 5;
+            optional string dm_id = 6;
+            optional int64 storage_space_id = 7;
+            
+            optional SpaceEvent event = 8;
+            message SpaceEvent {
+                optional string name = 1;
+            }
+        }
+        
+        optional User user = 2;
+        message User {
+            optional string email_address = 1;
+            optional int64 gaia_id = 2;
+            
+            optional UserEvent event = 3;
+            message UserEvent {
+                optional string name = 1;
+            }
+        }
+        
+        optional Subscription subscription = 3;
+        message Subscription {
+            optional string name = 1;
+        }
+        
+        optional App app = 4;
+        message App {
+            optional int64 app_id = 1;
+            optional int64 project_number = 2;
+        }
+    }
+    
+    message Groups {
+        optional Resource resource = 1;
+        message Resource {
+            optional string path = 1;
+            optional string name = 2;
+        }
+        
+        optional Group group = 2;
+        message Group {
+            optional Thread thread = 1;
+            message Thread {
+                optional Message message = 1;
+                message Message {
+                    optional string message_url = 1;
+                    optional int64 doc_id = 2;
+                }
+                
+                optional string thread_url = 2;
+                optional int64 thread_id = 3;
+            }
+            
+            optional string group_url = 2;
+            optional int64 group_gaia_id = 3;
+            optional string group_email_address = 4;
+        }
+    }
+    
+    message SharedAddressbook {
+        optional string name = 1;
+        
+        optional CustomDirectory custom_directory = 3;
+        message CustomDirectory {
+            optional string name = 1;
+            optional int64 roster_id = 2;
+        }
+        
+        reserved 2;
+    }
+    
+    message CPanel {
+        optional GxpPage gxp_page = 1;
+        message GxpPage {
+            optional string document_id = 1;
+        }
+    }
+    
+    message Starlight {
+        optional SuggestionSource suggestion_source = 1;
+        message SuggestionSource {
+            optional string name = 1;
+            optional int32 value = 2;
+        }
+    }
+    
+    message Category {
+        optional Resource resource = 1;
+        message Resource {
+            optional string name = 1;
+            optional string id = 2;
+        }
+    }
+    
+    message TasksResource {
+        repeated TaskList task_list = 1;
+        message TaskList {
+            optional string private_id = 2;
+            optional string public_id = 1;
+        }
+    }
+    
+    message DialogflowResource {
+        optional Agent agent = 1;
+        message Agent {
+            optional string id = 1;
+        }
+    }
+    
+    message MeetResource {
+        optional Conference conference = 1;
+        message Conference {
+            optional string conference_id = 1;
+            optional Session session = 2;
+        }
+        
+        optional Session session = 2;
+        message Session {
+            optional string session_id = 1;
+        }
+    }
+    
+    message ChromeOsResource {
+        optional ChromeOs chrome_os = 1;
+        message ChromeOs {
+            optional int64 gaia_id = 1;
+            optional string name = 2;
+        }
+    }
+}

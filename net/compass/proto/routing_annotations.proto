@@ -1,0 +1,15 @@
+syntax = "proto2";
+
+package compass;
+
+import "net/proto2/proto/descriptor.proto";
+
+option java_multiple_files = true;
+option java_package = "com.google.net.compass.proto";
+
+extend .proto2.FieldOptions {
+    optional bool entity_id = 108134615;
+    optional int32 routing_info_extension = 121686601;
+    repeated .proto2.FieldDescriptorProto.Type allowed_field_type = 127371464;
+    optional bool contains_routing_info = 342869202;
+}

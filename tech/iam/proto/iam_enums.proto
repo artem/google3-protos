@@ -1,0 +1,22 @@
+syntax = "proto3";
+
+package tech.iam;
+
+import "logs/proto/logs_annotations/logs_annotations.proto";
+
+option java_outer_classname = "IamEnums";
+option java_package = "com.google.tech.iam.proto";
+
+enum IamTokenType {
+    IAM_TOKEN_TYPE_UNSPECIFIED = 0;
+    LEGACY_AUTHZ_TOKEN_TYPE = 1;
+    SHORT_TERM_AUTHZ_TOKEN_TYPE = 2;
+    CREDENTIAL_ACCESS_BOUNDARY_TOKEN_TYPE = 3;
+}
+
+enum CloudLogReason {
+    CLOUD_LOG_REASON_UNSPECIFIED = 0;
+    CLOUD_LOG_REASON_WRITE_REQUIRED_UNSPECIFIED = 1;
+    CLOUD_LOG_REASON_NOT_REQUIRED_LOGS_DISABLED = 2;
+    CLOUD_LOG_REASON_NOT_REQUIRED_UNSPECIFIED = 3;
+}

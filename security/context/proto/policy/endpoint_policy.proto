@@ -214,10 +214,10 @@ message PeerDelegationTargetCondition {
 message AuthenticationConfig {
     repeated .ubermint.UberMintPlatform additional_ubermint_platforms = 1 [packed = true];
     optional bool default_anonymous_mode = 4 [default = false];
-    optional thinmintControl.Values thinmint_control = 5;
+    optional ThinMintControl.Values thinmint_control = 5;
 }
 
-message thinmintControl {
+message ThinMintControl {
     enum Values {
         UNSPECIFIED = 0;
         IGNORED = 1;

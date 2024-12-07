@@ -1,0 +1,25 @@
+syntax = "proto2";
+
+package security.data_access.asr;
+
+import "logs/proto/data_access/app_specific_resources.proto";
+import "net/proto2/proto/descriptor.proto";
+import "storage/datapol/annotations/proto/semantic_annotations.proto";
+
+option java_multiple_files = true;
+option java_outer_classname = "CloudIamResourceProtoFile";
+option java_package = "com.google.security.data_access.asr.proto";
+
+message CloudIamResource {
+    optional int64 principal = 1;
+    optional string policy_name_id = 2;
+    optional string policy_name_type = 3;
+    
+    extend .proto2.FieldOptions {
+        optional string path = 535801017;
+    }
+}
+
+extend AppSpecificResources {
+    repeated CloudIamResource cloud_iam_resource = 116;
+}

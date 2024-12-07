@@ -1,0 +1,15 @@
+syntax = "editions";
+
+package ubermint;
+
+import "storage/datapol/annotations/proto/semantic_annotations.proto";
+
+option java_multiple_files = true;
+option java_outer_classname = "DebugLabelProtoFile";
+option java_package = "com.google.identity.ubermint";
+
+message UberMintDebugLabel {
+    optional string name = 1;
+    optional string full_value = 2;
+    optional string anonymized_value = 3;
+}

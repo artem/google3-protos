@@ -1,0 +1,21 @@
+syntax = "proto2";
+
+package security.data_access.resourceidentification;
+
+import "security/data_access/resourceidentification/proto/modules.proto";
+import "security/data_access/resourceidentification/proto/resource_product.proto";
+import "storage/datapol/annotations/proto/semantic_annotations.proto";
+
+option java_outer_classname = "GcpNativeInfoProto";
+option java_package = "com.google.security.dataaccess.resourceidentification.proto";
+
+message GcpNativeInfo {
+    optional string resource_alias = 1;
+    optional int64 cloud_project_number = 3;
+    optional TeamModuleName module_name = 4;
+    optional ResourceProduct product_name = 5;
+    
+    reserved 2;
+    
+    reserved "service_name";
+}

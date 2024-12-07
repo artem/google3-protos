@@ -1,0 +1,12 @@
+syntax = "proto2";
+
+package gaia_auth;
+
+import "net/proto2/proto/descriptor.proto";
+
+option java_multiple_files = true;
+option java_package = "com.google.gaia.auth.restrictions.proto";
+
+extend .proto2.EnumValueOptions {
+    optional string obfuscated_id = 116022332;
+}

@@ -1,0 +1,18 @@
+syntax = "editions";
+
+package google.identity.type;
+
+import "logs/proto/logs_annotations/logs_annotations.proto";
+import "storage/datapol/annotations/proto/semantic_annotations.proto";
+
+option java_multiple_files = true;
+option java_outer_classname = "MintTypeProtoFile";
+option java_package = "com.google.identity.type";
+
+enum MintType {
+    MINT_TYPE_UNSPECIFIED = 0;
+    GAIA_MINT = 1;
+    UBER_MINT = 2;
+    AP_TOKEN = 3;
+    GENERAL_UBER_MINT = 4;
+}

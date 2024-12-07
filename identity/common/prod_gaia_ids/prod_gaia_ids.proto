@@ -1,0 +1,16 @@
+syntax = "editions";
+
+package gaia.backend;
+
+import "storage/datapol/annotations/proto/semantic_annotations.proto";
+
+option java_outer_classname = "ProdGaiaIdsProto";
+option java_package = "com.google.gaia.base";
+
+message ProdGaiaIdsList {
+    repeated int64 range_start = 1;
+}
+
+message NotActuallyProdGaiaIdsList {
+    repeated int64 gaia_id = 1;
+}

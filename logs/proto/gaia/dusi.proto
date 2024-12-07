@@ -1,19 +1,24 @@
 syntax = "proto2";
 
-import "third_party/android/nanoproto/nano_descriptor.proto";
-import "storage/datapol/annotations/proto/semantic_annotations.proto";
 package logs.proto.gaia;
 
+import "identity/credentials/dusi/protos/dusi_enums.proto";
+import "storage/datapol/annotations/proto/semantic_annotations.proto";
+
+option objc_class_prefix = "LOGGAIA";
 option java_package = "com.google.logs.proto.gaia";
-option cc_enable_arenas = true;
 
 message DeviceUserSessionIdProto {
-  oneof identifier {
-    int32 oauth_login_id = 1;
-    int64 oauth_timestamp_micro = 2;
-    int64 user_id_gaps_hash = 4;
-    int64 deprecated_user_id_gaps_hash = 3;
-  }
+    optional id.credentials.dusi.NonDeviceSourceType source_type = 6;
+    
+    oneof identifier {
+        int32 oauth_login_id = 1;
+        int64 oauth_timestamp_micro = 2;
+        int64 hashed_dusi = 4;
+        int64 cloneable_hashed_dusi = 5;
+        int64 ota_timestamp_micro = 7;
+        sfixed64 hashed_gaia_iddid = 8;
+    }
+    
+    reserved 3;
 }
-
-

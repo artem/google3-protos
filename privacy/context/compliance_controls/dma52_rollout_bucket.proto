@@ -1,0 +1,16 @@
+syntax = "editions";
+
+package privacy.context;
+
+option java_multiple_files = true;
+option java_package = "com.google.privacy.context";
+
+message Dma52RolloutBucket {
+    enum Bucket {
+        NONE = 0;
+        OUT_OUT_FROM_FILTERING = -1;
+        OPT_OUT = -2;
+        BREAKGLASS_AND_OPT_OUT = -3;
+        BREAKGLASS = -4;
+    }
+}

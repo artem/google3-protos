@@ -1,0 +1,90 @@
+syntax = "proto2";
+
+package security.context;
+
+import "security/context/proto/endpoint.proto";
+import "security/context/proto/policy/compiled_policy_bundle.proto";
+
+option java_multiple_files = true;
+option java_outer_classname = "RpcSecurityPolicyDeploymentInfoProtoFile";
+option java_package = "com.google.security.context";
+
+message PolicyScope {
+    repeated string tenant = 4;
+    repeated Endpoint endpoint = 5;
+    optional string tenant_policy_owner = 6;
+    optional string service_namespace = 7;
+    
+    reserved 1, 2, 3;
+}
+
+message BoqInfo {
+    optional string executable_node = 1;
+    optional string composite_node = 2;
+    optional string boq_team = 3;
+}
+
+message PolicySource {
+    optional string cdpush_def = 1;
+    optional string policy_handle = 2;
+    optional rpcsp.Provenance provenance = 3;
+}
+
+message DelegationPolicy {
+    optional string allowlist = 1;
+    optional string denylist = 2;
+}
+
+message BuildInfo {
+    optional int64 rpcsp_implementation_version = 1;
+}
+
+message PolicyDeploymentInfo {
+    optional PolicyEnforcementMode mode = 1;
+    optional PolicyEnvironment environment = 2;
+    optional ServerLanguage language = 3;
+    optional ServerFramework framework = 7;
+    optional BoqInfo boq_info = 10;
+    optional PolicyScope scope = 4;
+    optional PolicySource source = 6;
+    optional DelegationPolicy delegation_policy = 8;
+    optional BuildInfo build_info = 9;
+    optional bool rpc_use_rpc_security_policy_flag_value = 11;
+    optional bool scaffolding_register_security_checkers = 12;
+    
+    reserved 5;
+}
+
+enum PolicyEnforcementMode {
+    POLICY_ENFORCEMENT_UNSPECIFIED = 0;
+    POLICY_ENFORCEMENT_DARKLAUNCH = 1;
+    POLICY_ENFORCEMENT_ENFORCED = 2;
+}
+
+enum PolicyEnvironment {
+    POLICY_ENVIRONMENT_UNSPECIFIED = 0;
+    POLICY_ENVIRONMENT_PROD = 1;
+    POLICY_ENVIRONMENT_TEST = 2;
+    POLICY_ENVIRONMENT_FAKE = 3;
+}
+
+enum ServerLanguage {
+    LANGUAGE_UNSPECIFIED = 0;
+    LANGUAGE_CPP = 1;
+    LANGUAGE_JAVA = 2;
+    LANGUAGE_GO = 3;
+    LANGUAGE_PYTHON = 4;
+}
+
+enum ServerFramework {
+    FRAMEWORK_UNSPECIFIED = 0;
+    FRAMEWORK_CUSTOM = 1;
+    FRAMEWORK_STUBBY = 2;
+    FRAMEWORK_GRPC = 3;
+    FRAMEWORK_STUBBY_OR_GRPC = 7;
+    FRAMEWORK_SCAFFOLDING = 4;
+    FRAMEWORK_AF = 5;
+    FRAMEWORK_GOA = 6;
+    FRAMEWORK_TOOL_PROXY = 8;
+    FRAMEWORK_ESF_HTTP = 9;
+}

@@ -1,0 +1,19 @@
+syntax = "editions";
+
+package ubermint.legacygaia;
+
+import "gaia/mint/protos/core/signature_type.proto";
+import "storage/datapol/annotations/proto/semantic_annotations.proto";
+
+option java_multiple_files = true;
+option java_package = "com.google.identity.ubermint.legacygaia";
+
+message LegacyGaiaUberMintUnsignedPayload {
+    optional string remote_host = 1;
+    optional int64 primary_user_id = 2;
+    optional int32 encoding_format = 5;
+    optional gaia_mint.SignatureType signature_type = 6;
+    repeated int32 experiment_ids = 7;
+    
+    reserved 3, 4;
+}

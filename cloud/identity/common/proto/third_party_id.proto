@@ -1,0 +1,29 @@
+syntax = "proto2";
+
+package google.cloud.identity;
+
+import "logs/proto/logs_annotations/logs_annotations.proto";
+import "storage/datapol/annotations/proto/semantic_annotations.proto";
+
+message ThirdPartyId {
+    optional string identity_namespace = 1;
+    optional string subject = 3;
+    
+    optional IdentityPoolInfo identity_pool_info = 4;
+    message IdentityPoolInfo {
+        optional Type type = 1;
+        enum Type {
+            UNKNOWN = 0;
+            GKE_WORKLOAD = 1;
+            FREEFORM = 2;
+            WORKLOAD_IDENTITY_POOL = 3;
+            GKE_HUB_WORKLOAD = 4;
+            WORKFORCE_POOL = 5;
+            RESOURCE_IDENTITY_POOL = 6;
+        }
+    }
+    
+    reserved 2;
+    
+    reserved "tenants";
+}

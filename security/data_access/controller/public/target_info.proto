@@ -1,0 +1,33 @@
+syntax = "proto2";
+
+package security.data_access;
+
+import "logs/proto/data_access/app_specific_resources.proto";
+import "logs/proto/data_access/data_access_log.proto";
+import "logs/proto/resourceidentification/registry/fris_resource_types.proto";
+import "privacy/data_governance/attributes/proto/annotations.proto";
+import "security/credentials/proto/principal.proto";
+import "storage/datapol/annotations/proto/semantic_annotations.proto";
+
+option java_multiple_files = true;
+option java_package = "com.google.security.data_access.controller.client";
+
+message TargetInfo {
+    repeated credentials.PrincipalProto user_id = 1;
+    optional AppSpecificResources app_specific_resources = 2;
+    optional resourceregistry.FrisResourceTypes fris_resource_types = 8;
+    repeated string resource_jurisdictions = 3;
+    repeated string resource_corporate_entities = 4;
+    repeated ResourceId resource_id = 5;
+    
+    optional FrisBehavior fris_behavior = 6;
+    enum FrisBehavior {
+        FRIS_BEHAVIOR_DEFAULT = 0;
+        FRIS_BEHAVIOR_ENABLED = 1;
+        FRIS_BEHAVIOR_DISABLED = 2;
+    }
+    
+    optional privacy.data_governance.attributes.Annotations data_governance_annotations = 9;
+    
+    extensions 7;
+}

@@ -1,44 +1,62 @@
 syntax = "proto2";
 
-import "logs/proto/gaia/dusi.proto";
 package gaia_data;
 
-option java_package = "com.google.gaia.data.proto";
-option cc_enable_arenas = true;
+import "gaia/dreamcatcher/protos/device_characteristics.proto";
+import "identity/credentials/dusi/protos/dusi_enums.proto";
+import "logs/proto/gaia/dusi.proto";
+import "storage/datapol/annotations/proto/semantic_annotations.proto";
 
-message DeviceUserSessionEnvelope {
-  optional .gaia_data.DeviceUserSession UserSession = 1;
-}
+option objc_class_prefix = "GAIA";
+option cc_enable_arenas = true;
+option java_package = "com.google.gaia.data.proto";
 
 message DeviceUserSession {
-  enum DeviceType {
-    ANDROID = 0;
-    IOS = 1;
-    UNSPECIFIED = 2;
-    WINDOWS = 3;
-    BLACKBERRY = 4;
-    CHROME = 5;
-    SERVICE_ACCOUNT = 6;
-    SONY_PSN = 7;
-    CHROME_PLAYPEN = 8;
-    OSX_SYSTEM = 9;
-    IOS_SYSTEM = 10;
-    ROKU = 11;
-    FIBER_VOICE = 12;
-    GOOGLE_CLOUD_DEVICE = 13;
-    ARC_PLUS_PLUS = 14;
-    JAMBOARD = 15;
-  }
-  optional .logs.proto.gaia.DeviceUserSessionIdProto key = 1;
-  optional int64 creation_timestamp_micro = 2;
-  optional int32 type = 3;
-  optional string device_id = 4;
-  optional string device_name = 5;
-  optional string device_model = 6;
+    optional logs.proto.gaia.DeviceUserSessionIdProto key = 1;
+    optional int64 creation_timestamp_micro = 2;
+    optional int32 type = 3;
+    optional string device_id = 4;
+    optional string device_name = 5;
+    optional string device_model = 6;
+    
+    enum DeviceType {
+        ANDROID = 0;
+        IOS = 1;
+        UNSPECIFIED = 2;
+        WINDOWS = 3;
+        BLACKBERRY = 4;
+        CHROME = 5;
+        SERVICE_ACCOUNT = 6;
+        SONY_PSN = 7;
+        CHROME_PLAYPEN = 8;
+        OSX_SYSTEM = 9;
+        IOS_SYSTEM = 10;
+        ROKU = 11;
+        FIBER_VOICE = 12;
+        GOOGLE_CLOUD_DEVICE = 13;
+        ARC_PLUS_PLUS = 14;
+        JAMBOARD = 15;
+        CONNECTED_DEVICE = 16;
+        BATTLESTAR_EMULATOR = 17;
+    }
+}
+
+message DelegatedDusiGenerationInputs {
+    optional int64 delegated_id = 1;
+    optional string delegator_dusi = 2;
 }
 
 message DusiGenerationInputs {
-  optional int64 gaps_value = 1;
+    optional bool cloneable = 4;
+    optional id.credentials.dusi.NonDeviceSourceType dusi_source_type = 5;
+    optional .gaia.dreamcatcher.DeviceCharacteristics device_characteristics = 7;
+    optional .gaia.dreamcatcher.DeviceIdentifier device_identifier = 8;
+    
+    oneof inputs_oneof {
+        int64 gaps_value = 1;
+        DelegatedDusiGenerationInputs delegated_inputs = 2;
+        string device_id = 3;
+        int64 timestamp_micro = 6;
+        string iddid = 9;
+    }
 }
-
-

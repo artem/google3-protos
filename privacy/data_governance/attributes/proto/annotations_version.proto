@@ -13,7 +13,7 @@ enum AnnotationsVersion {
     V1 = 1;
 }
 
-extend proto2.EnumValueOptions {
+extend .proto2.EnumValueOptions {
     string go_link = 318995083;
     bool released = 321131782;
     VersionSpecification specification = 322344309;

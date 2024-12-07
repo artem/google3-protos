@@ -1,0 +1,413 @@
+syntax = "editions";
+
+package security.data_access.analyzer;
+
+import "logs/proto/data_access/loggable_data_governance_annotations.proto";
+import "logs/proto/resourceidentification/resolved_resource.proto";
+import "security/data_access/analyzer/proto/annotations.proto";
+import "security/data_access/analyzer/proto/data_quality.proto";
+import "security/data_access/analyzer/proto/monitoring.proto";
+import "storage/datapol/annotations/proto/semantic_annotations.proto";
+import "storage/f1/proto/schema_visibility.proto";
+
+option java_package = "com.google.security.data_access.analyzer.proto";
+
+message TargetUserInfo {
+    optional string target_user = 1;
+    optional int64 target_gaia_id = 2;
+    optional string target_id = 29;
+    optional bool account_deleted = 3;
+    optional int64 account_deleted_time_secs = 25;
+    optional int64 account_purged_time_secs = 26;
+    optional string gaia_domain = 4;
+    optional int64 gaia_customer_id = 5;
+    optional string target_google_plus_page_url = 6;
+    optional string target_user_domain = 7;
+    optional float actor_surname_target_user_id_similarity = 8;
+    optional float actor_firstname_target_user_id_similarity = 9;
+    optional float actor_initials_target_user_id_similarity = 10;
+    optional float actor_ldap_target_user_id_similarity = 11;
+    optional float actor_surname_target_user_domain_similarity = 17;
+    optional float actor_firstname_target_user_domain_similarity = 18;
+    optional float actor_firstname_target_user_name_similarity = 27;
+    optional float actor_surname_target_user_name_similarity = 28;
+    optional string target_google_plus_community_url = 12;
+    optional int64 registration_policy_id = 13;
+    optional string registration_policy_name = 14;
+    optional bool registration_approved = 15;
+    optional string registered_owner = 16;
+    optional bool target_user_is_not_person = 19;
+    repeated int64 used_service_id = 24;
+    optional int64 repeated_tracking_days = 30 [deprecated = true];
+    optional int64 repeated_tracking_accesses = 31 [deprecated = true];
+    optional UnlikelyhoodScoreAndEvaluation repeated_tracking_days_actor_cost_center_code = 32 [deprecated = true];
+    optional UnlikelyhoodScoreAndEvaluation repeated_tracking_accesses_actor_cost_center_code = 33 [deprecated = true];
+    optional UnlikelyhoodScoreAndEvaluation repeated_tracking_days_actor_manager = 34 [deprecated = true];
+    optional UnlikelyhoodScoreAndEvaluation repeated_tracking_accesses_actor_manager = 35 [deprecated = true];
+    optional UnlikelyhoodScoreAndEvaluation repeated_tracking_days_actor = 36 [deprecated = true];
+    optional UnlikelyhoodScoreAndEvaluation repeated_tracking_accesses_actor = 37 [deprecated = true];
+    
+    reserved 20 to 23, 38;
+    
+    reserved "cases_ticket_references_user", "ml_test_account", "photos_porn_score", "unify_ticket_references_target_domain", "uniqueness_for_actor";
+}
+
+message EntityMention {
+    optional int64 id = 5;
+    optional string value = 1;
+    optional string type = 2;
+    optional float score = 3;
+    optional string debug_info = 4;
+    optional string field = 6;
+    
+    enum MentionType {
+        UNKNOWN = 0;
+        FULL_PERSON_NAME = 1;
+        RIVET = 2;
+    }
+}
+
+message Trend {
+    repeated string term = 1;
+    repeated string mentioned_term = 6;
+    optional int64 detection_time_secs = 2;
+    optional string country = 3;
+    repeated string news_url = 4;
+    repeated string category = 5;
+}
+
+message UnlikelyhoodScoreAndEvaluation {
+    optional float score = 1;
+    optional float evaluation = 2;
+}
+
+message MachineLearningScore {
+    repeated UnlikelyhoodScoreAndEvaluation target_predictor_score = 4;
+    repeated UnlikelyhoodScoreAndEvaluation escalation_predictor_score = 5;
+    
+    reserved 1 to 3;
+    
+    reserved "bayesian_anomaly_score", "gaussian_anomaly_score", "mixture_anomaly_score";
+}
+
+message DataQualityInfo {
+    optional DataQualityPriority priority = 1;
+    optional string field_name = 2;
+    optional DataQualityIssueType issue_type = 3;
+}
+
+message ResourceInfo {
+    optional string resource_scope = 1;
+    optional string resource_name = 2;
+    optional string resource_field = 3;
+    optional string resource_type = 8;
+    optional string resource_eval_function = 4;
+    repeated string semantic_type = 5;
+    optional string data_format = 14;
+    repeated string semantic_qualifier = 6;
+    repeated string location_qualifier = 13;
+    repeated string access_level = 7;
+    repeated string owner = 9;
+    repeated string approval_rule_name = 11;
+    repeated string resource_sensitivity = 12;
+    optional bool is_more_accessible = 15;
+    optional string guri = 16;
+    
+    reserved 10;
+    
+    reserved "log_source";
+}
+
+message TicketInfo {
+    optional string ticket_id = 4;
+    optional string ticket_type = 7;
+    optional string source = 5;
+    
+    reserved 2, 6, 8 to 20;
+    
+    reserved "actor_updated_ticket", "assigned_actor", "assigned_actor_cost_center_code", "assigned_actor_cost_center_name", "assigned_actor_manager", "bad_reason", "cc_user_id", "component_id", "last_modified_time", "related_dal", "ticket_creator", "ticket_exists", "ticket_is_valid", "time_since_ticket_closed", "time_since_ticket_created";
+}
+
+message DataClassification {
+    optional string label = 1;
+    optional string sensitivity_level = 2;
+}
+
+message LanternToolInfo {
+    optional string tool_name = 1;
+    repeated string data_element_type = 2;
+    optional string product_area = 3;
+    optional string risk_assessment_url = 4;
+    optional int64 dal_approval_buganizer_id = 5;
+    optional string team_email = 6;
+    optional string primary_contact = 7;
+}
+
+message TicketStateInfo {
+    repeated string assigned_to = 1;
+}
+
+message BcidMpmInfo {
+    optional string name = 1 [deprecated = true];
+    optional string version_id = 2 [deprecated = true];
+    optional bool ephemeral = 3 [deprecated = true];
+    optional string build_target = 4 [deprecated = true];
+    optional string citc_client_name = 5 [deprecated = true];
+    optional int64 citc_client_version = 6 [deprecated = true];
+}
+
+message BcidBorgJobInfo {
+    optional int64 uid = 1 [deprecated = true];
+    optional string cell = 2 [deprecated = true];
+    optional string name = 3 [deprecated = true];
+    optional string logical_name = 6 [deprecated = true];
+    optional int64 first_seen_usec = 4 [deprecated = true];
+    optional int64 last_seen_usec = 5 [deprecated = true];
+    optional string argv = 7 [deprecated = true];
+}
+
+message BcidBorgAllocInfo {
+    optional int64 uid = 1 [deprecated = true];
+    optional string cell = 2 [deprecated = true];
+    optional string name = 3 [deprecated = true];
+    optional string logical_name = 6 [deprecated = true];
+    optional int64 first_seen_usec = 4 [deprecated = true];
+    optional int64 last_seen_usec = 5 [deprecated = true];
+}
+
+message BcidInfo {
+    optional int64 target_level = 4 [deprecated = true];
+    optional string severity = 5 [deprecated = true];
+    optional int64 severity_level = 6 [deprecated = true];
+    optional string project_name = 2 [deprecated = true];
+    optional string summary = 7 [deprecated = true];
+    optional string explanation = 8 [deprecated = true];
+    optional string suggestion = 9 [deprecated = true];
+    optional string policy_source_file = 10 [deprecated = true];
+    optional int64 first_detected_time_usec = 11 [deprecated = true];
+    optional int64 last_detected_time_usec = 12 [deprecated = true];
+    optional float alert_level = 1 [deprecated = true];
+    optional int64 affected_level = 3 [deprecated = true];
+}
+
+message ToolOwnershipInfo {
+    optional int64 team_id = 1;
+    
+    optional TeamAssociation team = 2;
+    message TeamAssociation {
+        optional string guri = 1;
+        optional string name = 2;
+    }
+    
+    optional TeamAssociation product_area = 3;
+    repeated string mpm_guris = 4;
+}
+
+message Identifiers {
+    optional string process_guri = 1;
+    optional string rpc_guri = 2;
+    optional string uberproxy_uuid = 3;
+}
+
+message FrisResourceTypeDistribution {
+    optional string full_path_name = 1;
+    optional int32 count = 2;
+}
+
+message Signals {
+    optional float breakglass = 1;
+    optional float access_refused = 7;
+    optional string error_message = 63;
+    optional string accessing_process = 8;
+    optional string accessing_process_family = 50;
+    optional string process_type = 51;
+    optional string command_line = 2;
+    optional string query = 9;
+    optional string action_type = 10;
+    optional string inferred_action_type = 3006;
+    optional string data_type = 62;
+    repeated string resource = 11;
+    repeated string resource_scope = 12;
+    repeated string resource_name = 13;
+    repeated string sawmill_logsource = 14;
+    repeated string sawmill_logtype = 15;
+    optional bool record_truncated = 33;
+    optional string request_url = 52;
+    optional string logging_role = 53;
+    optional string caller_chosen_jobname = 54;
+    optional float resource_sensitivity = 29 [deprecated = true];
+    optional string dat_requesting_tool = 41;
+    repeated string target_domain = 49 [deprecated = true];
+    optional string actor = 4;
+    optional string actor_extraction_source = 17;
+    optional bool actor_is_shared_account = 35;
+    optional bool actor_only_targeted_self = 31;
+    optional string delegate = 37;
+    optional string employee_status = 38;
+    optional string actor_location = 44;
+    optional string actor_title = 45;
+    optional string actor_manager = 46;
+    optional string actor_name = 47;
+    optional int64 actor_gaia_id = 68;
+    optional int64 actor_cost_center_number = 56 [deprecated = true];
+    optional string actor_cost_center_name = 57;
+    optional string actor_cost_center_code = 58;
+    optional string scoped_actor = 3003;
+    repeated string unnormalized_target_user = 16;
+    repeated int64 unnormalized_target_gaia_id = 28;
+    repeated string reason = 18;
+    repeated string buganizer_id = 19;
+    repeated string cases_id = 48;
+    repeated string unify_id = 61;
+    optional string event_day = 21;
+    optional string event_week = 22;
+    optional string processing_day = 65;
+    optional bool targets_google_account = 32;
+    optional bool targets_celebrity_account = 34 [deprecated = true];
+    optional bool targets_only_test_account = 36;
+    optional bool targets_only_googler_personal_accounts = 42;
+    optional float actor_target_user_id_distance = 43;
+    optional MachineLearningScore ml_score = 55;
+    optional float sem_score = 67;
+    repeated DataQualityInfo data_quality_info = 66;
+    optional bool actor_only_targeted_approved_accounts = 60;
+    optional bool dremel_query = 101 [deprecated = true];
+    optional bool sensitive_field = 103;
+    optional bool adspam_field = 104;
+    repeated string target_ip_address = 111;
+    
+    optional QueryLanguage query_language = 113;
+    enum QueryLanguage {
+        UNKNOWN = 0;
+        SQL = 1;
+        PROTO = 2;
+    }
+    
+    optional bool gmail_maintenance_activity = 202;
+    repeated TicketInfo ticket_info = 308;
+    optional TicketStateInfo ticket_state_info = 309;
+    optional BcidInfo bcid_info = 310;
+    repeated BcidMpmInfo bcid_mpm_info = 311;
+    repeated BcidBorgJobInfo bcid_borg_job_info = 312;
+    repeated BcidBorgAllocInfo bcid_borg_alloc_info = 313;
+    repeated string sem_ticket_id = 401;
+    optional bool android_inspector_write = 600;
+    optional bool android_inspector_wipe = 601;
+    optional bool android_inspector_customer = 602;
+    optional bool android_inspector_googler_prod = 603;
+    repeated string target_user = 700 [deprecated = true];
+    repeated int64 target_gaia_id = 701 [deprecated = true];
+    repeated string gaia_domain = 702 [deprecated = true];
+    repeated int64 gaia_customer_id = 703 [deprecated = true];
+    optional bool has_target_user = 704;
+    repeated string target_google_plus_page_url = 705 [deprecated = true];
+    repeated string target_user_domain = 706 [deprecated = true];
+    repeated TargetUserInfo target_user_info = 707;
+    repeated Trend related_trend = 709;
+    repeated EntityMention entity_mentions = 710;
+    optional string tonic_policy = 901;
+    optional string tonic_policy_family = 902;
+    repeated string tonic_token = 903;
+    repeated string tonic_original_token = 904;
+    optional string tonic_incoming_token = 905;
+    optional string tonic_usage_code = 906;
+    optional string product_area_lead = 1011;
+    optional string sensitivity_level = 1101;
+    repeated DataClassification data_classification = 1102;
+    optional LanternToolInfo lantern_tool_info = 1103;
+    
+    optional BreakGlassOutcome break_glass_outcome = 1106;
+    enum BreakGlassOutcome {
+        BREAK_GLASS_OUTCOME_UNKNOWN = 0;
+        VALID_JUSTIFICATION = 1;
+        APPROVAL_REQUESTED = 2;
+        APPROVAL_NOT_REQUESTED = 3;
+        APPROVAL_DISABLED = 4;
+        APPROVAL_RATE_LIMITED = 5;
+    }
+    
+    optional string justification_validation_failure = 1107;
+    repeated ResourceInfo resource_info = 1200;
+    optional bool is_fake_dal = 3005;
+    optional string identification = 3004;
+    optional Identifiers identifiers = 3014;
+    optional bool is_whitelist_rejected = 3007;
+    optional bool is_darklaunch_dal = 3012;
+    optional bool is_test_dal = 3008;
+    optional ProcessingStatistics processing_statistics = 3009;
+    optional LoggableDataGovernanceAnnotations data_governance_annotations = 3010;
+    optional ToolOwnershipInfo tool_ownership_info = 3011;
+    optional MonitoringData monitoring_data = 3013;
+    repeated resourceidentification.ResolvedResource resolved_resource = 3015;
+    repeated FrisResourceTypeDistribution fris_resource_type_distribution = 3016;
+    
+    reserved 3, 5, 6, 20, 23 to 27, 30, 39, 40, 59, 64, 100, 102, 106 to 110, 112, 200 to 201, 300 to 305, 307, 400, 402 to 404, 500 to 501, 708, 800 to 810, 900, 1000 to 1010, 1012 to 1015, 1100, 1104 to 1105, 2000 to 2002, 3000 to 3002;
+    
+    reserved "access_control_group", "access_max_daily", "access_max_hourly", "access_rate_decrease", "access_rate_deviation", "access_rate_increase", "access_rate_mean", "accessing_process_use_percentage", "actor_group", "arcata_encrypted_visitor_id", "cases_actor_assigned", "cases_references_user", "cases_was_open", "cause", "deprecated_event_month_0", "deprecated_event_month_1", "deprecated_event_month_2", "deprecated_event_month_3", "deprecated_ml_gaussian_anomaly", "deprecated_product_area_lead_id", "dremel_competitive", "dremel_toolbar", "effect", "event_month_0", "event_month_1", "event_month_2", "event_month_3", "first_resource_use", "first_tool_use", "gaia_sensitivity", "gaia_write_action", "gmail_audit_server", "gmail_sensitive", "jobcode", "kansas_display_server_targeting_user", "kansas_server_targeting_user", "label", "lint_info", "mentions_ip_address", "mentions_user", "moonshine_doc", "moonshine_keystore", "needs_post_approval", "num_actors_using_accessing_process_over_sixty_days", "post_approver_groups", "potential_target_info", "query_complexity", "repeated_tracking_accesses", "repeated_tracking_days", "scraping", "sem_expected_ticket_not_found", "sem_ticket_open", "sem_ticket_owner", "sensitive_resource", "sst_accessing_external_user_account", "tonic", "talk_access", "talk_full_access", "talk_heap_dump", "talk_heap_browse", "talk_heap_browse_chat_content", "talk_user_dump", "talk_modify_user_state", "talk_self_access", "talk_test_account", "talk_team_account", "talk_google_account", "trakken_actor_not_agent", "trakken_agent_ldap", "trakken_ticket_id", "trakken_ticket_in_dal", "trakken_ticket_matches_target", "trakken_ticket_open", "tvc_daily_access_id", "workflow_unexpected";
+}
+
+message ProcessingStatistics {
+    optional int64 dal_size_before_truncation = 1;
+    optional int64 dal_size_after_truncation = 2;
+}
+
+enum TrendCategory {
+    UNKNOWN = 0;
+    GOOGLE = 1;
+    KG_PEOPLE = 2;
+}
+
+enum ResourceSensitivity {
+    LOGS_SECONDARY_APPROVAL = 1;
+    LOGS_SECONDARY_APPROVAL_CC = 2;
+}
+
+enum InferredActionType {
+    UNKNOWN_INFERRED_ACTION_TYPE = 0;
+    HEARTBEAT = 1;
+    DATA_ACCESS_GRANT = 2;
+    DATA_ACCESS_DENY = 3;
+    AUTHORIZE = 4;
+    DISALLOW = 5;
+    ACK = 6;
+    CHECK = 7;
+    DECRYPT = 8;
+    DEBUG = 45;
+    DOWNLOAD = 9;
+    FILTER = 10;
+    GET = 11;
+    LIST = 12;
+    QUERY = 13;
+    RESOLVE = 14;
+    STREAM = 15;
+    TRANSLATE = 16;
+    VIEW = 17;
+    ADD = 18;
+    ASSIGN = 19;
+    BUILD = 20;
+    CANCEL = 21;
+    CLAIM = 22;
+    CLONE = 23;
+    CLOSE = 24;
+    CREATE = 25;
+    DEDUPE = 26;
+    DELETE = 27;
+    DENY = 28;
+    DISABLE = 29;
+    ENABLE = 30;
+    EXECUTE = 31;
+    EXPIRE = 32;
+    GRANT = 33;
+    LOG = 34;
+    PUBLISH = 35;
+    REFUND = 36;
+    REINSTATE = 37;
+    REQUEST = 38;
+    RESET = 46;
+    REVIEW = 39;
+    SEND = 40;
+    SSH = 41;
+    TRANSFER = 42;
+    UNASSIGN = 43;
+    UPDATE = 44;
+}

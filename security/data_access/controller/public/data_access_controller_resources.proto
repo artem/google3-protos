@@ -1,0 +1,84 @@
+syntax = "proto3";
+
+package security.data_access;
+
+import "google/protobuf/any.proto";
+import "net/proto2/proto/descriptor.proto";
+import "security/data_access/controller/public/http_request.proto";
+
+option cc_enable_arenas = true;
+option java_multiple_files = true;
+option java_package = "com.google.security.data_access.controller.client";
+
+message ControllerAuditing {
+    repeated ControllerAuditingRule rules = 1;
+    map<string, string> labels = 2;
+}
+
+message ControllerAuditingRule {
+    string selector = 1;
+    string directive = 2;
+}
+
+message PackagedProto {
+    google.protobuf.Any contents = 1;
+    .proto2.FileDescriptorSet descriptors = 2 [lazy = true];
+}
+
+message HttpExtractionRules {
+    repeated HttpResourceRule resources = 1;
+    repeated HttpReasonRule reasons = 2;
+    repeated HttpQueryRule queries = 3;
+}
+
+message HttpResourceRule {
+    oneof _selector {
+        HttpFieldSelector selector = 1;
+    }
+    
+    oneof _resource_registry_type {
+        string resource_registry_type = 2;
+    }
+}
+
+message HttpReasonRule {
+    oneof _selector {
+        HttpFieldSelector selector = 1;
+    }
+}
+
+message HttpQueryRule {
+    oneof _selector {
+        HttpFieldSelector selector = 1;
+    }
+}
+
+message HttpFieldSelector {
+    oneof source {
+        string header = 1;
+        string param = 2;
+    }
+}
+
+message FrisResourceId {
+    string path = 1;
+    string value = 2;
+}
+
+message FrisResourceParams {
+    repeated FrisResourceId resource_ids = 2;
+    
+    oneof _resource_type_proto {
+        PackagedProto resource_type_proto = 1;
+    }
+}
+
+message HttpPackagedProto {
+    HttpRequest request = 1;
+    HttpExtractionRules http_extraction_rules = 2;
+    FrisResourceParams resource_params = 4;
+    
+    oneof _request_proto {
+        PackagedProto request_proto = 3;
+    }
+}

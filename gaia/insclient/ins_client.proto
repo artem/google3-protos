@@ -1,0 +1,102 @@
+syntax = "proto2";
+
+import "gaia/insclient/ins_clientinfo.proto";
+import "identity/credentials/cookie/proto/check_session.proto";
+import "identity/gaia/storage_access/hosted_service_data/proto/cond_update_service_data.proto";
+import "net/compass/proto/routing_annotations.proto";
+import "storage/datapol/annotations/proto/semantic_annotations.proto";
+
+option java_package = "com.google.gaia.client.proto";
+
+message GaiaClientConst {
+    enum ConstNum {
+        INVALID_USERID = 0;
+        DEBUG_INFO_TAG = 99;
+        CLIENT_DATA_TAG = 100;
+    }
+}
+
+message CheckSessionRequest {
+    required string SessionCookie = 1;
+    optional string SessionCookie3p = 8;
+    optional string SessionCookie1p = 9;
+    required bool GetUserInfo = 2;
+    optional int32 ServiceID = 3;
+    optional int32 GetAuthTokenForService = 4;
+    repeated int32 AcceptedCookieVersions = 5;
+    optional ClientData ClientData = 100;
+    optional UserContext UserContext = 101;
+    
+    reserved 6, 7;
+}
+
+message CheckSessionResponse {
+    required int32 RetCode = 1;
+    optional string DebugInfo = 99;
+    optional int64 UserID = 2;
+    optional string SessionCookie = 3;
+    optional ClientUserInfo UserInfo = 4;
+    optional bool PersistentCookie = 5;
+    optional int64 SecSinceLastAuth = 6;
+    optional string AuthToken = 7;
+    optional int64 AuthenticationTime = 9;
+    optional bool ProgrammaticSession = 10;
+    optional int64 LastActivityTime = 11;
+    optional bool WasAuthToken = 12;
+    optional string UserKey = 13;
+    optional int64 InternalVersion = 14;
+    
+    reserved 8, 15, 16;
+    
+    extend identity_credentials.CheckSessionRequest {
+        optional CheckSessionResponse microservice_request_extension = 1000;
+    }
+}
+
+message GaiaServiceKeyData {
+    optional string Key = 1;
+    optional bytes Value = 2;
+    optional bytes Bytes = 3;
+    optional int32 ServiceId = 4;
+}
+
+message CondUpdateServiceDataRequest {
+    optional int64 UserId = 1;
+    optional int32 ServiceId = 2;
+    repeated GaiaServiceKeyData Condition = 3;
+    repeated GaiaServiceKeyData Update = 4;
+    optional ClientData ClientData = 100;
+    optional UserContext UserContext = 101;
+    optional bool DeletedOK = 5;
+    optional bool GetConditionBytes = 6 [default = false];
+    optional int32 CloudPropagationType = 7;
+}
+
+message CondUpdateServiceDataResponse {
+    required int32 RetCode = 1;
+    optional string DebugInfo = 99;
+    optional int64 UserId = 2;
+    
+    repeated group FailedCondition = 3 {
+        required GaiaServiceKeyData CurrentData = 4;
+        required int32 OriginalConditionIndex = 5;
+    }
+    
+    repeated group Results = 6 {
+        optional int32 ServiceID = 7;
+        optional string Key = 8;
+        optional string ConditionBytes = 9;
+    }
+    
+    optional bytes CloudToken = 10;
+    
+    extend gaia_storage_access.CondUpdateServiceDataRequest {
+        optional CondUpdateServiceDataResponse microservice_request_extension = 1000;
+    }
+}
+
+message PropertyDefault {
+    enum Key {
+        KEY = 1;
+    }
+}

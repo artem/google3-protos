@@ -1,0 +1,15 @@
+syntax = "editions";
+
+package security_iam;
+
+import "security/credentials/proto/authenticator.proto";
+
+option java_multiple_files = true;
+option java_outer_classname = "CloudIamAuthorityInfo";
+option java_package = "com.google.security.authorization.iam";
+
+message IAMAuthorityInfo {
+    optional bool success = 1;
+    optional bool data_access_logging_required = 2;
+    repeated security.credentials.DataAccessReason data_access_reasons = 3;
+}

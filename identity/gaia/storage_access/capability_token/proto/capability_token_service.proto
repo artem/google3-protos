@@ -1,0 +1,49 @@
+syntax = "proto2";
+
+package gaia_storage_access;
+
+import "gaia/insclient/ins_clientinfo.proto";
+import "identity/backend/common/legacy/recorded_rpc.proto";
+import "identity/gaia/storage_access/change_notification/change_notification_options.proto";
+import "net/compass/proto/routing_annotations.proto";
+import "storage/datapol/annotations/proto/semantic_annotations.proto";
+
+option java_multiple_files = true;
+option java_outer_classname = "GaiaCapabilityToken";
+option java_package = "com.google.gaia.storageaccess.proto";
+
+service CapabilityTokenService {
+    rpc LookupCapabilityToken(LookupCapabilityTokenRequest) returns (LookupCapabilityTokenResponse);
+    rpc RevokeCapabilityToken(RevokeCapabilityTokenRequest) returns (RevokeCapabilityTokenResponse);
+}
+
+message LookupCapabilityTokenRequest {
+    optional string capability_string = 2;
+    
+    extensions 327839634;
+    
+    reserved 1, 100, 101;
+}
+
+message LookupCapabilityTokenResponse {
+    optional GaiaCapabilityRecord capability = 2;
+    optional bool invalid_capability = 3;
+    
+    reserved 1, 99;
+}
+
+message RevokeCapabilityTokenRequest {
+    optional int64 user_id = 1;
+    optional int64 capability_id = 2;
+    optional string email = 3;
+    optional ChangeNotificationOptions change_notification_options = 4;
+    optional identity_backend.legacy.RecordedRpcSequence recorded_rpc_sequence = 102;
+    
+    extensions 421995498;
+    
+    reserved 100, 101;
+}
+
+message RevokeCapabilityTokenResponse {
+    reserved 1, 99;
+}

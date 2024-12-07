@@ -107,11 +107,15 @@ message Bootstrap {
         google.protobuf.Duration max_cached_entry_idle_duration = 1;
     }
     
+    MemoryAllocatorManager memory_allocator_manager = 41;
+    
     oneof stats_flush {
         bool stats_flush_on_admin = 29;
     }
     
-    reserved 10, 11, "runtime";
+    reserved 10, 11;
+    
+    reserved "runtime";
 }
 
 message Admin {
@@ -216,4 +220,9 @@ message CustomInlineHeader {
         RESPONSE_HEADER = 2;
         RESPONSE_TRAILER = 3;
     }
+}
+
+message MemoryAllocatorManager {
+    uint64 bytes_to_release = 1;
+    google.protobuf.Duration memory_release_interval = 2;
 }

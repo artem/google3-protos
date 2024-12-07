@@ -1,0 +1,12 @@
+syntax = "proto2";
+
+package id.accountcapabilities;
+
+import "storage/datapol/annotations/proto/semantic_annotations.proto";
+
+option java_multiple_files = true;
+option java_package = "com.google.identity.accountcapabilities.proto";
+
+message AccountCapabilityInfoTransport {
+    repeated int32 account_trait_id = 1 [packed = true];
+}

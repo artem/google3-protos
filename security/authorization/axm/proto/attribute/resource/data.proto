@@ -1,0 +1,406 @@
+syntax = "editions";
+
+package security.authorization.axm.attribute.resource;
+
+import "logs/proto/data_access/data_access_log.proto";
+import "logs/proto/resourceidentification/resolved_resource.proto";
+import "net/proto2/bridge/proto/message_set.proto";
+import "net/proto2/proto/descriptor.proto";
+import "security/authorization/axm/proto/attribute/resource/debug_info.proto";
+import "security/data_access/analyzer/proto/data_quality.proto";
+import "security/data_access/resourceidentification/proto/resource_product.proto";
+
+option java_multiple_files = true;
+option java_package = "com.google.security.authorization.axm.attribute.resource";
+
+message AresIdentifier {
+    optional string ares_id = 1;
+}
+
+message BlobstoreDriveIdentifier {
+    optional string blob_name = 1;
+}
+
+message BlobstoreDynamiteIdentifier {
+    optional string blob_name = 1;
+}
+
+message BlobstoreGmailIdentifier {
+    optional string blob_name = 1;
+}
+
+message BlobstoreTestIdentifier {
+    optional string blob_name = 1;
+}
+
+message CalendarEventIdentifier {
+    optional CalendarIdentifier calendar_identifier = 1;
+    optional string event_id = 2;
+}
+
+message CalendarEwsIdentifier {
+    optional string action = 1;
+    
+    optional CalendarResource resource = 2;
+    message CalendarResource {
+        optional string field_path = 1;
+        optional string resource_name = 2;
+    }
+    
+    optional string email = 3;
+}
+
+message CalendarIdentifier {
+    oneof id {
+        string calendar_id = 2;
+        int64 calendar_gaia_id = 3;
+    }
+    
+    reserved 1;
+}
+
+message CosmoObjectIdentifier {
+    optional string cosmo_object_id = 1;
+}
+
+message CosmoStorageIdentifier {
+    optional int64 creator_user_id = 1;
+    optional string local_id = 2;
+    optional int32 name_space = 3;
+}
+
+message CosmoStorageIdTextprotoIdentifier {
+    optional string cosmo_storage_id_textproto = 1;
+}
+
+message DasherDomainIdentfier {
+    optional int64 gaia_id = 1;
+    optional string domain_email = 2;
+}
+
+message DataAccessLogResourceIdentifier {
+    optional security.data_access.ResourceId resource_id = 1;
+    optional int64 user_id = 2;
+}
+
+message DirectoryIdentifier {
+    optional int64 gaia_id = 1;
+    
+    optional DirectoryType directory_type = 2;
+    enum DirectoryType {
+        UNKNOWN = 0;
+        USER = 1;
+        GROUP = 2;
+        GROUP_MEMBER = 3;
+    }
+    
+    optional string member_id = 3;
+}
+
+message DriveAllFilesIdentifier {
+    optional int64 user_gaia_id = 1;
+}
+
+message DriveIdentifier {
+    optional string file_id = 1;
+}
+
+message DriveLabelIdentifier {
+    optional string label_id = 1;
+}
+
+message DriveUserIdentifier {
+    optional int64 user_gaia_id = 1;
+}
+
+message DriveGaiaIdentifier {
+    optional int64 gaia_id = 1;
+}
+
+message DriveVersionedIdentifier {
+    optional string versioned_id = 1;
+    optional bool is_team_drive = 2;
+}
+
+message DynamiteAttachmentDraftIdentifier {
+    optional int64 user_gaia_id = 1;
+}
+
+message DynamiteAttachmentIdentifier {
+    optional int64 user_gaia_id = 1;
+    optional string space = 2;
+    optional string topic = 3;
+    optional string message_id = 4;
+}
+
+message DynamiteGroupIdentifier {
+    oneof id {
+        string space_id = 1;
+        string dm_id = 2;
+    }
+}
+
+message DynamiteSpaceNameIdentifier {
+    optional string space_name = 1;
+}
+
+message DynamiteStorageGroupIdentifier {
+    optional int64 space_id = 1;
+}
+
+message DynamiteObfuscatedGaiaIdentifier {
+    optional string obfuscated_gaia_id = 1;
+}
+
+message DynamiteProjectIdentifier {
+    optional int64 app_id = 1;
+    optional int64 project_number = 2;
+}
+
+message DynamiteUserIdentifier {
+    optional int64 gaia_id = 1;
+}
+
+message DynamiteVideoThumbnailIdentifier {
+    optional string space = 1;
+    optional string topic = 2;
+    optional string message_id = 3;
+}
+
+message DynamiteSubscriptionNameIdentifier {
+    optional string subscription_name = 1;
+}
+
+message GmailAttachmentIdentifier {
+    optional User user = 2;
+    optional string message_id_hex = 3;
+    optional string attachment_id = 4;
+    
+    optional DebugData debug_data = 5;
+    message DebugData {
+        optional bool is_autogin = 1;
+    }
+    
+    reserved 1;
+}
+
+message GmailExportIdentifier {
+    optional int64 user_id = 1;
+}
+
+message GmailLabelIdentifier {
+    optional User user = 1;
+    optional int64 label_id = 2;
+}
+
+message GmailMessageIdentifier {
+    optional User user = 1;
+    optional string message_id = 2;
+    
+    optional DebugData debug_data = 3;
+    message DebugData {
+        optional bool is_autogin = 1;
+    }
+}
+
+message GmailDeliveryMessageIdentifier {
+    optional int64 user_id = 1;
+    optional string rfc_message_id = 2;
+}
+
+message GmailSettingIdentifier {
+    optional int64 user_id = 1;
+}
+
+message GmailThreadIdentifier {
+    optional User user = 1;
+    optional string thread_id_hex = 2;
+}
+
+message GmailUserIdentifier {
+    optional User user = 1;
+}
+
+message GroupGaiaIdentifier {
+    optional int64 group_gaia_id = 1;
+}
+
+message HangoutsSpaceIdentifier {
+    optional ResourceType resource_type = 1;
+    enum ResourceType {
+        UNKNOWN = 0;
+        SPACE = 1;
+        SPACE_MEMBER = 2;
+    }
+    
+    optional int64 gaia_id = 2;
+    optional string space_id = 3;
+    optional string member_id = 4;
+}
+
+message KeepLabelIdentifier {
+    optional int64 user_id = 1;
+}
+
+message KeepNoteIdentifier {
+    optional string note_id = 1;
+    optional int64 user_id = 2;
+}
+
+message OutOfScopeIdentifier {
+    optional int64 user_id = 1;
+}
+
+message PreBackfillPs1Identifier {
+    optional string resource_name = 1;
+    optional string union_guri = 2;
+    optional string resource_guri = 3;
+}
+
+message RosterIdentifier {
+    optional ResourceType resource_type = 1;
+    enum ResourceType {
+        UNKNOWN = 0;
+        GROUP = 1;
+        MEMBER = 2;
+    }
+    
+    optional string member_resource_name = 2;
+    
+    oneof key {
+        int64 gaia_id = 3;
+        string gaia_key = 4;
+        string entity_id = 5;
+    }
+}
+
+message TeamDriveGaiaIdentifier {
+    optional int64 team_drive_gaia_id = 1;
+}
+
+message TeamDriveIdentifier {
+    optional string team_drive_id = 1;
+}
+
+message UnionIdentifier {
+    optional int64 user_id = 1;
+}
+
+message UnknownResourceIdentifier {
+    optional int64 user_id = 1;
+}
+
+message ObfuscatedCustomerIdentifier {
+    optional string obfuscated_id = 1;
+}
+
+message CustomerIdentifier {
+    optional int64 customer_id = 1;
+}
+
+message Identifier {
+    optional string data_realm = 1;
+    optional proto.attribute.resource.DebugInfo debug_info = 42;
+    
+    oneof identifier {
+        CalendarEventIdentifier calendar_event_identifier = 19;
+        CalendarEwsIdentifier calendar_ews_identifier = 2;
+        CalendarIdentifier calendar_identifier = 20;
+        BlobstoreDriveIdentifier blobstore_drive_identifier = 5;
+        BlobstoreGmailIdentifier blobstore_gmail_identifier = 7;
+        BlobstoreDynamiteIdentifier blobstore_dynamite_identifier = 10;
+        BlobstoreTestIdentifier blobstore_test_identifier = 40;
+        DriveAllFilesIdentifier drive_all_files_identifier = 28;
+        DriveIdentifier drive_identifier = 6;
+        DriveVersionedIdentifier drive_versioned_identifier = 30;
+        CosmoObjectIdentifier cosmo_object_identifier = 32;
+        TeamDriveGaiaIdentifier team_drive_gaia_identifier = 34;
+        CosmoStorageIdentifier cosmo_storage_identifier = 35;
+        DriveUserIdentifier drive_user_identifier = 36;
+        CosmoStorageIdTextprotoIdentifier cosmo_storage_id_textproto_identifier = 37;
+        TeamDriveIdentifier team_drive_identifier = 38;
+        DriveLabelIdentifier drive_label_identifier = 49;
+        DriveGaiaIdentifier drive_gaia_identifier = 50;
+        GmailExportIdentifier gmail_export_identifier = 3;
+        GmailMessageIdentifier gmail_message_identifier = 8;
+        GmailAttachmentIdentifier gmail_attachment_identifier = 9;
+        GmailLabelIdentifier gmail_label_identifier = 16;
+        GmailThreadIdentifier gmail_thread_identifier = 18;
+        GmailSettingIdentifier gmail_setting_identifier = 23;
+        GmailUserIdentifier gmail_user_identifier = 31;
+        GmailDeliveryMessageIdentifier gmail_delivery_message_identifier = 51;
+        DynamiteAttachmentDraftIdentifier dynamite_attachment_draft_identifier = 11;
+        DynamiteAttachmentIdentifier dynamite_attachment_identifier = 12;
+        DynamiteGroupIdentifier dynamite_group_identifier = 41;
+        DynamiteVideoThumbnailIdentifier dynamite_video_thumbnail_identifier = 13;
+        DynamiteObfuscatedGaiaIdentifier dynamite_obfuscated_gaia_identifier = 43;
+        DynamiteUserIdentifier dynamite_user_identifier = 44;
+        DynamiteStorageGroupIdentifier dynamite_storage_group_identifier = 46;
+        DynamiteSpaceNameIdentifier dynamite_space_name_identifier = 47;
+        DynamiteProjectIdentifier dynamite_project_identifier = 48;
+        DynamiteSubscriptionNameIdentifier dynamite_subscription_name_identifier = 53;
+        KeepLabelIdentifier keep_label_identifier = 14;
+        KeepNoteIdentifier keep_note_id_identifier = 21;
+        UnionIdentifier union_identifier = 15;
+        UnknownResourceIdentifier unknown_resource_identifier = 17;
+        DataAccessLogResourceIdentifier data_access_log_resource_identifier = 22;
+        DirectoryIdentifier directory_identifier = 24;
+        RosterIdentifier roster_identifier = 25;
+        HangoutsSpaceIdentifier hangouts_space_identifier = 26;
+        DasherDomainIdentfier dasher_domain_identifier = 27;
+        PreBackfillPs1Identifier pre_backfill_ps1_identifier = 29;
+        AresIdentifier ares_identifier = 33;
+        GroupGaiaIdentifier group_gaia_identifier = 45;
+        OutOfScopeIdentifier out_of_scope_identifier = 39;
+        ObfuscatedCustomerIdentifier obfuscated_customer_identifier = 52;
+        CustomerIdentifier customer_identifier = 54;
+    }
+    
+    reserved 4;
+}
+
+message User {
+    optional int64 gaia_id = 1;
+    optional string email = 2;
+}
+
+message Attributes {
+    optional Customer customer = 1;
+    message Customer {
+        optional int64 customer_id = 1;
+    }
+    
+    optional User target_user = 2;
+    optional security.data_access.resourceidentification.ResourceProduct resource_product = 3;
+    repeated security.data_access.resourceidentification.Attributes.ComplianceLabel compliance_labels = 4;
+}
+
+message Resource {
+    optional string external_identifier = 1;
+    optional Attributes attributes = 2;
+}
+
+message ErrorMessage {
+    optional string source = 1;
+    optional string destination = 2;
+    
+    optional Blame blame = 3;
+    enum Blame {
+        BLAME_UNKNOWN = 0;
+        BLAME_EXTERNAL = 1;
+        BLAME_INTERNAL = 2;
+        BLAME_INTEGRATION = 3;
+        BLAME_LOOKUP = 4;
+        BLAME_G_ON_G = 5;
+    }
+    
+    optional security.data_access.analyzer.DataQualityIssueType data_quality_issue_type = 4;
+    
+    extend .proto2.bridge.MessageSet {
+        optional ErrorMessage message_set_extension = 275265149;
+    }
+}
+
+extend .proto2.MessageOptions {
+    optional bool canonical = 249055296;
+}

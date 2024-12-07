@@ -1,0 +1,524 @@
+syntax = "proto2";
+
+package magiceye.dimensions;
+
+import "logs/proto/logs_annotations/logs_annotations.proto";
+import "net/proto2/proto/descriptor.proto";
+
+option objc_class_prefix = "MED";
+option java_multiple_files = true;
+option java_package = "com.google.analysis.magiceye.dimensions";
+
+message FormFactor {
+    enum Enum {
+        option allow_alias = true;
+        UNKNOWN = 0;
+        OTHER = 1;
+        ANY = 16;
+        COMPUTER = 2;
+        MOBILE_UNKNOWN = 3;
+        PHONE = 4;
+        TABLET = 5;
+        PORTABLE_MEDIA_PLAYER = 12;
+        TV = 6;
+        GAME_CONSOLE = 7;
+        MEDIA_PLAYER = 8;
+        SMART_SPEAKER = 13;
+        SMART_DISPLAY = 14;
+        CONNECTED_HOME_OTHER = 9;
+        SMART_WATCH = 19;
+        SMART_GLASSES = 20;
+        SMART_HEADPHONE = 21;
+        WEARABLE = 10 [deprecated = true];
+        WEARABLE_UNKNOWN = 10;
+        DIGITAL_WHITEBOARD = 17;
+        VIDEO_CONFERENCE_SYSTEM = 18;
+        CAR = 11;
+        VR_HEADSET = 15;
+    }
+}
+
+message FormFactorGroup {
+    enum Enum {
+        UNKNOWN = 0;
+        OTHER = 1;
+        ANY = 7;
+        COMPUTER = 2;
+        MOBILE = 3;
+        HOME = 4;
+        WEARABLE = 5;
+        CAR = 6;
+        PRODUCTIVITY = 8;
+    }
+}
+
+message UIFormFactor {
+    enum Enum {
+        UNKNOWN = 0;
+        OTHER = 1;
+        ANY = 10;
+        DESKTOP = 2;
+        MOBILE = 3;
+        TABLET = 4;
+        TV = 5;
+        WATCH = 6;
+        CAR = 7;
+        VOICE = 8;
+        VR = 9;
+    }
+}
+
+message OS {
+    enum Enum {
+        UNKNOWN = 0;
+        OTHER = 1;
+        ANY = 19;
+        ANDROID = 2;
+        ANDROID_THINGS = 17;
+        IOS = 3;
+        WIN_PHONE = 4;
+        BLACKBERRY = 5;
+        FIRE_OS = 6;
+        TIZEN = 7;
+        WINDOWS = 8;
+        MAC_OS = 9;
+        CHROME_OS = 10;
+        LINUX = 11;
+        APPLE_WATCH_OS = 12;
+        APPLE_VISION_OS = 26;
+        APPLE_TV_OS = 13;
+        PLAYSTATION_OS = 14;
+        NINTENDO_OS = 23;
+        XBOX_OS = 15;
+        KAI_OS = 16;
+        CAST_OS = 18;
+        ROKU_OS = 20;
+        WEAR_OS = 21;
+        FITBIT_OS = 22;
+        VIDAA_OS = 24;
+        WEB_OS = 25;
+    }
+}
+
+message ClientInterfaceType {
+    enum Enum {
+        UNKNOWN = 0;
+        ANY = 4;
+        WEB = 1;
+        NATIVE_1P = 2;
+        BROWSER_EXTENSION_1P = 5;
+        CHROME_APP_1P = 6;
+        THIRD_PARTY = 3;
+        HEADLESS_WEB = 8;
+        OTHER = 7;
+    }
+}
+
+message Browser {
+    enum Enum {
+        UNKNOWN = 0;
+        OTHER = 1;
+        ANY = 17;
+        CHROME = 2;
+        FIREFOX = 3;
+        SAFARI = 4;
+        OPERA = 5;
+        OPERA_MINI = 11;
+        EDGE = 6;
+        MSIE = 7;
+        SAMSUNG_BROWSER = 8;
+        UC_BROWSER = 9;
+        UC_MINI = 12;
+        CHROMIUM = 10;
+        CHROME_WEBVIEW = 31;
+        SAFARI_WEBVIEW = 32;
+        ANDROID_BROWSER = 13;
+        YANDEX_BROWSER = 14;
+        SILK = 15;
+        COC_COC_BROWSER = 16;
+    }
+}
+
+message App {
+    enum Enum {
+        option allow_alias = true;
+        UNKNOWN = 0;
+        OTHER = 1;
+        ANY = 207;
+        GEMINI = 241;
+        GSA = 2;
+        GOOGLE_GO = 6;
+        TRANSLATE = 3;
+        GBOARD = 4;
+        ASSISTANT = 5;
+        ASSISTANT_GO = 7;
+        LENS = 208;
+        GMAIL = 10;
+        GMAIL_INBOX = 11;
+        GMAIL_GO = 16;
+        ANDROID_EMAIL = 12;
+        SAMSUNG_MAIL = 13;
+        OUTLOOK_MAIL = 14;
+        APPLE_MAIL_ETC = 15;
+        DRIVE = 20;
+        DOCS = 21;
+        SHEETS = 22;
+        SLIDES = 23;
+        DRIVE_SYNC = 24;
+        WHATSAPP_BACKUP = 25;
+        CALENDAR = 26;
+        KEEP = 27;
+        KEEP_EXTENSION = 218;
+        TASKS = 28;
+        JAMBOARD = 29;
+        YOUTUBE_MAIN = 40;
+        YOUTUBE_MUSIC = 41;
+        YOUTUBE_GAMING = 42;
+        YOUTUBE_KIDS = 43;
+        YOUTUBE_CREATOR = 44;
+        YOUTUBE_PRODUCER = 230;
+        YOUTUBE_GO = 45;
+        YOUTUBE_TV = 46;
+        YOUTUBE_VR = 47;
+        PLAY_STORE = 60;
+        PLAY_MUSIC = 61;
+        PLAY_BOOKS = 62;
+        GOOGLE_TV_MOBILE = 63;
+        PLAY_GAMES = 65;
+        PLAY_MUSIC_MANAGER = 66;
+        NEWS = 64;
+        PLAY_NEWSSTAND = 64;
+        GOOGLE_PODCASTS = 219;
+        GMM = 70;
+        WAZE = 71;
+        EARTH = 72;
+        GOOGLE_MY_BUSINESS = 73;
+        STREET_VIEW = 74;
+        MAPS_GO = 75;
+        HANGOUTS = 80;
+        HANGOUTS_CHAT = 86;
+        HANGOUTS_MEET = 87;
+        MESSENGER = 81;
+        ALLO = 82;
+        DUO = 83;
+        VOICE = 84;
+        TALK = 85;
+        PLUS = 90;
+        PHOTOS = 91;
+        CONTACTS = 92;
+        BLOGGER = 93;
+        WALLET = 100;
+        SHOPPING = 101;
+        EXPRESS = 101 [deprecated = true];
+        GOOGLE_PAY = 102;
+        ADWORDS = 103;
+        ADWORDS_EXPRESS = 104;
+        ADSENSE = 105;
+        DOUBLECLICK_FOR_PUBLISHERS = 106;
+        GOOGLE_ANALYTICS = 107;
+        PAISA = 108;
+        PAISA_MERCHANT = 213;
+        ANDROID_WEAR = 120;
+        ANDROID_AUTO = 121;
+        HOME = 122;
+        WIFI = 123;
+        ONHUB = 123 [deprecated = true];
+        ANDROID_TV_REMOTE = 124;
+        GOOGLE_FI = 125;
+        PROJECT_FI = 125 [deprecated = true];
+        ANDROID_DEVICE_MANAGER = 126;
+        GOOGLE_CLOUD_CONSOLE = 227;
+        GOOGLE_FIBER = 228;
+        GOOGLE_CPANEL_ADMIN = 231;
+        GOOGLE_TV_HOME = 238;
+        GOOGLE_NOW_LAUNCHER = 130;
+        NEXUS_LAUNCHER = 131;
+        NEWS_AND_WEATHER = 132;
+        SETTINGS = 133;
+        DIALER = 134;
+        CAMERA = 135;
+        CALCULATOR = 136;
+        CLOCK = 137;
+        PLAYGROUND = 212;
+        RECORDER = 224;
+        FREIGHTER = 140;
+        FILES_GO = 203;
+        KORMO = 221;
+        CHROME_BROWSER = 159;
+        FIT = 151;
+        POKEMON_GO = 152;
+        LOGDOG = 153;
+        CLASSROOM = 154;
+        TRIPS = 155;
+        FAMILY_LINK = 156;
+        ARTS_AND_CULTURE = 157;
+        OPINION_REWARDS = 158;
+        REPLY = 204;
+        GOOGLE_ONE = 206;
+        WAYMO = 210;
+        STADIA = 215;
+        DIGITAL_WELLBEING = 216;
+        GOOGLE_PLAY_SERVICES = 217;
+        CHROME_REMOTE_DESKTOP = 232;
+        DEVICE_POLICY = 233;
+        GRASSHOPPER = 234;
+        JACQUARD = 235;
+        BASELINE = 236;
+        SOCRATIC = 237;
+        ACTION_BLOCKS = 214;
+        XPA_GROWTH_CATALOG = 201;
+        HUDDLE = 209;
+        XPA_GROWTH_GMSCORE_SAMPLE = 202;
+        OHANA = 220;
+        BATTLESTAR = 222;
+        SMART_LOCK = 223;
+        AUTHENTICATOR = 239;
+        STACK = 225;
+        PRIMER = 226;
+        CROWDSROUCE = 229;
+        PASSWORD_MANAGER = 240;
+    }
+}
+
+message ProductGroup {
+    enum Enum {
+        option allow_alias = true;
+        UNKNOWN = 0;
+        OTHER = 1;
+        ANY = 153;
+        SEARCH = 2;
+        DISCOVER = 3;
+        NOW = 3 [deprecated = true];
+        ASSISTANT = 150;
+        NEWS = 151;
+        TRAVEL = 175;
+        YOUTUBE = 4;
+        YOUTUBE_CREATOR = 5;
+        YOUTUBE_PRODUCER = 173;
+        PLAY = 6;
+        GMAIL = 7;
+        DRIVE = 8;
+        COMMUNICATIONS = 9;
+        MAPS = 10;
+        EARTH = 11;
+        GOOGLE_MY_BUSINESS = 12;
+        WAZE = 13;
+        CALENDAR = 20;
+        KEEP = 21;
+        GROUPS = 23;
+        CLOUD_PRINT = 24;
+        CLOUD_SEARCH = 26;
+        EDITORS = 25;
+        GSUITE_COMPANION = 136;
+        JAMBOARD = 27;
+        GSUITE_DEVELOPERS_PLATFORM = 152;
+        GOOGLE_ADMIN = 161;
+        TRANSLATE = 30;
+        TRENDS = 31;
+        TOOLBAR = 32;
+        CUSTOM_SEARCH = 33;
+        ACCOUNT = 171;
+        GOOGLE_SIGN_IN = 50;
+        ACCOUNT_TOOLS = 51;
+        SIGN_UP = 52;
+        PLUS = 70;
+        PHOTOS = 71;
+        CONTACTS = 72;
+        BLOGGER = 73;
+        SOCIAL_OTHER = 74;
+        CONSUMER_PAYMENTS = 90 [deprecated = true];
+        PAYMENTS = 90;
+        SHOPPING = 91;
+        EXPRESS = 91 [deprecated = true];
+        ADWORDS = 92;
+        ADSENSE = 93;
+        DOUBLECLICK = 94;
+        PAISA = 95;
+        GOOGLE_STORE = 162;
+        MY_ADS = 172;
+        GEMINI = 179;
+        GOOGLE_ANALYTICS = 110;
+        SEARCH_CONSOLE = 111;
+        ANDROID_WEAR = 120;
+        ANDROID_AUTO = 121;
+        HOME = 122;
+        WIFI = 123;
+        ONHUB = 123;
+        ANDROID_TV_REMOTE = 124;
+        GOOGLE_FI = 125;
+        PROJECT_FI = 125 [deprecated = true];
+        GOOGLE_FIBER = 163;
+        ANDROID_DEVICE_MANAGER = 126;
+        GOOGLE_TV = 176;
+        CHROME_SYNC = 130;
+        CHROME_WEBSTORE = 131;
+        EDUCATION_APPS = 132;
+        CLASSROOM = 132 [deprecated = true];
+        FIT = 133;
+        CURRENTS = 134;
+        HELP_CENTER = 135;
+        ARTS_AND_CULTURE = 154;
+        OPINION_REWARDS = 177;
+        STADIA = 215;
+        GOOGLE_ONE = 170;
+        GOOGLE_HELP = 174;
+        BACKGROUND_SERVICES = 137;
+        DEPRECATED_SITES = 22 [deprecated = true];
+        ONE_GOOGLE = 178;
+    }
+}
+
+message Product {
+    enum Enum {
+        option allow_alias = true;
+        UNKNOWN = 0;
+        OTHER = 1;
+        THIRD_PARTY = 301;
+        ANY = 256;
+        SEARCH = 2;
+        FLIGHTS = 8 [deprecated = true];
+        HOTELS = 9 [deprecated = true];
+        SCHOLAR = 10;
+        FINANCE = 11;
+        PATENTS = 12;
+        ASSISTANT = 13;
+        GEMINI = 310;
+        NEWS = 254;
+        PLAY_NEWSSTAND = 104;
+        DISCOVER = 20;
+        NOW = 20 [deprecated = true];
+        TRANSLATE = 21;
+        TRENDS = 22;
+        TOOLBAR = 23;
+        CUSTOM_SEARCH = 24;
+        TRAVEL = 291;
+        MAPS = 40;
+        MAPS_LITE = 257;
+        MY_MAPS = 41;
+        EARTH = 42;
+        GOOGLE_MY_BUSINESS = 43;
+        WAZE = 44;
+        STREET_VIEW = 45;
+        DRIVE = 50;
+        DRIVE_SYNC = 56;
+        DOCS = 51;
+        SHEETS = 52;
+        SLIDES = 53;
+        DRAWINGS = 54;
+        FORMS = 55;
+        SITES = 62;
+        ATARI = 63;
+        CALENDAR = 60;
+        TASKS = 248;
+        KEEP = 61;
+        VIDS = 305;
+        GROUPS = 64;
+        CLOUD_PRINT = 65;
+        CLOUD_SEARCH = 252;
+        GSUITE_COMPANION = 249;
+        JAMBOARD = 253;
+        APPS_SCRIPT = 255;
+        GOOGLE_ADMIN = 262;
+        YOUTUBE = 80;
+        YOUTUBE_MUSIC = 81;
+        YOUTUBE_GAMING = 82;
+        YOUTUBE_KIDS = 83;
+        YOUTUBE_CREATOR = 84;
+        YOUTUBE_PRODUCER = 277;
+        YOUTUBE_TV = 85;
+        PLAY_STORE = 100;
+        PLAY_MUSIC = 101;
+        PLAY_BOOKS = 102;
+        PLAY_MOVIES = 103;
+        PLAY_GAMES = 105;
+        GMAIL = 120;
+        INBOX = 121;
+        ACCOUNT = 272;
+        ACCOUNT_TOOLS = 281;
+        ACTIVITY_TOOLS = 282;
+        SIGN_IN = 130;
+        SIGN_OUT = 247;
+        ACCOUNT_RECOVERY = 131;
+        SIGN_IN_WITH_GOOGLE = 132;
+        GOOGLE_ACCOUNT_LINKING = 258;
+        AUTH_1P = 283;
+        AUTH_3P = 284;
+        MY_ACCOUNT = 133;
+        MY_ACTIVITY = 134;
+        PASSWORDS_UI = 135;
+        SIGN_UP = 136;
+        ACTIVITY_CONTROLS = 137;
+        GOOGLE_ACCOUNT_DASHBOARD = 138;
+        PRIVACY_CHECKUP = 139;
+        PRIVACY_PAGES = 271;
+        TAKEOUT = 140;
+        SECURITY_CHECKUP = 270;
+        PASSWORD_MANAGER = 278;
+        AUTHENTICATOR = 296;
+        HANGOUTS = 150;
+        HANGOUTS_CHAT = 155;
+        HANGOUTS_MEET = 156;
+        ALLO = 151 [deprecated = true];
+        DUO = 152;
+        VOICE = 153;
+        TALK = 154;
+        PLUS = 170;
+        PHOTOS = 171;
+        CONTACTS = 172;
+        BLOGGER = 173;
+        WALLET = 190;
+        GOOGLE_PAY = 191;
+        PAYMENTS_PLATFORM = 303;
+        SHOPPING = 192;
+        EXPRESS = 192 [deprecated = true];
+        ADWORDS = 193;
+        ADWORDS_EXPRESS = 194;
+        ADSENSE = 195;
+        DOUBLECLICK_FOR_PUBLISHERS = 196 [deprecated = true];
+        MY_ADS = 276;
+        PAISA = 197;
+        PAISA_MERCHANT = 260;
+        GOOGLE_STORE = 264;
+        GOOGLE_ANALYTICS = 210;
+        SEARCH_CONSOLE = 211;
+        ANDROID_WEAR = 220;
+        ANDROID_AUTO = 221;
+        HOME = 222;
+        WIFI = 223;
+        ONHUB = 223;
+        ANDROID_TV_REMOTE = 224;
+        GOOGLE_FI = 225;
+        PROJECT_FI = 225 [deprecated = true];
+        GOOGLE_FIBER = 265;
+        ANDROID_DEVICE_MANAGER = 226;
+        GOOGLE_TV = 295;
+        CHROME_SYNC = 240;
+        CHROME_WEBSTORE = 241;
+        CLASSROOM = 243;
+        FIT = 244;
+        CURRENTS = 245 [deprecated = true];
+        HELP_CENTER = 246;
+        ARTS_AND_CULTURE = 259;
+        OPINION_REWARDS = 308;
+        STADIA = 215;
+        GOOGLE_ONE = 267;
+        FAMILY_LINK = 250;
+        LOCATION_PLATFORM = 251;
+        GOOGLE_HELP = 280;
+        CONSENT = 297;
+        PEOPLE_INFO_PRIMITIVES = 300;
+        ONE_GOOGLE = 269;
+    }
+}
+
+extend .proto2.EnumValueOptions {
+    optional FormFactorGroup.Enum form_factor_group = 127135490;
+    optional ProductGroup.Enum product_group = 127135491;
+    optional string display_name = 127135492;
+    repeated int32 product_id = 127135493;
+}
+
+extend .proto2.FieldOptions {
+    repeated ProductGroup.Enum for_product_group = 142768386;
+    repeated Product.Enum for_product = 142707573;
+}

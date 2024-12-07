@@ -1,0 +1,19 @@
+syntax = "editions";
+
+package security.context;
+
+import "security/context/proto/internal/standard_permission.proto";
+import "security/context/proto/policy/role_name.proto";
+
+option java_multiple_files = true;
+option java_outer_classname = "RoleProtoFile";
+option java_package = "com.google.security.context";
+
+message DefaultRolesProto {
+    repeated RoleProto roles = 1;
+}
+
+message RoleProto {
+    optional RoleName name = 1;
+    repeated StandardPermission permissions = 2;
+}

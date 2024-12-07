@@ -1,0 +1,13 @@
+syntax = "editions";
+
+package gaia_mint;
+
+import "google/protobuf/struct.proto";
+import "storage/datapol/annotations/proto/semantic_annotations.proto";
+
+option objc_class_prefix = "GMNT";
+option java_package = "com.google.gaia.mint";
+
+message ThirdPartyClaim {
+    optional google.protobuf.Struct outclaim = 1;
+}

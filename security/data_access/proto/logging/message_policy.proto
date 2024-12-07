@@ -1,0 +1,16 @@
+syntax = "proto2";
+
+package admin_access;
+
+import "net/proto2/proto/descriptor.proto";
+
+option java_multiple_files = true;
+
+message MessagePolicy {
+    optional string resource_type = 1;
+    optional bool authority_is_target = 2 [default = false];
+}
+
+extend .proto2.MessageOptions {
+    optional MessagePolicy message_policy = 420400610;
+}

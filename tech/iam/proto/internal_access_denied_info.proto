@@ -1,0 +1,45 @@
+syntax = "editions";
+
+package tech.iam;
+
+option java_multiple_files = true;
+option java_package = "com.google.tech.iam.proto";
+
+message CredLevelAdvice {
+    optional string remediation_url = 1;
+}
+
+message InternalAccessDeniedInfo {
+    oneof reason {
+        NotGranted not_granted = 1;
+        DenyPolicy deny_policy = 2;
+        PrincipalAccessBoundariesPolicy principal_access_boundaries_policy = 3;
+        CustomOrgPolicy custom_org_policy = 4;
+        VpcServiceControlServicePerimeterViolation service_perimeter_violation = 5;
+    }
+    
+    message NotGranted {
+        
+    }
+    
+    message DenyPolicy {
+        optional CredLevelAdvice cred_level_advice = 1;
+    }
+    
+    message PrincipalAccessBoundariesPolicy {
+        
+    }
+    
+    message CustomOrgPolicy {
+        repeated CustomConstraintInfo denied_custom_constraint_info = 1;
+    }
+    
+    message VpcServiceControlServicePerimeterViolation {
+        
+    }
+    
+    message CustomConstraintInfo {
+        optional string custom_constraint_id = 1;
+        optional string short_message = 2;
+    }
+}

@@ -1,0 +1,9 @@
+syntax = "editions";
+
+package protopkg.analyzer;
+
+import "security/data_access/analyzer/proto/analysis.proto";
+
+message LogCheckerOutput {
+    repeated security.data_access.analyzer.DataQualityInfo data_quality_info = 1;
+}

@@ -1,0 +1,16 @@
+syntax = "editions";
+
+package tech.iam;
+
+option java_multiple_files = true;
+option java_outer_classname = "TestingProtoFile";
+option java_package = "com.google.tech.internal.iam.local.proto";
+
+message FakeMembershipsProto {
+    map<string, Members> memberships = 1;
+    
+    message Members {
+        repeated string principal = 1;
+        optional bool default_error = 2;
+    }
+}

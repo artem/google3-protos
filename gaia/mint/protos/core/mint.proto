@@ -1,0 +1,38 @@
+syntax = "proto2";
+
+package gaia_mint;
+
+import "gaia/mint/protos/core/signature_type.proto";
+import "net/proto2/bridge/proto/message_set.proto";
+import "storage/datapol/annotations/proto/semantic_annotations.proto";
+
+option objc_class_prefix = "GMNT";
+option java_multiple_files = true;
+option java_outer_classname = "CoreMintProtos";
+option java_package = "com.google.gaia.mint";
+
+message MintWrapper {
+    optional string remote_host = 3;
+    optional int64 primary_user_id = 4;
+    optional int32 encoding_format = 7 [default = 1];
+    optional bytes signed_data = 5;
+    optional bytes uber_mint_keymaster_rsa_signature = 14;
+    optional bytes tink_ecdsa_signature = 18;
+    optional string gaiamint_server = 9;
+    optional string type_url = 10;
+    optional bytes uber_mint_payload = 13;
+    optional SignatureType signature_for_verification = 15 [deprecated = true];
+    optional string signer_realm_hint = 17;
+    repeated int32 experiment_ids = 19 [packed = true];
+    
+    reserved 1, 2, 8, 11, 12, 16, 20;
+    
+    enum EncodingFormat {
+        KEYMASTER_RSA = 1;
+        TINK_ECDSA = 2;
+    }
+    
+    extend .proto2.bridge.MessageSet {
+        optional MintWrapper message_set_extension = 17705363;
+    }
+}

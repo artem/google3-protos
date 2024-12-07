@@ -1,0 +1,112 @@
+syntax = "proto2";
+
+package rpcsp;
+
+import "devtools/api/buildinfo/buildinfo.proto";
+import "google/protobuf/empty.proto";
+import "net/proto2/go/annotation/go_annotation.proto";
+import "security/context/proto/policy/policy_bundle_types.proto";
+import "security/context/proto/policy/rpc_security_policy.proto";
+
+option java_multiple_files = true;
+option java_package = "com.google.security.context";
+
+message CompiledPolicyBundle {
+    repeated CompiledPolicyConfiguration configs = 8;
+    
+    reserved 1, 2, 3, 4, 5, 6, 7;
+}
+
+message CompiledPolicyConfiguration {
+    optional Environment env = 1;
+    repeated string selectors = 6;
+    optional LegacyPolicyMode legacy_policy_mode = 10;
+    optional security.context.RpcSecurityPolicy live_policy = 2;
+    optional security.context.RpcSecurityPolicy darklaunch_policy = 3;
+    optional google.protobuf.Empty no_op_rpc_security_policy = 7;
+    optional ComplianceMetadata compliance_metadata = 4;
+    optional Provenance provenance = 5;
+    optional CompatibilityMode compatibility = 99;
+    optional MetricsCollection metrics = 8;
+    repeated Framework frameworks = 9;
+}
+
+message Provenance {
+    optional PolicyConfigSource policy_config_source = 6;
+    optional PolicyProvenance live_provenance = 4;
+    optional PolicyProvenance darklaunch_provenance = 5;
+    optional LegacyPolicyMode legacy_policy_mode = 7;
+    optional devtools.api.buildinfo.BuildInfo build_info = 8;
+    
+    reserved 1, 2, 3;
+}
+
+message PolicyConfigSource {
+    optional string source_file = 1;
+    optional SourceLocation source_location = 4;
+    optional Environment source_config_env = 2;
+    repeated string source_config_selectors = 3;
+    
+    oneof source {
+        LiteralConfig literal_config = 5;
+        GeneratedInput generated_input = 6;
+        AutomaticOpenConfig automatic_open_config = 7;
+    }
+}
+
+message SourceLocation {
+    optional int32 start_line = 1;
+    optional int32 start_column = 2;
+    optional int32 end_line = 3;
+    optional int32 end_column = 4;
+}
+
+message PolicyProvenance {
+    repeated string templates = 1;
+    
+    oneof source {
+        InlinePolicy inline_policy = 4;
+        AutomaticOpenPolicy automatic_open_policy = 2;
+        string policy_input_file = 5;
+        GeneratedInput generated_policy_input = 6;
+    }
+    
+    reserved 3;
+}
+
+message AutomaticOpenPolicy {
+    extensions 100 to 1000;
+    
+    reserved 1;
+    
+    extend AutomaticOpenPolicy {
+        optional PolicyProvenance source_policy_provenance = 101;
+    }
+}
+
+message InlinePolicy {
+    
+}
+
+message GeneratedInput {
+    optional string build_label = 1;
+    optional string generator_hint = 2;
+}
+
+message LiteralConfig {
+    optional string path = 1;
+    optional SourceLocation source_location = 2;
+}
+
+message AutomaticOpenConfig {
+    optional Environment source_config_env = 2;
+    repeated string source_config_selectors = 3;
+    
+    extensions 100 to 1000;
+    
+    reserved 1;
+    
+    extend AutomaticOpenConfig {
+        optional Provenance source_provenance = 101;
+    }
+}

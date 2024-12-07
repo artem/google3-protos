@@ -1,0 +1,62 @@
+syntax = "editions";
+
+package identity_ubermint;
+
+import "cloud/identity/common/proto/third_party_id.proto";
+import "gaia/data/accounttype/account_type.proto";
+import "google/protobuf/struct.proto";
+import "google/protobuf/timestamp.proto";
+import "identity/auxiliarydata/gaia_mint_auxiliary_data.proto";
+import "identity/boq/cloud/ubermint/proto/dasher_customer_id.proto";
+import "identity/boq/cloud/ubermint/proto/dma_info.proto";
+import "identity/boq/cloud/ubermint/proto/gaia_on_byoid.proto";
+import "identity/ubermint/proto/platform/cloud/resource_info.proto";
+import "security/credentials/proto/request_reason.proto";
+import "storage/datapol/annotations/proto/semantic_annotations.proto";
+
+message CloudUberMintContext {
+    optional int64 primary_gaia_id = 1;
+    optional int64 consumer_project_id = 2;
+    optional string primary_email = 3;
+    optional int64 client_gaia_id = 4;
+    optional security.credentials.RequestReason request_reason = 5;
+    optional bytes serialized_iam_token_wrapper = 6;
+    optional .ubermint.cloud.ResourceInfo resource_info = 8;
+    optional gaia_data.AccountType account_type = 9;
+    optional bool pure_first_party = 12;
+    optional google.cloud.identity.ThirdPartyId third_party_id = 13;
+    optional string principal_subject = 14;
+    optional string security_realm = 15;
+    optional string audience = 16;
+    optional string overridden_user_project = 17;
+    optional string api_key = 18;
+    optional bool is_googler = 19;
+    optional string application_domain = 20;
+    optional bool is_generated_from_id_token = 22;
+    optional bool is_test_account = 23;
+    optional int64 organization_id = 24;
+    optional bool is_debug_settings_enabled = 25;
+    optional string user_name = 26;
+    optional bytes serialized_mint_wrapper = 27;
+    repeated int32 accepted_scope_code = 29;
+    optional string display_name = 30;
+    optional string cache_key = 31;
+    optional bool is_global_account = 32;
+    optional google.protobuf.Struct first_party_claims = 33;
+    optional int64 anchor_project_id = 35;
+    optional string cpi_subject_to_lifecycle_notifications = 36;
+    optional string cpi_exempt_from_lifecycle_notifications = 37;
+    optional string raw_iam_token = 38;
+    optional bytes aaa_session_id = 39;
+    optional bool is_cloud_service_account = 40;
+    optional int32 gaia_cookie_session_index = 41;
+    optional DasherCustomerId dasher_customer_id = 42;
+    optional google.protobuf.Timestamp original_cred_iss_time = 43;
+    optional google.protobuf.Timestamp original_cred_exp_time = 44;
+    optional GaiaOnByoid gob_info = 45;
+    optional DmaInfo dma_info = 46;
+    optional identity_auxiliarydata.GaiaMintAuxiliaryData auxiliary_data = 47;
+    optional int64 seconds_since_last_auth = 48;
+    
+    reserved 7, 10, 11, 21, 28;
+}

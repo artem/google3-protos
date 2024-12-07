@@ -1,0 +1,123 @@
+syntax = "proto2";
+
+package security_approvals;
+
+import "frameworks/testing/rpcreplay/processors/rpc_replay_field_option.proto";
+import "google/protobuf/any.proto";
+import "google/protobuf/struct.proto";
+import "net/proto2/bridge/proto/message_set.proto";
+import "security/credentials/proto/end_user_credentials.proto";
+import "security/credentials/proto/principal.proto";
+import "security/thinmint/proto/core/thinmint_core.proto";
+import "storage/datapol/annotations/proto/semantic_annotations.proto";
+import "util/task/status.proto";
+
+option java_multiple_files = true;
+option java_outer_classname = "RequestAuthorizationProtoFile";
+option java_package = "com.google.security.authorization.approvals";
+
+service RequestApprover {
+    rpc GetApproval(GetApprovalRequest) returns (GetApprovalResponse);
+}
+
+service RequestApprovalMinter {
+    rpc GetApprovalMint(GetApprovalMintRequest) returns (GetApprovalMintResponse);
+}
+
+message GetApprovalRequest {
+    optional RequestDescription request_description = 1;
+    optional RequesterDescription requester_description = 2;
+    optional ServiceDescription service_description = 3;
+    optional DesiredApprovalDescription desired_approval_description = 4;
+    
+    extensions 1000 to max;
+}
+
+message RequesterDescription {
+    optional security.credentials.UserPrincipalProto user = 1;
+    optional security.credentials.EndUserCredentialsProto end_user_creds = 2;
+}
+
+message GetApprovalResponse {
+    optional bool approved = 1 [deprecated = true];
+    optional util.StatusProto extended_status = 2 [deprecated = true];
+    
+    oneof response {
+        SimpleApprovalResponse simple_response = 3;
+        DelegatedApprovalResponse delegated_response = 4;
+    }
+}
+
+message GetApprovalMintRequest {
+    optional RequestDescription request_description = 1;
+    optional ServiceDescription service_description = 2;
+    
+    extensions 1000 to max;
+}
+
+message GetApprovalMintResponse {
+    repeated .thinmint.ThinMint authorization_mints = 1;
+}
+
+message RequestDescription {
+    optional string action = 1;
+    optional google.protobuf.Struct request = 2;
+    optional google.protobuf.Any request_msg = 3;
+}
+
+message ServiceDescription {
+    optional string prod_username = 1;
+    optional string instance = 2;
+}
+
+message DesiredApprovalDescription {
+    repeated string desired_approvals = 1;
+}
+
+message SimpleApprovalResponse {
+    optional bool approved = 1;
+    optional util.StatusProto extended_status = 2;
+}
+
+message DelegatedApprovalResponse {
+    repeated ApprovalRoleResponse responses = 1;
+}
+
+message ApprovalRoleResponse {
+    optional ApprovalRoleIdentifier approval_role = 1;
+    optional SimpleApprovalResponse response = 2;
+}
+
+message ApprovalRoleIdentifier {
+    optional string prod_username = 1;
+}
+
+message RequestAuthorizationBaseRestriction {
+    extend .proto2.bridge.MessageSet {
+        optional RequestAuthorizationBaseRestriction message_set_extension = 173446165;
+    }
+}
+
+message RequestAuthorizationRestriction {
+    optional RequestDescription request_description = 1;
+    
+    extend .proto2.bridge.MessageSet {
+        optional RequestAuthorizationRestriction message_set_extension = 149329600;
+    }
+}
+
+message RequestAuthorizationServiceRestriction {
+    optional ServiceDescription service_description = 1;
+    
+    extend .proto2.bridge.MessageSet {
+        optional RequestAuthorizationServiceRestriction message_set_extension = 148778454;
+    }
+}
+
+message RequestAuthorizationMintArgs {
+    repeated .thinmint.ThinMint mint = 1;
+    
+    extend .proto2.bridge.MessageSet {
+        optional RequestAuthorizationMintArgs message_set_extension = 224182061;
+    }
+}

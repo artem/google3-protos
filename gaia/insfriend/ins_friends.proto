@@ -1,0 +1,498 @@
+syntax = "proto2";
+
+import "gaia/client/challenge_data.proto";
+import "gaia/client/cloud_propagation.proto";
+import "gaia/data/account_capabilities.proto";
+import "gaia/data/disable_metadata.proto";
+import "gaia/data/dusi.proto";
+import "gaia/data/email_annotation.proto";
+import "gaia/data/testaccount_data.proto";
+import "gaia/insclient/ins_client.proto";
+import "gaia/insclient/ins_clientinfo.proto";
+import "gaia/mint/protos/core/mint.proto";
+import "identity/auth/challenge/proto/password_service.proto";
+import "identity/gaia/storage_access/account_identifier/proto/account_identifier_service.proto";
+import "identity/gaia/storage_access/account_metadata/proto/account_metadata_service.proto";
+import "identity/gaia/storage_access/capability_token/proto/capability_token_service.proto";
+import "net/compass/proto/routing_annotations.proto";
+import "storage/datapol/annotations/proto/semantic_annotations.proto";
+
+option java_package = "com.google.gaia.client.proto";
+
+message CapabilityMessage {
+    required int64 UserID = 1;
+    required uint64 CapabilityID = 2;
+}
+
+message ClientEncryptionKey {
+    optional EncryptionKeyType KeyType = 1;
+    enum EncryptionKeyType {
+        KEY_TYPE_UNSPECIFIED = 0;
+        P256_KEY_PAIR = 1;
+    }
+    
+    optional bytes PublicKey = 2;
+    optional bytes PrivateKey = 3;
+}
+
+message NewUserRequest {
+    required string Email = 1;
+    optional QualifiedNameInfo QualifiedName = 102;
+    optional bytes Password = 2;
+    optional PasswordTypeEnum PasswordType = 24;
+    optional string RedirectURL = 3;
+    optional bool PersistentCookie = 4;
+    optional int32 ServiceID = 5 [deprecated = true];
+    optional bool GenerateLsidCookie = 25;
+    optional ClientUserInfo UserInfo = 10;
+    
+    repeated group NewServiceFlags = 15 {
+        required int32 ServiceID = 16;
+        required int32 FlagID = 17;
+    }
+    
+    repeated GaiaServiceKeyData Update = 11;
+    optional ClientResourceInfo ResourceInfo = 6;
+    optional bool ResourceOnly = 7;
+    optional bool IsOffNetwork = 103;
+    optional int32 AccountType = 106;
+    optional bool ProdAccount = 104;
+    optional bool GenerateCookies = 19 [default = true];
+    optional bool CanHandle3pCookies = 26;
+    optional bool CanHandle1pCookies = 28;
+    optional gaia_data.AccountCapabilityInfo AccountCapabilities = 27;
+    optional bool GenerateMint = 23;
+    optional gaia_data.DusiGenerationInputs DusiInputs = 20;
+    optional gaia_client.ChallengeDataLookupInfo ChallengeData = 21;
+    optional gaia_client.CloudPropagation CloudPropagation = 22;
+    optional gaia_data.TestAccountBehavior TestAccountBehavior = 107;
+    optional ClientData ClientData = 100;
+    optional UserContext UserContext = 101;
+    optional int64 PlaceholderGaiaId = 29;
+    optional bytes AuxiliaryData = 30 [ctype = STRING_PIECE];
+    
+    reserved 8, 9, 12 to 14, 18, 105;
+}
+
+message NewUserResponse {
+    required int32 RetCode = 1;
+    optional string DebugInfo = 99;
+    optional int64 UserID = 2;
+    optional string SessionCookie = 3;
+    optional string SessionCookie3p = 13;
+    optional string SessionCookie1p = 15;
+    optional string CapabilityString = 6;
+    optional string ServiceCookie = 5;
+    optional string LsidCookie = 12;
+    optional string LsidCookie3p = 14;
+    optional string LsidCookie1p = 16;
+    optional gaia_mint.MintWrapper MintWrapper = 10;
+    optional int64 CreationTimeSecs = 7;
+    optional string dusi = 8;
+    optional bytes CloudToken = 9;
+    optional int64 ExistingUserId = 11;
+    
+    reserved 4;
+}
+
+message GetVerificationCapabilityRequest {
+    required int64 UserID = 1;
+    optional string RedirectURL = 2;
+    optional ClientData ClientData = 100;
+    optional UserContext UserContext = 101;
+}
+
+message GetVerificationCapabilityResponse {
+    required int32 RetCode = 1;
+    optional string DebugInfo = 99;
+    optional string CapabilityString = 3;
+    
+    reserved 2;
+    
+    extend gaia_storage_access.GetVerificationCapabilityRequest {
+        optional GetVerificationCapabilityResponse microservice_request_extension = 24560812;
+    }
+}
+
+message AuthorizeRequest {
+    reserved 1 to 19, 100, 101;
+    
+    enum Const {
+        MAX_USERS_PER_SESSION = 10;
+    }
+}
+
+message AuthorizeResponse {
+    required int32 RetCode = 1;
+    optional string SessionCookie = 2;
+    optional ClientUserInfo UserInfo = 3;
+    optional string ServiceCookie = 5;
+    
+    reserved 4, 6 to 13, 99;
+}
+
+message ChangePasswordRequest {
+    required int64 UserID = 1;
+    required bytes NewPassword = 3;
+    optional PasswordTypeEnum PasswordType = 17;
+    optional GaiaNotificationSettings NotificationSettings = 6;
+    optional bool GenerateCookies = 7;
+    optional string dusi = 12;
+    optional bool RejectNoOpChange = 8;
+    repeated string WhitelistedDeviceSessions = 11;
+    optional bool ChangedByPasswordUnsettingPipeline = 14;
+    optional bool CreateClientEncryptionKey = 15;
+    optional bool CanHandle3pCookies = 13;
+    optional bool CanHandle1pCookies = 16;
+    optional ClientData ClientData = 100;
+    optional UserContext UserContext = 101;
+    
+    reserved 2, 4, 5, 9;
+}
+
+message ChangePasswordResponse {
+    required int32 RetCode = 1;
+    optional string SessionCookie = 3;
+    optional string SessionCookie3p = 5;
+    optional string SessionCookie1p = 8;
+    optional string LsidCookie = 4;
+    optional string LsidCookie3p = 6;
+    optional string LsidCookie1p = 9;
+    optional ClientEncryptionKey ClientEncryptionKey = 7;
+    optional string DebugInfo = 99;
+    
+    reserved 2;
+    
+    extend identity_auth_challenge.ChangePasswordRequest {
+        optional ChangePasswordResponse microservice_request_extension = 505811048;
+    }
+}
+
+message ChangeEmailRequest {
+    required int64 UserID = 1;
+    optional bytes Password = 2;
+    optional bool IgnorePassword = 5 [default = false];
+    required string NewEmail = 3;
+    optional string RedirectURL = 4;
+    optional ClientData ClientData = 100;
+    optional UserContext UserContext = 101;
+}
+
+message ChangeEmailResponse {
+    required int32 RetCode = 1;
+    optional string DebugInfo = 99;
+    optional string CapabilityString = 4;
+    
+    reserved 2, 3, 5;
+    
+    extend gaia_storage_access.GetChangeEmailCapabilityRequest {
+        optional ChangeEmailResponse microservice_request_extension = 500768909;
+    }
+}
+
+message ForgotPasswordRequest {
+    required string Email = 1;
+    optional string RecoveryEmail = 3;
+    optional string RedirectURL = 2;
+    optional int64 ExpirationTimeSeconds = 4;
+    optional ClientData ClientData = 100;
+    optional UserContext UserContext = 101;
+}
+
+message ForgotPasswordResponse {
+    required int32 RetCode = 1;
+    optional string DebugInfo = 99;
+    optional int64 CapabilityId = 4;
+    optional string CapabilityString = 3;
+    
+    reserved 2;
+    
+    extend identity_auth_challenge.ForgotPasswordRequest {
+        optional ForgotPasswordResponse microservice_request_extension = 367346332;
+    }
+}
+
+message ExerciseEmailCapabilityRequest {
+    optional string CapabilityString = 2;
+    optional ClientData ClientData = 100;
+    optional UserContext UserContext = 101;
+    
+    reserved 1;
+}
+
+message ExerciseEmailCapabilityResponse {
+    required int32 RetCode = 1;
+    optional string DebugInfo = 99;
+    optional string RedirectURL = 2;
+    optional int64 UserID = 3;
+    
+    reserved 4, 5;
+    
+    extend gaia_storage_access.ExerciseEmailCapabilityRequest {
+        optional ExerciseEmailCapabilityResponse microservice_request_extension = 426507013;
+    }
+}
+
+message ExercisePasswordCapabilityRequest {
+    optional string CapabilityString = 3;
+    required bytes NewPassword = 2;
+    optional GaiaNotificationSettings NotificationSettings = 4;
+    optional bool RejectNoOpChange = 5;
+    optional bool CreateClientEncryptionKey = 6;
+    optional ClientData ClientData = 100;
+    optional UserContext UserContext = 101;
+    
+    reserved 1;
+}
+
+message ExercisePasswordCapabilityResponse {
+    required int32 RetCode = 1;
+    optional ClientEncryptionKey ClientEncryptionKey = 5;
+    optional string DebugInfo = 99;
+    
+    reserved 2, 3, 4;
+    
+    extend identity_auth_challenge.ExercisePasswordCapabilityRequest {
+        optional ExercisePasswordCapabilityResponse microservice_request_extension = 416849054;
+    }
+}
+
+message DeleteAccountRequest {
+    required int64 UserID = 1;
+    optional GaiaNotificationSettings NotificationSettings = 2;
+    optional gaia_client.CloudPropagation CloudPropagation = 3;
+    optional ClientData ClientData = 100;
+    optional UserContext UserContext = 101;
+}
+
+message DeleteAccountResponse {
+    required int32 RetCode = 1;
+    optional bytes CloudToken = 2;
+    optional bool AlreadyDeleted = 3;
+    optional string DebugInfo = 99;
+    
+    extend gaia_storage_access.DeleteAccountRequest {
+        optional DeleteAccountResponse microservice_request_extension = 214662212;
+    }
+}
+
+message DisableAccountRequest {
+    optional string Email = 1 [deprecated = true];
+    optional int64 UserID = 5;
+    optional DisableAccountInfo DisableInfo = 2;
+    optional DisableAccountMetadata DisableMetadata = 3;
+    optional gaia_client.CloudPropagation CloudPropagation = 4;
+    optional ClientData ClientData = 100;
+    optional UserContext UserContext = 101;
+}
+
+message DisableAccountResponse {
+    required int32 RetCode = 1;
+    optional bytes CloudToken = 2;
+    optional string DebugInfo = 99;
+    
+    extend gaia_storage_access.DisableAccountRequest {
+        optional DisableAccountResponse microservice_request_extension = 366309953;
+    }
+}
+
+message EnableAccountRequest {
+    optional string Email = 1 [deprecated = true];
+    optional int64 UserID = 4;
+    optional EnableAccountInfo EnableInfo = 2;
+    optional gaia_client.CloudPropagation CloudPropagation = 3;
+    optional ClientData ClientData = 100;
+    optional UserContext UserContext = 101;
+}
+
+message EnableAccountResponse {
+    required int32 RetCode = 1;
+    optional bytes CloudToken = 2;
+    optional string DebugInfo = 99;
+    
+    extend gaia_storage_access.EnableAccountRequest {
+        optional EnableAccountResponse microservice_request_extension = 351382363;
+    }
+}
+
+message UpdateUserRequest {
+    required ClientUserInfo UserInfo = 1;
+    
+    repeated group ServiceChanges = 2 {
+        required int32 ServiceID = 3;
+        required int32 FlagID = 4;
+        
+        required ChangeTypeEnum ChangeType = 5;
+        enum ChangeTypeEnum {
+            CHANGE_TYPE_ENUM_UNSPECIFIED = -1;
+            ADD = 0;
+            REMOVE = 1;
+        }
+    }
+    
+    repeated string WhitelistedDeviceSessions = 7;
+    optional gaia_client.CloudPropagation CloudPropagation = 8;
+    optional bool ContextAwareAccessEnabled = 9;
+    optional gaia_data.TestAccountBehavior TestAccountBehavior = 10;
+    optional bool HasProductDisable = 11;
+    optional int32 AccountType = 12;
+    optional bool AllowDeletedAccount = 13 [default = false];
+    
+    optional EmailAddressInfoUpdate EmailInfoUpdate = 14;
+    message EmailAddressInfoUpdate {
+        required string EmailToSelect = 2;
+        optional bool SelectAsPrimary = 3 [default = true];
+        optional bool AllowAuth = 4;
+        optional bool DeliveryDisabled = 5;
+        optional bool IsXmppJid = 6;
+        optional bool IsPublicId = 7;
+        optional bool IsPrimaryId = 8;
+        optional bool RecoveryDisabled = 9;
+        optional bool IsShadow = 10;
+        optional bool HasShadow = 11;
+        optional bool FederatedAuthnEnabled = 13;
+        repeated gaia_data.GaiaEmailAnnotation EmailAnnotationToAdd = 14;
+        repeated gaia_data.GaiaEmailAnnotation EmailAnnotationToRemove = 15;
+        
+        reserved 12;
+    }
+    
+    optional AccountCapabilityInfoUpdate CapabilityInfoUpdate = 15;
+    message AccountCapabilityInfoUpdate {
+        repeated int32 AccountTraitToAdd = 1 [packed = true];
+        repeated int32 AccountTraitToRemove = 2 [packed = true];
+    }
+    
+    optional ClientData ClientData = 100;
+    optional UserContext UserContext = 101;
+    optional bool KeepExistingSessions = 16 [default = false];
+    
+    reserved 6;
+}
+
+message UpdateUserResponse {
+    required int32 RetCode = 1;
+    optional string DebugInfo = 99;
+    optional ClientUserInfo NewUserInfo = 2;
+    optional bytes CloudToken = 3;
+    
+    extend gaia_storage_access.UpdateUserRequest {
+        optional UpdateUserResponse microservice_request_extension = 455208407;
+    }
+}
+
+message GaiaFriendConst {
+    optional string CaribouDomain = 1 [default = "gmail.com"];
+    optional string GoogleMailDomain = 2 [default = "googlemail.com"];
+    optional string ProdAccountDomain = 5 [default = "prod.google.com"];
+    optional string SidewinderDomain = 6 [default = "1ucrs.com"];
+    optional string NSPrefixUnclaimed = 4 [default = "/cu/"];
+    optional string NSPrefixPlaceholder = 7 [default = "/ph/"];
+    
+    reserved 3;
+    
+    enum Const {
+        AUTHENTICATION_TIMEOUT = 1209600;
+        AUTH_TOKEN_TIMEOUT = 120;
+        REAUTH_TIMEOUT = 180;
+        MIN_AUTH_LOG_INTERVAL = 3600;
+    }
+    
+    enum InfConst {
+        MAX_AUTH_TIMEOUT_FOR_INF_SESSION = 3600;
+    }
+}
+
+message LookupCapabilityRequest {
+    optional string CapabilityString = 2;
+    optional ClientData ClientData = 100;
+    optional UserContext UserContext = 101;
+    
+    reserved 1;
+}
+
+message LookupCapabilityResponse {
+    required int32 RetCode = 1;
+    optional string DebugInfo = 99;
+    optional GaiaCapabilityRecord Capability = 2;
+    
+    reserved 3;
+    
+    extend gaia_storage_access.LookupCapabilityTokenRequest {
+        optional LookupCapabilityResponse microservice_request_extension = 327839634;
+    }
+}
+
+message CheckCanonicalEmailRequest {
+    required string Email = 1;
+    optional QualifiedNameInfo QualifiedName = 3;
+    
+    optional EmailChecksEnum EmailChecks = 2 [default = NONE];
+    enum EmailChecksEnum {
+        NONE = 0;
+        GAIA_EMAIL = 1;
+        CARIBOU_USERNAME = 2;
+    }
+    
+    optional ClientData ClientData = 100;
+    optional UserContext UserContext = 101;
+}
+
+message CheckCanonicalEmailResponse {
+    required int32 RetCode = 1;
+    
+    optional ErrorCodeEnum ErrorCode = 2 [default = NONE];
+    enum ErrorCodeEnum {
+        NONE = 0;
+        NOT_GMAIL_DOMAIN = 1;
+        TOO_SMALL = 2;
+        TOO_BIG = 3;
+        NUMBERS_ONLY = 4;
+        ILLEGAL_CHARS = 5;
+        SEPARATOR_FIRST = 6;
+        SEPARATOR_LAST = 7;
+        CONSECUTIVE_SEPARATORS = 8;
+        BAD_WORD = 9;
+        RESERVED = 10;
+        EMPTY = 11;
+        NO_AT_SIGN = 12;
+        NO_USER = 13;
+        NO_DOMAIN = 14;
+        TOO_MANY_AT_SIGNS = 15;
+        INVALID_DOMAIN = 16;
+    }
+    
+    optional group ExistingAccount = 3 {
+        optional bool ExactMatch = 4;
+        optional bool IsUser = 5;
+        optional bool IsOffNetwork = 9;
+        optional int64 LastLoginTime = 6;
+        optional bool HasLoggedIn = 7;
+        optional bool IsDeleted = 8;
+        
+        optional CollabAccountInfo ExistingCollabAccount = 10;
+        message CollabAccountInfo {
+            optional uint64 UserID = 1;
+        }
+    }
+    
+    optional EmailAvailabilityEnum email_availability = 11;
+    enum EmailAvailabilityEnum {
+        UNSPECIFIED = 0;
+        EMAIL_UNAVAILABLE = 1;
+        EMAIL_AVAILABLE = 2;
+    }
+    
+    optional string DebugInfo = 99;
+    
+    extend gaia_storage_access.CheckCanonicalEmailRequest {
+        optional CheckCanonicalEmailResponse microservice_request_extension = 395802975;
+    }
+}
+
+enum PasswordTypeEnum {
+    PASSWORD_TYPE_UNSPECIFIED = 0;
+    PLAINTEXT = 1;
+    HASHED = 2;
+    HASHED_AND_ENCRYPTED = 3;
+}

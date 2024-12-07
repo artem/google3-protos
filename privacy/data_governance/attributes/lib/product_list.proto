@@ -1,0 +1,10 @@
+syntax = "editions";
+
+package privacy.data_governance.attributes;
+
+option java_multiple_files = true;
+option java_package = "com.google.privacy.datagovernance.attributes";
+
+message ProductList {
+    repeated int32 product_ids = 1;
+}

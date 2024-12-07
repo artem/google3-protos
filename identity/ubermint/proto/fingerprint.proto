@@ -1,0 +1,15 @@
+syntax = "editions";
+
+package ubermint;
+
+import "identity/ubermint/proto/universe.proto";
+import "storage/datapol/annotations/proto/semantic_annotations.proto";
+
+option java_multiple_files = true;
+option java_outer_classname = "FingerprintProto";
+option java_package = "com.google.identity.ubermint";
+
+message Fingerprint {
+    optional UberMintUniverse universe = 1;
+    optional bytes id = 2;
+}

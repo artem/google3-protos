@@ -1,0 +1,11 @@
+syntax = "editions";
+
+package privacy.context;
+
+enum RampupEnablementStatus {
+    RAMPUP_ENABLEMENT_STATUS_UNSPECIFIED = 0;
+    CONSENT_INFO_PRESENT = 1;
+    NO_ROLLOUT_THRESHOLD = 2;
+    PRIORITY_EXCEEDS_MAX_THRESHOLD = 3;
+    GLOBAL_RAMPUP_SET = 4;
+}

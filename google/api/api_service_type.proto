@@ -1,0 +1,19 @@
+syntax = "proto3";
+
+package google.api;
+
+import "google/api/visibility.proto";
+
+option objc_class_prefix = "GAPI";
+option go_package = "google.golang.org/genproto/googleapis/api/serviceconfig;serviceconfig";
+option java_multiple_files = true;
+option java_outer_classname = "ApiServiceTypeProto";
+option java_package = "com.google.api";
+
+enum ApiServiceType {
+    API_SERVICE_TYPE_UNSPECIFIED = 0;
+    API_PRIVATE = 1;
+    API_CORP = 2;
+    API_HYBRID = 3;
+    API_PUBLIC = 4;
+}

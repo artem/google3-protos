@@ -1,0 +1,11 @@
+syntax = "editions";
+
+package gaia_data;
+
+import "storage/datapol/annotations/proto/semantic_annotations.proto";
+
+message EmailWordsDatabaseProto {
+    optional bytes bad_words = 1;
+    repeated string bad_words_to_match = 2;
+    optional bytes canonicalized_reserved_words = 3;
+}

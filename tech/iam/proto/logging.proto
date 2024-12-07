@@ -22,10 +22,10 @@ message MethodLogOption {
     bool logged = 1;
 }
 
-extend proto2.FieldOptions {
+extend .proto2.FieldOptions {
     FieldLogOption log_option = 139642647;
 }
 
-extend proto2.MethodOptions {
+extend .proto2.MethodOptions {
     MethodLogOption method_log_option = 139642647;
 }

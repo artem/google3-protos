@@ -1,0 +1,14 @@
+syntax = "proto3";
+
+package security.data_access;
+
+import "logs/proto/logs_annotations/logs_annotations.proto";
+
+option java_multiple_files = true;
+option java_package = "com.google.security.data_access.controller.client";
+
+enum CloudPlatform {
+    CLOUD_PLATFORM_UNSPECIFIED = 0;
+    CLOUD_POLICY_ENFORCEMENT = 1;
+    CLOUD_CONTROL_FRONTEND = 2;
+}

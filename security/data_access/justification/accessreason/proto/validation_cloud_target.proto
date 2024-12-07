@@ -1,0 +1,22 @@
+syntax = "proto2";
+
+package security.data_access.justification.accessreason.proto;
+
+import "security/data_access/controller/public/cloud_context.proto";
+import "storage/datapol/annotations/proto/semantic_annotations.proto";
+import "tech/iam/proto/iam.proto";
+
+option java_multiple_files = true;
+option java_package = "com.google.security.data_access.justification.accessreason.proto";
+
+message IamRequestTargetInfo {
+    optional tech.iam.SYSContext sys_context = 1;
+    optional tech.iam.PolicyName policy_name = 2;
+    repeated string permissions = 3;
+    optional CloudPlatform cloud_platform = 4;
+    optional string api_service_name = 5;
+}
+
+message IamRequestTargetInfoList {
+    repeated IamRequestTargetInfo iam_request_target_infos = 1;
+}

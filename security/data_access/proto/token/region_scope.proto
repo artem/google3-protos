@@ -1,0 +1,12 @@
+syntax = "editions";
+
+package security.data_access;
+
+option java_multiple_files = true;
+option java_package = "com.google.security.data_access.proto";
+
+enum DataAccessRegionScope {
+    DATA_ACCESS_REGION_SCOPE_UNSPECIFIED = 0;
+    DATA_ACCESS_REGION_SCOPE_NONE = 1;
+    DATA_ACCESS_REGION_SCOPE_PROD_REGION = 2;
+}

@@ -1,0 +1,22 @@
+syntax = "editions";
+
+package ubermint;
+
+import "storage/datapol/annotations/proto/semantic_annotations.proto";
+
+option java_multiple_files = true;
+option java_outer_classname = "UberMintProtoFile";
+option java_package = "com.google.identity.ubermint";
+
+message UberMint {
+    optional bytes payload = 1;
+    optional bytes signature = 2;
+    optional bytes unsigned_platform_payload = 3 [ctype = CORD];
+    optional bytes loggable_unsigned_platform_payload = 4 [ctype = CORD];
+    optional string signature_realm_hint = 31;
+    optional bytes darklaunch_signature = 32;
+    optional int32 signature_version = 33;
+    repeated UberMint linked_ubermints = 34;
+    
+    reserved 5, 6 to 30;
+}

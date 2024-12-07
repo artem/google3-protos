@@ -1,0 +1,139 @@
+syntax = "proto2";
+
+package security.data_access.admin;
+
+import "google/protobuf/duration.proto";
+import "security/data_access/controller/public/common_platform.proto";
+import "storage/datapol/annotations/proto/semantic_annotations.proto";
+
+option java_multiple_files = true;
+option java_package = "com.google.security.data_access.admin";
+
+message AdministrativeAccessRoles {
+    repeated string admins = 1;
+    repeated string emergency_admins = 2;
+    repeated string mpa_reviewers = 3;
+    repeated string mpa_emergency_reviewers = 4;
+}
+
+message AdministrativeAccessOptions {
+    optional RoleChecks role_checks = 2;
+    enum RoleChecks {
+        ROLE_CHECKS_DEFAULT = 0;
+        ROLE_CHECKS_ALL = 1;
+        ROLE_CHECKS_EMERGENCY_ONLY = 2;
+        ROLE_CHECKS_NONE = 3;
+    }
+    
+    optional EnforcementMode enforcement_mode = 3;
+    enum EnforcementMode {
+        ENFORCEMENT_MODE_DEFAULT = 0;
+        ENFORCEMENT_MODE_DARK_LAUNCH = 1;
+        ENFORCEMENT_MODE_METRICS_ONLY = 2 [deprecated = true];
+        ENFORCEMENT_MODE_DRY_RUN = 3;
+    }
+    
+    optional FailClosedGinLogBehavior fail_closed_gin_log_behavior = 4;
+    enum FailClosedGinLogBehavior {
+        FAIL_CLOSED_GIN_LOG_BEHAVIOR_UNSET = 0;
+        FAIL_CLOSED_GIN_LOG_BEHAVIOR_CLIENT_OBLIGATION = 1;
+        FAIL_CLOSED_GIN_LOG_BEHAVIOR_REQUIRED = 2;
+    }
+    
+    optional CommonPlatform common_platform = 5;
+    
+    reserved 1;
+}
+
+message BreakGlassMpaConfig {
+    optional MpaConfig.ReviewerCombinationLogic reviewer_combination_logic = 1;
+    repeated string preferred_rotations = 2;
+    repeated string preferred_user_reviewers = 3;
+    optional string review_guidance = 4;
+    optional google.protobuf.Duration approval_cache_duration = 5;
+    optional google.protobuf.Duration failed_cache_duration = 6;
+    optional google.protobuf.Duration max_mpa_pending_duration = 7;
+}
+
+message MpaConfig {
+    optional ReviewerCombinationLogic reviewer_combination_logic = 1;
+    enum ReviewerCombinationLogic {
+        REVIEWER_COMBINATION_LOGIC_UNSET = 0;
+        APPROVAL_FROM_ANY = 1;
+        APPROVAL_FROM_EACH = 2;
+    }
+    
+    repeated string preferred_rotations = 2;
+    repeated string preferred_user_reviewers = 3;
+    optional string review_guidance = 4;
+    optional google.protobuf.Duration approval_cache_duration = 5;
+    optional google.protobuf.Duration failed_cache_duration = 6;
+    optional google.protobuf.Duration max_mpa_pending_duration = 7;
+}
+
+message AdministrativeAccessPolicy {
+    optional BaselineControls baseline_controls = 10;
+    enum BaselineControls {
+        BASELINE_CONTROLS_AUTOMATIC = 0;
+        BASELINE_CONTROLS_INPUT_PRESENCE = 1;
+        BASELINE_CONTROLS_BREAK_GLASS_ONLY = 2;
+    }
+    
+    optional BreakGlassConfig break_glass_config = 9;
+    message BreakGlassConfig {
+        optional BreakGlassMpaConfig require_mpa = 1;
+        optional bool require_omg = 2;
+    }
+    
+    oneof non_unilateral_requirement {
+        MpaConfig require_mpa = 1;
+    }
+    
+    reserved 2;
+}
+
+message AdministrativeAccessControl {
+    optional AdministrativeAccessRoles roles = 1;
+    optional AdministrativeAccessOptions options = 2;
+    optional AdministrativeAccessPolicy policy = 3;
+}
+
+message OperationsLimitConfig {
+    optional int32 concurrent_operations_limit = 1;
+    optional int32 per_user_concurrent_operations_limit = 2;
+}
+
+message AuthorizationBackendConfiguration {
+    optional string authorization_service = 1;
+    optional google.protobuf.Duration authorization_service_connection_timeout = 2;
+}
+
+message ActorRateLimitConfig {
+    option deprecated = true;
+    optional string quota_server_specs = 1;
+    
+    optional RateLimitGroup rate_limit_group = 2;
+    enum RateLimitGroup {
+        UNSET = 0;
+        DEFAULT = 1;
+        TEST = 2;
+        TEST_FAILURE = 3;
+    }
+    
+    optional bool disable_rate_limit_for_test = 3;
+}
+
+message AdministrationConfiguration {
+    optional bool enabled = 1;
+    optional OperationsLimitConfig operations_limit_config = 2 [deprecated = true];
+    optional AuthorizationBackendConfiguration auth_backend_config = 3;
+    optional ActorRateLimitConfig actor_rate_limit_config = 4 [deprecated = true];
+    
+    optional SecurityContextEnvironment security_context_environment = 5;
+    enum SecurityContextEnvironment {
+        DEFAULT_TO_DATA_ACCESS_CONTROLLER_ENVIRONMENT = 0;
+        ENV_PROD = 1;
+        ENV_TEST = 2;
+        ENV_FAKE = 3;
+    }
+}

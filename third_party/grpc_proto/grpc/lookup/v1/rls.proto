@@ -27,7 +27,9 @@ message RouteLookupRequest {
     map<string, string> key_map = 4;
     repeated google.protobuf.Any extensions = 7;
     
-    reserved 1, 2, "server", "path";
+    reserved 1, 2;
+    
+    reserved "server", "path";
 }
 
 message RouteLookupResponse {
@@ -35,5 +37,7 @@ message RouteLookupResponse {
     string header_data = 2;
     repeated google.protobuf.Any extensions = 4;
     
-    reserved 1, "target";
+    reserved 1;
+    
+    reserved "target";
 }

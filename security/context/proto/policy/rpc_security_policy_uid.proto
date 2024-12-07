@@ -1,0 +1,10 @@
+syntax = "proto2";
+
+package security.context;
+
+option java_multiple_files = true;
+option java_package = "com.google.security.context";
+
+message RpcSecurityPolicyUID {
+    optional string policy_proto_sha256_base64 = 1;
+}

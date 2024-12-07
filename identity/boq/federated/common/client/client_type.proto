@@ -1,0 +1,20 @@
+syntax = "proto2";
+
+package id.federated;
+
+option java_multiple_files = true;
+option java_package = "com.google.identity.boq.federated.common.client";
+
+enum ClientType {
+    CLIENT_TYPE_UNSPECIFIED = 0;
+    WEB = 1;
+    NATIVE = 2;
+    NATIVE_ANDROID = 3;
+    NATIVE_IOS = 4;
+    NATIVE_CHROME = 5;
+    NATIVE_DEVICE = 6;
+    NATIVE_SONY = 7;
+    CONNECTED_DEVICE = 10;
+    NATIVE_UNIVERSAL_WINDOWS_PLATFORM = 11;
+    NATIVE_DESKTOP = 12;
+}

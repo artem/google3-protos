@@ -1,0 +1,12 @@
+syntax = "editions";
+
+package gaia_data;
+
+import "storage/datapol/annotations/proto/semantic_annotations.proto";
+
+option java_multiple_files = true;
+
+message ExperimentGroupInfo {
+    optional int64 update_timestamp_ms = 1;
+    repeated int64 group_ids = 2;
+}

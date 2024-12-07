@@ -1,0 +1,26 @@
+syntax = "editions";
+
+package cloud.identity.numeric_id.proto;
+
+option java_multiple_files = true;
+option java_package = "com.google.cloud.identity.numericid.proto";
+
+message IdBlock {
+    optional uint64 start_inclusive = 1;
+    optional uint64 end_exclusive = 2;
+}
+
+message IdUniverseShard {
+    optional string name = 1;
+    repeated IdBlock id_blocks = 3;
+}
+
+message IdUniverse {
+    optional string name = 1;
+    optional IdBlock id_range = 2;
+    repeated IdUniverseShard id_shards = 3;
+}
+
+message IdMultiverse {
+    repeated IdUniverse id_universes = 1;
+}

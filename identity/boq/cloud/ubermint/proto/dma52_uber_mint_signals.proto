@@ -1,0 +1,15 @@
+syntax = "editions";
+
+package identity_ubermint;
+
+import "storage/datapol/annotations/proto/semantic_annotations.proto";
+
+option java_multiple_files = true;
+option java_outer_classname = "Dma52UberMintSignalsProto";
+option java_package = "com.google.identity.boq.cloud.ubermint.proto";
+
+message Dma52UberMintSignals {
+    optional int32 dma52_hard_enforcement_enabled_up_to_rollout_bucket = 1;
+    optional bool should_enable_hard_enforcement = 2;
+    optional bool should_enable_discovery_early_enforcement = 3;
+}

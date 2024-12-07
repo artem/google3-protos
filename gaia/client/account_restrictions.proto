@@ -1,0 +1,48 @@
+syntax = "proto3";
+
+package gaia_client;
+
+import "gaia/auth/restrictions/proto/reasons.proto";
+import "gaia/auth/restrictions/proto/services.proto";
+import "identity/accesscontrol/credentials/proto/session_interruption_handling_params.proto";
+import "storage/datapol/annotations/proto/semantic_annotations.proto";
+
+option cc_enable_arenas = true;
+option java_multiple_files = true;
+option java_package = "com.google.gaia.client.proto.proto1api";
+
+message ScopeCodeSet {
+    repeated int32 scopes = 1;
+}
+
+message AccountRestrictionsServiceSet {
+    repeated gaia_auth.AccountRestrictionsService services = 1;
+}
+
+message AccountRestrictor {
+    oneof restrictor {
+        gaia_auth.AccountRestrictionsService service = 1;
+        ScopeCodeSet scopes = 2;
+        AccountRestrictionsServiceSet services = 3;
+    }
+}
+
+message AccountRestrictionsStatus {
+    Verdict verdict = 1;
+    enum Verdict {
+        ALLOWED = 0;
+        ACCOUNT_RESTRICTED = 1;
+        CONTEXT_AWARE_ACCESS_RESTRICTED = 2;
+        PRODUCT_DISABLED = 3;
+    }
+    
+    string error_url = 2 [deprecated = true];
+    string error_status = 5;
+    bool should_redirect = 6;
+    bool account_restrictions_enforced = 3;
+    repeated gaia_auth.RestrictionReason restriction_reasons = 7;
+    
+    oneof _session_interruption_handling_params {
+        identity_accesscontrol.SessionInterruptionHandlingParams session_interruption_handling_params = 8;
+    }
+}

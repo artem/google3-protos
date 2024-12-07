@@ -1,0 +1,18 @@
+syntax = "proto2";
+
+package identity_checkpoint;
+
+import "net/proto2/proto/descriptor.proto";
+import "storage/datapol/annotations/proto/semantic_annotations.proto";
+
+option java_multiple_files = true;
+option java_outer_classname = "TemplatePathProto";
+option java_package = "com.google.identity.checkpoint.labels.proto.sessioninterruption";
+
+extend .proto2.FieldOptions {
+    optional string template_path_prefix = 535800941;
+}
+
+extend .proto2.EnumValueOptions {
+    optional string template_path = 525000036;
+}

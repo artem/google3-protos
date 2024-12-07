@@ -1,0 +1,10 @@
+syntax = "proto3";
+
+package google.identity.type;
+
+import public "gaia/mint/protos/core/mint_type.proto";
+import "logs/proto/logs_annotations/logs_annotations.proto";
+
+option java_multiple_files = true;
+option java_outer_classname = "MintTypeProto";
+option java_package = "com.google.identity.type";

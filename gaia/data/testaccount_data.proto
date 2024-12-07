@@ -1,0 +1,57 @@
+syntax = "proto2";
+
+package gaia_data;
+
+import "frameworks/testing/rpcreplay/processors/rpc_replay_field_option.proto";
+import "google/protobuf/timestamp.proto";
+import "storage/datapol/annotations/proto/semantic_annotations.proto";
+
+option cc_enable_arenas = true;
+option java_package = "com.google.gaia.data.proto.proto1api";
+
+message SmartReauthOtaBehavior {
+    optional SmartReauthOtaFrictionLevel smart_reauth_ota_friction_level = 1;
+    enum SmartReauthOtaFrictionLevel {
+        FRICTION_LEVEL_OVERRIDE_UNSPECIFIED_NO_CHALLENGE = 0;
+        ALWAYS_CHALLENGE_FAIL_OPEN = 1;
+        ALWAYS_CHALLENGE_FAIL_CLOSED = 2;
+    }
+}
+
+message TestAccountBehavior {
+    optional bool enable_login_abuse_check = 1;
+    optional bool enable_reauth_flow = 2;
+    optional bool enable_captcha = 3;
+    optional bool enable_password_flow = 4;
+    
+    optional PasswordLifetime password_lifetime = 5;
+    enum PasswordLifetime {
+        PASSWORD_LIFETIME_UNSPECIFIED = 0;
+        ONE_DAY = 1;
+        ONE_WEEK = 2;
+        INFINITE = 3;
+    }
+    
+    optional bool enable_extended_oauth_token_lifetime = 6;
+    optional bool enable_password_change = 7;
+    optional bool exempt_from_age_inference_computation = 8;
+    
+    optional SmartReauthFrictionLevel smart_reauth_friction_level = 9 [deprecated = true];
+    enum SmartReauthFrictionLevel {
+        FRICTION_LEVEL_OVERRIDE_UNSPECIFIED_NO_CHALLENGE = 0;
+        ALWAYS_CHALLENGE_FAIL_OPEN = 1;
+        ALWAYS_CHALLENGE_FAIL_CLOSED = 2;
+    }
+    
+    optional SmartReauthOtaBehavior smart_reauth_ota_behavior = 10;
+    
+    optional CredentialLifetime credential_lifetime = 11;
+    enum CredentialLifetime {
+        CREDENTIAL_LIFETIME_UNSPECIFIED = 0;
+        CR_ONE_DAY = 1;
+        SEVEN_DAYS = 2;
+        NINETY_DAYS = 3;
+    }
+    
+    optional google.protobuf.Timestamp lifetime_valid_until_time = 12;
+}

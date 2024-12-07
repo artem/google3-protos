@@ -1,0 +1,15 @@
+syntax = "editions";
+
+package security.authorization.dynamic.proto;
+
+import "security/authorization/approvals/proto/request_authorization.proto";
+
+message MpaAccessReviewMetadata {
+    optional string requested_resource_name = 1;
+    optional string requested_resource_label = 2;
+    optional string review_guidance = 5;
+}
+
+extend security_approvals.GetApprovalRequest {
+    repeated MpaAccessReviewMetadata metadata = 389232545;
+}

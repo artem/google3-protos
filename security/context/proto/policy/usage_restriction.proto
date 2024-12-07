@@ -12,10 +12,10 @@ message UsageRestriction {
     optional string note = 2;
 }
 
-extend proto2.EnumValueOptions {
+extend .proto2.EnumValueOptions {
     repeated UsageRestriction enum_usage_restrictions = 401461094;
 }
 
-extend proto2.FieldOptions {
+extend .proto2.FieldOptions {
     repeated UsageRestriction field_usage_restrictions = 401461094;
 }

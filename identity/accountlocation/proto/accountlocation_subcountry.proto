@@ -1,0 +1,65 @@
+syntax = "proto2";
+
+package identity_accountlocation.subcountrycode;
+
+import "storage/datapol/annotations/proto/semantic_annotations.proto";
+
+option java_multiple_files = true;
+option java_outer_classname = "AccountLocationSubcountryProto";
+option java_package = "com.google.identity.accountlocation.proto";
+
+enum AccountLocationSubcountry {
+    ACCOUNT_LOCATION_SUBCOUNTRY_UNSPECIFIED = 0;
+    SUBCOUNTRY_ZZ = 1;
+    SUBCOUNTRY_US_XX = 100;
+    SUBCOUNTRY_US_AL = 101;
+    SUBCOUNTRY_US_AK = 102;
+    SUBCOUNTRY_US_AZ = 103;
+    SUBCOUNTRY_US_AR = 104;
+    SUBCOUNTRY_US_CA = 105;
+    SUBCOUNTRY_US_CO = 106;
+    SUBCOUNTRY_US_CT = 107;
+    SUBCOUNTRY_US_DE = 108;
+    SUBCOUNTRY_US_FL = 109;
+    SUBCOUNTRY_US_GA = 110;
+    SUBCOUNTRY_US_HI = 111;
+    SUBCOUNTRY_US_ID = 112;
+    SUBCOUNTRY_US_IL = 113;
+    SUBCOUNTRY_US_IN = 114;
+    SUBCOUNTRY_US_IA = 115;
+    SUBCOUNTRY_US_KS = 116;
+    SUBCOUNTRY_US_KY = 117;
+    SUBCOUNTRY_US_LA = 118;
+    SUBCOUNTRY_US_ME = 119;
+    SUBCOUNTRY_US_MD = 120;
+    SUBCOUNTRY_US_MA = 121;
+    SUBCOUNTRY_US_MI = 122;
+    SUBCOUNTRY_US_MN = 123;
+    SUBCOUNTRY_US_MS = 124;
+    SUBCOUNTRY_US_MO = 125;
+    SUBCOUNTRY_US_MT = 126;
+    SUBCOUNTRY_US_NE = 127;
+    SUBCOUNTRY_US_NV = 128;
+    SUBCOUNTRY_US_NH = 129;
+    SUBCOUNTRY_US_NJ = 130;
+    SUBCOUNTRY_US_NM = 131;
+    SUBCOUNTRY_US_NY = 132;
+    SUBCOUNTRY_US_NC = 133;
+    SUBCOUNTRY_US_ND = 134;
+    SUBCOUNTRY_US_OH = 135;
+    SUBCOUNTRY_US_OK = 136;
+    SUBCOUNTRY_US_OR = 137;
+    SUBCOUNTRY_US_PA = 138;
+    SUBCOUNTRY_US_RI = 139;
+    SUBCOUNTRY_US_SC = 140;
+    SUBCOUNTRY_US_SD = 141;
+    SUBCOUNTRY_US_TN = 142;
+    SUBCOUNTRY_US_TX = 143;
+    SUBCOUNTRY_US_UT = 144;
+    SUBCOUNTRY_US_VT = 145;
+    SUBCOUNTRY_US_VA = 146;
+    SUBCOUNTRY_US_WA = 147;
+    SUBCOUNTRY_US_WV = 148;
+    SUBCOUNTRY_US_WI = 149;
+    SUBCOUNTRY_US_WY = 150;
+}

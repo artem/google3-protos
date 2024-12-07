@@ -1,0 +1,28 @@
+syntax = "editions";
+
+package security.data_access;
+
+import "production/tpc/change_management/equivalence/proto/annotation.proto";
+import "security/credentials/proto/credential_origin.proto";
+import "security/credentials/proto/data_access_token_scope.proto";
+import "security/data_access/proto/token/region_scope.proto";
+import "third_party/boundary_proxy/proto_compare/annotation.proto";
+import "third_party/java/protobuf/java_features.proto";
+import "third_party/protobuf/cpp_features.proto";
+
+option java_multiple_files = true;
+option java_outer_classname = "DatAuthorityProtoFile";
+option java_package = "com.google.security.data_access.proto";
+
+message DatAuthority {
+    optional credentials.CredentialOrigin credential_origin = 6;
+    optional bytes effective_authority = 3;
+    optional string original_requester_realm = 4;
+    optional DataAccessRegionScope region_scope = 5;
+    
+    reserved 1, 2;
+    
+    extend credentials.DataAccessTokenScope {
+        optional DatAuthority dat_scope_extension = 80357671;
+    }
+}

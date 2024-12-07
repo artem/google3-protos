@@ -34,6 +34,7 @@ message CommandLineOptions {
     uint64 base_id = 1;
     bool use_dynamic_base_id = 31;
     bool skip_hot_restart_on_no_parent = 39;
+    bool skip_hot_restart_parent_stats = 40;
     string base_id_path = 32;
     uint32 concurrency = 2;
     string config_path = 3;
@@ -86,5 +87,7 @@ message CommandLineOptions {
     bool enable_core_dump = 37;
     repeated string stats_tag = 38;
     
-    reserved 12, 20, 21, 29, "max_stats", "max_obj_name_len", "bootstrap_version";
+    reserved 12, 20, 21, 29;
+    
+    reserved "max_stats", "max_obj_name_len", "bootstrap_version";
 }

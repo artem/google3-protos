@@ -72,6 +72,6 @@ message OperationInfo {
     string metadata_type = 2;
 }
 
-extend proto2.MethodOptions {
+extend .proto2.MethodOptions {
     OperationInfo operation_info = 1049;
 }

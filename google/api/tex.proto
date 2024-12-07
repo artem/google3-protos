@@ -17,8 +17,8 @@ message Tex {
     ETag etag = 3;
     repeated StrictParsingRule strict_parsing_rules = 4;
     repeated TemplateSource template_sources = 900;
-    proto2.FileDescriptorSet frontend_proto_descriptors = 901;
-    proto2.FileDescriptorSet backend_proto_descriptors = 902;
+    .proto2.FileDescriptorSet frontend_proto_descriptors = 901;
+    .proto2.FileDescriptorSet backend_proto_descriptors = 902;
 }
 
 message StrictParsingRule {

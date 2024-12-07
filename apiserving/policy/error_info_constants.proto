@@ -1,0 +1,26 @@
+syntax = "editions";
+
+package apiserving.policy;
+
+option java_multiple_files = true;
+option java_outer_classname = "ErrorInfoConstantsProto";
+option java_package = "com.google.apiserving.policy";
+
+message IamPermissionDeniedConstants {
+    optional string reason = 1 [default = "IAM_PERMISSION_DENIED"];
+    
+    message MetadataKeys {
+        optional string resource = 1 [default = "resource"];
+        optional string permission = 2 [default = "permission"];
+    }
+}
+
+message CustomOrgPolicyConstants {
+    optional string reason = 1 [default = "CUSTOM_ORG_POLICY_VIOLATION"];
+    optional string error_id = 2 [default = "error_id"];
+    
+    message MetadataKeys {
+        optional string resource = 1 [default = "resource"];
+        optional string custom_constraints = 2 [default = "customConstraints"];
+    }
+}

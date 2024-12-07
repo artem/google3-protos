@@ -1,0 +1,57 @@
+syntax = "proto2";
+
+package gaia_storage_access;
+
+import "gaia/client/cloud_propagation.proto";
+import "identity/backend/common/legacy/recorded_rpc.proto";
+import "identity/gaia/storage_access/change_notification/change_notification_options.proto";
+import "net/compass/proto/routing_annotations.proto";
+import "storage/datapol/annotations/proto/semantic_annotations.proto";
+
+option java_multiple_files = true;
+option java_outer_classname = "CondUpdateServiceDataProto";
+option java_package = "com.google.gaia.storageaccess.proto";
+
+message GaiaServiceKeyData {
+    optional string key = 1;
+    optional bytes value = 2;
+    optional bytes bytes = 3;
+    optional int32 service_id = 4;
+}
+
+message CondUpdateServiceDataRequest {
+    optional int64 user_id = 1;
+    optional int32 service_id = 2;
+    repeated GaiaServiceKeyData condition = 3;
+    repeated GaiaServiceKeyData update = 4;
+    optional bool deleted_ok = 5;
+    optional bool get_condition_bytes = 6 [default = false];
+    optional gaia_client.CloudPropagation cloud_propagation = 7;
+    optional ChangeNotificationOptions change_notification_options = 8;
+    optional identity_backend.legacy.RecordedRpcSequence recorded_rpc_sequence = 102;
+    
+    extensions 1000;
+    
+    reserved 100, 101;
+}
+
+message CondUpdateServiceDataResponse {
+    optional int64 user_id = 2;
+    
+    repeated FailedCondition failed_condition = 3;
+    message FailedCondition {
+        optional GaiaServiceKeyData current_data = 4;
+        optional int32 original_condition_index = 5;
+    }
+    
+    repeated Result results = 6;
+    message Result {
+        optional int32 service_id = 7;
+        optional string key = 8;
+        optional string condition_bytes = 9;
+    }
+    
+    optional bytes cloud_token = 10;
+    
+    reserved 1, 99;
+}

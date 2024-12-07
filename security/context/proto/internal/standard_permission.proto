@@ -1,0 +1,27 @@
+syntax = "proto2";
+
+package security.context;
+
+import "net/proto2/proto/descriptor.proto";
+
+option java_multiple_files = true;
+option java_outer_classname = "StandardPermissionProto";
+option java_package = "com.google.security.context";
+
+enum StandardPermission {
+    UNSPECIFIED_STANDARD_PERMISSION = 0;
+    ASSERT_PEER_IDENTITY = 10;
+    USE_LOAS = 1;
+    USE_NORMAL_USER_EUC = 2;
+    USE_PROD_USER_EUC = 3;
+    USE_ENTERPRISE_ADMIN_EUC = 4;
+    USE_THINMINT = 9;
+    IMPERSONATE_NORMAL_USER = 5;
+    IMPERSONATE_PROD_USER = 6;
+    ACCESS = 7;
+    APPROVE_MPA = 8;
+}
+
+extend .proto2.EnumValueOptions {
+    optional string permission_name = 440503565;
+}

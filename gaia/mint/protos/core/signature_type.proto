@@ -1,0 +1,16 @@
+syntax = "proto3";
+
+package gaia_mint;
+
+import "storage/datapol/annotations/proto/semantic_annotations.proto";
+
+option objc_class_prefix = "GMNT";
+option java_multiple_files = true;
+option java_package = "com.google.gaia.mint";
+
+enum SignatureType {
+    GAIAMINT_SIGNATURE_DEFAULT = 0 [deprecated = true];
+    UBERMINT_SIGNATURE_V2 = 1 [deprecated = true];
+    UBERMINT_SIGNATURE_V3 = 2 [deprecated = true];
+    REALMIFIED_TINK_V6 = 3 [deprecated = true];
+}

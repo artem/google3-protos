@@ -1,0 +1,41 @@
+syntax = "editions";
+
+package gaia_mint;
+
+import "gaia/mint/protos/mint.proto";
+import "google/identity/type/mint_type.proto";
+import "security/credentials/proto/authenticator.proto";
+import "security/credentials/proto/credential_origin.proto";
+import "storage/datapol/annotations/proto/semantic_annotations.proto";
+import "third_party/java/protobuf/java_features.proto";
+import "third_party/protobuf/cpp_features.proto";
+
+option objc_class_prefix = "GMNT";
+option java_multiple_files = true;
+option java_outer_classname = "GaiaMintProtos";
+option java_package = "com.google.gaia.mint";
+
+message DatInfo {
+    optional security.credentials.DataAccessTokenLoggingParams logging_params = 2;
+    
+    reserved 1;
+}
+
+message GaiaMint {
+    optional google.identity.type.MintType mint_type = 13;
+    optional uint64 not_before_seconds = 1;
+    optional uint64 not_after_seconds = 2;
+    repeated int64 user_id = 21;
+    repeated GaiaMintUserCredential user = 3;
+    repeated InvalidGaiaMintUserCredential invalid_user = 7;
+    optional CookieInfo cookie_info = 4;
+    optional DatInfo dat_info = 5;
+    optional bool encrypted_channel = 10;
+    optional security.credentials.CredentialOrigin credential_origin = 11;
+    optional ScopeOptions scope_options = 12;
+    optional bytes service_identity_attributes = 18;
+    optional int32 dma52_hard_enforcement_enabled_up_to_rollout_bucket = 23;
+    optional bytes cloud_uber_mint_context = 20;
+    
+    reserved 6, 8, 9, 14 to 17, 19, 22;
+}

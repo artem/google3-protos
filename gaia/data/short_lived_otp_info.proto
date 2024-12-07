@@ -1,0 +1,15 @@
+syntax = "proto2";
+
+package gaia_data;
+
+import "logs/proto/logs_annotations/logs_annotations.proto";
+import "storage/datapol/annotations/proto/semantic_annotations.proto";
+
+option cc_enable_arenas = true;
+option java_package = "com.google.gaia.data.proto";
+
+enum ShortLivedOtpPurpose {
+    UNSPECIFIED_PURPOSE = 0;
+    EMBEDDED_IOS_SECURITY_KEY = 1;
+    SECURITY_KEY_ON_UNSUPPORTED_DEVICE = 2;
+}

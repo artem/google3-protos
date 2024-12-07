@@ -1,0 +1,14 @@
+syntax = "proto3";
+
+package google.identity.type;
+
+import "storage/datapol/annotations/proto/semantic_annotations.proto";
+
+option java_outer_classname = "AuditLoggableMintOuterClass";
+option java_package = "com.google.identity.type";
+
+message AuditLoggableMint {
+    bytes serialized_mint_data = 1;
+    string type_url = 2;
+    int64 primary_id = 3;
+}

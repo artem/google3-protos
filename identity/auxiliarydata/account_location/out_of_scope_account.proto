@@ -1,0 +1,13 @@
+syntax = "proto2";
+
+package identity_auxiliarydata;
+
+import "storage/datapol/annotations/proto/semantic_annotations.proto";
+
+option java_multiple_files = true;
+option java_outer_classname = "OutOfScopeAccountProto";
+option java_package = "com.google.identity.auxiliarydata.accountlocation";
+
+message AccountLocationOutOfScopeAccount {
+    
+}

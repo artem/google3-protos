@@ -1,0 +1,15 @@
+syntax = "proto2";
+
+package gaia_client;
+
+import "logs/proto/logs_annotations/logs_annotations.proto";
+import "storage/datapol/annotations/proto/semantic_annotations.proto";
+
+message CloudPropagation {
+    optional Type PropagationType = 1;
+    enum Type {
+        TYPE_UNSPECIFIED = 0;
+        SLOW = 1;
+        FAST = 2;
+    }
+}

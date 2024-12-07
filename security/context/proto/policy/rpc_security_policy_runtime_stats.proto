@@ -1,0 +1,224 @@
+syntax = "proto2";
+
+package security.context;
+
+import "google/protobuf/empty.proto";
+import "security/context/proto/endpoint.proto";
+import "security/context/proto/internal/standard_permission.proto";
+import "security/context/proto/rpc_security_policy_privacy_context_stats.proto";
+import "security/credentials/proto/authenticator.proto";
+import "storage/datapol/annotations/proto/semantic_annotations.proto";
+import "util/task/codes.proto";
+
+option java_multiple_files = true;
+option java_outer_classname = "RpcSecurityPolicyRuntimeStatsProtoFile";
+option java_package = "com.google.security.context";
+
+message IamCheck {
+    optional string rpc_service_name = 1;
+    optional string rpc_command = 2;
+    optional string action = 10;
+    optional string label = 11;
+    optional string policy_type = 3;
+    optional string permission = 4;
+    optional string principal = 5;
+    optional string authority_selector = 6;
+    optional string realm_class = 9;
+    optional string status = 7;
+    optional uint64 counter = 8;
+}
+
+message InvalidCred {
+    optional string rpc_service_name = 1;
+    optional string rpc_command = 2;
+    optional string label = 10;
+    optional string reason = 3;
+    optional string credential_type = 4;
+    optional string client_role = 5;
+    optional string client_jobname = 6;
+    optional fixed32 tonic_policy_id = 9;
+    optional uint64 counter = 7;
+    
+    reserved 8;
+}
+
+message OAuthOriginCred {
+    optional string rpc_service_name = 1;
+    optional string rpc_command = 2;
+    optional uint64 counter = 4;
+}
+
+message CloudIamPermission {
+    optional string rpc_service_name = 1;
+    optional string rpc_command = 2;
+    optional string cloud_iam_permission = 3;
+    optional string check_type = 5;
+    optional string resource_type = 6;
+    optional uint64 counter = 4;
+}
+
+message DeprecatedUsage {
+    optional string rpc_service_name = 1;
+    optional string rpc_command = 2;
+    
+    optional Type type = 3;
+    enum Type {
+        UNSPECIFIED_TYPE = 0;
+        TRUST_ESF_AUTHENTICATION = 1;
+        INVALID_AUTHORITY = 2;
+        IGNORED_SERVICE_CC = 3;
+    }
+    
+    optional uint64 counter = 4;
+}
+
+message PrivacyContextMetric {
+    optional string rpc_service_name = 1;
+    optional string rpc_command = 2;
+    optional RpcSPPrivacyContextMetric.PrivacyContextState type = 3;
+    optional int32 origin_associated_product_id = 5;
+    optional RpcSPPrivacyContextMetric.AuthenticatorType authenticator_type = 6;
+    optional RpcSPPrivacyContextMetric.ProcessingPurpose processing_purpose = 7;
+    optional RpcSPPrivacyContextMetric.AccountType account_type = 8;
+    optional uint64 counter = 4;
+}
+
+message DeprecatedFrameworkUsage {
+    optional string token = 1;
+}
+
+message PolicyRuntimeStats {
+    repeated IamCheck iam_check = 1;
+    repeated InvalidCred invalid_cred = 2;
+    repeated OAuthOriginCred oauth_origin_cred = 9;
+    repeated CloudIamPermission cloud_iam_permission = 3;
+    repeated DeprecatedUsage deprecated_usage = 4;
+    repeated DeprecatedFrameworkUsage deprecated_framework_usage = 5;
+    repeated RpcSecurityEventWithCounter rpc_security_event_with_counter = 6;
+    repeated PeerSecurityRealmMetric peer_security_realm = 7;
+    repeated PrivacyContextMetric privacy_context = 8;
+}
+
+message ProdAuthority {
+    optional string user_name = 1;
+    optional string authority_selector = 2;
+}
+
+message PeerAuthority {
+    oneof authority {
+        string prod_user_name = 1;
+        google.protobuf.Empty gaia_user = 2;
+    }
+}
+
+message ImpersonationAuthority {
+    optional ProdAuthority authority = 1;
+}
+
+message AuthenticatedUser {
+    oneof authority {
+        ProdAuthority prod_user = 1;
+        google.protobuf.Empty gaia_user = 2;
+        google.protobuf.Empty anonymous_user = 3;
+    }
+}
+
+message RpcRequestInfo {
+    optional PeerAuthority peer = 1;
+    optional ImpersonationAuthority impersonation_authority = 2;
+    optional AuthenticatedUser authenticated_user = 3;
+    optional Endpoint endpoint = 4;
+    optional credentials.AuthenticatorProto.AuthenticatorType euc_type = 5;
+    optional bool has_structured_justification = 6;
+    optional bool has_breakglass = 7;
+}
+
+message CredsPermission {
+    optional StandardPermission permission = 1;
+    optional StandardPermission fallback_permission = 2;
+}
+
+message PolicyEvaluationResult {
+    optional util.error.Code check_result = 1;
+    optional LoggingResult logging_result = 2;
+    optional util.error.Code aac_status = 3;
+}
+
+message RpcRequestEvalResult {
+    optional bool darklaunch = 1;
+    optional CredsPermission creds_permission = 2;
+    optional StandardPermission impersonation_permission = 3;
+    optional string authorization_permission = 4;
+    optional EucVerificationStatus euc_verification_result = 5;
+    optional PolicyEvaluationResult creds_check_result = 6;
+    optional PolicyEvaluationResult impersonation_check_result = 7;
+    optional PolicyEvaluationResult authz_check_result = 8;
+    optional RpcSecurityPolicyVersion rpcsp_version = 9;
+    optional RpcStatus rpc_result = 10;
+}
+
+message RpcSecurityEvent {
+    optional RpcRequestInfo request_info = 1;
+    optional RpcRequestEvalResult eval_result = 2;
+    optional RpcRequestEvalResult darklaunch_eval_result = 3;
+}
+
+message RpcSecurityEventMergedFields {
+    repeated string peer_security_realms = 1;
+}
+
+message RpcSecurityEventWithCounter {
+    optional bool exceed_cardinality = 1;
+    optional RpcSecurityEvent rpc_security_event = 2;
+    optional RpcSecurityEventMergedFields merged_fields = 3;
+    optional int64 request_count = 4;
+}
+
+message PeerSecurityRealmMetric {
+    optional string rpc_service_name = 1;
+    optional string rpc_command = 2;
+    optional string action = 3;
+    optional string peer_security_realm = 4;
+    
+    optional PeerType peer_type = 5;
+    enum PeerType {
+        PEER_TYPE_UNSPECIFIED = 0;
+        PROD_USER_PERSON = 1;
+        PROD_USER_NON_PERSON = 2;
+    }
+    
+    optional uint64 counter = 6;
+}
+
+enum RpcSecurityPolicyVersion {
+    UNSPECIFIED_RPC_SECURITY_POLICY_VERSION = 0;
+    MAPPING_EVALUATION = 1;
+    ENDPOINT_POLICY_EVALUATION = 2;
+}
+
+enum LoggingResult {
+    UNSPECIFIED_LOGGING_RESULT = 0;
+    NO_LOG = 1;
+    LOG_REQUIRED = 2;
+    LOG_REQUIRED_FAIL_CLOSE = 3;
+}
+
+enum RpcStatus {
+    UNSPECIFIED_RPC_STATUS = 0;
+    RPC_STATUS_OK = 1;
+    ACTIVE = 2;
+    DEADLINE_EXCEEDED = 3;
+    CLIENT_ERROR = 4;
+    SERVER_ERROR = 5;
+    UNREACHABLE = 6;
+    APPLICATION_ERROR = 7;
+    CANCELLED = 8;
+    STREAM_BROKEN = 9;
+}
+
+enum EucVerificationStatus {
+    UNSPECIFIED_EUC_VERIFICATION_STATUS = 0;
+    EUC_VERIFICATION_OK = 1;
+    EUC_EXPIRED = 2;
+    EUC_INVALID = 3;
+}

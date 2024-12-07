@@ -1,0 +1,76 @@
+syntax = "editions";
+
+package security.context;
+
+import "google/iam/v1/rule.proto";
+import "google/rpc/status.proto";
+import "logs/proto/data_access/admin_access_control_authorization_info.proto";
+import "security/authorization/iam/cloud_audit_record.proto";
+import "tech/iam/proto/iam_service.proto";
+
+option java_multiple_files = true;
+option java_outer_classname = "CPEContextProto";
+option java_package = "com.google.security.context";
+
+message CPEContext {
+    repeated Obligation obligations = 1;
+    message Obligation {
+        oneof type {
+            IAM iam = 1;
+        }
+        
+        enum IAM {
+            UNSPECIFIED = 0;
+            ENFORCE_IAM_CHECKS = 1;
+            PREVENT_IAM_CHECK = 2;
+        }
+    }
+    
+    optional IAM iam = 2;
+    message IAM {
+        optional google.rpc.Status status = 1;
+        
+        repeated PermissionResponse permission_responses = 4;
+        message PermissionResponse {
+            optional string permission = 1;
+            optional bool success = 2;
+            repeated google.iam.v1.LogConfig log_configs = 3;
+            optional bool justification_control_required = 4;
+        }
+        
+        oneof request {
+            tech.iam.CheckPolicyRequest check_request = 2;
+            tech.iam.BulkCheckPolicyRequest bulk_check_request = 3;
+        }
+    }
+    
+    optional CloudAuditLogging cloud_audit_logging = 3;
+    message CloudAuditLogging {
+        optional security_iam.CloudAuditRecordProto cloud_audit_record = 1;
+    }
+    
+    optional AdminAccess admin_access = 5;
+    message AdminAccess {
+        optional security.data_access.AuthDecision aac_decision = 1;
+    }
+    
+    optional ESF esf = 4;
+    message ESF {
+        repeated ResourceAuthzResult resource_authz_results = 1;
+        message ResourceAuthzResult {
+            optional string resource_name = 1;
+            optional google.rpc.Status status = 2;
+            
+            repeated PermissionResponse permission_responses = 3;
+            message PermissionResponse {
+                optional string permission = 1;
+                optional bool success = 2;
+            }
+        }
+    }
+    
+    optional BackendValidation backend_validation = 6;
+    message BackendValidation {
+        optional bool esf_config_validation_success = 1 [default = false];
+    }
+}

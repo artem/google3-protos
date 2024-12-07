@@ -1,0 +1,29 @@
+syntax = "proto2";
+
+package gaia_data;
+
+import "storage/datapol/annotations/proto/semantic_annotations.proto";
+
+option objc_class_prefix = "GAIA";
+option cc_enable_arenas = true;
+option java_package = "com.google.gaia.client.proto";
+
+message DasherSessionDetails {
+    oneof details {
+        DwdInfo dwd_info = 1;
+        PreapprovalInfo preapproval_info = 2;
+    }
+    
+    message DwdInfo {
+        optional int64 service_account_id = 1;
+    }
+    
+    message PreapprovalInfo {
+        optional SessionType session_type = 1;
+        enum SessionType {
+            UNSPECIFIED = 0;
+            EPHEMERAL = 1;
+            STATEFUL = 2 [deprecated = true];
+        }
+    }
+}

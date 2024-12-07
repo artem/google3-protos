@@ -1,0 +1,302 @@
+syntax = "proto2";
+
+package gaia_storage_access;
+
+import "gaia/client/cloud_propagation.proto";
+import "gaia/data/email_annotation.proto";
+import "gaia/insclient/ins_clientinfo.proto";
+import "google/protobuf/timestamp.proto";
+import "identity/backend/common/legacy/recorded_rpc.proto";
+import "identity/gaia/storage_access/change_notification/change_notification_options.proto";
+import "net/compass/proto/routing_annotations.proto";
+import "net/proto2/bridge/proto/message_set.proto";
+import "storage/datapol/annotations/proto/semantic_annotations.proto";
+
+option java_multiple_files = true;
+option java_outer_classname = "AccountIdentifierServiceProto";
+option java_package = "com.google.gaia.storageaccess.proto";
+
+service AccountIdentifierService {
+    rpc CheckCanonicalEmail(CheckCanonicalEmailRequest) returns (CheckCanonicalEmailResponse);
+    rpc LookupByRecoveryEmail(LookupByRecoveryEmailRequest) returns (LookupByRecoveryEmailResponse);
+    rpc ExerciseEmailCapability(ExerciseEmailCapabilityRequest) returns (ExerciseEmailCapabilityResponse);
+    rpc GetAddAlternateEmailCapability(GetAddAlternateEmailCapabilityRequest) returns (GetAddAlternateEmailCapabilityResponse);
+    rpc GetVerificationCapability(GetVerificationCapabilityRequest) returns (GetVerificationCapabilityResponse);
+    rpc UidHistory(UidHistoryRequest) returns (UidHistoryResponse);
+    rpc GetChangeEmailCapability(GetChangeEmailCapabilityRequest) returns (GetChangeEmailCapabilityResponse);
+    rpc GetEmailAssociationTimestamp(GetEmailAssociationTimestampRequest) returns (GetEmailAssociationTimestampResponse);
+    rpc UpdateEmails(UpdateEmailsRequest) returns (UpdateEmailsResponse);
+    rpc SelectPrimaryEmail(SelectPrimaryEmailRequest) returns (SelectPrimaryEmailResponse);
+}
+
+message CheckCanonicalEmailRequest {
+    optional string email = 1;
+    optional QualifiedNameInfo qualified_name = 3;
+    
+    optional EmailChecksEnum email_checks = 2 [default = NONE];
+    enum EmailChecksEnum {
+        NONE = 0;
+        GAIA_EMAIL = 1;
+        CARIBOU_USERNAME = 2;
+    }
+    
+    optional identity_backend.legacy.RecordedRpcSequence recorded_rpc_sequence = 102;
+    
+    extensions 395802975;
+    
+    reserved 100, 101;
+}
+
+message CheckCanonicalEmailResponse {
+    optional group ExistingAccount = 3 {
+        optional bool exact_match = 4;
+        optional bool is_user = 5;
+        optional bool is_off_network = 9;
+        optional int64 last_login_time = 6;
+        optional bool has_logged_in = 7;
+        optional bool is_deleted = 8;
+        
+        optional CollabAccountInfo existing_collab_account = 10;
+        message CollabAccountInfo {
+            optional uint64 user_id = 1;
+        }
+    }
+    
+    optional EmailAvailability email_availability = 11;
+    enum EmailAvailability {
+        EMAIL_AVAILABILITY_UNSPECIFIED = 0;
+        EMAIL_UNAVAILABLE = 1;
+        EMAIL_AVAILABLE = 2;
+    }
+    
+    optional UnavailabilityReason unavailability_reason = 12;
+    enum UnavailabilityReason {
+        UNAVAILABILITY_REASON_UNSPECIFIED = 0;
+        BAD_WORD = 1;
+        RESERVED = 2;
+        ACCOUNT_EXISTS = 3;
+    }
+    
+    reserved 1, 2, 99;
+}
+
+message CheckCanonicalEmailFailureExtension {
+    optional ErrorCode error_code = 1 [default = UNSPECIFIED];
+    enum ErrorCode {
+        UNSPECIFIED = 0;
+        NOT_GMAIL_DOMAIN = 1;
+        TOO_SMALL = 2;
+        TOO_BIG = 3;
+        NUMBERS_ONLY = 4;
+        ILLEGAL_CHARS = 5;
+        SEPARATOR_FIRST = 6;
+        SEPARATOR_LAST = 7;
+        CONSECUTIVE_SEPARATORS = 8;
+        BAD_WORD = 9;
+        RESERVED = 10;
+        EMPTY = 11;
+        NO_AT_SIGN = 12;
+        NO_USER = 13;
+        NO_DOMAIN = 14;
+        TOO_MANY_AT_SIGNS = 15;
+        INVALID_DOMAIN = 16;
+    }
+    
+    extend .proto2.bridge.MessageSet {
+        optional CheckCanonicalEmailFailureExtension message_set_extension = 391293828;
+    }
+}
+
+message LookupByRecoveryEmailRequest {
+    optional string recovery_email = 1;
+    optional identity_backend.legacy.RecordedRpcSequence recorded_rpc_sequence = 102;
+    
+    extensions 420896701;
+    
+    reserved 100, 101;
+}
+
+message LookupByRecoveryEmailResponse {
+    repeated ClientUserInfo user_info = 2;
+    
+    reserved 1, 99;
+}
+
+message RecoveryEmailLookupResultForDarkLaunch {
+    repeated int64 gaia_ids = 1;
+}
+
+message ExerciseEmailCapabilityRequest {
+    optional string capability_string = 2;
+    optional ChangeNotificationOptions change_notification_options = 3;
+    optional identity_backend.legacy.RecordedRpcSequence recorded_rpc_sequence = 102;
+    
+    extensions 426507013;
+    
+    reserved 1, 100, 101;
+}
+
+message ExerciseEmailCapabilityResponse {
+    optional string redirect_url = 2;
+    optional int64 user_id = 3;
+    
+    reserved 1, 4, 5, 99;
+}
+
+message GetAddAlternateEmailCapabilityRequest {
+    optional int64 user_id = 1;
+    optional string new_email = 2;
+    optional bool login_allowed = 3;
+    optional string redirect_url = 4;
+    optional bool new_email_is_primary = 5;
+    optional bool delivery_disabled = 6;
+    optional ChangeNotificationOptions change_notification_options = 9;
+    optional identity_backend.legacy.RecordedRpcSequence recorded_rpc_sequence = 102;
+    
+    extensions 305817245;
+    
+    reserved 7, 8, 100, 101;
+}
+
+message GetAddAlternateEmailCapabilityResponse {
+    optional string capability_string = 3;
+    
+    reserved 1, 2, 99;
+}
+
+message GetVerificationCapabilityRequest {
+    optional int64 user_id = 1;
+    optional string redirect_url = 2;
+    optional ChangeNotificationOptions change_notification_options = 3;
+    optional identity_backend.legacy.RecordedRpcSequence recorded_rpc_sequence = 102;
+    
+    extensions 24560812;
+    
+    reserved 100, 101;
+}
+
+message GetVerificationCapabilityResponse {
+    optional string capability_string = 3;
+    
+    reserved 1, 2, 99;
+}
+
+message UidHistoryRequest {
+    optional string email = 1;
+    optional bool include_sign_up_equivalent_gmail_addresses = 2;
+    optional identity_backend.legacy.RecordedRpcSequence recorded_rpc_sequence = 102;
+    
+    extensions 511312880;
+    
+    reserved 100, 101;
+}
+
+message UidHistoryResponse {
+    repeated History history = 2;
+    message History {
+        optional int64 id = 3;
+        optional int64 time_sec = 4;
+        optional string new_email = 5;
+    }
+    
+    optional bool truncated = 6;
+    
+    reserved 1, 99;
+}
+
+message GetChangeEmailCapabilityRequest {
+    optional int64 user_id = 1;
+    optional bytes password = 2;
+    optional bool ignore_password = 5 [default = false];
+    optional string new_email = 3;
+    optional string redirect_url = 4;
+    optional ChangeNotificationOptions change_notification_options = 6;
+    optional identity_backend.legacy.RecordedRpcSequence recorded_rpc_sequence = 102;
+    
+    extensions 500768909;
+    
+    reserved 100, 101;
+}
+
+message GetChangeEmailCapabilityResponse {
+    optional string capability_string = 4;
+    
+    reserved 1, 2, 3, 5, 99;
+}
+
+message GetEmailAssociationTimestampRequest {
+    optional string email_address = 1;
+}
+
+message GetEmailAssociationTimestampResponse {
+    optional int64 user_id = 1;
+    optional google.protobuf.Timestamp association_timestamp = 2;
+}
+
+message UpdateEmailsRequest {
+    optional int64 user_id = 1;
+    
+    optional EmailToAdd new_primary = 4;
+    message EmailToAdd {
+        optional string new_email = 1;
+        optional bool login_allowed = 2 [default = true];
+        optional bool delivery_disabled = 3 [default = false];
+        optional bool recovery_disabled = 4 [default = false];
+        repeated gaia_data.GaiaEmailAnnotation email_annotation = 5 [packed = true];
+    }
+    
+    repeated EmailToAdd new_alternates = 2;
+    
+    optional EmailsToDiscard discard_emails = 5;
+    message EmailsToDiscard {
+        repeated string emails = 1;
+        optional bool allow_deleted_accounts = 2;
+    }
+    
+    optional gaia_client.CloudPropagation cloud_propagation = 6;
+    optional bool existing_emails_allowed = 7;
+    optional ChangeNotificationOptions change_notification_options = 8;
+    optional identity_backend.legacy.RecordedRpcSequence recorded_rpc_sequence = 102;
+    
+    extensions 529465541;
+    
+    reserved 3, 100, 101;
+}
+
+message UpdateEmailsResponse {
+    repeated FailedEmail errors = 2;
+    message FailedEmail {
+        optional string email = 1;
+    }
+    
+    repeated FailedEmail conflicts = 3;
+    optional bytes cloud_token = 4;
+    
+    reserved 1, 99;
+}
+
+message SelectPrimaryEmailRequest {
+    optional int64 user_id = 1;
+    optional string email_to_select = 2;
+    optional bool select_as_primary = 3 [default = true];
+    optional bool allow_auth = 4;
+    optional bool delivery_disabled = 5;
+    optional bool is_xmpp_jid = 6;
+    optional bool is_public_id = 7;
+    optional bool is_primary_id = 8;
+    optional bool recovery_disabled = 9;
+    optional bool is_shadow = 10;
+    optional bool has_shadow = 11;
+    optional bool federated_login_enabled = 13;
+    repeated gaia_data.GaiaEmailAnnotation email_annotations_to_add = 14 [packed = true];
+    repeated gaia_data.GaiaEmailAnnotation email_annotations_to_remove = 15 [packed = true];
+    optional identity_backend.legacy.RecordedRpcSequence recorded_rpc_sequence = 102;
+    
+    extensions 500771103;
+    
+    reserved 12, 100, 101;
+}
+
+message SelectPrimaryEmailResponse {
+    reserved 1, 99;
+}

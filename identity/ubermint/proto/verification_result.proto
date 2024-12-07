@@ -1,0 +1,25 @@
+syntax = "editions";
+
+package ubermint;
+
+import "storage/datapol/annotations/proto/semantic_annotations.proto";
+
+option java_multiple_files = true;
+option java_package = "com.google.identity.ubermint";
+
+enum VerificationResult {
+    VALID = 0;
+    WIRE_INVALID = 1;
+    USED_TOO_EARLY = 2;
+    USED_TOO_LATE = 3;
+    UNIVERSE_NOT_ALLOWED = 4;
+    UBERMINT_DISABLED = 5;
+    SIGNATURE_INVALID = 6;
+    KEY_MATERIAL_UNAVAILABLE = 7;
+    LIFETIME_EXCEEDED = 8;
+    LOAS_ROLE_NOT_ALLOWED = 9;
+    MISSING_DARKLAUNCH_VERIFIER = 10;
+    PLATFORM_LINK_NOT_ALLOWED = 11;
+    PUM_NOT_LINKED = 12;
+    PLATFORM_VALIDATION_FAILED = 13;
+}

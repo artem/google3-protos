@@ -1,0 +1,26 @@
+syntax = "proto2";
+
+package security.data_access.asr;
+
+import "logs/proto/data_access/app_specific_resources.proto";
+import "net/proto2/proto/descriptor.proto";
+import "security/authorization/axm/proto/attribute/resource/data.proto";
+import "security/data_access/accesstransparency/proto/apps_resource.proto";
+import "storage/datapol/annotations/proto/semantic_annotations.proto";
+
+option java_multiple_files = true;
+option java_outer_classname = "PertinenceResourceProtoFile";
+option java_package = "com.google.security.data_access.asr.proto";
+
+message GSuiteResource {
+    optional authorization.axm.attribute.resource.Identifier identifier = 1;
+    optional accesstransparency.AppsResource apps_resource = 2;
+    
+    extend .proto2.FieldOptions {
+        optional string path = 535800991;
+    }
+}
+
+extend AppSpecificResources {
+    repeated GSuiteResource gsuite_resource = 21;
+}

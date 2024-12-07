@@ -1,0 +1,11 @@
+syntax = "editions";
+
+package security.context;
+
+import "security/credentials/proto/end_user_credentials.proto";
+
+message EucCachingHints {
+    extend credentials.EndUserCredentialsProto {
+        optional EucCachingHints rpcsp_caching_hints = 8;
+    }
+}

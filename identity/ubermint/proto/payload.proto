@@ -1,0 +1,42 @@
+syntax = "editions";
+
+package ubermint;
+
+import "google/protobuf/timestamp.proto";
+import "identity/ubermint/proto/debug_label.proto";
+import "identity/ubermint/proto/fingerprint.proto";
+import "identity/ubermint/proto/history.proto";
+import "identity/ubermint/proto/idp_seal.proto";
+import "identity/ubermint/proto/universe.proto";
+import "storage/datapol/annotations/proto/semantic_annotations.proto";
+
+option java_multiple_files = true;
+option java_outer_classname = "PayloadProtoFile";
+option java_package = "com.google.identity.ubermint";
+
+message UberMintPayload {
+    optional UberMintUniverse universe = 1;
+    optional google.protobuf.Timestamp not_before = 2;
+    optional google.protobuf.Timestamp not_after = 3;
+    optional UberMintHistory history = 4;
+    optional bytes platform_payload = 5 [ctype = CORD];
+    optional bytes loggable_platform_payload = 9 [ctype = CORD];
+    repeated UberMintDebugLabel debug_labels = 6;
+    repeated string loas_roles_allowed_to_verify = 10;
+    optional google.protobuf.Timestamp extended_not_after = 11;
+    repeated identity_ubermint.IdpSealWrapper seals = 13;
+    optional SealEnforcementMode seal_enforcement_mode = 14;
+    
+    oneof linked_um {
+        bytes pum_id = 7;
+        Fingerprint pum_fingerprint = 12;
+    }
+    
+    reserved 8;
+}
+
+enum SealEnforcementMode {
+    SEAL_ENFORCEMENT_MODE_UNSPECIFIED = 0;
+    SEAL_ENFORCEMENT_MODE_FAIL_OPEN = 1;
+    SEAL_ENFORCEMENT_MODE_FAIL_CLOSED = 2;
+}

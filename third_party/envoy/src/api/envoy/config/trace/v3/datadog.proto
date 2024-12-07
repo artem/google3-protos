@@ -2,6 +2,7 @@ syntax = "proto3";
 
 package envoy.config.trace.v3;
 
+import "google/protobuf/duration.proto";
 import "third_party/udpa/udpa/annotations/migrate.proto";
 import "third_party/udpa/udpa/annotations/status.proto";
 import "third_party/udpa/udpa/annotations/versioning.proto";
@@ -12,8 +13,13 @@ option java_multiple_files = true;
 option java_outer_classname = "DatadogProto";
 option java_package = "io.envoyproxy.envoy.config.trace.v3";
 
+message DatadogRemoteConfig {
+    google.protobuf.Duration polling_interval = 1;
+}
+
 message DatadogConfig {
     string collector_cluster = 1;
     string service_name = 2;
     string collector_hostname = 3;
+    DatadogRemoteConfig remote_config = 4;
 }

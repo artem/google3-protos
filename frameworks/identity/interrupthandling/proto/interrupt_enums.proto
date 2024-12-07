@@ -1,0 +1,18 @@
+syntax = "proto2";
+
+package identity_interrupthandling;
+
+import "logs/proto/logs_annotations/logs_annotations.proto";
+import "storage/datapol/annotations/proto/semantic_annotations.proto";
+
+option java_multiple_files = true;
+option java_outer_classname = "IdentityInterruptEnums";
+option java_package = "com.google.frameworks.identity.interrupthandling.proto";
+
+enum RemedyType {
+    REMEDY_TYPE_UNSPECIFIED = 0;
+    REMEDY_TYPE_AUTOMATIC = 1;
+    REMEDY_TYPE_INTERACTIVE = 2;
+    REMEDY_TYPE_MANUAL = 3;
+    REMEDY_TYPE_FATAL = 4;
+}

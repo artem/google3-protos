@@ -1,0 +1,310 @@
+syntax = "editions";
+
+import "gaia/data/account_capabilities.proto";
+import "gaia/data/bucket_version.proto";
+import "gaia/data/email_annotation.proto";
+import "gaia/data/experiment_group_info.proto";
+import "gaia/data/gaia_challenge_data.proto";
+import "gaia/data/password.proto";
+import "gaia/data/testaccount_data.proto";
+import "gaia/insclient/ins_clientinfo.proto";
+import "google/protobuf/timestamp.proto";
+import "logs/eventid/eventid.proto";
+import "logs/proto/gaia/dusi.proto";
+import "storage/datapol/annotations/proto/semantic_annotations.proto";
+
+option java_package = "com.google.gaia.mapreduce.proto";
+
+message GaiaEmailData {
+    optional uint64 UserID = 1;
+    
+    repeated History history = 14;
+    message History {
+        optional uint64 ID = 16;
+        optional int64 Date = 17;
+        optional string NewEmail = 18;
+    }
+    
+    optional bool TruncatedHistory = 19;
+    optional int64 CloudGaiaFlipSequenceNumber = 23;
+    optional google.protobuf.Timestamp association_timestamp = 24;
+    
+    reserved 15, 20 to 22;
+}
+
+message GaiaLockData {
+    optional google.protobuf.Timestamp expire_time = 2;
+    optional string task_name = 3;
+    optional EventIdMessage event_id = 4;
+    optional int64 dapper_trace_id = 5;
+    
+    reserved 1;
+}
+
+message GaiaPurgedUserInfo {
+    optional int64 PurgeTime = 1;
+    optional int64 CreationTime = 2;
+    repeated int32 ServiceID = 4;
+    optional int64 DeletionTime = 5;
+    optional int64 DisableTime = 6;
+    optional string GmailOemDomain = 8;
+    optional bool IsNonUser = 9;
+    
+    repeated ServiceFlagHistory serviceflaghistory = 10;
+    message ServiceFlagHistory {
+        optional int32 ServiceID = 11;
+        optional int64 Time = 12;
+        optional int32 ChangeType = 13;
+    }
+    
+    optional int32 AccountType = 14;
+    
+    reserved 7;
+}
+
+message GaiaRetentionExtension {
+    optional GaiaRetentionReason retention_reason = 7;
+    message GaiaRetentionReason {
+        oneof reason {
+            string vimes_id = 1;
+            string case_id = 2;
+            int64 omg_id = 3;
+            int64 inactive_account_closure_id = 4;
+            int64 dots_id = 5;
+        }
+    }
+    
+    optional int64 creation_time_secs = 3;
+    optional string creation_username = 4;
+    optional int64 removal_time_secs = 5;
+    optional string removal_username = 6;
+    optional int64 buganizer_id = 8;
+}
+
+message GaiaRetentionConfig {
+    repeated GaiaRetentionExtension active_retention_extensions = 1;
+    repeated GaiaRetentionExtension removed_retention_extensions = 2;
+}
+
+message EncryptedPasswordHash {
+    optional int32 KeyVersion = 1;
+    optional bytes EncryptedHash = 2;
+}
+
+message ClientEncryptionKeyData {
+    optional int32 KeystoreKeyVersion = 1;
+    
+    optional PasswordDerivedEncryptionMetadata PasswordDerivedEncMetadata = 2;
+    message PasswordDerivedEncryptionMetadata {
+        optional EncryptionType EncType = 1;
+        enum EncryptionType {
+            ENCRYPTION_TYPE_UNKNOWN = 0;
+            SECUREBOX2_WITH_128_BIT_KEY = 1;
+        }
+        
+        optional gaia_data.GaiaPassword.Format HashingAlgorithm = 2;
+        optional bytes Salt = 3;
+    }
+    
+    optional KeyType Type = 3;
+    enum KeyType {
+        CLIENT_ENCRYPTION_KEY_TYPE_UNKNOWN = 0;
+        P256_KEY_PAIR = 1;
+    }
+    
+    optional bytes PublicKey = 4;
+    optional bytes EncryptedPrivateKey = 5;
+}
+
+message ClientEncryptionKeyAndTimestamp {
+    optional ClientEncryptionKeyData ClientEncryptionKey = 1;
+    optional int64 PasswordTimestampUsec = 2 [default = 0];
+}
+
+message ClientEncryptionKeyMetadata {
+    optional int64 PasswordTimestampUsec = 1 [default = 0, deprecated = true];
+    optional int64 LastUpdateTimestampUsec = 2 [default = 0, deprecated = true];
+    
+    optional KeyStorageFlow StorageFlow = 3 [deprecated = true];
+    enum KeyStorageFlow {
+        USER_FLOW_UNSPECIFIED = 0;
+        AUTHENTICATION = 1;
+        CHANGE_PASSWORD = 2;
+        EXERCISE_PASSWORD_CAPABILITY = 3;
+        NEW_USER = 4;
+    }
+    
+    optional bool IsPregenerated = 4 [default = false, deprecated = true];
+    optional bool GeneratedWithSecureBoxCpp = 5 [default = false, deprecated = true];
+    
+    repeated StorageUpdate StorageUpdates = 6;
+    message StorageUpdate {
+        optional int64 TimestampUsec = 1;
+        
+        optional StorageAction Action = 2;
+        enum StorageAction {
+            STORAGE_ACTION_UNSPECIFIED = 0;
+            ADDED = 1;
+            UPDATED = 2;
+            CLEARED = 3;
+        }
+        
+        optional StorageFlow Flow = 3;
+        enum StorageFlow {
+            STORAGE_FLOW_UNSPECIFIED = 0;
+            AUTHENTICATION = 1;
+            CHANGE_PASSWORD = 2;
+            EXERCISE_PASSWORD_CAPABILITY = 3;
+            NEW_USER = 4;
+            CLEAR_CLIENT_ENCRYPTION_KEY = 5;
+        }
+        
+        optional int64 PasswordTimestampUsec = 4;
+        optional bool IsPregenerated = 5;
+    }
+    
+    optional int64 decryption_error_count = 7;
+    
+    repeated DecryptionError decryption_errors = 8;
+    message DecryptionError {
+        optional google.protobuf.Timestamp error_timestamp = 1;
+    }
+}
+
+message Compressed {
+    optional Format format = 1;
+    enum Format {
+        FORMAT_UNSPECIFIED = 0;
+        ZIPPY = 1;
+        BROTLI = 2;
+    }
+    
+    optional bytes data = 2;
+    optional google.protobuf.Timestamp compression_time = 3;
+    optional bool uncompressed_present = 4 [default = true];
+}
+
+message GaiaUserIndex {
+    optional string Email = 1;
+    optional QualifiedNameInfo QualifiedName = 50;
+    optional int32 Shard = 2;
+    optional bool IsPrimaryEmailPublicId = 33;
+    optional bool IsPrimaryEmailPrimaryId = 34;
+    optional int64 DeletionDate = 3;
+    optional bool IsShadow = 41;
+    optional bool HasShadow = 42;
+    optional bool IsPrimaryEmailRecoveryDisabled = 55;
+    optional bool PrimaryEmailFederatedAuthnEnabled = 47;
+    repeated gaia_data.GaiaEmailAnnotation EmailAnnotation = 53;
+    
+    repeated AlternateEmail alternateemail = 5;
+    message AlternateEmail {
+        optional string Email = 16;
+        optional QualifiedNameInfo QualifiedName = 51;
+        optional bool AllowAuth = 17;
+        optional uint64 ChangeCap = 18;
+        optional bool DeliveryDisabled = 19;
+        optional bool RecoveryDisabled = 40;
+        optional bool IsXmppJid = 20;
+        optional bool IsPublicId = 31;
+        optional bool IsPrimaryId = 32;
+        optional bool IsShadow = 43;
+        optional bool HasShadow = 44;
+        optional bool FederatedAuthnEnabled = 48;
+        repeated gaia_data.GaiaEmailAnnotation EmailAnnotation = 54;
+    }
+    
+    optional int64 LastAddedEmailTimestamp = 38;
+    optional int64 LastRemovedEmailTimestamp = 39;
+    optional bool NonUser = 6 [default = false];
+    optional int32 NonUserType = 52;
+    
+    repeated Memberships memberships = 7;
+    message Memberships {
+        optional int64 GroupID = 21;
+        optional string Tag = 36;
+        optional int64 AddTimeMS = 22;
+    }
+    
+    repeated RemovedMemberships removedmemberships = 23;
+    message RemovedMemberships {
+        optional int64 GroupID = 24;
+        optional string Tag = 37;
+        optional int64 AddTimeMS = 25;
+        optional int64 RemoveTimeMS = 26;
+        
+        enum Const {
+            NUM_KEPT = 10;
+        }
+    }
+    
+    repeated GaiaCapabilityRecord Capabilities = 30;
+    optional GaiaPurgedUserInfo Purged = 35;
+    optional GaiaRetentionConfig retention_config = 60;
+    optional int64 CookieUserUpdateMicros = 49;
+    optional gaia_data.BucketVersion VersionSeq = 57;
+    optional bool fully_created = 58 [default = true];
+    optional Compressed compressed = 59;
+    optional gaia_data.ExperimentGroupInfo experiment_group_info = 61;
+    optional bool sot_migrated_to_cloud_gaia = 62;
+    optional int64 CloudGaiaFlipSequenceNumber = 63;
+    
+    reserved 4, 15, 45, 56;
+}
+
+message GaiaUserData {
+    optional ClientUserInfo UserInfo = 1;
+    optional int64 CreationTime = 2;
+    optional bytes HashedPassword = 3 [deprecated = true];
+    optional int64 DeletionDate = 4;
+    optional string Disabled = 5;
+    optional int64 Verified = 6 [default = 1];
+    optional int64 Timestamp = 8 [default = 0];
+    optional int64 PasswordTimestamp = 9 [default = 0];
+    repeated logs.proto.gaia.DeviceUserSessionIdProto WhitelistedDeviceSessions = 34;
+    repeated logs.proto.gaia.DeviceUserSessionIdProto BlacklistedDeviceSessions = 35;
+    
+    repeated OldEmails oldemails = 14;
+    message OldEmails {
+        optional string Email = 16;
+        optional int64 Date = 17;
+    }
+    
+    optional bool TruncatedOldEmails = 23;
+    
+    repeated GoogleAccessCodes googleaccesscodes = 24;
+    message GoogleAccessCodes {
+        optional int32 CodeID = 25;
+        optional bytes HashedAccessCode = 26;
+        optional EncryptedPasswordHash EncryptedAccessCodeHash = 46;
+        optional string Name = 27;
+        optional int64 CreationTime = 28;
+        optional int64 LastTimeUsed = 30;
+    }
+    
+    optional int32 NextAccessCodeID = 29 [default = 0];
+    optional int64 AccessCodeModificationTimestampMicros = 31;
+    optional int64 CookieUserUpdateMicros = 32;
+    optional gaia_data.ChallengeData challengeData = 33;
+    optional int64 FirstKnownLoginSeconds = 36;
+    optional bool ContextAwareAccessEnabled = 40;
+    optional gaia_data.TestAccountBehavior AccountBehavior = 41;
+    optional bool HasProductDisable = 42;
+    optional gaia_data.AccountCapabilityInfo AccountCapabilities = 43;
+    optional EncryptedPasswordHash EncryptedPasswordHash = 44;
+    optional ClientEncryptionKeyData ClientEncryptionKeyData = 45;
+    optional ClientEncryptionKeyMetadata ClientEncryptionKeyMetadata = 48;
+    optional Compressed compressed = 47;
+    
+    reserved 7, 13, 15, 18 to 22;
+}
+
+message GaiaServiceData {
+    optional bytes Value = 1;
+    
+    reserved 15;
+}
+
+message GaiaResourceData {
+    optional ClientResourceInfo ResourceInfo = 1;
+}

@@ -1,0 +1,26 @@
+syntax = "editions";
+
+package security.context;
+
+import "production/resources/dataplatform/idx/time_series/public/proto/idx_time_series_record.proto";
+import "security/context/proto/policy/rpc_security_policy_deployment_info.proto";
+import "security/context/proto/policy/rpc_security_policy_runtime_stats.proto";
+import "security/context/proto/policy/rpc_security_policy_usage_event.proto";
+import "security/dataprotection/collection/public/collection_service.proto";
+
+option java_multiple_files = true;
+option java_outer_classname = "RpcSecurityPolicyEventStatsProtoFile";
+option java_package = "com.google.security.context";
+
+message BorgTaskPolicyEventStats {
+    optional secure_collection.MessageSource task = 1;
+    optional RpcSecurityPolicyUID policy_id = 2;
+    optional RpcSecurityPolicyUID darklaunch_policy_id = 9;
+    optional int64 event_time_usec = 3;
+    optional int64 start_time_usec = 4;
+    optional PolicyRuntimeStats runtime_stats = 6;
+    optional PolicyDeploymentInfo deployment_info = 7;
+    optional .idx.time_series.ingestion.proto.IDXTimeSeriesMetadata idx_internal_metadata = 8;
+    
+    reserved 5;
+}

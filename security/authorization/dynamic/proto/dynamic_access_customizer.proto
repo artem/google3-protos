@@ -1,0 +1,16 @@
+syntax = "editions";
+
+package security.authorization.dynamic.proto;
+
+import "google/protobuf/duration.proto";
+import "security/authorization/dynamic/proto/mpa_intent.proto";
+import "security/authorization/dynamic/proto/mpa_metadata.proto";
+
+option java_multiple_files = true;
+
+message DynamicAccessCustomizerProto {
+    optional google.protobuf.Duration max_mpa_pending_duration = 1;
+    optional google.protobuf.Duration approval_cache_duration = 4;
+    optional MpaIntent mpa_intent = 2;
+    map<string, MpaAccessReviewMetadata> rpc_to_metadata = 3;
+}

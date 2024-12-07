@@ -1,0 +1,29 @@
+syntax = "editions";
+
+package security.data_access;
+
+import "google/api/annotations.proto";
+import "logs/eventid/eventid.proto";
+import "logs/proto/data_access/data_access_log.proto";
+
+option java_multiple_files = true;
+option java_outer_classname = "DataAccessLogServiceProtoFile";
+option java_package = "com.google.security.data_access.proto";
+
+service DataAccessLogService {
+    rpc LogDataAccess(DataAccessLogRequestProto) returns (DataAccessLogReplyProto);
+}
+
+message DataAccessLoggingClientInfo {
+    optional int64 version = 1;
+}
+
+message DataAccessLogRequestProto {
+    optional DataAccessLogProto data_access_log_entry = 1;
+}
+
+message DataAccessLogReplyProto {
+    optional string warning_message = 1 [deprecated = true];
+    optional EventIdMessage server_start_time = 2;
+    optional int64 sequence_num = 3;
+}

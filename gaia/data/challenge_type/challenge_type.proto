@@ -1,0 +1,70 @@
+syntax = "proto2";
+
+package gaia_data;
+
+import "logs/proto/logs_annotations/logs_annotations.proto";
+import "net/proto2/proto/descriptor.proto";
+
+option java_multiple_files = true;
+option java_outer_classname = "ChallengeTypeProtos";
+option java_package = "com.google.gaia.authentication.challenge.proto";
+
+enum ChallengeType {
+    UNKNOWN_CHALLENGE = 0;
+    KNOWLEDGE_PASSWORD = 1;
+    SAML = 20;
+    SECURITY_KEY = 2;
+    OFFLINE_OTP = 5;
+    TOTP = 6;
+    INTERNAL_TWO_FACTOR = 7;
+    BACKUP_CODE = 8;
+    IDV_PREREGISTERED_PHONE = 9;
+    IDV_PREREGISTERED_EMAIL = 30;
+    ACCESS_TO_PREREGISTERED_EMAIL = 11;
+    KNOWLEDGE_PREREGISTERED_EMAIL = 12;
+    KNOWLEDGE_PREREGISTERED_PHONE = 13;
+    KNOWLEDGE_CLOUD_PIN = 14;
+    KNOWLEDGE_SECRET_QUESTION = 15;
+    KNOWLEDGE_REAL_NAME = 28;
+    KNOWLEDGE_DATE_OF_BIRTH = 27;
+    IDV_ANY_PHONE = 17;
+    IDV_ANY_EMAIL = 26;
+    CAPTCHA = 18;
+    RESCUE_CODE = 23;
+    EXTENDED_BOTGUARD = 22;
+    MANUAL_RECOVERY = 29;
+    CNAME = 31;
+    KNOWLEDGE_LAST_LOGIN_DATE = 33;
+    KNOWLEDGE_USER_COUNT = 34;
+    KNOWLEDGE_DOMAIN_TITLE = 35;
+    KNOWLEDGE_EMPLOYEE_ID = 36;
+    SECURITY_KEY_OTP = 37;
+    TIME_DELAY = 38;
+    DEVICE_PROMPT = 39;
+    MATH = 40;
+    CROSS_DEVICE = 41;
+    WEB_APPROVAL = 42;
+    CROSS_ACCOUNT = 43;
+    KNOWLEDGE_LOCKSCREEN = 44;
+    DEVICE_PREREGISTERED_PHONE = 45;
+    PARENT_AUTH = 48;
+    USERLESS_FIDO = 49;
+    KNOWLEDGE_HISTORICAL_PASSWORD = 50;
+    RECAPTCHA = 51;
+    OIDC = 52;
+    PASSKEY = 53;
+    DEVICE_ASSERTION = 25 [deprecated = true];
+    AUTHZEN = 4 [deprecated = true];
+    SAME_DEVICE_SCREENLOCK = 32 [deprecated = true];
+    DENY = 19 [deprecated = true];
+    KNOWLEDGE_LOGIN_LOCATION = 16 [deprecated = true];
+    KNOWLEDGE_YOUTUBE = 10 [deprecated = true];
+    KNOWLEDGE_ACCOUNT_CREATION_DATE = 24 [deprecated = true];
+    ASSISTANT_APPROVAL = 46 [deprecated = true];
+    OUTDATED_APP_WARNING = 47 [deprecated = true];
+    TEST_ONLY = 1000;
+}
+
+extend .proto2.EnumValueOptions {
+    optional string visible_name = 103331566;
+}

@@ -1,0 +1,90 @@
+syntax = "proto2";
+
+package identity_device_groups;
+
+import "frameworks/testing/rpcreplay/processors/rpc_replay_field_option.proto";
+import "google/protobuf/duration.proto";
+import "google/protobuf/timestamp.proto";
+import "storage/datapol/annotations/proto/semantic_annotations.proto";
+import "util/task/status.proto";
+
+option java_multiple_files = true;
+option java_package = "com.google.identity.device.groups.proto";
+
+message UserId {
+    optional int64 gaia_id = 1;
+}
+
+message UserGroupId {
+    optional string id = 1;
+}
+
+message DeviceId {
+    optional string iddid = 1;
+}
+
+message DeviceGroupId {
+    optional string id = 1;
+}
+
+message RequestId {
+    optional string id = 1;
+}
+
+message ReadConsistencyOptions {
+    oneof consistency_option {
+        Strong strong_read = 1;
+        google.protobuf.Duration max_staleness = 2;
+        google.protobuf.Duration exact_staleness = 3;
+        google.protobuf.Timestamp min_timestamp = 4;
+        google.protobuf.Timestamp exact_timestamp = 5;
+    }
+    
+    message Strong {
+        
+    }
+}
+
+message ReadOptions {
+    optional ReadConsistencyOptions consistency_options = 2;
+}
+
+message ConsistencyToken {
+    optional bytes zookie = 1;
+    optional google.protobuf.Timestamp spanner_timestamp = 2;
+}
+
+message MutationOptions {
+    optional bool commit_zanzibar_write = 1;
+    optional RequestId request_id = 2;
+}
+
+message NewUserDeviceLinkResult {
+    optional UserId user_id = 1;
+    optional DeviceId device_id = 2;
+    
+    oneof dusi_or_status {
+        string dusi = 3;
+        util.StatusProto status = 4;
+    }
+}
+
+message Session {
+    optional UserId user_id = 1;
+    optional DeviceId device_id = 2;
+    optional string dusi = 3;
+    optional bool is_collocated = 4;
+}
+
+enum State {
+    STATE_UNSPECIFIED = 0;
+    STATE_ACTIVE = 1;
+    STATE_DELETED = 2;
+    STATE_PURGED = 3;
+}
+
+enum SsdExperimentMode {
+    SSD_EXPERIMENT_MODE_UNSPECIFIED = 0;
+    SSD_EXPERIMENT_MODE_DARK_LAUNCH = 1;
+    SSD_EXPERIMENT_MODE_LIVE_LAUNCH = 2;
+}

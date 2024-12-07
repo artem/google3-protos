@@ -1,0 +1,14 @@
+syntax = "editions";
+
+package identity_ubermint;
+
+import "storage/datapol/annotations/proto/semantic_annotations.proto";
+
+option java_multiple_files = true;
+option java_outer_classname = "GaiaOnByoidProto";
+option java_package = "com.google.identity.boq.cloud.ubermint.proto";
+
+message GaiaOnByoid {
+    optional string family_name = 1;
+    optional string given_name = 2;
+}

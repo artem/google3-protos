@@ -1,0 +1,102 @@
+syntax = "editions";
+
+package security.data_access.analyzer;
+
+import "security/data_access/analyzer/proto/annotations.proto";
+import "storage/datapol/annotations/proto/semantic_annotations.proto";
+
+option java_package = "com.google.security.data_access.analyzer.proto";
+
+message MonitoringData {
+    optional int64 records = 1;
+    
+    optional EventAttributes event_attributes = 2;
+    message EventAttributes {
+        optional int64 with_event_id = 1;
+        optional int64 with_valid_timestamp = 2;
+    }
+    
+    optional ActorAttributes actor_attributes = 3;
+    message ActorAttributes {
+        optional int64 with_actor = 1;
+    }
+    
+    optional ToolAttributes tool_attributes = 4;
+    message ToolAttributes {
+        optional int64 with_apn = 1;
+        optional int64 with_tool_ownership_info = 2;
+    }
+    
+    optional ActionAttributes action_attributes = 5;
+    message ActionAttributes {
+        optional int64 with_action = 1;
+    }
+    
+    optional TargetResourceAttributes target_resource_attributes = 6;
+    message TargetResourceAttributes {
+        optional int64 with_no_target = 6;
+        optional int64 with_basic_resource = 1;
+        optional int64 with_target_resource = 2;
+        optional int64 with_query = 3;
+        optional int64 with_fris_request = 4;
+        optional int64 with_verified_resource = 5;
+        optional int64 with_fris_resource_types = 7;
+        optional int64 with_fris_lookup = 8;
+        optional int64 with_fris_module_lookup = 9;
+    }
+    
+    optional TargetUserAttributes target_user_attributes = 7;
+    message TargetUserAttributes {
+        optional int64 with_target_user = 1;
+        optional int64 with_verified_owner = 2;
+    }
+    
+    optional JustificationAttributes justification_attributes = 8;
+    message JustificationAttributes {
+        optional int64 with_justification = 1;
+        optional int64 with_structured_justification = 2;
+        optional int64 with_validated_justification = 3;
+    }
+    
+    optional AnnotationAttributes annotation_attributes = 9;
+    message AnnotationAttributes {
+        optional int64 with_dg_annotations = 1;
+        optional int64 with_dg_source_annotations = 2;
+        optional int64 with_dg_semantic_context_annotations = 3;
+        optional int64 with_dg_confidentiality_annotations = 4;
+    }
+    
+    optional AccessControlsAttributes access_controls_attributes = 10;
+    message AccessControlsAttributes {
+        optional int64 with_present_controls = 1;
+        optional int64 with_enforceable_configuration = 2;
+        optional int64 with_enforced_controls = 3;
+        optional int64 with_approved_outcome = 4;
+        optional int64 with_successful_action = 5;
+    }
+    
+    optional PolicyEvaluationAttributes policy_evaluation_attributes = 11;
+    message PolicyEvaluationAttributes {
+        optional PolicyStats justification_presence = 1;
+        message PolicyStats {
+            optional PolicyCounts advisory_counts = 1;
+            message PolicyCounts {
+                optional int64 executed = 1;
+                optional int64 passing = 2;
+            }
+            
+            optional PolicyCounts enforced_counts = 2;
+        }
+        
+        optional PolicyStats validated_justification = 2;
+        optional PolicyStats non_unilateral_access = 3;
+        optional PolicyStats identity_verification = 4;
+        optional PolicyStats high_risk_targets = 5;
+    }
+    
+    optional LogAttributes log_attributes = 12;
+    message LogAttributes {
+        optional int64 with_required_fields = 1;
+        optional int64 with_recommended_fields = 2;
+    }
+}

@@ -1,0 +1,36 @@
+syntax = "editions";
+
+package security.context;
+
+import public "security/context/proto/policy/rpc_security_policy_uid.proto";
+import "production/resources/dataplatform/idx/time_series/public/proto/idx_time_series_record.proto";
+import "security/context/proto/policy/rpc_security_policy.proto";
+import "security/context/proto/policy/rpc_security_policy_deployment_info.proto";
+import "security/context/proto/policy/rpc_security_policy_runtime_stats.proto";
+
+option java_multiple_files = true;
+option java_outer_classname = "RpcSecurityPolicyUsageEventProtoFile";
+option java_package = "com.google.security.context";
+
+message BorgTask {
+    optional string cell = 1;
+    optional string user = 2;
+    optional int64 job_uid = 3;
+    optional string job_name = 5;
+    optional int32 task_index = 4;
+    optional string unauthenticated_host = 6;
+}
+
+message BorgTaskPolicyUsageEvent {
+    optional BorgTask task = 1;
+    optional RpcSecurityPolicyUID policy_id = 2;
+    optional int64 event_time_usec = 3;
+    optional int64 start_time_usec = 4;
+    optional RpcSecurityPolicy policy = 5;
+    optional PolicyDeploymentInfo deployment_info = 7;
+    optional PolicyRuntimeStats runtime_stats = 8 [deprecated = true];
+    optional bool sdcf = 9;
+    optional .idx.time_series.ingestion.proto.IDXTimeSeriesMetadata idx_internal_metadata = 10;
+    
+    reserved 6;
+}

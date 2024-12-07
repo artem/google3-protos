@@ -1,0 +1,13 @@
+syntax = "editions";
+
+package tech.env.framework;
+
+option java_package = "com.google.tech.env.framework";
+
+message RequestContextInternal {
+    optional bytes cpe_context = 3;
+    optional int64 stream_id = 4;
+    optional bytes chemist_context = 5;
+    
+    reserved 1, 2;
+}

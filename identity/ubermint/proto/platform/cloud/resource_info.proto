@@ -1,0 +1,19 @@
+syntax = "editions";
+
+package ubermint.cloud;
+
+import "google/api/expr/checked.proto";
+import "storage/datapol/annotations/proto/semantic_annotations.proto";
+
+option java_multiple_files = true;
+option java_package = "com.google.identity.ubermint.cloud";
+
+message ResourceInfoEntry {
+    optional string resource_name = 1;
+    repeated string iam_roles = 2;
+    optional google.api.expr.CheckedExpr condition = 3;
+}
+
+message ResourceInfo {
+    repeated ResourceInfoEntry entries = 1;
+}

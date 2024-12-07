@@ -1,0 +1,208 @@
+syntax = "proto2";
+
+package gaia_data;
+
+import "gaia/data/challenge_type/challenge_type.proto";
+import "gaia/data/recovery_contact.proto";
+import "gaia/data/short_lived_otp_info.proto";
+import "google/protobuf/timestamp.proto";
+import "logs/proto/logs_annotations/logs_annotations.proto";
+import "storage/datapol/annotations/proto/semantic_annotations.proto";
+
+option java_package = "com.google.gaia.data.proto.proto1api";
+
+message ChallengeData {
+    optional RescueCodeData rescue_code = 1;
+    optional UserSignInDigest user_sign_in_digest = 2;
+    optional LockdownState lockdown_state = 3;
+    optional DeviceCentricAuthConfig device_centric_auth_config = 4;
+    repeated ChallengeExperimentData challenge_experiment_data = 5;
+    optional DevicePolicyConfig device_policy_config = 6;
+    repeated RecoveryContact recovery_contacts = 7;
+    optional ChallengeConfigSettings challenge_config_settings = 8;
+    repeated ShortLivedOtp short_lived_otp = 9;
+    optional EmailVerificationData recovery_email_verification_data = 10;
+    optional DeferredAction deferred_sign_in_action = 11;
+}
+
+message JSDisabledBrowsersSettings {
+    optional bool allowed = 1;
+    optional SettingsModificationType modification_type = 2;
+    optional uint32 last_update_seconds = 3;
+}
+
+message LessSecureBrowsersSettings {
+    optional bool allowed = 1;
+    optional SettingsModificationType modification_type = 2;
+    optional uint32 last_update_seconds = 3;
+}
+
+message ChallengeConfigSettings {
+    optional LessSecureBrowsersSettings less_secure_browsers = 1;
+    optional JSDisabledBrowsersSettings js_disabled_browsers = 2 [deprecated = true];
+}
+
+message ChallengeExperimentData {
+    optional google.protobuf.Timestamp timestamp = 1;
+    
+    optional ChallengeExperimentEvent experiment_event = 2;
+    enum ChallengeExperimentEvent {
+        CHALLENGE_EXPERIMENT_EVENT_UNSPECIFIED = 0;
+        SHOW_2SV_AUTHZEN_PROMO = 1;
+        SHOW_PASSKEY_ENROLLMENT_SPEEDBUMP = 2;
+    }
+    
+    optional SignInChallengeData.ChallengeResult challenge_result = 3;
+}
+
+message RescueCodeData {
+    optional bytes hashed_code = 1;
+    optional int64 creation_time_millis = 2;
+    optional string user_description = 3;
+    optional int32 attempt_count = 4;
+    optional int64 verification_time_millis = 5;
+}
+
+message DeviceCentricAuthConfig {
+    optional EnrollmentMechanism enrollment_mechanism = 1;
+    enum EnrollmentMechanism {
+        DCA_ENROLLMENT_MECHANISM_UNSPECIFIED = 0;
+        TEST_ACCOUNT = 1;
+        INITIAL_DOGFOOD = 2;
+        FREINDS_AND_FAMILY_DOGFOOD = 3;
+        AC_SETTINGS_PROMOTION = 4;
+        ACCOUNT_RECOVERY_PROMO = 5;
+        PHONE_IDENTIFIER_PREFERRED = 6;
+        AC_SETTINGS = 7;
+        OOTP_DOGFOOD = 8;
+        RANDOM_ENROLLMENT_NO_INTERACTION = 9;
+        RANDOM_ENROLLMENT = 10;
+        NEW_MOBILE_ACCOUNT_AUTHZEN_FIRST = 11;
+        NEW_MOBILE_ACCOUNT_PASSWORD_FIRST = 12;
+        NEW_MOBILE_ACCOUNT_PICKER_FIRST = 13;
+    }
+}
+
+message DevicePolicyConfig {
+    optional bool auto_select_devices = 1;
+    
+    optional PasswordOptionalState password_optional_state = 2;
+    enum PasswordOptionalState {
+        PASSWORD_OPTIONAL_UNSPECIFIED = 0;
+        NO_PREFERENCE = 1;
+        PASSWORD_ONLY = 2;
+        PASSWORD_OR_DEVICE = 3;
+    }
+}
+
+message UserSignInDigest {
+    repeated SignInData first_factor_sign_in_data = 1;
+}
+
+message LockdownState {
+    optional google.protobuf.Timestamp start_time = 1;
+    optional LockdownReason reason = 2;
+}
+
+message SignInData {
+    repeated SignInChallengeData challenge = 1;
+    optional google.protobuf.Timestamp timestamp = 2;
+}
+
+message SignInChallengeData {
+    optional ChallengeType challenge_type = 1;
+    
+    optional ChallengeResult challenge_result = 2;
+    enum ChallengeResult {
+        UNKNOWN_OUTCOME = 0;
+        NO_RESPONSE = 1;
+        PASSED = 2;
+        ERROR = 3;
+        ATTEMPTED = 4;
+        INSUFFICIENT = 5;
+    }
+}
+
+message ShortLivedOtp {
+    optional bytes hashed_otp = 1;
+    optional google.protobuf.Timestamp creation_timestamp = 2;
+    optional google.protobuf.Timestamp expiration_timestamp = 3;
+    optional ShortLivedOtpPurpose purpose = 4;
+    optional int32 verification_attempts = 5;
+    optional int32 max_verification_attempts = 6;
+    optional bytes hashed_end_user_ip = 7;
+    optional bytes hashed_end_user_ipv6_prefix = 8;
+}
+
+message ImplicitVerificationData {
+    optional google.protobuf.Timestamp time = 1;
+    optional ImplicitVerificationType type = 2;
+}
+
+message EmailVerificationData {
+    optional string email = 1;
+    optional string pending_explicit_verification_challenge_id = 2;
+    optional google.protobuf.Timestamp pending_challenge_creation_time = 3;
+    optional google.protobuf.Timestamp explicit_verification_time = 4;
+    repeated ImplicitVerificationData implicit_verification_data = 5;
+    optional google.protobuf.Timestamp confirmation_time = 6;
+}
+
+message SignInMethods {
+    optional bool primary_email_verification = 1;
+    optional bool recovery_email_verification = 2;
+    optional bool recovery_phone_verification = 3;
+}
+
+message DeferredAction {
+    optional google.protobuf.Timestamp last_update_time = 1;
+    optional bool set_password_after_signin = 2;
+    optional SignInMethods sign_in_methods = 3;
+}
+
+enum SettingsModificationType {
+    AUTOMATIC = 0;
+    INITIATED_BY_USER = 1;
+}
+
+enum ChallengeDataUpdateOperation {
+    GENERATE_RESCUE_CODE = 1;
+    REVOKE_RESCUE_CODE = 2;
+    UPDATE_RESCUE_CODE_DESCRIPTION = 3;
+    UPDATE_USER_SIGNIN_DIGEST_ADD = 4;
+    UPDATE_USER_SIGNIN_DIGEST_CLEAR = 5;
+    SET_LOCKDOWN = 6;
+    CLEAR_LOCKDOWN = 7;
+    DCA_ENROLL = 8;
+    DCA_SET_ENROLLMENT_MECHANISM = 9;
+    DCA_UNENROLL = 10;
+    UPDATE_CHALLENGE_CONFIG_SETTINGS = 11;
+    GENERATE_SHORT_LIVED_OTP = 12;
+    CLEAR_SHORT_LIVED_OTP = 13;
+    UPDATE_DEVICE_POLICY_CONFIG = 14;
+    UPDATE_RECOVERY_CONTACTS_DATA = 15;
+    UPDATE_DEFERRED_ACTION = 16;
+    SET_PASSWORD_OPTIONAL = 17;
+}
+
+enum LockdownReason {
+    LOCKDOWNREASON_UNSPECIFIED = 0;
+    FOR_TESTING_ONLY = 1;
+}
+
+enum ShortLivedOtpVerificationAttemptResult {
+    UNSPECIFIED_RESULT = 1;
+    NO_OTP_FOR_PURPOSE = 2;
+    OTP_EXPIRED = 3;
+    OTP_INCORRECT = 4;
+    IP_MISMATCH = 5;
+}
+
+enum ImplicitVerificationType {
+    TYPE_UNKNOWN = 0;
+    ALTERNATE_EMAIL = 1;
+    CONTACT_EMAIL = 2;
+    PASSED_CHALLENGE = 3;
+    SHARED_DEVICE = 4;
+    SHARED_NETWORK = 5;
+}

@@ -1,0 +1,23 @@
+syntax = "proto3";
+
+package gaia_client;
+
+import "storage/datapol/annotations/proto/semantic_annotations.proto";
+
+option java_multiple_files = true;
+option java_package = "com.google.gaia.client.proto";
+
+enum ClientFeature {
+    UNKNOWN_FEATURE = 0;
+    GAIAFILTER = 1;
+    APPSFRAMEWORK = 2;
+    HRC = 3;
+    CREDENTIALEXCHANGER = 4;
+    CPP = 5;
+    JAVA = 6;
+    GO = 7;
+    PYTHON = 8;
+    HAAPI = 9;
+    SCAFFOLDING = 10;
+    GOA = 11;
+}

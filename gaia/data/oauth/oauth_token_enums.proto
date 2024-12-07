@@ -1,0 +1,17 @@
+syntax = "proto2";
+
+package gaia_data;
+
+import "logs/proto/logs_annotations/logs_annotations.proto";
+import "storage/datapol/annotations/proto/semantic_annotations.proto";
+
+option objc_class_prefix = "GAIA";
+option cc_enable_arenas = true;
+option java_package = "com.google.gaia.client.proto";
+
+enum DelegationTypeEnum {
+    UNKNOWN_DELEGATION_TYPE = 0;
+    UNICORN_CHILD_MANAGEMENT = 1;
+    HOME_GRAPH = 2;
+    UNICORN_PARENT_CONSENT_3P = 3;
+}

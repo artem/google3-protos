@@ -1,0 +1,227 @@
+syntax = "proto3";
+
+package security.data_access;
+
+import "google/protobuf/any.proto";
+import "google/protobuf/duration.proto";
+import "logs/proto/data_access/admin_access_control_authorization_info.proto";
+import "logs/proto/data_access/data_access_log.proto";
+import "logs/proto/data_access/method_type.proto";
+import "net/proto2/proto/descriptor.proto";
+import "privacy/data_governance/attributes/proto/annotations.proto";
+import "security/authorization/approvals/proto/request_authorization.proto";
+import "security/authorization/dynamic/proto/dynamic_access_customizer.proto";
+import "security/authorization/iam/proto/approver.proto";
+import "security/authorization/reqrat/testing/proto/acl_db.proto";
+import "security/context/proto/context.proto";
+import "security/credentials/proto/end_user_credentials.proto";
+import "security/credentials/proto/principal.proto";
+import "security/data_access/controller/public/administration_configuration.proto";
+import "security/data_access/controller/public/cloud_context.proto";
+import "security/data_access/controller/public/data_access_controller_resources.proto";
+import "security/data_access/controller/public/resource_identification_configuration.proto";
+import "security/data_access/controller/public/target_info.proto";
+import "util/task/status.proto";
+
+option cc_enable_arenas = true;
+option java_multiple_files = true;
+option java_package = "com.google.security.data_access.controller.client";
+
+service DataAccessController {
+    rpc CacheClientDescriptors(CacheClientDescriptorsRequest) returns (CacheClientDescriptorsResponse);
+    rpc CreateHandle(CreateHandleRequest) returns (CreateHandleResponse);
+    rpc InitiateDataAccess(InitiateDataAccessRequest) returns (InitiateDataAccessResponse);
+    rpc LogDataAccess(LogDataAccessRequest) returns (LogDataAccessResponse);
+    rpc FillAndWritePreliminaryLog(FillAndWritePreliminaryLogRequest) returns (FillAndWritePreliminaryLogResponse);
+    rpc FillPreliminaryLog(FillPreliminaryLogRequest) returns (FillPreliminaryLogResponse);
+    rpc FillAndWriteFinalLog(FillAndWriteFinalLogRequest) returns (FillAndWriteFinalLogResponse);
+    rpc LowDependencyMpa(LowDependencyMpaRequest) returns (LowDependencyMpaResponse);
+    rpc ExtractTargetInfo(ExtractTargetInfoRequest) returns (ExtractTargetInfoResponse);
+}
+
+message FullResponseEncryptionConfigProto {
+    int32 keystore_config_id = 1;
+    string master_key_name = 2;
+    credentials.PrincipalProto decrypt_principal = 3;
+}
+
+message CacheClientDescriptorsRequest {
+    .proto2.FileDescriptorSet descriptors = 1;
+}
+
+message CacheClientDescriptorsResponse {
+    
+}
+
+message CreateHandleRequest {
+    Environment environment = 1;
+    enum Environment {
+        ENVIRONMENT_UNSPECIFIED = 0;
+        PROD = 1;
+        DEV = 2;
+    }
+    
+    string gin_server_address = 2;
+    string keystore_address = 3;
+    FullResponseEncryptionConfigProto encryption = 4;
+    admin.AdministrationConfiguration admin_config = 5;
+    ResourceIdentificationConfig resource_identification = 6;
+    bool use_silva = 8;
+    
+    InitStrategy init_strategy = 9;
+    enum InitStrategy {
+        INIT_STRATEGY_UNSPECIFIED = 0;
+        INIT_STRATEGY_LAZY_WHEN_UDP_DISALLOWED = 1;
+        INIT_STRATEGY_BLOCKING = 2;
+        INIT_STRATEGY_LAZY = 3;
+    }
+    
+    oneof _gin_readiness_timeout {
+        google.protobuf.Duration gin_readiness_timeout = 7;
+    }
+}
+
+message CreateHandleResponse {
+    int32 handle = 1;
+}
+
+message DataAccessContext {
+    string action = 1;
+    MethodType method_type = 17;
+    credentials.EndUserCredentialsProto end_user_creds = 2;
+    credentials.EndUserCredentialsProto admin_metadata = 16;
+    string end_user_device_cert = 15;
+    google.protobuf.Any cloud_check_policy_request = 3;
+    google.protobuf.Any token_info = 4;
+    PackagedProto request_proto = 6;
+    HttpPackagedProto http_packaged_proto = 12;
+    ControllerAuditing audit_config = 8;
+    TargetInfo target_info = 7;
+    
+    oneof _data_governance_annotations {
+        privacy.data_governance.attributes.Annotations data_governance_annotations = 9;
+    }
+    
+    oneof _unique_id {
+        int32 unique_id = 10;
+    }
+    
+    oneof _impersonated_user {
+        credentials.UserPrincipalProto impersonated_user = 11;
+    }
+    
+    oneof _cloud_platform {
+        CloudPlatform cloud_platform = 13;
+    }
+    
+    oneof _api_service_name {
+        string api_service_name = 14;
+    }
+    
+    reserved 5;
+}
+
+message InitiateDataAccessRequest {
+    int32 handle = 1;
+    DataAccessContext request_context = 2;
+    admin.AdministrativeAccessControl control = 3;
+    bool skip_client_justification_check = 4;
+    
+    oneof _partial_auth_check_access_log {
+        DataAccessLogProto partial_auth_check_access_log = 6;
+    }
+}
+
+message InitiateDataAccessResponse {
+    util.StatusProto status = 1;
+    AdminAccessControlAuthorizationInfo admin_access_control_authorization_info = 2;
+    DataAccessLogProto auth_check_access_log = 3;
+    
+    oneof _fcgl_outcome {
+        FcglOutcome fcgl_outcome = 4;
+    }
+    
+    enum FcglOutcome {
+        FCGL_OUTCOME_UNSPECIFIED = 0;
+        FCGL_OUTCOME_NOT_ATTEMPTED = 1;
+        FCGL_OUTCOME_FAILED = 2;
+        FCGL_OUTCOME_COMPLETED = 3;
+        FCGL_OUTCOME_NEEDED = 4;
+    }
+}
+
+message FillPreliminaryLogRequest {
+    int32 handle = 1;
+    DataAccessLogProto pre_access_log = 2;
+    PackagedProto request_proto = 3;
+    HttpPackagedProto http_packaged_proto = 5;
+    ControllerAuditing audit_config = 4;
+}
+
+message FillPreliminaryLogResponse {
+    DataAccessLogProto pre_access_log = 1;
+}
+
+message FillAndWritePreliminaryLogRequest {
+    FillPreliminaryLogRequest fill_request = 1;
+}
+
+message FillAndWritePreliminaryLogResponse {
+    FillPreliminaryLogResponse fill_response = 1;
+    util.StatusProto fail_closed_status = 2;
+}
+
+message FillAndWriteFinalLogRequest {
+    int32 handle = 1;
+    DataAccessLogProto log_entry = 2;
+    PackagedProto response_proto = 3;
+    util.StatusProto response_status = 4;
+    ControllerAuditing audit_config = 5;
+}
+
+message FillAndWriteFinalLogResponse {
+    
+}
+
+message LowDependencyMpaRequest {
+    security_approvals.RequestDescription request_description = 2;
+    security_approvals.ServiceDescription service_description = 3;
+    repeated string desired_approvals = 4;
+    credentials.ApprovalStore store = 6;
+    authorization.dynamic.proto.DynamicAccessCustomizerProto dynamic_access_customizer = 7;
+    context.LoggableSecurityContextProto security_context = 8;
+    credentials.EndUserCredentialsProto euc = 9;
+    
+    oneof _acl_db {
+        authorization.reqrat.testing.proto.DB acl_db = 10;
+    }
+    
+    oneof _thinmint_verifier_key_path {
+        string thinmint_verifier_key_path = 11;
+    }
+    
+    reserved 1, 5;
+}
+
+message LowDependencyMpaResponse {
+    security_iam.ApproverResponse approver_response = 5;
+}
+
+message LogDataAccessRequest {
+    int32 handle = 1;
+    DataAccessLogProto log_entry = 2;
+    google.protobuf.Any unencrypted_response = 3;
+}
+
+message LogDataAccessResponse {
+    
+}
+
+message ExtractTargetInfoRequest {
+    PackagedProto request_proto = 1;
+    ControllerAuditing audit_config = 2;
+}
+
+message ExtractTargetInfoResponse {
+    TargetInfo target_info = 1;
+}

@@ -1,0 +1,60 @@
+syntax = "proto2";
+
+import "google/api/inclusion.proto";
+import "storage/datapol/annotations/proto/semantic_annotations.proto";
+
+option java_outer_classname = "UserAgentPb";
+option java_package = "com.google.common.net.useragent";
+
+message UserAgentProto {
+    required Family family = 1;
+    enum Family {
+        USER_DEFINED = 0;
+        MSIE = 1;
+        GECKO = 2;
+        APPLEWEBKIT = 3;
+        OPERA = 4;
+        KHTML = 5;
+        OTHER = 10;
+        APPLE = 11;
+        BLACKBERRY = 12;
+        DOCOMO = 13;
+        GOOGLE = 14;
+        OPENWAVE = 15;
+        POLARIS = 16;
+        OBIGO = 17;
+        TELECA = 18;
+        MICROSOFT = 19;
+        NOKIA = 20;
+        NETFRONT = 21;
+        SEMC = 22;
+        SMIT = 23;
+        KOREAN = 24;
+        CLIENT_HINTS = 25;
+    }
+    
+    optional string sub_family = 2;
+    optional string platform = 3;
+    optional string device = 4;
+    optional string device_version = 5;
+    optional string carrier = 6;
+    optional string security = 7;
+    optional string locale = 8;
+    optional string os = 9;
+    optional string os_variant = 10;
+    optional string browser = 11;
+    optional string browser_version = 12;
+    optional string browser_engine_version = 13;
+    optional string google_toolbar_version = 14;
+    optional string java_profile = 15;
+    optional string java_profile_version = 16;
+    optional string java_configuration = 17;
+    optional string java_configuration_version = 18;
+    optional string messaging = 19;
+    optional string messaging_version = 20;
+    
+    repeated group Annotation = 21 {
+        required string key = 22;
+        required string value = 23;
+    }
+}

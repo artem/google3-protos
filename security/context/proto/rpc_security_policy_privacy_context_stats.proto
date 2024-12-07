@@ -1,0 +1,51 @@
+syntax = "proto2";
+
+package security.context;
+
+import "net/proto2/bridge/proto/message_set.proto";
+
+option java_multiple_files = true;
+option java_package = "com.google.security.context";
+
+message RpcSPPrivacyContextMetric {
+    optional PrivacyContextState privacy_context_state = 1;
+    enum PrivacyContextState {
+        UNKNOWN = 0;
+        PRESENT = 1;
+        PRIVACY_CONTEXT_ABSENT = 2;
+        PRIVACY_CONTEXT_MISCONFIGURED = 8;
+        MISSING_CONSENT_INFO = 3;
+        PROPAGATED_CONSENT_INFO = 4;
+        PROPAGATED_DMA52_ENFORCEMENT = 5;
+        PROPAGATED_CONSENT_AND_DMA52_ENFORCEMENT = 6;
+        NOT_APPLICABLE = 7;
+    }
+    
+    optional int32 origin_associated_product_id = 2;
+    
+    optional AuthenticatorType authenticator_type = 3;
+    enum AuthenticatorType {
+        AUTHENTICATOR_TYPE_UNSPECIFIED = 0;
+        GAIA_MINT = 1;
+        CLOUD_UBER_MINT = 2;
+    }
+    
+    optional ProcessingPurpose processing_purpose = 4;
+    enum ProcessingPurpose {
+        PROCESSING_PURPOSE_UNSPECIFIED = 0;
+        NON_CLOUD_PROCESSING_INFRASTRUCTURE_PURPOSE = 1;
+        CLOUD_PROCESSING_INFRASTRUCTURE = 2;
+        PROCESSING_PURPOSE_EMPTY = 3;
+    }
+    
+    optional AccountType account_type = 5;
+    enum AccountType {
+        ACCOUNT_TYPE_UNSPECIFIED = 0;
+        ACCOUNT_TYPE_HUMAN = 1;
+        ACCOUNT_TYPE_SERVICE_ACCOUNT = 2;
+    }
+    
+    extend .proto2.bridge.MessageSet {
+        optional RpcSPPrivacyContextMetric message_set_extension = 525000002;
+    }
+}

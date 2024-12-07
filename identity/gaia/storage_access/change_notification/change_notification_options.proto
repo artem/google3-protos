@@ -1,0 +1,14 @@
+syntax = "proto2";
+
+package gaia_storage_access;
+
+import "net/proto2/bridge/proto/message_set.proto";
+import "storage/datapol/annotations/proto/semantic_annotations.proto";
+
+message ChangeNotificationOptions {
+    repeated string pubsub_keywords = 1;
+}
+
+extend .proto2.bridge.MessageSet {
+    optional ChangeNotificationOptions change_notification_options_extension = 525000734;
+}

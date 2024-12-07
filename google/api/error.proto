@@ -21,6 +21,6 @@ message CustomErrorRule {
     bool is_error_type = 3;
 }
 
-extend proto2.MessageOptions {
+extend .proto2.MessageOptions {
     CustomErrorRule custom_error = 79365461;
 }

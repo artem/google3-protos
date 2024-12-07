@@ -1,0 +1,224 @@
+syntax = "proto3";
+
+package tech.iam;
+
+import "cloud/identity/common/proto/third_party_id.proto";
+import "frameworks/testing/rpcreplay/processors/rpc_replay_field_option.proto";
+import "google/api/auditing.proto";
+import "google/api/inclusion.proto";
+import "google/api/policy.proto";
+import "google/iam/v1/policy.proto";
+import "google/protobuf/any.proto";
+import "google/protobuf/struct.proto";
+import "google/protobuf/timestamp.proto";
+import "logs/proto/data_access/asr/cloud_iam_resource.proto";
+import "security/credentials/proto/creds_assertion.proto";
+import "security/credentials/proto/justification.proto";
+import "security/credentials/proto/service_identity_attributes.proto";
+import "security/loas/l2/proto/credstype.proto";
+import "security/loas/l2/proto/usertype.proto";
+import "storage/datapol/annotations/proto/semantic_annotations.proto";
+import "tech/iam/proto/logging.proto";
+
+option java_outer_classname = "Iam";
+option java_package = "com.google.tech.iam.proto";
+
+message ApprovalDenyExplanation {
+    string explanation_text = 1;
+}
+
+message ApproverInfo {
+    repeated IAMContext approvers = 1;
+    repeated ApprovalDenyExplanation approval_deny_explanations = 2;
+}
+
+message JustificationInfo {
+    repeated security.credentials.Justifications.JustificationType types = 1;
+}
+
+message Request {
+    Authentication auth = 1;
+    message Authentication {
+        repeated string access_levels = 1;
+        google.protobuf.Struct claims = 2;
+        string third_party_cloud_principal_identifier = 3;
+    }
+    
+    string path = 2;
+    string host = 5;
+    
+    AccessLevelsInfo access_levels_info = 6;
+    message AccessLevelsInfo {
+        repeated AccessLevelDetails access_level_details = 1;
+        bool policies_evaluated = 2;
+    }
+    
+    string reason = 4;
+    
+    reserved 3;
+    
+    message AccessLevelDetails {
+        string name = 1;
+        
+        AccessLevelGrantState grant_state = 2;
+        enum AccessLevelGrantState {
+            GRANT_STATE_UNSPECIFIED = 0;
+            GRANTED = 1;
+            NOT_GRANTED = 2;
+            FAILED = 3;
+        }
+    }
+}
+
+message Destination {
+    string ip = 1;
+    int64 port = 2;
+}
+
+message PrincipalInfo {
+    oneof type {
+        TypeUnspecified type_unspecified = 3;
+        NonServiceAccount non_service_account = 4 [deprecated = true];
+        ServiceAccount service_account = 5;
+        ThirdPartyUser third_party_user = 6;
+        WorkspaceUser workspace_user = 7;
+        NonGcpRobot non_gcp_robot = 8;
+    }
+    
+    reserved 1, 2;
+    
+    message TypeUnspecified {
+        bool is_non_service_account = 1;
+        bool is_non_workspace_user = 2;
+    }
+    
+    message NonServiceAccount {
+        
+    }
+    
+    message ServiceAccount {
+        security.credentials.ServiceIdentityAttributes service_identity_attributes = 1;
+        
+        oneof _email_address {
+            string email_address = 2;
+        }
+    }
+    
+    message ThirdPartyUser {
+        google.cloud.identity.ThirdPartyId third_party_id = 1;
+    }
+    
+    message WorkspaceUser {
+        int64 dasher_customer_id = 1;
+        
+        oneof _email_address {
+            string email_address = 2;
+        }
+    }
+    
+    message NonGcpRobot {
+        
+    }
+}
+
+message IAMContext {
+    bytes end_user_creds = 16;
+    int64 principal = 1;
+    Request request = 9;
+    string prod_username = 6;
+    string authority_selector = 4;
+    string authority_selector_verifier = 10;
+    string token = 3;
+    string security_realm = 5;
+    ApproverInfo approver_info = 7;
+    JustificationInfo justification_info = 8;
+    security_loas_l2.CredentialsType creds_type = 11;
+    security_loas_l2.UserType prod_user_type = 20;
+    bytes uber_mint = 12;
+    bytes service_control_token = 13;
+    Destination destination = 14;
+    bytes end_user_creds_monitoring = 15;
+    PrincipalInfo principal_info = 17;
+    string authenticator_type = 18;
+    security.credentials.EvaluatedCredsAssertionSet creds_assertions = 19;
+}
+
+message Resource {
+    string name = 1;
+    string type = 2;
+    string service = 3;
+    map<string, string> labels = 4;
+    google.protobuf.Any expected_next_state = 5;
+    NextStateOfTags next_state_of_tags = 6;
+}
+
+message NextStateOfTags {
+    oneof TagsModification {
+        TagsFullState tags_full_state = 1;
+        TagsPartialState tags_partial_state = 2;
+        TagsFullStateForChildResource tags_full_state_for_child_resource = 3;
+    }
+    
+    message TagsFullState {
+        map<string, string> tags = 1;
+    }
+    
+    message TagsPartialState {
+        map<string, string> tags_to_upsert = 1;
+        repeated string tag_keys_to_remove = 2;
+    }
+    
+    message TagsFullStateForChildResource {
+        map<string, string> tags = 1;
+    }
+}
+
+message SYSContext {
+    Resource resource = 5;
+    string service_name = 2;
+    string resource_name = 3;
+    repeated string discharged_attrs = 4;
+    google.protobuf.Struct api_attrs = 6;
+    PolicyName nearest_crm_node = 7;
+    repeated ActivationConditionContext activation_condition_contexts = 8;
+}
+
+message ActivationConditionContext {
+    string namespace_identifier = 1;
+    google.protobuf.Any attributes = 2;
+}
+
+message ApiContext {
+    string operation = 1;
+    
+    MethodType method = 2;
+    enum MethodType {
+        UNKNOWN = 0;
+        CREATE = 1;
+        READ = 2;
+        UPDATE = 3;
+        DELETE = 4;
+    }
+}
+
+message LoggingContext {
+    bool disable_cloud_audit_logs_for_dry_run = 1;
+}
+
+message PolicyName {
+    string type = 1;
+    string id = 2;
+    string region = 3;
+}
+
+message ChangeDescription {
+    string summary = 1;
+}
+
+message PolicyChange {
+    google.protobuf.Timestamp time = 1;
+    PolicyName parent = 2;
+    google.iam.v1.Policy policy = 3;
+    ChangeDescription change_description = 6;
+    string principal = 5;
+}

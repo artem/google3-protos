@@ -1,0 +1,176 @@
+syntax = "proto2";
+
+package gaia_stats;
+
+import "google/api/inclusion.proto";
+import "java/com/google/apps/jspb/jspb.proto";
+import "logs/proto/logs_annotations/logs_annotations.proto";
+import "storage/datapol/annotations/proto/semantic_annotations.proto";
+import "webutil/http/user_agent/user_agent.proto";
+
+option objc_class_prefix = "GAIA";
+option java_multiple_files = true;
+option java_package = "com.google.gaia.stats";
+
+message BondUserAgent {
+    optional UserAgentProto user_agent_internal = 1;
+    
+    optional DeviceType device_type = 2;
+    enum DeviceType {
+        UNKNOWN = 0;
+        PC = 2;
+        MOBILE = 1;
+        TABLET = 3;
+        PORTABLE_MEDIA_PLAYER = 10;
+        TV = 4;
+        GAME_CONSOLE = 8;
+        MEDIA_PLAYER = 11;
+        SMART_SPEAKER = 9;
+        SMART_DISPLAY = 14;
+        CONNECTED_HOME_OTHER = 12;
+        WEARABLE = 5;
+        GLASS = 6 [deprecated = true];
+        CAR = 7;
+        VR_HEADSET = 13;
+    }
+    
+    optional Os os = 10 [default = UNKNOWN_OS];
+    enum Os {
+        UNKNOWN_OS = 0;
+        ANDROID_OS = 1;
+        IOS_OS = 2;
+        BLACKBERRY_OS = 3;
+        WIN_PHONE_OS = 4;
+        FIRE_OS = 5;
+        MAX_MOBILE_OS_VALUE = 99;
+        WINDOWS_OS = 101;
+        LINUX_OS = 102;
+        MAC_OS = 103;
+        CHROME_OS = 104;
+        PLAYSTATION_OS = 110;
+        XBOX_OS = 111;
+        TIZEN_OS = 112;
+        APPLE_TV_OS = 113;
+        KAI_OS = 114;
+        ANDROID_THINGS_OS = 115;
+        CAST_OS = 116;
+        STADIA_OS = 117;
+        ROKU_OS = 118;
+    }
+    
+    optional string os_version = 9;
+    optional string os_major_version = 12;
+    
+    optional App app = 7;
+    enum App {
+        OTHER_APP = 0;
+        CHROME = 1;
+        FIREFOX = 2;
+        MSIE = 3;
+        SAFARI = 4;
+        OPERA = 6;
+        EDGE = 8;
+        MSIE_COMPATIBILITY = 9;
+        OTHER_BROWSER = 5;
+        SAMSUNG_BROWSER = 10;
+        UC_BROWSER = 11;
+        ANDROID_BROWSER = 12;
+        YANDEX_BROWSER = 13;
+        SILK_BROWSER = 14;
+        COC_COC_BROWSER = 15;
+        HEADLESS_CHROME = 16;
+        MAX_BROWSER_APP_VALUE = 99;
+        GMAIL_APP = 107;
+        GMAIL_INBOX_APP = 113;
+        ANDROID_EMAIL_APP = 133;
+        SAMSUNG_MAIL_APP = 136;
+        MOTO_EMAIL_APP = 139;
+        BOXER_APP = 140;
+        LIMILABS_MAIL_DLL = 141;
+        BIS_APP = 142;
+        OUTLOOK_MAIL_APP = 137;
+        APPLE_NATIVE_APP = 138;
+        CHROME_WEBVIEW_APP = 112;
+        SAFARI_WEBVIEW_APP = 122;
+        CHROME_SYNC_APP = 105 [deprecated = true];
+        GSA_APP = 101;
+        GMM_APP = 103;
+        CALENDAR_APP = 108;
+        PLUS_APP = 109;
+        HANGOUTS_APP = 110;
+        HANGOUTS_MEET_APP = 176;
+        JAMBOARD_APP = 177;
+        VOICE_APP = 111;
+        PHOTOS_APP = 114;
+        DRIVE_SYNC_APP = 106;
+        DRIVE_APP = 116;
+        DOCS_APP = 115;
+        SHEETS_APP = 117;
+        SLIDES_APP = 120;
+        KEEP_APP = 118;
+        WHATS_APP_IN_DRIVE_APP = 121;
+        TRANSLATE_APP = 119;
+        YOUTUBE_APP = 104;
+        YOUTUBE_MUSIC_APP = 123;
+        YOUTUBE_GAMING_APP = 124;
+        YOUTUBE_KIDS_APP = 125;
+        YOUTUBE_CAPTURE_APP = 126;
+        YOUTUBE_CREATOR_APP = 127;
+        YOUTUBE_GO_APP = 150;
+        YOUTUBE_TV_APP = 151;
+        YOUTUBE_VR_APP = 157;
+        PLAY_APP = 102;
+        PLAY_MUSIC_APP = 128;
+        PLAY_BOOKS_APP = 129;
+        PLAY_MOVIES_APP = 130;
+        PLAY_NEWSSTAND_APP = 131;
+        PLAY_GAMES_APP = 132;
+        POKEMON_GO_APP = 143;
+        ALLO_APP = 144;
+        DUO_APP = 145;
+        CLASSROOM_APP = 147;
+        TRIPS_APP = 148;
+        GOOGLE_PAY_APP = 149;
+        WAZE_APP = 152;
+        ASSISTANT_APP = 153;
+        GBOARD_APP = 154;
+        NEWS_APP = 155;
+        HOME_APP = 156;
+        EARTH_APP = 158;
+        STREET_VIEW_APP = 159;
+        TEZ_APP = 160;
+        GOOGLE_ANALYTICS_APP = 161;
+        ADSENSE_APP = 162;
+        ADWORDS_APP = 163;
+        EXPRESS_APP = 164;
+        WEAR_APP = 165;
+        GOOGLE_MY_BUSINESS_APP = 166;
+        FAMILY_LINK_APP = 167;
+        OPINION_REWARDS_APP = 168;
+        WALLET_APP = 169;
+        ARTS_AND_CULTURE_APP = 170;
+        ANDROID_DEVICE_MANAGER_APP = 171;
+        GOOGLE_GO_APP = 172;
+        FILES_GO_APP = 173;
+        DATALLY_APP = 174;
+        WIFI_APP = 175;
+        STADIA_APP = 178;
+        BATTLESTAR_APP = 179;
+        SMART_LOCK_APP = 180;
+        LOGDOG_APP = 146;
+        DEPRECATED_MAC_OSX_MAIL_APP = 134 [deprecated = true];
+        DEPRECATED_IOS_MAIL_APP = 135 [deprecated = true];
+    }
+    
+    optional string app_version = 11;
+    optional string app_major_version = 13;
+    optional string device_model = 8;
+    optional bool is_from_client_hints = 14;
+    optional bool is_octarine_webview = 15;
+    
+    reserved 3, 4, 5, 6;
+}
+
+message IdCommandFields {
+    map<string, string> fields = 1;
+}

@@ -1,0 +1,28 @@
+syntax = "editions";
+
+package tech.internal.iam.local;
+
+import "tech/iam/proto/iam_service.proto";
+import "util/task/status.proto";
+
+option java_package = "com.google.tech.internal.iam.local.proto";
+
+message CheckPolicyResult {
+    optional util.StatusProto status = 1;
+    optional tech.iam.CheckPolicyResponse response = 2;
+}
+
+message GetPolicyResult {
+    optional util.StatusProto status = 1;
+    optional tech.iam.GetPolicyResponse response = 2;
+}
+
+message PurgePolicyResult {
+    optional util.StatusProto status = 1;
+    optional tech.iam.PurgePolicyResponse response = 2;
+}
+
+message SetPolicyResult {
+    optional util.StatusProto status = 1;
+    optional tech.iam.SetPolicyResponse response = 2;
+}

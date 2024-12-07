@@ -1,0 +1,58 @@
+syntax = "proto3";
+
+package tech.iam;
+
+import "google/api/auditing.proto";
+import "google/api/inclusion.proto";
+import "google/protobuf/any.proto";
+import "storage/datapol/annotations/proto/semantic_annotations.proto";
+import "tech/iam/proto/iam.proto";
+
+option java_multiple_files = true;
+
+message FederatedResourceHierarchy {
+    int32 version = 1;
+    repeated FederatedResource federated_hierarchy = 2;
+    PolicyName non_federated_parent = 3;
+}
+
+message FederatedResource {
+    PolicyName policy_name = 1;
+    
+    oneof grant_policy {
+        FederatedAttributeStatus grant_policy_status = 2;
+        FederatedGrantPolicy federated_grant_policy = 3;
+    }
+    
+    oneof tags {
+        FederatedAttributeStatus tags_status = 4;
+        FederatedTags federated_tags = 5;
+    }
+    
+    message FederatedTags {
+        map<string, string> tags = 1;
+    }
+    
+    enum FederatedAttributeStatus {
+        FEDERATION_STATUS_UNSET = 0;
+        NOT_FEDERATED = 1;
+        FEDERATED_AND_EMPTY = 2;
+    }
+}
+
+message FederatedGrantPolicy {
+    int32 version = 1;
+    google.protobuf.Any policy_data = 2;
+    
+    VisibleReferences visible_references = 4;
+    message VisibleReferences {
+        repeated int64 gaia_ids = 1;
+        repeated string custom_roles = 2;
+        repeated string cpis = 3;
+        repeated int64 project_numbers = 4;
+    }
+    
+    bytes sha_256 = 5;
+    
+    reserved 3;
+}

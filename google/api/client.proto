@@ -134,12 +134,12 @@ enum ClientLibraryDestination {
     PACKAGE_MANAGER = 20;
 }
 
-extend proto2.ServiceOptions {
+extend .proto2.ServiceOptions {
     string default_host = 1049;
     string oauth_scopes = 1050;
     string api_version = 525000001;
 }
 
-extend proto2.MethodOptions {
+extend .proto2.MethodOptions {
     repeated string method_signature = 1051;
 }

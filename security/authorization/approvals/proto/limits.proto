@@ -1,0 +1,12 @@
+syntax = "editions";
+
+package security_approvals;
+
+option java_multiple_files = true;
+option java_outer_classname = "LimitsProtoFile";
+option java_package = "com.google.security.authorization.approvals";
+
+message DynamicApprovalLimitConfig {
+    optional int32 concurrent_operations_limit = 1;
+    optional int32 per_user_concurrent_operations_limit = 2;
+}

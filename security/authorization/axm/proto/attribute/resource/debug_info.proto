@@ -1,0 +1,11 @@
+syntax = "editions";
+
+package security.authorization.axm.proto.attribute.resource;
+
+option java_multiple_files = true;
+option java_package = "com.google.security.authorization.axm.attribute.resource";
+
+message DebugInfo {
+    optional string source = 1;
+    optional string original_identifier = 2;
+}

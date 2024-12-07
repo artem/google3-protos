@@ -1,0 +1,45 @@
+syntax = "proto3";
+
+package gaia_auth;
+
+import "gaia/auth/restrictions/proto/hide_in_config_insights.proto";
+import "gaia/auth/restrictions/proto/obfuscated_id.proto";
+import "identity/checkpoint/labels/proto/session_interruption/template_path.proto";
+
+option java_multiple_files = true;
+option java_package = "com.google.gaia.auth.restrictions.proto";
+
+enum RestrictionReason {
+    DEFAULT = 0;
+    NONE = 1;
+    TESTING1 = 2;
+    TESTING2 = 3;
+    TESTING3 = 4;
+    TESTING4 = 5;
+    RETIRED_LEGACY_ESR_CLIENT_ID_BLOCK = 33 [deprecated = true];
+    UNICORN = 6;
+    ANDROID_FOR_WORK_DEVICE = 8;
+    RIALTO_DEVICE = 9;
+    YOUTUBE_PERSONA = 10;
+    GMB_ONLY_LISTING_ACCOUNT = 12;
+    CHROME_ENTERPRISE_DEVICE = 15;
+    DASHER = 17;
+    YOUTUBE_CHANNEL_ACCOUNT = 19;
+    COLLABORATOR_ACCOUNT = 20;
+    KLOPFKLOPF_DEVICE = 21;
+    YOUTUBE_MUSIC_LIBRARY_ACCOUNT = 22;
+    CHAUFFEUR_ACCOUNT = 23;
+    GOOGLE_VOICE_DEVICE_LINE_ROBOT = 24;
+    GOOGLE_DEV_PROFILE_ACCOUNT = 25;
+    GRIFFIN = 26;
+    MAPS_UGC_PROFILE_ACCOUNT = 34;
+    YOUTUBE_HOUSE_CHANNEL_ACCOUNT = 27;
+    UNDER_AGE_OF_CONSENT = 28;
+    UNICORN_LEGACY = 29;
+    UNDER_AGE_OF_CONSENT_FOR_YOUTUBE = 30;
+    SUPERVISED_OVER_AGE_OF_CONSENT = 31;
+    UNICORN_LITE_PROFILE = 32;
+    DASHER_ADDITIONAL_SERVICES_UTOS = 35 [deprecated = true];
+    RETIRED_ABUSE_PROTECTION_PILOT = 36 [deprecated = true];
+    RETAIL_DEMO_ACCOUNT = 37;
+}

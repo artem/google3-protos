@@ -1,0 +1,18 @@
+syntax = "proto2";
+
+package gaia_mint;
+
+import "storage/datapol/annotations/proto/semantic_annotations.proto";
+
+option objc_class_prefix = "GMNT";
+option java_multiple_files = true;
+option java_package = "com.google.gaia.mint";
+
+message ScopeOptions {
+    optional ScopeMode scope_mode = 1 [default = SCOPES];
+    enum ScopeMode {
+        SCOPES = 0;
+        PRETEND_NO_SCOPES = 1;
+        NO_SCOPES = 2;
+    }
+}

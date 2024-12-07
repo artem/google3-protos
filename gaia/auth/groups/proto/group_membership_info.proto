@@ -1,0 +1,48 @@
+syntax = "editions";
+
+package gaia.auth.groups.proto;
+
+import "gaia/client/client_feature.proto";
+import "storage/datapol/annotations/proto/semantic_annotations.proto";
+import "third_party/java/protobuf/java_features.proto";
+import "third_party/protobuf/cpp_features.proto";
+
+option java_multiple_files = true;
+option java_package = "com.google.gaia.auth.groups.proto";
+
+message GaiaGroupMembershipInfo {
+    repeated LegacyMembership legacy_memberships = 1;
+    message LegacyMembership {
+        optional int64 group_id = 1;
+        optional string tag = 2;
+        optional int64 add_time_ms = 3;
+    }
+    
+    optional OriginInfo origin_info = 2;
+    message OriginInfo {
+        optional RequestType request_type = 1;
+        enum RequestType {
+            UNKNOWN = 0;
+            GET_MINT = 1;
+            LOOKUP = 2;
+            CREATE_ISSUE_CONTEXT = 3;
+            EXCHANGE_AUTH_CODE_FOR_COOKIES = 4;
+            CHECK_AUTH_SUB_TOKEN = 5;
+            LOOKUP_AUTH_SUB_TOKEN = 6;
+        }
+        
+        optional string loas_role = 2;
+        repeated gaia_client.ClientFeature client_feature = 3;
+        optional string client_identifier = 4;
+    }
+    
+    optional ExperimentRelevantMembership experiment_relevant_membership = 3;
+    message ExperimentRelevantMembership {
+        repeated int64 group_ids = 1;
+    }
+    
+    optional XrgMigrationInfo xrg_migration_info = 4;
+    message XrgMigrationInfo {
+        optional bool is_xrg_only = 1;
+    }
+}

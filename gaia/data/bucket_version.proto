@@ -1,0 +1,15 @@
+syntax = "proto2";
+
+package gaia_data;
+
+import "storage/datapol/annotations/proto/semantic_annotations.proto";
+
+option java_package = "com.google.protos.gaia_data.proto1api";
+
+message BucketVersion {
+    optional int64 account_info = 1;
+    optional int64 external_keys = 2;
+    optional int64 internal_keys = 3;
+    optional int64 universal_seed = 4;
+    optional int64 last_fast_update_event_time_usec = 5;
+}

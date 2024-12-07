@@ -1,0 +1,25 @@
+syntax = "editions";
+
+package security_iam;
+
+import "logs/proto/data_access/data_access_log.proto";
+import "storage/datapol/annotations/proto/semantic_annotations.proto";
+import "tech/iam/proto/iam.proto";
+
+option java_multiple_files = true;
+option java_outer_classname = "ApproverProtoFile";
+option java_package = "com.google.security.authorization.iam";
+
+message ApproverResponse {
+    optional tech.iam.ApproverInfo approver_info = 1;
+    optional bool require_gin_logging = 3;
+    
+    optional FailClosedGinLogStatus fail_closed_gin_log_status = 4;
+    enum FailClosedGinLogStatus {
+        FAIL_CLOSED_GIN_LOG_STATUS_UNSET = 0;
+        FAIL_CLOSED_GIN_LOG_REQUIRED = 1;
+        FAIL_CLOSED_GIN_LOG_WRITTEN = 2;
+    }
+    
+    repeated security.data_access.AuthorizationInfo authorization_info = 2;
+}

@@ -1,0 +1,43 @@
+syntax = "proto2";
+
+package gaia_data;
+
+import "logs/proto/logs_annotations/logs_annotations.proto";
+import "security/credentials/proto/credential_origin.proto";
+import "security/loas/l2/proto/instance.proto";
+import "storage/datapol/annotations/proto/semantic_annotations.proto";
+
+option objc_class_prefix = "GAIA";
+option cc_enable_arenas = true;
+option java_multiple_files = true;
+option java_package = "com.google.gaia.client.proto";
+
+message CloudGaiaMetadata {
+    optional security.credentials.CredentialOrigin credential_origin = 2;
+    optional string identity_namespace_unique_id = 3;
+    optional string service_endpoint = 4;
+    repeated uint32 vm_vnid = 6;
+    repeated string certificate_fingerprint = 7;
+    
+    optional BoundTokenType bound_token_type = 5 [deprecated = true];
+    enum BoundTokenType {
+        UNKNOWN = 0;
+        IDENTITY_BOUND = 1;
+        NETWORK_BOUND = 2;
+        CERTIFICATE_BOUND = 3;
+        IP_BOUND = 4;
+        IDENTITY_BOUND_MTLS = 5;
+        INSTANCE_IDENTITY_BOUND = 6;
+        HARD_IDENTITY_BOUND_MTLS = 7;
+        HARD_CERTIFICATE_BOUND = 8;
+    }
+    
+    optional bool is_token_binding_policy_enforced = 8;
+    optional string client_ip = 9;
+    optional string client_spiffe_id = 10;
+    optional string cloud_principal_identifier = 11;
+    repeated BoundTokenType bound_token_types = 12;
+    optional security_loas_l2.CloudVMInfo cloud_vm_info = 13;
+    
+    reserved 1;
+}

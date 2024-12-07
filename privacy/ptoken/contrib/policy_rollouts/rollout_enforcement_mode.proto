@@ -1,0 +1,19 @@
+syntax = "proto2";
+
+package ptoken.policy_rollouts;
+
+option java_multiple_files = true;
+option java_package = "com.google.privacy.ptoken.policyrollouts";
+
+message RolloutEnforcementMode {
+    enum Enum {
+        option allow_alias = true;
+        ROLLOUT_ENFORCEMENT_MODE_UNSPECIFIED = 0;
+        GLOBAL_RAMPUP = 1;
+        EXPLICIT_OPT_IN = 2 [deprecated = true];
+        EXPLICIT_EARLY_ENFORCEMENT_OPT_IN = 2;
+        OPT_OUT = 3;
+        OPT_OUT_FILTERING = 4;
+        DISCOVERY_OPT_IN = 5;
+    }
+}

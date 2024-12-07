@@ -1,0 +1,22 @@
+syntax = "editions";
+
+package security.authentication;
+
+option java_multiple_files = true;
+option java_outer_classname = "DummyErrorOuterClassName";
+option java_package = "com.google.security.authentication.proto";
+
+message AuthError {
+    enum ErrorCode {
+        OK = 0;
+        CREDENTIALS_INVALID = 3;
+        CREDENTIALS_EXPIRED = 4;
+        CREDENTIALS_UNSUPPORTED = 5;
+        CREDENTIALS_INSUFFICIENT = 6;
+        CREDENTIALS_ILLEGAL = 11;
+        BACKEND_NOT_READY = 7;
+        REQUEST_INVALID = 8;
+        BACKEND_ERROR = 9;
+        OPERATION_UNAVAILABLE = 10;
+    }
+}

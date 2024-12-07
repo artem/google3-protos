@@ -14,9 +14,12 @@ option java_outer_classname = "CelProto";
 option java_package = "com.github.xds.type.v3";
 
 message CelExpression {
+    google.api.expr.ParsedExpr cel_expr_parsed = 3;
+    google.api.expr.CheckedExpr cel_expr_checked = 4;
+    
     oneof expr_specifier {
-        google.api.expr.ParsedExpr parsed_expr = 1;
-        google.api.expr.CheckedExpr checked_expr = 2;
+        google.api.expr.ParsedExpr parsed_expr = 1 [deprecated = true];
+        google.api.expr.CheckedExpr checked_expr = 2 [deprecated = true];
     }
 }
 

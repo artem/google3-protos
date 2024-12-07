@@ -8,6 +8,7 @@ import "logs/proto/logs_annotations/logs_annotations.proto";
 option ruby_package = "Google::Cloud::ServiceControl::V1";
 option php_namespace = "Google\\Cloud\\ServiceControl\\V1";
 option csharp_namespace = "Google.Cloud.ServiceControl.V1";
+option cc_enable_arenas = true;
 option java_multiple_files = true;
 option java_outer_classname = "CheckErrorProto";
 option java_package = "com.google.api.servicecontrol.v1";

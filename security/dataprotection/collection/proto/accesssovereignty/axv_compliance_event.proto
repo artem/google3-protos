@@ -1,0 +1,32 @@
+syntax = "editions";
+
+package security.data_access.accesssovereignty;
+
+import "google/protobuf/timestamp.proto";
+import "production/resources/dataplatform/idx/time_series/public/proto/idx_time_series_record.proto";
+import "security/dataprotection/collection/public/collection_service.proto";
+
+option java_multiple_files = true;
+option java_outer_classname = "AxvComplianceEventProto";
+option java_package = "com.google.security.dataaccess.accesssovereignty";
+
+message AxVComplianceEvent {
+    optional secure_collection.MessageSource message_source = 1;
+    optional google.protobuf.Timestamp event_timestamp = 2;
+    repeated AxVCredInferability cred_inferability = 3;
+    optional .idx.time_series.ingestion.proto.IDXTimeSeriesMetadata idx_internal_metadata = 4;
+}
+
+message AxVCredInferability {
+    optional string rpc_service_name = 1;
+    optional string rpc_method_name = 11;
+    optional string rpc_command = 2 [deprecated = true];
+    optional string original_authority_status = 3 [deprecated = true];
+    optional bool inferable_as_customer_access = 4 [deprecated = true];
+    optional string client_role = 5;
+    optional uint64 counter = 6;
+    optional string client_job = 7;
+    optional string client_rpc_service = 8;
+    optional string client_rpc_method = 9;
+    optional bool is_system_operation = 10;
+}

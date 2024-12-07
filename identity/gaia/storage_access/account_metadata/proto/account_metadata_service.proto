@@ -1,0 +1,223 @@
+syntax = "proto2";
+
+package gaia_storage_access;
+
+import "gaia/client/cloud_propagation.proto";
+import "gaia/data/disable_metadata.proto";
+import "gaia/data/email_annotation.proto";
+import "gaia/data/testaccount_data.proto";
+import "gaia/insclient/ins_clientinfo.proto";
+import "identity/backend/common/legacy/recorded_rpc.proto";
+import "identity/gaia/storage_access/change_notification/change_notification_options.proto";
+import "net/compass/proto/routing_annotations.proto";
+import "storage/datapol/annotations/proto/semantic_annotations.proto";
+
+option java_multiple_files = true;
+option java_outer_classname = "GaiaAccountMetadata";
+option java_package = "com.google.gaia.storageaccess.proto";
+
+service AccountMetadataService {
+    rpc DisableAccount(DisableAccountRequest) returns (DisableAccountResponse);
+    rpc EnableAccount(EnableAccountRequest) returns (EnableAccountResponse);
+    rpc RenewPlaceholderAccountExpiration(RenewPlaceholderAccountExpirationRequest) returns (RenewPlaceholderAccountExpirationResponse);
+    rpc UpdateAccountType(UpdateAccountTypeRequest) returns (UpdateAccountTypeResponse);
+    rpc DeleteAccount(DeleteAccountRequest) returns (DeleteAccountResponse);
+    rpc UndeleteAccount(UndeleteAccountRequest) returns (UndeleteAccountResponse);
+    rpc UpdateUser(UpdateUserRequest) returns (UpdateUserResponse);
+    rpc DeactivateAccount(DeactivateAccountRequest) returns (DeactivateAccountResponse);
+    rpc ReactivateAccount(ReactivateAccountRequest) returns (ReactivateAccountResponse);
+    rpc EnablePurgeForDeactivatedAccount(EnablePurgeForDeactivatedAccountRequest) returns (EnablePurgeForDeactivatedAccountResponse);
+}
+
+message DisableAccountRequest {
+    optional int64 user_id = 5;
+    optional DisableAccountInfo disable_info = 2;
+    optional DisableAccountMetadata disable_metadata = 3;
+    optional gaia_client.CloudPropagation cloud_propagation = 4;
+    optional ChangeNotificationOptions change_notification_options = 7;
+    optional identity_backend.legacy.RecordedRpcSequence recorded_rpc_sequence = 102;
+    
+    extensions 366309953;
+    
+    reserved 1, 6, 100, 101;
+}
+
+message DisableAccountResponse {
+    optional bytes cloud_token = 2;
+    
+    reserved 1, 99;
+}
+
+message EnableAccountRequest {
+    optional int64 user_id = 4;
+    optional EnableAccountInfo enable_info = 2;
+    optional gaia_client.CloudPropagation cloud_propagation = 3;
+    optional ChangeNotificationOptions change_notification_options = 6;
+    optional identity_backend.legacy.RecordedRpcSequence recorded_rpc_sequence = 102;
+    
+    extensions 351382363;
+    
+    reserved 1, 5, 100, 101;
+}
+
+message EnableAccountResponse {
+    optional bytes cloud_token = 2;
+    
+    reserved 1, 99;
+}
+
+message RenewPlaceholderAccountExpirationRequest {
+    optional int64 user_id = 1;
+}
+
+message RenewPlaceholderAccountExpirationResponse {
+    
+}
+
+message UpdateAccountTypeRequest {
+    optional int64 user_id = 1;
+    optional int32 account_type = 2;
+    optional identity_backend.legacy.RecordedRpcSequence recorded_rpc_sequence = 102;
+    
+    extensions 387701349;
+    
+    reserved 100, 101;
+}
+
+message UpdateAccountTypeResponse {
+    reserved 1, 99;
+}
+
+message DeleteAccountRequest {
+    optional int64 user_id = 1;
+    optional GaiaNotificationSettings notification_settings = 2;
+    optional gaia_client.CloudPropagation cloud_propagation = 3;
+    optional ChangeNotificationOptions change_notification_options = 4;
+    optional identity_backend.legacy.RecordedRpcSequence recorded_rpc_sequence = 102;
+    
+    extensions 214662212;
+    
+    reserved 100, 101;
+}
+
+message DeleteAccountResponse {
+    optional bytes cloud_token = 2;
+    optional bool already_deleted = 3;
+    
+    reserved 1, 99;
+}
+
+message UndeleteAccountRequest {
+    optional uint64 user_id = 1;
+    optional gaia_client.CloudPropagation cloud_propagation = 2;
+    optional ChangeNotificationOptions change_notification_options = 3;
+    optional identity_backend.legacy.RecordedRpcSequence recorded_rpc_sequence = 102;
+    
+    extensions 432667141;
+    
+    reserved 100, 101;
+}
+
+message UndeleteAccountResponse {
+    optional bytes cloud_token = 2;
+    
+    reserved 1, 99, 100;
+}
+
+message UpdateUserRequest {
+    optional ClientUserInfo user_info = 1;
+    
+    repeated ServiceChange service_changes = 2;
+    message ServiceChange {
+        optional int32 service_id = 3;
+        optional int32 flag_id = 4;
+        
+        optional ChangeTypeEnum change_type = 5;
+        enum ChangeTypeEnum {
+            CHANGE_TYPE_ENUM_UNSPECIFIED = -1;
+            ADD = 0;
+            REMOVE = 1;
+        }
+    }
+    
+    repeated string allowed_device_sessions = 7;
+    optional gaia_client.CloudPropagation cloud_propagation = 8;
+    optional bool context_aware_access_enabled = 9;
+    optional gaia_data.TestAccountBehavior test_account_behavior = 10;
+    optional bool has_product_disable = 11;
+    optional int32 account_type = 12;
+    optional bool allow_deleted_account = 13 [default = false];
+    
+    optional EmailAddressInfoUpdate email_info_update = 14;
+    message EmailAddressInfoUpdate {
+        optional string email_to_select = 2;
+        optional bool select_as_primary = 3 [default = true];
+        optional bool allow_auth = 4;
+        optional bool delivery_disabled = 5;
+        optional bool is_xmpp_jid = 6;
+        optional bool is_public_id = 7;
+        optional bool is_primary_id = 8;
+        optional bool recovery_disabled = 9;
+        optional bool is_shadow = 10;
+        optional bool has_shadow = 11;
+        optional bool federated_login_enabled = 13;
+        repeated gaia_data.GaiaEmailAnnotation email_annotations_to_add = 14 [packed = true];
+        repeated gaia_data.GaiaEmailAnnotation email_annotations_to_remove = 15 [packed = true];
+        
+        reserved 1, 12;
+    }
+    
+    optional AccountCapabilityInfoUpdate capability_info_update = 15;
+    message AccountCapabilityInfoUpdate {
+        repeated int32 account_traits_to_add = 1 [packed = true];
+        repeated int32 account_traits_to_remove = 2 [packed = true];
+    }
+    
+    optional bool keep_existing_sessions = 16 [default = false];
+    optional ChangeNotificationOptions change_notification_options = 17;
+    optional identity_backend.legacy.RecordedRpcSequence recorded_rpc_sequence = 102;
+    
+    extensions 455208407;
+    
+    reserved 6, 100, 101;
+}
+
+message UpdateUserResponse {
+    optional ClientUserInfo new_user_info = 2;
+    optional bytes cloud_token = 3;
+    
+    reserved 1, 99;
+}
+
+message DeactivateAccountRequest {
+    optional int64 user_id = 1;
+    optional int64 purging_exception_reason = 6;
+    optional UserContext user_context = 5;
+    
+    reserved 2, 3, 4;
+}
+
+message DeactivateAccountResponse {
+    reserved 1, 2;
+}
+
+message ReactivateAccountRequest {
+    optional int64 user_id = 1;
+    optional int64 purging_exception_reason = 5;
+    optional ChangeNotificationOptions change_notification_options = 6;
+    
+    reserved 2, 3, 4;
+}
+
+message ReactivateAccountResponse {
+    reserved 1, 2;
+}
+
+message EnablePurgeForDeactivatedAccountRequest {
+    optional int64 user_id = 1;
+    optional int64 purging_exception_reason = 2;
+}
+
+message EnablePurgeForDeactivatedAccountResponse {
+    
+}

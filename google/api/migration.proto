@@ -391,26 +391,26 @@ enum GaiaMintOption {
     GAIA_GROUPS = 2;
 }
 
-extend proto2.MessageOptions {
+extend .proto2.MessageOptions {
     MigrationMessageRule message_migration = 182434174;
 }
 
-extend proto2.EnumOptions {
+extend .proto2.EnumOptions {
     MigrationEnumRule enum_migration = 214180820;
 }
 
-extend proto2.MethodOptions {
+extend .proto2.MethodOptions {
     MigrationRule method_migration = 124888596;
 }
 
-extend proto2.FieldOptions {
+extend .proto2.FieldOptions {
     MigrationFieldRule field_migration = 158016499;
 }
 
-extend proto2.EnumValueOptions {
+extend .proto2.EnumValueOptions {
     MigrationEnumValueRule enum_value_migration = 272764843;
 }
 
-extend proto2.ServiceOptions {
+extend .proto2.ServiceOptions {
     MigrationApiRule api_migration = 351442474;
 }

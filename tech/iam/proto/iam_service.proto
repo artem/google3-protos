@@ -1,0 +1,847 @@
+syntax = "proto3";
+
+package tech.iam;
+
+import public "tech/iam/proto/federated_resource.proto";
+import "google/api/auditing.proto";
+import "google/api/expr/syntax.proto";
+import "google/api/policy.proto";
+import "google/api/visibility.proto";
+import "google/cloud/audit/policy_violation_info.proto";
+import "google/iam/v1/options.proto";
+import "google/iam/v1/policy.proto";
+import "google/protobuf/any.proto";
+import "google/protobuf/duration.proto";
+import "google/protobuf/field_mask.proto";
+import "google/protobuf/timestamp.proto";
+import "google/rpc/context/attribute_context.proto";
+import "google/rpc/status.proto";
+import "logs/proto/data_access/asr/cloud_identity_service_account_resource.proto";
+import "net/proto2/proto/descriptor.proto";
+import "security/credentials/proto/authenticator.proto";
+import "storage/datapol/annotations/proto/semantic_annotations.proto";
+import "tech/iam/proto/iam.proto";
+import "tech/iam/proto/iam_enums.proto";
+import "tech/iam/proto/logging.proto";
+
+option cc_enable_arenas = true;
+option java_outer_classname = "IamService";
+option java_package = "com.google.tech.iam.proto";
+
+service IAMInternal {
+    rpc SetPolicy(SetPolicyRequest) returns (SetPolicyResponse);
+    rpc SetParent(SetParentRequest) returns (SetParentResponse);
+    rpc CompilePolicy(CompilePolicyRequest) returns (CompilePolicyResponse);
+    rpc GetPolicy(GetPolicyRequest) returns (GetPolicyResponse);
+    rpc GetParent(GetParentRequest) returns (GetParentResponse);
+    rpc DecompilePolicy(DecompilePolicyRequest) returns (DecompilePolicyResponse);
+    rpc CheckPolicy(CheckPolicyRequest) returns (CheckPolicyResponse);
+    rpc TestPermissions(TestPermissionsRequest) returns (TestPermissionsResponse);
+    rpc BulkCheckPolicy(BulkCheckPolicyRequest) returns (BulkCheckPolicyResponse);
+    rpc BulkTestPermissions(BulkTestPermissionsRequest) returns (BulkTestPermissionsResponse);
+    rpc PurgePolicy(PurgePolicyRequest) returns (PurgePolicyResponse);
+    rpc MarkPolicyForPurge(MarkPolicyForPurgeRequest) returns (MarkPolicyForPurgeResponse);
+    rpc UnmarkPolicyForPurge(UnmarkPolicyForPurgeRequest) returns (UnmarkPolicyForPurgeResponse);
+    rpc SetProjectNumber(SetProjectNumberRequest) returns (SetProjectNumberResponse);
+    rpc MemberTypeLookup(MemberTypeLookupRequest) returns (MemberTypeLookupResponse);
+    rpc GetSetPolicy(GetSetPolicyRequest) returns (GetSetPolicyResponse);
+    rpc GetAccessTokenForSelf(GetAccessTokenForSelfRequest) returns (GetAccessTokenForSelfResponse);
+    rpc GetTokenForSelf(GetTokenForSelfRequest) returns (GetTokenForSelfResponse);
+    rpc CanActAsServiceAccount(CanActAsServiceAccountRequest) returns (CanActAsServiceAccountResponse);
+    rpc ImportServiceAccount(ImportServiceAccountRequest) returns (ImportServiceAccountResponse);
+    rpc AddTenantProject(AddTenantProjectRequest) returns (AddTenantProjectResponse);
+    rpc RemoveTenantProject(RemoveTenantProjectRequest) returns (RemoveTenantProjectResponse);
+    rpc ListTenantProjects(ListTenantProjectsRequest) returns (ListTenantProjectsResponse);
+    rpc CreateToken(CreateTokenRequest) returns (CreateTokenResponse);
+    rpc CheckOrgPolicy(CheckOrgPolicyRequest) returns (CheckOrgPolicyResponse);
+    rpc BulkCheckOrgPolicy(BulkCheckOrgPolicyRequest) returns (BulkCheckOrgPolicyResponse);
+}
+
+message RepeatedFieldRule {
+    int32 min_elements = 1;
+    int32 max_elements = 2;
+}
+
+message RetryParams {
+    bool suppress = 1;
+}
+
+message SetPolicyRequest {
+    IAMContext iam = 1;
+    PolicyName parent = 2;
+    PolicyName name = 3;
+    SYSContext sys = 10;
+    google.iam.v1.Policy policy = 4;
+    google.protobuf.FieldMask update_mask = 12;
+    ChangeDescription change_description = 8;
+    bool enforce_set_iam_policy_permission = 11;
+    
+    JustificationValidation justification_validation = 17;
+    enum JustificationValidation {
+        JUSTIFICATION_VALIDATION_UNSPECIFIED = 0;
+        VALIDATED = 1;
+        NOT_VALIDATED = 2;
+    }
+    
+    SetPolicyMode mode = 13;
+    enum SetPolicyMode {
+        DEFAULT = 0;
+        GLOBAL_TO_REGIONAL_MIGRATION_DUAL = 1;
+    }
+    
+    bool dry_run = 15;
+    FederatedResourceHierarchy federated_resource_hierarchy = 18;
+    
+    oneof previous {
+        PolicyName previous_name = 14;
+        google.iam.v1.Policy previous_policy = 16;
+    }
+}
+
+message ExplainParams {
+    bool explain_deny = 1;
+    bool include_residual_policy = 2;
+}
+
+message ClientCapabilities {
+    bool fail_closed_data_access_logging_capable = 1;
+    
+    LogLevel log_level = 2;
+    enum LogLevel {
+        LOG_LEVEL_UNSPECIFIED = 0;
+        INFO = 1;
+    }
+    
+    repeated PolicyState policy_states = 3;
+    message PolicyState {
+        State launch_state = 1;
+        PolicyType policy = 2;
+    }
+    
+    enum PolicyType {
+        POLICY_TYPE_UNSPECIFIED = 0;
+        CUSTOM_ORG_POLICY = 1;
+    }
+    
+    enum State {
+        STATE_UNSPECIFIED = 0;
+        DARK_LAUNCHED = 1;
+        LAUNCHED = 2;
+    }
+}
+
+message DenyExplanation {
+    string explanation_text = 1;
+    google.iam.v1.Policy residual_policy = 2;
+    google.protobuf.Any internal_info = 3;
+    string error_id = 4;
+}
+
+message CheckExplanation {
+    DenyExplanation deny_explanation = 1;
+}
+
+message TokenInfo {
+    repeated TokenInfos token_infos = 1;
+    message TokenInfos {
+        repeated security.credentials.DataAccessReason data_access_reasons = 1;
+        IAMContext delegator = 2;
+        google.protobuf.Timestamp issue_time = 3;
+        google.protobuf.Timestamp expiration_time = 4;
+    }
+    
+    ValidationFailureReason validation_failure_reason = 2;
+    enum ValidationFailureReason {
+        UNSPECIFIED = 0;
+        TOKEN_NOT_WELL_FORMED = 1;
+        TOKEN_EXPIRED = 2;
+    }
+    
+    IamTokenType token_type = 3;
+}
+
+message ClientFeature {
+    ClientFeatureOption feature = 1;
+    enum ClientFeatureOption {
+        NONE = 0;
+        NEGATIVE_CACHING_RETRY_THRESHOLD = 2;
+        CONDITION_CACHE_KEY = 3;
+    }
+    
+    ClientFeatureStatus status = 2;
+    enum ClientFeatureStatus {
+        UNSUPPORTED = 0;
+        DARK_LAUNCH = 1;
+        SUPPORTED = 2;
+    }
+}
+
+message AttributeCacheKeys {
+    google.protobuf.FieldMask attribute_mask = 1 [deprecated = true];
+    repeated string api_attribute_keys = 2;
+    google.protobuf.FieldMask iam_attribute_mask = 3;
+    google.protobuf.FieldMask sys_attribute_mask = 4;
+}
+
+message CheckResultInformation {
+    AccessType access_type = 1 [deprecated = true];
+    bool injected_policy_grants_exclusively = 2;
+    CloudLogReason cloud_log_reason = 3;
+}
+
+message CheckResultAdvice {
+    google.protobuf.Duration cache_ttl = 1;
+    repeated ClientFeature client_features = 3;
+    int32 max_retry_attempts_allowed = 4;
+    bool enable_missing_attributes_error_in_cel_evaluation = 6;
+    google.protobuf.Any access_type_info = 7;
+    
+    reserved 2, 5;
+}
+
+message CheckResultObligations {
+    
+}
+
+message SetPolicyResponse {
+    google.iam.v1.Policy policy = 1;
+    google.iam.v1.PolicyDelta policy_delta = 2;
+    
+    AuthorizationResult authorization_result = 4;
+    enum AuthorizationResult {
+        UNSPECIFIED = 0;
+        AUTHORIZED = 1;
+        UNAUTHORIZED = 2;
+    }
+    
+    repeated google.iam.v1.LogConfig log_configs = 3;
+    string permission_checked = 5;
+    bool justification_control_required = 8;
+    CheckExplanation explanation = 9;
+    PolicyName cap_name = 6;
+    TokenInfo token_info = 7;
+}
+
+message CompilePolicyRequest {
+    bool enforce_policy_check = 1;
+    CompilePolicyCheckRequestInfo check_info = 2;
+    PolicyName name = 3;
+    google.iam.v1.Policy policy = 4;
+    PolicyName parent = 6;
+    google.protobuf.FieldMask update_mask = 7;
+    
+    oneof existing {
+        PolicyName existing_name = 8;
+        FederatedGrantPolicy existing_policy = 5;
+    }
+}
+
+message CompilePolicyResponse {
+    CompilePolicyCheckResponseInfo authorization_info = 1;
+    google.iam.v1.Policy policy = 2;
+    google.iam.v1.PolicyDelta policy_delta = 3;
+    FederatedGrantPolicy federated_policy = 4;
+}
+
+message CompilePolicyCheckRequestInfo {
+    IAMContext iam = 1;
+    SYSContext sys = 2;
+    SetPolicyRequest.JustificationValidation justification_validation = 3;
+    FederatedResourceHierarchy federated_resource_hierarchy = 4;
+}
+
+message CompilePolicyCheckResponseInfo {
+    SetPolicyResponse.AuthorizationResult authorization_result = 1;
+    repeated google.iam.v1.LogConfig log_configs = 2;
+    string permission_checked = 3;
+    bool justification_control_required = 4;
+    TokenInfo token_info = 5;
+    CheckExplanation explanation = 6;
+}
+
+message SetParentRequest {
+    bytes etag = 1;
+    PolicyName parent = 2;
+    PolicyName name = 3;
+}
+
+message SetParentResponse {
+    bytes etag = 1;
+}
+
+message GetParentRequest {
+    PolicyName name = 1;
+}
+
+message GetParentResponse {
+    bytes etag = 1;
+    PolicyName parent = 2;
+}
+
+message GetPolicyRequest {
+    IAMContext iam = 1;
+    PolicyName name = 2;
+    bytes read_token = 3;
+    google.iam.v1.GetPolicyOptions options = 5;
+    
+    reserved 4;
+    
+    reserved "requested_policy_version";
+}
+
+message GetPolicyResponse {
+    PolicyName parent = 1;
+    google.iam.v1.Policy policy = 2;
+    
+    reserved 3;
+}
+
+message DecompilePolicyRequest {
+    PolicyName parent = 1;
+    PolicyName name = 2;
+    FederatedGrantPolicy policy = 3;
+    google.iam.v1.GetPolicyOptions options = 4;
+}
+
+message DecompilePolicyResponse {
+    google.iam.v1.Policy policy = 1;
+}
+
+message MemberTypeLookupRequest {
+    string member = 1;
+}
+
+message MemberTypeLookupResponse {
+    MemberType member_type = 1;
+    enum MemberType {
+        UNKNOWN_MEMBER_TYPE = 0;
+        USER = 1;
+        GROUP = 2;
+        SERVICE_ACCOUNT = 3;
+        DOMAIN_GROUP = 4;
+    }
+}
+
+message IAMInternalValidationOptions {
+    bool disable_cross_region_alert = 1;
+}
+
+message InternalRequestMetadata {
+    google.protobuf.Any internal_orchestration_metadata = 1;
+}
+
+message InternalRequestInfo {
+    bool enable_orchestrator_protocol = 1;
+}
+
+message CheckPolicyRequest {
+    IAMContext iam = 1;
+    SYSContext sys = 2;
+    PolicyName name = 4;
+    PolicyNameOptions name_options = 11;
+    string permission = 5;
+    RetryParams retry_params = 6;
+    ExplainParams explain_params = 7;
+    ClientCapabilities client_capabilities = 8;
+    repeated bytes etags = 9;
+    InjectedDecisions injected_decisions = 13;
+    google.iam.v1.Policy policy = 10;
+    IAMInternalValidationOptions validation_options = 12;
+    FederatedResourceHierarchy federated_resource_hierarchy = 14;
+    ApiContext api = 15;
+    LoggingContext logging = 16;
+    InternalRequestMetadata internal_request_metadata = 17;
+    InternalRequestInfo internal_request_info = 18;
+}
+
+message BooleanDecisionValue {
+    oneof value {
+        bool bag_value = 1;
+        bool aggregated_value = 2;
+    }
+}
+
+message InjectedDecisions {
+    BooleanDecisionValue access = 1 [deprecated = true];
+    
+    oneof _allow {
+        bool allow = 2;
+    }
+    
+    oneof _public_for_logging {
+        bool public_for_logging = 3;
+    }
+    
+    oneof _access_type {
+        AccessType access_type = 4;
+    }
+}
+
+message InternalResponseInfo {
+    google.protobuf.Any orchestrator_protocol_result = 1;
+}
+
+message CheckPolicyResponse {
+    bool success = 1;
+    repeated google.iam.v1.LogConfig log_configs = 2;
+    CheckExplanation explanation = 3;
+    google.api.expr.Expr condition_expr = 4 [deprecated = true];
+    TokenInfo token_info = 5;
+    bool justification_control_required = 6;
+    ConditionControl condition_control = 7 [deprecated = true];
+    bool not_cacheable = 9;
+    CheckResultInformation check_result_information = 10;
+    CheckResultAdvice check_result_advice = 11;
+    repeated EffectiveCondition effective_conditions = 12;
+    Obligations obligations = 13;
+    InternalResponseInfo internal_response_info = 14;
+    
+    reserved 8;
+}
+
+message CloudAuditLoggingObligation {
+    bool granted = 1;
+    google.cloud.audit.PolicyViolationInfo policy_violation_info = 2;
+}
+
+message Obligations {
+    CloudAuditLoggingObligation cloud_audit_logging_obligation = 1;
+    
+    reserved 2;
+}
+
+message EffectiveCondition {
+    string type = 1;
+    bool evaluation_result = 3;
+    repeated google.api.expr.Expr exprs = 4;
+    
+    reserved 2;
+}
+
+message ConditionControl {
+    repeated Assignment assignments = 1;
+    message Assignment {
+        string name = 1;
+        google.api.expr.Expr expr = 2;
+        bool value = 3;
+        
+        reserved 4;
+    }
+    
+    repeated ConditionalResult conditional_results = 2;
+    message ConditionalResult {
+        Condition condition = 1;
+        message Condition {
+            repeated string expressions = 1;
+            bool has_valid_justification = 2;
+        }
+        
+        AuthzResult result = 2;
+        message AuthzResult {
+            bool success = 1;
+            repeated google.iam.v1.LogConfig log_configs = 2;
+        }
+    }
+}
+
+message GetAccessTokenForSelfRequest {
+    repeated string scopes = 1;
+    string name = 4 [deprecated = true];
+    
+    oneof service_account {
+        string service_account_ref = 2;
+        string service_account_email = 3;
+    }
+}
+
+message GetAccessTokenForSelfResponse {
+    string access_token = 1;
+    google.protobuf.Timestamp expiration_time = 2;
+}
+
+message GetTokenForSelfRequest {
+    TokenType token_type = 1;
+    enum TokenType {
+        TOKEN_TYPE_UNSPECIFIED = 0;
+        OPENID = 1;
+    }
+    
+    string audience = 2;
+    
+    OpenIdAttributes open_id_attributes = 3;
+    message OpenIdAttributes {
+        repeated string gce_vm_information_mask = 1;
+    }
+    
+    bool include_email = 4;
+}
+
+message GetTokenForSelfResponse {
+    string token = 1;
+}
+
+message CanActAsServiceAccountRequest {
+    IAMContext iam = 1;
+    string name = 5;
+    int64 project_number = 4;
+    bool allow_deleted = 6;
+    
+    UseCase use_case = 7;
+    enum UseCase {
+        UNSPECIFIED_CAN_ACT_AS = 0;
+        CAN_ACT_AS_COMPUTE_CREATE_VM = 1;
+        CAN_ACT_AS_COMPUTE_FIREWALL = 2;
+        CAN_GET_CERTIFICATE_GKE_POD = 3;
+    }
+    
+    ServiceAccountAttachmentInfo sa_attachment_info = 8;
+    
+    oneof service_account {
+        string service_account_ref = 2 [deprecated = true];
+        string service_account_email = 3 [deprecated = true];
+    }
+}
+
+message ServiceAccountAttachmentInfo {
+    string resource_type = 1;
+    string resource_id = 2;
+}
+
+message CanActAsServiceAccountResponse {
+    bool success = 1;
+    int64 account_gaia_id = 2;
+    
+    DeletedStatus deleted_status = 3;
+    message DeletedStatus {
+        bool is_purged = 1;
+        bool is_deleted = 2;
+        bool would_act_as_if_not_deleted = 3;
+    }
+    
+    oneof _denied_error {
+        google.rpc.Status denied_error = 4;
+    }
+}
+
+message PurgePolicyRequest {
+    PolicyName name = 1;
+    bytes etag = 2;
+}
+
+message PurgePolicyResponse {
+    
+}
+
+message MarkPolicyForPurgeRequest {
+    PolicyName name = 1;
+    string etag = 2;
+}
+
+message MarkPolicyForPurgeResponse {
+    string etag = 1;
+}
+
+message UnmarkPolicyForPurgeRequest {
+    PolicyName name = 1;
+    string etag = 2;
+}
+
+message UnmarkPolicyForPurgeResponse {
+    string etag = 1;
+}
+
+message TestPermissionsRequest {
+    IAMContext iam = 1;
+    SYSContext sys = 2;
+    PolicyName name = 3;
+    PolicyNameOptions name_options = 6;
+    repeated string permissions = 4;
+    RetryParams retry_params = 5;
+    google.iam.v1.Policy policy = 7;
+    repeated InjectedDecisions permissions_injected_decisions = 8;
+    FederatedResourceHierarchy federated_resource_hierarchy = 9;
+    InternalRequestInfo internal_request_info = 10;
+}
+
+message TestPermissionsResponse {
+    repeated string permissions = 1;
+    InternalResponseInfo internal_response_info = 2;
+}
+
+message FindServiceAccountRequest {
+    int64 gaiaid = 1;
+}
+
+message FindServiceAccountResponse {
+    string ref = 1;
+}
+
+message ImportServiceAccountRequest {
+    int64 robot_gaia_id = 1 [deprecated = true];
+    string account_id = 2 [deprecated = true];
+    string display_name = 3 [deprecated = true];
+    
+    ImportSource import_source = 4 [deprecated = true];
+    enum ImportSource {
+        UNSPECIFIED = 0;
+        DEVCONSOLE_FRONTEND = 1;
+        APPIDENTITY = 2;
+        INCEPTION = 3;
+        BACKFILL = 4;
+    }
+}
+
+message ImportServiceAccountResponse {
+    
+}
+
+message AddTenantProjectRequest {
+    int64 project_number = 1;
+    int64 tenant_project_number = 2;
+}
+
+message AddTenantProjectResponse {
+    
+}
+
+message RemoveTenantProjectRequest {
+    int64 project_number = 1;
+    int64 tenant_project_number = 2;
+}
+
+message RemoveTenantProjectResponse {
+    
+}
+
+message ListTenantProjectsRequest {
+    int64 project_number = 1;
+}
+
+message ListTenantProjectsResponse {
+    repeated int64 tenant_project_numbers = 1;
+}
+
+message BulkCheckPolicyRequest {
+    IAMContext iam = 1;
+    
+    repeated Request requests = 2;
+    message Request {
+        SYSContext sys = 1;
+        PolicyName name = 2;
+        repeated string permissions = 3;
+        PolicyNameOptions name_options = 4;
+        InjectedDecisions injected_decisions = 5 [deprecated = true];
+        repeated InjectedDecisions permissions_injected_decisions = 7;
+        FederatedResourceHierarchy federated_resource_hierarchy = 8;
+        repeated ClientCapabilities.PolicyState policy_states = 9;
+        ApiContext api = 10;
+        
+        reserved 6;
+    }
+    
+    RetryParams retry_params = 6;
+    LoggingContext logging = 7;
+    InternalRequestMetadata internal_request_metadata = 8;
+    InternalRequestInfo internal_request_info = 9;
+}
+
+message BulkCheckPolicyResponse {
+    bool success = 2;
+    
+    repeated Response responses = 1;
+    message Response {
+        repeated string failed_permissions = 1 [deprecated = true];
+        
+        repeated PermissionResponse permission_responses = 3;
+        message PermissionResponse {
+            string permission = 1;
+            bool success = 2;
+            repeated google.iam.v1.LogConfig log_configs = 3;
+            google.api.expr.Expr condition_expr = 4 [deprecated = true];
+            bool justification_control_required = 5;
+            ConditionControl condition_control = 6 [deprecated = true];
+            bool not_cacheable = 7;
+            CheckResultInformation check_result_information = 8;
+            CheckResultAdvice check_result_advice = 9;
+            repeated EffectiveCondition effective_conditions = 10;
+            CheckExplanation explanation = 11;
+            Obligations obligations = 12;
+        }
+    }
+    
+    TokenInfo token_info = 3;
+    InternalResponseInfo internal_response_info = 4;
+}
+
+message SetProjectNumberRequest {
+    string project_id = 1;
+    int64 project_number = 2;
+    
+    DasherInfo dasher_info = 3;
+    message DasherInfo {
+        int64 customer_id = 1;
+        int64 ou_id = 2;
+    }
+    
+    PolicyName parent = 4;
+    google.iam.v1.Policy policy = 5;
+}
+
+message SetProjectNumberResponse {
+    bytes etag = 1;
+}
+
+message ProjectInfo {
+    string display_name = 1;
+}
+
+message CreateTokenRequest {
+    IAMContext delegator = 1;
+    
+    repeated Delegation delegations = 2;
+    message Delegation {
+        PolicyName name = 1;
+        google.iam.v1.Policy policy = 2;
+    }
+    
+    google.protobuf.Duration ttl = 4;
+    repeated security.credentials.DataAccessReason data_access_reasons = 5;
+    
+    reserved 3;
+}
+
+message CreateTokenResponse {
+    string token = 1;
+}
+
+message BulkTestPermissionsRequest {
+    IAMContext iam = 1;
+    
+    repeated Request requests = 2;
+    message Request {
+        SYSContext sys = 1;
+        PolicyName name = 2;
+        PolicyNameOptions name_options = 4;
+        repeated string permissions = 3;
+        repeated InjectedDecisions permissions_injected_decisions = 5;
+        FederatedResourceHierarchy federated_resource_hierarchy = 6;
+    }
+    
+    RetryParams retry_params = 3;
+    InternalRequestInfo internal_request_info = 4;
+}
+
+message BulkTestPermissionsResponse {
+    repeated Response responses = 1;
+    message Response {
+        repeated string permissions = 1;
+    }
+    
+    InternalResponseInfo internal_response_info = 2;
+}
+
+message CheckOrgPolicyRequest {
+    OrgPolicyContext policy_context = 1;
+    PolicyName resource = 2;
+    PolicyNameOptions name_options = 6;
+    
+    OrgPolicyCheckType type = 3;
+    enum OrgPolicyCheckType {
+        CHECK_TYPE_NOT_SET = 0;
+        LIST_CONSTRAINT_ENFORCEMENT = 1;
+        BOOLEAN_CONSTRAINT_ENFORCEMENT = 2;
+        CONSTRAINT_DEFAULT_ACTIVE = 3;
+    }
+    
+    string value_to_check = 4;
+    RetryParams retry_params = 5;
+    google.rpc.context.AttributeContext attribute_context = 7;
+    bool disable_org_policy_dry_run_logging = 8;
+    PolicyName nearest_crm_node = 9;
+    NextStateOfTags next_state_of_tags = 10;
+}
+
+message PolicyResponse {
+    ResponseState response = 1;
+    enum ResponseState {
+        UNSPECIFIED = 0;
+        ENFORCED = 1;
+        NOT_ENFORCED = 2;
+    }
+    
+    string launch = 2;
+}
+
+message DebugInfo {
+    bool has_new_eval_engine_been_used = 1;
+    bool is_global_check_retried = 2;
+    int64 project_number = 3;
+}
+
+message CheckOrgPolicyResponse {
+    bool response = 1;
+    bool check_retried = 2;
+    bool is_broken_hierarchy = 3;
+    
+    CheckRetryStatus check_retry_status = 4;
+    enum CheckRetryStatus {
+        UNSPECIFIED = 0;
+        SUCCESS = 1;
+        FAILURE = 2;
+        FAILURE_WITH_DE = 3;
+    }
+    
+    PolicyResponse alternate_result = 5;
+    PolicyResponse live_result = 6;
+    DebugInfo debug_info = 7;
+    PolicyResponse dry_run_result = 8;
+    
+    PolicyPresence policy_presence = 9;
+    enum PolicyPresence {
+        POLICY_UNSPECIFIED = 0;
+        POLICY_SET = 1;
+        POLICY_NOT_SET = 2;
+    }
+}
+
+message BulkCheckOrgPolicyRequest {
+    repeated CheckOrgPolicyRequest requests = 1;
+}
+
+message BulkCheckOrgPolicyResponse {
+    repeated CheckOrgPolicyResponse responses = 1;
+}
+
+message OrgPolicyContext {
+    string constraint = 1;
+}
+
+message PolicyNameOptions {
+    bool convert_project_id_or_number = 1;
+}
+
+message GetSetPolicyRequest {
+    PolicyName name = 1;
+    IAMContext iam = 2;
+}
+
+message GetSetPolicyResponse {
+    google.iam.v1.Policy policy = 1;
+}
+
+enum AccessType {
+    ACCESS_TYPE_UNSPECIFIED = 0;
+    IS_ALL_USERS = 1;
+    IS_ALL_AUTHENTICATED_USERS = 2;
+    IS_OTHER = 3;
+}
+
+enum LifecycleState {
+    LIFECYCLE_STATE_UNSPECIFIED = 0;
+    ACTIVE = 1;
+    DELETE_REQUESTED = 2;
+}
+
+extend .proto2.FieldOptions {
+    RepeatedFieldRule repeated_field = 94938325;
+}

@@ -1,0 +1,152 @@
+syntax = "proto2";
+
+package gaia_cookie;
+
+import "frameworks/testing/rpcreplay/processors/rpc_replay_field_option.proto";
+import "gaia/insclient/ins_clientinfo.proto";
+import "identity/accountcapabilities/proto/capability_transport.proto";
+import "logs/proto/gaia/dusi.proto";
+import "storage/datapol/annotations/proto/semantic_annotations.proto";
+
+option java_outer_classname = "CookieDataProto";
+option java_package = "com.google.gaia.cookie.proto.proto1api";
+
+message EmailInfo {
+    optional string email = 1;
+    optional QualifiedNameInfo qualified_name = 2;
+    optional bool login_allowed = 3 [default = true];
+    optional bool delivery_disabled = 4;
+    optional bool is_xmpp_jid = 5;
+    optional bool is_public_id = 6;
+    optional bool is_primary_id = 7;
+    optional bool recovery_disabled = 8;
+    optional bool is_shadow = 9;
+    optional bool has_shadow = 10;
+    optional bool federated_authn_enabled = 11;
+}
+
+message Memberships {
+    optional int64 group_id = 1;
+    optional int64 add_time_ms = 2;
+}
+
+message ExperimentGroupInfo {
+    repeated int64 group_ids = 1 [packed = true];
+    optional bool omitted_group_ids = 2;
+}
+
+message CookieUser {
+    optional int64 user_id = 1;
+    repeated string username = 2;
+    optional bool verified = 3 [default = true];
+    repeated int32 registered_service = 4 [packed = true];
+    repeated int32 suspended_service = 5 [packed = true];
+    repeated int32 dasher_admin_disabled_service = 6 [packed = true];
+    optional int64 opl_id = 7 [deprecated = true];
+    optional bool disabled = 8;
+    optional bool googlemail_user = 9;
+    
+    optional FocusName focus_name = 10;
+    message FocusName {
+        optional string given_name = 1;
+        optional string family_name = 2;
+    }
+    
+    optional int64 dusi_session_invalidation_timestamp_micros = 13;
+    optional bool is_non_user = 14;
+    repeated EmailInfo email_info = 15;
+    optional bool omitted_email_info = 16;
+    repeated Memberships memberships = 17;
+    optional bool omitted_membership_info = 18;
+    optional bool do_force_passwd_change = 19;
+    optional bool context_aware_access_enabled = 20;
+    optional int32 account_type = 21;
+    optional bool has_product_disable = 22;
+    optional id.accountcapabilities.CapabilityTransport account_capabilities = 24;
+    optional ExperimentGroupInfo experiment_group_info = 25;
+    
+    reserved 11, 12, 23;
+}
+
+message SessionDeviceBindingKeyInfo {
+    optional bytes key_id = 1;
+    optional int32 domain_id = 2;
+    optional int64 timestamp_micros = 3;
+}
+
+message DeviceBoundSessionMetadata {
+    repeated SessionDeviceBindingKeyInfo binding_key_info = 1;
+    optional int32 enforcement_state = 2;
+    
+    enum BoundSessionEnforcementState {
+        ENFORCEMENT_STATE_UNSPECIFIED = 0;
+        DISABLED = 1;
+        DARKLAUNCH = 2;
+        ENABLED_SHORTLIVED_SIDTS = 99;
+        ENABLED_LONGLIVED_SIDTS = 100;
+    }
+}
+
+message SessionMetadata {
+    optional bool persistent = 2 [default = false];
+    optional bool programmatic = 6;
+    optional int64 session_id = 9;
+    optional DeviceBoundSessionMetadata device_bound_session_metadata = 10;
+    
+    reserved 1, 3, 4, 5, 8, 7;
+}
+
+message CookieMetadata {
+    optional int32 issued_service = 1;
+    optional bool auth_token = 3;
+    optional int64 auth_token_issue_time_micros = 8;
+    
+    repeated UserFreshnessConstraint constraint = 5;
+    message UserFreshnessConstraint {
+        optional int64 user_id = 1;
+        optional int64 timestamp_in_micros = 3;
+        
+        reserved 2;
+    }
+    
+    optional int64 cookie_id = 6;
+    optional fixed64 tls_channel_id = 7;
+    optional int64 user_session_version_timestamp_micros = 9;
+    optional string origin_domain_name = 10;
+    
+    reserved 2, 4;
+}
+
+message UserSession {
+    optional int64 DEPRECATED_authentication_time_millis = 1 [deprecated = true];
+    optional int64 authentication_time_micros = 5;
+    required CookieUser user = 2;
+    optional bool is_tombstone = 14;
+    optional int32 access_code_id = 3;
+    optional int32 oauth_login_id = 4;
+    optional bool oauth_session_upgraded = 11;
+    optional bool invalidate_with_parent_token = 15;
+    optional bool oauth_web_session = 12;
+    optional logs.proto.gaia.DeviceUserSessionIdProto dusi = 13;
+    optional bytes aaa_session_id = 17;
+    optional int32 session_type = 9;
+    optional int32 custom_session_lifetime_sec = 10;
+    repeated int32 invalid_reason = 7;
+    optional int64 expiration_time_micros = 16;
+    
+    reserved 6, 8;
+    
+    enum SessionType {
+        LEGACY = 0;
+        SHORT = 1;
+        LONG = 2;
+        CUSTOM_OVERRIDE = 3;
+    }
+    
+    enum ValidationFailure {
+        ACCESS_CODE_REVOKED = 1;
+        OAUTH_LOGIN_TOKEN_REVOKED = 2;
+        VALID_SESSION_TIMESTAMP_IS_NEWER = 3;
+        SESSION_EXPIRED = 4;
+    }
+}

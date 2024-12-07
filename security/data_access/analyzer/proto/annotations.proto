@@ -1,0 +1,13 @@
+syntax = "editions";
+
+package security.data_access.analyzer;
+
+import "net/proto2/proto/descriptor.proto";
+
+option java_package = "com.google.security.data_access.analyzer.proto";
+
+extend .proto2.FieldOptions {
+    optional string description = 26809212;
+    optional string analyzer = 26692864;
+    optional bool singular_signal = 535801238;
+}

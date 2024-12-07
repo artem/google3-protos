@@ -1,0 +1,28 @@
+syntax = "editions";
+
+package gaia.auth.groups.proto;
+
+import "storage/datapol/annotations/proto/semantic_annotations.proto";
+
+option java_multiple_files = true;
+option java_package = "com.google.gaia.auth.groups.proto";
+
+message ExperimentGroupRecordDelta {
+    optional sfixed64 gaia_id = 1;
+    optional string date_change_suffix = 2;
+}
+
+message ExperimentGroupRecord {
+    optional int64 gaia_id = 1;
+    optional string contact = 2;
+    repeated ExperimentGroupRecordDelta delta = 5;
+    
+    oneof date {
+        string date_added = 3;
+        string date_removed = 4;
+    }
+}
+
+message ExperimentGroupConfiguration {
+    repeated ExperimentGroupRecord xrg = 1;
+}

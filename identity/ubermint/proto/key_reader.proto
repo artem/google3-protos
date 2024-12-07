@@ -1,0 +1,28 @@
+syntax = "editions";
+
+package ubermint;
+
+import "identity/ubermint/proto/universe.proto";
+import "security/keymaster/keymaster.proto";
+import "storage/datapol/annotations/proto/semantic_annotations.proto";
+import "util/task/status.proto";
+
+option java_multiple_files = true;
+option java_package = "com.google.identity.ubermint";
+
+service UberMintVerificationKeyReader {
+    rpc ReadKeys(ReadKeysRequest) returns (ReadKeysResponse);
+}
+
+message ReadKeysRequest {
+    repeated UberMintUniverse universes = 1;
+}
+
+message ReadKeysResponse {
+    repeated VerificationKey keys = 1;
+    message VerificationKey {
+        optional util.StatusProto status = 1;
+        optional UberMintUniverse universe = 2;
+        optional security.SerializedReader key_material = 3;
+    }
+}

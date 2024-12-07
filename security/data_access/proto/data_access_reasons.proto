@@ -1,0 +1,56 @@
+syntax = "editions";
+
+package security.data_access;
+
+import "storage/datapol/annotations/proto/semantic_annotations.proto";
+
+option java_multiple_files = true;
+option java_outer_classname = "DataAccessReasonsProtoFile";
+option java_package = "com.google.security.data_access.proto";
+
+message DataAccessReasons {
+    repeated string manual_reason = 3;
+    repeated string auto_generated_reason = 11;
+    repeated string external_reason = 26;
+    repeated int64 buganizer_id = 1;
+    repeated int64 trax_id = 2 [deprecated = true];
+    repeated string abuse_review_id = 4;
+    repeated int64 feedback_id = 5;
+    repeated int64 sem_id = 6 [deprecated = true];
+    repeated int64 guts_id = 7;
+    repeated int64 unify_id = 8 [deprecated = true];
+    repeated string salesforce_id = 23;
+    repeated string cases_id = 9;
+    repeated string enterprise_pin = 10;
+    repeated string infame_incident_id = 12 [deprecated = true];
+    repeated int32 lis_matter_id = 13;
+    repeated int64 omg_id = 14;
+    repeated string outalator_id = 15;
+    repeated int64 payment_fraud_review_id = 16;
+    repeated int64 shax_id = 17;
+    repeated string payments_review_id = 18;
+    repeated string yt_flows_id = 19;
+    repeated string yt_admin_review_id = 20;
+    repeated string break_glass = 21;
+    repeated string g4np_task_id = 22;
+    repeated string shopping_ticket_id = 24;
+    repeated string vimes_ticket_id = 25;
+    repeated string waymo_support_id = 27;
+    repeated string waymo_event_id = 43;
+    repeated int64 vector_case_number = 28;
+    repeated int64 vector_privacy_review_id = 35;
+    repeated string vector_quality_review_id = 34;
+    repeated string legal_removals_case_id = 29 [deprecated = true];
+    repeated int64 skyvine_id = 30;
+    repeated string irm_id = 31;
+    repeated string yt_admin_review_packet_id = 32;
+    repeated string verification_ticket_id = 33;
+    repeated string crbug_id = 36;
+    repeated string koala_task_id = 37;
+    repeated int64 popsconnect_id = 38;
+    repeated string tpc_reason = 39;
+    repeated string aart_session_id = 40;
+    repeated string soundboard_task_id = 41;
+    repeated int64 play_bd_id = 42;
+    repeated string pickle_ticket_id = 44;
+}

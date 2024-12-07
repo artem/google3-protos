@@ -1,0 +1,16 @@
+syntax = "editions";
+
+package identity_ubermint;
+
+import "identity/boq/cloud/ubermint/proto/dma52_uber_mint_signals.proto";
+import "storage/datapol/annotations/proto/semantic_annotations.proto";
+
+option java_multiple_files = true;
+option java_outer_classname = "DmaInfoProto";
+option java_package = "com.google.identity.boq.cloud.ubermint.proto";
+
+message DmaInfo {
+    optional Dma52UberMintSignals dma52_uber_mint_signals = 3;
+    
+    reserved 1, 2;
+}

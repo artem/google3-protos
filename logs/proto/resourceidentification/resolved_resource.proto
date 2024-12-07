@@ -1,0 +1,141 @@
+syntax = "proto2";
+
+package security.data_access.resourceidentification;
+
+import "logs/proto/resourceidentification/gcp_native_info.proto";
+import "security/data_access/resourceidentification/proto/resource_product.proto";
+import "storage/datapol/annotations/proto/semantic_annotations.proto";
+
+option java_outer_classname = "ResolvedResourceProto";
+option java_package = "com.google.security.dataaccess.resourceidentification.proto";
+
+message ResolvedResource {
+    optional string name = 2 [deprecated = true];
+    optional string canonical_name = 3;
+    optional string external_name = 4;
+    optional Attributes attributes = 5;
+    repeated Ancestor ancestry = 6;
+    repeated Relation relations = 7;
+    
+    reserved 1;
+    
+    reserved "scope";
+}
+
+message Attributes {
+    optional ResourceOwner resource_owner = 1;
+    message ResourceOwner {
+        optional int64 gaia_id = 1;
+        optional string email = 2;
+        optional int64 dasher_customer_id = 3;
+        optional int64 cloud_project_number = 4;
+        optional string cloud_folder_id = 5;
+        optional string cloud_organization_id = 6;
+        optional string cloud_billing_account_id = 7;
+        optional uint64 merchant_id = 11;
+        optional uint64 commerce_listing_id = 16;
+        optional int64 ads_customer_id = 8;
+        optional int64 ads_customer_external_id = 20;
+        optional int64 ads_search_advertiser_id = 21;
+        optional int64 ads_search_agency_id = 22;
+        optional int64 ads_display_and_video_advertiser_id = 23;
+        optional int64 ads_display_and_video_partner_id = 24;
+        optional int64 ads_campaign_manager_advertiser_id = 25;
+        optional int64 ads_network_id = 12;
+        optional int64 ads_publisher_id = 15;
+        optional int64 tag_account_id = 14;
+        optional string youtube_channel_id = 13;
+        optional int64 payments_customer_id = 17;
+        optional int64 payments_billing_customer_number = 26;
+        optional string geo_feature_id = 18;
+    }
+    
+    optional ResourceProduct resource_product = 2;
+    repeated GcpNativeInfo gcp_native_infos = 3;
+    
+    repeated ComplianceLabel compliance_labels = 4;
+    message ComplianceLabel {
+        optional string label_path = 1;
+        
+        repeated Field fields = 2;
+        message Field {
+            optional string field_id = 1;
+            
+            oneof value {
+                string choice_id = 2;
+            }
+        }
+    }
+    
+    optional string external_name = 5;
+}
+
+message Ancestor {
+    optional string canonical_name = 1;
+    optional Attributes.ResourceOwner resource_owner = 2;
+}
+
+message PrincipalIdentifier {
+    oneof identifier {
+        string email = 1;
+        int64 gaia_id = 2;
+        int64 dasher_customer_id = 3;
+        int64 cloud_project_number = 4;
+        string cloud_project_id = 5;
+        string cloud_folder_id = 6;
+        int64 cloud_organization_id = 7;
+        string cloud_organization_name = 8;
+        string cloud_organization_display_name = 16;
+        string cloud_billing_account_id = 9;
+        int64 ads_customer_id = 10;
+        int64 ads_customer_external_id = 20;
+        int64 ads_search_advertiser_id = 21;
+        int64 ads_search_agency_id = 22;
+        int64 ads_display_and_video_advertiser_id = 23;
+        int64 ads_display_and_video_partner_id = 24;
+        int64 ads_campaign_manager_advertiser_id = 25;
+        int64 ads_network_id = 12;
+        int64 ads_publisher_id = 15;
+        int64 tag_account_id = 14;
+        uint64 merchant_id = 11;
+        uint64 commerce_listing_id = 17;
+        string youtube_channel_id = 13;
+        int64 payments_customer_id = 18;
+        int64 payments_billing_customer_number = 26;
+        string geo_feature_id = 19;
+    }
+}
+
+message ResourceScope {
+    optional string resource_name = 1;
+    optional PrincipalIdentifier principal_id = 2;
+}
+
+message Principal {
+    optional PrincipalIdentifier id = 1;
+    repeated PrincipalIdentifier aliases = 2;
+    repeated Relation relations = 3;
+}
+
+message Relation {
+    optional Principal principal = 1;
+    optional RelationType type = 2;
+}
+
+message LocallyResolvedResource {
+    optional string canonical_name = 1;
+    
+    repeated DirectRelation relations = 2;
+    message DirectRelation {
+        optional PrincipalIdentifier id = 1;
+        optional RelationType type = 2;
+    }
+    
+    optional Attributes attributes = 3;
+}
+
+enum RelationType {
+    UNDEFINED = 0;
+    OWNER = 1;
+    ASSOCIATED_PRINCIPAL = 2;
+}

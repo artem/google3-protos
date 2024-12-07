@@ -1,0 +1,28 @@
+syntax = "proto2";
+
+package f1;
+
+import "net/proto2/proto/descriptor.proto";
+
+option cc_enable_arenas = true;
+option optimize_for = SPEED;
+option java_outer_classname = "SchemaVisibilityProto";
+option java_package = "com.google.storage.f1";
+
+message SchemaVisibility {
+    enum Visibility {
+        STAGING = 1;
+        PRIVATE = 2;
+        PUBLIC = 3;
+        DEPRECATED = 4;
+        DEPRECATED_AND_CLEANING_UP = 5;
+    }
+}
+
+extend .proto2.FieldOptions {
+    optional SchemaVisibility.Visibility visibility = 26721089 [default = PUBLIC];
+}
+
+extend .proto2.EnumValueOptions {
+    optional SchemaVisibility.Visibility enum_value_visibility = 26721090 [default = PUBLIC];
+}

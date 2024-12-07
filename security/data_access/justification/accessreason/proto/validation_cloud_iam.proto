@@ -1,0 +1,19 @@
+syntax = "editions";
+
+package security.data_access.justification.accessreason.proto;
+
+import "storage/datapol/annotations/proto/semantic_annotations.proto";
+import "tech/iam/proto/iam_service.proto";
+
+option java_multiple_files = true;
+option java_package = "com.google.security.data_access.justification.accessreason.proto";
+
+message SetPolicyValidationArgs {
+    optional tech.iam.SetPolicyRequest request = 1;
+    optional string permission = 2;
+}
+
+message CompilePolicyValidationArgs {
+    optional tech.iam.CompilePolicyRequest request = 1;
+    optional string permission = 2;
+}

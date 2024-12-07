@@ -1,0 +1,36 @@
+syntax = "editions";
+
+package gaia_mint;
+
+option objc_class_prefix = "GMNT";
+option java_multiple_files = true;
+option java_outer_classname = "GaiaMintCoreErrorsProto";
+
+message VerifyError {
+    enum Code {
+        OK = 0;
+        NO_SIGNED_DATA = 1;
+        SIGNED_DATA_PARSE_ERROR = 2;
+        UNSUPPORTED_SIGNATURE_ENCODING = 3;
+        SIGNATURE_VERIFICATION_ERROR = 4;
+        MISSING_NOT_BEFORE_SECONDS = 5;
+        MISSING_NOT_AFTER_SECONDS = 6;
+        MINT_USED_TOO_EARLY = 7;
+        MINT_USED_TOO_LATE = 8;
+        MINT_DURATION_TOO_LONG = 9;
+        NO_USERS_IN_MINT = 10;
+        NO_USER_ID_IN_USER = 11;
+        NO_MATCHING_SCOPES = 12;
+        REMOTE_VERIFICATION_FAILED = 13;
+        RPC_ERROR = 14;
+        UNSUPPORTED_APIARY_MINT = 15;
+        INVALID_PRIMARY_USER_ID = 16;
+        USERS_DELETED = 17;
+        DISALLOWED_OFF_NETWORK_USERS = 18;
+        INVALID_PROD_USER_ID = 19;
+        INVALID_MINT_TYPE = 20;
+        KEY_MATERIAL_UNAVAILABLE = 21;
+        KEY_MATERIAL_UNAVAILABLE_GENERIC = 22;
+        UNINITIALIZED = 100;
+    }
+}

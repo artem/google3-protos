@@ -1,0 +1,19 @@
+syntax = "proto2";
+
+package id.accountcapabilities;
+
+import "net/proto2/contrib/validator/annotations.proto";
+import "net/proto2/proto/descriptor.proto";
+import "storage/datapol/annotations/proto/semantic_annotations.proto";
+
+option cc_enable_arenas = true;
+option java_multiple_files = true;
+option java_package = "com.google.identity.accountcapabilities.proto";
+
+message AccountTraitMetadata {
+    optional bool must_be_purged = 1;
+}
+
+extend .proto2.EnumValueOptions {
+    optional AccountTraitMetadata account_trait_metadata = 421511607;
+}

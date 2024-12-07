@@ -1,0 +1,17 @@
+syntax = "editions";
+
+package identity_ubermint;
+
+import "storage/datapol/annotations/proto/semantic_annotations.proto";
+
+option java_multiple_files = true;
+option java_outer_classname = "DasherCustomerIdProto";
+option java_package = "com.google.identity.boq.cloud.ubermint.proto";
+
+message DasherCustomerId {
+    oneof dasher_customer_id {
+        bool is_unknown = 1;
+        bool is_not_dasher = 2;
+        int64 id = 3;
+    }
+}

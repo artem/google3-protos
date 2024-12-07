@@ -1,18 +1,17 @@
 syntax = "proto2";
 
+import "storage/datapol/annotations/proto/semantic_annotations.proto";
+
 option java_package = "com.google.gaia.client.proto";
-option cc_enable_arenas = true;
 
 message ServiceLocalePreferences {
-  optional string Mail = 1;
+    optional string Mail = 1;
 }
 
 message GaiaUserPreferences {
-  optional .ServiceLocalePreferences ServiceLocalePreferences = 1;
+    optional ServiceLocalePreferences ServiceLocalePreferences = 1;
 }
 
 message GaiaCachedUserPreferences {
-  optional string GmailOemDomain = 2;
+    optional string GmailOemDomain = 2;
 }
-
-

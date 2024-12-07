@@ -1,0 +1,18 @@
+syntax = "editions";
+
+package security.data_access;
+
+option java_multiple_files = true;
+option java_package = "com.google.security.data_access.controller.client";
+
+message HttpRequest {
+    optional string uri = 1;
+    optional string method = 2;
+    repeated HttpRequestField headers = 3;
+    repeated HttpRequestField parameters = 4;
+}
+
+message HttpRequestField {
+    optional string key = 1;
+    optional string value = 2;
+}

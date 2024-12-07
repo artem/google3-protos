@@ -1,0 +1,47 @@
+syntax = "proto2";
+
+package identity_datamodel;
+
+import "logs/proto/logs_annotations/logs_annotations.proto";
+import "net/proto2/proto/descriptor.proto";
+import "storage/datapol/annotations/proto/semantic_annotations.proto";
+
+option objc_class_prefix = "IDM";
+
+message LogicalSchemaMapping {
+    repeated string id = 1;
+    
+    optional MappingNotRequiredReason mapping_not_required_reason = 2;
+    enum MappingNotRequiredReason {
+        UNSPECIFIED_MAPPING_NOT_REQUIRED_REASON = 0;
+        PHYSICAL_STORAGE_METADATA = 1;
+        UNUSED = 2;
+        PROTOCOL_IMPLEMENTATION_DETAIL = 3;
+        CONTENT_METADATA = 4;
+        SUBSUMED = 5;
+        DEPRECATED = 6;
+        INTERNAL_IMPLEMENTATION_DETAIL = 7;
+    }
+    
+    optional SourceOfTruth source_of_truth = 3 [default = THIS];
+    enum SourceOfTruth {
+        UNSPECIFIED_SOURCE_OF_TRUTH = 0;
+        THIS = 1;
+        PRIMARY_KEY = 2;
+        FOREIGN_KEY = 3;
+        DUPLICATE = 4;
+        CHANGE_HISTORY = 5;
+    }
+    
+    optional string unmapped_entity_description = 4;
+    optional string subsumed_by_attribute_id = 5;
+    repeated string relationship_id = 6;
+}
+
+extend .proto2.FieldOptions {
+    optional LogicalSchemaMapping logical_schema_mapping = 307706083;
+}
+
+extend .proto2.MessageOptions {
+    optional LogicalSchemaMapping msg_logical_schema_mapping = 307706083;
+}

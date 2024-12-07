@@ -1,0 +1,36 @@
+syntax = "proto2";
+
+import "frameworks/testing/rpcreplay/processors/rpc_replay_field_option.proto";
+import "logs/eventid/eventid.proto";
+import "logs/proto/logs_annotations/logs_annotations.proto";
+import "storage/datapol/annotations/proto/semantic_annotations.proto";
+
+option java_package = "com.google.gaia.client.proto.proto1api";
+
+message LockPolicyCodes {
+    enum LockPolicyType {
+        UNKNOWN = 0;
+        EMAIL_SPAM = 1;
+        PHISHING = 2;
+        PASSWORD_COLLECTION = 3;
+        CALL_SPAM = 4;
+        CHAT_SPAM = 5;
+    }
+}
+
+message DisableAccountMetadata {
+    optional EventIdMessage transaction_id = 1;
+    optional int64 escalate_to = 2;
+    optional int64 executed_by = 5;
+    optional AppealPolicy appeal_policy = 3;
+    optional LockPolicyCodes.LockPolicyType lock_policy = 4;
+}
+
+enum AppealPolicy {
+    DO_NOT_REENABLE = 0;
+    REQUIRES_MANUAL_REVIEW = 1;
+    REENABLE_WITH_APPEAL = 2;
+    REENABLE_IF_FIRST_DISABLE = 3;
+    ESCALATE = 4;
+    ROUTE_TO_ACCOUNT_RECOVERY = 5;
+}

@@ -149,26 +149,26 @@ enum ScreenContentType {
     COMPLETE = 2;
 }
 
-extend proto2.ServiceOptions {
+extend .proto2.ServiceOptions {
     ApiVersionsRule api_versions = 525000000;
 }
 
-extend proto2.MethodOptions {
+extend .proto2.MethodOptions {
     ApiVersionsRule method_api_versions = 525000004;
 }
 
-extend proto2.MessageOptions {
+extend .proto2.MessageOptions {
     ApiVersionsRule message_api_versions = 525000020;
 }
 
-extend proto2.FieldOptions {
+extend .proto2.FieldOptions {
     ApiVersionsRule field_api_versions = 525000037;
 }
 
-extend proto2.EnumOptions {
+extend .proto2.EnumOptions {
     ApiVersionsRule enum_api_versions = 525000018;
 }
 
-extend proto2.EnumValueOptions {
+extend .proto2.EnumValueOptions {
     ApiVersionsRule enum_value_api_versions = 525000123;
 }

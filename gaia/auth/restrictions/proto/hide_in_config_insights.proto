@@ -1,0 +1,13 @@
+syntax = "proto2";
+
+package gaia_auth;
+
+import "net/proto2/proto/descriptor.proto";
+import "storage/datapol/annotations/proto/semantic_annotations.proto";
+
+option java_multiple_files = true;
+option java_package = "com.google.gaia.auth.restrictions.proto";
+
+extend .proto2.EnumValueOptions {
+    optional bool hide_in_config_insights = 535801017;
+}

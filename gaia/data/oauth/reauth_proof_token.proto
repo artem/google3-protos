@@ -1,0 +1,14 @@
+syntax = "proto2";
+
+package gaia_data;
+
+import "storage/datapol/annotations/proto/semantic_annotations.proto";
+
+option objc_class_prefix = "GAIA";
+option cc_enable_arenas = true;
+option java_multiple_files = true;
+option java_package = "com.google.gaia.client.proto.proto1api";
+
+message ReauthProofTokenData {
+    optional string encoded_rapt = 1;
+}

@@ -1,0 +1,189 @@
+syntax = "editions";
+
+package security.data_access.asr;
+
+import "logs/proto/data_access/app_specific_resources.proto";
+import "security/data_access/accesstransparency/proto/resource.proto";
+import "storage/datapol/annotations/proto/semantic_annotations.proto";
+
+option java_multiple_files = true;
+option java_outer_classname = "G4CResourceOuterClass";
+option java_package = "com.google.security.data_access.asr";
+
+message G4CResource {
+    optional string planet_name = 2;
+    optional string dataset_type = 3;
+    optional string person_id = 4;
+    
+    optional Resource access_point_specific = 5;
+    message Resource {
+        oneof resource {
+            MixerSpecific mixer_specific = 1;
+            DataMapperSpecific data_mapper_specific = 2;
+            WetlabSpecific wetlab_specific = 3;
+            DataTracerSpecific data_tracer_specific = 4;
+            HdsSpecific hds_specific = 5;
+            WetdocsSpecific wetdocs_specific = 6;
+        }
+    }
+    
+    oneof resource {
+        Planet planet = 1 [deprecated = true];
+    }
+    
+    message MixerSpecific {
+        optional string query_text = 1;
+        optional string imaging_study_id = 2;
+        optional DicomStudy dicom_study = 3;
+        optional string patient_search_query = 4;
+        optional string patient_suggest_query = 5;
+        optional string search_suggestions_query = 6;
+    }
+    
+    message DicomStudy {
+        optional string study_uid = 1;
+        optional string series_uid = 2;
+        optional string series_instance_uid = 3;
+    }
+    
+    message DataMapperSpecific {
+        optional string table_name = 1;
+    }
+    
+    message WetlabSpecific {
+        optional string session_id = 1;
+        optional int64 changelist_number = 4;
+        optional string notebook_path = 5;
+        
+        reserved 2, 3;
+    }
+    
+    message WetdocsSpecific {
+        optional string document_id = 1;
+        optional string section_id = 2;
+    }
+    
+    message DataTracerSpecific {
+        optional string data_type = 1;
+    }
+    
+    message HdsSpecific {
+        optional string policy_type = 1;
+        optional string token = 2;
+    }
+    
+    message Planet {
+        optional string name = 1 [deprecated = true];
+        
+        oneof resource {
+            Patient patient = 2 [deprecated = true];
+            Query query = 3 [deprecated = true];
+            Person person = 4 [deprecated = true];
+            ImagingStudy imaging_study = 5 [deprecated = true];
+            DicomStudy dicom_study = 6 [deprecated = true];
+            Table table = 7 [deprecated = true];
+            Dataset dataset = 8 [deprecated = true];
+        }
+        
+        message Dataset {
+            optional string type = 1 [deprecated = true];
+            
+            oneof resource {
+                Patient patient = 2 [deprecated = true];
+                Person person = 3 [deprecated = true];
+            }
+            
+            message Patient {
+                optional string id = 1 [deprecated = true];
+                optional Person.Resource resource = 2 [deprecated = true];
+            }
+            
+            message Person {
+                optional string id = 1 [deprecated = true];
+                
+                optional Resource resource = 2 [deprecated = true];
+                message Resource {
+                    oneof resource {
+                        MixerSpecific mixer_specific = 1 [deprecated = true];
+                    }
+                    
+                    message MixerSpecific {
+                        oneof resource {
+                            Query query = 1 [deprecated = true];
+                            ImagingStudy imaging_study = 2 [deprecated = true];
+                            DicomStudy dicom_study = 3 [deprecated = true];
+                            Table table = 4 [deprecated = true];
+                            Query patient_search = 5 [deprecated = true];
+                            Query patient_suggest = 6 [deprecated = true];
+                            Query search_suggestions = 7 [deprecated = true];
+                        }
+                        
+                        message Query {
+                            optional string text = 1 [deprecated = true];
+                        }
+                        
+                        message ImagingStudy {
+                            optional string id = 1 [deprecated = true];
+                        }
+                        
+                        message DicomStudy {
+                            optional string uid = 1 [deprecated = true];
+                            
+                            optional DicomStudySeries series = 2 [deprecated = true];
+                            message DicomStudySeries {
+                                optional string uid = 1 [deprecated = true];
+                                
+                                optional DicomStudySeriesInstance instance = 2 [deprecated = true];
+                                message DicomStudySeriesInstance {
+                                    optional string uid = 1 [deprecated = true];
+                                }
+                            }
+                        }
+                        
+                        message Table {
+                            optional string name = 1 [deprecated = true];
+                        }
+                    }
+                }
+            }
+        }
+        
+        message Patient {
+            optional string id = 1 [deprecated = true];
+        }
+        
+        message Query {
+            optional string text = 1 [deprecated = true];
+        }
+        
+        message Person {
+            optional string id = 1 [deprecated = true];
+        }
+        
+        message ImagingStudy {
+            optional string id = 1 [deprecated = true];
+        }
+        
+        message DicomStudy {
+            optional string uid = 1 [deprecated = true];
+            
+            optional DicomStudySeries series = 2 [deprecated = true];
+            message DicomStudySeries {
+                optional string uid = 1 [deprecated = true];
+                
+                optional DicomStudySeriesInstance instance = 2 [deprecated = true];
+                message DicomStudySeriesInstance {
+                    optional string uid = 1 [deprecated = true];
+                }
+            }
+        }
+        
+        message Table {
+            optional string name = 1 [deprecated = true];
+        }
+    }
+}
+
+extend AppSpecificResources {
+    repeated G4CResource g4c_resource = 22;
+}

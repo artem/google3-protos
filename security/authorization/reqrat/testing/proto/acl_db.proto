@@ -1,0 +1,16 @@
+syntax = "editions";
+
+package security.authorization.reqrat.testing.proto;
+
+option java_multiple_files = true;
+option java_package = "com.google.security.authorization.reqrat.testing.proto";
+
+message DB {
+    repeated ACL acls = 1;
+}
+
+message ACL {
+    optional string name = 1;
+    repeated string permanent_members = 2;
+    repeated string eligible_members = 3;
+}

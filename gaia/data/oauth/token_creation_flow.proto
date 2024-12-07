@@ -1,0 +1,43 @@
+syntax = "proto3";
+
+package gaia_data;
+
+import "logs/proto/logs_annotations/logs_annotations.proto";
+import "storage/datapol/annotations/proto/semantic_annotations.proto";
+
+option objc_class_prefix = "GAIA";
+option cc_enable_arenas = true;
+option java_package = "com.google.gaia.client.proto";
+
+enum CreationFlowEnum {
+    CREATIONFLOW_UNSPECIFIED = 0;
+    PER_DUSI_ANDROID_THIRD_PARTY_EXISTING_GRANT = 2;
+    CHROME_OS = 3;
+    CHROME_USERMENU = 4;
+    CHROME_DICE = 5;
+    CHROME_DICE_ENABLE_SYNC = 6;
+    ANDROID_FIRST_PARTY = 7;
+    ANDROID_TV = 8;
+    ANDROID_AUTO = 9;
+    SAFARI_VIEW_CONTROLLER = 1;
+    APPLE_FIRST_PARTY = 12;
+    GENERAL_OAUTH = 14;
+    GENERAL_OAUTH_COOKIELESS = 15;
+    PARENTSIGNIN_OAUTH_COOKIELESS = 27;
+    GENERAL_OAUTH_COOKIELESS_TV = 16;
+    DEVICE_OAUTH = 17;
+    WINDOWS_GOOGLE_CREDENTIAL_PROVIDER = 20;
+    GSI = 22;
+    GIS_ONETAP = 23;
+    GIS_BUTTON = 24;
+    GIS_AUTHORIZATION = 25;
+    GIS_VWG = 29;
+    PROGRAMMATIC_AUTH = 26;
+    FEDCM = 28;
+    ANDROID_DAYDREAM = 10 [deprecated = true];
+    APPLE_NATIVE = 11 [deprecated = true];
+    ANDROID_DRAGONFLY = 13 [deprecated = true];
+    APPLE_DRAGONFLY = 18 [deprecated = true];
+    FUCHSIA = 19 [deprecated = true];
+    ANDROID_GO2PHONE = 21 [deprecated = true];
+}

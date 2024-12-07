@@ -1,0 +1,24 @@
+syntax = "proto3";
+
+package security.data_access;
+
+option cc_enable_arenas = true;
+option java_multiple_files = true;
+option java_package = "com.google.security.data_access.controller.client";
+
+message ResourceIdentificationConfig {
+    bool enabled = 2;
+    ResourceIdentificationBackendConfig backend_config = 1;
+    ResourceSelection resources_for_access_controls = 3;
+}
+
+message ResourceIdentificationBackendConfig {
+    string target_address = 1;
+}
+
+enum ResourceSelection {
+    RESOURCE_SELECTION_UNSPECIFIED = 0;
+    RESOURCE_SELECTION_ALL_AVAILABLE = 1;
+    RESOURCE_SELECTION_PREFER_FRIS = 2;
+    RESOURCE_SELECTION_DARK_LAUNCH = 3;
+}

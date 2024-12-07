@@ -1,0 +1,22 @@
+syntax = "editions";
+
+package security.data_access.analyzer;
+
+option java_package = "com.google.security.data_access.analyzer.proto";
+
+enum DataQualityIssueType {
+    UNKNOWN_DATA_QUALITY_ISSUE_TYPE = 0;
+    SHOULD_NOT_BE_SET = 1;
+    MISSING_VALUE = 2;
+    INVALID_VALUE = 3;
+    WRONG_NUMBER_OF_PROTOS_SET = 4;
+    TOO_MANY_VALUES = 5;
+    TOO_FEW_VALUES = 6;
+}
+
+enum DataQualityPriority {
+    UNKNOWN_DATA_QUALITY_PRIORITY = 0;
+    HIGH = 1;
+    MEDIUM = 2;
+    LOW = 3;
+}

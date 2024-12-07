@@ -1,0 +1,16 @@
+syntax = "editions";
+
+package security.authorization.dynamic.proto;
+
+import "google/protobuf/field_mask.proto";
+import "security/authorization/approvals/proto/request_authorization.proto";
+
+message MpaIntent {
+    optional bool and_approvers = 1;
+    repeated string prefer_approvers_from_rotation = 2;
+    optional google.protobuf.FieldMask ignored_fields_from_hashing = 3;
+}
+
+extend security_approvals.GetApprovalRequest {
+    optional MpaIntent mpa_intent = 264371543;
+}

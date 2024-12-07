@@ -1,0 +1,16 @@
+syntax = "proto2";
+
+package appidentity;
+
+option java_multiple_files = true;
+
+enum Tag {
+    TAG_UNSPECIFIED = 0;
+    MAESTRO = 1;
+    SCRIPTY = 2;
+    ACTIONS_ON_GOOGLE = 3;
+    IDENTITY_AWARE_PROXY = 4;
+    LEGACY_CAST_DEVICE = 6;
+    IOT_DEVICE = 7;
+    API_TESTER = 8;
+}
