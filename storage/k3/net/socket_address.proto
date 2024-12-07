@@ -1,0 +1,10 @@
+syntax = "editions";
+
+package k3;
+
+import "storage/k3/net/ip_address.proto";
+
+message SocketAddressProto {
+    optional IpAddressProto ip_address = 1;
+    optional uint32 port = 2;
+}

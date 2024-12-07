@@ -1,4 +1,4 @@
-syntax = "proto2";
+syntax = "editions";
 
 import public "chubby/lib/proto/chubby_checksums.proto";
 import public "chubby/lib/proto/client_library_name.proto";
@@ -8,6 +8,8 @@ import public "chubby/lib/proto/timestamp.proto";
 import "chubby/lib/proto/lockservice_cell_migration_config.proto";
 import "consensus/common/proto/event_tags.proto";
 import "frameworks/platform/endpoints/rpc/options/generic_services.proto";
+import "third_party/java/protobuf/java_features.proto";
+import "third_party/protobuf/cpp_features.proto";
 
 option java_package = "com.google.chubby.impl.chubbyprotos";
 
@@ -42,12 +44,12 @@ service LockServerWire {
 
 message LockServerWire_ClientInfo {
     optional string auth_secure = 1;
-    required string auth_insecure = 2;
+    optional string auth_insecure = 2;
     repeated string security_realms = 10;
     optional string host = 3;
     optional int32 pid = 4;
     optional string binary = 5;
-    required uint64 session_id = 6;
+    optional uint64 session_id = 6;
     optional int32 version = 7;
     optional LockServerWire_NewSession_Arg.ClientLanguage client_language = 11;
     optional string client_library = 12 [deprecated = true];
@@ -58,10 +60,10 @@ message LockServerWire_ClientInfo {
 }
 
 message LockServerWire_SessionInfo {
-    required string auth = 1;
+    optional string auth = 1;
     repeated string security_realms = 9;
-    required uint64 session_id = 2;
-    required uint64 session_check = 3;
+    optional uint64 session_id = 2;
+    optional uint64 session_check = 3;
     optional int64 epoch = 4;
     optional int64 call_id = 5;
     optional LockServerWire_ClientInfo proxying_for = 6;
@@ -73,13 +75,13 @@ message LockServerWire_SessionInfo {
 }
 
 message LockServerWire_HandleInfo {
-    required int32 open_mode = 1;
-    required uint64 handle = 2;
-    required string name = 3;
+    optional int32 open_mode = 1;
+    optional uint64 handle = 2;
+    optional string name = 3;
     optional string original_cell = 16;
-    required uint64 instance = 4;
-    required uint64 handle_check = 5;
-    required int32 notification_mask = 6;
+    optional uint64 instance = 4;
+    optional uint64 handle_check = 5;
+    optional int32 notification_mask = 6;
     optional int32 lock_delay_ms = 7 [default = 0];
     optional uint64 proxying_for = 10;
     optional int32 exclusive_lock = 11;
@@ -98,8 +100,17 @@ message OperationChecksums {
     repeated chubby.ChubbyChecksumData checksums = 1;
 }
 
+message VersionInfoMessage {
+    optional int64 instance = 1;
+    optional int64 generation = 2;
+    optional int64 acl_generation = 3;
+    optional int64 lock_generation = 4;
+    optional int32 lock_mode = 5;
+    optional bytes backend_fingerprint = 6;
+}
+
 message LockServerWire_NewSession_Arg {
-    required string auth = 1;
+    optional string auth = 1;
     optional string host = 2;
     optional int32 pid = 3;
     optional string binary = 4;
@@ -135,11 +146,12 @@ message LockServerWire_NewSession_Arg {
     }
     
     optional bool support_bounded_incremental_refresh = 20;
+    optional string physical_cell = 21;
 }
 
 message LockServerWire_RegisterSession_Arg {
-    required LockServerWire_SessionInfo session = 1;
-    required LockServerWire_NewSession_Arg new_session_arg = 2;
+    optional LockServerWire_SessionInfo session = 1;
+    optional LockServerWire_NewSession_Arg new_session_arg = 2;
     repeated LockServerWire_HandleInfo locks = 3;
     repeated uint64 UNUSED_handles = 4;
     optional string auth_secure = 17;
@@ -148,16 +160,17 @@ message LockServerWire_RegisterSession_Arg {
 }
 
 message LockServerWire_TransferClients_Arg {
-    required LockServerWire_SessionInfo session = 1;
+    optional LockServerWire_SessionInfo session = 1;
     
-    repeated group Client = 2 {
-        required LockServerWire_ClientInfo client_info = 3;
+    repeated Client client = 2;
+    message Client {
+        optional LockServerWire_ClientInfo client_info = 3;
         repeated LockServerWire_HandleInfo locks = 4;
     }
 }
 
 message LockServerWire_JustSession_Arg {
-    required LockServerWire_SessionInfo session = 1;
+    optional LockServerWire_SessionInfo session = 1;
     optional int32 version = 2;
     optional bool want_proxies = 3;
     optional string binary = 5;
@@ -170,29 +183,29 @@ message LockServerWire_JustSession_Arg {
 }
 
 message LockServerWire_IsEmpty_Arg {
-    required string auth = 1;
-    required string name = 2;
+    optional string auth = 1;
+    optional string name = 2;
 }
 
 message LockServerWire_MiniStat_Arg {
-    required LockServerWire_SessionInfo session = 1;
-    required string name = 2;
+    optional LockServerWire_SessionInfo session = 1;
+    optional string name = 2;
     optional string original_cell = 7;
-    required bool contents = 3;
-    required bool cached = 4;
+    optional bool contents = 3;
+    optional bool cached = 4;
     optional int32 client_version = 5;
     optional LockServerWire_NewSession_Arg.ClientLanguage client_language = 6;
     optional bool refresh = 8;
 }
 
 message LockServerWire_EventACK {
-    required int64 sequence = 1;
-    required int32 index = 2;
+    optional int64 sequence = 1;
+    optional int32 index = 2;
 }
 
 message LockServerWire_KeepAlive_Arg {
-    required LockServerWire_SessionInfo session = 1;
-    required int64 sequence = 2;
+    optional LockServerWire_SessionInfo session = 1;
+    optional int64 sequence = 2;
     optional int64 timeout = 3;
     optional int32 num_sessions = 4;
     repeated int64 sequence_processed = 6;
@@ -207,7 +220,7 @@ message LockServerWire_KeepAlive_Arg {
 }
 
 message LockServerWire_Handle_Arg {
-    required LockServerWire_SessionInfo session = 1;
+    optional LockServerWire_SessionInfo session = 1;
     repeated LockServerWire_HandleInfo handle_info = 2;
     optional int32 new_mode = 3;
     optional string sequencer = 4;
@@ -215,31 +228,33 @@ message LockServerWire_Handle_Arg {
     optional bool handle_refresh = 6 [default = false];
     optional OperationChecksums checksum = 7;
     optional bool bounded_incremental_refresh = 8;
+    optional bytes new_contents = 9;
+    optional VersionInfoMessage expected_version = 10;
 }
 
 message LockServerWire_NotifyDir_Arg {
-    required string auth = 1;
-    required string name = 2;
+    optional string auth = 1;
+    optional string name = 2;
     repeated LockServerWire_StatInfo stat_info = 3;
-    required int32 event = 4;
+    optional int32 event = 4;
 }
 
 message LockServerWire_ReadDir_Arg {
-    required LockServerWire_SessionInfo session = 1;
-    required string from = 2;
-    required int32 max = 3;
-    required bool backward = 4;
+    optional LockServerWire_SessionInfo session = 1;
+    optional string from = 2;
+    optional int32 max = 3;
+    optional bool backward = 4;
     repeated LockServerWire_HandleInfo handle_info = 5;
     optional string sequencer = 6;
 }
 
 message LockServerWire_SetACL_Arg {
-    required LockServerWire_SessionInfo session = 1;
+    optional LockServerWire_SessionInfo session = 1;
     repeated LockServerWire_HandleInfo handle_info = 2;
-    required uint64 acl_generation = 3;
-    required string owner = 4;
-    required string write = 5;
-    required string read = 6;
+    optional uint64 acl_generation = 3;
+    optional string owner = 4;
+    optional string write = 5;
+    optional string read = 6;
     optional LockServerWire_LockServiceACL lockservice_acl_owner = 11;
     repeated LockServerWire_LockServiceACL lockservice_acl_writers = 9;
     repeated LockServerWire_LockServiceACL lockservice_acl_readers = 10;
@@ -250,9 +265,9 @@ message LockServerWire_SetACL_Arg {
 }
 
 message LockServerWire_SetContents_Arg {
-    required LockServerWire_SessionInfo session = 1;
-    required uint64 generation = 2;
-    required bytes new_data = 3;
+    optional LockServerWire_SessionInfo session = 1;
+    optional uint64 generation = 2;
+    optional bytes new_data = 3;
     repeated LockServerWire_HandleInfo handle_info = 4;
     optional string sequencer = 5;
     repeated LockServerWire_Timestamp lifetime_timestamp = 6;
@@ -260,12 +275,12 @@ message LockServerWire_SetContents_Arg {
 }
 
 message LockServerWire_Open_Arg {
-    required LockServerWire_SessionInfo session = 1;
-    required string name = 2;
+    optional LockServerWire_SessionInfo session = 1;
+    optional string name = 2;
     repeated LockServerWire_HandleInfo handle_info = 3;
-    required int32 mode = 4;
-    required int32 type = 5;
-    required int32 notification_mask = 6;
+    optional int32 mode = 4;
+    optional int32 type = 5;
+    optional int32 notification_mask = 6;
     optional string sequencer = 7;
     optional int32 lock_delay_ms = 8;
     optional string owner = 9;
@@ -281,8 +296,8 @@ message LockServerWire_Open_Arg {
 }
 
 message LockServerWire_ReserveIds_Arg {
-    required LockServerWire_SessionInfo session = 1;
-    required int32 count = 2;
+    optional LockServerWire_SessionInfo session = 1;
+    optional int32 count = 2;
 }
 
 message LockServerWire_ReadCellMigrationConfig_Arg {
@@ -292,7 +307,7 @@ message LockServerWire_ReadCellMigrationConfig_Arg {
 }
 
 message LockServerWire_Event {
-    required int32 event = 1;
+    optional int32 event = 1;
     optional uint64 handle = 2;
     optional uint64 handle_check = 3;
     optional int64 instance = 4;
@@ -305,8 +320,11 @@ message LockServerWire_Event {
     optional uint64 generation = 43;
     optional bool invalidate_all_reset = 44 [default = false];
     optional bool bounded_incremental_refresh_bogus_event = 45;
+    optional bool bounded_incremental_refresh_not_useful_event = 46;
     
-    reserved 6, "weak_consistency";
+    reserved 6;
+    
+    reserved "weak_consistency";
 }
 
 message ReadDirConsistencyInfo {
@@ -322,9 +340,9 @@ message LimitedStatInfoForLogging {
 
 message LockServerWire_Status {
     optional LockServerWire_SessionInfo session = 1;
-    required int32 status = 2;
-    required int32 error = 3;
-    required int64 current_time = 4;
+    optional int32 status = 2;
+    optional int32 error = 3;
+    optional int64 current_time = 4;
     repeated LockServerWire_StatInfo stat_info = 5;
     optional string master_name = 6;
     optional uint64 handle = 7;
@@ -338,17 +356,20 @@ message LockServerWire_Status {
     optional int32 version = 15;
     repeated string proxy_host_port = 20;
     
-    optional group ForProxy = 21 {
+    optional ForProxy forproxy = 21;
+    message ForProxy {
         optional uint64 reserved_ids_first = 22;
         optional int32 reserved_ids_count = 23;
         
-        repeated group RegisteredClient = 24 {
-            required LockServerWire_ClientInfo client_info = 25;
-            required bool success = 26;
+        repeated RegisteredClient registeredclient = 24;
+        message RegisteredClient {
+            optional LockServerWire_ClientInfo client_info = 25;
+            optional bool success = 26;
             
-            repeated group Handle = 28 {
-                required LockServerWire_HandleInfo handle_info = 29;
-                required LockServerWire_StatInfo stat_info = 30;
+            repeated Handle handle = 28;
+            message Handle {
+                optional LockServerWire_HandleInfo handle_info = 29;
+                optional LockServerWire_StatInfo stat_info = 30;
                 optional bool nocache = 31;
             }
         }
@@ -375,8 +396,11 @@ message LockServerWire_Status {
     optional chubby.LockserviceCellMigrationConfig cell_migration_config = 51;
     repeated LimitedStatInfoForLogging child_statinfo_for_logging = 52;
     optional bool bounded_incremental_refresh_bogus_event = 54;
+    optional bool bounded_incremental_refresh_not_useful_event = 55;
     
-    reserved 16, 17, 35, 44, "weak_consistency";
+    reserved 16, 17, 35, 44;
+    
+    reserved "weak_consistency";
 }
 
 message LockServer_SessionData {
@@ -399,6 +423,7 @@ message LockServer_SessionData {
     optional chubby.ClientLibraryName client_library_name = 17;
     optional consensus.EventTags session_tags = 18;
     optional bool bounded_incremental_refresh = 19 [default = false];
+    optional string physical_cell = 20;
 }
 
 message LockServer_LockData {
@@ -415,12 +440,11 @@ message LockServer_LockData {
 }
 
 message LockServer_MasterTime {
-    required int64 timestamp_ms = 1;
-    required string master_epoch = 2;
+    optional int64 timestamp_ms = 1;
+    optional string master_epoch = 2;
 }
 
 enum LockServerWire_HeartBeatingProtocol {
     KA_DYNAMIC = 0;
-    KA_UDP_ONLY = 1;
     KA_TCP_ONLY = 2;
 }

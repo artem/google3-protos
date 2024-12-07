@@ -1,0 +1,57 @@
+syntax = "editions";
+
+package plaque;
+
+import "net/plaque/internal/compiled_program.proto";
+import "net/plaque/internal/security/key_management.proto";
+import "net/plaque/util/digest.proto";
+
+option java_multiple_files = true;
+
+message VerificationMsgProto {
+    oneof kind {
+        VerificationRequestProto verification_request = 1;
+        VerificationResponseProto verification_response = 2;
+    }
+}
+
+message VerificationRequestProto {
+    optional Digest256Proto verification_digest = 1;
+    optional uint64 request_id = 2;
+}
+
+message VerificationResponseProto {
+    optional bool verified = 1;
+    optional uint64 request_id = 2;
+}
+
+message VerifiableDataProto {
+    repeated Digest256Proto dependency_digests = 1;
+    
+    oneof kind {
+        RootActivationInfoProto root_activation_info = 2;
+        SubprogramCallProto subprogram_call = 3;
+    }
+}
+
+message RootActivationInfoProto {
+    optional string root_controller_addr = 1;
+    optional string root_controller_role = 2;
+    optional uint64 root_execid_a = 3;
+    optional uint64 root_execid_b = 4;
+    optional CompilationResultProto compilation_result = 5;
+}
+
+message SubprogramCallProto {
+    optional string caller_addr = 1;
+    optional string caller_role = 2;
+    optional int32 caller_loc = 3;
+    optional uint32 subprogram_index = 4;
+    optional uint64 subprogram_execid_a = 5;
+    optional uint64 subprogram_execid_b = 6;
+}
+
+message SerializedVerifiableDataProto {
+    optional bytes serialized_data = 1 [ctype = CORD];
+    repeated SignatureProto signatures = 2;
+}

@@ -1,0 +1,167 @@
+syntax = "editions";
+
+package colossus.cfs2;
+
+import "file/colossus/cfs2/proto/folder.proto";
+import "file/colossus/cfs2/proto/paxos.proto";
+import "file/colossus/proto/base.proto";
+
+service MasterFolderInterface {
+    rpc LookupFolder(LookupFolderArg) returns (LookupFolderResult);
+    rpc SetFolder(SetFolderArg) returns (SetFolderResult);
+    rpc SeekFolder(SeekFolderArg) returns (SeekFolderResult);
+    rpc MatchFolder(MatchFolderArg) returns (MatchFolderResult);
+    rpc CommitNewFolder(CommitNewFolderArg) returns (CommitNewFolderResult);
+    rpc UpdateActivePaxosGroup(UpdateActivePaxosGroupArg) returns (UpdateActivePaxosGroupResult);
+    rpc UpdateHistoryPaxosGroup(UpdateHistoryPaxosGroupArg) returns (UpdateHistoryPaxosGroupResult);
+    rpc MarkFolderDeleted(MarkFolderDeletedArg) returns (MarkFolderDeletedResult);
+    rpc ExpungeFolder(ExpungeFolderArg) returns (ExpungeFolderResult);
+    rpc CommitSplit(CommitSplitArg) returns (CommitSplitResult);
+    rpc CommitMerge(CommitMergeArg) returns (CommitMergeResult);
+}
+
+message LookupFolderArg {
+    optional ArgHeader header = 1;
+    optional string folder_name = 2;
+    optional int64 folder_generation = 3;
+}
+
+message LookupFolderResult {
+    optional FolderDescriptor fd = 2;
+    
+    reserved 1;
+}
+
+message SetFolderArg {
+    optional ArgHeader header = 1;
+    optional string folder_name = 2;
+    optional int64 folder_generation = 3;
+    optional FolderDescriptor proposed_fd = 4;
+    optional FolderDescriptor verify_fd = 5;
+}
+
+message SetFolderResult {
+    reserved 1;
+}
+
+message SeekFolderArg {
+    optional ArgHeader header = 1;
+    optional string filename = 2;
+}
+
+message SeekFolderResult {
+    optional string folder_name = 2;
+    optional FolderDescriptor fd = 3;
+    
+    reserved 1;
+}
+
+message MatchFolderArg {
+    optional ArgHeader header = 1;
+    optional string pattern = 2;
+    optional string restart_cookie = 3;
+    optional bool include_non_mutable_folders = 4;
+    optional bool match_by_flat_folder_limit = 5;
+}
+
+message MatchFolderEntry {
+    optional int32 common_prefix_length = 1;
+    optional string name_delta = 2;
+    optional int64 folder_generation = 3;
+    optional int32 start_filename_common_prefix_length = 4;
+    optional string start_filename_delta = 5;
+    optional int32 limit_filename_common_prefix_length = 6;
+    optional string limit_filename_delta = 7;
+}
+
+message MatchFolderResult {
+    optional string restart_cookie = 2;
+    repeated MatchFolderEntry entry = 3;
+    
+    reserved 1;
+}
+
+message CommitNewFolderArg {
+    optional ArgHeader header = 1;
+    optional string folder_name = 2;
+    optional int64 folder_generation = 3;
+    optional FolderDescriptor fd = 4;
+}
+
+message CommitNewFolderResult {
+    reserved 1;
+}
+
+message UpdateActivePaxosGroupArg {
+    optional ArgHeader header = 1;
+    optional string folder_name = 2;
+    optional int64 folder_generation = 3;
+    optional PaxosGroup paxos_group = 4;
+}
+
+message UpdateActivePaxosGroupResult {
+    reserved 1;
+}
+
+message UpdateHistoryPaxosGroupArg {
+    optional ArgHeader header = 1;
+    optional string folder_name = 2;
+    optional int64 folder_generation = 3;
+    optional PaxosGroup paxos_group = 4;
+}
+
+message UpdateHistoryPaxosGroupResult {
+    reserved 1;
+}
+
+message MarkFolderDeletedArg {
+    optional ArgHeader header = 1;
+    optional string folder_name = 2;
+    optional int64 folder_generation = 3;
+}
+
+message MarkFolderDeletedResult {
+    reserved 1;
+}
+
+message ExpungeFolderArg {
+    optional ArgHeader header = 1;
+    optional string folder_name = 2;
+    optional int64 folder_generation = 3;
+}
+
+message ExpungeFolderResult {
+    reserved 1;
+}
+
+message CommitSplitArg {
+    optional ArgHeader header = 1;
+    optional string parent_folder_name = 2;
+    optional int64 parent_folder_generation = 3;
+    optional string left_child_folder_name = 4;
+    optional int64 left_child_folder_generation = 5;
+    optional FolderDescriptor left_child_folder_descriptor = 6;
+    optional string right_child_folder_name = 7;
+    optional int64 right_child_folder_generation = 8;
+    optional FolderDescriptor right_child_folder_descriptor = 9;
+}
+
+message CommitSplitResult {
+    
+}
+
+message CommitMergeArg {
+    optional ArgHeader header = 1;
+    optional string left_parent_folder_name = 2;
+    optional int64 left_parent_folder_generation = 3;
+    optional string right_parent_folder_name = 4;
+    optional int64 right_parent_folder_generation = 5;
+    optional string child_folder_name = 6;
+    optional int64 child_folder_generation = 7;
+    optional FolderDescriptor child_folder_descriptor = 8;
+}
+
+message CommitMergeResult {
+    optional bool left_parent_accepted = 1;
+    optional bool right_parent_accepted = 2;
+}

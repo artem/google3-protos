@@ -4,7 +4,6 @@ package tech.log;
 
 import "tech/label/proto/label.proto";
 
-option cc_enable_arenas = true;
 option java_multiple_files = true;
 option java_outer_classname = "EntityOuterClass";
 option java_package = "com.google.tech.log";

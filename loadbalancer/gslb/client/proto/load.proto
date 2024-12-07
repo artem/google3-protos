@@ -36,6 +36,7 @@ message LBLoad {
     optional double reporting_interval_in_sec = 14 [default = 10];
     optional LBNamedCostLoad named_cost_load = 18;
     map<int32, int64> priority_to_queries_issued = 21;
+    optional double cumulative_server_processing_latency_in_ms = 22 [default = 0];
     
     reserved 17;
 }

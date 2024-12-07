@@ -1,10 +1,9 @@
-syntax = "proto2";
+syntax = "editions";
 
 package rpc;
 
 import "net/proto2/bridge/proto/message_set.proto";
 
-option cc_enable_arenas = true;
 option java_multiple_files = true;
 option java_outer_classname = "LoadBalancingFeedbackProto";
 option java_package = "com.google.net.rpc.impl";

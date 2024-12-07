@@ -1,0 +1,16 @@
+syntax = "proto3";
+
+package rodos;
+
+import "file/colossus/proto/cfs.proto";
+import "file/colossus/rodos/common/stripe_state.proto";
+
+message StripeMetadata {
+    int64 stripe_index = 1;
+    int32 stripe_version = 2;
+    repeated .colossus.StripeChunk chunks = 3;
+    StripeState stripe_state = 4;
+    int64 stripe_length = 5;
+    int32 tiering_state = 6;
+    int64 stripe_creation_time_seconds = 7;
+}

@@ -1,0 +1,36 @@
+syntax = "editions";
+
+package colossus.cfs2;
+
+import "file/colossus/proto/base.proto";
+
+service RoleManagementInterface {
+    rpc BecomeLeader(BecomeLeaderArg) returns (BecomeLeaderResult);
+    rpc BecomeReadReplica(BecomeReadReplicaArg) returns (BecomeReadReplicaResult);
+}
+
+message BecomeLeaderArg {
+    optional ArgHeader header = 1;
+    optional string folder_name = 2;
+    optional double folder_load = 3;
+    optional int64 folder_load_gcu_nanos = 4;
+}
+
+message BecomeLeaderResult {
+    optional bool accepted = 2;
+    
+    reserved 1;
+}
+
+message BecomeReadReplicaArg {
+    optional ArgHeader header = 1;
+    optional string folder_name = 2;
+    optional ServerLocation leader = 3;
+    optional int64 folder_load_gcu_nanos = 4;
+}
+
+message BecomeReadReplicaResult {
+    optional bool accepted = 2;
+    
+    reserved 1;
+}

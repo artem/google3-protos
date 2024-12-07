@@ -1,0 +1,350 @@
+syntax = "proto2";
+
+package net_bwenforcer;
+
+import "google/protobuf/timestamp.proto";
+import "net/base/qos.proto";
+import "net/base/service_class.proto";
+import "net/base/tz_bits.proto";
+import "net/bwenforcer/proto/bwe_host.proto";
+import "net/bwenforcer/proto/bwe_slo.proto";
+import "net/bwenforcer/proto/common.proto";
+import "net/bwenforcer/proto/config_communication.proto";
+import "net/bwenforcer/proto/flow_delegation_metadata.proto";
+import "net/bwenforcer/proto/flow_encap_type.proto";
+import "net/bwenforcer/proto/network.proto";
+import "net/bwenforcer/proto/network_allocation.proto";
+import "net/bwenforcer/proto/network_config.proto";
+import "net/bwenforcer/proto/qos_remarking.proto";
+import "net/bwenforcer/proto/serverinfo.proto";
+import "stats/histogram/proto/histogram.proto";
+import "storage/datapol/annotations/proto/semantic_annotations.proto";
+
+option cc_enable_arenas = true;
+option cc_generic_services = true;
+option java_multiple_files = true;
+option java_package = "com.google.net.bwenforcer.proto";
+
+service TrafficShaper {
+    rpc ReportUsageGetLimits(ShaperReq) returns (ShaperResp);
+    rpc GetUsageLimits(ShaperReq) returns (ShaperResp);
+}
+
+message AppIdentity {
+    optional ContainerType type = 1;
+    enum ContainerType {
+        UNKNOWN = 0;
+        BORG_ALLOC = 1;
+        BORG_TASK = 2;
+        BORG_PACKAGE = 3;
+        EXTERNAL = 4;
+    }
+    
+    optional int32 priority = 10;
+    
+    optional ContainerAppClass appclass = 11;
+    enum ContainerAppClass {
+        option allow_alias = true;
+        BEST_EFFORT = 0;
+        PRODUCTION_BATCH = 1;
+        LATENCY_TOLERANT_SECONDARY = 0;
+        LATENCY_TOLERANT_PRIMARY = 1;
+        LATENCY_SENSITIVE_SECONDARY = 2;
+        LATENCY_SENSITIVE_CRITICAL = 3;
+        LATENCY_OPTIMIZED = 4;
+    }
+    
+    optional string cell = 3;
+    optional string user = 4;
+    optional string name = 5;
+    optional int32 instance = 6;
+    optional string host = 9;
+    optional string delegated_user = 12 [deprecated = true];
+    optional DelegatedUser proto_delegated_user = 14 [deprecated = true];
+    optional FlowDelegationMetadata flow_delegation_metadata = 15;
+}
+
+message FlowIdentity {
+    optional AppIdentity local_app_id = 1;
+    optional AppRole local_role = 2;
+    optional string local_cluster = 8;
+    optional string remote_cluster = 9;
+    optional string local_ipg = 15;
+    optional string remote_ipg = 16;
+    optional int32 dscp = 5;
+    optional net_base.qos.TrafficClass qos = 29;
+    optional int32 intended_dscp = 17;
+    optional int32 requested_dscp = 13;
+    optional net_base.TZBits tz_bits = 28;
+    optional FlowDirection direction = 6 [deprecated = true];
+    optional PathType path_type = 10;
+    optional PathType intended_path_type = 18 [deprecated = true];
+    optional int32 jobshaper_shard = 11;
+    optional bool is_auto_enforced = 12 [default = true];
+    
+    optional DatapathType datapath_type = 19 [default = KERNEL];
+    enum DatapathType {
+        UNKNOWN = 0;
+        KERNEL = 1;
+        USPS = 2;
+        APP_FLOW_PROCESSOR = 3;
+        USPS_PONY = 4;
+        USPS_PRIME = 5;
+        USPS_ANDROMEDA_ENGINE = 6;
+        USPS_ANDROMEDA_COPROCESSOR = 7;
+        USPS_PROMETHIUM_OFFLOADED = 8;
+        USPS_PROMETHIUM_ONLOADED = 9;
+        USPS_RDMA_GRT = 10;
+        USPS_TERRAZZO = 11;
+        USPS_HOVERBOARD = 12;
+        USPS_TELEX = 13;
+        USPS_ZAKIM = 14;
+        USPS_ASAPD = 15;
+    }
+    
+    optional bool vc2 = 21;
+    
+    optional Vc2Status vc2_status = 22;
+    enum Vc2Status {
+        ALL = 0;
+        IS_VC2 = 1;
+        NOT_VC2 = 2;
+    }
+    
+    optional TePathInfo te_path_info = 24;
+    optional string user_aggregate = 25;
+    optional net_base.nsc.ServiceClass network_service_class = 26;
+    optional FlowEncapType flow_encap_type = 27;
+    
+    reserved 14, 20, 23, 3, 4;
+    
+    reserved "remote_ip_subnet", "network_tier", "is_cortex_enabled", "local_site", "remote_site";
+}
+
+message DataFreshness {
+    optional double timestamp = 1;
+    optional stats.HistogramState histogram = 2;
+}
+
+message GlobalAlgorithmData {
+    optional DataFreshness usage_freshness = 1;
+}
+
+message NetworkAllocatorAlgorithmData {
+    optional DataFreshness limit_freshness = 1;
+}
+
+message ServerUpdateInfo {
+    optional string data_source_address = 1;
+    optional google.protobuf.Timestamp prioritization_update_time = 2;
+    optional bool was_primary = 3;
+    optional google.protobuf.Timestamp prioritization_run_time = 4;
+}
+
+message SiteBrokerAlgorithmData {
+    repeated ServerUpdateInfo prioritization_update_info = 1;
+}
+
+message Event {
+    optional uint64 event_gid = 5;
+    optional int64 timestamp = 2;
+    
+    oneof event_data {
+        GlobalAlgorithmData global_algorithm_run = 4;
+        SiteBrokerAlgorithmData site_broker_algorithm_run = 6;
+        NetworkAllocatorAlgorithmData network_allocator_algorithm_run = 7;
+    }
+    
+    reserved 1, 3;
+    
+    reserved "event_id", "bns";
+}
+
+message EventDB {
+    repeated Event event = 1;
+}
+
+message BwELimitSrcValue {
+    optional BwStat.BwELimitSrc limit_src = 1;
+}
+
+message MultimodalLimitDistributionData {
+    optional bool is_multimodal = 1 [default = false];
+    optional double limit_scale_factor = 2 [default = 1];
+    optional bool enable_task_p_monitoring = 3 [default = false];
+}
+
+message BwStat {
+    optional double timestamp = 16;
+    optional double report_interval = 15;
+    optional double task_report_interval = 20;
+    optional int64 avg_usage = 2;
+    
+    repeated DatapathStat datapath_stats = 61;
+    message DatapathStat {
+        optional FlowIdentity.DatapathType datapath_type = 1;
+        optional int64 avg_usage = 2;
+    }
+    
+    optional int64 total_bytes = 17;
+    optional int64 avg_limit = 3;
+    optional int64 burst_microseconds = 14 [deprecated = true];
+    optional int64 intrinsic_demand = 6;
+    optional int64 peak_intrinsic_demand = 13;
+    optional double avg_pps = 11;
+    optional int64 min_enforceable_limit = 18;
+    optional int64 sum_of_children_limits = 19;
+    optional SchedulerBusyStat scheduler_busy_stat = 39;
+    optional int64 num_tasks = 21;
+    optional int64 num_tasks_non_zero_usage = 43;
+    optional int64 num_tasks_usage_close_to_limit = 37;
+    optional int64 num_tasks_high_scheduler_busy_time = 40;
+    optional int64 num_tasks_high_parent_scheduler_busy_time = 45;
+    optional int64 num_tasks_high_self_or_parent_scheduler_busy_time = 46;
+    optional int64 num_tasks_usage_near_limit_and_busy_parent_scheduler_time = 47;
+    optional int64 num_tasks_usage_near_limit_and_busy_scheduler_time = 48;
+    repeated int32 requested_dscp = 23;
+    optional DataFreshness usage_freshness = 32;
+    optional uint64 event_gid = 34;
+    
+    optional BwELimitSrc limit_src = 42 [default = UNKNOWN];
+    enum BwELimitSrc {
+        UNKNOWN = 0;
+        GB = 1;
+        CB = 2;
+        CLOUD_BROKER = 6;
+        JOB_MANUAL = 3;
+        USER_MANUAL = 5;
+        CONFIG_JOB_MINIMAL = 7;
+        DEFAULT = 4;
+        ALPHA_BROKER = 8;
+        FABRIC_ENFORCER = 9;
+    }
+    
+    optional bool num_tasks_usage_close_to_limit_computed = 44 [default = false];
+    optional NetworkAllocation network_allocation = 53;
+    
+    optional LimitAnnotation limit_annotation = 54;
+    enum LimitAnnotation {
+        UNSPECIFIED = 0;
+        POLICY_LIMIT_NOT_DISTRIBUTED_TO_JOBP = 1;
+        POLICY_LIMIT_DISTRIBUTED_TO_JOBP = 2;
+    }
+    
+    optional bool clear_limits = 55;
+    optional int64 sum_of_task_limits = 56;
+    optional QosAllocation qos_allocation = 57;
+    optional HostQosAllocation host_qos_allocation = 58;
+    optional bool should_clear_host_qos_allocation = 59;
+    optional MultimodalLimitDistributionData multimodal_limit_distribution_data = 60;
+    
+    reserved 7, 8, 9, 10, 12, 22, 24, 25, 26, 28, 29, 30, 31, 33, 35, 36, 38, 41, 49, 50, 51, 52;
+    
+    reserved "avg_tcp_pps", "avg_dropped_bps", "avg_overlimit_pps", "avg_tcp_retransmit_pps", "intended_dscp", "tcp_supersonic_stats", "tcp_bbr_stats", "tcp_socket_control_info", "tcp_stats", "num_tasks_high_usage", "event_id", "num_tasks_overlimit", "num_tasks_high_scheduler_busy_bytes", "num_tasks_high_parent_scheduler_busy_bytes", "num_tasks_high_self_or_parent_scheduler_busy_bytes", "num_tasks_usage_near_limit_and_busy_parent_scheduler_bytes", "num_tasks_usage_near_limit_and_busy_scheduler_bytes", "rewritten_dscp", "should_enforce_limit", "overflow_rewrite";
+}
+
+message FlowStat {
+    optional BwStat latest = 1;
+}
+
+message PerQosStat {
+    optional net_base.qos.TrafficClass qos = 1;
+    optional FlowStat stat = 2;
+}
+
+message FlowBottleneckInfo {
+    optional string link_id = 1;
+    optional double link_fraction = 2;
+    optional int64 bonus = 3;
+    optional double bottleneck_utility = 4 [default = inf];
+}
+
+message UserPInfo {
+    optional UserAggregate user_aggregate = 1;
+    
+    reserved 2;
+    
+    reserved "max_transfer_type";
+}
+
+message Flow {
+    optional FlowIdentity id = 1;
+    optional FlowStat stat = 2;
+    optional BwHostStat host_stat = 10;
+    optional BwHostRule host_rule = 11;
+    
+    optional Status status = 3;
+    enum Status {
+        ACTIVE = 0;
+        STALE = 1;
+    }
+    
+    optional uint64 jobshaper_shard_fingerprint = 4;
+    optional string delegated_tracked_user = 5;
+    optional DelegatedUser proto_delegated_tracked_user = 9;
+    optional int32 delegated_netuid = 6;
+    optional int32 user_p_info_index = 8;
+    
+    reserved 7;
+}
+
+message FlowSet {
+    repeated Flow flow = 1;
+    optional AppIdentity local_app_id = 2;
+}
+
+message EndpointMetaInfo {
+    repeated AppIdentity local_app_id = 1;
+}
+
+message RequestIdentity {
+    optional FlowSetType flows_set_type = 1 [default = FLOWS_MIXED];
+    enum FlowSetType {
+        UNSPECIFIED = 0;
+        FLOWS_INTRA_CAMPUS = 1;
+        FLOWS_INTER_CAMPUS = 2;
+        FLOWS_MIXED = 3;
+    }
+}
+
+message GetUsageLimitsOptions {
+    optional bool request_flows = 1;
+}
+
+message ShaperReq {
+    repeated FlowSet flow_set = 1;
+    optional Config config_request = 2;
+    optional ServerInfo server_info = 3;
+    repeated FlowSet shared_service_flow_set = 4;
+    optional double timestamp = 5;
+    optional EndpointMetaInfo endpoint_meta_info = 6;
+    optional RequestIdentity request_identity = 7;
+    optional GetUsageLimitsOptions get_usage_limits_options = 8;
+}
+
+message ShaperResp {
+    repeated FlowSet flow_set = 1;
+    optional string sequencer = 2;
+    optional Config new_config = 3;
+    optional ServerInfo server_info = 4;
+    repeated FlowSet shared_service_flow_set = 5;
+    optional double timestamp = 6;
+    repeated UserPInfo user_p_info = 7;
+    optional EventDB event_db = 8;
+    
+    enum ApplicationError {
+        LIMITS_UNAVAILABLE = 1;
+        BAD_REQUEST_SHARED_SERVICE_REPORTING = 2;
+    }
+}
+
+enum AppRole {
+    ROLE_ALL = 0;
+    ROLE_CLIENT = 1;
+    ROLE_SERVER = 2;
+}
+
+enum FlowDirection {
+    TX = 0;
+    RX = 1 [deprecated = true];
+}

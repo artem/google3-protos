@@ -322,6 +322,7 @@ message ShardReplicaHeartbeatResponse {
     optional uint64 max_processable_lsn = 2;
     optional uint64 first_buffered_backpointer_lsn = 3;
     optional uint64 seal_through_lsn = 4;
+    optional uint64 checkpoint_lsn = 5;
 }
 
 message ShardReplicaPingResponse {

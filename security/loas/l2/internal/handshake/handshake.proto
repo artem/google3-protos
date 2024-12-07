@@ -52,6 +52,8 @@ message Alert {
         SELF_SIGNED_CERTIFICATE_DISALLOWED = 14;
         SELF_SIGNED_CERTIFICATE_REQUIRED = 15;
         MISSING_HANDSHAKE_PARAMETERS = 16;
+        RRCP_CHECK_FAILURE = 17;
+        AUTHORIZATION_CHECK_FAILED = 18;
     }
     
     optional string error_message = 2;

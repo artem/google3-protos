@@ -1,0 +1,20 @@
+syntax = "proto3";
+
+package plaque.lb;
+
+import "net/plaque/net.proto";
+
+option java_multiple_files = true;
+option java_package = "com.google.net.plaque.proto";
+
+message LoadBalancingOptionsProto {
+    LbPolicyType policy = 1;
+    uint32 gslb_priority = 2;
+    uint32 subset_size = 3;
+    GSLBPickClusterParametersProto gslb_pick_cluster_parameter = 4;
+}
+
+message GSLBPickClusterParametersProto {
+    repeated string allowed_clusters = 1;
+    bool use_allowed_clusters_order = 2;
+}

@@ -1,0 +1,18 @@
+syntax = "editions";
+
+package plaque.trace.retainer;
+
+import "google/protobuf/timestamp.proto";
+import "net/plaque/trace.proto";
+
+message JournalEntry {
+    optional fixed64 id_a = 1;
+    optional fixed64 id_b = 2;
+    optional string recordio_path = 8;
+    optional string recordio_position = 9;
+    optional Metadata metadata = 7;
+    optional google.protobuf.Timestamp retention_time = 10;
+    optional string source_id = 3;
+    
+    reserved 4, 5, 6;
+}

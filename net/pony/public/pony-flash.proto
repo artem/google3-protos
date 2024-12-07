@@ -1,0 +1,75 @@
+syntax = "editions";
+
+package net_pony;
+
+message FuzzingConfig {
+    optional string request_error_status_percentages = 1 [default = "0:0:0:0"];
+    optional double delay_percentage = 2 [default = 0];
+    optional int64 max_delay_us = 3 [default = 100];
+}
+
+message FakeGSSDConfig {
+    optional int64 device_space_size_bytes = 1;
+    optional FuzzingConfig fuzzing = 2;
+}
+
+message GSSDConfig {
+    optional int64 device_fd = 2;
+    optional string device_path = 3;
+    
+    optional AIORequestDispatcherType dispatcher_type = 4;
+    enum AIORequestDispatcherType {
+        ANY_READ_WRITE = 0;
+        LIBAIO = 7;
+        SIMULATED = 100;
+    }
+    
+    optional uint32 interrupt_cpu_affinity = 5;
+    
+    reserved 1;
+}
+
+message SPDKConfig {
+    repeated string pcie_address = 1;
+    optional uint32 max_nvme_io_queue_size = 2 [default = 128];
+    optional uint32 max_nvme_io_requests = 3 [default = 256];
+}
+
+message FlashDeviceConfig {
+    oneof device {
+        FakeGSSDConfig fake_device_config = 1;
+        GSSDConfig real_device_config = 2;
+        SPDKConfig spdk_device_config = 3;
+    }
+}
+
+message FlashConfig {
+    repeated FlashDeviceConfig device_config = 1;
+    optional int64 landing_buffer_size_bytes = 3 [default = 0x800000];
+    optional int64 landing_buffer_block_size_bytes = 4 [default = 4096];
+    optional int64 max_num_outstanding_ops = 5 [default = 3000000];
+    optional int64 max_num_outstanding_aio_requests = 6 [default = 1024];
+    optional ReadCacheConfig read_cache_config = 7;
+    optional int64 device_stripe_size_bytes = 8 [default = 16384];
+    optional WriteCacheConfig write_cache_config = 9;
+    optional OpSchedulingWeights op_scheduing_weights = 10;
+    
+    reserved 2;
+}
+
+message ReadCacheConfig {
+    optional int64 num_entries = 1 [default = 0x20000];
+    optional int64 cache_max_bytes = 2 [default = 0x10000000];
+    optional int32 num_entries_per_bucket = 3 [default = 8];
+}
+
+message WriteCacheConfig {
+    optional int64 num_entries = 1 [default = 0x20000];
+    optional int64 cache_max_bytes = 2 [default = 0x10000000];
+    optional int32 num_entries_per_bucket = 3 [default = 8];
+}
+
+message OpSchedulingWeights {
+    optional int32 read_weight = 1 [default = 20];
+    optional int32 write_weight = 2 [default = 40];
+}

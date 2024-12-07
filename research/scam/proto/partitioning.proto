@@ -43,6 +43,7 @@ message PartitioningConfig {
     optional int32 max_clustering_iterations = 6 [default = 10];
     optional google.protobuf.Duration max_iteration_duration = 50;
     optional int32 num_mini_batches = 38 [default = 1];
+    optional bool ignore_empty_cluster_errors = 55 [default = false];
     optional float clustering_convergence_tolerance = 7 [default = 1e-05];
     optional float min_cluster_size = 9 [default = 1];
     optional int32 max_cluster_size = 40;

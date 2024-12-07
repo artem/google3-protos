@@ -1,0 +1,14 @@
+syntax = "editions";
+
+package plaque;
+
+option java_multiple_files = true;
+
+message SecurityMilestoneS3 {
+    enum Features {
+        NONE = 0;
+        COMPILE_SUBPROGRAMS_AT_CONTROLLER = 1;
+        SECURITY_SUBMILESTONE_1 = 2;
+        UNSAFE_ALL_FEATURES = 1000;
+    }
+}

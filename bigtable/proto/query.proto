@@ -1,0 +1,138 @@
+syntax = "editions";
+
+package bigtable;
+
+option java_package = "com.google.bigtable.protos";
+
+message BQuery {
+    repeated Factor factor = 1;
+    message Factor {
+        optional bool positive = 2 [default = true];
+        
+        repeated Primitive primitive = 3;
+        message Primitive {
+            repeated Term term = 4;
+            message Term {
+                optional string token = 5;
+                optional int32 distance = 6 [default = 1];
+            }
+        }
+    }
+}
+
+message RankingParams {
+    repeated SortByColumn sortbycolumn = 1;
+    message SortByColumn {
+        optional string column = 2;
+        optional bool is_ascending = 3 [default = true];
+        optional bytes default_value = 16 [ctype = CORD];
+    }
+    
+    optional Scorer scorer = 4;
+    message Scorer {
+        optional string cpname = 5;
+        optional string name = 12;
+        optional string bns_address = 17;
+        optional int32 rank_type = 6;
+        optional bytes args = 7 [ctype = CORD];
+        optional bool want_timestamp = 13;
+        repeated string column = 8;
+        
+        repeated Term term = 9;
+        message Term {
+            optional string name = 10;
+            optional bool want_attributes = 11 [default = true];
+        }
+    }
+    
+    optional int32 num_to_score = 14 [default = 0x7fffffff];
+}
+
+message FilteringParams {
+    repeated SelectByColumn selectbycolumn = 1;
+    message SelectByColumn {
+        optional string column = 2;
+        
+        repeated Range range = 3;
+        message Range {
+            optional bytes start = 4 [ctype = CORD];
+            optional bytes limit = 5 [ctype = CORD];
+        }
+        
+        optional bool include_non_existent = 6 [default = false];
+    }
+    
+    repeated CrowdByColumn crowdbycolumn = 7;
+    message CrowdByColumn {
+        optional string column = 8;
+        optional int32 limit = 9 [default = 1];
+        optional int32 non_existent = 11 [default = 0];
+        
+        enum CrowdNonExistent {
+            LIMITED = 0;
+            UNLIMITED = 1;
+        }
+    }
+    
+    optional double expected_filter_ratio = 10;
+}
+
+message SearchTrace {
+    optional string hostport = 1;
+    optional double start_timestamp = 2;
+    optional double end_timestamp = 3;
+    optional int32 optype = 8 [default = 0];
+    
+    repeated Event event = 4;
+    message Event {
+        optional double timestamp = 5;
+        optional string local = 6;
+        optional SearchTrace remote = 7;
+    }
+    
+    optional int32 num_pruned_events = 9 [default = 0];
+    
+    enum TraceOpType {
+        OTHER = 0;
+        GC = 1;
+        ROOT = 2;
+        LEAF = 3;
+        LOCAL_LEAF = 4;
+        NODE = 5;
+        LOCAL_NODE = 6;
+        PREP = 7;
+        PREPASS = 8;
+        READHIT = 9;
+        DOCPROC = 10;
+        DOCPROC_LIGHTWEIGHT = 11;
+        SCORER_BATCH = 12;
+        SCORER_BATCH_GROUP = 13;
+        SCORER_DRIVER = 14;
+        SUBQUERY = 15;
+        SUBQUERY_GROUP = 16;
+        FANNER = 17;
+        FIND_OBSOLETE = 18;
+        GC_OBSOLETE = 19;
+    }
+}
+
+message BTI_SearchStats {
+    optional int32 num_docs_matched = 1 [default = 0];
+    optional int32 num_docs_admitted = 6 [default = 0];
+    optional int32 num_docs_selected = 2 [default = 0];
+    optional int32 num_docs_valid = 3 [default = 0];
+    optional int32 num_docs_scored = 7 [default = 0];
+    optional int32 num_docs_filtered = 8 [default = 0];
+    optional int32 num_docs_crowded_out = 4 [default = 0];
+    optional int64 estimated_num_docs = 5 [default = 0];
+    optional uint64 max_docid_matched = 9 [default = 0];
+    
+    optional NonAdmissionStats non_admission_stats = 10;
+    message NonAdmissionStats {
+        optional int32 index_doc_state_not_found = 1;
+        optional int32 does_not_exist = 2;
+        optional int32 index_committed_version_not_found = 3;
+        optional int32 deleted = 4;
+        optional int32 latest_version_not_in_results = 5;
+    }
+}

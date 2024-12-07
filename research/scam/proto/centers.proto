@@ -4,10 +4,12 @@ package research_scam;
 
 import "research/scam/data_format/features.proto";
 import "research/scam/proto/hash.proto";
+import "research/scam/proto/projection.proto";
 
 message CentersForAllSubspaces {
     repeated CentersForSubspace subspace_centers = 1;
     optional AsymmetricHasherConfig.QuantizationScheme quantization_scheme = 2 [default = PRODUCT];
+    optional SerializedProjection serialized_projection = 3;
 }
 
 message CentersForSubspace {

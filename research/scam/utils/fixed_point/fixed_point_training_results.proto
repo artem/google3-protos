@@ -1,0 +1,7 @@
+syntax = "editions";
+
+package research_scam;
+
+message FixedPointTrainingResults {
+    repeated float max_abs_value_by_dim = 1;
+}

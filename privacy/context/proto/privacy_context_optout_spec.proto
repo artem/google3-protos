@@ -1,0 +1,12 @@
+syntax = "editions";
+
+package privacy.context;
+
+import "privacy/ptoken/public/core/logical_policy.proto";
+
+option java_multiple_files = true;
+option java_package = "com.google.privacy.context.proto";
+
+message PrivacyContextOptoutSpec {
+    optional .ptoken.LogicalPolicy.Enum request_policy_enforcement_optout = 1;
+}

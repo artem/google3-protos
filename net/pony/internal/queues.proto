@@ -1,0 +1,383 @@
+syntax = "editions";
+
+package net_pony.proto;
+
+import "net/hostdatapath/components/fd/shmem-region.proto";
+
+message AccDmaMetadataBlock {
+    optional uint64 authoritative_iova = 1;
+    optional uint64 authoritatve_pages = 2;
+    optional uint64 cache_iova = 3;
+    optional uint64 cache_pages = 4;
+}
+
+message ApertureAccRangeInfo {
+    optional uint32 bar = 1;
+    optional uint64 challenge = 2;
+    optional uint64 offset = 3;
+    optional uint64 pages = 4;
+}
+
+message CompletionRx {
+    oneof impl {
+        Pipe pipe = 1;
+        Verbs verbs = 2;
+        DioriteRing diorite_ring = 3;
+        ApertureRing aperture_ring = 4;
+        HostRing host_ring = 5;
+    }
+    
+    message Pipe {
+        optional int32 notification_fd_index = 1;
+        optional int32 backing_fd_index = 2;
+        optional uint64 backing_fd_offset = 3;
+        optional uint64 pages = 4;
+        optional uint64 head = 5;
+    }
+    
+    message Verbs {
+        
+    }
+    
+    message DioriteRing {
+        optional int32 backing_fd_index = 1;
+        optional uint64 backing_fd_offset = 2;
+        optional uint64 pages = 3;
+        optional uint64 head = 4;
+        optional uint64 tail = 5;
+        optional uint64 metadata_index = 6;
+        optional int32 notification_fd_index = 7;
+    }
+    
+    message ApertureRing {
+        optional int32 backing_fd_index = 1;
+        optional uint64 backing_fd_offset = 2;
+        optional uint64 pages = 3;
+        optional uint64 head = 4;
+        optional uint64 tail = 5;
+        optional uint64 metadata_index = 6;
+        optional int32 notification_fd_index = 7;
+    }
+    
+    message HostRing {
+        optional int32 backing_fd_index = 1;
+        optional uint64 backing_fd_offset = 2;
+        optional uint64 pages = 3;
+        optional uint64 head = 4;
+        optional uint64 tail = 5;
+        optional uint64 metadata_index = 6;
+        optional int32 notification_fd_index = 7;
+    }
+}
+
+message CompletionTx {
+    oneof impl {
+        Pipe pipe = 1;
+        Verbs verbs = 2;
+        DioriteRing diorite_ring = 3;
+        ApertureRing aperture_ring = 4;
+        HostRing host_ring = 5;
+    }
+    
+    message Pipe {
+        optional int32 notification_fd_index = 1;
+        optional int32 backing_fd_index = 2;
+        optional uint64 backing_fd_offset = 3;
+        optional uint64 pages = 4;
+        optional uint64 head = 5;
+        optional uint64 tail = 6;
+        optional usps.fd.rpc.ContiguousMappedShmemRegionList backing_region_list = 7;
+    }
+    
+    message Verbs {
+        
+    }
+    
+    message DioriteRing {
+        optional int32 backing_fd_index = 1;
+        optional uint64 backing_fd_offset = 2;
+        optional uint64 pages = 3;
+        optional uint64 head = 4;
+        optional uint64 tail = 5;
+        optional uint64 metadata_index = 6;
+        optional AccDmaMetadataBlock metadata_head = 7;
+        optional AccDmaMetadataBlock metadata_tail = 8;
+        optional uint64 remote_iova = 9;
+        optional int32 notification_fd_index = 10;
+    }
+    
+    message ApertureRing {
+        optional int32 backing_fd_index = 1;
+        optional uint64 backing_fd_offset = 2;
+        optional uint64 pages = 3;
+        optional uint64 head = 4;
+        optional uint64 tail = 5;
+        optional uint64 metadata_index = 6;
+        optional int32 notification_fd_index = 7;
+        optional uint64 reverse_aperture_backing_iova = 8;
+        optional int32 reverse_aperture_backing_fd = 9;
+        optional uint64 notifier_msix_iova = 10;
+        optional uint32 notifier_msix_data = 11;
+    }
+    
+    message HostRing {
+        optional int32 backing_fd_index = 1;
+        optional uint64 backing_fd_offset = 2;
+        optional uint64 pages = 3;
+        optional uint64 head = 4;
+        optional uint64 tail = 5;
+        optional uint64 metadata_index = 6;
+        optional int32 notification_fd_index = 7;
+    }
+}
+
+message CommandRx {
+    oneof impl {
+        Pipe pipe = 1;
+        Verbs verbs = 2;
+        DioriteRing diorite_ring = 3;
+        ApertureRing aperture_ring = 4;
+        HostRing host_ring = 5;
+    }
+    
+    message Pipe {
+        optional int32 backing_fd_index = 1;
+        optional uint64 backing_fd_offset = 2;
+        optional uint64 pages = 3;
+        optional uint64 head = 4;
+        optional usps.fd.rpc.ContiguousMappedShmemRegionList backing_region_list = 5;
+    }
+    
+    message Verbs {
+        
+    }
+    
+    message DioriteRing {
+        optional int32 backing_fd_index = 1;
+        optional uint64 backing_fd_offset = 2;
+        optional uint64 pages = 3;
+        optional uint64 head = 4;
+        optional uint64 tail = 5;
+        optional uint64 metadata_index = 6;
+        optional AccDmaMetadataBlock metadata_head = 7;
+        optional AccDmaMetadataBlock metadata_tail = 8;
+        optional uint64 remote_iova = 9;
+    }
+    
+    message ApertureRing {
+        optional int32 backing_fd_index = 1;
+        optional uint64 backing_fd_offset = 2;
+        optional uint64 pages = 3;
+        optional uint64 head = 4;
+        optional uint64 tail = 5;
+        optional uint64 metadata_index = 6;
+        optional ApertureAccRangeInfo aperture_range_info = 7;
+    }
+    
+    message HostRing {
+        optional int32 backing_fd_index = 1;
+        optional uint64 backing_fd_offset = 2;
+        optional uint64 pages = 3;
+        optional uint64 head = 4;
+        optional uint64 tail = 5;
+        optional uint64 metadata_index = 6;
+    }
+}
+
+message CommandTx {
+    oneof impl {
+        Pipe pipe = 1;
+        Verbs verbs = 2;
+        DioriteRing diorite_ring = 3;
+        ApertureRing aperture_ring = 4;
+        HostRing host_ring = 5;
+    }
+    
+    message Pipe {
+        optional int32 backing_fd_index = 1;
+        optional uint64 backing_fd_offset = 2;
+        optional uint64 pages = 3;
+        optional uint64 head = 4;
+        optional uint64 tail = 5;
+    }
+    
+    message Verbs {
+        
+    }
+    
+    message DioriteRing {
+        optional int32 backing_fd_index = 1;
+        optional uint64 backing_fd_offset = 2;
+        optional uint64 pages = 3;
+        optional uint64 head = 4;
+        optional uint64 tail = 5;
+        optional uint64 metadata_index = 6;
+    }
+    
+    message ApertureRing {
+        optional int32 backing_fd_index = 1;
+        optional uint64 backing_fd_offset = 2;
+        optional uint64 pages = 3;
+        optional uint64 head = 4;
+        optional uint64 tail = 5;
+        optional uint64 metadata_index = 6;
+        optional int32 aperture_fd_index = 7;
+    }
+    
+    message HostRing {
+        optional int32 backing_fd_index = 1;
+        optional uint64 backing_fd_offset = 2;
+        optional uint64 pages = 3;
+        optional uint64 head = 4;
+        optional uint64 tail = 5;
+        optional uint64 metadata_index = 6;
+    }
+}
+
+message SharedEndpointQueueState {
+    oneof impl {
+        Pipe pipe = 1;
+        Verbs verbs = 2;
+        DioriteRing diorite_ring = 3;
+        ApertureRing aperture_ring = 4;
+        HostRing host_ring = 5;
+    }
+    
+    message Pipe {
+        
+    }
+    
+    message Verbs {
+        
+    }
+    
+    message DioriteRing {
+        optional int32 metadata_fd_index = 1;
+        optional uint64 metadata_fd_offset = 2;
+        optional uint64 metadata_pages = 3;
+        optional uint64 command_backing_pages = 4;
+        optional uint64 completion_backing_pages = 5;
+        optional uint64 command_ring_capacity_in_bytes = 6;
+        optional uint64 completion_ring_capacity_in_bytes = 7;
+        optional uint64 message_capacity_in_bytes = 8;
+        optional uint64 next_command_metadata_index = 9;
+        optional uint64 next_completion_metadata_index = 10;
+    }
+    
+    message ApertureRing {
+        optional int32 metadata_fd_index = 1;
+        optional uint64 metadata_fd_offset = 2;
+        optional uint64 metadata_pages = 3;
+        optional uint64 command_backing_pages = 4;
+        optional uint64 completion_backing_pages = 5;
+        optional uint64 command_ring_capacity_in_bytes = 6;
+        optional uint64 completion_ring_capacity_in_bytes = 7;
+        optional uint64 message_capacity_in_bytes = 8;
+        optional uint64 next_command_metadata_index = 9;
+        optional uint64 next_completion_metadata_index = 10;
+        optional int32 aperture_metadata_fd_index = 11;
+        optional bool completion_queue_notifications = 12 [default = false];
+    }
+    
+    message HostRing {
+        optional int32 metadata_fd_index = 1;
+        optional uint64 metadata_fd_offset = 2;
+        optional uint64 metadata_pages = 3;
+        optional uint64 command_backing_pages = 4;
+        optional uint64 completion_backing_pages = 5;
+        optional uint64 command_ring_capacity_in_bytes = 6;
+        optional uint64 completion_ring_capacity_in_bytes = 7;
+        optional uint64 message_capacity_in_bytes = 8;
+        optional uint64 next_command_metadata_index = 9;
+        optional uint64 next_completion_metadata_index = 10;
+    }
+}
+
+message SharedStationQueueState {
+    oneof impl {
+        Pipe pipe = 1;
+        Verbs verbs = 2;
+        DioriteRing diorite_ring = 3;
+        ApertureRing aperture_ring = 4;
+        HostRing host_ring = 5;
+    }
+    
+    message Pipe {
+        
+    }
+    
+    message Verbs {
+        
+    }
+    
+    message DioriteRing {
+        optional int32 metadata_fd_index = 1;
+        optional uint64 metadata_fd_offset = 2;
+        optional uint64 metadata_pages = 3;
+        optional uint64 metadata_remote_iova = 4;
+        optional uint64 command_backing_pages = 5;
+        optional uint64 completion_backing_pages = 6;
+        optional uint64 command_ring_capacity_in_bytes = 7;
+        optional uint64 completion_ring_capacity_in_bytes = 8;
+        optional uint64 message_capacity_in_bytes = 9;
+        optional AccDmaMetadataBlock command_heads_metadata = 10;
+        optional AccDmaMetadataBlock command_tails_metadata = 11;
+        optional AccDmaMetadataBlock completion_heads_metadata = 12;
+        optional AccDmaMetadataBlock completion_tails_metadata = 13;
+    }
+    
+    message ApertureRing {
+        optional int32 metadata_fd_index = 1;
+        optional uint64 metadata_fd_offset = 2;
+        optional uint64 metadata_pages = 3;
+        optional uint64 command_backing_pages = 4;
+        optional uint64 completion_backing_pages = 5;
+        optional uint64 command_ring_capacity_in_bytes = 6;
+        optional uint64 completion_ring_capacity_in_bytes = 7;
+        optional uint64 message_capacity_in_bytes = 8;
+        optional uint64 reverse_aperture_metadata_iova = 9;
+        optional int32 reverse_aperture_metadata_fd = 10;
+        optional ApertureAccRangeInfo aperture_range_info = 11;
+    }
+    
+    message HostRing {
+        optional int32 metadata_fd_index = 1;
+        optional uint64 metadata_fd_offset = 2;
+        optional uint64 metadata_pages = 3;
+        optional uint64 command_backing_pages = 4;
+        optional uint64 completion_backing_pages = 5;
+        optional uint64 command_ring_capacity_in_bytes = 6;
+        optional uint64 completion_ring_capacity_in_bytes = 7;
+        optional uint64 message_capacity_in_bytes = 8;
+    }
+}
+
+message SharedEngineQueueConfig {
+    oneof impl {
+        Pipe pipe = 1;
+        Verbs verbs = 2;
+        DioriteRing diorite_ring = 3;
+        ApertureRing aperture_ring = 4;
+        HostRing host_ring = 5;
+    }
+    
+    message Pipe {
+        
+    }
+    
+    message Verbs {
+        
+    }
+    
+    message DioriteRing {
+        
+    }
+    
+    message ApertureRing {
+        
+    }
+    
+    message HostRing {
+        
+    }
+}

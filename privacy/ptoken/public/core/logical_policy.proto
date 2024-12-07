@@ -33,7 +33,5 @@ message LogicalPolicy {
         SEARCH_MODEL_TRAINING_PRIVACY_CONTROL = 20;
         AXT_STORAGE_COMPLIANCE = 21;
         GEO_DATA_INTEGRITY = 22;
-        OPT_IN_CONSENT = 23;
-        NEED_TO_KNOW_POLICY = 24;
     }
 }

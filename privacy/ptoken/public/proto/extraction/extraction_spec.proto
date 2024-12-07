@@ -1,0 +1,22 @@
+syntax = "proto2";
+
+package ptoken;
+
+import "net/proto2/proto/descriptor.proto";
+
+option java_multiple_files = true;
+option java_package = "com.google.privacy.ptoken.proto.extraction";
+
+message ExtractionSpec {
+    oneof specification {
+        string ptoken_path = 1;
+    }
+    
+    extensions 10000 to max;
+    
+    reserved 2;
+}
+
+extend .proto2.MessageOptions {
+    optional ExtractionSpec extraction_spec = 318825248;
+}

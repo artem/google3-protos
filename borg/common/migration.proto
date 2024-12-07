@@ -1,0 +1,26 @@
+syntax = "proto2";
+
+package borg;
+
+import "borg/common/common.proto";
+import "security/thinmint/proto/core/thinmint_core.proto";
+import "security/thinmint/proto/thinmint.proto";
+
+option cc_enable_arenas = true;
+
+message Migration {
+    optional int32 port = 1;
+    optional string source_hostport = 2;
+    optional .thinmint.ThinMint mint = 3;
+    optional string source_shandle = 4 [deprecated = true];
+    optional bool disable_cpu_hardcap_treat_overlimit_ls_tasks_as_abusive = 5 [default = false];
+    optional string migration_reason = 6;
+    
+    optional MigrationStatus migration_status = 7;
+    enum MigrationStatus {
+        MIGRATION_STATUS_UNSPECIFIED = 0;
+        MIGRATION_IN_PROGRESS = 1;
+    }
+    
+    optional SliceMigrationState slice_migration_state = 8;
+}

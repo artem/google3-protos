@@ -1,0 +1,12 @@
+syntax = "editions";
+
+package storage_l4;
+
+message Encryption {
+    enum Type {
+        UNKNOWN = 0;
+        NONE = 1;
+        COLOSSUS = 2;
+        OTHER = 3;
+    }
+}

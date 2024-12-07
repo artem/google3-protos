@@ -1,0 +1,23 @@
+syntax = "proto2";
+
+package usps.broker.rpc;
+
+import "perftools/tracing/proto/tracecontext.proto";
+import "util/task/status.proto";
+
+message BrokerMessage {
+    optional int64 id = 3;
+    optional util.StatusProto status = 4;
+    optional uint32 fd_count = 5 [default = 0];
+    optional perftools.tracing.TraceContextProto trace_context = 6;
+    
+    extensions 100 to 524999999, 525000000 to max;
+}
+
+message ExtraFds {
+    optional int64 base_id = 1;
+    
+    extend BrokerMessage {
+        optional ExtraFds ext = 340032643;
+    }
+}

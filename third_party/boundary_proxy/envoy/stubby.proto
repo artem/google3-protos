@@ -1,0 +1,76 @@
+syntax = "proto2";
+
+package boundary_proxy;
+
+import "third_party/boundary_proxy/proto_compare/annotation.proto";
+
+option java_multiple_files = true;
+
+message StubbyRequestHeader {
+    optional int32 type = 1;
+    optional fixed64 id = 2;
+    optional string method = 3;
+    optional double deadline = 4 [default = 0];
+    optional bool streaming = 10;
+    optional int32 payload_format = 15;
+    optional string package_name = 31;
+    optional MessageSet request_extensions = 23;
+    optional CensusContext census_context = 11;
+    optional StreamHeader stream_header = 25;
+    
+    enum TYPE {
+        REQUEST = 0;
+        HEALTH_CHECK = 1;
+        CANCEL_REQUEST = 2;
+        CHANNEL_OPTIONS = 3;
+        STREAM_MESSAGE = 4;
+        HEALTH_CHECK_REQUEST = 5;
+        HEALTH_CHECK_RESPONSE = 6;
+        READINESS_CHECK = 7;
+        CONNECTION_FAILURE_STATUS = 8;
+        BDP_PING = 9;
+        BDP_PING_ACK = 10;
+    }
+}
+
+message StubbyResponseHeader {
+    optional int32 type = 1 [default = 0];
+    optional int32 status = 2 [default = 0];
+    optional fixed64 id = 3;
+    optional string error_detail = 4;
+    optional int32 app_code = 5 [default = 0];
+    optional int32 payload_format = 10;
+    optional bool final_response = 12 [default = true];
+    optional int32 seqno = 13 [default = 0];
+    optional int32 error_code = 17;
+    optional string error_space = 18;
+    optional StreamHeader stream_header = 23;
+    optional int32 original_payload_size = 25;
+}
+
+message MessageSet {
+    option message_set_wire_format = true;
+    
+    extensions 4 to max;
+}
+
+message StatusProto {
+    optional int32 code = 1;
+    optional string space = 2;
+    optional string message = 3;
+    optional MessageSet message_set = 5;
+    optional int32 canonical_code = 6;
+}
+
+message StreamHeader {
+    optional int64 sequence = 1;
+    optional bool end_of_data = 3 [default = false];
+    optional bool end_of_stream = 4 [default = false];
+    optional bool pure_control_message = 5 [default = false];
+    optional StatusProto status = 6;
+}
+
+message CensusContext {
+    optional string tracking_tag = 2;
+    optional string layer_local_tracking_tag = 3;
+}

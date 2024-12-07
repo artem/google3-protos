@@ -32,10 +32,19 @@ message SecurityRealmMapping {
             TPC_EDGE = 7;
             TPC_CORP = 8;
             TPC_XUNIVERSE = 9;
+            SMALL_SCATTERED = 10;
         }
         
         optional uint32 id = 8;
         optional string universe_id = 9;
+        
+        optional Tier6State tier_6_state = 11 [default = NOT_TIER_6];
+        enum Tier6State {
+            NOT_TIER_6 = 0;
+            TURNING_UP = 1;
+            ACTIVE = 2;
+            TURNING_DOWN = 3;
+        }
         
         reserved 2, 4, 5, 10;
         

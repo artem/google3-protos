@@ -1,0 +1,19 @@
+syntax = "editions";
+
+package colossus.restricted_features;
+
+import "file/colossus/proto/options.proto";
+
+message RawCiphertextRead {
+    
+}
+
+message SetStatEncryptionPropertiesNonFinalizedFile {
+    
+}
+
+message SnapshotNonFinalizedEncryptedFile {
+    extend SnapshotOptions {
+        optional SnapshotNonFinalizedEncryptedFile snapshot_non_finalized_encrypted_file = 361199046;
+    }
+}

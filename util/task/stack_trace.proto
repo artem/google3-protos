@@ -11,7 +11,7 @@ message StackTrace {
 message StackTraces {
     repeated StackTrace traces = 1;
     
-    extend proto2.bridge.MessageSet {
+    extend .proto2.bridge.MessageSet {
         optional StackTraces message_set_extension = 181005703;
     }
 }

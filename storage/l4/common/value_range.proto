@@ -1,0 +1,8 @@
+syntax = "proto3";
+
+package storage_l4;
+
+message ValueRange {
+    int64 offset = 1;
+    int64 size = 2;
+}

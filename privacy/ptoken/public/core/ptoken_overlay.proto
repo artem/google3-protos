@@ -1,0 +1,12 @@
+syntax = "editions";
+
+package ptoken;
+
+import "privacy/ptoken/public/core/ptoken.proto";
+
+option java_multiple_files = true;
+option java_package = "com.google.privacy.ptoken.proto";
+
+message PTokenOverlay {
+    optional PToken ptoken = 9099;
+}

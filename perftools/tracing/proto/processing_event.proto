@@ -1,4 +1,4 @@
-syntax = "proto2";
+syntax = "editions";
 
 package perftools.tracing.processing_events;
 
@@ -46,6 +46,7 @@ enum Instrumentation {
     INSTRUMENTATION_HUMBOLDT = 2;
     INSTRUMENTATION_TEMPUS = 3;
     INSTRUMENTATION_DAPPER = 4;
+    INSTRUMENTATION_SEARCH = 5;
 }
 
 enum FlowType {
@@ -53,4 +54,6 @@ enum FlowType {
     FLOW_GENERIC = 1;
     FLOW_SCHEDULE = 2;
     FLOW_CONTINUE = 3;
+    FLOW_START = 4;
+    FLOW_END = 5;
 }

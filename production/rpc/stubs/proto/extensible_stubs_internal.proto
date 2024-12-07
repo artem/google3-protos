@@ -1,8 +1,9 @@
-syntax = "proto2";
+syntax = "editions";
 
 package production.rpc.stubs.proto;
 
 import "net/proto2/bridge/proto/message_set.proto";
+import "third_party/boundary_proxy/proto_compare/annotation.proto";
 import "util/task/contrib/proto_status/proto_status.proto";
 
 option java_outer_classname = "ExtensibleStubsInternalProto";

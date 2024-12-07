@@ -1,14 +1,13 @@
-syntax = "proto2";
+syntax = "editions";
 
 package rpc;
 
 import "net/proto2/bridge/proto/message_set.proto";
 
-option cc_enable_arenas = true;
 option java_package = "com.google.net.rpc.impl";
 
 message QueryCost {
-    required float query_cost = 1;
+    optional float query_cost = 1;
     optional string cost_name = 2;
     
     extend .proto2.bridge.MessageSet {

@@ -1,0 +1,30 @@
+syntax = "editions";
+
+package colossus;
+
+import "util/task/status.proto";
+
+message DataCorruptionRecord {
+    optional string file_path = 1;
+    optional int64 file_id = 2;
+    optional int64 stripe_index = 3;
+    optional string chunk_path = 22;
+    optional int64 chunk_volume_id = 4;
+    optional uint64 chunk_handle = 5;
+    optional int64 offset = 6;
+    optional int64 data_size = 7;
+    optional bytes data = 8 [ctype = CORD];
+    optional uint32 data_crc32c = 9;
+    optional uint32 expected_data_crc32c = 10;
+    optional int64 request_offset = 11;
+    optional int64 request_size = 12;
+    optional uint64 request_data_crc32c = 13;
+    optional uint64 expected_request_data_crc32c = 16;
+    optional uint32 original_cumulative_checksum = 17;
+    optional uint32 request_cumulative_checksum = 18;
+    optional bytes original_request_data = 19 [ctype = CORD];
+    optional uint32 original_request_data_crc32c = 20;
+    optional uint32 expected_request_data_expected_crc32c = 21;
+    map<int64, uint32> offset_to_checksum = 14;
+    optional util.StatusProto status = 15;
+}

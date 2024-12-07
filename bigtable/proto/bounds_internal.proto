@@ -1,0 +1,29 @@
+syntax = "editions";
+
+package bigtable;
+
+import "bigtable/proto/bigtable.proto";
+
+option java_package = "com.google.bigtable.protos";
+
+message UpdateBounds {
+    optional bytes min_row = 15;
+    optional bytes max_row = 16;
+    optional int64 min_update_ts = 6;
+    optional int64 max_update_ts = 7;
+    
+    repeated Family family = 8;
+    message Family {
+        optional int64 family_id = 9;
+        optional int64 min_family_ts = 12;
+        optional int64 max_family_ts = 13;
+        
+        reserved 10 to 11;
+    }
+    
+    optional GlobalSequencerProto min_global_sequencer = 14;
+    optional GlobalSequencerProto max_global_sequencer = 17;
+    optional int64 min_logical_clock = 18;
+    
+    reserved 1 to 5;
+}

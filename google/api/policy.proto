@@ -76,10 +76,10 @@ message PolicyAspect {
     protobuf.Struct spec = 2;
 }
 
-extend proto2.FieldOptions {
+extend .proto2.FieldOptions {
     FieldPolicy field_policy = 158361448;
 }
 
-extend proto2.MethodOptions {
+extend .proto2.MethodOptions {
     MethodPolicy method_policy = 161893301;
 }

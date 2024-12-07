@@ -1,0 +1,32 @@
+syntax = "editions";
+
+package storage_l4;
+
+import "net/proto2/bridge/proto/message_set.proto";
+
+message ErrorSource {
+    optional string rpc_target = 5;
+    
+    optional Transport rpc_transport = 2;
+    enum Transport {
+        TRANSPORT_UNKNOWN = 0;
+        TRANSPORT_STUBBY = 1;
+        TRANSPORT_GRPC = 2;
+        TRANSPORT_USEC = 3;
+    }
+    
+    optional string rpc_service = 3;
+    optional string rpc_method = 4;
+    
+    reserved 1;
+    
+    extend .proto2.bridge.MessageSet {
+        optional ErrorSource message_set_extension = 332993945;
+    }
+}
+
+message CannedErrorTag {
+    extend .proto2.bridge.MessageSet {
+        optional CannedErrorTag message_set_extension = 415413493;
+    }
+}

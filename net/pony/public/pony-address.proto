@@ -1,0 +1,52 @@
+syntax = "editions";
+
+package net_pony;
+
+import "net/base/qos.proto";
+
+message UDAddress {
+    optional string address = 1;
+    optional uint32 qpn = 2;
+}
+
+message SubAddress {
+    optional uint32 transport_version = 1;
+    optional uint32 transport_identifier = 2;
+    optional net_base.qos.TrafficClass qos = 3;
+    repeated int32 selector = 8;
+    optional uint32 local_priority = 6 [default = 0];
+    optional uint32 remote_priority = 11 [default = 0];
+    optional UDAddress ud = 5;
+    repeated uint32 overflow_engine_addresses = 16;
+    optional string name = 9;
+    optional bool per_station_flows = 12 [default = false];
+    optional bool wan_capable = 13 [default = false];
+    
+    optional UdPspSupportMode ud_psp_support_mode = 14 [default = UD_ONLY];
+    enum UdPspSupportMode {
+        UNSPECIFIED = 0;
+        BOTH = 1;
+        UD_ONLY = 2;
+        PSP_ONLY = 3;
+    }
+    
+    reserved 4, 7, 10, 15;
+}
+
+message Address {
+    optional int32 engine_version = 7;
+    optional string address = 2;
+    optional uint32 http_port = 11;
+    optional uint32 station_handle = 4;
+    optional uint64 station_nonce = 14;
+    optional uint32 engine_token = 10;
+    repeated SubAddress sub_address = 6;
+    optional bool codywhack = 12 [default = false];
+    optional string app_auth_message = 13;
+    optional bool fips_compliant = 15 [default = false];
+    optional int32 stripes_supported = 16 [default = 0];
+    optional bool supports_zero_copy_rx_messaging = 17 [default = false];
+    optional bool psp_v1_supported = 18 [default = false];
+    
+    reserved 1, 3, 5, 8, 9;
+}

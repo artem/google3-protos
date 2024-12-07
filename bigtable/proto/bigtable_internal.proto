@@ -1,0 +1,651 @@
+syntax = "proto2";
+
+package bigtable;
+
+import public "bigtable/proto/bti_request.proto";
+import public "bigtable/proto/bti_tablet.proto";
+import public "bigtable/proto/compaction_stats.proto";
+import "bigtable/proto/bigtable.proto";
+import "bigtable/proto/dma_rollout.proto";
+import "bigtable/proto/materialized_views_config_internal.proto";
+import "bigtable/proto/schema_validator_spec.proto";
+import "bigtable/proto/snapshot_internal.proto";
+import "bigtable/util/state_manager/state_manager.proto";
+import "google/protobuf/duration.proto";
+import "google/protobuf/timestamp.proto";
+import "net/proto2/bridge/proto/message_set.proto";
+import "net/proto2/proto/descriptor.proto";
+import "security/context/proto/audit_requirements.proto";
+import "storage/cmek_library/proto/wrapped_resource_key.proto";
+import "storage/datapol/annotations/proto/semantic_annotations.proto";
+
+option java_package = "com.google.bigtable.protos";
+
+service BTI_ServerDebug {
+    rpc FindTablets(BTI_RowSpec) returns (BTI_TabletLocationList);
+}
+
+message BTI_Response {
+    optional fixed64 ack = 4;
+    
+    reserved 1 to 3;
+}
+
+message BTI_Ports {
+    required int32 control_port = 8;
+    required int32 besteffort_port = 4;
+    optional int32 server_version = 10;
+    
+    reserved 5 to 7, 9;
+    
+    reserved "assured1_port", "assured2_port", "assured3_port", "assured4_port";
+}
+
+message RemoteCp {
+    required uint64 uid = 1;
+    required int64 round = 2;
+    optional bool need_discovery = 3;
+    optional int64 cp_lease_count = 4;
+    optional int64 cp_lease_count_round = 5;
+    optional string partition = 6;
+}
+
+message TabletLocation {
+    required string location = 1;
+    optional fixed64 id = 2;
+    optional BTI_Ports ports = 4;
+    optional bytes ipv4 = 5;
+    optional bytes ipv6 = 6;
+    optional RemoteCp remotecp = 8;
+    optional int64 timestamp_micros = 9;
+    
+    reserved 3, 7;
+}
+
+message TabletAndLocation {
+    required BTI_Tablet tablet = 1;
+    required string location = 2;
+    optional fixed64 id = 3;
+    optional BTI_Ports ports = 6;
+    optional int32 system_version = 5 [default = 0];
+    optional bytes ipv4 = 7;
+    optional bytes ipv6 = 8;
+    
+    repeated group CpLocations = 9 {
+        optional string name = 10;
+        optional string location = 11;
+        optional BTI_Ports ports = 12;
+    }
+    
+    optional int64 timestamp_micros = 13;
+    
+    reserved 4;
+    
+    extend .proto2.bridge.MessageSet {
+        optional TabletAndLocation message_set_extension = 98339097;
+    }
+}
+
+message TabletAndLocationCache {
+    map<string, BTI_TabletLocationList> tablet_locations_per_cell = 1;
+}
+
+message MoveReplicaDestinationTableInfo {
+    optional string cell = 1;
+    optional string table_name = 2;
+    optional string original_name = 3;
+    optional uint64 table_version = 4;
+    optional bytes start_row = 5;
+    optional bytes limit_row = 6;
+    
+    extend .proto2.bridge.MessageSet {
+        optional MoveReplicaDestinationTableInfo message_set_extension = 525001835;
+    }
+}
+
+message LogReaderStats {
+    optional int32 groups = 9;
+    optional int32 useful_groups = 10;
+    optional int32 skipped_groups = 16;
+    optional int64 records = 1;
+    optional int64 bytes = 2;
+    optional double findfiles_time = 3;
+    optional double sort_time = 4;
+    optional double remoteread_time = 5;
+    optional int64 bad_reader_records = 6;
+    optional int64 bad_reader_bytes = 7;
+    optional int64 bad_sorter_records = 8;
+    
+    reserved 11 to 15;
+}
+
+message TabletLoadStats {
+    optional double loader_queue_time = 1;
+    optional LogReaderStats logread_stats = 2;
+    optional double apply_time = 3;
+    optional double md_time = 4;
+    optional double chubby_time = 5;
+    optional double master_unassigned_time = 6;
+    optional double master_first_seen = 7;
+    optional double log_setup_time = 9;
+    optional double load_delay_time = 10;
+    
+    reserved 8;
+}
+
+message TabletUnloadStats {
+    optional double md_time = 1;
+    optional double chubby_time = 2;
+    optional bool added_end_sequence = 3 [default = false];
+    optional bool server_initiated = 4 [default = false];
+    optional string extra_details = 5;
+    optional int32 goal = 6;
+}
+
+message CompactionErrorPayload {
+    optional int32 fs_root_id = 1;
+    optional string cell_out_of_ssd_quota = 2;
+    optional string cell_out_of_hdd_quota = 3;
+    
+    extend .proto2.bridge.MessageSet {
+        optional CompactionErrorPayload message_set_extension = 79450920;
+    }
+}
+
+message BulkImportStats {
+    required int32 import_type = 1;
+    required int32 file_op = 2;
+    required uint64 import_replay_id = 3;
+    required int32 num_files_imported = 4;
+    required int32 sstable_entries_before = 5;
+    required int32 sstable_entries_after = 6;
+}
+
+message EncryptionParentKeyStats {
+    optional int64 rewrapped_file_keys = 1;
+}
+
+message PreLoadFixupStats {
+    required double time_elapsed = 1;
+    optional int64 num_sstable_references_removed = 2 [default = 0];
+    optional string new_partition = 3;
+    optional bool partition_cleared = 4 [default = false];
+    optional bool quarantined = 5 [default = false];
+    optional bool unquarantined = 6 [default = false];
+}
+
+message TabletEventProto {
+    required string location = 1;
+    optional int32 borg_task_id = 21;
+    optional int32 latency_ms = 3;
+    optional string type = 4;
+    optional string details = 8;
+    optional TabletLoadStats load_stats = 9;
+    optional TabletUnloadStats unload_stats = 10;
+    repeated CompactionStats compaction_stats = 11;
+    optional PreLoadFixupStats pre_load_fixup_stats = 12;
+    optional BulkImportStats bulk_import_stats = 13;
+    optional uint64 serial = 5;
+    optional bytes startkey = 14;
+    optional bytes parent_startkey = 18;
+    optional bytes parent_endkey = 19;
+    optional bytes merge_next_tablet_endkey = 15;
+    optional SplitReason split_reason = 16;
+    optional EncryptionParentKeyStats encryption_parent_key_stats = 20;
+    
+    reserved 2, 7;
+}
+
+message TabletErrors {
+    optional int64 sstable_iterator_errors = 1;
+    optional int32 sstables_recovered = 4;
+    optional string tablet_load_error = 5;
+    optional string hostport = 6;
+    
+    reserved 2, 3;
+}
+
+message TabletPartitionInfo {
+    required string partition = 1;
+    required string details = 2;
+}
+
+message TabletQuarantineInfo {
+    required double last_quarantine_time = 1;
+    optional int32 auto_unquarantine_attempts = 2;
+    optional int32 severity = 3;
+    required string details = 4;
+}
+
+message BTI_TabletFixup {
+    optional FixupType type = 3 [default = DELETE];
+    enum FixupType {
+        DELETE = 0;
+        SKIP_BAD_ENTRIES = 1;
+        CLEAR_FOR_REPAIR = 2;
+    }
+    
+    repeated string unanchored_sstable_path = 1;
+    repeated string anchored_shared_log_prefix = 4;
+    required string details = 2;
+}
+
+message BTI_BloomfilterSettings {
+    required int32 hashes = 1;
+    required int32 shard_size_bytes = 2;
+    
+    optional FirstKeyData first_key_data = 3;
+    message FirstKeyData {
+        optional int32 prefix_length = 1;
+        optional bytes suffix = 2;
+    }
+}
+
+message BTI_CreateCell {
+    required string cluster_cell = 1;
+    required string fs_root_spec = 2;
+    
+    reserved 3;
+}
+
+message BTI_FamilyDescription {
+    required FamilyDescription description = 1;
+    required fixed64 client_id = 2;
+    required fixed64 local_id = 3;
+    optional int64 family_id = 4;
+    
+    optional group ReplicationState = 5 {
+        required string repl_cell_name = 6;
+        required int64 repl_cell_id = 7;
+        required string repl_table_name = 8;
+        required int64 repl_table_id = 9;
+        required int64 repl_family_id = 10;
+        optional int64 new_repl_family_id = 21;
+        required bool active = 11;
+        required bool master = 12;
+        optional bool has_logs = 13 [default = true];
+        optional uint64 max_incarnation = 14;
+        optional uint64 min_pull_incarnation = 19;
+        optional int32 version = 18;
+        
+        reserved 15;
+        
+        enum Version {
+            LEGACY = 0;
+            NEW_ADDREPLICA = 1;
+        }
+    }
+    
+    optional bool multi_master_ordering = 16;
+    optional int64 min_logical_clock = 17;
+    optional int64 gcdellife_micros = 20 [default = -1];
+}
+
+message SourceIncarnation {
+    required string cell = 1;
+    required int64 table_id = 2;
+    required uint64 incarnation = 3;
+}
+
+message SpannerProxyConfig {
+    optional string spanner_database = 1;
+    optional string spanner_table = 2;
+    optional string proxy_source_id = 3;
+    optional string spanner_source_id = 4;
+}
+
+message SpannerMigrationConfig {
+    optional string spanner_database = 1;
+    optional string spanner_table = 2;
+    optional bool fully_migrated = 3;
+}
+
+message LocationProxyConfig {
+    optional string location_cache_proxy_address = 1;
+    map<string, RolloutConfig> rollout_group_to_config = 2;
+    
+    message RolloutConfig {
+        optional int32 rollout_percentage = 2 [default = 0];
+    }
+}
+
+message BTI_TableMetadata {
+    required uint64 table_version = 1;
+    optional string table_name = 15;
+    optional string table_key = 28;
+    repeated string administrator = 4;
+    repeated string creator = 5;
+    repeated string delegator = 47;
+    repeated string resource_delegator = 60;
+    repeated SecurityRealmSet security_realms = 96;
+    repeated BTI_FamilyDescription family = 3;
+    optional string description = 8;
+    optional string row_format = 31;
+    required fixed64 client_id = 6;
+    required fixed64 local_id = 7;
+    optional int64 system_schema_version = 37;
+    optional int64 schema_info_generation = 102 [default = -1];
+    optional string schema_backup_path = 106;
+    repeated LocalityGroup locality_group = 9;
+    repeated AclGroup acl_group = 65;
+    optional security.context.AuditRequirements audit_requirements = 70;
+    optional int64 next_family_id = 10 [default = 2];
+    optional bool uses_column_family_ids = 12;
+    
+    optional group ReplTableOp = 16 {
+        required string repl_cell_name = 17;
+        required int64 repl_cell_id = 18;
+        required string repl_table_name = 19;
+        required int64 repl_table_id = 20;
+        repeated string family = 21;
+        required string op = 22;
+        required bool committed = 23;
+        
+        optional group PartialReplica = 82 {
+            required bytes start_row = 83;
+            required bytes limit_row = 84;
+        }
+    }
+    
+    optional float tablet_split_size = 25 [default = 1.0737418e+09];
+    optional float tablet_soft_split_size = 69 [default = -1];
+    optional float tablet_ssd_split_size = 125 [default = -1];
+    optional int32 load_priority = 61 [default = 2];
+    optional int32 snapshot_load_priority = 62 [default = 2];
+    optional bool auto_merge = 14;
+    optional uint64 incarnation = 13 [default = 1];
+    optional float major_compaction_cycle_days = 26;
+    optional double major_compaction_cycle_updated_timestamp = 89;
+    optional SnapshotPolicy snapshot_policy = 41 [deprecated = true];
+    optional string backup_policy = 72;
+    optional string previous_backup_policy = 107;
+    
+    optional group SnapshotSource = 42 {
+        required uint64 source_table_version = 49;
+        required bool created_by_policy = 48;
+        optional string schedule_name = 44;
+        required double timestamp = 45;
+        optional double expected_gc_time = 50;
+        
+        reserved 43;
+    }
+    
+    repeated CoprocessorSpec coprocessor = 29;
+    repeated string remote_coprocessor_starter = 113;
+    optional PropertyMap userdata = 30;
+    optional string default_owner = 32;
+    optional bool is_index = 33 [default = false];
+    optional int32 index_hit_shard_bits = 38 [default = 15];
+    optional bool enable_index_gc = 54 [default = true];
+    optional bool nonloadable = 34;
+    optional double nonloadable_cleared_time = 73;
+    optional double unload2load_time = 74;
+    optional BandwidthLimit bandwidth_limit = 35;
+    optional BTI_SnapshotOrigin snapshot_origin = 57;
+    optional int32 fs_root_id = 46 [default = 724];
+    optional string replication_puller_qos = 39;
+    optional string partition = 40 [default = "default"];
+    
+    optional UnloadReason unload_reason = 100;
+    enum UnloadReason {
+        UNKNOWN = 0;
+        CLOUD_KMS_KEY_REVOKED = 1;
+        RESOURCE_KEY_MANAGER_INIT_FAILED = 2;
+        WRAPPED_KEY_READING_FAILED = 3;
+        CMEK_ENCRYPTION_DISABLED = 4;
+        REVERSIBLE_DELETION = 5;
+        MASTER_INIT_SKIPPED_TABLE_LOADING = 6;
+        CLOUD_KMS_KEY_UNREACHABLE = 7;
+        SHREDMILL_KEY_EXPIRED = 8;
+    }
+    
+    optional string previous_partition = 101;
+    optional double unused_last_cmek_reinstate_wall_time_seconds = 104;
+    optional bool may_proxy = 52 [default = true];
+    repeated SourceIncarnation proxy_source_epochs = 53;
+    optional bool use_stubby_delegation = 55 [default = false];
+    optional int64 death_epoch_seconds = 58;
+    optional bool do_not_delete = 59 [default = false];
+    optional EncryptionSettings encryption_settings = 63;
+    optional TableEncryptionSettings table_encryption_settings = 95;
+    optional storage_cmek.WrappedResourceKey wrapped_resource_key = 98;
+    optional string cloud_kms_key_version = 99;
+    optional string wrapped_resource_key_filepath = 105;
+    optional bool encrypt_table = 67;
+    optional int64 encryption_key_rotation_interval_sec = 75;
+    optional bool family_ids_in_pull_request = 66 [default = false];
+    optional ChubbyCompressed chubby_compressed = 2;
+    optional bool load_based_splitting = 71 [default = true];
+    optional TableMetadata.AllowRebalancePolicy allow_rebalance = 76 [default = ALWAYS];
+    repeated string backup_and_snapshot_administrator = 115;
+    repeated string backup_and_snapshot_restorer = 116;
+    repeated string offline_access_reader = 77;
+    optional bool offline_access_can_snapshot_table = 78 [default = false];
+    
+    optional group PartialReplica = 79 {
+        required bytes start_row = 80;
+        required bytes limit_row = 81;
+    }
+    
+    optional BatchReplication batch_replication = 85;
+    message BatchReplication {
+        optional bool source = 1;
+        optional bool puller = 2;
+        optional FamilyIDMigration.State family_id_migration_state = 3 [default = DEFAULT_NOT_MIGRATING];
+        
+        message FamilyIDMigration {
+            enum State {
+                DEFAULT_NOT_MIGRATING = 0;
+                MIGRATING = 1;
+                MIGRATED = 2;
+            }
+        }
+    }
+    
+    optional bool allow_multimaster_intsum_deletes = 86 [default = false];
+    optional bool disable_adaptive_stack_depth = 87 [default = false];
+    optional int32 max_boa_ttl_hours = 88 [default = 336];
+    optional string bandwidth_delegated_user = 90;
+    optional int64 max_row_size = 91;
+    optional TableMetadata.SharedlogStoragePlacement sharedlog_placement = 92 [default = SHAREDLOG_PLACEMENT_DEFAULT];
+    optional int64 max_sequencer_backwards_skew_seconds = 108;
+    
+    optional GcControl gc_control = 124;
+    message GcControl {
+        optional Mode mode = 1 [default = DEFAULT_GC_BEHAVIOR];
+        enum Mode {
+            DEFAULT_GC_BEHAVIOR = 0;
+            FORCE_EXPLICIT_GC_MUTATIONS = 1;
+            IGNORE_GC_POLICY = 2;
+        }
+        
+        optional google.protobuf.Timestamp last_updated = 2;
+    }
+    
+    optional MoveReplica move_replica = 127;
+    message MoveReplica {
+        optional bool is_source = 1;
+        optional string peer_cell = 2;
+        optional uint64 peer_table_version = 3;
+        optional string peer_original_name = 6;
+        optional string peer_table_name = 7;
+        
+        optional RestoreInfo restore_info = 8;
+        message RestoreInfo {
+            optional GcControl gc_control = 1;
+        }
+        
+        optional google.protobuf.Timestamp create_time = 4;
+        optional google.protobuf.Timestamp update_time = 5;
+    }
+    
+    optional bool do_not_replicate = 109;
+    optional BTI_ChangeDataCaptureConfig change_data_capture = 110;
+    optional int64 replica_tiebreaker = 112;
+    optional bool replication_pulling_enabled = 122 [default = true];
+    optional bool replication_serving_enabled = 123 [default = true];
+    optional int64 logical_clock_start = 129;
+    repeated SchemaValidatorSpec schema_validator = 111;
+    optional LocationProxyConfig location_proxy_config = 114;
+    repeated string debug_acl = 117;
+    optional DmaRolloutConfig dma_rollout_config = 120;
+    optional bool ssd_to_ssd_data_column_override_opt_out = 121 [default = false];
+    
+    repeated ProtoDescriptorMetadata proto_descriptor_metadata = 126;
+    message ProtoDescriptorMetadata {
+        optional fixed64 identifier_fingerprint = 1;
+        optional int64 version = 2;
+        optional fixed64 checksum = 3;
+    }
+    
+    optional BTI_MaterializedViewsConfig materialized_views_config = 128;
+    
+    oneof crn_oneof {
+        string cloud_resource_name = 94;
+        uint64 cloud_resource_name_fingerprint = 118;
+    }
+    
+    oneof spanner_info {
+        SpannerProxyConfig spanner_proxy_config = 93;
+        SpannerMigrationConfig spanner_migration_config = 103;
+    }
+    
+    reserved 11, 24, 27, 36, 51, 56, 64, 68, 97, 119;
+}
+
+message BTI_RecentTableEventRecord {
+    required uint64 table_version = 1;
+    optional int64 link_file_generation = 2;
+    optional bool link_file_update_pending = 3;
+    optional int64 name_file_generation = 4;
+    optional bool name_file_update_pending = 5;
+    optional int64 event_file_generation = 6;
+    optional bool canceled = 7;
+}
+
+message BTI_RecentTableEvents {
+    optional fixed32 _checksum = 1;
+    optional fixed32 _crc_checksum = 5;
+    repeated BTI_RecentTableEventRecord event = 2;
+    optional int64 max_dropped_event = 3;
+    optional bool concurrent_updates_were_enabled = 4;
+}
+
+message BTI_TableLink {
+    required string table_name = 1;
+}
+
+message BTI_PartitionMetadata {
+    required int64 partition_id = 1;
+    required fixed64 client_id = 2;
+    required fixed64 local_id = 3;
+    optional PartitionMetadata md = 4;
+    optional ChubbyCompressed chubby_compressed = 5;
+    optional fixed32 _checksum = 6;
+    optional fixed32 _crc_checksum = 7;
+}
+
+message BTI_GlobalPartitionMetadata {
+    required int64 max_partition_id = 1;
+}
+
+message BTI_UnloadType {
+    required Type type = 1;
+    enum Type {
+        UNLOAD_NORMAL = 0;
+        UNLOAD_NO_COMPACTIONS = 1;
+    }
+}
+
+message BTI_EncryptionMasterKey {
+    required EncryptionMasterKey key = 1;
+    optional int32 version = 2 [default = -1];
+}
+
+message BTI_ChangeDataCaptureConfig {
+    optional google.protobuf.Duration log_retention_period = 1;
+    optional int64 disallowed_before_micros = 2;
+    optional bool create_gc_mutations = 3 [default = true];
+    
+    repeated DynamicRetentionConfig dynamic_retention_configs = 4;
+    message DynamicRetentionConfig {
+        optional string coprocessor_name = 1;
+    }
+}
+
+message BTI_RowSpec {
+    required string TableName = 1;
+    optional uint64 TableVersion = 2;
+    required bytes Row = 3;
+}
+
+message BTI_TabletLocationList {
+    repeated TabletAndLocation tabletandloc = 1;
+    
+    extend .proto2.bridge.MessageSet {
+        optional BTI_TabletLocationList message_set_extension = 457489577;
+    }
+}
+
+message BTI_CrashRequest {
+    required BTI_Request request = 1;
+    required string crash_reason = 2;
+}
+
+message CP_ProcessStatsProto {
+    required int32 rpc_queue_length = 1;
+}
+
+message CellRunnerProto {
+    required string username = 1;
+}
+
+message PerTableInfo {
+    optional uint64 incomplete_backup = 1;
+    optional double no_backups_until = 2;
+}
+
+message PolicyManagerCheckPoint {
+    map<uint64, PerTableInfo> table_info = 1;
+    
+    extend StateManagerCheckPoint {
+        optional PolicyManagerCheckPoint state = 104;
+    }
+}
+
+message FsRootInfo {
+    optional string file_prefix = 1;
+    
+    reserved 2;
+}
+
+message BTI_SchemaInfo {
+    repeated BTI_FamilyMapping family_mapping = 1;
+    optional uint64 chubby_generation = 2;
+    optional string cloud_resource_name = 3;
+}
+
+message BTI_FamilyMapping {
+    optional int64 family_id = 1;
+    optional string family_name = 2;
+}
+
+message ProtoDescriptorSet {
+    optional string identifier = 1;
+    optional .proto2.FileDescriptorSet descriptor_set = 2;
+}
+
+enum SplitReason {
+    UNKNOWN_SPLIT = 0;
+    LOAD_SPLIT = 1;
+    DISK_SPLIT = 2;
+    DISK_SOFT_SPLIT = 3;
+    MEMORY_SPLIT = 4;
+    LAZY_SPLIT = 5;
+    USER_SPLIT = 6;
+    REPLICATION_SPLIT = 7;
+    WRITE_SPLIT = 8;
+    QUEUE_SPLIT = 9;
+    DELETED_BOUNDARY_SPLIT = 10;
+    SSD_SPLIT = 11;
+}

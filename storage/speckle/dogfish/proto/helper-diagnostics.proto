@@ -1,4 +1,4 @@
-syntax = "proto2";
+syntax = "editions";
 
 package speckle_dogfish.diagnostics;
 
@@ -76,6 +76,8 @@ message WalProgress {
     optional uint64 process_pos = 4;
     optional uint64 consume_pos = 11;
     optional uint64 checkpoint_start_pos = 5;
+    optional uint64 checkpoint_end_pos = 14;
+    optional uint64 shared_checkpoint_end_pos = 15;
     optional uint64 backpointer_pos = 2;
     optional uint64 walbuffer_pos = 1;
     optional uint64 walbuffer_end_pos = 12;

@@ -1,0 +1,17 @@
+syntax = "proto2";
+
+package bigtable;
+
+import "bigtable/replicate/public/replication_log_ranges.proto";
+
+option java_package = "com.google.bigtable.protos";
+
+message BTIR_LogBounds {
+    repeated group SourceIdData = 1 {
+        required string source_id = 2;
+        required BTIR_TimeRange range = 3;
+        optional int64 max_logical_clock = 5;
+    }
+    
+    reserved 4;
+}

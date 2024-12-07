@@ -1,0 +1,66 @@
+syntax = "proto2";
+
+package colossus.cns2;
+
+import "perftools/tracing/proto/tracecontext.proto";
+import "production/time/public/true_time.proto";
+
+message StateGeneration {
+    optional int64 number = 1;
+}
+
+message AnchorPoint {
+    optional string path = 1;
+}
+
+message AnchorPointPlacement {
+    oneof placement {
+        Placement concrete_placement = 1;
+    }
+    
+    message Placement {
+        repeated string store_cells = 1;
+    }
+}
+
+message EntryPlacement {
+    optional string store_cell = 1;
+}
+
+message RouteMutation {
+    optional AnchorPoint anchor_point = 1;
+    optional production_time.TrueTimestampProto mutation_creation_time = 2;
+    optional StateGeneration generation = 3;
+    
+    optional DebugInfo debug_info = 8;
+    message DebugInfo {
+        optional string curator_operation_name = 1;
+        optional uint64 request_id = 2;
+        optional uint64 operation_id = 3;
+        optional string originator = 4;
+        optional perftools.tracing.TraceContextProto trace_context = 5;
+    }
+    
+    oneof mutation {
+        UpdateEntry update_entry = 4;
+        DeleteEntry delete_entry = 5;
+        UpdateDirectory update_directory = 6;
+        DeleteDirectory delete_directory = 7;
+    }
+    
+    message UpdateEntry {
+        optional EntryPlacement entry_placement = 1;
+    }
+    
+    message DeleteEntry {
+        
+    }
+    
+    message UpdateDirectory {
+        optional AnchorPointPlacement anchor_point_placement = 1;
+    }
+    
+    message DeleteDirectory {
+        
+    }
+}

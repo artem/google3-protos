@@ -1,0 +1,39 @@
+syntax = "editions";
+
+package bigtable;
+
+option java_package = "com.google.bigtable.protos";
+
+message Aggregate {
+    optional Type type = 1;
+    enum Type {
+        NONE = 0;
+        INT_SUM = 1;
+        IBLOCK = 2;
+        V2_TYPES = 3;
+        REPLICATED_INT_SUM = 4;
+        INT_MAX_FN = 5;
+        INT_MIN_FN = 6;
+        HLL_PLUS_PLUS = 7;
+        NUM_TYPES = 8;
+    }
+    
+    repeated bytes iblock_stack = 4 [ctype = CORD];
+    
+    optional Kind kind = 6;
+    enum Kind {
+        KIND_UNKNOWN = 0;
+        INPUT = 1;
+        ACCUMULATOR = 2;
+    }
+    
+    oneof value {
+        int64 int_value = 2;
+        bytes bytes_value = 5 [ctype = CORD];
+    }
+}
+
+message Idempotency {
+    optional bytes token = 1;
+    optional int64 start_time_micros = 2;
+}

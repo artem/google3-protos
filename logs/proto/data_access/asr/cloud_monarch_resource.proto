@@ -136,6 +136,7 @@ message CloudMonarchResource {
     }
     
     repeated int64 precomputation_targeted_project_numbers = 29 [packed = true];
+    repeated int64 cloud_iam_project_numbers = 30 [packed = true];
     
     reserved 5;
     

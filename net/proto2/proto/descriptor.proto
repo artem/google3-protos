@@ -184,7 +184,7 @@ message FileOptions {
     optional int32 cc_api_version = 2 [default = 2];
     optional bool cc_utf8_verification = 24 [default = true];
     optional string java_package = 1;
-    optional int32 java_api_version = 5 [default = 2, deprecated = true];
+    optional int32 java_api_version = 5 [default = 2];
     optional bool java_use_javaproto2 = 6 [default = true, deprecated = true];
     optional bool java_java5_enums = 7 [default = true, deprecated = true];
     optional string java_alt_api_package = 19;
@@ -192,7 +192,7 @@ message FileOptions {
     optional string java_outer_classname = 8;
     optional bool java_multiple_files = 10 [default = false];
     optional bool java_string_check_utf8 = 27 [default = false];
-    optional bool java_mutable_api = 28 [default = true, deprecated = true];
+    optional bool java_mutable_api = 28 [default = true];
     optional string java_multiple_files_mutable_package = 29;
     
     optional OptimizeMode optimize_for = 9 [default = SPEED];
@@ -218,7 +218,7 @@ message FileOptions {
     optional string php_namespace = 41;
     optional string php_metadata_namespace = 44;
     optional string ruby_package = 45;
-    optional bool use_java_stubby_library = 47 [default = true];
+    optional bool use_java_stubby_library = 47;
     optional bool jspb_use_correct_proto2_semantics = 48 [default = true];
     optional bool cc_enable_method_handles = 49;
     optional FeatureSet features = 50;

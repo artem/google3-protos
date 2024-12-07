@@ -1,4 +1,4 @@
-syntax = "proto2";
+syntax = "editions";
 
 package chubby;
 
@@ -40,6 +40,10 @@ message NetworkControlShardingConfigSet {
 
 message VirtualCellClientShardingConfigSet {
     repeated VirtualCellClientShardingParams params = 1;
+}
+
+message DomainAwareVirtualCellShardingConfigSet {
+    repeated DomainAwareVirtualCellShardingParams params = 1;
 }
 
 message AclMigrationClientShardingConfigSet {
@@ -84,7 +88,9 @@ message CoreProdShardingParams {
     repeated string core_shard_dirs_regex = 2;
     optional bool assign_all_paths_to_prod = 4;
     
-    reserved 3, "domain_aware_sharded_cells";
+    reserved 3;
+    
+    reserved "domain_aware_sharded_cells";
 }
 
 message DomainAwareShardingParams {
@@ -106,8 +112,9 @@ message NetworkControlCell {
 
 message NetworkControlShardingParams {
     optional ClientShardingConfigFilter client_sharding_config_filter = 1;
-    repeated string cells_with_nc_sveltes = 2 [deprecated = true];
-    repeated NetworkControlCell nc_cells_with_sveltes = 3;
+    repeated NetworkControlCell nc_sveltes = 3;
+    
+    reserved 2;
 }
 
 message VirtualCellClientShardingParams {
@@ -120,6 +127,20 @@ message VirtualCellClientShardingParams {
     }
     
     optional bool assign_local_cell_to_direct_access = 3;
+}
+
+message DomainAwareVirtualCellShardingParams {
+    optional ClientShardingConfigFilter client_sharding_config_filter = 1;
+    
+    repeated CellInfo enabled_cells = 2;
+    message CellInfo {
+        optional string cell_name = 1;
+        
+        oneof domain {
+            string prod_zone = 2;
+            string prod_region = 3;
+        }
+    }
 }
 
 message AclMigrationClientShardingParams {

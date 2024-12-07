@@ -5,7 +5,7 @@ package file;
 import "net/proto2/bridge/proto/message_set.proto";
 
 message CreateDirRecursed {
-    extend proto2.bridge.MessageSet {
+    extend .proto2.bridge.MessageSet {
         optional CreateDirRecursed message_set_extension = 55478377;
     }
 }
@@ -14,7 +14,7 @@ message DeleteRecursed {
     optional int32 undeleted_dirs = 1;
     optional int32 undeleted_files = 2;
     
-    extend proto2.bridge.MessageSet {
+    extend .proto2.bridge.MessageSet {
         optional DeleteRecursed message_set_extension = 152383528;
     }
 }

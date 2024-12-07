@@ -309,7 +309,6 @@ message SatParameters {
     optional double lp_dual_tolerance = 267 [default = 1e-07];
     optional bool convert_intervals = 177 [default = true];
     optional int32 symmetry_level = 183 [default = 2];
-    optional bool use_symmetry_in_lp = 301 [default = false];
     optional bool new_linear_propagation = 224 [default = true];
     optional int32 linear_split_size = 256 [default = 100];
     optional int32 linearization_level = 90 [default = 1];

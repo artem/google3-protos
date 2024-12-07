@@ -1,0 +1,257 @@
+syntax = "editions";
+
+package bigtable;
+
+import "bigtable/proto/query.proto";
+import "bigtable/proto/stats.proto";
+
+option java_package = "com.google.bigtable.protos";
+
+message BTI_Query_Term {
+    optional int32 tokenid = 1;
+    optional int32 offset = 2 [default = -99999];
+}
+
+message BTI_Query_Primitive {
+    repeated BTI_Query_Term term = 1;
+    optional uint64 cost = 2;
+    optional bool forward_hits = 3;
+    optional int32 prior_hits_offset = 4;
+    optional bool subquery = 5;
+    optional bool hits_everything = 6 [default = false];
+}
+
+message BTI_Query_Factor {
+    optional bool positive = 1 [default = true];
+    repeated BTI_Query_Primitive primitive = 2;
+    optional int32 target_tokenid = 3;
+    optional uint64 cost = 4 [default = 1];
+    optional float selectivity = 5 [default = 0.5];
+}
+
+message BTI_Query {
+    repeated BTI_Query_Factor factor = 1;
+    
+    repeated Token token = 2;
+    message Token {
+        optional bytes text = 3;
+        optional uint64 postinglist_size = 4;
+        repeated uint64 tablet_docid_boundary = 5;
+        repeated bytes tabletid = 6;
+    }
+}
+
+message BTI_DocList {
+    optional bytes encoded = 1 [ctype = CORD];
+    optional bool is_docid_list = 5;
+    optional int32 handle_count = 2;
+    optional int32 doc_count = 6;
+    optional uint64 start = 3;
+    optional uint64 limit = 4;
+    
+    repeated PreviousPassData previouspassdata = 7;
+    message PreviousPassData {
+        optional uint64 docid = 8;
+        optional uint64 version = 9;
+        optional bytes data = 10 [ctype = CORD];
+    }
+}
+
+message BTI_SearchRequest {
+    optional bytes division = 1;
+    optional string squery = 21;
+    optional BQuery bquery = 2;
+    optional int64 max_timestamp = 16 [default = 0x7fffffffffffffff];
+    optional bool reeval_on_concurrent_update = 30 [default = false];
+    optional int32 max_results = 3 [default = 0x7fffffff];
+    optional bool strict_payload_timestamp_matching = 23 [default = false];
+    optional RankingParams ranking_params = 4;
+    optional RankingParams ranking_params_first_pass = 22;
+    optional FilteringParams filtering_params = 14;
+    optional uint64 start = 5 [default = 0];
+    optional uint64 limit = 6 [default = 0xffffffffffffffff];
+    optional int32 trace_level = 7 [default = 0];
+    optional int32 docprocessing_batch_size = 19 [default = 4096];
+    optional bool cacheable = 20 [default = true];
+    optional int32 consistency = 8;
+    repeated bytes payload_column = 11 [ctype = CORD];
+    optional int32 result_estimation = 15;
+    optional bool want_timestamp = 17;
+    repeated uint64 restrict_docids_delta = 18;
+    optional uint32 position_start = 24 [default = 0];
+    optional uint32 position_limit = 25 [default = 0xffffffff];
+    optional bool use_plaque = 31;
+    optional BTI_Query reduced_query = 10;
+    optional int64 start_walltime = 12;
+    optional bool raw = 13;
+    optional int64 max_result_size = 26 [default = 0x7fffffffffffffff];
+    optional int64 max_data_processed_size = 27 [default = 0x7fffffffffffffff];
+    optional bool scorer_rounds_with_docid_rank = 28 [default = false];
+    optional int32 max_scorer_round_size_with_docid_rank = 29 [default = 4096];
+    optional int32 use_heap_or_doc_iterator_above_threshold = 32 [default = 0x7fffffff];
+}
+
+message BTI_SearchResult {
+    optional uint64 docid = 1;
+    optional uint64 version = 19;
+    optional int64 timestamp = 18 [default = -1];
+    optional bytes sortkey = 2;
+    optional float score = 14;
+    
+    repeated CrowdByColumn crowdbycolumn = 15;
+    message CrowdByColumn {
+        optional int32 column_index = 16;
+        optional fixed64 value_fp = 17;
+    }
+    
+    optional bytes ranking_debug_info = 6 [ctype = CORD];
+    
+    repeated Payload payload = 7;
+    message Payload {
+        optional bytes data = 8 [ctype = CORD];
+        optional int64 micro_timestamp = 9;
+    }
+    
+    repeated ScorerColumn scorercolumn = 10;
+    message ScorerColumn {
+        optional bytes data = 11 [ctype = CORD];
+    }
+    
+    optional bytes prior_output_payload = 12 [ctype = CORD];
+    
+    reserved 3, 4, 5;
+}
+
+message AdmissionControllerStats {
+    optional uint64 queue_latency_micros = 1;
+    repeated double read_cpu_mhz = 2;
+}
+
+message BTI_SearchResponse {
+    repeated BTI_SearchResult final_result = 2;
+    repeated bytes summary = 3 [ctype = CORD];
+    optional SearchTrace trace_info = 4;
+    optional uint64 start = 5;
+    optional uint64 limit = 6;
+    repeated BTI_DocList raw_result = 7;
+    optional BTI_SearchStats stats = 8;
+    optional ReaderStatsProto reader_stats = 9;
+    optional ReaderStatsProto perdoc_reader_stats = 10;
+    optional AdmissionControllerStats admission_controller_stats = 11;
+    
+    reserved 1;
+}
+
+message BTI_PrepareRequest {
+    optional bytes division = 1;
+    optional int32 trace_level = 2 [default = -1];
+}
+
+message BTI_PrepareRangeReq {
+    optional bytes token = 1;
+    optional int32 trace_level = 2 [default = -1];
+}
+
+message BTI_PrepareReply {
+    repeated TokenInfo tokeninfo = 1;
+    message TokenInfo {
+        optional bytes token = 2;
+        optional int64 plist_bytes = 3;
+        
+        repeated Tablet tablet = 4;
+        message Tablet {
+            optional bytes limit = 5;
+            optional string hostport = 6;
+        }
+    }
+    
+    optional IndexInfo indexinfo = 7;
+    message IndexInfo {
+        optional int64 num_docs = 8;
+    }
+    
+    optional SearchTrace trace_info = 9;
+}
+
+message Index_FindObsolete_Arg {
+    optional int32 trace_level = 3 [default = -1];
+    
+    reserved 1;
+}
+
+message Index_FindObsolete_RangeArg {
+    optional bytes division = 2;
+    repeated bytes candidates = 1 [ctype = CORD];
+}
+
+message Index_FindObsolete_Result {
+    optional bytes division = 3;
+    repeated bytes obsolete = 1 [ctype = CORD];
+    optional SearchTrace trace_info = 2;
+}
+
+message Index_GcObsolete_Arg {
+    optional int64 max_bytes_per_pass = 1;
+    optional int64 max_bytes_per_call = 2;
+}
+
+message BTI_ReadHitRequest {
+    optional bytes division = 1;
+    repeated BTI_DocList targets = 5;
+    optional int32 info_level = 6 [default = 1];
+    optional int32 trace_level = 4 [default = -1];
+    
+    reserved 2, 3;
+    
+    enum InfoLevel {
+        INFO_DOC = 0;
+        INFO_POS = 1;
+        INFO_ATTR = 2;
+    }
+}
+
+message BTI_ReadHitReply {
+    repeated Token token = 1;
+    message Token {
+        optional bytes name = 2;
+        repeated bytes stack = 3 [ctype = CORD];
+    }
+    
+    optional SearchTrace trace_info = 4;
+}
+
+message BTI_ScoreRequestMain {
+    optional string scorer = 1;
+    optional int32 rank_type = 2;
+    optional bytes division = 3;
+    optional int32 hit_shard_bits = 7 [default = 15];
+    optional int32 max_results = 4 [default = 0x7fffffff];
+    optional bytes args = 5 [ctype = CORD];
+    optional int32 trace_level = 6 [default = -1];
+}
+
+message BTI_ScoreRequestRange {
+    optional int32 num_docs = 1;
+    repeated bytes docs = 2 [ctype = CORD];
+    optional bool docs_has_versions = 3;
+    optional bool docs_has_timestamps = 4;
+    
+    repeated HitInfo hitinfo = 5;
+    message HitInfo {
+        optional bytes token = 6;
+        optional bool want_attributes = 7 [default = true];
+        repeated bytes hit_stack = 8 [ctype = CORD];
+    }
+    
+    repeated ScoreColumn scorecolumn = 9;
+    message ScoreColumn {
+        optional bytes name = 10;
+        
+        repeated Value value = 11;
+        message Value {
+            optional bytes data = 12 [ctype = CORD];
+        }
+    }
+    
+    repeated bytes prior_data = 13 [ctype = CORD];
+}

@@ -1,0 +1,89 @@
+syntax = "editions";
+
+package bamm2.internal;
+
+import "net/bamm2/public/endpoint-config.proto";
+import "net/base/qos.proto";
+
+message Bamm2zSummary {
+    repeated EndpointSummary endpoint = 1;
+}
+
+message EndpointSummary {
+    optional string name = 1;
+    
+    optional PonySummary pony = 2;
+    message PonySummary {
+        optional int64 endpoint_version = 1;
+        optional string path = 2;
+        optional string statusz_url = 3;
+        optional string ponyz_url = 4;
+        optional int64 engine_version = 5;
+        optional string engine_build_label = 6;
+        optional string station_handle = 7;
+        optional bool exclusive_engine = 8;
+        optional string engine_id = 9;
+        optional string per_machine_url = 10;
+        optional int32 num_command_queues = 11;
+    }
+    
+    optional uint64 pending_open_stream_commands = 3;
+    repeated ConnectionSummary connection = 4;
+    repeated StreamSummary stream = 5;
+    
+    repeated RegionSummary regions = 6;
+    message RegionSummary {
+        optional int64 region_handle = 1;
+        optional int64 region_bytes = 2;
+        optional string ponyz_url = 3;
+    }
+    
+    optional int32 num_completion_queues = 7;
+    optional int32 transport_buffer_size = 8;
+    optional int32 inline_message_size = 10;
+    optional EndpointConfig.StatsMode stats_mode = 9;
+}
+
+message ConnectionSummary {
+    optional uint64 handle = 1;
+    optional uint64 created_at_epoch_ms = 2;
+    
+    optional ConnectionState state = 3;
+    enum ConnectionState {
+        UNKNOWN_STATE = 0;
+        INVALID = 1;
+        PENDING_ACCEPT = 2;
+        OPEN = 3;
+    }
+    
+    optional string ponyz_url = 4;
+    optional string remote = 5;
+    repeated net_base.qos.TrafficClass qoses = 6;
+    optional bool initiator = 7;
+    optional int64 bytes_sent = 9;
+    optional uint32 fabric_rtt_usecs = 10;
+    optional uint32 rtt_usecs = 11;
+    optional uint32 op_latency_usecs = 12;
+    optional int32 pony_stripe = 13;
+    optional net_base.qos.TrafficClass default_qos = 14;
+}
+
+message StreamSummary {
+    optional uint64 handle = 1;
+    optional uint64 created_at_epoch_ms = 2;
+    
+    optional StreamState state = 3;
+    enum StreamState {
+        UNKNOWN_STATE = 0;
+        INVALID = 1;
+        PENDING_ACCEPT = 2;
+        OPEN = 3;
+        ABORTED = 4;
+    }
+    
+    optional string ponyz_url = 4;
+    optional int64 outstanding_sends = 5;
+    optional int64 outstanding_recvs = 6;
+    optional int64 outstanding_zero_copy_recvs = 8;
+    optional bool outstanding_peek = 7;
+}

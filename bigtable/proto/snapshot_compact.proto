@@ -1,0 +1,19 @@
+syntax = "proto2";
+
+package bigtable;
+
+import "bigtable/proto/protocol_versioning.proto";
+import "bigtable/proto/rowset.proto";
+
+option java_package = "com.google.bigtable.protos";
+
+message BTI_SnapshotCompactArg {
+    optional BTI_Protocol protocol = 1;
+    optional int64 snapshot_version = 2;
+    optional int32 round = 3;
+    optional int32 shard_number = 4;
+    optional bool copy_repl_manager = 5;
+    optional bool copy_repl_logs = 8;
+    repeated string groups_to_keep = 6;
+    optional BTI_RowSetProto rowset = 7;
+}

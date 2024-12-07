@@ -1,0 +1,19 @@
+syntax = "editions";
+
+package bigtable;
+
+option java_package = "com.google.bigtable.protos";
+
+message BTI_IBlock {
+    repeated Doc doc = 1;
+    message Doc {
+        optional uint64 docid = 2;
+        optional uint64 version = 3 [default = 0];
+        
+        repeated Hit hit = 4;
+        message Hit {
+            optional int32 position = 5;
+            optional int32 attribute = 6;
+        }
+    }
+}

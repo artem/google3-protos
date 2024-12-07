@@ -2,6 +2,7 @@ syntax = "proto2";
 
 package security.data_access;
 
+import "logs/proto/data_access/method_type.proto";
 import "storage/datapol/annotations/proto/semantic_annotations.proto";
 import "util/task/status.proto";
 
@@ -56,6 +57,8 @@ message AuthDecision {
         }
         
         optional int32 unique_id = 2;
+        optional string action = 3;
+        optional MethodType method_type = 4;
     }
     
     optional AacEnvironment environment = 5;

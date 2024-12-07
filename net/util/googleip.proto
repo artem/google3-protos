@@ -1,8 +1,9 @@
-syntax = "proto2";
+syntax = "editions";
 
 package net.util.googleip;
 
 option java_multiple_files = true;
+option java_package = "com.google.net.util";
 
 message Range {
     optional string cidr = 1;

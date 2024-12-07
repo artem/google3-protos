@@ -1,0 +1,27 @@
+syntax = "proto3";
+
+package plaque;
+
+import "net/proto2/proto/descriptor.proto";
+
+option java_package = "com.google.net.plaque.proto";
+
+enum NetworkType {
+    DEFAULT = 0;
+    STUBBY = 1;
+    BAMM2 = 3;
+    TCP = 5;
+    GCP = 6;
+}
+
+enum LbPolicyType {
+    LB_POLICY_UNKNOWN = 0;
+    LB_POLICY_ROUND_ROBIN = 2;
+    LB_POLICY_WEIGHTED_ROUND_ROBIN = 3;
+    LB_POLICY_LEAST_CPU_USED = 4;
+    LB_POLICY_RANDOM = 5;
+}
+
+extend .proto2.EnumValueOptions {
+    string str = 147258371;
+}

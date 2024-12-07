@@ -1,0 +1,18 @@
+syntax = "proto2";
+
+package bigtable;
+
+option java_package = "com.google.bigtable.protos";
+
+message BTI_Tablet {
+    required string TableName = 1;
+    required uint64 TableVersion = 2;
+    required string TabletId = 3;
+    required bytes StartKey = 4;
+    required bytes EndKey = 5;
+}
+
+message BTI_TabletPair {
+    required BTI_Tablet first = 1;
+    required BTI_Tablet second = 2;
+}

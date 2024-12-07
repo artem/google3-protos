@@ -1,0 +1,13 @@
+syntax = "proto2";
+
+package bigtable;
+
+import "util/task/status.proto";
+
+option java_package = "com.google.bigtable.protos";
+
+message RangeStatusProto {
+    required bytes start = 1 [ctype = CORD];
+    required bytes limit = 2 [ctype = CORD];
+    optional util.StatusProto status = 3;
+}

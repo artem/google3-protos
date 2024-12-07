@@ -1,0 +1,15 @@
+syntax = "proto2";
+
+package networkd.lib;
+
+import "google/protobuf/timestamp.proto";
+
+message DelegationState {
+    optional string delegation_metadata = 1;
+    optional uint32 delegated_user_id = 2;
+    optional google.protobuf.Timestamp last_used = 3;
+}
+
+message DelegationStates {
+    repeated DelegationState delegation_states = 1;
+}

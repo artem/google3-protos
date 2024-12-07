@@ -1,0 +1,134 @@
+syntax = "editions";
+
+package net_pony;
+
+import "net/base/qos.proto";
+import "net/hostdatapath/components/engine/rpc/engine-thread-config.proto";
+
+message StreamzRootLabel {
+    optional string name = 1;
+    
+    oneof value {
+        string string_value = 2;
+        int64 int64_value = 3;
+        bool bool_value = 4;
+    }
+}
+
+message EndpointConfig {
+    optional string path = 1;
+    optional uint32 command_pages = 3 [default = 256];
+    optional uint32 completion_pages = 4 [default = 256];
+    optional string trim_wasm_binary_path = 46;
+    map<string, string> trim_module_flags = 53;
+    
+    optional TrimOptions trim_options = 56;
+    message TrimOptions {
+        optional uint32 chargeback_initial_bytes_per_thread = 1;
+        optional uint32 chargeback_increment_bytes_per_thread = 2;
+        optional bool enable_streamz_root = 6;
+        repeated StreamzRootLabel streamz_root_labels = 4;
+        optional bool disable_trim = 5 [default = false];
+        
+        reserved 3;
+    }
+    
+    optional bool disconnect_on_completion_queue_overflow = 23 [default = false];
+    optional uint32 control_timeout_ms = 5 [default = 1000];
+    optional uint32 completion_queues = 8 [default = 1];
+    optional uint32 command_queues = 32 [default = 1];
+    optional int32 connection_credits = 10 [default = 50];
+    optional uint32 appaloosa_command_pages = 48 [default = 512];
+    
+    optional EngineHint engine_hint = 12;
+    message EngineHint {
+        optional bool exclusive = 1 [default = false];
+        optional uint32 exclusive_token = 39;
+        optional uint32 shard_key = 3;
+        repeated net_base.qos.TrafficClass requested_qos = 4;
+        repeated int64 requested_selector = 5;
+        optional int32 rx_packet_count_override = 7;
+        optional int32 tx_packet_count_override = 8;
+        optional usps.engine.rpc.EngineBalancingOptions engine_balancing_options = 9;
+        optional int32 fair_share_scheduler_amount = 10;
+        optional bool prioritize_rx = 11;
+        optional uint32 min_zero_copy_tx_payload_size = 19;
+        optional int32 memcpy_offload_claim_length_us = 20;
+        optional int32 swift_max_pacing_delay_us = 26;
+        optional string network_interface = 28;
+        optional bool appaloosa = 29 [default = false];
+        optional int32 appaloosa_team_size = 42;
+        optional bool disable_shared_appaloosa = 44 [default = false];
+        optional bool allow_smart_nic_offload = 31 [default = false];
+        optional bool bypass_iommu = 32 [default = false];
+        optional bool anchor_engine_to_hub = 33 [default = false];
+        optional uint32 multipath_request = 34 [default = 0];
+        optional uint32 rx_batch = 35;
+        optional uint32 tx_batch = 36;
+        optional uint32 work_source_per_packet_limit_override = 37;
+        optional uint32 flash_aio_completions_per_runloop = 38 [default = 128];
+        optional uint32 retransmit_timeout_override_us = 40;
+        optional bool enable_bamm2_steering = 45;
+        
+        reserved 6, 22, 23, 24, 25, 27, 30;
+        
+        reserved "enable_packet_allocator_chargeback";
+    }
+    
+    optional uint32 initial_memory = 14 [default = 1];
+    optional uint32 maximum_memory = 15;
+    optional uint32 memory_increment = 16 [default = 1];
+    optional uint32 memory_cushion = 25 [default = 1];
+    
+    optional ClientType client_type = 17 [default = UNKNOWN];
+    enum ClientType {
+        UNKNOWN = 0;
+        MINDMELD_MEMORY_HOST = 1;
+        MINDMELD_CLIENT = 2;
+        CLIQUEMAP_SERVER = 5;
+        CLIQUEMAP_CLIENT = 6;
+        USECCFS_CLIENT = 7;
+        USECCFS_SERVER = 8;
+        VANADIUM = 10;
+        PLAQUE = 11;
+        PD_AGENT_CLIENT = 13;
+        PD_AGENT_SERVER = 14;
+        SLO_PROBER = 15;
+        VOID = 16;
+        TEST = 17;
+        ADS_KEYVAL_CLIENT = 18;
+        ADS_KEYVAL_SERVER = 19;
+        FASTRAK_DXS = 20;
+    }
+    
+    optional uint64 bamm2_inline_message_buffer_bytes = 18 [default = 0];
+    optional bool enable_accepted_bamm2_connection_completions = 29;
+    optional bool enable_bamm2_inline_send_acks = 34;
+    optional bool use_flash = 26 [default = false];
+    optional uint32 client_overload_threshold_us = 33 [default = 0];
+    
+    optional WanSelection wan_selection = 37 [default = EXPLICIT_WAN_SELECTION];
+    enum WanSelection {
+        WAN_SELECTION_UNSPECIFIED = 0;
+        NEVER_USE_WAN = 1;
+        EXPLICIT_WAN_SELECTION = 2;
+        TRANSPARENT_WAN_SELECTION = 3;
+        ALWAYS_USE_WAN = 4;
+    }
+    
+    optional bool enable_mpr = 38 [default = false];
+    optional bool enable_delay_metric_completions = 39 [default = false];
+    optional bool appaloosa_steer_commands = 40 [default = true];
+    optional bool enable_per_job_metrics = 41 [default = false];
+    optional bool enable_bamm2_rd_recv_with_timestamp_completion = 42 [default = false];
+    optional int32 num_window_panes = 43 [default = 0];
+    optional bool use_region_panes = 51 [default = false];
+    optional bool shard_completion_queues = 45 [default = false];
+    optional bool enable_borg_task_migration = 47 [default = false];
+    optional bool client_stripe_round_robin = 50 [default = false];
+    optional string client_details = 52;
+    optional string borg_container_name = 54;
+    optional bool enable_use_new_engines = 55 [default = false];
+    
+    reserved 6, 7, 9, 11, 13, 19, 20, 21, 22, 24, 27, 28, 30, 31, 35;
+}

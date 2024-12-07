@@ -1,4 +1,4 @@
-syntax = "proto2";
+syntax = "editions";
 
 package production.rpc.stubs.proto;
 
@@ -11,7 +11,8 @@ option java_package = "com.google.prod.rpc.stubs.proto";
 message ExtensibleStubsMetadata {
     optional RequestAggregatorBundleMetadata request_aggregator = 1;
     optional GatingForwardedRequestMetadata gating_forwarded_request = 2;
-    optional GatewiseRequestMetadata gatewise_request = 3;
+    optional RequestMetadata gatewise_request = 3;
+    optional RequestMetadata request_metadata = 4;
     
     extend .proto2.bridge.MessageSet {
         optional ExtensibleStubsMetadata message_set_extension = 2147475003;
@@ -20,6 +21,16 @@ message ExtensibleStubsMetadata {
 
 message RequestAggregatorBundleMetadata {
     optional int64 bundle_size = 1;
+    
+    optional FlushReason flush_reason = 2;
+    enum FlushReason {
+        FLUSH_REASON_UNKNOWN = 0;
+        FLUSH_REASON_REQUEST_SIZE = 1;
+        FLUSH_REASON_BYTE_SIZE = 2;
+        FLUSH_REASON_DEADLINE_EXPIRED = 3;
+        FLUSH_REASON_BASELINE_COST = 4;
+        FLUSH_REASON_BUNDLE_KEY_UNAVAILABLE = 5;
+    }
 }
 
 message GatingForwardedRequestMetadata {
@@ -29,7 +40,7 @@ message GatingForwardedRequestMetadata {
     optional string package = 4;
 }
 
-message GatewiseRequestMetadata {
+message RequestMetadata {
     optional string backend = 1;
     optional string package = 2;
     optional string service = 3;

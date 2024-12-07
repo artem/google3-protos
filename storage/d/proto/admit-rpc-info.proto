@@ -1,0 +1,24 @@
+syntax = "editions";
+
+package storage_d;
+
+import "net/proto2/bridge/proto/message_set.proto";
+import "storage/d/proto/header.proto";
+import "storage/datapol/annotations/proto/semantic_annotations.proto";
+
+message AdmitRpcInfo {
+    optional string resource_user = 1;
+    optional string acting_user = 2;
+    optional string isolation_class = 3;
+    optional RequestHeader.Priority priority = 4 [default = LOW_LATENCY];
+    optional string volume_name = 9;
+    optional int64 write_length = 6;
+    optional string write_reservation_cookie = 7;
+    optional bytes internal_use_only_admission_metadata = 8 [ctype = CORD];
+    
+    reserved 5;
+    
+    extend .proto2.bridge.MessageSet {
+        optional AdmitRpcInfo message_set_extension = 525001125;
+    }
+}

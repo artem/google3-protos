@@ -1,7 +1,8 @@
-syntax = "proto2";
+syntax = "editions";
 
 package security_loas_l2;
 
+import "borg/common/internal_confidential_mode_config.proto";
 import "net/proto2/bridge/proto/message_set.proto";
 import "security/credentials/proto/principal.proto";
 import "security/loas/l2/proto/common.proto";
@@ -10,6 +11,7 @@ import "security/loas/l2/proto/identity_types.proto";
 import "security/loas/l2/proto/instance.proto";
 import "security/loas/l2/proto/usertype.proto";
 import "storage/datapol/annotations/proto/semantic_annotations.proto";
+import "third_party/protobuf/cpp_features.proto";
 
 message MasterCertificate {
     repeated uint64 revocation_ids = 1;
@@ -38,7 +40,9 @@ message RoleCertificate {
     optional UserType user_type = 6 [default = USER_TYPE_UNSPECIFIED];
     optional CredentialsType creds_type = 7 [default = CREDS_TYPE_UNSPECIFIED];
     
-    reserved 5, 4, "is_emergency";
+    reserved 5, 4;
+    
+    reserved "is_emergency";
     
     extend .proto2.bridge.MessageSet {
         optional RoleCertificate message_set_extension = 43526055;
@@ -64,7 +68,9 @@ message RekeCertificate {
     repeated uint64 revocation_ids = 1;
     repeated RekeHandshakeParameters handshake = 2;
     
-    reserved 3, 4, "protocol", "next_protocol";
+    reserved 3, 4;
+    
+    reserved "protocol", "next_protocol";
     
     extend .proto2.bridge.MessageSet {
         optional RekeCertificate message_set_extension = 26605557;
@@ -87,7 +93,11 @@ message BorgTaskCertificate {
     optional int64 epoch = 4;
     optional string fqdn = 5;
     optional InstanceInfo instance_info = 6;
-    optional bool instance_info_resumable = 7;
+    optional bool resumable_instance_info = 9;
+    optional string virtual_cell = 10;
+    optional borg.InternalConfidentialModeConfig.SecurityLevel confidential_security_level = 11;
+    
+    reserved 7, 8;
     
     extend .proto2.bridge.MessageSet {
         optional BorgTaskCertificate message_set_extension = 44454843;

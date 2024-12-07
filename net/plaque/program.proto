@@ -1,0 +1,133 @@
+syntax = "proto3";
+
+package plaque;
+
+import "net/plaque/core/version.proto";
+import "net/plaque/lb_options.proto";
+import "net/plaque/opdef/opdef.proto";
+
+option java_package = "com.google.net.plaque.proto";
+
+message ProgramProto {
+    string program_name = 5;
+    repeated StmtProto stmts = 2;
+    repeated BlockProto blocks = 11;
+    repeated OpFile imports = 6;
+    repeated ProgramProto called_programs = 9;
+    map<string, LocationProto> locations = 8;
+    
+    Compat compat = 10;
+    message Compat {
+        Version min_protocol_version = 1;
+        repeated ProgramFeature features = 2;
+    }
+    
+    Hints hints = 16;
+    
+    oneof _created_location {
+        SourceLocation created_location = 17;
+    }
+    
+    reserved 3, 4, 7;
+}
+
+message Literal {
+    oneof value {
+        int64 i64 = 1 [jstype = JS_STRING];
+        uint64 u64 = 2 [jstype = JS_STRING];
+        bytes data = 3;
+        bool boolean = 4;
+        double f64 = 5;
+        int32 i32 = 6;
+        uint32 u32 = 7;
+        float f32 = 8;
+        string str = 9;
+        bytes proto = 10;
+        int32 object = 11;
+        int32 enum_value = 12;
+    }
+}
+
+message StmtProto {
+    string op = 1;
+    
+    StatementType stmt_type = 10;
+    enum StatementType {
+        OPERATOR = 0;
+        CALL = 1;
+    }
+    
+    string name = 2;
+    repeated Literal attributes = 3;
+    repeated InputProto inputs = 4;
+    repeated int32 controls = 6;
+    LocationProto location = 11;
+    int32 group_id = 7;
+    int32 local_group_id = 16;
+    uint32 block = 12;
+    repeated string executor_tags = 17;
+    bool internal_runtime_generated = 18;
+    
+    oneof _source_location {
+        SourceLocation source_location = 19;
+    }
+    
+    reserved 5, 8, 9;
+}
+
+message InputProto {
+    int32 stmt = 1;
+    int32 output = 2;
+    int32 repeat_index = 5;
+    
+    oneof _name {
+        string name = 4;
+    }
+    
+    reserved 3;
+}
+
+message LocationProto {
+    string address = 1;
+    bool dynamic = 3;
+    Sharding sharding = 2;
+    bool append_shard_to_address = 6;
+    lb.LoadBalancingOptionsProto lb_options = 4;
+    InputProto shardmap = 8;
+    string display_name = 9;
+    repeated LocationProto any_of = 10;
+    bool is_any = 11;
+    
+    reserved 7, 34;
+}
+
+message Sharding {
+    oneof type {
+        uint32 mod_shard = 2;
+        uint64 range_split = 3;
+        uint32 num_shards = 4;
+    }
+    
+    reserved 1;
+}
+
+message BlockProto {
+    string name = 1;
+    uint32 parent = 2;
+}
+
+message Hints {
+    repeated SchedulingOrder scheduling_order = 1;
+    message SchedulingOrder {
+        int32 first = 1;
+        int32 second = 2;
+    }
+}
+
+enum ProgramFeature {
+    UNSUPPORTED = 0;
+    TEST = 1;
+    PER_STATEMENT_LOCATIONS = 2;
+    ANY_OF_LOCATIONS = 3;
+    NO_MONITOR_CONTROL_EDGES = 4 [deprecated = true];
+}

@@ -1,10 +1,9 @@
-syntax = "proto2";
+syntax = "editions";
 
 package net.loadshedding.serverthrottler;
 
 import "net/proto2/bridge/proto/message_set.proto";
 
-option cc_enable_arenas = true;
 option java_outer_classname = "ThrottlingRpc";
 option java_package = "com.google.net.loadshedding.serverthrottler.proto";
 

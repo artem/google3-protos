@@ -1,0 +1,14 @@
+syntax = "editions";
+
+package storage_l4;
+
+import "logs/proto/logs_annotations/logs_annotations.proto";
+
+enum LookupFlavor {
+    LOOKUP_FLAVOR_UNKNOWN = 0;
+    LOOKUP_FLAVOR_FINAL_READ = 1;
+    LOOKUP_FLAVOR_NON_TEMPORAL = 3;
+    LOOKUP_FLAVOR_EXPERIMENTAL_NON_TEMPORAL = 5;
+    LOOKUP_FLAVOR_PREWARMING = 2;
+    LOOKUP_FLAVOR_NIMBUS_PAUSED = 4;
+}

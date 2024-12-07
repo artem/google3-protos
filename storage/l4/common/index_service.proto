@@ -1,0 +1,161 @@
+syntax = "editions";
+
+package storage_l4;
+
+import "file/colossus/proto/curator_signed_capability.proto";
+import "google/protobuf/timestamp.proto";
+import "storage/d/proto/capability.proto";
+import "storage/k3/net/socket_address.proto";
+import "storage/l4/common/d_user_isolation_class.proto";
+import "storage/l4/common/encryption_type.proto";
+import "storage/l4/common/entry_location.proto";
+import "storage/l4/common/entry_location_and_capability.proto";
+import "storage/l4/common/file_descriptor_info.proto";
+import "storage/l4/common/key.proto";
+import "storage/l4/common/l4_admission_reason.proto";
+import "storage/l4/common/l4r_policy.proto";
+import "storage/l4/common/lookup_flavor.proto";
+import "storage/l4/common/resource_settings.proto";
+import "storage/l4/common/value_range.proto";
+import "storage/l4/common/write_file.proto";
+import "storage/l4/core/version.proto";
+import "util/task/status.proto";
+
+service IndexService {
+    rpc LookUpEntry(LookUpEntryRequest) returns (LookUpEntryResponse);
+    rpc Insert(InsertRequest) returns (InsertResponse);
+    rpc PullAndInsert(PullAndInsertRequest) returns (PullAndInsertResponse);
+    rpc Delete(DeleteRequest) returns (DeleteResponse);
+    rpc ReportFileProblem(ReportFileProblemRequest) returns (ReportFileProblemResponse);
+    rpc GetWriteFile(GetWriteFileRequest) returns (GetWriteFileResponse);
+}
+
+message RequestHeader {
+    optional Version version = 4;
+    optional ResourceSettingsProto d_resource_settings = 20;
+    optional DUserIsolationClassProto l4_resource_user = 21;
+    
+    reserved 1 to 3, 5 to 19;
+}
+
+message LookUpEntryRequest {
+    optional RequestHeader header = 16;
+    
+    repeated Replica replicas = 15;
+    message Replica {
+        optional KeyProto key = 1;
+        optional storage_d.Capability capability = 5;
+        
+        reserved 2 to 4;
+    }
+    
+    optional ValueRange value_range = 6;
+    optional LookupFlavor lookup_flavor = 36;
+    optional double extra_cost_of_miss = 33;
+    optional int64 cache_entry_size_hint = 34;
+    optional FileDescriptorInfoProto fd_info = 35;
+    optional L4rPolicyProto learned_cache_policy = 22;
+    optional .colossus.CuratorSignedCapability curator_signed_capability = 37;
+    
+    reserved 1 to 5, 7 to 14, 17 to 21, 23 to 27, 28, 29 to 32;
+}
+
+message LookUpEntryResponse {
+    optional EntryLocationAndCapabilityProto hit_result = 12;
+    optional L4Admission.Reason admission_decision = 6;
+    optional L4rPolicyProto policy = 15;
+    optional google.protobuf.Timestamp response_expiry = 7;
+    optional bool locally_cached = 8;
+    optional uint64 hit_replica_index = 9;
+    repeated int64 additional_should_insert_offsets = 11;
+    optional bool is_second_miss = 14;
+    
+    reserved 1 to 5, 10, 13;
+}
+
+message InsertRequest {
+    optional RequestHeader header = 1;
+    optional KeyProto key = 13;
+    optional EntryLocationProto location = 25;
+    optional Encryption.Type encryption_type = 22;
+    optional FileDescriptorInfoProto fd_info = 30;
+    
+    reserved 2 to 12, 14 to 21, 23 to 24, 26 to 29;
+}
+
+message InsertResponse {
+    reserved 1 to 5;
+}
+
+message PullAndInsertRequest {
+    optional RequestHeader header = 1;
+    optional DFileKeyProto key = 2;
+    optional storage_d.Capability capability = 14;
+    optional Encryption.Type encryption_type = 10;
+    optional FileDescriptorInfoProto fd_info = 24;
+    optional LookupFlavor lookup_flavor = 25;
+    
+    reserved 3 to 9, 11 to 13, 15, 16 to 23;
+}
+
+message PullAndInsertResponse {
+    reserved 1 to 3;
+}
+
+message DeleteRequest {
+    optional RequestHeader header = 1;
+    optional KeyProto key = 3;
+    
+    reserved 2, 4 to 7;
+}
+
+message DeleteResponse {
+    
+}
+
+message ReportFileProblemRequest {
+    optional RequestHeader header = 1;
+    optional .k3.SocketAddressProto d_server_address = 6;
+    optional string filename = 7;
+    
+    oneof problem {
+        WriteError write_error = 3;
+        ReadError read_error = 4;
+        TooLargeError too_large_error = 5;
+    }
+    
+    reserved 2;
+    
+    message WriteError {
+        optional util.StatusProto status = 2;
+        
+        reserved 1;
+    }
+    
+    message ReadError {
+        optional util.StatusProto status = 1;
+        optional fixed64 capability_key_id = 4;
+        
+        reserved 2, 3;
+    }
+    
+    message TooLargeError {
+        optional int64 file_size = 1;
+    }
+}
+
+message ReportFileProblemResponse {
+    
+}
+
+message GetWriteFileRequest {
+    optional RequestHeader header = 1;
+    optional KeyProto key = 29;
+    optional FileDescriptorInfoProto fd_info = 31;
+    
+    reserved 2 to 28, 30;
+}
+
+message GetWriteFileResponse {
+    optional WriteFileProto write_file = 1;
+}

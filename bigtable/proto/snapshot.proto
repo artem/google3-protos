@@ -1,0 +1,25 @@
+syntax = "editions";
+
+package bigtable;
+
+message SnapshotCompactionStyle {
+    enum Value {
+        AUTOMATIC = 0;
+        DONT = 1;
+        TRY = 2 [deprecated = true];
+        FORCE = 3;
+    }
+}
+
+message RemoteSnapshotStatus {
+    enum Phase {
+        PHASE_QUERY_ERROR = 0;
+        EPHEMERAL_PHASE = 1;
+        START_DEST_PHASE = 2;
+        COPY_MD_PHASE = 3;
+        COPY_FILES_PHASE = 4;
+        END_DEST_PHASE = 5;
+        CANCEL_PHASE = 6;
+        DONE_PHASE = 7;
+    }
+}

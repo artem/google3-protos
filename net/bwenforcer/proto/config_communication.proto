@@ -1,0 +1,28 @@
+syntax = "proto2";
+
+package net_bwenforcer;
+
+option cc_enable_arenas = true;
+option java_multiple_files = true;
+option java_package = "com.google.net.bwenforcer.proto";
+
+message SubConfig {
+    required bytes digest = 1;
+    required int32 type = 2;
+    optional bytes serialized_config = 3;
+}
+
+message Config {
+    repeated SubConfig subconfigs = 1;
+}
+
+enum SubConfigType {
+    CONNECTIVITY_INFO = 0;
+    USER_CONFIGURATION = 1;
+    CLUSTERS_INFO = 2 [deprecated = true];
+    USER_CONFIGURATION_CANARY = 3 [deprecated = true];
+    IPGS_INFO = 4 [deprecated = true];
+    IPG_CORE = 5 [deprecated = true];
+    IPG_CORE_EDGE = 6 [deprecated = true];
+    IPG_CORE_EDGE_INTERNET = 7 [deprecated = true];
+}

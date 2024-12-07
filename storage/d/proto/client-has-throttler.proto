@@ -1,0 +1,11 @@
+syntax = "editions";
+
+package storage_d;
+
+import "net/proto2/bridge/proto/message_set.proto";
+
+message ClientHasThrottler {
+    extend .proto2.bridge.MessageSet {
+        optional ClientHasThrottler message_set_extension = 472556459;
+    }
+}

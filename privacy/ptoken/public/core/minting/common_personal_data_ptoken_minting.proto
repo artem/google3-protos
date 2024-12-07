@@ -1,0 +1,42 @@
+syntax = "editions";
+
+package ptoken;
+
+import "google/protobuf/timestamp.proto";
+import "privacy/compliance_controls/proto/core_platform_service.proto";
+import "privacy/pattributes/public/proto/gaia_waa_state.proto";
+import "privacy/ptoken/public/core/common_personal_data_defs.proto";
+import "privacy/ptoken/public/core/ptoken_type.proto";
+import "storage/datapol/annotations/proto/semantic_annotations.proto";
+import "third_party/protobuf/cpp_features.proto";
+
+message CommonPersonalDataPTokenForMinting {
+    optional ScalarPTokenV2 scalar_ptoken = 6;
+    message ScalarPTokenV2 {
+        optional BasicAttributes basic_attributes = 7;
+        message BasicAttributes {
+            optional Attributes attributes = 1;
+            message Attributes {
+                optional PTokenType.Enum ptoken_type = 5;
+                optional int64 gaia_liable_id = 9;
+                optional uint64 zwieback_id = 140;
+                optional string youtube_visitor_id = 266;
+                optional int32 origin_associated_product_id = 371;
+                repeated int32 provenance_product_ids = 383;
+                repeated .compliance_controls.CorePlatformService dma52_user_consents_snapshot = 384;
+                optional bool dma52_data_sharing_enabled_for_all_cps_snapshot = 436;
+                optional google.protobuf.Timestamp dma52_user_consents_snapshot_timestamp = 435;
+                optional bool dma52_preprod = 403;
+                optional google.protobuf.Timestamp data_last_modified_timestamp = 450;
+                optional bool dma52_explicit_data_is_exempted = 388;
+                optional bool dma52_data_is_irreversibly_combined = 441;
+                optional int32 rollout_priority_bucket_snapshot = 512;
+                optional bool dma52_pretesting = 519;
+                optional Dma52RevocationExemption dma52_revocation_exemption = 559;
+                optional bool data_origin_unknown = 597;
+                optional .pattributes.GaiaWebAndAppActivityState gaia_waa_state = 652;
+                repeated int32 dual_observation_product_ids = 684;
+            }
+        }
+    }
+}

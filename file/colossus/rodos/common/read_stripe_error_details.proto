@@ -1,0 +1,20 @@
+syntax = "editions";
+
+package rodos;
+
+import "net/proto2/bridge/proto/message_set.proto";
+import "util/task/status.proto";
+
+message ReadStripeErrorDetails {
+    repeated ChunkError chunk_errors = 1;
+    message ChunkError {
+        optional int64 chunk_index = 1;
+        optional util.StatusProto error = 3;
+        
+        reserved 2;
+    }
+    
+    extend .proto2.bridge.MessageSet {
+        optional ReadStripeErrorDetails message_set_extension = 358201129;
+    }
+}

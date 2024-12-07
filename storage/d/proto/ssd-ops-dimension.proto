@@ -1,0 +1,9 @@
+syntax = "proto2";
+
+package storage_d;
+
+enum SSDOpsDimension {
+    SSD_OPS_DIM_ABSTRACT_CPU = 0;
+    SSD_OPS_DIM_NETWORK = 1;
+    SSD_OPS_DIM_WRITE_BANDWIDTH = 2;
+}

@@ -1,4 +1,4 @@
-syntax = "proto2";
+syntax = "editions";
 
 package data_integrity.dcm;
 
@@ -67,6 +67,8 @@ enum ReportingSystem {
     REPORTING_SYSTEM_CLOUD_BIGTABLE_SERVER = 46;
     REPORTING_SYSTEM_DCM_ENVELOPE_PROBER = 47;
     REPORTING_SYSTEM_PUBSUB_SERVER = 48;
+    REPORTING_SYSTEM_GFE2_SERVER = 49;
+    REPORTING_SYSTEM_ALLOYDB_STORAGE = 50;
 }
 
 extend .proto2.EnumValueOptions {

@@ -1,0 +1,91 @@
+syntax = "proto2";
+
+package net_bwenforcer;
+
+import "google/protobuf/timestamp.proto";
+import "net/bwenforcer/proto/network_config.proto";
+import "net/bwenforcer/proto/pipeline_metadata.proto";
+import "storage/datapol/annotations/proto/semantic_annotations.proto";
+
+option cc_enable_arenas = true;
+option java_multiple_files = true;
+option java_package = "com.google.net.bwenforcer.proto";
+
+message MPLSPriorityValue {
+    optional MPLSPriority value = 1;
+}
+
+message PathType {
+    required ClusterConnectivityType connectivity_type = 1;
+    optional MPLSPriority priority = 2;
+}
+
+message TePathInfo {
+    optional TePathingClass te_pathing_class = 1 [default = PC_UNKNOWN];
+    optional uint32 policy_label = 3 [default = 0];
+    optional bool is_gre_encapped_for_middlebridge = 4;
+    
+    reserved 2;
+    
+    reserved "bsid_label";
+}
+
+message ConnectivityTypes {
+    optional ClusterConnectivityType connectivity_type_for_t_bit = 1 [default = UNKNOWN];
+    optional ClusterConnectivityType connectivity_type_for_non_t_bit = 2 [default = UNKNOWN];
+    optional OriginMetadataReference t_bit_origin_info = 3;
+    optional OriginMetadataReference non_bit_origin_info = 4;
+    optional ConnectivityInfoMetadata proxy_metadata = 5;
+}
+
+message ClusterPairConnectionInfo {
+    required string src_cluster = 1;
+    required string dst_cluster = 2;
+    repeated ClusterConnectivityType available_paths = 3 [deprecated = true];
+    repeated ClusterConnectivityType configured_paths = 4 [deprecated = true];
+    optional ConnectivityTypes available_path_types = 5;
+}
+
+message OriginMetadataReference {
+    optional PipelineMetadata.Component component = 1;
+}
+
+message ConnectivityInfo {
+    repeated ClusterPairConnectionInfo clusters_connection_info = 1;
+    repeated ClusterConnectivityType default_configured_paths = 3 [deprecated = true];
+    optional ConnectivityTypes default_available_path_types = 6 [deprecated = true];
+    optional NetworkMetaInfo network_meta_info = 4;
+    optional ConnectivityOverrideDB connectivity_overrides = 5 [deprecated = true];
+    repeated PipelineMetadata origin_metadata = 7;
+    optional PipelineMetadata producer_metadata = 8;
+    
+    reserved 2;
+}
+
+message ConnectivityInfoMetadata {
+    optional google.protobuf.Timestamp origin_timestamp = 1;
+}
+
+enum MPLSPriority {
+    LOPRI = 0;
+    HIPRI = 1;
+    BE1 = 2;
+    AF1 = 3;
+    AF2 = 4;
+    BE0 = 5;
+    AF3 = 6;
+    AF4 = 7;
+}
+
+enum TePathingClass {
+    PC_UNKNOWN = 0;
+    PC_BEST_EFFORT_LATENCY = 1;
+    PC_NETSLO_BEST_EFFORT_LATENCY = 2;
+    PC_NORMAL_LATENCY = 5;
+    PC_NETSLO_NORMAL_LATENCY = 6;
+    PC_LOW_LATENCY = 9;
+    PC_MIDDLEBRIDGE = 10;
+    PC_MIDDLEBRIDGE_DISABLED = 11;
+    PC_NETSLO_LOW_LATENCY = 12;
+    PC_FOURTH = 13;
+}

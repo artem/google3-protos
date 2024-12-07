@@ -1,0 +1,56 @@
+syntax = "editions";
+
+package colossus.cfs2;
+
+import "file/colossus/cfs2/proto/folder.proto";
+import "file/colossus/cfs2/proto/folder_role.proto";
+import "file/colossus/proto/base.proto";
+import "file/colossus/proto/config.proto";
+
+service CuratorStatsInterface {
+    rpc GatherCuratorStats(GatherCuratorStatsArg) returns (GatherCuratorStatsResult);
+}
+
+message UsageStats {
+    optional int64 gcu_nanos_used = 1;
+    optional int64 gcu_nanos_capacity = 2;
+    optional int64 gcu_nanos_adjusted_available_capacity = 5;
+    
+    reserved 3, 4;
+}
+
+message FolderOpStats {
+    optional float peak_ops_per_sec = 1;
+}
+
+message FolderCpuStats {
+    optional float gcu_sec_per_sec = 1;
+}
+
+message FolderRoleStats {
+    optional FolderKeyProto folder_key = 6;
+    optional FolderRole role = 2;
+    optional FolderOpStats op_stats = 3;
+    map<string, FolderOpStats> method_to_op_stats = 4;
+    optional FolderCpuStats cpu_stats = 5;
+    
+    reserved 1;
+}
+
+message GatherCuratorStatsArg {
+    optional ArgHeader header = 1;
+    optional bool should_get_folder_stats = 2;
+    optional bool should_get_folder_roles = 3;
+    optional bool should_get_curator_gcu_usage = 4 [default = true];
+    optional bool should_get_curator_parameters = 5;
+    optional bool should_get_usage_stats_history = 6;
+}
+
+message GatherCuratorStatsResult {
+    optional UsageStats usage_stats = 2;
+    repeated FolderRoleStats folder_stats = 3;
+    optional CellParameters parameters = 4;
+    repeated UsageStats usage_stats_history = 5;
+    
+    reserved 1;
+}

@@ -1,0 +1,60 @@
+syntax = "editions";
+
+package colossus;
+
+import "file/colossus/proto/client_info.proto";
+import "file/colossus/proto/stack_trace.proto";
+import "google/protobuf/any.proto";
+
+option java_package = "com.google.io.file.colossus";
+
+message ColossusOpenOptions {
+    optional bool ignore_cmeta_row_limit = 1 [default = false];
+    optional bool honor_owner_during_creation = 2;
+    optional StackTraceProto stack_trace = 3;
+    optional bool enable_rma_writes = 4 [default = false];
+}
+
+message SnapshotOptions {
+    optional bool ignore_cmeta_row_limit = 1 [default = false];
+    optional bool parallel_write_mode = 2;
+    optional int32 num_stripes_included_requested = 3 [default = -1];
+    optional bool finalize = 4;
+    optional bool is_protected = 5;
+    repeated google.protobuf.Any extended_options = 6;
+    
+    extensions 361199046;
+}
+
+message StatOptions {
+    optional uint64 stat_mask = 1;
+    optional fixed64 min_expected_ciphertext_length = 2;
+    
+    enum Mask {
+        STAT_NONE = 0;
+        STAT_CLIENTS_INFO = 1;
+        STAT_ENCRYPTION_SYNC_POINT = 2;
+    }
+}
+
+message ClientsInfo {
+    optional ClientInfo creator = 1;
+    optional ClientInfo writer = 2;
+    optional ClientInfo finalizer = 3;
+}
+
+message StatProto {
+    optional ClientsInfo clients_info = 1;
+}
+
+message WriteOptions {
+    optional bool respect_cancellation = 1;
+}
+
+message FlushOptions {
+    optional bool respect_cancellation = 1;
+}
+
+message CloseOptions {
+    optional bool respect_cancellation = 1;
+}

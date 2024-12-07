@@ -1,14 +1,15 @@
-syntax = "proto2";
+syntax = "editions";
 
 package stats_census;
 
+import "stats/census/proto/key_id.proto";
 import "stats/census/proto/tag_propagation.proto";
 
-option cc_enable_arenas = true;
 option java_outer_classname = "TaggingMetadata";
 option java_package = "com.google.monitoring.census";
 
 message TagMetadata {
+    optional key_id_internal.KeyId key_id = 13;
     optional string key = 1;
     optional bool contains_pii = 3;
     optional string owner = 4;
@@ -18,7 +19,8 @@ message TagMetadata {
     optional bool exclude_from_stats = 9 [default = false];
     optional bool propagate_to_d = 10;
     optional bool track_tag_loss = 11 [default = false];
-    repeated TagPropagation.AllowVia allow_propagation_via = 8 [packed = true];
+    optional bool allow_long_value = 14;
+    repeated TagPropagation.AllowVia allow_propagation_via = 8;
     
     reserved 2, 12;
 }

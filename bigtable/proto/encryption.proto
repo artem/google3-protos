@@ -1,0 +1,120 @@
+syntax = "editions";
+
+package bigtable;
+
+import "bigtable/proto/bigtable.proto";
+import "bigtable/proto/bigtable_internal.proto";
+import "devtools/protoshop/public/parsing_options/parsing_options.proto";
+import "security/keystore/proto/keystore.proto";
+import "security/panoptikeys/crypto_key_classes/crypto_key_classes_binding.proto";
+import "storage/cmek_library/proto/wrapped_resource_key.proto";
+import "storage/datapol/annotations/proto/semantic_annotations.proto";
+import "util/task/status.proto";
+
+option java_package = "com.google.bigtable.protos";
+
+message ParentKeyWrappingSpec {
+    optional bytes name = 1;
+    
+    optional ParentKeyType type = 2 [default = AES_256_GCM];
+    enum ParentKeyType {
+        TYPE_UNSPECIFIED = 0;
+        AES_256_GCM = 1;
+    }
+    
+    optional BTI_EncryptionMasterKey master_key = 7;
+    optional bytes document_id = 5;
+    repeated bytes principal = 6;
+    optional storage_cmek.WrappedResourceKey resource_key = 8 [deprecated = true];
+    optional bool wrapped_with_resource_key = 9 [default = false];
+}
+
+message ParentKeyTimeInfo {
+    optional int64 creation_time_micros = 1;
+    optional int64 desired_rotation_time_micros = 2;
+}
+
+message ParentKeyWrappedInfo {
+    optional bytes wrapped_parent_key = 1;
+    optional int32 wrapping_master_key_version = 2;
+    optional bytes wrapping_master_key_hash = 3;
+    optional fixed32 wrapped_key_crc32c = 7;
+    optional ParentKeyTimeInfo time_info = 4;
+    optional int32 wrapping_resource_key_version = 6;
+    optional string wrapping_resource_key_name = 8;
+    
+    reserved 5;
+}
+
+message ParentKeyData {
+    optional ParentKeyWrappingSpec parent_key_spec = 1;
+    optional ParentKeyWrappedInfo parent_key_info = 2;
+}
+
+message UnwrappedKeystoreKeyData {
+    optional security.keystore.LiteralKey literal_key = 1;
+    optional ParentKeyTimeInfo time_info = 2;
+}
+
+message EncryptionKeySpec {
+    optional SSTableEncryptionMode encryption_mode = 1 [default = AES_GCM_256];
+    enum SSTableEncryptionMode {
+        MODE_UNSPECIFIED = 0;
+        AES_GCM_256 = 1;
+    }
+    
+    optional bytes parent_key_name = 2;
+}
+
+message EncryptionKeyInfo {
+    optional bytes wrapped_encryption_key = 1;
+    optional fixed32 wrapped_encryption_key_crc32c = 2;
+}
+
+message EncryptionKeyData {
+    optional EncryptionKeySpec encryption_key_spec = 1;
+    optional EncryptionKeyInfo encryption_key_info = 2;
+}
+
+message BigtableKeymasterKey {
+    optional bytes key = 1;
+    optional int64 checksum = 2;
+}
+
+message IntransitWrappingKeySpec {
+    optional EncryptionMasterKey keystore_key = 1;
+    optional bytes keymaster_key = 2;
+}
+
+message StorableEncryptionKey {
+    optional BTI_EncryptionMasterKey wrapping_master_key = 1;
+    optional bytes wrapped_encryption_key = 2;
+    optional fixed32 wrapped_key_crc32c = 5;
+    repeated string principal = 3;
+}
+
+message CloudKMSKeyState {
+    optional string cloud_kms_key_reference = 1;
+    
+    repeated CloudKmsKeyVersionInUse cloud_kms_key_versions_in_use = 3;
+    message CloudKmsKeyVersionInUse {
+        optional string version = 1;
+        optional util.StatusProto status = 2;
+    }
+    
+    reserved 2;
+}
+
+message CloudKMSKeyTableUsage {
+    optional int64 table_version = 1;
+    repeated CloudKMSKeyState cloud_kms_key_states = 2;
+    optional util.StatusProto status = 3;
+    optional string partition = 4;
+    optional bool table_unloaded = 5 [default = false];
+    optional string resource_key_version = 7;
+    optional string resource_key_last_rotation_time = 8;
+    optional string cloud_resource_name = 9;
+    optional BTI_TableMetadata.UnloadReason table_unload_reason = 10;
+    
+    reserved 6;
+}

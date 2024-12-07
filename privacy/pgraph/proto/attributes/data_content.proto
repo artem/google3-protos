@@ -1,0 +1,12 @@
+syntax = "proto3";
+
+package pgraph.attributes;
+
+option java_multiple_files = true;
+
+enum DataContent {
+    DATA_CONTENT_UNDEFINED = 0;
+    DATA_CONTENT_YES = 1;
+    DATA_CONTENT_NO = 2;
+    DATA_CONTENT_UNKNOWN = 3;
+}

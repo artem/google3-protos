@@ -29,6 +29,7 @@ message PRequestContext {
     optional int32 origin_associated_product_id = 13;
     optional bool search_is_in_emergency_critical_only_mode = 14;
     repeated LogicalPolicy.Enum poe_enforced_return_policies = 15 [packed = true];
+    repeated LogicalPolicy.Enum paf_enforced_return_policies = 33 [packed = true];
     repeated privacy.data_governance.attributes.ProcessingPurpose.Purpose processing_purpose = 16 [packed = true];
     optional bool origin_is_end_user = 17;
     optional bool dma52_cross_use_offered_together = 18;
@@ -45,6 +46,7 @@ message PRequestContext {
     optional bytes bitfield_set = 27;
     repeated int32 dataset_product_ids = 30 [packed = true, deprecated = true];
     optional .pattributes.external.GeoLocationLookupStatus geo_location_lookup_status = 31;
+    optional EpdEligibility signed_out_epd_eligibility = 34;
     
     oneof origin_logical_location {
         data_residency.mapping.cloud.CloudDataResidencyLocation origin_logical_cloud_location = 28;

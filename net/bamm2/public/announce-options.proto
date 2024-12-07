@@ -1,0 +1,13 @@
+syntax = "editions";
+
+package bamm2;
+
+import "security/loas/l2/proto/securitylevel.proto";
+
+message AnnounceOptions {
+    optional uint64 user_data = 1;
+    optional int32 queue = 2;
+    optional string service = 3;
+    optional security_loas_l2.SecurityLevel minimum_security_level = 4 [default = SECURITY_NONE];
+    optional bytes data = 5;
+}

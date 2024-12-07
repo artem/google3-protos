@@ -27,6 +27,7 @@ message FreelistEntry {
     int64 obj_capacity = 5;
     repeated HistogramEntry span_util_histogram = 6;
     repeated PrioritizationListOccupancy prioritization_list_occupancy = 7;
+    repeated HistogramEntry span_lifetime_histogram = 8;
 }
 
 message TransferCacheEntry {
@@ -81,7 +82,9 @@ message PageHeapEntry {
     int64 released = 3;
     int64 num_spans = 4;
     
-    reserved 5, 6, 7, 8, "avg_live_age_secs", "avg_released_age_secs", "live_age_hist", "released_age_hist";
+    reserved 5, 6, 7, 8;
+    
+    reserved "avg_live_age_secs", "avg_released_age_secs", "live_age_hist", "released_age_hist";
 }
 
 message HugePageUsageStats {
@@ -97,6 +100,9 @@ message HugePageTracker {
     repeated HistogramEntry longest_free_range_histogram = 14;
     repeated HistogramEntry allocations_histogram = 15;
     repeated TwoDHistogramEntry allocations_free_pages_histogram = 16;
+    repeated HistogramEntry lifetime_histogram = 17;
+    repeated HistogramEntry low_occupancy_lifetime_histogram = 18;
+    repeated HistogramEntry long_lived_hugepages_histogram = 19;
 }
 
 message HugePageFillerSeparateAllocStats {
@@ -232,6 +238,8 @@ message HugePageAllocatorInfo {
     MinMaxCurrentStats huge_cache_usage_stats = 25;
     MinMaxCurrentStats huge_cache_offpeak_stats = 26;
     MinMaxCurrentStats huge_cache_cache_stats = 27;
+    int64 cache_num_hugepages_released = 68;
+    int64 cache_num_hugepages_released_due_to_limit = 69;
     DetailedStatSeries huge_cache_history = 38;
     int64 num_huge_address_map_treap_nodes_used = 28;
     int64 num_huge_address_map_treap_nodes_created = 29;
@@ -246,13 +254,17 @@ message HugePageAllocatorInfo {
     SkippedSubrelease filler_skipped_subrelease = 47;
     SubreleaseStatsSeries region_stats_timeseries = 61;
     SkippedSubrelease region_skipped_subrelease = 62;
+    SubreleaseStatsSeries cache_stats_timeseries = 70;
+    SkippedSubrelease cache_skipped_subrelease = 71;
     int64 num_released_total_pages = 63;
     int64 num_released_release_memory_to_system_pages = 64;
     int64 num_released_process_background_actions_pages = 65;
     int64 num_released_soft_limit_exceeded_pages = 66;
     int64 num_released_hard_limit_exceeded_pages = 67;
     
-    reserved 13, 14, 15, 40, 52, "filler_free_pages_histogram", "filler_longest_free_range_histogram", "filler_allocations_histogram", "huge_cache_regret", "lifetime_based_allocator_stats";
+    reserved 13, 14, 15, 40, 52;
+    
+    reserved "filler_free_pages_histogram", "filler_longest_free_range_histogram", "filler_allocations_histogram", "huge_cache_regret", "lifetime_based_allocator_stats";
 }
 
 message PageAllocatorEntry {
@@ -265,19 +277,20 @@ message PageAllocatorEntry {
 message GwpAsanStats {
     int64 tcmalloc_guarded_sample_parameter = 1;
     int64 successful_allocations = 2;
-    int64 failed_allocations = 3;
-    int64 current_slots_allocated = 4;
-    int64 current_slots_quarantined = 5;
-    int64 max_slots_allocated = 6;
-    int64 allocated_slot_limit = 7;
-    bool tcmalloc_improved_guarded_sampling = 8;
-    int64 stack_trace_filter_max_slots_used = 9;
-    int64 stack_trace_filter_replacement_inserts = 10;
-    int64 total_pages_used = 11;
+    int64 failed_allocations = 16;
+    int64 skipped_allocations_noslots = 3;
+    int64 skipped_allocations_filtered = 17;
+    int64 skipped_allocations_toolarge = 18;
+    int64 allocated_pages = 4;
+    int64 quarantine_pages = 5;
+    int64 high_allocated_pages = 6;
+    int64 max_allocated_pages = 7;
+    int64 pages_touched = 11;
     int64 total_pages = 12;
-    int64 alloced_page_count_when_all_used_once = 13;
     
-    reserved 14, 15, "tcmalloc_uaf_check_parameter", "tcmalloc_uaf_check_quarantine_limit";
+    reserved 8, 9, 10, 13, 14, 15;
+    
+    reserved "tcmalloc_uaf_check_parameter", "tcmalloc_uaf_check_quarantine_limit";
 }
 
 message SelSanStats {
@@ -292,6 +305,7 @@ message SampledProfiles {
 
 message MalloczEntry {
     bytes meta = 1;
+    double scaling_factor = 110;
     int64 in_use_by_app = 2;
     int64 page_heap_freelist = 3;
     int64 central_cache_freelist = 4;
@@ -345,19 +359,20 @@ message MalloczEntry {
     int64 tcmalloc_skip_subrelease_interval_ns = 56;
     int64 tcmalloc_skip_subrelease_short_interval_ns = 82;
     int64 tcmalloc_skip_subrelease_long_interval_ns = 83;
-    int64 profile_sampling_rate = 68;
+    int64 tcmalloc_cache_demand_release_short_interval_ns = 114;
+    int64 tcmalloc_cache_demand_release_long_interval_ns = 115;
+    int64 profile_sampling_interval = 68;
     bool tcmalloc_partial_transfer_cache = 76;
     int64 tcmalloc_linear_search_length_tracker_list = 77;
     repeated TransferCacheEntry sharded_transfer_cache = 78;
     int64 active_sharded_transfer_caches = 79;
-    bool separate_allocs_for_few_and_many_objects_spans = 81;
     bool tcmalloc_release_partial_alloc_pages = 86;
+    bool tcmalloc_huge_cache_demand_based_release = 109;
     bool tcmalloc_huge_region_demand_based_release = 99;
     bool tcmalloc_release_pages_from_huge_region = 89;
-    int64 tcmalloc_filler_chunks_per_alloc = 88;
     bool tcmalloc_use_wider_slabs = 93;
-    bool tcmalloc_use_all_buckets_for_few_object_spans = 95;
     bool tcmalloc_configure_size_class_max_capacity = 96;
+    bool tcmalloc_dense_trackers_sorted_on_spans_allocated = 111;
     repeated SizeClassCapacityEntry size_class_capacity = 67;
     int64 dynamic_per_cpu_slab_size = 94;
     repeated DynamicSlabEntry dynamic_slab = 72;
@@ -386,11 +401,15 @@ message MalloczEntry {
     SampledProfiles sampled_profiles = 55;
     int64 total_sampled_count = 84;
     SizeClassConfiguration size_class_config = 98;
-    int32 span_max_cache_size = 100;
+    int64 span_max_cache_size = 100;
+    int64 span_max_cache_array_size = 112;
     MadvisePreference madvise = 101;
     bool tcmalloc_resize_size_class_max_capacity = 108;
+    int64 text_size_in_bytes = 113;
     
-    reserved 65, 69, 75, 80, 87, 66, 74, 47, 53, "tcmalloc_shuffle_per_cpu_caches", "tcmalloc_prioritize_spans", "madvise_cold_regions_nohugepage", "tcmalloc_chunks_for_page_tracker_lists", "tcmalloc_resize_cpu_cache_size_classes", "tcmalloc_reclaim_idle_per_cpu_caches", "tcmalloc_resize_transfer_caches", "hard_limit", "limit_hits", "other_info";
+    reserved 65, 69, 75, 80, 81, 87, 66, 74, 88, 95, 47, 53;
+    
+    reserved "tcmalloc_shuffle_per_cpu_caches", "tcmalloc_prioritize_spans", "madvise_cold_regions_nohugepage", "tcmalloc_chunks_for_page_tracker_lists", "separate_allocs_for_few_and_many_objects_spans", "tcmalloc_resize_cpu_cache_size_classes", "tcmalloc_reclaim_idle_per_cpu_caches", "tcmalloc_resize_transfer_caches", "tcmalloc_filler_chunks_per_alloc", "tcmalloc_use_all_buckets_for_few_object_spans", "hard_limit", "limit_hits", "other_info";
 }
 
 enum HugePageTrackerType {
@@ -442,6 +461,7 @@ enum SizeClassConfiguration {
     SIZE_CLASS_LEGACY = 3;
     SIZE_CLASS_LOW_FRAG = 4;
     SIZE_CLASS_FEWER = 5;
+    SIZE_CLASS_REUSE = 6;
 }
 
 enum MadvisePreference {

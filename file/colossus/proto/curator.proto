@@ -1,0 +1,952 @@
+syntax = "proto2";
+
+package colossus;
+
+import "bigtable/proto/rowset.proto";
+import "file/base/fileproperties.proto";
+import "file/colossus/proto/base.proto";
+import "file/colossus/proto/cfs.proto";
+import "file/colossus/proto/conditional_operation.proto";
+import "file/colossus/proto/config.proto";
+import "file/colossus/proto/curator_signed_capability.proto";
+import "file/colossus/proto/public.proto";
+import "file/colossus/proto/sampled_file_open_call.proto";
+import "file/colossus/proto/stack_trace.proto";
+import "file/colossus/proto/stats.proto";
+import "file/colossus/proto/write_tiering_arg.proto";
+import "google/protobuf/any.proto";
+import "google/protobuf/timestamp.proto";
+import "net/proto2/bridge/proto/message_set.proto";
+import "security/thinmint/proto/core/thinmint_core.proto";
+import "storage/datapol/annotations/proto/semantic_annotations.proto";
+import "tech/file/proto/types.proto";
+import "util/task/status.proto";
+
+service CuratorInterface {
+    rpc Lookup(Curator_LookupArg) returns (Curator_LookupResult);
+    rpc LookupStripes(Curator_LookupStripesArg) returns (Curator_LookupStripesResult);
+    rpc Create(Curator_CreateArg) returns (Curator_CreateResult);
+    rpc Close(Curator_CloseArg) returns (Curator_CloseResult);
+    rpc Stat(Curator_StatArg) returns (Curator_StatResult);
+    rpc Snapshot(Curator_SnapshotArg) returns (Curator_SnapshotResult);
+    rpc Trim(Curator_TrimArg) returns (Curator_TrimResult);
+    rpc Delete(Curator_DeleteArg) returns (Curator_DeleteResult);
+    rpc Match(Curator_MatchArg) returns (Curator_MatchResult);
+    rpc SetAttr(Curator_SetAttrArg) returns (Curator_SetAttrResult);
+    rpc OpenStripe(Curator_OpenStripeArg) returns (Curator_OpenStripeResult);
+    rpc UpdateStripe(Curator_UpdateStripeArg) returns (Curator_UpdateStripeResult);
+    rpc CloseStripe(Curator_CloseStripeArg) returns (Curator_CloseStripeResult);
+    rpc NotifyError(Curator_NotifyErrorArg) returns (Curator_NotifyErrorResult);
+    rpc GetStats(Curator_GetStatsArg) returns (Curator_GetStatsResult);
+    rpc GetProblemStripes(Curator_GetProblemStripesArg) returns (Curator_GetProblemStripesResult);
+    rpc InspectRebalances(Curator_InspectRebalancesArg) returns (Curator_InspectRebalancesResult);
+    rpc GetCFSCapability(Curator_GetCFSCapabilityArg) returns (Curator_GetCFSCapabilityResult);
+    rpc SetCMeta(Curator_SetCMetaArg) returns (Curator_SetCMetaResult);
+    rpc Split(Curator_SplitArg) returns (Curator_SplitResult);
+    rpc Merge(Curator_MergeArg) returns (Curator_MergeResult);
+}
+
+message Curator_LookupArg {
+    required ArgHeader header = 1;
+    required string path = 2;
+    optional int64 id = 3;
+    optional bool want_capabilities = 4 [default = true];
+    optional string additional_readonly_capability_grantee = 15;
+    optional int32 stripe_index = 5;
+    optional bool want_cfs_capability = 6;
+    optional string cfs_capability_grantee = 9;
+    optional CFSCapability cfs_capability = 7;
+    optional int32 max_stripe_count = 8;
+    optional bool sanitize_fd = 10 [default = false];
+    optional bool allow_deleted_file = 11 [default = false];
+    optional bool want_volume_ids = 12 [default = false];
+    optional int32 number_of_chunks = 13;
+    optional bool keep_all_parallel_stripes = 17;
+    optional SampledFileOpenCall sampled_file_open_call = 18;
+    
+    reserved 14, 16;
+    
+    extend .proto2.bridge.MessageSet {
+        optional Curator_LookupArg message_set_extension = 14746022;
+    }
+}
+
+message Curator_LookupResult {
+    option no_standard_descriptor_accessor = true;
+    required FileDescriptor descriptor = 1;
+    optional CFSCapability cfs_capability = 2;
+    optional CuratorSignedCapability curator_signed_capability = 7;
+    optional KeystoreInstance keystore_affinity = 6;
+    
+    reserved 3, 4, 5;
+    
+    extend .proto2.bridge.MessageSet {
+        optional Curator_LookupResult message_set_extension = 14746056;
+    }
+}
+
+message Curator_LookupStripesArg {
+    required ArgHeader header = 1;
+    required string path = 2;
+    required int64 id = 3;
+    repeated int32 indices = 4;
+    optional bool want_capabilities = 5 [default = true];
+    optional string additional_readonly_capability_grantee = 16;
+    optional CFSCapability cfs_capability = 6;
+    optional bool allow_deleted_file = 7 [default = false];
+    optional bool want_encryption_info = 8 [default = false];
+    optional bool want_volume_ids = 9 [default = false];
+    optional int32 number_of_chunks = 13;
+    optional bool sanitize_stripes = 14 [default = true];
+    
+    repeated CapabilityErrorDetails capability_errors = 18;
+    message CapabilityErrorDetails {
+        optional int32 stripe_index = 1;
+        optional string location = 2;
+        optional fixed64 capability_key_id = 4;
+    }
+    
+    reserved 15, 17;
+    
+    extend .proto2.bridge.MessageSet {
+        optional Curator_LookupStripesArg message_set_extension = 14746074;
+    }
+}
+
+message Curator_LookupStripesResult {
+    repeated int32 indices = 2;
+    repeated Stripe stripes = 3;
+    optional FileEncryptionInfo encryption_info = 4;
+    optional CuratorSignedCapability curator_signed_capability = 6;
+    
+    reserved 5;
+    
+    extend .proto2.bridge.MessageSet {
+        optional Curator_LookupStripesResult message_set_extension = 14746096;
+    }
+}
+
+message Curator_CreateArg {
+    required ArgHeader header = 1;
+    required string path = 2;
+    optional int64 id = 13;
+    required FileEncoding encoding = 3;
+    optional int32 ttl_secs = 11;
+    optional string partition = 19;
+    optional PlacementPolicy placement_policy = 27;
+    optional int32 auto_placement_ttl_secs = 28;
+    optional FileDescriptor.WriteMode write_mode = 4;
+    optional bool create_if_exists = 8 [default = true];
+    optional bool file_must_exist = 22 [default = false];
+    optional fixed32 mode = 5;
+    optional string owner = 6;
+    optional string group = 7;
+    optional int32 stripe_index = 9;
+    optional NamespaceMetadata cns_meta = 10;
+    optional Challenge response = 12;
+    optional bool want_cfs_capability = 15;
+    optional string cfs_capability_grantee = 21;
+    optional bool want_capabilities = 16 [default = false];
+    optional int32 max_stripe_count = 17;
+    optional bool ec_open_for_append = 20 [default = false];
+    optional FileEncryptionInfo encryption_info = 23;
+    optional bool is_protected = 24 [default = false];
+    optional bool create_iff_new = 25 [default = false];
+    optional bool already_encrypted = 31;
+    optional EncryptionExemption encryption_exemption = 36;
+    optional bool raw_ciphertext_access = 32;
+    optional bool encrypted_per_file_plaintext_crc = 42;
+    optional tech.file.QuotaAccounting quota_accounting = 33;
+    optional string additional_readonly_capability_grantee = 34;
+    repeated google.protobuf.Any extended_attributes = 37;
+    optional bool ignore_cmeta_row_limit = 38 [default = false];
+    optional WriteTieringArgProto write_tiering_arg = 39;
+    optional StackTraceProto call_site = 40;
+    
+    optional SupportedFeatures supported_features = 41;
+    message SupportedFeatures {
+        optional bool allow_snapshot_of_mutable_file = 1;
+    }
+    
+    optional SampledFileOpenCall sampled_file_open_call = 43;
+    
+    reserved 14, 18, 26, 29, 30, 35;
+    
+    extend .proto2.bridge.MessageSet {
+        optional Curator_CreateArg message_set_extension = 14746113;
+    }
+}
+
+message Curator_CreateResult {
+    option no_standard_descriptor_accessor = true;
+    optional FileDescriptor descriptor = 1;
+    optional Challenge request = 2;
+    optional CFSCapability cfs_capability = 3;
+    optional KeystoreInstance keystore_affinity = 6;
+    
+    reserved 4, 5;
+    
+    extend .proto2.bridge.MessageSet {
+        optional Curator_CreateResult message_set_extension = 14746130;
+    }
+}
+
+message Curator_CloseArg {
+    required ArgHeader header = 1;
+    required string path = 2;
+    optional int64 id = 3;
+    optional NamespaceMetadata cns_meta = 4;
+    optional Challenge response = 5;
+    optional bool revoke_cfs_capabilities = 6;
+    
+    extend .proto2.bridge.MessageSet {
+        optional Curator_CloseArg message_set_extension = 14832674;
+    }
+}
+
+message Curator_CloseResult {
+    optional bool restart_protocol = 1 [default = false];
+    optional Challenge request = 2;
+    optional int64 capability_generation = 3;
+    
+    reserved 4;
+    
+    extend .proto2.bridge.MessageSet {
+        optional Curator_CloseResult message_set_extension = 14833058;
+    }
+}
+
+message Curator_StatArg {
+    required ArgHeader header = 1;
+    required string path = 2;
+    optional int64 id = 3;
+    optional int32 stripe_index = 4;
+    optional bool fast_length = 5 [default = false];
+    optional CFSCapability cfs_capability = 6;
+    optional bool want_space_usage_by_partition = 7 [default = false];
+    optional bool want_placement_policy = 8 [default = false];
+    repeated string extended_attributes_types = 10;
+    
+    reserved 9;
+    
+    extend .proto2.bridge.MessageSet {
+        optional Curator_StatArg message_set_extension = 15831472;
+    }
+}
+
+message Curator_StatResult {
+    required int64 length = 1;
+    required int64 mtime = 2;
+    required fixed32 attributes = 3;
+    required fixed32 mode = 4;
+    required string owner = 5;
+    required string group = 6;
+    optional FileEncoding encoding = 11;
+    required int64 identifier = 8;
+    optional .file.FileProperties properties = 9;
+    optional fixed32 plaintext_crc32c = 14;
+    optional bool fast_length = 10 [default = false];
+    optional PlacementPolicy placement_policy = 12;
+    optional tech.file.QuotaAccounting quota_accounting = 15;
+    optional KeystoreInstance keystore_affinity = 16;
+    
+    reserved 13;
+    
+    extend .proto2.bridge.MessageSet {
+        optional Curator_StatResult message_set_extension = 15954881;
+    }
+}
+
+message Curator_SnapshotArg {
+    required ArgHeader header = 1;
+    required string src_path = 2;
+    optional string dst_base = 19;
+    required string dst_extension = 3;
+    optional int64 src_id = 4;
+    optional int32 ttl_secs = 15;
+    optional string owner = 6;
+    optional bool keep_owner = 13;
+    optional string group = 7;
+    optional bool keep_group = 14;
+    optional int32 mode = 12;
+    optional fixed32 mode_mask = 5;
+    optional FileDescriptor.State state = 8;
+    optional bool is_protected = 9;
+    optional FileDescriptor.WriteMode target_write_mode = 23;
+    optional int32 num_stripes_included_requested = 24 [default = -1];
+    optional NamespaceMetadata cns_meta = 10;
+    optional bool revoke_cfs_capabilities = 11;
+    optional bool allow_mutable_encrypted_snapshot = 16;
+    optional .thinmint.ThinMint keystore_thinmint = 18;
+    optional bool ignore_quota = 20 [default = false];
+    optional tech.file.QuotaAccounting quota_accounting = 21;
+    optional bool ignore_cmeta_row_limit = 22 [default = false];
+    optional bool raw_ciphertext_snapshot = 25 [default = false];
+    
+    extend .proto2.bridge.MessageSet {
+        optional Curator_SnapshotArg message_set_extension = 14746149;
+    }
+}
+
+message Curator_SnapshotResult {
+    optional int64 id = 1;
+    optional int64 capability_generation = 2;
+    optional int64 length = 3;
+    optional int64 mtime = 4;
+    optional tech.file.EncryptionProperties encryption_properties = 6;
+    optional tech.file.EncryptionMode encryption_mode = 8;
+    optional tech.file.QuotaAccounting quota_accounting = 7;
+    
+    reserved 5;
+    
+    extend .proto2.bridge.MessageSet {
+        optional Curator_SnapshotResult message_set_extension = 14746164;
+    }
+}
+
+message Curator_TrimArg {
+    required ArgHeader header = 1;
+    required string path = 2;
+    optional int64 id = 3;
+    required int64 new_length = 4;
+    optional bytes encryption_auth_code = 5;
+    optional fixed32 plaintext_crc32c = 6;
+    
+    extend .proto2.bridge.MessageSet {
+        optional Curator_TrimArg message_set_extension = 21973773;
+    }
+}
+
+message Curator_TrimResult {
+    reserved 1;
+    
+    extend .proto2.bridge.MessageSet {
+        optional Curator_TrimResult message_set_extension = 21973787;
+    }
+}
+
+message Curator_DeleteArg {
+    required ArgHeader header = 1;
+    required string path = 2;
+    optional int64 id = 3;
+    
+    extend .proto2.bridge.MessageSet {
+        optional Curator_DeleteArg message_set_extension = 14746184;
+    }
+}
+
+message Curator_DeleteResult {
+    reserved 1;
+    
+    extend .proto2.bridge.MessageSet {
+        optional Curator_DeleteResult message_set_extension = 14746197;
+    }
+}
+
+message Curator_MatchArg {
+    required ArgHeader header = 1;
+    required string pattern = 2;
+    required string restart_cookie = 3;
+    optional string limit = 6;
+    optional bool recursive = 4;
+    optional bool plain_match_files_only = 5 [default = false];
+    optional uint32 match_type = 7;
+    optional uint64 stat_mask = 8;
+    
+    extend .proto2.bridge.MessageSet {
+        optional Curator_MatchArg message_set_extension = 14746214;
+    }
+}
+
+message Curator_MatchResult {
+    required string restart_cookie = 2;
+    
+    repeated group Entry = 3 {
+        required int32 common = 4;
+        required string name_delta = 5;
+        required int32 Type = 6;
+        optional Curator_StatResult stat = 7;
+        
+        enum TYPE {
+            FILE = 0;
+            DIR = 1;
+        }
+    }
+    
+    optional bool skipped_entries = 7;
+    
+    reserved 8;
+    
+    extend .proto2.bridge.MessageSet {
+        optional Curator_MatchResult message_set_extension = 14746237;
+    }
+}
+
+message Curator_SetAttrArg {
+    required ArgHeader header = 1;
+    required string path = 2;
+    optional int64 id = 3;
+    optional int64 generation = 21;
+    optional bool finalized = 4;
+    optional bool is_protected = 10;
+    optional FileDescriptor.WriteMode write_mode = 9;
+    optional int64 length = 5;
+    optional int64 mtime = 11;
+    optional fixed32 mode = 6;
+    optional string owner = 7;
+    optional string group = 8;
+    optional int32 ttl_seconds_from_mtime = 12;
+    optional tech.file.EncryptionProperties encryption_properties = 13;
+    optional tech.file.ChecksumKey checksum_key = 28;
+    optional bool allow_encryption_properties_non_finalized = 26 [default = false];
+    optional FileEncoding encoding = 15;
+    optional PlacementPolicy placement_policy = 16;
+    optional bool placement_policy_partition_force_replace = 20 [default = true];
+    optional string partition = 17;
+    optional bool already_encrypted = 18;
+    optional bool ignore_quota = 19 [default = false];
+    optional tech.file.QuotaAccounting quota_accounting = 22;
+    optional bool include_file_header = 23 [default = false];
+    optional bool force_encryption_sync_point = 24 [default = false];
+    optional fixed32 plaintext_crc32c = 25;
+    repeated google.protobuf.Any extended_attributes = 27;
+    optional bool allow_non_frozen_snapshot = 30 [default = true];
+    optional CfsConditionalOperation cfs_conditional_operation = 31;
+    
+    reserved 14, 29;
+    
+    extend .proto2.bridge.MessageSet {
+        optional Curator_SetAttrArg message_set_extension = 14746263;
+    }
+}
+
+message Curator_SetAttrResult {
+    optional int64 capability_generation = 1;
+    optional int64 length = 2;
+    optional int64 mtime = 3;
+    optional tech.file.EncryptionProperties encryption_properties = 5;
+    optional tech.file.EncryptionMode encryption_mode = 9;
+    optional FileDescriptor cmeta_header = 6;
+    
+    reserved 4, 7, 8;
+    
+    extend .proto2.bridge.MessageSet {
+        optional Curator_SetAttrResult message_set_extension = 14746285;
+    }
+}
+
+message Curator_OpenStripeArg {
+    required ArgHeader header = 1;
+    required string path = 2;
+    required int64 id = 3;
+    optional int64 generation = 6;
+    required int32 index = 4;
+    optional CFSCapability cfs_capability = 7;
+    optional string isolation_class = 8;
+    optional FileEncryptionInfo encryption_info = 9;
+    optional tech.file.ChecksumKey checksum_key = 16;
+    optional string additional_readonly_capability_grantee = 10;
+    optional bool ignore_cmeta_row_limit = 12 [default = false];
+    
+    optional StripeTieringAdmission stripe_tiering_admission = 13;
+    message StripeTieringAdmission {
+        optional google.protobuf.Timestamp expiration_time = 1;
+    }
+    
+    optional bool client_compress_chunk_debug_info = 14;
+    optional bool intending_to_use_rodos = 15;
+    
+    reserved 5, 11;
+    
+    extend .proto2.bridge.MessageSet {
+        optional Curator_OpenStripeArg message_set_extension = 14746306;
+    }
+}
+
+message Curator_OpenStripeResult {
+    required Stripe stripe = 2;
+    optional FileDescriptor updated_fd = 5;
+    optional bool reencrypt_hint = 6;
+    optional bytes double_wrapped_key = 7;
+    optional fixed32 double_wrapped_key_crc32c = 8;
+    optional bytes encrypted_data = 9;
+    
+    reserved 3, 4;
+    
+    extend .proto2.bridge.MessageSet {
+        optional Curator_OpenStripeResult message_set_extension = 14746434;
+    }
+}
+
+message Curator_UpdateStripeArg {
+    required ArgHeader header = 1;
+    required string path = 2;
+    required int64 id = 3;
+    required int32 index = 4;
+    optional int64 generation = 16;
+    
+    repeated group Chunk = 10 {
+        required uint64 handle = 11;
+        required int32 state = 12;
+        optional int64 length = 13;
+        optional bool regrant_lock = 15;
+        optional fixed64 capability_key_id = 23;
+        optional util.StatusProto status = 30;
+    }
+    
+    optional int64 commit_length = 14;
+    optional CFSCapability cfs_capability = 17;
+    optional string isolation_class = 19;
+    optional fixed32 data_crc32c = 20;
+    repeated fixed32 chunk_crc32c = 21;
+    optional bytes encryption_auth_code = 22;
+    optional fixed32 plaintext_crc32c = 26;
+    optional bytes reencrypted_last_partial_segment = 24 [ctype = CORD];
+    optional fixed32 reencrypted_last_partial_segment_checksum = 25;
+    optional bool wait_for_slow_reencryption = 27 [default = false];
+    optional string additional_readonly_capability_grantee = 28;
+    optional Stripe.RodosWriteInformation rodos_write_information = 31;
+    
+    reserved 18, 29;
+    
+    extend .proto2.bridge.MessageSet {
+        optional Curator_UpdateStripeArg message_set_extension = 14746448;
+    }
+}
+
+message Curator_UpdateStripeResult {
+    required Stripe stripe = 2;
+    
+    reserved 3;
+    
+    extend .proto2.bridge.MessageSet {
+        optional Curator_UpdateStripeResult message_set_extension = 14746476;
+    }
+}
+
+message Curator_CloseStripeArg {
+    required ArgHeader header = 1;
+    required string path = 2;
+    required sfixed64 id = 3;
+    required int32 index = 4;
+    optional int64 generation = 12;
+    required bool finalize = 5;
+    optional int64 length = 9;
+    optional fixed32 crc32c = 13;
+    repeated fixed32 checksums = 11;
+    optional bytes encryption_auth_code = 16;
+    optional fixed32 plaintext_crc32c = 17;
+    repeated uint64 abandoned_chunk_handles = 10;
+    optional CFSCapability cfs_capability = 14;
+    optional bool want_capabilities = 15 [default = false];
+    optional string additional_readonly_capability_grantee = 18;
+    optional Stripe.RodosWriteInformation rodos_write_information = 20;
+    
+    reserved 19;
+    
+    extend .proto2.bridge.MessageSet {
+        optional Curator_CloseStripeArg message_set_extension = 14746485;
+    }
+}
+
+message Curator_CloseStripeResult {
+    required Stripe stripe = 2;
+    
+    reserved 3;
+    
+    extend .proto2.bridge.MessageSet {
+        optional Curator_CloseStripeResult message_set_extension = 14746500;
+    }
+}
+
+message Curator_NotifyErrorArg {
+    required ArgHeader header = 1;
+    required string path = 2;
+    required int64 id = 3;
+    required int32 stripe_index = 4;
+    optional bool use_physical_stripe_domain = 13 [default = false];
+    required uint64 chunk_handle = 5;
+    optional util.StatusProto error_status = 16;
+    required int32 error_code = 8;
+    required string error_msg = 9;
+    
+    optional Action action = 12 [default = NOTIFY_ERROR];
+    enum Action {
+        NOTIFY_ERROR = 0;
+        NOTIFY_GOOD = 1;
+        UPDATE_CNS_META = 3;
+        NOTIFY_INVALID_CAPABILITY_KEY = 4;
+        NOTIFY_DECRYPTION_FAILURE = 5;
+    }
+    
+    optional NamespaceMetadata cns_meta = 14;
+    optional fixed64 capability_key_id = 15;
+    
+    reserved 10, 11;
+    
+    extend .proto2.bridge.MessageSet {
+        optional Curator_NotifyErrorArg message_set_extension = 14746511;
+    }
+}
+
+message Curator_NotifyErrorResult {
+    reserved 1;
+    
+    extend .proto2.bridge.MessageSet {
+        optional Curator_NotifyErrorResult message_set_extension = 14746531;
+    }
+}
+
+message Curator_GetStatsArg {
+    required ArgHeader header = 1;
+    optional int64 timestamp = 2;
+    
+    reserved 3 to 5;
+    
+    extend .proto2.bridge.MessageSet {
+        optional Curator_GetStatsArg message_set_extension = 14746542;
+    }
+}
+
+message ScanStats {
+    required int64 num_bad_descriptors = 3;
+    optional double start_time = 5;
+    optional double end_time = 6;
+    repeated RiskStats risk_stats = 7;
+    repeated ChunkStateStats chunk_state_stats = 8;
+    repeated FileVersionStats file_version_stats = 9;
+    repeated RiskStats efficiency_risk_stats = 12;
+    optional int64 num_stripes_missing_risk_stats = 13;
+    optional int64 num_unrecoverable_stripes = 15;
+    optional int64 num_unavailable_stripes = 16;
+    repeated LabeledChunkStateStats labeled_chunk_state_stats = 17;
+    repeated LabeledStripeRecoveryStateStats labeled_stripe_recovery_state_stats = 28;
+    optional int64 num_unimportant_recoveries = 18;
+    optional int64 num_duplicate_files = 27;
+    repeated int64 min_open_file_create_time = 22;
+    repeated StatsByEncodingWide encoding_stats_wide = 19;
+    optional UsageStatsWide usage_stats_wide = 20;
+    optional UsageEntryWide overcharged_usage_wide = 21;
+    map<int32, LddStatsSummary> ldd_stats_summary_by_entity = 26;
+    
+    reserved 1, 4, 10, 14, 23, 24, 25;
+}
+
+message CoprocessorInfo {
+    required string start = 1;
+    required string limit = 2;
+    required string url = 3;
+}
+
+message CuratorInfo {
+    required string instance = 1;
+    required int32 start_time = 2;
+    required string url = 3;
+    optional int32 current_version = 5;
+    optional int32 min_supported_version = 6;
+    optional bool is_bootstrap = 7 [default = false];
+    optional CellParameters.CellMode mode = 4;
+    
+    reserved 8;
+}
+
+message RemovalVote {
+    optional bool safe_to_remove = 3 [default = false];
+    optional int64 remaining_chunk_count = 4;
+    optional StripeSample example = 6;
+    
+    oneof info {
+        ServerInfo server = 1;
+        DiskInfo disk = 2;
+    }
+    
+    reserved 5;
+    
+    message ServerInfo {
+        optional string name = 1;
+        optional int64 health_version = 2;
+    }
+    
+    message DiskInfo {
+        optional string server_name = 1;
+        optional int64 health_version = 2;
+        optional int64 volume_id = 3;
+        
+        reserved 4;
+    }
+}
+
+message RangeStats {
+    optional CoprocessorInfo cp_info = 12;
+    optional ScanStats scan_stats = 1;
+    repeated RemovalVote removal_votes = 24;
+    optional int32 cfs2_metadata_incremental_num_files = 13;
+    optional int64 cfs2_metadata_incremental_file_size = 14;
+    optional int32 cfs2_metadata_merge_num_files = 18;
+    optional int64 cfs2_metadata_merge_file_size = 19;
+    optional int32 cfs2_metadata_base_num_files = 15;
+    optional int64 cfs2_metadata_base_file_size = 16;
+    optional int64 cfs2_merge_response_size = 20;
+    optional int64 cfs2_base_response_size = 21;
+    
+    reserved 2 to 11, 17, 22, 23;
+}
+
+message DiskRemovalSummary {
+    required string server = 1;
+    required DiskInfo disk = 2;
+    required int32 chunk_count = 3;
+    required int32 range_count = 4;
+    repeated StripeSample stripes_sample = 6;
+    optional int32 num_gaps = 7;
+    
+    reserved 5;
+}
+
+message RemovalSummary {
+    required bigtable.BTI_RowSetProto ranges = 1;
+    repeated ServerRemovalSummary servers = 2;
+    repeated DiskRemovalSummary disks = 3;
+}
+
+message InstanceStats {
+    required int64 total_recoveries = 1;
+    optional int64 total_rebalances = 9;
+    
+    repeated group RecoveryStats = 2 {
+        required int32 state = 3;
+        repeated RecoveryStatsEntry stats = 4;
+    }
+    
+    repeated group RebalanceStats = 10 {
+        required int32 state = 11;
+        repeated RebalanceStatsEntry stats = 12;
+    }
+    
+    repeated RPCStat rpc_stats = 6;
+    required int64 total_deferred_stripe_closes = 7;
+    optional int64 current_deferred_stripe_closes = 8;
+    optional int64 current_stuck_open_stripes = 22;
+    optional int64 current_corrupt_stripes = 23;
+    optional CellParameters parameters = 14;
+    optional SpreadStats spread_stats = 19;
+    optional EncryptionStats encryption_stats = 20;
+    optional int64 acl_config_generation = 27;
+    map<string, StuckStripeInfo> stuck_stripe_closes_by_owner = 28;
+    optional int64 total_live_chunks_on_removed_devices = 29;
+    
+    reserved 13, 15 to 18, 21, 24 to 26;
+    
+    enum MaintenanceState {
+        ACTIVE = 0;
+        PENDING = 1;
+        DEFERRED = 2;
+    }
+}
+
+message Curator_GetStatsResult {
+    required CuratorInfo curator_info = 1;
+    repeated RangeStats range_stats = 3;
+    optional InstanceStats instance_stats = 4;
+    
+    reserved 2;
+    
+    extend .proto2.bridge.MessageSet {
+        optional Curator_GetStatsResult message_set_extension = 14746557;
+    }
+}
+
+message ProblemStripe {
+    required string path = 1;
+    required int64 id = 2;
+    required int32 stripe_index = 3;
+    optional FileEncoding encoding = 4;
+    optional Stripe stripe = 5;
+    
+    required SOURCE source = 6;
+    enum SOURCE {
+        RECOVERY_MANAGER = 0;
+        STRIPE_CLOSER = 1;
+        ADMIN_UNRECOVERABLE = 2;
+    }
+    
+    optional PROBLEM problem = 7;
+    enum PROBLEM {
+        PROBLEM_UNSPECIFIED = 0;
+        PROBLEM_MISSING = 1;
+        PROBLEM_UNAVAILABLE = 2;
+        PROBLEM_MISSING_CHECKERBOARD = 3;
+    }
+    
+    optional util.StatusProto last_status = 8;
+    optional string last_trace = 9;
+}
+
+message Curator_GetProblemStripesArg {
+    required ArgHeader header = 1;
+    optional int32 max_entries = 2 [default = 1000];
+    optional bool include_unavailable = 3 [default = false];
+    
+    extend .proto2.bridge.MessageSet {
+        optional Curator_GetProblemStripesArg message_set_extension = 14746579;
+    }
+}
+
+message Curator_GetProblemStripesResult {
+    repeated ProblemStripe stripes = 1;
+    
+    extend .proto2.bridge.MessageSet {
+        optional Curator_GetProblemStripesResult message_set_extension = 14746598;
+    }
+}
+
+message Curator_InspectRebalancesArg {
+    required ArgHeader header = 1;
+    optional int64 timestamp = 2;
+    optional string path_name_filter = 3;
+    optional string source_name_filter = 4;
+    
+    extend .proto2.bridge.MessageSet {
+        optional Curator_InspectRebalancesArg message_set_extension = 14746648;
+    }
+}
+
+message Curator_RebalanceRecord {
+    required string path = 1;
+    required int64 id = 2;
+    required FileEncoding encoding = 3;
+    required int32 stripe_index = 4;
+    required int32 chunk_length = 12;
+    required int32 data_length = 5;
+    required int32 priority = 6;
+    required int32 min_risk_diversity_level = 7;
+    repeated int32 exclude = 8;
+    required InstanceStats.MaintenanceState state = 9;
+    required RebalanceType.Type type = 10;
+    optional string trace = 11;
+}
+
+message Curator_InspectRebalancesResult {
+    optional string instance = 1;
+    
+    repeated group Source = 2 {
+        required string name = 3;
+        required int32 num_active = 4;
+        required int32 num_pending = 5;
+        repeated Curator_RebalanceRecord active = 6;
+        repeated Curator_RebalanceRecord pending = 7;
+    }
+    
+    extend .proto2.bridge.MessageSet {
+        optional Curator_InspectRebalancesResult message_set_extension = 14746672;
+    }
+}
+
+message Curator_GetCFSCapabilityArg {
+    required ArgHeader header = 1;
+    required string path = 2;
+    optional int64 id = 3;
+    optional string grantee = 4;
+    optional int32 rights = 5;
+    optional string delegated_user = 6;
+    
+    extend .proto2.bridge.MessageSet {
+        optional Curator_GetCFSCapabilityArg message_set_extension = 17612822;
+    }
+}
+
+message Curator_GetCFSCapabilityResult {
+    required CFSCapability capability = 1;
+    
+    reserved 2;
+    
+    extend .proto2.bridge.MessageSet {
+        optional Curator_GetCFSCapabilityResult message_set_extension = 17639310;
+    }
+}
+
+message Curator_SetCMetaArg {
+    required ArgHeader header = 1;
+    required string path = 2;
+    required int64 id = 3;
+    optional Stripe stripe = 4;
+    optional int32 stripe_index = 5;
+    optional bool use_physical_stripe_domain = 6;
+    optional FileDescriptor file_descriptor = 7;
+    optional bool disable_previous_stripe_validation = 8 [default = false];
+    optional bool special_disaster_recovery_op = 9 [default = false];
+    
+    optional DisasterRecoveryOpType disaster_recovery_op_type = 10;
+    enum DisasterRecoveryOpType {
+        UNKNOWN = 0;
+        NEW_FD = 1;
+        NEW_STRIPE = 2;
+        REPLACE_EXISTING_STRIPE = 3;
+    }
+    
+    optional int64 disaster_recovery_op_new_fd_length = 11;
+    
+    extend .proto2.bridge.MessageSet {
+        optional Curator_SetCMetaArg message_set_extension = 18405572;
+    }
+}
+
+message Curator_SetCMetaResult {
+    reserved 1;
+    
+    extend .proto2.bridge.MessageSet {
+        optional Curator_SetCMetaResult message_set_extension = 13521947;
+    }
+}
+
+message Reason {
+    optional Source source = 1;
+    enum Source {
+        UNKNOWN = 0;
+        API = 1;
+        CFSUTIL = 2;
+        SIZE_THRESHOLD = 3;
+        MONITORING = 4;
+        DISRUPTOR = 5;
+        WRITE_LOAD_THRESHOLD = 6;
+        METADATA_SIZE_THRESHOLD = 7;
+    }
+    
+    optional string info = 2;
+}
+
+message Curator_SplitArg {
+    required ArgHeader header = 1;
+    required string path = 2;
+    repeated string split_key = 3;
+    optional int32 min_merge_delay_seconds = 4;
+    optional Reason reason = 5;
+    
+    extend .proto2.bridge.MessageSet {
+        optional Curator_SplitArg message_set_extension = 62872614;
+    }
+}
+
+message Curator_SplitResult {
+    extend .proto2.bridge.MessageSet {
+        optional Curator_SplitResult message_set_extension = 62872705;
+    }
+}
+
+message Curator_MergeArg {
+    required ArgHeader header = 1;
+    optional string path = 3;
+    optional Reason reason = 4;
+    
+    reserved 2;
+    
+    extend .proto2.bridge.MessageSet {
+        optional Curator_MergeArg message_set_extension = 231786299;
+    }
+}
+
+message Curator_MergeResult {
+    extend .proto2.bridge.MessageSet {
+        optional Curator_MergeResult message_set_extension = 231775858;
+    }
+}

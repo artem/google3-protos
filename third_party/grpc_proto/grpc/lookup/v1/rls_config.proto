@@ -53,7 +53,9 @@ message RouteLookupConfig {
     repeated string valid_targets = 8;
     string default_target = 9;
     
-    reserved 10, "request_processing_strategy";
+    reserved 10;
+    
+    reserved "request_processing_strategy";
 }
 
 message RouteLookupClusterSpecifier {

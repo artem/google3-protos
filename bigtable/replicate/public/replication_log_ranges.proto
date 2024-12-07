@@ -1,0 +1,124 @@
+syntax = "editions";
+
+package bigtable;
+
+import "bigtable/proto/bigtable.proto";
+import "bigtable/proto/bigtable_internal.proto";
+import "bigtable/proto/bti_request.proto";
+import "bigtable/replicate/public/replicated_table.proto";
+
+option java_package = "com.google.bigtable.protos";
+
+message BTIR_TimePoint {
+    optional uint64 incarnation = 1;
+    optional int64 logical_clock = 2;
+}
+
+message BTIR_TimeRange {
+    optional BTIR_TimePoint start = 1;
+    optional BTIR_TimePoint end = 2;
+}
+
+message BTIR_SequencerWaterMarks {
+    optional uint64 incarnation_hwm = 1;
+    optional GlobalSequencerProto sequencer_lwm = 2;
+    optional GlobalSequencerProto sequencer_hwm = 3;
+}
+
+message BTIR_LogRangeSet {
+    repeated RowRange rowrange = 1;
+    message RowRange {
+        optional bytes start_row = 2;
+        optional bytes end_row = 3;
+        repeated BTIR_TimeRange timerange = 4;
+        optional BTIR_SequencerWaterMarks watermarks = 5;
+    }
+}
+
+message BTIR_MissingLogRangeSet {
+    repeated RowRange rowrange = 1;
+    message RowRange {
+        optional bytes start_row = 2;
+        optional bytes end_row = 3;
+        repeated BTIR_TimeRange timerange = 4;
+        optional BTIR_SequencerWaterMarks watermarks = 5;
+    }
+}
+
+message BTIR_LogManager {
+    repeated SourceRange sourcerange = 1;
+    message SourceRange {
+        optional string source_id = 2;
+        optional BTIR_LogRangeSet range_set = 3;
+    }
+    
+    optional bytes partial_start_row = 4;
+    optional bytes partial_end_row = 5;
+    
+    repeated ProxySourceRange proxy_source_range = 7;
+    message ProxySourceRange {
+        optional string source_id = 1;
+        optional BTIR_LogRangeSet range_set = 2;
+    }
+    
+    repeated BTIR_ReplicatedTableMetadata.Move moved_replicas = 8;
+    
+    reserved 6;
+}
+
+message BTIR_WaterMarksRequest {
+    optional BTI_Request request = 1;
+    optional uint64 table_version = 3;
+    
+    reserved 2;
+}
+
+message BTIR_WaterMarks {
+    repeated WM wm = 1;
+    message WM {
+        optional string source_id = 2;
+        optional uint64 incarnation = 4;
+        optional int64 logical_clock = 3;
+    }
+}
+
+message BTIR_CPWaterMarks {
+    optional bytes start_row = 1 [ctype = CORD];
+    optional bytes end_row = 2 [ctype = CORD];
+    optional BTIR_WaterMarks water_marks = 3;
+    optional bool is_lwm = 4;
+    optional int64 collection_timestamp = 5;
+    optional bool is_historic_data = 6;
+    
+    optional CdcDiskUsage cdc_disk_usage = 7;
+    message CdcDiskUsage {
+        optional int64 replication_log_disk_use = 1;
+        optional int64 cdc_disk_use = 2;
+    }
+}
+
+message BTIR_CPWaterMarksArg {
+    optional bool is_lwm_request = 1;
+    optional bool also_request_cdc_disk_usage = 2 [default = false];
+}
+
+message BTIR_CP_PositionArg {
+    repeated string source_ids = 1;
+}
+
+message BTIR_CP_Position {
+    optional string source_id = 1;
+    optional int64 collection_logical_clock = 2;
+    optional bool known = 3;
+    
+    repeated RowRange row_ranges = 4;
+    message RowRange {
+        optional bytes start = 1 [ctype = CORD];
+        optional bytes limit = 2 [ctype = CORD];
+        optional BTIR_TimePoint time = 3;
+    }
+}
+
+message BTIR_LogicalClock {
+    optional int64 logical_clock = 1;
+}

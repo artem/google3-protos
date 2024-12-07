@@ -1,0 +1,47 @@
+syntax = "editions";
+
+package bigtable;
+
+import "bigtable/proto/backup_shared.proto";
+
+option java_package = "com.google.bigtable.protos";
+
+message BTI_SnapshotCreator {
+    extensions 100 to 119;
+}
+
+message BTI_SnapshotClientInfo {
+    optional string secure_userid = 1;
+    optional string insecure_userid = 2;
+    optional uint64 client_id = 3;
+    optional int64 local_id = 4;
+    optional int64 done_id = 5;
+}
+
+message BTI_SnapshotClientCreator {
+    optional BTI_SnapshotClientInfo client_info = 1;
+    
+    extend BTI_SnapshotCreator {
+        optional BTI_SnapshotClientCreator ext = 100;
+    }
+}
+
+message BTI_SnapshotPolicyCreator {
+    optional uint64 source_table_version = 1;
+    repeated string schedule_names = 2;
+    optional double creation_time = 3;
+    optional double expected_gc_time = 4;
+    
+    extend BTI_SnapshotCreator {
+        optional BTI_SnapshotPolicyCreator ext = 101;
+    }
+}
+
+message BTI_BackupCreator {
+    optional BackupInfo backup_info = 1;
+    optional BTI_SnapshotCreator original_creator = 2;
+    
+    extend BTI_SnapshotCreator {
+        optional BTI_BackupCreator ext = 103;
+    }
+}

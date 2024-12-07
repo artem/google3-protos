@@ -1,0 +1,17 @@
+syntax = "proto2";
+
+package net_bwenforcer;
+
+import "net/base/service_class.proto";
+
+message NetworkAllocation {
+    optional net_base.nsc.ServiceClass allocated_service_class = 2;
+    optional double allocated_utility = 3;
+    optional double bonus = 4;
+    optional string priority_source = 5;
+    optional double fair_share = 6;
+    
+    reserved 1;
+    
+    reserved "prioritization_id";
+}

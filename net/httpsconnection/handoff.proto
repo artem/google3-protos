@@ -16,5 +16,7 @@ message HandoffState {
     optional bytes in_mac_secret = 7;
     optional bytes out_mac_secret = 8;
     
-    reserved 5, 6, "in_rc4", "out_fc4";
+    reserved 5, 6;
+    
+    reserved "in_rc4", "out_fc4";
 }

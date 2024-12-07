@@ -1,4 +1,4 @@
-syntax = "proto2";
+syntax = "editions";
 
 package colossus;
 
@@ -38,11 +38,11 @@ message DiskStatsSummaryByPartition {
 }
 
 message CMetaStatsSummary {
-    required int64 num_files = 1;
-    required int64 num_stripes = 2;
-    required int64 num_chunks = 3;
-    required int32 num_curators = 4;
-    required int32 num_ranges = 5;
+    optional int64 num_files = 1;
+    optional int64 num_stripes = 2;
+    optional int64 num_chunks = 3;
+    optional int32 num_curators = 4;
+    optional int32 num_ranges = 5;
 }
 
 message CuratorIssuesSummary {
@@ -79,9 +79,9 @@ message MissingStripeInfo {
 }
 
 message CuratorInstanceSummary {
-    required int64 num_missing_stripes = 1;
+    optional int64 num_missing_stripes = 1;
     optional int64 num_unavailable_stripes = 11;
-    required int64 num_stuck_stripe_closes = 3;
+    optional int64 num_stuck_stripe_closes = 3;
     optional int64 num_deferred_stripe_closes = 8;
     optional int64 num_corrupt_stripes = 9;
     repeated int64 total_recoveries_by_state = 2;
@@ -121,8 +121,8 @@ message DiskStatsRequest {
 
 message DiskStatRecord {
     option no_standard_descriptor_accessor = true;
-    required string descriptor = 1;
-    required int32 disk_count = 2;
+    optional string descriptor = 1;
+    optional int32 disk_count = 2;
     optional int32 server_count = 3;
     optional int32 server_ok_count = 13;
     optional int32 server_config_state = 4;
@@ -144,10 +144,10 @@ message DiskStatsResult {
 }
 
 message RiskDescription {
-    required string domain = 1;
+    optional string domain = 1;
     repeated int64 effective_redundancy_delta = 2;
-    repeated int64 effective_redundancy = 3 [packed = true];
-    repeated int64 domain_spread = 4 [packed = true];
+    repeated int64 effective_redundancy = 3;
+    repeated int64 domain_spread = 4;
     
     enum FixedDomain {
         OK = 0;
@@ -190,13 +190,13 @@ message StatsByEncodingWide {
 }
 
 message RiskStats {
-    required FileEncoding encoding = 1;
+    optional FileEncoding encoding = 1;
     repeated RiskDescription domains = 2;
     optional PlacementPolicy placement_policy = 3;
 }
 
 message SpreadDescription {
-    required int64 num_endangered_stripes = 1 [default = -1];
+    optional int64 num_endangered_stripes = 1 [default = -1];
     repeated string files_sample = 2;
 }
 
@@ -206,15 +206,15 @@ message SpreadStats {
     
     repeated NodeSpread node = 2;
     message NodeSpread {
-        required string name = 1;
+        optional string name = 1;
         repeated SpreadDescription spread = 2;
         optional bool is_machine = 3 [default = false];
     }
 }
 
 message FileVersionStats {
-    required FileDescriptor.Version version = 1;
-    required int64 count = 2;
+    optional FileDescriptor.Version version = 1;
+    optional int64 count = 2;
 }
 
 message ColossusFileStatsExtendedAttr {
@@ -239,40 +239,40 @@ message UsageStatsWide {
 }
 
 message RPCStat {
-    required string method = 1;
-    required int64 count = 2;
-    required int64 rpc_errors = 3;
-    required int64 app_errors = 4;
-    required double elapsed = 5;
-    required double max_elapsed = 6;
-    required int64 request_bytes = 7;
-    required int64 response_bytes = 8;
+    optional string method = 1;
+    optional int64 count = 2;
+    optional int64 rpc_errors = 3;
+    optional int64 app_errors = 4;
+    optional double elapsed = 5;
+    optional double max_elapsed = 6;
+    optional int64 request_bytes = 7;
+    optional int64 response_bytes = 8;
     optional double period_secs = 9;
 }
 
 message CuratorRPCSummary {
-    required string type = 1;
+    optional string type = 1;
     repeated RPCStat periods = 2;
 }
 
 message RebalanceStat {
-    required int32 state = 1;
+    optional int32 state = 1;
     repeated RebalanceStatsEntry count = 2;
 }
 
 message RecoveryStat {
-    required int32 state = 1;
+    optional int32 state = 1;
     repeated RecoveryStatsEntry stats = 2;
 }
 
 message RecoverySummary {
-    required double secs = 1;
-    required RecoveryStat state_counts = 2;
+    optional double secs = 1;
+    optional RecoveryStat state_counts = 2;
 }
 
 message RebalanceSummary {
-    required double secs = 1;
-    required RebalanceStat state_counts = 2;
+    optional double secs = 1;
+    optional RebalanceStat state_counts = 2;
 }
 
 message MaintOpBusyStatus {
@@ -288,9 +288,9 @@ message MaintOpBusyStatus {
 }
 
 message RebalanceStatsEntry {
-    required int32 type = 1;
+    optional int32 type = 1;
     optional FileEncoding encoding = 2;
-    required int64 count = 3;
+    optional int64 count = 3;
 }
 
 message PreparePlansFailureReason {
@@ -315,9 +315,9 @@ message RecoveryPriority {
 }
 
 message RecoveryStatsEntry {
-    required int32 priority = 1;
+    optional int32 priority = 1;
     optional FileEncoding encoding = 2;
-    required int64 count = 3;
+    optional int64 count = 3;
     optional bool feasible = 4;
     optional Feasibility.Type feasibility = 5;
     
@@ -341,7 +341,6 @@ message MaintenanceTraceType {
         RISK_DIVERSITY = 5;
         PARTITION = 6;
         USER = 7;
-        SOFT_OVERFULL = 9;
         UNHEALTHY = 10;
     }
 }
@@ -356,20 +355,6 @@ message MaintenanceTraceOp {
     }
 }
 
-message RebalanceExecutionResult {
-    enum Type {
-        UNKNOWN = 0;
-        TRANSACTION_START_FAILED = 1;
-        SPACE_REBALANCE_NO_LONGER_NEEDED = 2;
-        REBALANCE_NO_LONGER_NEEDED = 3;
-        INVALID_TARGET = 4;
-        REPLACEMENT_INDEX_CHANGED = 5;
-        NO_PLAN_ON_REQUEST = 6;
-        RPC_OK = 7;
-        RPC_ERROR = 8;
-    }
-}
-
 message MrsDispatchLimit {
     enum Type {
         UNKNOWN = 0;
@@ -380,9 +365,9 @@ message MrsDispatchLimit {
 }
 
 message ChunkStateStats {
-    required int32 state = 1;
-    required int32 layer = 2;
-    required int64 count = 3;
+    optional int32 state = 1;
+    optional int32 layer = 2;
+    optional int64 count = 3;
 }
 
 message LabeledChunkStateStats {
@@ -394,6 +379,15 @@ message LabeledChunkStateStats {
     optional storage_util.Int128 total_bytes_128 = 7;
     
     reserved 6;
+}
+
+message LabeledStripeRecoveryStateStats {
+    optional string d_partition = 1;
+    optional string encoding = 2;
+    optional int64 num_missing_stripes = 3;
+    optional int64 num_unavailable_stripes = 4;
+    optional int64 num_watch_stripes = 5;
+    optional int64 num_recoverable_chunks = 6;
 }
 
 message EncryptionMetadataClass {
@@ -434,6 +428,7 @@ message StringSampleSet {
 
 message EncryptionMetadataClassStat {
     optional StringSampleSet master_key_names = 6;
+    optional StringSampleSet master_key_hashes = 8;
     optional int64 num_files = 1;
     optional string sample_file = 2 [ctype = CORD];
     
@@ -509,13 +504,25 @@ message SpreadStatsRequest {
 }
 
 message SpreadStatsResult {
-    required int64 timestamp = 1;
-    required SpreadStats spread_stats = 2;
+    optional int64 timestamp = 1;
+    optional SpreadStats spread_stats = 2;
     optional int64 num_stripes_missing_spread_stats = 3;
 }
 
 message CellSummaryArg {
     optional bool report_usage_from_d_manager = 1;
+}
+
+message LddWearoutInfoProto {
+    optional google.protobuf.Timestamp last_wearout_indicator_cutoff_update_time = 1;
+    optional bool wearout_indicator_cutoff_valid = 2 [default = false];
+    optional double wearout_indicator_cutoff = 3;
+    optional uint32 total_ssd = 4;
+    optional uint32 readable_ssd_percentage = 5;
+    optional uint32 total_healthy_ssd = 6;
+    optional uint32 num_ldd = 7;
+    optional uint32 num_ldd_to_exclude = 8;
+    optional uint32 num_non_allocatable_ldd = 9;
 }
 
 message CellSummaryResult {
@@ -530,6 +537,7 @@ message CellSummaryResult {
     optional DiskStatsSummaryWide cell_summary_wide = 13;
     repeated StatsByEncodingWide file_encodings_wide = 14;
     repeated DiskStatsSummaryByPartition cell_summary_by_partition = 17;
+    optional LddWearoutInfoProto ldd_wearout_info = 18;
     
     reserved 1, 2, 4, 5, 15, 16;
 }
@@ -545,9 +553,9 @@ message StripeSample {
 }
 
 message ServerRemovalSummary {
-    required ChunkserverInfo server = 1;
-    required int32 chunk_count = 2;
-    required int32 range_count = 3;
+    optional ChunkserverInfo server = 1;
+    optional int32 chunk_count = 2;
+    optional int32 range_count = 3;
     repeated StripeSample stripes_sample = 5;
     optional int32 num_gaps = 6;
     
@@ -555,8 +563,8 @@ message ServerRemovalSummary {
 }
 
 message GetRemovalSummaryResult {
-    required int32 total_ranges = 1;
-    required int32 num_gaps = 2;
+    optional int32 total_ranges = 1;
+    optional int32 num_gaps = 2;
     repeated ServerRemovalSummary server_removal_summary = 3;
 }
 

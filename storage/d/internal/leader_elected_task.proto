@@ -1,0 +1,14 @@
+syntax = "proto2";
+
+package storage_d;
+
+import "storage/k3/borg/borg_task_port.proto";
+import "storage/k3/net/socket_address.proto";
+
+message LeaderElectedTaskProto {
+    oneof variant {
+        string election_file = 1;
+        .k3.BorgTaskPortProto borg_task = 2;
+        .k3.SocketAddressProto socket_address = 3;
+    }
+}

@@ -2,6 +2,8 @@ syntax = "editions";
 
 package security;
 
+import "storage/datapol/annotations/proto/semantic_annotations.proto";
+
 option java_multiple_files = true;
 option java_outer_classname = "SigningKeyProtoOuterClass";
 option java_package = "com.google.security.keymaster";

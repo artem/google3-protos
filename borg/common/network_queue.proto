@@ -1,0 +1,14 @@
+syntax = "proto2";
+
+package borg;
+
+option cc_enable_arenas = true;
+
+message NetworkQueueConfiguration {
+    optional int32 default_queues = 1;
+    optional int32 max_notification_blocks = 2;
+    optional int32 max_tx_queues = 3;
+    optional int32 max_rx_queues = 4;
+    optional int32 offload_completion_queues = 5;
+    optional int32 offload_buffer_queues = 6;
+}

@@ -1,0 +1,12 @@
+syntax = "proto2";
+
+package compliance_controls;
+
+import "privacy/compliance_controls/proto/new_product_development_state.proto";
+
+option java_multiple_files = true;
+option java_package = "com.google.privacy.compliancecontrols";
+
+message NewProductDevelopmentControl {
+    optional NewProductDevelopmentState.State new_product_development_state = 1;
+}

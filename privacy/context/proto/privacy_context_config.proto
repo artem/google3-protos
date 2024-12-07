@@ -1,4 +1,4 @@
-syntax = "proto2";
+syntax = "editions";
 
 package privacy.context;
 
@@ -9,6 +9,7 @@ import "privacy/data_governance/attributes/proto/ddt.proto";
 import "privacy/data_governance/attributes/proto/purpose.proto";
 import "privacy/ptoken/public/core/logical_policy.proto";
 import "privacy/ptoken/public/core/request_context_defs.proto";
+import "production/machine_locality/proto/machine_locality_public.proto";
 
 option java_multiple_files = true;
 option java_package = "com.google.privacy.context";
@@ -28,17 +29,39 @@ message PrivacyContextDefaultConfig {
     }
     
     optional int32 origin_product_id = 2;
-    repeated .ptoken.PolicyRolloutEnforcementMode request_policy_global_rampup = 12 [packed = true];
+    optional Source origin_product_id_source = 18;
+    repeated .ptoken.PolicyRolloutEnforcementMode request_policy_global_rampup = 12;
+    optional Source request_policy_global_rampup_source = 19;
+    optional bool request_policy_dma52_global_rampup_override = 16;
+    optional Source request_policy_dma52_global_rampup_override_source = 20;
     optional data_governance.attributes.DDTContext ddt_context = 13;
+    optional Source ddt_context_source = 21;
     optional bool dma52_cross_use_offered_together = 4;
+    optional Source dma52_cross_use_offered_together_source = 22;
     optional .ptoken.Dma52ProcessingType dma52_processing_type = 6;
+    optional Source dma52_processing_type_source = 23;
     optional bool post_access_filtering = 8;
-    repeated data_governance.attributes.ProcessingPurpose.Purpose processing_purpose = 3 [packed = true];
-    repeated ads.user_data_enforcement.DataUsage ads_processing_purpose = 7 [packed = true];
-    repeated .ptoken.PolicyRolloutEnforcementMode request_policy_rollout_enforcement_mode = 9 [packed = true];
+    optional Source post_access_filtering_source = 24;
+    repeated data_governance.attributes.ProcessingPurpose.Purpose processing_purpose = 3;
+    optional Source processing_purpose_source = 25;
+    repeated ads.user_data_enforcement.DataUsage ads_processing_purpose = 7;
+    optional Source ads_processing_purpose_source = 26;
+    repeated .ptoken.PolicyRolloutEnforcementMode request_policy_rollout_enforcement_mode = 9;
+    optional Source request_policy_rollout_enforcement_mode_source = 27;
     repeated PolicyBreakglass policies_breakglass = 10;
+    optional Source policies_breakglass_source = 28;
     optional bool allow_enforcement_without_consent = 11;
-    repeated .ptoken.LogicalPolicy.Enum request_policy_enforcement = 5 [packed = true];
+    optional Source allow_enforcement_without_consent_source = 29;
+    optional fixed32 source_pipeline_guri_hash = 14;
+    optional Source source_pipeline_guri_hash_source = 30;
+    optional Source execution_id_source = 31;
+    repeated .ptoken.LogicalPolicy.Enum request_policy_enforcement = 5;
+    optional Source request_policy_enforcement_source = 32;
+    
+    oneof execution_id {
+        int64 borg_run_uid = 15;
+        int64 custom_execution_id = 17;
+    }
 }
 
 message PrivacyContextDefaultTraceInfo {
@@ -56,4 +79,9 @@ message PrivacyContextDefaultTraceInfo {
     extend .proto2.bridge.MessageSet {
         optional PrivacyContextDefaultTraceInfo message_set_extension = 495337008;
     }
+}
+
+message PrivacyContextDefaultTestConfig {
+    optional bool test_mode = 1 [default = false];
+    optional production.machine_locality.Host.Kind host_kind = 2 [default = UNKNOWN];
 }

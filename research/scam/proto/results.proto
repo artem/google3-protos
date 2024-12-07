@@ -2,10 +2,9 @@ syntax = "proto2";
 
 package research_scam;
 
+import "google/api/inclusion.proto";
 import "research/scam/data_format/features.proto";
 import "research/scam/proto/query_metadata.proto";
-
-option cc_enable_arenas = true;
 
 message NearestNeighbors {
     required bytes docid = 1;

@@ -1,0 +1,43 @@
+syntax = "editions";
+
+package net_http;
+
+message CompressionRule {
+    optional string encoding = 3;
+    optional string gfe_encoding = 4;
+    optional CompressionUserAgents user_agents = 1;
+    optional CompressionContentTypes content_types = 2;
+}
+
+message CompressionUserAgents {
+    repeated string whitelist_agent = 1;
+    repeated string safe_agent = 2;
+    
+    repeated ConditionalAgent conditional_whitelist_agent = 3;
+    message ConditionalAgent {
+        optional string with_string = 1;
+        optional string without_string = 2;
+    }
+    
+    repeated ConditionalAgent conditional_safe_agent = 4;
+    repeated ConditionalAgent conditional_blacklist_override_agent = 5;
+}
+
+message CompressionContentTypes {
+    repeated string compressible_type = 1;
+    
+    repeated ContentGroup compressible_content_group = 2;
+    message ContentGroup {
+        optional string start_with = 1;
+        optional string end_with = 2;
+    }
+    
+    repeated TypeWithParams compressible_type_with_params = 5;
+    message TypeWithParams {
+        optional string media_type = 1;
+        repeated string param = 2;
+    }
+    
+    repeated string blacklist_type = 3;
+    repeated string incompressible_type = 4;
+}

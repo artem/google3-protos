@@ -1,4 +1,4 @@
-syntax = "proto2";
+syntax = "editions";
 
 package tech.log;
 
@@ -7,29 +7,28 @@ import "tech/log/proto/log_entry.proto";
 import "tech/log/proto/log_options.proto";
 import "util/task/status.proto";
 
-option cc_enable_arenas = true;
 option java_multiple_files = true;
 option java_package = "com.google.tech.log";
 
 message LogHandle {
-    required string name = 1;
-    required bytes handle = 2;
+    optional string name = 1;
+    optional bytes handle = 2;
     optional bytes continuation_token = 3;
 }
 
 message OpenRequest {
-    required string name = 1;
+    optional string name = 1;
     optional Entity producer = 3;
     optional LogOptions options = 2;
 }
 
 message OpenResponse {
-    required LogHandle log = 1;
+    optional LogHandle log = 1;
 }
 
 message PutRequest {
-    required LogHandle log = 1;
-    required LogEntry record = 2;
+    optional LogHandle log = 1;
+    optional LogEntry record = 2;
 }
 
 message MultiPutRequest {
@@ -43,7 +42,7 @@ message PutResponse {
 }
 
 message CloseRequest {
-    required LogHandle log = 1;
+    optional LogHandle log = 1;
     optional LogOptions options = 2;
 }
 

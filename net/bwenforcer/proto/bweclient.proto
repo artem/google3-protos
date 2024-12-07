@@ -1,0 +1,39 @@
+syntax = "editions";
+
+package net_bwenforcer;
+
+import "net/base/qos.proto";
+import "net/bwenforcer/proto/common.proto";
+
+option java_multiple_files = true;
+option java_package = "com.google.net.bwenforcer.proto";
+
+message BandwidthTuple {
+    optional string source_cluster = 1;
+    optional string target_cluster = 2;
+    optional net_base.qos.TrafficClass traffic_class = 3 [default = BE1];
+    optional string loas_user = 4;
+    optional DelegatedUser delegated_user = 8;
+    optional string delegated_by_user = 6;
+    optional bool is_b4_network = 5;
+    optional string job_name = 7;
+}
+
+message BandwidthUsage {
+    optional BandwidthTuple tuple = 1;
+    optional int64 bits_per_second = 2;
+}
+
+message BweUsage {
+    repeated BandwidthUsage usage = 1;
+}
+
+message BandwidthLimit {
+    optional BandwidthTuple tuple = 1;
+    optional int64 bits_per_second = 2;
+}
+
+message BweLimits {
+    repeated BandwidthLimit limit = 1;
+    repeated BandwidthUsage usage = 2;
+}

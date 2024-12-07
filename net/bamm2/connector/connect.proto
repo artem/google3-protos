@@ -1,0 +1,87 @@
+syntax = "editions";
+
+package bamm2;
+
+import "google/protobuf/duration.proto";
+import "net/bamm2/public/connection-options.proto";
+import "net/base/qos.proto";
+import "net/pony/internal/supported-features.proto";
+import "net/pony/public/pony-address.proto";
+import "perftools/tracing/proto/tracecontext.proto";
+import "security/loas/l2/proto/securitylevel.proto";
+import "util/task/status.proto";
+
+message ConnectionCapabilities {
+    optional net_pony.SupportedFeatures pony_features = 1;
+}
+
+message ConnectRequest {
+    optional int32 version = 1;
+    optional bytes data = 2;
+    optional SecurityOptions security_options = 3;
+    
+    optional Pony pony = 4;
+    message Pony {
+        optional net_pony.Address address = 1;
+        optional net_base.qos.TrafficClass traffic_class = 2;
+        repeated net_base.qos.TrafficClass additional_traffic_classes = 3;
+    }
+    
+    optional google.protobuf.Duration connect_deadline = 5;
+    
+    optional TcpInfo tcp_info = 10;
+    message TcpInfo {
+        optional uint64 connection_handle = 1;
+    }
+    
+    optional VerbsInfo verbs_info = 11;
+    message VerbsInfo {
+        optional uint32 qp_num = 1;
+        optional bytes gid = 2;
+        optional uint64 connection_handle = 3;
+    }
+    
+    optional bool query_pony_connectivity = 7;
+    optional bool require_pony_connectivity = 8;
+    optional int32 inline_message_size = 9;
+    optional ConnectionCapabilities capabilities = 12;
+    optional perftools.tracing.TraceContextProto trace_context = 13;
+    
+    reserved 6;
+}
+
+message ConnectResponse {
+    optional int32 version = 1;
+    optional bytes data = 2;
+    optional util.StatusProto status = 3;
+    
+    optional Pony pony = 4;
+    message Pony {
+        optional net_pony.Address address = 1;
+        optional uint64 exchange_id = 2;
+        optional uint32 stripe_requested = 6;
+    }
+    
+    optional TcpInfo tcp_info = 8;
+    message TcpInfo {
+        optional uint64 connection_handle = 1;
+    }
+    
+    optional VerbsInfo verbs_info = 9;
+    message VerbsInfo {
+        
+    }
+    
+    optional int32 inline_message_size = 6;
+    optional security_loas_l2.SecurityLevel minimum_security_level = 7 [default = SECURITY_NONE];
+    optional bool zero_copy_rx = 10;
+    optional ConnectionCapabilities capabilities = 11;
+    
+    reserved 5;
+}
+
+enum ConnectVersion {
+    CONNECT_VERSION_INVALID = 0;
+    CONNECT_VERSION_V1 = 1;
+    CONNECT_VERSION_BAMM2_MESSAGE_HASH = 2;
+}

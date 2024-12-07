@@ -1,0 +1,50 @@
+syntax = "editions";
+
+package bigtable;
+
+option java_package = "com.google.bigtable.protos";
+
+message RowMutationProto {
+    optional bytes row = 1 [ctype = CORD];
+    optional string table_fullname = 2;
+    
+    repeated Mod mod = 3;
+    message Mod {
+        optional SetCell set_cell = 1;
+        message SetCell {
+            optional bytes column = 1 [ctype = CORD];
+            optional bytes value = 2 [ctype = CORD];
+            optional int64 micro_timestamp = 3;
+        }
+        
+        optional DeleteCell delete_cell = 2;
+        message DeleteCell {
+            optional bytes column = 1 [ctype = CORD];
+            optional int64 start_micro_timestamp = 2 [default = 0];
+            optional int64 end_micro_timestamp = 3 [default = 0x7fffffffffffffff];
+        }
+        
+        optional DeleteRow delete_row = 3;
+        message DeleteRow {
+            
+        }
+        
+        optional DeleteCellsInFamily delete_cells_in_family = 4;
+        message DeleteCellsInFamily {
+            optional string family = 1;
+        }
+    }
+    
+    optional bool add_to_replication_log = 4 [default = true];
+    repeated bytes secondary = 5 [ctype = CORD];
+}
+
+message SecondaryMutationProto {
+    optional Label label = 1;
+    message Label {
+        optional uint64 value = 1;
+    }
+    
+    repeated Label waitfor = 2;
+    optional RowMutationProto mutation = 3;
+}

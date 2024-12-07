@@ -1,0 +1,716 @@
+syntax = "editions";
+
+package bigtable;
+
+import "bigtable/proto/backup_shared.proto";
+import "bigtable/proto/bigtable.proto";
+import "bigtable/proto/bigtable_fault.proto";
+import "bigtable/proto/bigtable_internal.proto";
+import "bigtable/proto/bti_request.proto";
+import "bigtable/proto/byte_quota_manager.proto";
+import "bigtable/proto/encryption.proto";
+import "bigtable/proto/master_table_range_info.proto";
+import "bigtable/proto/quarantine_internal.proto";
+import "bigtable/proto/rowset.proto";
+import "bigtable/proto/snapshot.proto";
+import "bigtable/proto/stats_internal.proto";
+import "bigtable/replicate/public/batch_replication.proto";
+import "bigtable/replicate/public/new_replica.proto";
+import "bigtable/replicate/public/replicated_table.proto";
+import "bigtable/replicate/public/replication_log_ranges.proto";
+import "google/protobuf/wrappers.proto";
+import "net/rpc/empty-message.proto";
+
+option java_package = "com.google.bigtable.protos";
+
+service BTI_Master {
+    rpc UpdateCell(BTI_UpdateCellRequest) returns (EmptyMessage);
+    rpc SetQuotaEnforcementPolicy(BTI_SetQuotaEnforcementPolicyArgs) returns (EmptyMessage);
+    rpc SetFileCleaner(BTI_SetFileCleanerRequest) returns (BTI_SetFileCleanerReply);
+    rpc CreateTable(BTI_CreateTableArgs) returns (BTI_TableVersion);
+    rpc UpdateTable(BTI_UpdateTableRequest) returns (EmptyMessage);
+    rpc RenameTable(BTI_RenameTableRequest) returns (EmptyMessage);
+    rpc SnapshotTable(BTI_SnapshotTableRequest) returns (EmptyMessage);
+    rpc DeleteTable(BTI_DeleteTableRequest) returns (EmptyMessage);
+    rpc CancelSnapshot(BTI_CancelSnapshotRequest) returns (EmptyMessage);
+    rpc RestoreSnapshot(BTI_RestoreSnapshotRequest) returns (EmptyMessage);
+    rpc DeleteSnapshot(BTI_DeleteSnapshotRequest) returns (EmptyMessage);
+    rpc WaitForSnapshot(BTI_SnapshotTableRequest) returns (EmptyMessage);
+    rpc QuerySnapshot(BTI_QuerySnapshotRequest) returns (BTI_QuerySnapshotReply);
+    rpc CopySnapshot(BTI_CopySnapshotRequest) returns (EmptyMessage);
+    rpc WaitForCopySnapshot(BTI_CopySnapshotRequest) returns (EmptyMessage);
+    rpc CancelCopySnapshot(BTI_CopySnapshotRequest) returns (EmptyMessage);
+    rpc IsCopySnapshotActive(BTI_IsCopySnapshotActiveRequest) returns (google.protobuf.BoolValue);
+    rpc SetupOfflineAccess(BTI_OfflineAccessRequest) returns (BTI_OfflineAccessReply);
+    rpc DeleteBoa(BTI_DeleteBoaRequest) returns (EmptyMessage);
+    rpc GetBackupConfig(BTI_GetBackupConfigRequest) returns (BTI_GetBackupConfigReply);
+    rpc CreateBackup(BTI_CreateBackupRequest) returns (BTI_CreateBackupReply);
+    rpc RestoreBackup(BTI_RestoreBackupRequest) returns (BTI_RestoreBackupReply);
+    rpc CreatePartition(BTI_CreatePartitionRequest) returns (EmptyMessage);
+    rpc UpdatePartition(BTI_UpdatePartitionRequest) returns (EmptyMessage);
+    rpc GetPartition(BTI_GetPartitionRequest) returns (BTI_GetPartitionReply);
+    rpc ListPartitions(BTI_ListPartitionsRequest) returns (BTI_ListPartitionsReply);
+    rpc RenamePartition(BTI_RenamePartitionRequest) returns (EmptyMessage);
+    rpc DeletePartition(BTI_DeletePartitionRequest) returns (EmptyMessage);
+    rpc GetPartitionInfo(BTI_GetPartitionInfoRequest) returns (BTI_GetPartitionInfoReply);
+    rpc CreateReplTable(BTIR_CreateReplTableArgs) returns (BTIR_ReplicatedTableMetadata);
+    rpc DeleteReplTable(BTIR_DeleteReplTableArgs) returns (EmptyMessage);
+    rpc AddUnavailableReplica(BTIR_AddUnavailableReplicaArgs) returns (EmptyMessage);
+    rpc ReplicateFamily(BTIR_ReplicateFamilyArgs) returns (EmptyMessage);
+    rpc AddReplica(BTIR_AddReplicaArgs) returns (EmptyMessage);
+    rpc RemoveReplica(BTIR_RemoveReplicaArgs) returns (EmptyMessage);
+    rpc RemoveLastReplica(BTIR_RemoveReplicaArgs) returns (EmptyMessage);
+    rpc UpdateReplica(BTIR_UpdateReplicaArgs) returns (EmptyMessage);
+    rpc IncrementIncarnation(BTIR_IncrementIncarnationArgs) returns (EmptyMessage);
+    rpc EnableMayProxy(BTIR_EnableMayProxyArgs) returns (EmptyMessage);
+    rpc AssignReplicaTiebreaker(BTIR_AssignReplicaTiebreakerArgs) returns (EmptyMessage);
+    rpc UpdateGlobalMetadata(BTIR_UpdateGlobalMetadataArgs) returns (EmptyMessage);
+    rpc GetLowWaterMarks(BTIR_WaterMarksRequest) returns (BTIR_WaterMarks);
+    rpc CollectHighWaterMarks(BTIR_WaterMarksRequest) returns (BTIR_WaterMarks);
+    rpc CollectMaxLogicalClock(BTIR_WaterMarksRequest) returns (BTIR_LogicalClock);
+    rpc StartNewReplica(BTIR_NewReplicaArgs) returns (EmptyMessage);
+    rpc GetNewReplicaStatus(BTIR_GetNewReplicaStatusArgs) returns (BTIR_GetNewReplicaStatusReply);
+    rpc WaitForNewReplica(BTIR_WaitForNewReplicaArgs) returns (BTIR_WaitForNewReplicaReply);
+    rpc CancelNewReplica(BTIR_CancelNewReplicaArgs) returns (EmptyMessage);
+    rpc CleanupNewReplica(BTIR_CleanupNewReplicaArgs) returns (EmptyMessage);
+    rpc UnreplicateTable(BTIR_UnreplicateTableArgs) returns (EmptyMessage);
+    rpc SetFamilyIDMigrationState(BTIR_FamilyIDMigrationArgs) returns (EmptyMessage);
+    rpc GetFamilyIDMigrationStatus(BTIR_GetFamilyIDMigrationStatusArgs) returns (BatchReplicationMigrationStatus);
+    rpc RebalanceRequest(BTI_RebalanceRequest) returns (EmptyMessage);
+    rpc SetRebalanceInterval(BTI_SetRebalanceIntervalRequest) returns (EmptyMessage);
+    rpc MoveTablet(BTI_MoveTabletRequest) returns (EmptyMessage);
+    rpc MergeTablets(BTI_MergeArgs) returns (EmptyMessage);
+    rpc MarkTabletNonloadable(BTI_TabletLoadabilityRequest) returns (EmptyMessage);
+    rpc ClearTabletNonloadable(BTI_TabletLoadabilityRequest) returns (EmptyMessage);
+    rpc QueryTableLoadability(BTI_TableLoadabilityRequest) returns (BTI_TableLoadabilityReply);
+    rpc OverrideTabletPartition(BTI_TabletPartitionOverrideRequest) returns (EmptyMessage);
+    rpc ClearTabletPartition(BTI_TabletPartitionOverrideRequest) returns (EmptyMessage);
+    rpc TableRangeInfo(BTI_TableRangeInfoRequest) returns (BTI_TableRangeInfoReply);
+    rpc GetServers(BTI_GetServersRequest) returns (BTI_GetServersReply);
+    rpc GetBTStats(BTI_GetBTStatsRequest) returns (BTI_GetBTStatsReply);
+    rpc Crash(BTI_CrashRequest) returns (EmptyMessage);
+    rpc Join(BTI_JoinRequest) returns (EmptyMessage);
+    rpc ImmediateMTSRequest(BTI_ImmediateMTSRequest) returns (EmptyMessage);
+    rpc GetSequencesForSnapshot(BTI_GetSequencesForSnapshotRequest) returns (BTI_GetSequencesForSnapshotReply);
+    rpc FixMetadata(BTI_FixMetadataRequest) returns (BTI_FixMetadataReply);
+    rpc ClearTablet(BTI_ClearTabletRequest) returns (BTI_ClearTabletReply);
+    rpc DenyWrites(BTI_DenyWritesRequest) returns (BTI_DenyWritesResponse);
+    rpc GetCloudKmsKeyStatus(BTI_CloudKMSKeyStateRequest) returns (BTI_CloudKMSKeyStatusResponse);
+    rpc GetTableSchema(BTI_GetTableSchemaRequest) returns (BTI_GetTableSchemaResponse);
+    rpc RotateTableResourceKey(BTI_RotateTableResourceKeyRequest) returns (BTI_RotateTableResourceKeyResponse);
+    rpc RestoreTableACLs(BTI_RestoreTableACLsRequest) returns (BTI_RestoreTableACLsResponse);
+    rpc MoveReplicaInit(BTIR_MoveReplicaInitRequest) returns (BTIR_MoveReplicaInitResponse);
+    rpc MoveReplicaUndoInit(BTIR_MoveReplicaUndoInitRequest) returns (BTIR_MoveReplicaUndoInitResponse);
+    rpc MoveReplicaStart(BTIR_MoveReplicaStartRequest) returns (BTIR_MoveReplicaStartResponse);
+    rpc MoveReplicaComplete(BTIR_MoveReplicaCompleteRequest) returns (BTIR_MoveReplicaCompleteResponse);
+    rpc MoveReplicaFinalizeDestination(BTIR_MoveReplicaFinalizeDestinationRequest) returns (BTIR_MoveReplicaFinalizeDestinationResponse);
+    rpc MoveReplicaInitRollbackOnDestination(BTIR_MoveReplicaInitRollbackOnDestinationRequest) returns (BTIR_MoveReplicaInitRollbackOnDestinationResponse);
+    rpc MoveReplicaInitRollbackOnSource(BTIR_MoveReplicaInitRollbackOnSourceRequest) returns (BTIR_MoveReplicaInitRollbackOnSourceResponse);
+    rpc AddProtoDescriptorSet(BTI_AddProtoDescriptorSetRequest) returns (BTI_AddProtoDescriptorSetResponse);
+    rpc UpdateProtoDescriptorSet(BTI_UpdateProtoDescriptorSetRequest) returns (BTI_UpdateProtoDescriptorSetResponse);
+    rpc DeleteProtoDescriptorSet(BTI_DeleteProtoDescriptorSetRequest) returns (EmptyMessage);
+    rpc GetProtoDescriptorSetVersion(BTI_GetProtoDescriptorSetVersionRequest) returns (BTI_GetProtoDescriptorSetVersionResponse);
+}
+
+message BTI_UpdateCellRequest {
+    optional BTI_Request request = 1;
+    optional CellMetadata metadata = 2;
+    optional int64 generation = 3;
+}
+
+message BTI_SetQuotaEnforcementPolicyArgs {
+    optional BTI_Request request = 1;
+    optional CellMetadata.QuotaPolicy quota_enforcement = 2 [default = QUOTA_FLAG_ENFORCED];
+    optional int64 generation = 3;
+}
+
+message BTI_SetFileCleanerRequest {
+    optional BTI_Request request = 1;
+    
+    optional FileCleanerRequest request_type = 2 [default = FILE_CLEANER_VIEW_STATUS];
+    enum FileCleanerRequest {
+        FILE_CLEANER_REQUEST_UNSPECIFIED = 0;
+        FILE_CLEANER_VIEW_STATUS = 1;
+        FILE_CLEANER_ENABLE = 2;
+        FILE_CLEANER_DISABLE = 3;
+    }
+}
+
+message BTI_SetFileCleanerReply {
+    optional bool parallel_file_cleaner_enabled = 1 [default = true];
+}
+
+message ReplicatedTableState {
+    optional string repl_cell_name = 1;
+    optional int64 repl_cell_id = 2 [default = -1];
+    optional string repl_table_name = 3;
+    optional int64 repl_table_id = 4 [default = -1];
+    optional SpannerProxyConfig spanner_config = 5;
+    optional int64 replica_tiebreaker = 6;
+}
+
+message BTI_CreateTableArgs {
+    optional BTI_Request request = 5;
+    optional TableMetadata args = 1;
+    optional bool nonloadable = 6 [default = false];
+    optional ReplicatedTableState repl_table_state = 7;
+    
+    reserved 2, 3, 4;
+}
+
+message BTI_TableVersion {
+    optional uint64 version = 1;
+    optional string key = 2;
+    optional int64 forced_death_epoch_seconds = 3;
+}
+
+message BTI_UpdateTableRequest {
+    optional BTI_Request request = 1;
+    optional string table_name = 2;
+    optional uint64 table_version = 3;
+    optional fixed64 chubby_generation = 4;
+    optional BTI_TableMetadata new_metadata = 5;
+}
+
+message BTI_RenameTableRequest {
+    optional BTI_Request request = 1;
+    optional uint64 table_version = 2;
+    optional string old_table_name = 3;
+    optional string new_table_name = 4;
+}
+
+message BTI_SnapshotTableRequest {
+    optional BTI_Request request = 1;
+    optional string source_cell = 2;
+    optional string source_table_name = 3;
+    optional uint64 source_table_version = 4;
+    optional string target_cell = 8;
+    optional string target_table_name = 5;
+    optional bool ephemeral = 7 [default = false];
+    optional int32 remote_fsroot_id = 9 [default = -1];
+    optional bool ignore_logs = 10 [default = false];
+    optional string remote_cfs_extension = 13;
+    optional bool copy_repl_manager = 14 [default = false];
+    optional bool copy_repl_logs = 23 [default = false];
+    optional SnapshotCompactionStyle.Value compaction = 11 [default = AUTOMATIC];
+    optional int32 compaction_wait_seconds = 12;
+    optional bool force_copy_files = 15 [default = false];
+    optional FsReroots fs_reroots = 16;
+    repeated string groups_to_keep = 17;
+    optional int64 death_epoch_seconds = 18;
+    optional bool deflash = 19;
+    optional string remote_target_partition = 20;
+    optional BTI_RowSetProto partial_snapshot_rowset = 21;
+    optional CloudKMSEncryptionSettings destination_cloud_kms_encryption_settings = 22;
+    
+    reserved 6;
+}
+
+message BTI_DeleteTableRequest {
+    optional BTI_Request request = 4;
+    optional string table = 1;
+    optional uint64 version = 2;
+    optional bool ok_to_delete_replicated_table = 5 [default = false];
+    optional string reversible_deletion_ttl_override = 6;
+    
+    reserved 3, 16, 17;
+}
+
+message BTI_MergeArgs {
+    optional BTI_Request request = 1;
+    optional BTI_Tablet tablet1 = 2;
+    optional BTI_Tablet tablet2 = 3;
+    optional BTI_OperationFault faults = 10;
+}
+
+message BTI_CancelSnapshotRequest {
+    optional BTI_Request request = 1;
+    optional string source_table_name = 2;
+    optional int64 source_table_version = 3;
+    optional string destination_cell_name = 4;
+    optional string destination_snapshot_name = 5;
+}
+
+message BTI_RestoreSnapshotRequest {
+    optional BTI_Request request = 1;
+    optional string snapshot_name = 2;
+    optional string table_name = 3;
+    optional BTI_RowSetProto restore_rowset = 4;
+    optional string partition = 5;
+    optional bool copy_repl_manager = 6 [default = false];
+    optional string moved_from_repl_source_id = 9;
+    optional string justification = 7;
+    optional string cloud_resource_name = 8;
+    optional uint64 moved_from_incarnation = 10;
+    optional bool move_status_to_standby = 11 [default = false];
+}
+
+message BTI_DeleteSnapshotRequest {
+    optional BTI_Request request = 1;
+    optional string snapshot_name = 2;
+}
+
+message BTI_QuerySnapshotRequest {
+    optional BTI_Request request = 1;
+    optional int64 source_table_version = 4;
+    optional string destination_cell_name = 5;
+    optional string destination_snapshot_name = 6;
+    optional string source_snapshot_name = 7;
+    
+    reserved 2, 3;
+}
+
+message BTI_QuerySnapshotReply {
+    optional RemoteSnapshotStatus.Phase remote_snapshot_phase = 1;
+}
+
+message BTI_CopySnapshotRequest {
+    optional BTI_Request request = 1;
+    optional string source_snapshot_name = 2;
+    optional string target_cell_name = 3;
+    optional string target_snapshot_name = 4;
+    optional bool deflash = 7;
+    optional CloudKMSEncryptionSettings destination_cloud_kms_encryption_settings = 8;
+    optional bool reflash = 9;
+    optional string remote_target_partition = 10;
+    
+    reserved 5, 6;
+}
+
+message BTI_IsCopySnapshotActiveRequest {
+    optional BTI_Request request = 1;
+    optional string source_snapshot_name = 2;
+    optional string target_cell_name = 3;
+    optional string target_snapshot_name = 4;
+}
+
+message BTI_CancelRecallBackupRequest {
+    optional BTI_Request request = 1;
+    optional string manifest_path = 2;
+    optional string table_name = 3;
+}
+
+message BTI_OfflineAccessRequest {
+    optional BTI_Request request = 1;
+    optional string snapshot_name = 2;
+    optional uint64 snapshot_version = 3;
+    optional string table_name = 6;
+    optional uint64 table_version = 7;
+    optional string output_dir = 4 [deprecated = true];
+    optional string boa_name = 13;
+    repeated string groups_to_keep = 8;
+    optional string delegated_user = 9;
+    optional int32 shards_per_sstable = 10 [default = 2];
+    optional int64 lifespan_secs = 11 [default = 0x127500];
+    optional bool owns_snapshot = 12 [default = true];
+    optional bool use_ssd_for_manifest = 14 [default = false];
+    
+    reserved 5;
+}
+
+message BTI_OfflineAccessReply {
+    optional int64 md_sstables = 1;
+    optional int64 md_ss_covered = 2;
+    optional int64 md_entries_recorded = 3;
+    optional BTI_OfflineBackupStats backup_stats = 5;
+    optional string online_manifest_path = 6;
+    optional string backup_manifest_path = 7;
+    optional string backup_manifest_site = 8;
+    optional string boa_spec = 9;
+    
+    reserved 4;
+}
+
+message BTI_DeleteBoaRequest {
+    optional BTI_Request request = 1;
+    optional string boa_spec = 2;
+}
+
+message BTI_GetBackupConfigRequest {
+    optional BTI_Request request = 1;
+}
+
+message BTI_GetBackupConfigReply {
+    optional string universe = 1;
+    optional string site = 2;
+    repeated ActiveArchive archives = 3;
+    repeated ReadOnlyArchive ro_archives = 4;
+}
+
+message BTI_CreateBackupRequest {
+    optional BTI_Request request = 1;
+    optional string archive = 4;
+    repeated string schedules = 6;
+    optional int32 shards_per_sstable = 7 [default = 2];
+    
+    oneof type {
+        string table_name = 2;
+        string snapshot_name = 3;
+    }
+    
+    reserved 5;
+}
+
+message BTI_CreateBackupReply {
+    optional string ts_label = 1;
+}
+
+message BTI_RestoreBackupRequest {
+    optional BTI_Request request = 1;
+    optional string orig_cell = 2;
+    optional string orig_table_name = 3;
+    optional string target_table_name = 4;
+    optional string ts_label = 5;
+    optional string archive = 6;
+    optional BTI_RowSetProto restore_rowset = 7;
+    optional string partition = 8;
+    optional int32 table_fsroot = 9 [default = -1];
+    optional string justification = 10;
+}
+
+message BTI_RestoreBackupReply {
+    
+}
+
+message BTI_CreatePartitionRequest {
+    optional BTI_Request request = 1;
+    optional PartitionMetadata md = 2;
+}
+
+message BTI_GetPartitionRequest {
+    optional BTI_Request request = 1;
+    optional string name = 2;
+}
+
+message BTI_GetPartitionReply {
+    optional fixed64 chubby_generation = 1;
+    optional BTI_PartitionMetadata md = 2;
+}
+
+message BTI_ListPartitionsRequest {
+    optional BTI_Request request = 1;
+}
+
+message BTI_ListPartitionsReply {
+    repeated string names = 1;
+}
+
+message BTI_UpdatePartitionRequest {
+    optional BTI_Request request = 1;
+    optional fixed64 chubby_generation = 2;
+    optional BTI_PartitionMetadata new_md = 3;
+}
+
+message BTI_RenamePartitionRequest {
+    optional BTI_Request request = 1;
+    optional string old_name = 2;
+    optional string new_name = 3;
+}
+
+message BTI_DeletePartitionRequest {
+    optional BTI_Request request = 1;
+    optional string name = 2;
+}
+
+message BTI_PartitionServerInfo {
+    optional string server = 1;
+    optional string subpartition = 2;
+    optional int32 mtsport = 3;
+    optional ServerResources tabletserver_resources = 4;
+}
+
+message BTI_PartitionTableInfo {
+    optional string tablename = 1;
+    optional int64 tableversion = 2;
+    optional string assigner = 3;
+}
+
+message BTI_PartitionInfo {
+    optional string name = 1;
+    optional string borg_job_name = 2;
+    repeated BTI_PartitionServerInfo server_info = 4;
+    repeated BTI_PartitionTableInfo table_info = 5;
+    repeated string borg_job_names = 6;
+    
+    reserved 3;
+}
+
+message BTI_GetPartitionInfoRequest {
+    optional BTI_Request request = 1;
+    optional string name = 2;
+}
+
+message BTI_GetPartitionInfoReply {
+    repeated BTI_PartitionInfo partition_info = 1;
+}
+
+message BTI_RebalanceRequest {
+    optional BTI_Request request = 1;
+}
+
+message BTI_SetRebalanceIntervalRequest {
+    optional BTI_Request request = 1;
+    optional int32 secs = 2;
+}
+
+message BTI_RebalanceStat {
+    optional double unload_attempts_load = 1;
+    optional double unload_attempts_memory = 2;
+    optional double unload_attempts_queue = 7;
+    optional double unload_attempts_disk = 3;
+    optional double unload_successes_load = 4;
+    optional double unload_successes_memory = 5;
+    optional double unload_successes_queue = 8;
+    optional double unload_successes_disk = 6;
+}
+
+message BTI_MoveTabletRequest {
+    optional BTI_Request request = 1;
+    optional BTI_Tablet tablet = 2;
+    optional string from_server = 3;
+    optional string to_server = 4;
+    optional BTI_UnloadType unload_type = 5;
+}
+
+message BTI_HostAndPort {
+    optional string ip = 1;
+    optional int32 port = 2;
+}
+
+message BTI_GetServersRequest {
+    optional BTI_Request request = 1;
+    optional bool get_quiescent = 3;
+    optional bool get_in_pushback = 4;
+    optional string partition = 5;
+    optional bool mtsport = 6;
+    
+    reserved 2;
+}
+
+message BTI_GetServersReply {
+    repeated BTI_HostAndPort servers = 1;
+}
+
+message BTI_TabletLoadabilityRequest {
+    optional BTI_Request request = 1;
+    optional string tablename = 2;
+    optional bytes endkey = 3;
+    optional int64 tableversion = 4;
+    optional int32 severity = 5;
+    optional string details = 8;
+    optional BTI_QuarantineReason reason = 10;
+    
+    reserved 7, 9;
+}
+
+message BTI_TableLoadabilityRequest {
+    optional BTI_Request request = 1;
+    optional uint64 tableversion = 2;
+}
+
+message BTI_TableLoadabilityReply {
+    optional int64 num_quarantined_tablets = 1;
+}
+
+message BTI_TabletPartitionOverrideRequest {
+    optional BTI_Request request = 1;
+    optional string tablename = 2;
+    optional bytes endkey = 3;
+    optional int64 tableversion = 4;
+    optional TabletPartitionInfo partition_override = 5;
+    optional bool all_tablets_for_table = 6;
+    optional string partition_label_to_clear = 7;
+}
+
+message BTI_GetBTStatsRequest {
+    optional BTI_Request request = 1;
+    optional string table = 2;
+}
+
+message BTI_GetBTStatsReply {
+    optional CellStats cellstats = 1;
+}
+
+message BTI_JoinRequest {
+    optional BTI_Request request = 1;
+    optional int32 sequencer_lease_ms = 2;
+    optional string ts_address = 3;
+}
+
+message BTI_ImmediateMTSRequest {
+    optional BTI_Request request = 1;
+    optional string ts_address = 2;
+    optional fixed64 ts_id = 3;
+    
+    optional RequestType request_type = 4 [default = MTS];
+    enum RequestType {
+        MTS = 0;
+        CRU = 1;
+    }
+}
+
+message BTI_GetSequencesForSnapshotRequest {
+    optional BTI_Request request = 1;
+    optional string target_cell = 2;
+    optional uint64 target_table_version = 3;
+    optional uint64 source_table_version = 4;
+    repeated string servers = 5;
+    optional int32 num_retries = 6 [default = 0];
+}
+
+message BTI_GetSequencesForSnapshotReply {
+    repeated int64 sequences = 1;
+}
+
+message BTI_FixMetadataRequest {
+    optional BTI_Request request = 1;
+    repeated string anchored_logs_to_scan = 6;
+    
+    repeated BadTablet badtablet = 3;
+    message BadTablet {
+        optional BTI_Tablet tablet = 4;
+        optional BTI_TabletFixup tablet_fixup = 5;
+    }
+}
+
+message BTI_FixMetadataReply {
+    repeated FailedTablets failedtablets = 2;
+    message FailedTablets {
+        optional BTI_Tablet tablet = 3;
+        optional Reason reason = 4;
+    }
+    
+    repeated LogCorruption log_corruption = 5;
+    message LogCorruption {
+        optional string filename = 1;
+        optional string error_message = 2;
+        optional int64 num_errors = 3 [default = 0];
+    }
+    
+    optional Stats stats = 6;
+    message Stats {
+        optional int64 num_shared_logs_scanned = 1 [default = 0];
+    }
+    
+    reserved 1;
+    
+    enum Reason {
+        TABLET_DOES_NOT_EXIST = 0;
+        ANOTHER_OP_IN_PROGRESS = 1;
+        UNQUARANTINE_FAILED = 2;
+        UNLOAD_FAILED = 3;
+        TIMED_OUT = 4;
+        RPC_CANCELED = 5;
+    }
+}
+
+message BTI_ClearTabletRequest {
+    optional BTI_Request request = 1;
+    optional BTI_Tablet tablet = 2;
+    optional string table_name = 3;
+}
+
+message BTI_ClearTabletReply {
+    optional Status status = 1;
+    enum Status {
+        NO_ERROR = 0;
+        MD_METADATA_COPY_FAILED = 1;
+        MD_METADATA_FAILED = 2;
+    }
+}
+
+message BTI_CloudKMSKeyStatusResponse {
+    repeated CloudKMSKeyTableUsage table_status = 1;
+}
+
+message BTI_CloudKMSKeyStateRequest {
+    optional BTI_Request request = 1;
+    repeated uint64 table_version = 2;
+}
+
+message BTI_GetTableSchemaRequest {
+    optional BTI_Request request = 1;
+    optional uint64 table_version = 2;
+}
+
+message BTI_GetTableSchemaResponse {
+    optional BTI_TableMetadata table_md = 1;
+    optional uint64 generation = 2;
+}
+
+message BTI_RotateTableResourceKeyRequest {
+    optional BTI_Request request = 3;
+    optional uint64 table_version = 1;
+    optional string cloud_resource_name = 2;
+}
+
+message BTI_RotateTableResourceKeyResponse {
+    
+}
+
+message BTI_RestoreTableACLsRequest {
+    optional BTI_Request request = 1;
+    optional uint64 table_version = 2;
+}
+
+message BTI_RestoreTableACLsResponse {
+    
+}
+
+message BTI_AddProtoDescriptorSetRequest {
+    optional BTI_Request request = 1;
+    optional uint64 table_version = 2;
+    optional ProtoDescriptorSet proto_descriptor_set = 3;
+}
+
+message BTI_AddProtoDescriptorSetResponse {
+    optional int64 version = 1;
+}
+
+message BTI_UpdateProtoDescriptorSetRequest {
+    optional BTI_Request request = 1;
+    optional uint64 table_version = 2;
+    optional ProtoDescriptorSet proto_descriptor_set = 3;
+    optional int64 current_version = 4;
+}
+
+message BTI_UpdateProtoDescriptorSetResponse {
+    optional int64 version = 1;
+}
+
+message BTI_DeleteProtoDescriptorSetRequest {
+    optional BTI_Request request = 1;
+    optional uint64 table_version = 2;
+    optional string identifier = 3;
+    optional int64 current_version = 4;
+}
+
+message BTI_GetProtoDescriptorSetVersionRequest {
+    optional BTI_Request request = 1;
+    optional uint64 table_version = 2;
+    optional string identifier = 3;
+}
+
+message BTI_GetProtoDescriptorSetVersionResponse {
+    optional int64 version = 1;
+}
+
+message BTI_NonloadableTablets {
+    repeated Tablet tablet = 1;
+    message Tablet {
+        optional uint64 tableversion = 2;
+        optional bytes endkey = 3;
+        optional string details = 5;
+        optional int32 severity = 6 [default = 0x7fffffff];
+        optional int32 auto_unquarantine_attempts = 7 [default = 0];
+        optional double first_quarantined_at = 8;
+        
+        reserved 4;
+    }
+    
+    optional int32 fileset_size = 11 [default = 1];
+    optional int32 fileset = 12;
+    optional ChubbyCompressed chubby_compressed = 9;
+    optional fixed32 _checksum = 10;
+    optional fixed32 _crc_checksum = 13;
+}

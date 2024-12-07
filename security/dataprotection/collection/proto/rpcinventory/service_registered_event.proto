@@ -18,6 +18,7 @@ message ServiceRegisteredEvent {
     repeated AppsFrameworkServerInfo af_server_info = 10 [deprecated = true];
     repeated FrameworkServerInfo framework_server_info = 11;
     int64 borg_job_uid = 4;
+    int64 borg_task_uid = 18;
     int32 task_index = 12;
     
     TransportType transport_type = 7;

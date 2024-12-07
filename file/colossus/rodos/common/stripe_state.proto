@@ -1,0 +1,9 @@
+syntax = "editions";
+
+package rodos;
+
+import "file/colossus/proto/cfs.proto";
+
+message StripeState {
+    optional .colossus.Stripe.State state = 1;
+}

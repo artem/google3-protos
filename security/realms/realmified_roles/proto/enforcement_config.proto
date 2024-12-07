@@ -1,0 +1,20 @@
+syntax = "editions";
+
+package security_realms;
+
+import "security/credentials/proto/principal.proto";
+import "security/realms/realmified_roles/proto/role_realm_control_policy.proto";
+
+message EnforcementConfig {
+    repeated AttributeValueEnforcement attribute_value_enforcement = 1;
+    message AttributeValueEnforcement {
+        repeated CredentialControlPolicyType.Enum darklaunched_policy_types = 3;
+        repeated CredentialControlPolicyType.Enum enforced_policy_types = 4;
+        
+        oneof binding_attribute {
+            security.credentials.PrincipalProto principal = 1;
+            string security_realm = 2;
+            security.credentials.PrincipalProto issuer = 5;
+        }
+    }
+}

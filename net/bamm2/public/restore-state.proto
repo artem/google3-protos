@@ -1,0 +1,11 @@
+syntax = "editions";
+
+package bamm2.chr;
+
+import "net/bamm2/internal/pony/state.proto";
+import "net/bamm2/public/endpoint-config.proto";
+
+message EndpointState {
+    optional EndpointConfig config = 1;
+    optional .bamm2.internal.pony.PonyTransportState pony_transport_state = 2;
+}

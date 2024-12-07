@@ -1,0 +1,16 @@
+syntax = "editions";
+
+package security_realms;
+
+message RegionalTrustMetadata {
+    optional PolicyInstanceMetadata enforced_policy_metadata = 1;
+    message PolicyInstanceMetadata {
+        repeated string trusted_realm_acls = 1;
+        repeated string trusted_universe_ids = 2;
+        optional bool trusts_all_tpc_universes = 3;
+    }
+    
+    optional PolicyInstanceMetadata darklaunch_policy_metadata = 2;
+    optional string loas_mode = 3;
+    optional bool centrally_enabled = 4;
+}

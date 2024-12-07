@@ -1,6 +1,11 @@
-syntax = "proto2";
+syntax = "editions";
 
 package ptoken;
+
+import "privacy/data_governance/attributes/proto/purpose.proto";
+import "privacy/ptoken/public/core/request_context_defs.proto";
+import "third_party/java/protobuf/java_features.proto";
+import "third_party/protobuf/cpp_features.proto";
 
 option java_multiple_files = true;
 option java_package = "com.google.privacy.ptoken.core.minting";
@@ -15,4 +20,7 @@ message PTokenMintingMetrics {
         PROPAGATED = 4;
         REGISTRY = 5;
     }
+    
+    repeated privacy.data_governance.attributes.ProcessingPurpose.Purpose processing_purpose = 2;
+    optional Dma52ProcessingType dma52_processing_type = 3;
 }

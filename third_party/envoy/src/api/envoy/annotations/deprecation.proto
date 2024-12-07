@@ -6,12 +6,12 @@ import "net/proto2/proto/descriptor.proto";
 
 option go_package = "github.com/envoyproxy/go-control-plane/envoy/annotations";
 
-extend proto2.FieldOptions {
+extend .proto2.FieldOptions {
     bool disallowed_by_default = 189503207;
     string deprecated_at_minor_version = 157299826;
 }
 
-extend proto2.EnumValueOptions {
+extend .proto2.EnumValueOptions {
     bool disallowed_by_default_enum = 70100853;
     string deprecated_at_minor_version_enum = 181198657;
 }

@@ -2,6 +2,7 @@ syntax = "proto2";
 
 package security_loas_l2;
 
+import "borg/common/internal_confidential_mode_config.proto";
 import "net/proto2/bridge/proto/message_set.proto";
 import "security/credentials/proto/principal.proto";
 import "security/loas/l2/proto/usertype.proto";
@@ -38,6 +39,7 @@ message MasterPolicy {
     optional bool allowed_to_set_instance_info = 12;
     repeated UserType allowed_user_type_assertions = 13 [packed = true];
     optional bool allowed_to_set_is_person = 10;
+    repeated borg.InternalConfidentialModeConfig.SecurityLevel allowed_confidential_levels = 14 [packed = true];
     
     extensions 8;
 }

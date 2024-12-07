@@ -2,6 +2,8 @@ syntax = "proto2";
 
 package research_scam;
 
+import "research/scam/data_format/features.proto";
+
 option java_package = "com.google.research.scam";
 
 message ProjectionConfig {
@@ -20,6 +22,7 @@ message ProjectionConfig {
         MEANSTD_PROJECTION = 12;
         IDENTITY_CHUNK = 13;
         TRUNCATE = 14;
+        EIGENVALUE_OPQ = 15;
     }
     
     optional uint64 input_dim = 9;
@@ -63,4 +66,10 @@ message RandomBilinearConfig {
     optional int32 input_vector_columns = 2;
     optional int32 proj_vector_rows = 3;
     optional int32 proj_vector_columns = 4;
+}
+
+message SerializedProjection {
+    repeated GenericFeatureVector rotation_vec = 1;
+    repeated int32 variable_dims_per_block = 2 [packed = true];
+    repeated float per_block_eigenvalue_sums = 3 [packed = true];
 }

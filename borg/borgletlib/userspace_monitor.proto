@@ -1,0 +1,8 @@
+syntax = "editions";
+
+package borg;
+
+message UserspaceData {
+    optional string task_handle = 1;
+    optional bytes payload = 2;
+}

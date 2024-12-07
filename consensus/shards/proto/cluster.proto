@@ -1,0 +1,19 @@
+syntax = "editions";
+
+package consensus.shards;
+
+import "storage/datapol/annotations/proto/semantic_annotations.proto";
+
+message Cluster {
+    optional string name = 1;
+    
+    optional ClusterPurpose purpose = 2;
+    enum ClusterPurpose {
+        PRODUCTION = 0;
+        MINICLUSTER = 1;
+        LOGS = 2;
+        EDGE_COMPUTE = 3;
+    }
+    
+    map<string, string> locations = 3;
+}

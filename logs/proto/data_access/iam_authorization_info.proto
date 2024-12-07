@@ -14,4 +14,8 @@ message IamAuthorizationInfo {
     LoggableIamAuthority iam_authority = 4;
     string permission = 2;
     bool granted = 3;
+    
+    oneof _is_direct_auth {
+        bool is_direct_auth = 5;
+    }
 }

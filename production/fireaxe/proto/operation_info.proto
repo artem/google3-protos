@@ -1,4 +1,4 @@
-syntax = "proto3";
+syntax = "editions";
 
 package fireaxe;
 
@@ -10,8 +10,8 @@ option java_outer_classname = "OperationInfoPb";
 option java_package = "com.google.protos.fireaxe.operationinfo";
 
 message OperationInfoProto {
-    google.protobuf.Timestamp time = 1;
-    string user = 2;
-    string on_behalf_of = 3;
-    bool is_superuser = 4;
+    optional google.protobuf.Timestamp time = 1;
+    optional string user = 2;
+    optional string on_behalf_of = 3;
+    optional bool is_superuser = 4;
 }

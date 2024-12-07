@@ -1,0 +1,142 @@
+syntax = "proto3";
+
+package plaque;
+
+import "net/plaque/core/version.proto";
+import "net/plaque/opdef/opdef.proto";
+import "net/plaque/program.proto";
+import "net/plaque/util/digest.proto";
+
+message CompilationResultProto {
+    CompiledRulesProto compiled_rules = 1;
+    Digest256Proto root_program_digest = 2;
+    SubprogramTableProto subprogram_table = 3;
+}
+
+message CompiledRulesProto {
+    AllowedCalls root_calls = 1;
+    message AllowedCalls {
+        repeated AllowedCall allowed_calls = 1;
+    }
+    
+    repeated AllowedCalls subprogram_calls = 2;
+    
+    message AllowedCall {
+        int32 location_id = 1;
+        uint32 subprogram_index = 2;
+    }
+}
+
+message SubprogramTableProto {
+    repeated Digest256Proto subprogram_digests = 1;
+}
+
+message CompiledProgramProto {
+    string program_name = 2;
+    repeated LocationProto locations = 4;
+    repeated GraphProto graphs = 1;
+    Version version = 3;
+    bytes source_info = 6 [ctype = CORD];
+}
+
+message GraphProto {
+    LocationProto run_location = 1;
+    int32 run_location_id = 6;
+    int32 max_shards = 5;
+    repeated GraphStmtProto stmts = 2;
+    repeated SendOpInfo sends = 3;
+    repeated ActivatorInfo activators = 13;
+    repeated MonitorInfo monitor_info = 15;
+    bool is_disconnecting = 12;
+    repeated int32 monitors = 10;
+    repeated DirectStartInfo direct_starts = 8;
+    repeated OpFile opfiles = 14;
+    repeated ShardingInfo sharding_info = 16;
+    
+    reserved 4;
+}
+
+message GraphInputProto {
+    int32 stmt = 1;
+    int32 output = 2;
+    
+    reserved 3;
+}
+
+message GraphStmtProto {
+    string op = 1;
+    string name = 2;
+    repeated Literal attributes = 3;
+    repeated GraphInputProto inputs = 4;
+    repeated int32 input_counts = 18;
+    repeated int32 controls = 6;
+    repeated int32 monitors = 9;
+    repeated string out_types = 5;
+    fixed32 properties = 7;
+    int32 execution_order = 11;
+    repeated string executor_tags = 17;
+    int32 object_id = 12;
+    
+    reserved 8, 10;
+}
+
+message SendOpInfo {
+    int32 stmt = 1;
+    LocationProto loc = 2;
+    int32 recv_loc_id = 6;
+    bool direct = 4;
+    bool activating = 15;
+    int32 direct_start_index = 11;
+    bool recv_graph_multi_receiver = 10;
+    bool recv_loc_has_multi_recv_graph = 3;
+    int32 num_shards = 5;
+    repeated bool is_optional = 16;
+}
+
+message ActivatorInfo {
+    int32 gid = 1;
+    LocationProto loc = 2;
+    int32 activator_loc_id = 3;
+}
+
+message MonitorInfo {
+    int32 stmt = 1;
+    repeated int32 activation_gids = 2;
+}
+
+message DirectStartInfo {
+    fixed64 recv_graph_fp = 2;
+    fixed64 recv_graph_fp1 = 3;
+    fixed64 recv_graph_fp2 = 4;
+    fixed64 recv_graph_fp3 = 5;
+    
+    reserved 1;
+}
+
+message ArgInfo {
+    string name = 1;
+    Recv recv = 2;
+}
+
+message Recv {
+    int32 gid = 1;
+    int32 stmt = 2;
+}
+
+message StmtList {
+    repeated int32 stmts = 1;
+}
+
+message ShardingInfo {
+    int32 stmt = 1;
+    string sharding_field = 2;
+}
+
+enum GraphStmtProperties {
+    NO_PROPERTIES = 0;
+    END_WHEN_OUTPUTS_DONE = 1;
+    SKIP_ON_EMPTY_INPUTS = 2;
+    RUNTIME_GENERATED = 4;
+    PROGRAM_CALL = 8;
+    LOCAL_SHARDED_SEND = 16;
+}

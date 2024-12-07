@@ -1,8 +1,7 @@
-syntax = "proto3";
+syntax = "editions";
 
 package production.dependency.rpc.outboundacl;
 
-option cc_enable_arenas = true;
 option java_package = "com.google.prod.dependency.rpc.outboundacl";
 
 enum Reason {

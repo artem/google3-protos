@@ -33,7 +33,9 @@ message CertificateConfig {
         
         optional bool require_scts = 14;
         
-        reserved 7, 6, 10, "additional_cert_base64", "strict_address", "replacement";
+        reserved 7, 6, 10;
+        
+        reserved "additional_cert_base64", "strict_address", "replacement";
     }
     
     optional TrustStore server_auth_trust_store = 20;
@@ -138,5 +140,7 @@ message CertificateConfig {
     
     repeated string ip_and_port_without_sni = 19;
     
-    reserved 15, 12, 6, 14, 13, "enable_token_binding", "stricter_checking", "client_cert_subtree_cert_file", "ciphers_tls10", "ciphers_tls11";
+    reserved 15, 12, 6, 14, 13;
+    
+    reserved "enable_token_binding", "stricter_checking", "client_cert_subtree_cert_file", "ciphers_tls10", "ciphers_tls11";
 }

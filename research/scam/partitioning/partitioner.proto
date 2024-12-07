@@ -2,18 +2,14 @@ syntax = "proto2";
 
 package research_scam;
 
-import "research/scam/data_format/features.proto";
 import "research/scam/partitioning/kmeans_tree_partitioner.proto";
 import "research/scam/partitioning/linear_projection_tree.proto";
+import "research/scam/proto/projection.proto";
 
 message SerializedPartitioner {
     optional int32 n_tokens = 1;
     optional bool uses_projection = 3 [default = false];
-    
-    optional PcaEigenvectors pca_eigenvectors = 5;
-    message PcaEigenvectors {
-        repeated GenericFeatureVector eigenvector = 1;
-    }
+    optional SerializedProjection serialized_projection = 5;
     
     oneof PartitionerPayload {
         SerializedKMeansTreePartitioner kmeans = 2;

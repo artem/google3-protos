@@ -1,28 +1,26 @@
-syntax = "proto3";
+syntax = "editions";
 
 package stats_census;
 
 import "stats/census/proto/tag_set.proto";
 
-option cc_enable_arenas = true;
-
 message UnaggregatedMeasurements {
     repeated Record records = 1;
     message Record {
-        uint64 tag_set_idx = 1;
-        int32 resource_id = 2;
+        optional uint64 tag_set_idx = 1;
+        optional int32 resource_id = 2;
         repeated double quantities = 3;
     }
     
     repeated TagSetProto tag_sets = 2;
-    double weight = 3;
+    optional double weight = 3;
     
-    MonitoredTarget monitored_target = 4;
+    optional MonitoredTarget monitored_target = 4;
     message MonitoredTarget {
-        string borg_user = 1;
-        string borg_job = 2;
-        string borg_cell = 3;
-        int32 borg_task_num = 4;
+        optional string borg_user = 1;
+        optional string borg_job = 2;
+        optional string borg_cell = 3;
+        optional int32 borg_task_num = 4;
     }
     
     reserved 5, 6;

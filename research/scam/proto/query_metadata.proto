@@ -2,6 +2,8 @@ syntax = "proto2";
 
 package research_scam;
 
+import "google/api/inclusion.proto";
+
 option cc_enable_arenas = true;
 
 message NeighborSelectionOverride {

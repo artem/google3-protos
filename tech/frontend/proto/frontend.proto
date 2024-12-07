@@ -1,22 +1,24 @@
-syntax = "proto2";
+syntax = "editions";
 
 package tech.frontend;
 
-message FrontEndMessage {
-  optional bytes headers = 2 [ctype = CORD];
-  optional bytes data = 3 [ctype = CORD];
-}
+import "third_party/boundary_proxy/proto_compare/annotation.proto";
 
 service HTTPService {
-  rpc Request(stream .tech.frontend.FrontEndMessage) returns (stream .tech.frontend.FrontEndMessage);
+    rpc Request(stream FrontEndMessage) returns (stream FrontEndMessage);
 }
 
 service WebChannelService {
-  rpc Message(stream .tech.frontend.FrontEndMessage) returns (stream .tech.frontend.FrontEndMessage);
+    rpc Message(stream FrontEndMessage) returns (stream FrontEndMessage);
 }
 
 service ByteStreamService {
-  rpc Message(stream .tech.frontend.FrontEndMessage) returns (stream .tech.frontend.FrontEndMessage);
+    rpc Message(stream FrontEndMessage) returns (stream FrontEndMessage);
 }
 
-
+message FrontEndMessage {
+    optional bytes headers = 2 [ctype = CORD];
+    optional bytes data = 3 [ctype = CORD];
+    optional bytes metadata = 11 [ctype = CORD];
+    optional bool headers_continuation = 12 [default = false];
+}

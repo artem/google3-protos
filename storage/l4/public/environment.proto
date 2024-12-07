@@ -1,0 +1,14 @@
+syntax = "editions";
+
+package storage_l4;
+
+option java_multiple_files = true;
+
+enum Environment {
+    ENVIRONMENT_UNSPECIFIED = 0;
+    PROD = 1;
+    DEV = 2;
+    SANDBOX = 3;
+    NIMBUS_PROD = 4;
+    NIMBUS_DEV = 5;
+}

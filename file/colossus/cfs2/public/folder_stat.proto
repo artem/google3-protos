@@ -1,0 +1,13 @@
+syntax = "editions";
+
+package colossus.cfs2;
+
+message FolderStat {
+    optional int64 generation = 2;
+    optional string start_filename = 5;
+    optional string limit_filename = 6;
+    optional bool folder_deleted = 3;
+    optional bool read_only = 4;
+    
+    reserved 1;
+}

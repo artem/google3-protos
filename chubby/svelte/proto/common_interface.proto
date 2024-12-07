@@ -1,4 +1,4 @@
-syntax = "proto2";
+syntax = "editions";
 
 package chubby;
 
@@ -17,4 +17,14 @@ message AwaitChangeRequestInfo {
 
 message AwaitChangeResponseInfo {
     optional LoadSheddingMode load_shedding_mode = 1;
+}
+
+message ErrorReason {
+    enum REASON {
+        UNSPECIFIED = 0;
+        BLACKLISTED_FILE = 1;
+        FORBIDDEN_IN_HERMETIC_MODE = 2;
+        STALE_BNS_CLIENT_VIOLATION = 3;
+        LS_ANY_ALLOWLIST_VIOLATION = 4;
+    }
 }

@@ -1,0 +1,74 @@
+syntax = "editions";
+
+package colossus.cfs2;
+
+import "file/colossus/cfs2/proto/folder.proto";
+import "file/colossus/cfs2/proto/metadata_layer.proto";
+import "file/colossus/cfs2/public/folder_stat.proto";
+import "file/colossus/proto/base.proto";
+import "google/protobuf/timestamp.proto";
+
+service FolderManagementInterface {
+    rpc CreateFolder(CreateFolderArg) returns (CreateFolderResult);
+    rpc DeleteFolder(DeleteFolderArg) returns (DeleteFolderResult);
+    rpc StatFolder(StatFolderArg) returns (StatFolderResult);
+    rpc TransferRangeOwnership(TransferRangeOwnershipArg) returns (TransferRangeOwnershipResult);
+    rpc StartMerge(StartMergeArg) returns (StartMergeResult);
+}
+
+message CreateFolderArg {
+    optional ArgHeader header = 1;
+    optional string folder_name = 2;
+    optional string start_filename = 3;
+    optional string limit_filename = 4;
+    optional google.protobuf.Timestamp expiration_time = 5;
+}
+
+message CreateFolderResult {
+    optional int64 generation = 2;
+    
+    reserved 1;
+}
+
+message DeleteFolderArg {
+    optional ArgHeader header = 1;
+    optional string folder_name = 2;
+}
+
+message DeleteFolderResult {
+    reserved 1;
+}
+
+message StatFolderArg {
+    optional ArgHeader header = 1;
+    optional string folder_name = 2;
+}
+
+message StatFolderResult {
+    optional MetadataLayer max_loadable_layer = 4;
+    optional FolderStat stat = 3;
+    
+    reserved 1, 2, 5;
+}
+
+message TransferRangeOwnershipArg {
+    optional ArgHeader header = 1;
+    optional string folder_name = 2;
+    optional FolderKeyProto transferred_parent_folder = 4;
+    optional google.protobuf.Timestamp earliest_merge_timestamp = 5;
+}
+
+message TransferRangeOwnershipResult {
+    reserved 1;
+}
+
+message StartMergeArg {
+    optional ArgHeader header = 1;
+    optional string folder_name = 2;
+    optional FolderKeyProto child = 3;
+    optional FolderRangeKeyProto child_range_key = 4;
+}
+
+message StartMergeResult {
+    
+}

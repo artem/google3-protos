@@ -2,7 +2,9 @@ syntax = "proto2";
 
 package compliance_controls;
 
+import "privacy/compliance_controls/proto/ads_measurement_control.proto";
 import "privacy/compliance_controls/proto/compliance_controls.proto";
+import "privacy/compliance_controls/proto/new_product_development_control.proto";
 import "privacy/compliance_controls/proto/privacy_mode_controls.proto";
 import "storage/datapol/annotations/proto/semantic_annotations.proto";
 import "storage/datapol/annotations/proto/workspace_annotations.proto";
@@ -14,6 +16,8 @@ message ZwiebackComplianceControls {
     optional int64 last_refresh_time_micros = 1;
     optional int32 rollout_priority = 4;
     optional PrivacyModeControls privacy_mode_controls = 5;
+    optional AdsMeasurementControl ads_measurement_control = 6;
+    optional NewProductDevelopmentControl new_product_development_control = 7;
     
     oneof dma52 {
         Dma52Controls dma52_controls = 2;

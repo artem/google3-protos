@@ -1,0 +1,8 @@
+syntax = "proto3";
+
+package storage_l4;
+
+message DUserIsolationClassProto {
+    string user = 1;
+    string isolation_class = 2;
+}

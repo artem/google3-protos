@@ -1,0 +1,101 @@
+syntax = "editions";
+
+package storage_encryption;
+
+import "storage/datapol/annotations/proto/semantic_annotations.proto";
+
+message ColossusParameters {
+    optional int64 stripe_length = 1;
+    optional ColossusSuffixStrategy suffix_strategy = 2;
+}
+
+message StorageEncryptionParams {
+    optional System system = 1;
+    optional Mode mode = 2;
+    optional Hash hash = 3;
+    optional uint32 segment_size = 4;
+    optional uint32 iv_size = 5;
+    optional uint32 mac_size = 6;
+    optional uint32 prefix_size = 7;
+    optional uint32 suffix_size = 8;
+    
+    oneof storage_system_params {
+        ColossusParameters colossus_params = 9;
+    }
+}
+
+message AesGcmStorageEncryptionKeyFormat {
+    optional uint32 version = 1;
+    optional StorageEncryptionParams params = 2;
+    optional uint32 key_size = 3;
+}
+
+message AesGcmStorageEncryptionKey {
+    optional uint32 version = 1;
+    optional StorageEncryptionParams params = 2;
+    optional bytes key_value = 3;
+    optional uint32 key_crc_value = 4;
+    optional bytes ff1_key_value = 5;
+    optional uint32 ff1_key_crc_value = 6;
+}
+
+message AesCtrHmacStorageEncryptionKeyFormat {
+    optional uint32 version = 1;
+    optional StorageEncryptionParams params = 2;
+    optional uint32 key_size = 3;
+}
+
+message AesCtrHmacStorageEncryptionKey {
+    optional uint32 version = 1;
+    optional StorageEncryptionParams params = 2;
+    optional bytes aes_ctr_key_value = 3;
+    optional uint32 aes_ctr_key_crc_value = 4;
+    optional bytes hmac_key_value = 5;
+    optional uint32 hmac_key_crc_value = 6;
+    optional bytes ff1_key_value = 7;
+    optional uint32 ff1_key_crc_value = 8;
+}
+
+message AesGhacStorageEncryptionKeyFormat {
+    optional uint32 version = 1;
+    optional StorageEncryptionParams params = 2;
+    optional uint32 key_size = 3;
+}
+
+message AesGhacStorageEncryptionKey {
+    optional uint32 version = 1;
+    optional StorageEncryptionParams params = 2;
+    optional bytes aes_key_value = 3;
+    optional uint32 aes_key_crc_value = 4;
+    optional bytes hmac_key_value = 5;
+    optional uint32 hmac_key_crc_value = 6;
+    optional bytes ff1_key_value = 7;
+    optional uint32 ff1_key_crc_value = 8;
+}
+
+enum System {
+    SYSTEM_UNSPECIFIED = 0;
+    SYSTEM_COLOSSUS = 1;
+    SYSTEM_BLOBSTORE = 2;
+}
+
+enum ColossusSuffixStrategy {
+    STRATEGY_UNSPECIFIED = 0;
+    STRATEGY_EMPTY_SUFFIX = 1;
+    STRATEGY_CRC32C_SUFFIX = 2;
+    STRATEGY_FFX_ENCRYPTED_CRC32C_SUFFIX = 3;
+    STRATEGY_FFX_ENCRYPTED_PER_FILE_CRC32C_SUFFIX = 4;
+}
+
+enum Mode {
+    MODE_UNSPECIFIED = 0;
+    MODE_AES_GCM = 1;
+    MODE_AES_CTR_HMAC = 2;
+    MODE_AES_GHAC = 3;
+}
+
+enum Hash {
+    HASH_UNSPECIFIED = 0;
+    HASH_SHA1 = 1;
+    HASH_SHA256 = 2;
+}

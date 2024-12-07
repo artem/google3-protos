@@ -38,7 +38,7 @@ message RPCClientRequestInfo {
     optional int32 flags = 9 [default = 1];
     optional string message = 100;
     
-    extend proto2.bridge.MessageSet {
+    extend .proto2.bridge.MessageSet {
         optional RPCClientRequestInfo message_set_extension = 6120541;
     }
 }
@@ -60,7 +60,7 @@ message RPCClientResponseInfo {
     optional bool rcvd_b4_path_selector = 9;
     optional float query_cost = 10;
     
-    extend proto2.bridge.MessageSet {
+    extend .proto2.bridge.MessageSet {
         optional RPCClientResponseInfo message_set_extension = 6128373;
     }
 }
@@ -80,7 +80,7 @@ message RPCServerRequestInfo {
     optional bool rcvd_b4_path_selector = 11;
     optional string message = 100;
     
-    extend proto2.bridge.MessageSet {
+    extend .proto2.bridge.MessageSet {
         optional RPCServerRequestInfo message_set_extension = 6131050;
     }
 }
@@ -95,7 +95,7 @@ message RPCServerResponseInfo {
     optional float query_cost = 7;
     optional string message = 100;
     
-    extend proto2.bridge.MessageSet {
+    extend .proto2.bridge.MessageSet {
         optional RPCServerResponseInfo message_set_extension = 6145233;
     }
 }
@@ -105,7 +105,7 @@ message RPCStreamingResponseInfo {
     required int64 size_bytes_wire = 2;
     optional int32 seqno = 3;
     
-    extend proto2.bridge.MessageSet {
+    extend .proto2.bridge.MessageSet {
         optional RPCStreamingResponseInfo message_set_extension = 6815927;
     }
 }

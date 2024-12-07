@@ -1,0 +1,141 @@
+syntax = "proto2";
+
+package bigtable;
+
+import "bigtable/proto/rowset.proto";
+import "net/proto2/bridge/proto/message_set.proto";
+import "storage/datapol/annotations/proto/semantic_annotations.proto";
+
+option java_package = "com.google.bigtable.protos";
+
+message TabletIteratorStatsProto {
+    required int32 num_memtables = 1;
+    required int32 memtable_seek_cnt = 2;
+    required int32 memtable_next_cnt = 3;
+    required int32 num_sstables = 4;
+    optional int32 num_ssd_sstables = 22;
+    required int32 sstable_errors = 5;
+    required int32 sstable_block_count = 6;
+    required int32 cached_block_count = 7;
+    required int32 sstable_index_block_count = 8;
+    required int32 sstable_index_cached_block_count = 9;
+    required int32 sstable_seek_cnt = 10;
+    required int32 sstable_next_cnt = 11;
+    required int32 bloom_hit_cnt = 12;
+    required int64 sstable_bytes_read = 13;
+    required int64 sstable_fs_bytes_read = 14;
+    required double sstable_fs_delay = 15;
+    required int64 decode_errors = 16;
+    optional int64 sstable_fs_read_count = 17;
+    optional int32 sstable_bloom_block_count = 18;
+    optional int32 sstable_bloom_cached_block_count = 19;
+    optional int32 sstable_bloom_seek_cnt = 20;
+    optional int32 sstable_bloom_next_cnt = 21;
+}
+
+message ReaderStatsProto {
+    required int32 num_reads = 2;
+    required TabletIteratorStatsProto tablet_iter_stats = 3;
+    optional int64 rows_seen = 11;
+    required int64 cells_seen = 4;
+    required int64 deletes_seen = 5;
+    required int64 rows_encoded = 6;
+    required int64 items_encoded = 7;
+    required int64 bytes_encoded = 8;
+    required int64 flush_count = 9;
+    optional int64 cells_ptoken_filtered = 13;
+    
+    optional EvaluatorType evaluator = 10 [default = UNINITIALIZED];
+    enum EvaluatorType {
+        UNINITIALIZED = 0;
+        SCANNER = 1;
+        READER = 2;
+        MIXED = 3;
+    }
+    
+    reserved 12;
+    
+    extend .proto2.bridge.MessageSet {
+        optional ReaderStatsProto message_set_extension = 8874670;
+    }
+}
+
+message StatsEntry {
+    optional bytes tabletserver_ip = 21;
+    
+    required OperationType operation_type = 2;
+    enum OperationType {
+        APPLY = 0;
+        READ = 1;
+        REPL_CHUNK_REQ = 2;
+        OTHER = 3;
+        COMPACTION_MAJOR = 4;
+        COMPACTION_MINOR = 5;
+        COMPACTION_MERGE = 6;
+        COMPACTION_DISCARD = 7;
+        COPROCESSOR_CALL = 8;
+        BULK_IMPORT = 15;
+        READ_APPLY = 9;
+        WATCH = 10;
+        PING = 11;
+        DIFF = 12;
+        DIFF_DIGEST = 13;
+        ROTATE_KEY = 14;
+        NUM_OPERATION_TYPES = 16;
+    }
+    
+    required uint64 table_version = 3;
+    required int32 dropped = 4;
+    optional int32 op_priority = 5;
+    optional string user = 6;
+    optional BTI_RowSetProto rowset = 7;
+    optional string coprocessor_method = 15;
+    optional int32 error_code = 8;
+    optional string error_detail = 9;
+    optional double latency = 10;
+    optional int64 network_bytes_in = 11;
+    optional int64 network_bytes_out = 12;
+    optional int64 gfs_bytes_in = 13;
+    optional int64 gfs_bytes_out = 14;
+    repeated int64 column_family = 17;
+    optional string client_jobname = 18;
+    optional string client_borgcell = 19;
+    optional string client_username = 20;
+    optional string partition = 22;
+    repeated .proto2.bridge.MessageSet extended_stats = 16;
+    optional bool must_log = 23;
+    optional uint32 bucket = 24;
+    
+    optional ClientLanguage client_language = 25;
+    enum ClientLanguage {
+        LANG_UNKNOWN = 0;
+        LANG_CPP = 1;
+        LANG_JAVA = 2;
+        LANG_GO = 3;
+        LANG_PYTHON = 4;
+    }
+    
+    reserved 1;
+}
+
+message ActiveOpStatsProto {
+    required double count = 1;
+    optional double op_latency = 2;
+    optional double loc_latency = 3;
+    optional double sent_bytes = 4;
+    optional double recv_bytes = 5;
+    optional double retries = 6;
+    optional double errors = 7;
+}
+
+message ClientOpStatsProto {
+    required int32 error_code = 1;
+    required int32 finder_scans = 2;
+    required int32 finder_location_poisoned = 3;
+    optional ActiveOpStatsProto active_op_stats = 4;
+    optional ReaderStatsProto reader_stats = 5;
+    
+    extend .proto2.bridge.MessageSet {
+        optional ClientOpStatsProto message_set_extension = 12820125;
+    }
+}

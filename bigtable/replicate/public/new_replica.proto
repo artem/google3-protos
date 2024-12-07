@@ -1,0 +1,127 @@
+syntax = "editions";
+
+package bigtable;
+
+import "bigtable/proto/bigtable.proto";
+import "bigtable/proto/bigtable_internal.proto";
+import "bigtable/proto/bti_request.proto";
+import "bigtable/proto/error_payload.proto";
+import "bigtable/util/state_manager/state_manager.proto";
+import "net/proto2/bridge/proto/message_set.proto";
+
+message NewReplicaStatus {
+    optional Phase phase = 1;
+    enum Phase {
+        INVALID = 0;
+        UNUSED = 1;
+        STARTING = 5;
+        PRE_SNAPSHOTTING = 7;
+        CREATING_GHOST_TABLE = 10;
+        ADDING_GHOST_REPLICA = 15;
+        SNAPSHOTTING = 25;
+        RESTORING_SNAPSHOT = 35;
+        ADDING_DESTINATION_REPLICA = 45;
+        UPDATING_DESTINATION_REPLICA = 47;
+        SETTING_LOADABLE = 50;
+        REMOVING_GHOST_REPLICA = 55;
+        DELETING_GHOST_TABLE = 60;
+        DELETING_SNAPSHOT = 62;
+        COLLECTING_STATS = 63;
+        SUCCESS = 65;
+        FAILURE = 70;
+        CANCELLED = 75;
+        CANCELLATION_PENDING = 76;
+    }
+    
+    optional Phase last_phase = 3;
+    optional string error_message = 2;
+    optional float copy_progress = 4;
+    optional int32 error_code = 5;
+    optional BigtableErrorPayload error_payload = 6;
+}
+
+message NewReplicaSnapshot {
+    enum Type {
+        INVALID = 0;
+        DONT_SNAPSHOT_COMPACT = 1;
+        TRY_SNAPSHOT_COMPACT = 2;
+        FORCE_SNAPSHOT_COMPACT = 3;
+        AUTOMATIC = 4;
+    }
+}
+
+message BTIR_NewReplicaCheckpoint {
+    optional NewReplicaStatus status = 1;
+    optional BTIR_NewReplicaArgs args = 2;
+    optional int64 timestamp_millis = 3;
+    
+    extend .proto2.bridge.MessageSet {
+        optional BTIR_NewReplicaCheckpoint message_set_extension = 63041759;
+    }
+    
+    extend StateManagerCheckPoint {
+        optional BTIR_NewReplicaCheckpoint state = 102;
+    }
+}
+
+message BTIR_NewReplicaArgs {
+    optional BTI_Request request = 1;
+    optional string source_cell_name = 2;
+    optional string source_table_name = 3;
+    optional string destination_cell_name = 4;
+    optional string destination_table_name = 5;
+    optional string destination_partition = 6;
+    optional int32 destination_fsroot_id = 7 [default = -1];
+    optional CloudKMSEncryptionSettings destination_cloud_kms_encryption_settings = 14;
+    optional bool try_snapshot_compaction = 8 [default = false];
+    optional NewReplicaSnapshot.Type snapshot_type = 12 [default = INVALID];
+    optional bool master = 9 [default = false];
+    optional bool pre_snapshot = 10 [default = false];
+    optional bool copy_unreplicated = 11 [default = false];
+    optional bool deflash_snapshot = 13 [default = false];
+    
+    optional MoveReplicaVersion move_replica_version = 17;
+    enum MoveReplicaVersion {
+        NOT_APPLICABLE = 0;
+        MOVE_CLUSTER = 1;
+        MOVE_REPLICA = 2;
+    }
+    
+    optional bool is_move_table = 16 [default = false, deprecated = true];
+    
+    reserved 15;
+}
+
+message BTIR_WaitForNewReplicaArgs {
+    optional BTI_Request request = 1;
+    optional string destination_cell_name = 2;
+    optional string destination_table_name = 3;
+}
+
+message BTIR_WaitForNewReplicaReply {
+    optional NewReplicaStatus status = 1;
+}
+
+message BTIR_GetNewReplicaStatusArgs {
+    optional BTI_Request request = 1;
+    optional string destination_cell_name = 2;
+    optional string destination_table_name = 3;
+    optional bool get_copy_stats = 4 [default = false];
+}
+
+message BTIR_GetNewReplicaStatusReply {
+    optional NewReplicaStatus status = 1;
+}
+
+message BTIR_CancelNewReplicaArgs {
+    optional BTI_Request request = 1;
+    optional string destination_cell_name = 2;
+    optional string destination_table_name = 3;
+}
+
+message BTIR_CleanupNewReplicaArgs {
+    optional BTI_Request request = 1;
+    optional string destination_cell_name = 2;
+    optional string destination_table_name = 3;
+    optional bool force = 4 [default = false];
+}

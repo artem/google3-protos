@@ -1,0 +1,36 @@
+syntax = "editions";
+
+package bigtable;
+
+import "bigtable/proto/bigtable.proto";
+import "bigtable/proto/bigtable_internal.proto";
+
+message AuditLogEntry {
+    optional string label = 1;
+    optional string credentials = 2;
+    optional string server_ip = 3;
+    optional string client_ip_port = 4;
+    optional string annotation = 15;
+    
+    optional CellMetadataUpdate cellmetadataupdate = 5;
+    message CellMetadataUpdate {
+        optional CellMetadata cell_metadata = 6;
+    }
+    
+    optional TableMetadataUpdate tablemetadataupdate = 7;
+    message TableMetadataUpdate {
+        optional string table_name = 8;
+        optional BTI_TableMetadata table_metadata = 9;
+    }
+    
+    optional PartitionMetadataUpdate partition_md_update = 11;
+    message PartitionMetadataUpdate {
+        optional string partition_name = 12;
+        optional int64 partition_id = 13;
+        optional BTI_PartitionMetadata partition_metadata = 14;
+    }
+    
+    optional bool compare = 10 [default = true];
+    
+    extensions 100 to 199;
+}

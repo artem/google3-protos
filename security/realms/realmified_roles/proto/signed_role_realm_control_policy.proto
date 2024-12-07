@@ -1,0 +1,9 @@
+syntax = "editions";
+
+package security_realms;
+
+import "security/rootkr/carabiner/proto/carabiner.proto";
+
+message SignedRoleRealmControlPolicy {
+    optional .carabiner.Carabiner carabiner = 1;
+}

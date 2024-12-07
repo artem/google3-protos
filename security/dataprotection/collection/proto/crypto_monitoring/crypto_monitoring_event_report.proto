@@ -1,4 +1,4 @@
-syntax = "proto3";
+syntax = "editions";
 
 package security.dataprotection.collection.proto.crypto_monitoring;
 
@@ -11,30 +11,27 @@ option java_multiple_files = true;
 option java_package = "com.google.security.cryptomonitoring";
 
 message CryptoMonitoringEventReport {
-    secure_collection.MessageSource message_source = 1;
-    google.protobuf.Timestamp event_timestamp = 2;
+    optional secure_collection.MessageSource message_source = 1;
+    optional google.protobuf.Timestamp event_timestamp = 2;
     repeated CryptoMonitoringEvent events = 3;
-    CollectorErrorReport error_report = 4;
-    
-    oneof _idx_internal_metadata {
-        .idx.time_series.ingestion.proto.IDXTimeSeriesMetadata idx_internal_metadata = 5;
-    }
+    optional CollectorErrorReport error_report = 4;
+    optional .idx.time_series.ingestion.proto.IDXTimeSeriesMetadata idx_internal_metadata = 5;
 }
 
 message CryptoMonitoringEvent {
-    string name = 1;
+    optional string name = 1;
     map<string, bytes> fields = 2;
-    int64 count = 3;
+    optional int64 count = 3;
 }
 
 message CollectorErrorReport {
-    int64 error_count = 1;
-    int64 events_exceeded_size = 2;
-    int64 cells_dropped_from_counter = 3;
-    int64 counter_buffer_exceeded_size = 4;
-    int64 merge_exceeded_size = 5;
-    int64 failed_increments_in_java_crypto_collector = 6;
-    int64 events_dropped_in_java_crypto_publisher = 7;
-    int64 failed_increments_in_go_crypto_collector = 8;
-    int64 events_dropped_in_go_crypto_publisher = 9;
+    optional int64 error_count = 1;
+    optional int64 events_exceeded_size = 2;
+    optional int64 cells_dropped_from_counter = 3;
+    optional int64 counter_buffer_exceeded_size = 4;
+    optional int64 merge_exceeded_size = 5;
+    optional int64 failed_increments_in_java_crypto_collector = 6;
+    optional int64 events_dropped_in_java_crypto_publisher = 7;
+    optional int64 failed_increments_in_go_crypto_collector = 8;
+    optional int64 events_dropped_in_go_crypto_publisher = 9;
 }

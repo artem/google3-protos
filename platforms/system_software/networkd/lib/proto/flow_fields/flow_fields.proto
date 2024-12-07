@@ -1,0 +1,34 @@
+syntax = "proto2";
+
+package networkd.lib;
+
+import "platforms/system_software/networkd/lib/proto/delegation/delegation_metadata.proto";
+import "storage/datapol/annotations/proto/semantic_annotations.proto";
+
+option java_multiple_files = true;
+option java_package = "com.google.platforms.system_software.networkd.lib.proto";
+
+message IpGroupIdentifier {
+    optional uint64 id = 1;
+    optional string name = 2;
+    
+    enum IpgConstants {
+        NO_MATCH_IPG_ID = 65535;
+    }
+}
+
+message FlowIpGroup {
+    optional IpGroupIdentifier group_id = 1;
+}
+
+message FlowApplication {
+    optional uint64 id = 1;
+    optional string name = 2;
+}
+
+message FlowUser {
+    optional uint64 id = 1;
+    optional DelegationMetadata delegation_metadata = 3;
+    
+    reserved 2;
+}

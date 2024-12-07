@@ -1,4 +1,4 @@
-syntax = "proto2";
+syntax = "editions";
 
 package security.ganpati.sharded_client;
 
@@ -20,6 +20,7 @@ message AclChecksReport {
         UNKNOWN = 0;
         GANPATI_PROD = 1;
         GANPATI_CORP = 2;
+        LOCAL_REALM_ACL_REPOSITORY = 3;
     }
 }
 

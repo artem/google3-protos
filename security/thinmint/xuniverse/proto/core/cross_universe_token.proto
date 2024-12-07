@@ -1,19 +1,15 @@
-syntax = "proto2";
+syntax = "editions";
 
 package xuniverse;
 
-import "google/protobuf/any.proto";
 import "net/proto2/bridge/proto/message_set.proto";
 import "security/thinmint/proto/thinmint.proto";
-import "storage/datapol/annotations/proto/semantic_annotations.proto";
-
-message NotarizationWrapper {
-    optional google.protobuf.Any notarization = 1;
-}
+import "security/thinmint/xuniverse/proto/core/notarization_wrapper.proto";
 
 message CrossUniverseToken {
     optional NotarizationWrapper wrapped_notarization = 3;
     optional CrossUniverseTokenType token_type = 2;
+    optional CrossUniverseTokenOrigin token_origin = 4;
     
     reserved 1;
 }
@@ -32,4 +28,10 @@ enum CrossUniverseTokenType {
     CROSS_UNIVERSE_TOKEN_TYPE_UNSPECIFIED = 0;
     CROSS_UNIVERSE_TOKEN_TYPE_THINMINT = 1;
     CROSS_UNIVERSE_TOKEN_TYPE_DAT = 2;
+}
+
+enum CrossUniverseTokenOrigin {
+    CROSS_UNIVERSE_TOKEN_ORIGIN_UNSPECIFIED = 0;
+    CROSS_UNIVERSE_TOKEN_ORIGIN_REQUEST_EXTENSION = 1;
+    CROSS_UNIVERSE_TOKEN_ORIGIN_ENCRYPTED_EXTENSION = 2;
 }

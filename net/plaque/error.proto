@@ -1,0 +1,24 @@
+syntax = "editions";
+
+package plaque;
+
+option java_package = "com.google.net.plaque.proto";
+
+message ErrorProto {
+    optional ErrorCause cause = 1;
+    optional string network_address = 2;
+    optional string network_name = 3;
+    optional int32 shard = 4;
+    optional string name = 5;
+    optional string op = 6;
+}
+
+enum ErrorCause {
+    UNKNOWN_ERROR_CAUSE = 0;
+    NETWORK_TRANSPORT_CAUSED_ERROR = 1;
+    APPLICATION_RAISED_ERROR = 2;
+    RUNTIME_DETECTED_APPLICATION_ERROR = 3;
+    RUNTIME_INTERNAL_ERROR = 4;
+    RUNTIME_EXECUTOR_ERROR = 5;
+    LOAD_BALANCING_ERROR = 6;
+}

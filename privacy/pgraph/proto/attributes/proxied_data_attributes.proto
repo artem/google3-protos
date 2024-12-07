@@ -1,0 +1,18 @@
+syntax = "proto3";
+
+package pgraph.attributes;
+
+import "privacy/data_governance/attributes/proto/ml.proto";
+import "privacy/data_governance/attributes/proto/purpose.proto";
+
+option java_multiple_files = true;
+
+message Purposes {
+    repeated privacy.data_governance.attributes.ProcessingPurpose.Purpose purposes = 1;
+}
+
+message Dma52MlModelAccessStatus {
+    oneof _value {
+        privacy.data_governance.attributes.MlModel.Data.ModelAccessStatus value = 1;
+    }
+}

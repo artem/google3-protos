@@ -1,0 +1,15 @@
+syntax = "proto2";
+
+package ptoken;
+
+option java_multiple_files = true;
+option java_package = "com.google.privacy.ptoken.proto";
+
+enum Dma52RevocationExemption {
+    REVOCATION_EXEMPTION_UNKNOWN = 0;
+    REVOCATION_EXEMPTION_IRREVERSIBLE_COMBINATION = 1;
+    REVOCATION_EXEMPTION_ZWIEBACK = 2;
+    REVOCATION_EXEMPTION_ABACK = 3;
+    REVOCATION_EXEMPTION_YOUTUBE_VISITOR_ID = 4;
+    REVOCATION_EXEMPTION_NON_EEA = 5;
+}

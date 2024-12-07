@@ -1,0 +1,17 @@
+syntax = "editions";
+
+package plaque.internal;
+
+import "net/proto2/bridge/proto/message_set.proto";
+
+message ApplicationError {
+    extend .proto2.bridge.MessageSet {
+        optional ApplicationError message_set_extension = 193211503;
+    }
+}
+
+message RemoteError {
+    extend .proto2.bridge.MessageSet {
+        optional RemoteError message_set_extension = 294320659;
+    }
+}

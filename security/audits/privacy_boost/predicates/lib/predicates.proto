@@ -1,4 +1,4 @@
-syntax = "proto3";
+syntax = "editions";
 
 package privacy_boost.predicates;
 
@@ -11,27 +11,27 @@ message Zone {
     
     repeated TagPair tags = 2;
     message TagPair {
-        TagType type = 1;
-        uint32 value = 2;
+        optional TagType type = 1;
+        optional uint32 value = 2;
     }
     
-    string name = 3;
+    optional string name = 3;
 }
 
 message Metadata {
     repeated int32 exception_ports = 1;
-    string version_serial = 2;
+    optional string version_serial = 2;
 }
 
 message Config {
     repeated Zone zones = 1;
-    Metadata metadata = 2;
+    optional Metadata metadata = 2;
 }
 
 message Proxy {
     repeated string ranges = 1;
-    string location = 2;
-    string proxy_target = 3;
+    optional string location = 2;
+    optional string proxy_target = 3;
 }
 
 message ProxyConfig {

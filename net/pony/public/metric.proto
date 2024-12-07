@@ -1,0 +1,97 @@
+syntax = "editions";
+
+package net_pony;
+
+message PonyMetric {
+    optional MetricType metric_type = 1;
+    enum MetricType {
+        option allow_alias = true;
+        PONYMETRIC_UNSPECIFIED = 0;
+        UNUSED = 1;
+        UNDIFFERENTIATED = 2;
+        INTERVAL_METRICS_START = 3;
+        TIME_TO_FIRST_SEND = 3;
+        SEND_TIME = 4;
+        BOTH_WAY_TRANSMISSION_TIME = 5;
+        REMOTE_SOURCE_TIME = 6;
+        SOURCE_TIME = 7;
+        REMOTE_ACK_RESPONSE_TIME = 8;
+        REMOTE_OFFLOAD_TIME_DEPRECATED = 9;
+        FINAL_SEND_TIME_TO_COMPLETION = 16;
+        REQUEST_TO_SEND = 17;
+        CLEAR_TO_SEND = 18;
+        WAIT_TX_FINISHED = 19;
+        WAIT_CONNECTION = 20;
+        WAIT_COMMAND = 21;
+        WAIT_PAYLOAD = 22;
+        RECEIVE_PAYLOAD = 23;
+        INTERVAL_METRICS_END = 24;
+        DELAY_METRICS_START = 24;
+        ECWND_DELAY = 24;
+        FCWND_DELAY = 25;
+        RETRANSMIT_DELAY = 26;
+        PACING_DELAY = 27;
+        INTRA_ENGINE_SCHEDULING_DELAY = 28;
+        INTER_ENGINE_SCHEDULING_DELAY = 29;
+        OTHER_DELAY = 30;
+        DELAY_METRICS_END = 31;
+        METRICS_END = 31;
+    }
+    
+    optional uint32 interval_time_us = 2;
+    
+    optional SourcingInformation sourcing_info = 4;
+    message SourcingInformation {
+        optional bool data_flowing = 1;
+        optional ValueRange engine_delta = 2;
+        optional ValueRange flow_delta = 3;
+    }
+    
+    optional FirstSourceInformation first_source_info = 5;
+    message FirstSourceInformation {
+        optional bool connection_credits = 1;
+    }
+    
+    optional RemoteReceptionInformation remote_rx_info = 6;
+    message RemoteReceptionInformation {
+        optional bool last_rx_retransmitted = 1;
+        optional bool last_rx_retransmitted_due_to_timeout = 2;
+        optional bool used_usdma = 3;
+        optional bool early_finish = 4;
+    }
+    
+    optional AnomalousEngineEvents anomalous_engine_events = 9;
+    message AnomalousEngineEvents {
+        optional bool long_run_loop_observed = 1;
+        optional bool long_run_periodic_observed = 2;
+        optional bool long_run_infrequent_observed = 3;
+        optional bool long_run_loop_delay_observed = 4;
+        optional bool long_thread_scheduling_delay_observed = 5;
+    }
+    
+    optional CongestionWindowInformation congestion_window_information = 10;
+    message CongestionWindowInformation {
+        optional ValueRangeDouble cwnd = 1;
+        
+        optional Source cwnd_source = 2;
+        enum Source {
+            SOURCE_UNSPECIFIED = 0;
+            ECWND = 1;
+            FCWND = 2;
+        }
+    }
+    
+    optional bytes raw_metadata = 7;
+    
+    reserved 3, 8;
+    
+    message ValueRange {
+        optional uint32 min_val = 1;
+        optional uint32 max_val = 2;
+    }
+    
+    message ValueRangeDouble {
+        optional double min_val = 1;
+        optional double max_val = 2;
+    }
+}

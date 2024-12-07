@@ -1,15 +1,19 @@
-syntax = "proto2";
+syntax = "editions";
 
 package security_loas_l2;
 
+import "borg/common/internal_confidential_mode_config.proto";
 import "security/credentials/proto/principal.proto";
 import "security/loas/l2/proto/common.proto";
 import "security/loas/l2/proto/credstype.proto";
 import "security/loas/l2/proto/identity_types.proto";
 import "security/loas/l2/proto/instance.proto";
+import "security/loas/l2/proto/thin_mint_verification_key_trust_tier.proto";
 import "security/loas/l2/proto/usertype.proto";
 import "security/util/proto/permission.proto";
 import "storage/datapol/annotations/proto/semantic_annotations.proto";
+import "third_party/java/protobuf/java_features.proto";
+import "third_party/protobuf/cpp_features.proto";
 
 option java_package = "com.google.net.loas.l2";
 
@@ -22,8 +26,11 @@ message RoleIdentity {
     optional UserType user_type = 7;
     optional CredentialsType creds_type = 8;
     optional string universe = 9;
+    optional ThinMintVerificationKeyTrustTier verification_key_tier = 10;
     
-    reserved 4, "next_protocol";
+    reserved 4;
+    
+    reserved "next_protocol";
 }
 
 message HostIdentity {
@@ -45,6 +52,7 @@ message ProcessIdentity {
 
 message BorgCellIdentity {
     optional string cell = 1;
+    optional string virtual_cell = 2;
 }
 
 message BorgTaskIdentity {
@@ -72,6 +80,12 @@ message UnauthenticatedProgramNameIdentity {
     }
 }
 
+message ConfidentialModeIdentity {
+    optional borg.InternalConfidentialModeConfig.SecurityLevel confidential_security_level = 2;
+    
+    reserved 1;
+}
+
 extend Identity {
     optional RoleIdentity role_identity = 100;
     optional HostIdentity host_identity = 101;
@@ -82,4 +96,5 @@ extend Identity {
     optional UnauthenticatedHostIdentity unauthenticated_host_identity = 106;
     optional UnauthenticatedProgramNameIdentity unauthenticated_program_name_identity = 107;
     optional InstanceIdentity instance_identity = 108;
+    optional ConfidentialModeIdentity confidential_mode_identity = 109;
 }

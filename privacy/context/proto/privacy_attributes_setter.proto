@@ -8,5 +8,22 @@ option java_package = "com.google.privacy.context.proto";
 
 message PrivacyAttributesSetter {
     optional fixed32 prequest_origin_associated_product_id_setter_job = 1;
-    optional fixed32 prequest_origin_associated_product_id_setter_gfe_service = 2;
+    
+    oneof source {
+        fixed32 prequest_origin_associated_product_id_setter_gfe_service = 2;
+        fixed32 source_pipeline_guri = 3;
+        fixed32 passthrough_gfe_service = 6;
+    }
+    
+    oneof execution_id {
+        int64 borg_run_uid = 4;
+        int64 custom_execution_id = 5;
+    }
+    
+    enum CustomExecutionIDType {
+        UNDEFINED = 0;
+        NON_BORG_JOB_RUN_ID = 1;
+        COLAB_SESSION_ID = 2;
+        FLUME_EXECUTION_ID = 3;
+    }
 }

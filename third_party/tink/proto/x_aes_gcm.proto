@@ -1,0 +1,23 @@
+syntax = "proto3";
+
+package google.crypto.tink;
+
+option java_multiple_files = true;
+option java_package = "com.google.crypto.tink.proto";
+
+message XAesGcmParams {
+    uint32 salt_size = 1;
+}
+
+message XAesGcmKeyFormat {
+    uint32 version = 1;
+    XAesGcmParams params = 3;
+    
+    reserved 2;
+}
+
+message XAesGcmKey {
+    uint32 version = 1;
+    XAesGcmParams params = 2;
+    bytes key_value = 3;
+}

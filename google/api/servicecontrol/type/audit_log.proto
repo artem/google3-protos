@@ -5,7 +5,6 @@ package google.api.servicecontrol.type;
 import "logs/proto/data_access/data_access_log.proto";
 import "security/authorization/iam/cloud_audit_record.proto";
 
-option cc_enable_arenas = true;
 option java_multiple_files = true;
 option java_outer_classname = "AuditLogProto";
 option java_package = "google.api.servicecontrol.type";

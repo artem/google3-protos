@@ -1,4 +1,4 @@
-syntax = "proto2";
+syntax = "editions";
 
 package cdd;
 
@@ -8,7 +8,7 @@ option java_multiple_files = true;
 option java_package = "com.google.chubby.cdd.impl.state";
 
 message Selector {
-    required Operation operation = 1;
+    optional Operation operation = 1;
     enum Operation {
         TASK_LIST = 100;
         TAG_REGEXP = 103;
@@ -19,9 +19,9 @@ message Selector {
 }
 
 message Rule {
-    required string client = 1;
+    optional string client = 1;
     repeated string cell = 2;
-    required string acl = 3;
+    optional string acl = 3;
     optional string notify = 4;
     optional string p4file = 5;
     optional string compiler = 6;
@@ -42,16 +42,19 @@ message Rule {
     optional int32 task_count = 12 [default = 0];
     optional bool disable_canaries_on_turnup = 34 [default = false];
     
-    optional group Source = 13 {
+    optional Source source = 13;
+    message Source {
         optional int64 watch_duration_ms = 14 [default = 0];
     }
     
-    optional group Baseline = 15 {
+    optional Baseline baseline = 15;
+    message Baseline {
         optional string canary_tag = 16;
     }
     
-    repeated group Canaries = 17 {
-        required string selector = 18;
+    repeated Canaries canaries = 17;
+    message Canaries {
+        optional string selector = 18;
         optional Selector parsed_selector = 19;
         optional string canary_tag = 20;
         optional int64 rate_limit_ms = 21;
@@ -73,44 +76,51 @@ message Rule {
 }
 
 message Client {
-    required Rule rule = 1;
+    optional Rule rule = 1;
     
-    required group State = 2 {
+    optional State state = 2;
+    message State {
         optional int64 baseline = 3;
         
-        repeated group Canaries = 5 {
+        repeated Canaries canaries = 5;
+        message Canaries {
             optional int64 version = 6;
             optional int64 time_start = 7;
             optional int64 time_end = 8;
         }
     }
     
-    required group Data = 12 {
-        required int64 last_version = 13;
+    optional Data data = 12;
+    message Data {
+        optional int64 last_version = 13;
         
-        repeated group Blacklist = 14 {
-            required int64 version = 15;
-            required bool revert = 29;
-            required int64 time = 16;
+        repeated Blacklist blacklist = 14;
+        message Blacklist {
+            optional int64 version = 15;
+            optional bool revert = 29;
+            optional int64 time = 16;
             optional string reason = 17;
         }
         
-        repeated group Mapping = 18 {
-            required int64 version = 19;
+        repeated Mapping mapping = 18;
+        message Mapping {
+            optional int64 version = 19;
             optional bool gzipped = 32;
             
-            optional group P4 = 20 {
-                required string p4file = 21;
-                required int64 revision = 22;
+            optional P4 p4 = 20;
+            message P4 {
+                optional string p4file = 21;
+                optional int64 revision = 22;
                 optional int64 cl = 30;
                 optional int64 option_checksum = 31;
             }
             
-            optional group Manual = 23 {
-                required string file = 24;
-                required string user = 25;
-                required string hostname = 26;
-                required int64 time = 27;
+            optional Manual manual = 23;
+            message Manual {
+                optional string file = 24;
+                optional string user = 25;
+                optional string hostname = 26;
+                optional int64 time = 27;
                 optional string binary = 33;
                 optional string build_target = 34;
             }

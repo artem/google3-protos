@@ -1,0 +1,36 @@
+syntax = "editions";
+
+package net_pony;
+
+import "net/pony/public/pony-address.proto";
+import "util/task/status.proto";
+
+message ControlUpdateMessage {
+    optional Type type = 1;
+    enum Type {
+        UNKNOWN = 0;
+        BEGIN_HITLESS_RESTART = 1;
+        END_HITLESS_RESTART = 2;
+        UPDATES_DISABLED = 3;
+        EVICTION_NOTICE = 4;
+    }
+    
+    extensions 1000 to 524999999, 525000000 to max;
+}
+
+message ControlEndHitlessRestart {
+    optional int32 engine_team_size = 1;
+    optional Address address = 2;
+    
+    extend ControlUpdateMessage {
+        optional ControlEndHitlessRestart ext = 525000000;
+    }
+}
+
+message ControlEvictionNotice {
+    optional util.StatusProto status = 1;
+    
+    extend ControlUpdateMessage {
+        optional ControlEvictionNotice ext = 504066387;
+    }
+}

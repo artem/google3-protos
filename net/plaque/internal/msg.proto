@@ -1,0 +1,341 @@
+syntax = "editions";
+
+package plaque;
+
+import "frameworks/debug/sherlog/core/proto/request_extension.proto";
+import "java/com/google/apps/jspb/jspb.proto";
+import "net/base/qos.proto";
+import "net/plaque/core/version.proto";
+import "net/plaque/internal/lb/lb.proto";
+import "net/plaque/internal/security/milestone_s3_features.proto";
+import "net/plaque/internal/security/security_s3_msg.proto";
+import "net/plaque/internal/security/verification.proto";
+import "net/plaque/lb_options.proto";
+import "net/plaque/net.proto";
+import "net/plaque/program.proto";
+import "net/rpc/census-context.proto";
+import "perftools/tracing/proto/tracecontext.proto";
+import "privacy/context/proto/evaluation_result.proto";
+import "privacy/context/proto/privacy_context.proto";
+import "security/credentials/proto/end_user_credentials.proto";
+import "util/task/status.proto";
+
+option java_multiple_files = true;
+option java_package = "com.google.net.plaque.net.protocol";
+
+message MsgBatchProto {
+    optional string sender = 17;
+    optional bool internal_sender_only = 25;
+    optional NetworkTransportUpdate transport_update = 18;
+    optional Version protocol_version = 4;
+    optional SecurityS3MsgProto security_s3_msg = 27;
+    repeated OOEMsgProto ooe_msgs = 1;
+    optional uint64 execid_a = 2;
+    optional uint64 execid_b = 3;
+    optional bytes client_config = 5 [ctype = CORD];
+    repeated SerializedVerifiableDataProto serialized_verifiable_data = 12;
+    optional perftools.tracing.TraceContextProto trace_context = 26;
+    optional fixed64 remaining_deadline_ns = 24;
+    optional uint64 connection_id = 23;
+    repeated int32 announce_loc_id = 6;
+    repeated uint32 announce_gid = 7;
+    repeated uint32 announce_shard = 8;
+    repeated uint64 announce_lb_pick_id = 22;
+    repeated GraphMsgProto graph_msgs = 9;
+    repeated ExecMsgProto exec_msgs = 10;
+    repeated ExecLogMsgProto exec_log_msgs = 11;
+    repeated ConnMsgProto conn_msgs = 21;
+    optional uint64 trace_object_id = 19;
+    optional int64 receive_cpu_ns = 20;
+    
+    reserved 13, 14 to 16;
+}
+
+message ConnMsgProto {
+    oneof kind {
+        bool is_dedicated_connection = 2;
+        DetachExecProto detach_exec = 3;
+    }
+    
+    reserved 1;
+}
+
+message DetachExecProto {
+    optional util.StatusProto status = 1;
+    
+    optional DetachType detach_type = 2;
+    enum DetachType {
+        ABORT = 0;
+        CLOSE = 1;
+    }
+}
+
+message ExecMsgProto {
+    oneof kind {
+        AddressRequestProto address_request = 1;
+        SetMapShardLocationInfoProto set_map_shard_location_info = 9;
+        AddressReplyProto address_reply = 2;
+        GraphLocationInfoProto graph_location_info = 10;
+        GraphRequestProto graph_request = 3;
+        EndOfSendProto end_of_send = 4;
+        CrashReportProto crash_report = 5;
+        util.StatusProto stop = 6;
+        ActivationReportProto activation_report = 7;
+        ActivationNotificationProto activation_notification = 8;
+    }
+}
+
+message AddressRequestProto {
+    optional uint32 from_gid = 1;
+    optional uint32 from_shard = 2;
+    optional uint32 to_gid = 3;
+    optional int32 to_loc_id = 6;
+    optional uint32 to_shard = 4;
+    optional bool resolving = 5;
+}
+
+message SetMapShardLocationInfoProto {
+    optional uint32 gid = 1;
+    optional int32 loc_id = 5;
+    optional uint32 shard = 2;
+    optional string address = 3;
+    optional .plaque.lb.LoadBalancingOptionsProto lb_options = 4;
+}
+
+message AddressReplyProto {
+    optional uint32 gid = 1;
+    optional int32 loc_id = 6;
+    optional uint32 shard = 2;
+    optional string failure_address = 5;
+    
+    oneof result {
+        string resolved_address = 3;
+        util.StatusProto failure_status = 4;
+    }
+}
+
+message GraphLocationInfoProto {
+    optional int32 loc_id = 1;
+    optional uint32 gid = 2;
+    optional LocationProto location = 3;
+}
+
+message GraphRequestProto {
+    optional uint32 from_gid = 1;
+    optional uint32 from_shard = 2;
+    optional uint64 trace_object_id = 3;
+}
+
+message EndOfSendProto {
+    optional uint32 send_gid = 1;
+    optional uint32 send_shard = 2;
+    optional uint32 recv_gid = 5;
+    repeated uint32 recv_shard = 4;
+    optional uint32 recv_stmt = 6;
+    optional uint64 trace_object_id = 7;
+    
+    reserved 3;
+}
+
+message CrashReportProto {
+    optional util.StatusProto status = 1;
+    
+    repeated Peer peers = 2;
+    message Peer {
+        optional uint32 gid = 1;
+        optional uint32 shard = 2;
+        optional uint32 stmt = 4;
+        optional string address = 5;
+    }
+    
+    optional uint32 monitor_gid = 4;
+    optional uint32 monitor_shard = 5;
+    optional uint32 monitor_stmt = 3;
+}
+
+message ActivationReportProto {
+    optional uint32 gid = 1;
+    optional uint32 shard = 2;
+    optional string addr = 8;
+    optional fixed64 activation_time_micros = 3;
+    optional fixed64 activation_duration_micros = 4;
+    optional uint32 activator_gid = 5;
+    optional uint32 activator_shard = 6;
+    optional string activator_addr = 7;
+}
+
+message ActivationNotificationProto {
+    optional uint32 gid = 1;
+    repeated uint32 shards = 2;
+}
+
+message GraphMsgProto {
+    optional uint32 target_gid = 1;
+    optional uint32 target_shard = 2;
+    optional bool relay = 3;
+    
+    oneof kind {
+        StartGraphProto start_graph = 4;
+        PayloadProto payload = 5;
+        AckRequestProto ack_request = 6;
+        AckProto ack = 7;
+        EndTokensProto end_tokens = 8;
+    }
+    
+    reserved 9;
+}
+
+message StartGraphProto {
+    optional fixed64 graph_fp = 1;
+    optional fixed64 graph_fp1 = 5;
+    optional fixed64 graph_fp2 = 6;
+    optional fixed64 graph_fp3 = 7;
+    optional bytes graph = 2 [ctype = CORD];
+    optional bool compressed = 9;
+    optional uint32 activator_gid = 3;
+    optional uint32 activator_shard = 4;
+    optional int32 loc_id = 10;
+    optional uint64 trace_object_id = 8;
+}
+
+message PayloadProto {
+    optional uint32 recv_stmt = 1;
+    optional bytes fixed = 3 [ctype = CORD];
+    optional bytes var = 4 [ctype = CORD];
+    repeated bytes cords = 6 [ctype = CORD];
+    optional uint64 trace_object_id = 5;
+    
+    reserved 2;
+}
+
+message AckRequestProto {
+    optional uint32 recv_stmt = 1;
+    optional uint32 send_gid = 2;
+    optional uint32 send_shard = 3;
+    optional uint64 marker = 5;
+    
+    reserved 4;
+}
+
+message AckProto {
+    optional uint32 recv_gid = 4;
+    optional uint32 recv_shard = 2;
+    optional uint32 recv_stmt = 5;
+    optional uint64 marker = 3;
+    
+    reserved 1;
+}
+
+message EndTokensProto {
+    optional uint32 recv_stmt = 1;
+    optional uint32 send_shard = 2;
+    optional uint32 num_tokens = 3;
+    optional uint64 trace_object_id = 4;
+}
+
+message BackpropagatedPrivacyContextProto {
+    optional privacy.context.PolicyEvaluationResults policy_evaluation_results = 1;
+}
+
+message ExecLogMsgProto {
+    oneof kind {
+        LogProto logs = 1;
+        CounterProto counter = 2;
+        BackpropagatedPrivacyContextProto backpropagated_privacy_context = 3;
+    }
+}
+
+message LogProto {
+    repeated bytes key = 1;
+    repeated bytes msg = 2;
+}
+
+message CounterProto {
+    repeated fixed64 key_fp = 1;
+    repeated int64 value = 2;
+}
+
+message OOEMsgProto {
+    oneof kind {
+        .plaque.lb.PickFeedback pick_feedback = 1;
+        HealthCheckRequestProto health_check_request = 3;
+        HealthCheckResponseProto health_check_response = 4;
+        TraceFeedbackProto trace_feedback = 5;
+        IndirectHealthCheckRequestProto indirect_health_check_request = 6;
+        IndirectHealthCheckResponseProto indirect_health_check_response = 7;
+    }
+    
+    reserved 2, 17;
+}
+
+message HealthCheckRequestProto {
+    optional fixed64 id = 1;
+    optional fixed32 seq = 2;
+}
+
+message HealthCheckResponseProto {
+    optional fixed64 id = 1;
+    optional fixed32 seq = 2;
+    optional .plaque.lb.TaskLoad task_load = 4;
+    
+    reserved 3;
+}
+
+message TraceFeedbackProto {
+    optional fixed64 execid_a = 1;
+    optional fixed64 execid_b = 2;
+    optional bytes bundle = 3 [ctype = CORD];
+    repeated string peers = 4;
+}
+
+message IndirectHealthCheckRequestProto {
+    optional fixed64 id = 1;
+    optional string target = 2;
+}
+
+message IndirectHealthCheckResponseProto {
+    optional fixed64 id = 1;
+    
+    optional HealthStatus health_status = 2;
+    enum HealthStatus {
+        UNHEALTHY = 0;
+        HEALTHY = 1;
+    }
+}
+
+message ClientConfigProto {
+    optional string controller_addr = 1 [ctype = STRING_PIECE];
+    optional fixed64 trace_mask = 2;
+    optional int64 trace_level = 8;
+    optional bool tuple_tracing_requested = 23;
+    optional fixed64 deadline_ns_from_epoch = 3;
+    optional fixed64 start_ns_from_epoch = 4;
+    
+    repeated Var env_variables = 5;
+    message Var {
+        optional string key = 1 [ctype = STRING_PIECE];
+        optional bytes value = 2 [ctype = STRING_PIECE];
+    }
+    
+    optional string program_name = 7 [ctype = STRING_PIECE];
+    optional string group_name = 9 [ctype = STRING_PIECE];
+    optional .rpc.CensusContext census_context = 11;
+    optional perftools.tracing.TraceContextProto trace_context = 12 [deprecated = true];
+    optional .security.credentials.EndUserCredentialsProto euc = 13;
+    optional privacy.context.PrivacyContext privacy_context = 22;
+    optional .sherlog.RequestExtensionProto sherlog_context = 24;
+    optional NetworkType network_type = 14;
+    optional SecurityMilestoneS3.Features security_milestone_s3_features = 25;
+    optional uint64 root_execid_a = 16;
+    optional uint64 root_execid_b = 17;
+    optional uint64 parent_execid_a = 18;
+    optional uint64 parent_execid_b = 19;
+    optional net_base.qos.TrafficClassValue network_qos = 21;
+    
+    reserved 6, 10, 15, 20, 123;
+}
+
+enum NetworkTransportUpdate {
+    NONE = 0;
+    PONY_RESTARTING = 1;
+}

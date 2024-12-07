@@ -1,0 +1,42 @@
+syntax = "editions";
+
+package privacy.data_flow.homunculus.proto;
+
+import "privacy/context/proto/privacy_context_portability.proto";
+import "privacy/data_governance/attributes/proto/purpose.proto";
+
+option java_multiple_files = true;
+option java_package = "com.google.privacy.dataflow.homunculus.proto";
+
+message HomunculusOverrideData {
+    optional int32 origin_associated_product_id = 1;
+    repeated data_governance.attributes.ProcessingPurpose.Purpose processing_purpose = 6 [deprecated = true];
+    
+    repeated PrivacyPolicyScope privacy_policy_scopes = 7;
+    enum PrivacyPolicyScope {
+        PRIVACY_POLICY_SCOPE_NONE = 0;
+        PRIVACY_POLICY_SCOPE_DMA52 = 1;
+    }
+    
+    optional context.PrivacyContextPortability privacy_context_portability = 8;
+    
+    repeated EssentialOnlyModeState essential_only_mode_state = 4;
+    message EssentialOnlyModeState {
+        optional int32 essential_use_consent_state = 1;
+        optional int32 user_sign_in_state = 2;
+    }
+    
+    optional string src_guri = 5;
+    
+    optional CnsOverrideData cns_override_data = 9;
+    message CnsOverrideData {
+        optional string src_file_name = 1;
+        optional string src_dir_path = 2;
+    }
+    
+    reserved 2, 3;
+}
+
+message HomunculusOverrideSignals {
+    repeated HomunculusOverrideData homunculus_override_data = 1;
+}

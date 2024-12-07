@@ -1,0 +1,9 @@
+syntax = "editions";
+
+package storage_useccfs;
+
+import "storage/datapol/annotations/proto/semantic_annotations.proto";
+
+message UsecDOpenOptions {
+    optional bool enable_usecd_writes = 1;
+}

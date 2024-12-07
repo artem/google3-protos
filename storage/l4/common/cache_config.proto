@@ -1,0 +1,19 @@
+syntax = "editions";
+
+package storage_l4;
+
+import "storage/k3/borg/borg_job_port.proto";
+import "storage/l4/core/version.proto";
+
+message TaskNumberList {
+    repeated uint64 task_numbers = 1;
+}
+
+message CacheConfig {
+    optional Version version = 14;
+    optional .k3.BorgJobPortProto index_server_port = 15;
+    map<string, TaskNumberList> experiment_ids = 9;
+    optional string d_cell = 16;
+    
+    reserved 1 to 8, 10 to 13, 17;
+}

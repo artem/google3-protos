@@ -4,6 +4,7 @@ package envoy.extensions.transport_sockets.http_11_proxy.v3;
 
 import "third_party/envoy/src/api/envoy/config/core/v3/base.proto";
 import "third_party/udpa/udpa/annotations/status.proto";
+import "third_party/protoc_gen_validate/validate/validate.proto";
 
 option go_package = "github.com/envoyproxy/go-control-plane/envoy/extensions/transport_sockets/http_11_proxy/v3;http_11_proxyv3";
 option java_multiple_files = true;

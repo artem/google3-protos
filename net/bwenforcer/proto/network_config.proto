@@ -1,0 +1,200 @@
+syntax = "proto2";
+
+package net_bwenforcer;
+
+import public "net/bwenforcer/proto/connectivity_type.proto";
+import "logs/proto/logs_annotations/logs_annotations.proto";
+
+option java_multiple_files = true;
+option java_package = "com.google.net.bwenforcer.proto";
+
+message ClusterInfo {
+    required string cluster_name = 1;
+    optional string site_name = 2;
+    repeated string subnet = 3;
+    optional string description = 4;
+    optional string b4_neighborhood_name = 5;
+    repeated string extra_b4_neighborhood_names = 6;
+}
+
+message IPPrefixGroupInfo {
+    optional string ipg_name = 1;
+    optional string cluster_name = 2;
+    optional string site_name = 3;
+    repeated string subnet = 4;
+    repeated string b4_neighborhood_name = 5;
+    optional IPPrefixGroupType type = 6 [default = IPG_UNKNOWN];
+    repeated string campus_name = 7;
+    optional string metro_name = 8;
+    optional string fabric_name = 9;
+    repeated string b2_sector_name = 10;
+    optional string topology_domain_name = 11;
+}
+
+message NetworkMetaInfo {
+    repeated ClusterInfo cluster_info = 1 [deprecated = true];
+    repeated IPPrefixGroupInfo ipg_info = 2;
+}
+
+message LinkRule {
+    optional string src_router = 1 [default = ".*", deprecated = true];
+    optional string dst_router = 2 [default = ".*", deprecated = true];
+    optional string interface = 3 [default = ".*", deprecated = true];
+    optional string link_id = 4 [default = ".*"];
+    
+    repeated LinkType link_type = 5 [packed = true];
+    enum LinkType {
+        UNKNOWN = 0;
+        GOOGLE_BACKBONE = 1;
+        B4_BACKBONE = 2;
+        MINICLUSTER_B2_EDGE = 3;
+        B4_CAMPUS = 4;
+        MINICLUSTER_MESH = 5;
+        CAMPUS = 6;
+        JUPITER_FABRIC = 7;
+        FABRIC_B2_WAN_BORDER = 8;
+        B4_EDGE = 9;
+        JUPITER_MINICLUSTER_MESH = 10;
+        JUPITER_JUPITER_MESH = 11;
+    }
+}
+
+message ClusterPairRule {
+    optional string src_cluster = 1;
+    optional string dst_cluster = 2;
+}
+
+message LinkCapacityOverride {
+    required LinkRule link = 1;
+    required double capacity = 2;
+}
+
+message LinkDropsBasedScaleupParameters {
+    optional double max_scale = 1 [default = -1];
+    optional double min_scale = 8 [default = 1];
+    optional double ramp_up_time_sec = 2 [default = 900];
+    optional double utilization_threshold = 5 [default = 1];
+    optional string fill_level = 9;
+    
+    repeated PerQoSParameters per_qos_params = 10;
+    message PerQoSParameters {
+        optional string qos_regexp = 1;
+        optional DropsBasedParameters drops_based_params = 2;
+    }
+    
+    optional DropsBasedParameters overall_params = 11;
+    message DropsBasedParameters {
+        optional double drop_threshold = 1 [default = 0.01];
+        optional double min_drop_threshold = 2 [default = 0.001];
+        optional double ramp_down_time_sec = 3 [default = 0];
+        optional double ramp_down_delay_time_sec = 4 [default = 0];
+    }
+    
+    optional DropsBasedParameters fallback_params = 12;
+}
+
+message LinkReservableOverride {
+    required LinkRule link = 1;
+    optional double scale = 2 [default = 1];
+    optional LinkDropsBasedScaleupParameters drop_based_scale_params = 3;
+    repeated LinkDropsBasedScaleupParameters drop_based_params_overrides = 4;
+}
+
+message RouterSiteOverride {
+    required string router_name = 1;
+    optional string site = 2;
+}
+
+message LinkUnreportedScaleDown {
+    required LinkRule link = 1;
+    optional double unreported_ratio_min_threshold = 2 [default = 1];
+    optional double unreported_scale_down_factor = 3 [default = 1];
+    
+    repeated LinkUnreportedScaledownPerQos unreported_scale_down_per_qos = 4;
+    message LinkUnreportedScaledownPerQos {
+        optional string qos_regexp = 1;
+        optional LinkUnreportedScaleDownParams unreported_scale_down_params = 2;
+    }
+    
+    message LinkUnreportedScaleDownParams {
+        optional double unreported_ratio_min_threshold = 1 [default = 1];
+        optional double unreported_scale_down_factor = 2 [default = 1];
+    }
+}
+
+message ClusterConnectivityTypeValue {
+    optional ClusterConnectivityType value = 1;
+}
+
+message ConnectivityOverride {
+    required ClusterPairRule cluster_pair = 1;
+    optional string connectivity = 2 [deprecated = true];
+    optional ClusterConnectivityType connectivity_type = 3;
+}
+
+message B4ConnectivityOverride {
+    required ClusterPairRule cluster_pair = 1;
+    required bool is_b4_available = 2;
+}
+
+message TBitConnectivityOverride {
+    required ClusterPairRule cluster_pair = 1;
+    optional ClusterConnectivityType connectivity_type = 2;
+}
+
+message ConnectivityOverrideDB {
+    repeated ConnectivityOverride connectivity_override = 1;
+    repeated TBitConnectivityOverride t_bit_connectivity_override = 3;
+    
+    reserved 2;
+}
+
+message LinkFailOpenSelector {
+    optional LinkRule eligible_links = 1;
+    
+    optional AllocatableCriterion allocatable_criterion = 2;
+    message AllocatableCriterion {
+        optional double threshold_fraction = 1;
+    }
+}
+
+message LinkIncorrectlyModeledSelector {
+    optional LinkRule eligible_links = 1;
+    
+    optional AllocatableCriterion allocatable_criterion = 2;
+    message AllocatableCriterion {
+        optional double min_threshold_fraction_for_intra_campus = 1 [default = 0.1];
+    }
+}
+
+message NetworkModelOverrides {
+    repeated LinkCapacityOverride capacity_overrides = 1;
+    repeated LinkReservableOverride reservable_overrides = 2;
+    repeated RouterSiteOverride router_site_overrides = 3;
+    repeated LinkUnreportedScaleDown unreported_scale_downs = 4;
+    repeated LinkFailOpenSelector link_fail_open_selectors = 7;
+    repeated LinkIncorrectlyModeledSelector link_incorrectly_modeled_selectors = 8;
+    optional ConnectivityOverrideDB connectivity_overrides = 5 [deprecated = true];
+    
+    reserved 6;
+    
+    reserved "link_stat_overrides";
+}
+
+message NetworkDB {
+    optional NetworkMetaInfo cluster_meta_info = 1 [deprecated = true];
+    optional string hostshaper_clusters_regexp = 2 [deprecated = true];
+    optional NetworkModelOverrides network_model_overrides = 3;
+}
+
+enum IPPrefixGroupType {
+    IPG_UNKNOWN = 0;
+    IPG_CORE_CLUSTER = 1;
+    IPG_SATELLITE = 2;
+    IPG_EDGE_CACHE = 3;
+    IPG_TAILSERV = 4 [deprecated = true];
+    IPG_PEERING = 5;
+    IPG_EGRESS_GUE_VIPS = 6;
+    IPG_CLUSTELLITE_EDGE_CLUSTER = 7;
+    IPG_EDGE_NETWORK_BLOCK = 8;
+}

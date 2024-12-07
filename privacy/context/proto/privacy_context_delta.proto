@@ -1,4 +1,4 @@
-syntax = "proto2";
+syntax = "editions";
 
 package privacy.context;
 
@@ -27,6 +27,7 @@ message PrivacyContextDeltaTraceInfo {
     optional bool compliance_controls_ads = 21;
     optional int32 request_policy_rollout_enforcement_mode = 20;
     optional int32 policies_breakglass = 22;
+    optional int64 borg_run_uid = 23;
     
     optional Language language = 4;
     enum Language {
@@ -72,6 +73,10 @@ message PrivacyContextDeltaTraceInfo {
         SKIP_DEFAULT_ADS_PROCESSING_PURPOSE = 30;
         ADD_REQUEST_POLICY_ENFORCEMENT_DISCOVERY = 31;
         REMOVE_REQUEST_POLICY_ENFORCEMENT_GLOBAL_RAMPUP = 32;
+        REMOVE_REQUEST_POLICY_ENFORCEMENT_OPT_OUT = 33;
+        REMOVE_REQUEST_POLICY_ENFORCEMENT_OPT_OUT_FILTERING = 34;
+        SET_BORG_RUN_UID = 35;
+        CLEAR_SOT_MAPPINGS = 36;
     }
     
     optional bool is_census_root_handle = 19;

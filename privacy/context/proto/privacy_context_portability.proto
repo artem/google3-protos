@@ -6,6 +6,7 @@ import "dataresidency/mapping/cloud/cloud_locations_enum.proto";
 import "net/proto2/bridge/proto/message_set.proto";
 import "privacy/ads/user_data_enforcement/data-usage.proto";
 import "privacy/context/proto/privacy_attributes_setter.proto";
+import "privacy/data_governance/attributes/proto/ddt.proto";
 import "privacy/data_governance/attributes/proto/purpose.proto";
 import "privacy/ptoken/public/core/logical_policy.proto";
 import "privacy/ptoken/public/core/request_context_defs.proto";
@@ -21,6 +22,7 @@ message PrivacyContextPortability {
     optional bool dma52_cross_use_offered_together = 4;
     optional .ptoken.Dma52ProcessingType dma52_processing_type = 6;
     repeated .ptoken.LogicalPolicy.Enum poe_enforced_return_policies = 7 [packed = true];
+    repeated .ptoken.LogicalPolicy.Enum paf_enforced_return_policies = 21 [packed = true];
     repeated .ptoken.PolicyRolloutEnforcementMode request_policy_rollout_enforcement_mode = 8 [packed = true];
     optional bytes bitfield_value = 10;
     optional bytes bitfield_set = 11;
@@ -29,6 +31,10 @@ message PrivacyContextPortability {
     optional .ptoken.SotMappings sot = 13;
     optional PrivacyAttributesSetter privacy_attributes_setter = 15;
     optional bool origin_is_end_user = 17;
+    optional bool assistant_guest_mode_enabled = 18;
+    optional .ptoken.YoutubePrivacyEnhancedPlayerType youtube_privacy_enhanced_player_type = 19;
+    optional bool youtube_autoplay_embedded_playback = 20;
+    optional data_governance.attributes.DDTContext ddt = 22;
     
     oneof origin_logical_location {
         data_residency.mapping.cloud.CloudDataResidencyLocation origin_logical_cloud_location = 9;

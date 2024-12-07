@@ -1,11 +1,9 @@
-syntax = "proto2";
+syntax = "editions";
 
 package storage_d;
 
 import "net/proto2/bridge/proto/message_set.proto";
 import "storage/datapol/annotations/proto/semantic_annotations.proto";
-
-option cc_enable_arenas = true;
 
 message Grant {
     optional string grantee = 12;
@@ -36,5 +34,18 @@ message Capability {
     
     extend .proto2.bridge.MessageSet {
         optional Capability message_set_extension = 15793898;
+    }
+}
+
+message InvalidCapabilityKeyDetails {
+    optional Reason reason = 1;
+    enum Reason {
+        UNKNOWN_CAPABILITY_KEY = 0;
+        EXPIRED_CAPABILITY_KEY = 1;
+        EXPIRED_CAPABILITY_GRANT = 2;
+    }
+    
+    extend .proto2.bridge.MessageSet {
+        optional InvalidCapabilityKeyDetails message_set_extension = 525002189;
     }
 }

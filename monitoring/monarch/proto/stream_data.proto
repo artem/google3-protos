@@ -4,7 +4,6 @@ package monarch;
 
 import "net/proto2/bridge/proto/message_set.proto";
 
-option cc_enable_arenas = true;
 option java_outer_classname = "StreamDataProto";
 
 message IntegerSequenceProto {

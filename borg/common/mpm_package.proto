@@ -41,6 +41,7 @@ message MpmAccessStyle {
         UNSET_TREAT_AS_MOUNTED = 0;
         MOUNTED = 1;
         DIRECT_DEVICE = 2;
+        DIRECT_DEVICE_WITH_MOUNT_PARAMS = 3;
     }
 }
 

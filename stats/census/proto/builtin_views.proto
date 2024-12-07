@@ -1,11 +1,10 @@
-syntax = "proto2";
+syntax = "editions";
 
 package stats_census;
 
 import "stats/census/proto/view.proto";
 import "storage/datapol/annotations/proto/semantic_annotations.proto";
 
-option cc_enable_arenas = true;
 option java_outer_classname = "BuiltinViews";
 option java_package = "com.google.monitoring.census";
 

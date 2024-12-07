@@ -1,0 +1,1115 @@
+syntax = "proto3";
+
+package plaque.trace;
+
+import "java/com/google/apps/jspb/jspb.proto";
+import "net/plaque/opdef/opdef.proto";
+import "net/plaque/program.proto";
+import "net/proto2/proto/descriptor.proto";
+import "storage/datapol/annotations/proto/semantic_annotations.proto";
+import "util/task/status.proto";
+
+option cc_enable_arenas = true;
+option java_package = "com.google.net.plaque.proto";
+
+message Bundle {
+    repeated string strings = 1;
+    TraceType type = 4;
+    repeated Program programs = 2;
+    repeated Run runs = 3;
+    repeated Participant participants = 5;
+    Metadata metadata = 6;
+    Aggregate aggregate = 7;
+    
+    reserved 20;
+}
+
+message Source {
+    fixed32 name = 1;
+    fixed32 net_address = 2;
+    fixed32 location = 4;
+    repeated fixed32 id = 3;
+    bool has_parent = 8;
+    uint32 parent_index = 9;
+    util.StatusProto crash_report = 5;
+    bool is_partial = 6;
+    uint64 start_unix_nanos = 10;
+    uint64 end_unix_nanos = 11;
+    bool has_participant = 12;
+    uint32 participant_index = 13;
+    bool has_error = 14;
+    
+    reserved 7;
+}
+
+message RunParticipant {
+    fixed32 net_address = 1;
+    fixed32 net_bns_path = 15;
+    bool is_controller = 2;
+    util.StatusProto fetch_status = 5;
+    uint64 trace_bytes_written = 7;
+    uint64 trace_bytes_read = 8;
+    fixed32 participant_index = 17;
+    fixed32 build_id = 9;
+    uint64 build_timestamp_unix_nanos = 11;
+    fixed32 build_info = 12;
+    fixed32 build_target = 13;
+    fixed32 kernel_version = 14;
+    repeated OpFile changed_op_files = 18;
+    repeated RewrittenGraph rewritten_graphs = 19;
+    
+    reserved 16, 3, 4, 6;
+}
+
+message Participant {
+    fixed32 net_address = 1;
+    fixed32 net_host = 15;
+    fixed32 net_machine_name = 19;
+    fixed32 net_bns_path = 2;
+    fixed32 net_bns_taskuid = 18;
+    repeated fixed32 thread_ids = 3;
+    repeated fixed32 thread_names = 4;
+    fixed32 build_id = 5;
+    fixed32 base_build_cl = 6;
+    uint64 build_timestamp_unix_nanos = 7;
+    fixed32 build_info = 8;
+    fixed32 build_target = 9;
+    fixed32 kernel_version = 10;
+    repeated fixed32 trace = 11 [packed = true];
+    repeated fixed32 trace_cpu = 12 [packed = true];
+    repeated fixed32 trace_thread = 13 [packed = true];
+    repeated fixed64 trace_thread_cpu_usage = 14 [packed = true];
+    sfixed64 system_clock_offset_lower = 16;
+    sfixed64 system_clock_offset_upper = 17;
+}
+
+message KVTag {
+    fixed32 key = 1;
+    
+    oneof value_type {
+        double double_value = 3;
+        fixed32 string_value = 4;
+        bool bool_value = 5;
+    }
+    
+    reserved 2;
+}
+
+message Run {
+    uint32 program_index = 1;
+    fixed64 execid_a = 2;
+    fixed64 execid_b = 3;
+    fixed32 builder_version = 4;
+    fixed32 protocol_version = 5;
+    repeated Source sources = 6;
+    repeated RunParticipant participants = 22;
+    repeated string errors = 19;
+    repeated string notes = 7;
+    repeated string tags = 25;
+    repeated KVTag kv_tags = 29;
+    repeated fixed32 trace = 8 [packed = true];
+    repeated fixed32 trace_cpu = 14 [packed = true];
+    repeated fixed32 trace_thread = 20 [packed = true];
+    repeated fixed64 trace_thread_cpu_usage = 28 [packed = true];
+    util.StatusProto result = 9;
+    string group_name = 10;
+    int32 trace_level = 12;
+    fixed64 trace_mask = 13;
+    uint64 dapper_trace_id = 24;
+    uint64 dapper_span_id = 33;
+    uint64 start_unix_nanos = 21;
+    uint64 end_unix_nanos = 23;
+    uint64 controller_start_unix_nanos = 26;
+    uint64 controller_end_unix_nanos = 27;
+    fixed64 root_execid_a = 15;
+    fixed64 root_execid_b = 16;
+    fixed64 parent_execid_a = 17;
+    fixed64 parent_execid_b = 18;
+    repeated CapturedMsgBatch msg_batches = 36;
+    repeated CapturedBatch batches = 37;
+    
+    oneof _parent_gid {
+        uint32 parent_gid = 30;
+    }
+    
+    oneof _parent_shard {
+        uint32 parent_shard = 31;
+    }
+    
+    oneof _parent_statement {
+        uint32 parent_statement = 32;
+    }
+    
+    oneof _sherlog_run_info {
+        SherlogRunInfo sherlog_run_info = 38;
+    }
+    
+    reserved 34, 35;
+}
+
+message SherlogRunInfo {
+    string data_id = 1;
+    string processor_name = 2;
+}
+
+message CapturedMsgBatch {
+    uint64 trace_object_id = 1;
+    
+    oneof data {
+        bytes serialized_msg_batch = 2 [ctype = CORD];
+        util.StatusProto error = 3;
+    }
+}
+
+message CapturedBatch {
+    uint64 trace_object_id = 1;
+    
+    oneof data {
+        bytes serialized_batch = 2 [ctype = CORD];
+        util.StatusProto error = 3;
+    }
+}
+
+message RewrittenGraph {
+    uint32 gid = 1;
+    repeated Statement statements = 2;
+    repeated Edge edges = 3;
+}
+
+message Statement {
+    uint32 gid = 1;
+    uint32 stmt = 2;
+    string op = 3;
+    string name = 4;
+    repeated Literal attributes = 5;
+    fixed32 properties = 6;
+    repeated string out_types = 7;
+    int32 object_id = 9;
+    repeated uint32 monitor_gids = 10;
+    repeated uint32 monitor_stmts = 11;
+    int32 execution_order = 12;
+    
+    reserved 8, 16, 17;
+}
+
+message Edge {
+    uint32 sender_stmt = 1;
+    uint32 sender_output = 2;
+    uint32 receiver_stmt = 3;
+    uint32 receiver_input = 4;
+    bool control = 5;
+}
+
+message Program {
+    string name = 1;
+    repeated Statement statements = 2;
+    repeated Edge edges = 3;
+    repeated string locations = 4;
+    repeated LocationProto location_protos = 10;
+    repeated int32 gid_locations = 11;
+    bytes source = 6 [ctype = CORD];
+    
+    oneof _id_fp {
+        fixed64 id_fp = 8;
+    }
+    
+    oneof _structure_fp {
+        fixed64 structure_fp = 9;
+    }
+    
+    reserved 5, 7;
+}
+
+message SourceProgram {
+    ProgramProto program = 1;
+    repeated Call calls = 2;
+    repeated int32 call_index = 3;
+    repeated int32 src_index = 4;
+}
+
+message Call {
+    int32 parent_call = 1;
+    int32 call_stmt_index = 2;
+}
+
+message SourceStatement {
+    repeated fixed32 id = 2;
+    fixed32 stmt = 3;
+    fixed64 execid_a = 4;
+    fixed64 execid_b = 5;
+}
+
+message StatusContext {
+    fixed64 when_unix_nanos = 1;
+    repeated SourceStatement sources = 2;
+}
+
+message MetadataKVTag {
+    string key = 1;
+    double value = 2;
+    
+    oneof value_type {
+        double double_value = 3;
+        string string_value = 4;
+        bool bool_value = 5;
+    }
+}
+
+message PerRunMetadata {
+    util.StatusProto result = 1;
+    string program_name = 2;
+    string group_name = 9;
+    repeated MetadataKVTag kv_tags = 3;
+    uint64 dapper_span_id = 6;
+    fixed64 id_a = 7;
+    fixed64 id_b = 8;
+    
+    oneof _program_id_fp {
+        fixed64 program_id_fp = 4;
+    }
+    
+    oneof _program_structure_fp {
+        fixed64 program_structure_fp = 5;
+    }
+}
+
+message Metadata {
+    fixed64 id_a = 29;
+    fixed64 id_b = 30;
+    TraceType trace_type = 1;
+    int32 min_trace_level = 21;
+    bool missing_data = 2;
+    string builder_network_host = 7;
+    string builder_network_bns_path = 26;
+    string program_name = 3;
+    string group_name = 4;
+    fixed64 start_time_unix_micros = 5;
+    fixed64 latency_micros = 6;
+    util.StatusProto result = 8;
+    uint64 dapper_trace_id = 22;
+    repeated PerRunMetadata run_metadatas = 28;
+    repeated MetadataKVTag kv_tags = 27;
+    repeated string tags = 9;
+    repeated string build_ids = 10;
+    repeated string network_addresses = 11;
+    repeated string network_bns_paths = 12;
+    repeated string network_hosts = 24;
+    repeated string controller_network_addresses = 13;
+    repeated string controller_network_bns_paths = 14;
+    repeated string controller_network_hosts = 25;
+    repeated string build_infos = 16;
+    repeated string build_targets = 17;
+    repeated string kernel_versions = 18;
+    repeated uint64 plaque_protocols = 19;
+    repeated uint64 build_time_unix_nanos = 20;
+    repeated uint64 cls = 23;
+    
+    reserved 15;
+}
+
+message Aggregate {
+    string query = 1;
+    repeated TraceRef traces = 3;
+    repeated RunCosts run_costs = 4;
+    
+    reserved 2, 5, 6, 7;
+}
+
+message TraceRef {
+    TraceBundleSource source = 4;
+    
+    reserved 1, 2, 3;
+}
+
+message TraceBundleSource {
+    oneof kind {
+        Empty empty = 1;
+        File file = 2;
+        FileSegment file_segment = 3;
+        RecordIOFile record_io_file = 4;
+    }
+    
+    message Empty {
+        
+    }
+    
+    message File {
+        string path = 1;
+    }
+    
+    message FileSegment {
+        string path = 1;
+        int64 offset = 2;
+        int64 size = 3;
+    }
+    
+    message RecordIOFile {
+        string path = 1;
+        string position = 2;
+    }
+}
+
+message RunCosts {
+    uint32 trace_index = 1;
+    uint32 run_index = 2;
+    repeated fixed32 op_costs = 3 [packed = true];
+    repeated fixed32 op_input_costs = 4 [packed = true];
+    repeated fixed32 msg_batch_costs = 5 [packed = true];
+    repeated fixed32 graph_costs = 6;
+    repeated fixed32 exec_costs = 7;
+    repeated fixed32 user_event_costs = 8;
+}
+
+message ExecId {
+    fixed64 id_a = 1;
+    fixed64 id_b = 2;
+}
+
+enum TraceType {
+    RUN_TRACE = 0;
+    SYSTEM_TRACE = 1;
+    PROGRAM_ONLY_TRACE = 2;
+    METADATA_ONLY_TRACE = 3;
+    AGGREGATE_TRACE = 4;
+}
+
+enum RunConstants {
+    UNUSED_ZERO_VALUE = 0;
+    PROGRAM_MISSING = 2147483647;
+}
+
+enum TraceEntryInfo {
+    option allow_alias = true;
+    TYPE_SHIFT = 0;
+    TYPE_MASK = 255;
+    PAYLOAD_LEN_SHIFT = 8;
+    PAYLOAD_LEN_MASK = 255;
+    HEADER_OFFSET = 0;
+    TIMESTAMP_LO_OFFSET = 1;
+    TIMESTAMP_HI_OFFSET = 2;
+    DURATION_LO_OFFSET = 3;
+    DURATION_HI_OFFSET = 4;
+    SOURCE_OFFSET = 5;
+    LABEL_OFFSET = 6;
+    PAYLOAD_OFFSET = 7;
+}
+
+enum TraceCpuEntryInfo {
+    option allow_alias = true;
+    START_CPU_SHIFT = 0;
+    START_CPU_MASK = 65535;
+    END_CPU_SHIFT = 16;
+    END_CPU_MASK = 65535;
+    CPU_ENTRY_SIZE = 1;
+    UNKNOWN_CPU = 65535;
+}
+
+enum LbPickEventInfo {
+    option allow_alias = true;
+    LB_POLICY_OFFSET = 0;
+    LB_BALANCED_ADDR_OFFSET = 1;
+    LB_PICK_MIN_PAYLOAD_LENGTH = 2;
+    LB_STATUS_OFFSET = 2;
+    LB_PICK_OR_ERR_OFFSET = 3;
+    LB_EVENT_SIZE = 4;
+}
+
+enum TraceThreadCpuUsageEntryInfo {
+    THREAD_CPU_USAGE_WHEN_OFFSET = 0;
+    THREAD_CPU_USAGE_DURATION_OFFSET = 1;
+    THREAD_CPU_USAGE_ENTRY_SIZE = 2;
+}
+
+enum ErrorType {
+    ERR_UNKNOWN = 0;
+    ERR_EXEC = 1;
+    ERR_STMT = 2;
+}
+
+enum WaitEventType {
+    UNKNOWN_WAIT_TYPE = 0;
+    LOOKUP_REPLY = 1;
+    REMOTE_ACK = 2;
+    LOCAL_ACK = 3;
+    STATEMENT_INPUT = 4;
+    STATEMENT_OUTPUT = 5;
+}
+
+enum AttributeEventValueType {
+    UNKNOWN_ATTRIBUTE_TYPE = 0;
+    INT64 = 1;
+    DOUBLE = 2;
+    BYTES4 = 3;
+    BYTES1 = 4;
+    BYTES2 = 5;
+    BYTES3 = 6;
+    PII_OBJECT_ID = 7;
+}
+
+enum EventType {
+    UNSPECIFIED = 0;
+    PROG_START = 1;
+    PROG_DONE = 2;
+    GRAPH_INIT = 7;
+    GRAPH_RUN = 8;
+    GRAPH_FLUSH = 20;
+    GRAPH_DONE = 12;
+    GRAPH_SCHEDULE = 10;
+    OP_END_OUTPUT = 14;
+    OP_START = 15;
+    OP_HANDLE_BATCH = 3;
+    OP_HANDLE_END = 13;
+    OP_HANDLE_BATCH_AND_END = 4;
+    OP_HANDLE_ASYNC = 21;
+    OP_HANDLE_DONE = 30;
+    OP_DONE = 22;
+    OP_BUFFER_INPUT = 29;
+    OP_ASYNC = 40;
+    OP_INPUT_READ = 44;
+    ERROR = 27;
+    FUNCTOR_OP_ACTION = 45;
+    WAIT = 32;
+    DEBUG = 17;
+    USER_TRACE = 19;
+    USER_TRACE2 = 39;
+    USER_TRACE_ACTION = 41;
+    ID_TRACE = 38;
+    LB_PICK = 28;
+    ATTRIBUTE_TRACE = 37;
+    SUBPROGRAM_START = 23;
+    SUBPROGRAM_END = 24;
+    OBJECT_ACTION = 6;
+    NIL_OBJECT_ACTION = 36;
+    GRAPH_RECV = 9;
+    RECV_DATA = 18;
+    LOCAL_SEND_DATA = 25;
+    SEND_DATA = 26;
+    SEND_TUPLES = 34;
+}
+
+enum ObjectType {
+    UNKNOWN_OBJECT = 0;
+    PLAQUE_MSG_BATCH = 23;
+    BATCH = 29;
+    MSG_PAYLOAD = 1;
+    MSG_STOP = 2;
+    MSG_ACK = 4;
+    MSG_END_TOKENS = 5;
+    MSG_START_REQUEST = 6;
+    MSG_GRAPH_REQUEST = 12;
+    MSG_CRASH_REPORT = 13;
+    MSG_LOOKUP_REQUEST = 7;
+    MSG_LOOKUP_REPLY = 8;
+    MSG_GET_ADDRESS = 9;
+    MSG_ADDRESS_REPLY = 10;
+    MSG_GRAPH_LOCATION_INFO = 31;
+    MSG_END_OF_SEND = 11;
+    MSG_LOGS = 16;
+    MSG_COUNTER = 17;
+    MSG_ACTIVATION_REPORT = 19;
+    MSG_SET_SHARD_MAP_LOCATION_INFO = 25;
+    MSG_ACTIVATION_NOTIFICATION = 26;
+    MSG_ADDRESS_REQUEST = 20;
+    MSG_ACK_REQUEST = 21;
+    NET_EXEC_CONN = 24;
+    BARRIER = 22;
+    GRAPH_QUEUE_ENTRY_ANY = 27;
+    SCHEDULED_GRAPH_ENTRY = 28;
+    MSG_BACKPROPAGATED_PRIVACY_CONTEXT = 30;
+    MSG_BLOCK_CACHE_REQUEST = 32;
+    MSG_BLOCK_CACHE_RESPONSE = 33;
+    MSG_VERIFICATION_REQUEST = 34;
+    MSG_VERIFICATION_RESPONSE = 35;
+    MSG_KEY_REQUEST = 36;
+    MSG_KEY_RESPONSE = 37;
+}
+
+enum ObjectActionType {
+    UNKNOWN_ACTION = 0;
+    CREATE = 1;
+    NET_SEND = 2;
+    NET_RECEIVE = 3;
+    BROADCAST = 4;
+    SET_SIZE = 5;
+    LOCAL_SEND = 6;
+    LOCAL_RECEIVE = 7;
+    DECODE = 8;
+    DELIVER = 9;
+    EXEC_RECEIVE = 10;
+    MERGE = 11;
+    BARRIER_WAIT = 12;
+    BARRIER_SIGNAL = 13;
+    SERIALIZE = 14;
+    ACTION_DESERIALIZE = 25;
+    ACTION_FLUSH = 15;
+    ACTION_GRAPH_ENQUEUE = 43;
+    ACTION_PROCESS_GRAPH_ENTRY = 44;
+    ACTION_EMIT = 47;
+    ACTION_SCHEDULE_WORK = 45;
+    ACTION_RUN_WORK = 46;
+    ACTION_CONNECT = 16;
+    ACTION_SEND = 19;
+    ACTION_RECEIVE = 17;
+    KERNEL_RECEIVE = 26;
+    KERNEL_SEND_SENDING = 27;
+    KERNEL_SEND_WAIT_ACK = 28;
+    KERNEL_SEND_ABORTED = 29;
+    ACTION_PEEK = 18;
+    ACTION_CLOSE = 24;
+    ACTION_SERVER_CONNECT = 21;
+    ACTION_FALLBACK = 42;
+    ADD_MSG = 22;
+    ACTION_SET_INFO = 23;
+    ACTION_BAMM2_IN_PONY_COMMAND_QUEUE = 30;
+    ACTION_BAMM2_PONY_RTS = 31;
+    ACTION_BAMM2_PONY_CTS = 32;
+    ACTION_BAMM2_PONY_WAIT_TO_SEND = 33;
+    ACTION_BAMM2_PONY_SENDING = 34;
+    ACTION_BAMM2_PONY_WAIT_TX_FINISHED = 48;
+    ACTION_BAMM2_PONY_COMPLETION_LATENCY = 49;
+    ACTION_BAMM2_DELAY_ECWND = 35;
+    ACTION_BAMM2_DELAY_FCWND = 36;
+    ACTION_BAMM2_DELAY_RETRANSMIT = 37;
+    ACTION_BAMM2_DELAY_PACING = 38;
+    ACTION_BAMM2_DELAY_INTRA_ENGINE_SCHEDULING = 39;
+    ACTION_BAMM2_DELAY_INTER_ENGINE_SCHEDULING = 40;
+    ACTION_BAMM2_DELAY_OTHER = 41;
+}
+
+enum GraphEntryType {
+    GRAPH_ENTRY_UNKNOWN = 0;
+    GRAPH_ENTRY_START_GRAPH = 1;
+    GRAPH_ENTRY_END_TOKENS = 2;
+    GRAPH_ENTRY_ACK_REQUEST = 3;
+    GRAPH_ENTRY_ABANDON_SEND = 4;
+    GRAPH_ENTRY_ASYNC_READY = 5;
+    GRAPH_ENTRY_END_OUTPUT_ASYNC = 6;
+    GRAPH_ENTRY_INPUT_NOT_NEEDED_ASYNC = 7;
+    GRAPH_ENTRY_FINISH_ASYNC = 8;
+    GRAPH_ENTRY_MAYBE_FINISH = 9;
+    GRAPH_ENTRY_RUN_CLOSURE = 10;
+    GRAPH_ENTRY_MONITORED_CRASH = 11;
+    GRAPH_ENTRY_RECV_ENCODED = 12;
+    GRAPH_ENTRY_RECV_DECODED = 13;
+    GRAPH_ENTRY_RECV_DECODED_LOCAL = 14;
+    GRAPH_ENTRY_EMIT_ASYNC = 15;
+    GRAPH_ENTRY_EMIT_AND_END_OUTPUT_ASYNC = 16;
+    GRAPH_ENTRY_RAISE_ERROR_ASYNC = 17;
+}
+
+enum FunctorOpActionType {
+    FUNCTOR_OP_ACTION_UNKNOWN = 0;
+    FUNCTOR_OP_ACTION_SCHEDULE_WORK = 1;
+    FUNCTOR_OP_ACTION_RUN_WORK = 2;
+    FUNCTOR_OP_ACTION_IMPL_RUN = 3;
+    FUNCTOR_OP_ACTION_CANCELLED_EARLY = 4;
+    FUNCTOR_OP_ACTION_ENQUEUE_INPUT_BATCH = 5;
+    FUNCTOR_OP_ACTION_RECEIVE_INPUT_TUPLES = 6;
+    FUNCTOR_OP_ACTION_INPUT_ENDED = 7;
+    FUNCTOR_OP_ACTION_EMIT_OUTPUT_BATCH = 8;
+    FUNCTOR_OP_ACTION_ENQUEUE_OUTPUT_BATCH = 9;
+    FUNCTOR_OP_ACTION_FLOW_CONTROL_ADMIT = 10;
+    FUNCTOR_OP_ACTION_OUTPUT_ENDED = 11;
+}
+
+enum UserTraceWireType {
+    USER_TRACE_UNKNOWN = 0;
+    USER_TRACE_STRING_POINTER = 1;
+    USER_TRACE_STRING_TABLE_ENTRY = 2;
+    USER_TRACE_STATEMENT_ID = 3;
+    USER_TRACE_INLINE_STRING_1 = 17;
+    USER_TRACE_INLINE_STRING_2 = 18;
+    USER_TRACE_INLINE_STRING_3 = 19;
+    USER_TRACE_INLINE_STRING_4 = 20;
+    USER_TRACE_INLINE_STRING_5 = 21;
+    USER_TRACE_INLINE_STRING_6 = 22;
+    USER_TRACE_INLINE_STRING_7 = 23;
+    USER_TRACE_INLINE_STRING_8 = 24;
+    USER_TRACE_PADDING = 254;
+    USER_TRACE_TRUNCATED = 255;
+}
+
+enum UserTraceInfo {
+    USER_TRACE_INFO_UNKNOWN = 0;
+    USER_TRACE_STRING_ENTRY_LENGTH = 8;
+    USER_TRACE_STATEMENT_ID_LENGTH = 4;
+}
+
+enum UserTraceActionType {
+    USER_TRACE_ACTION_UNKNOWN = 0;
+    USER_TRACE_ACTION_START_ASYNC = 1;
+    USER_TRACE_ACTION_RUN_CALLBACK = 2;
+    USER_TRACE_ACTION_BARRIER_WAIT = 3;
+    USER_TRACE_ACTION_BARRIER_SIGNAL = 4;
+    USER_TRACE_ACTION_BARRIER_CONTINUE = 5;
+}
+
+enum UserTraceActionInfo {
+    option allow_alias = true;
+    USER_TRACE_ACTION_INFO_UNKNOWN = 0;
+    USER_TRACE_ACTION_HEADER_OFFSET = 0;
+    USER_TRACE_ACTION_PAYLOAD_OFFSET = 1;
+}
+
+enum ErrorPayloadInfo {
+    option allow_alias = true;
+    ERROR_UNKNOWN = 0;
+    ERROR_STMT_OFFSET = 0;
+    ERROR_TYPE_AND_CODE_OFFSET = 1;
+    ERROR_FILE_NAME_OFFSET = 2;
+    ERROR_LINE_OFFSET = 3;
+    ERROR_MESSAGE_OFFSET = 4;
+}
+
+enum ObjectActionInfo {
+    option allow_alias = true;
+    OBJECT_TYPE_SHIFT = 0;
+    OBJECT_TYPE_MASK = 65535;
+    OBJECT_ACTION_TYPE_SHIFT = 16;
+    OBJECT_ACTION_TYPE_MASK = 65535;
+    OBJECT_TYPE_OFFSET = 0;
+    OBJECT_ACTION_TYPE_OFFSET = 0;
+    OBJECT_ID_LO_OFFSET = 1;
+    OBJECT_ID_HI_OFFSET = 2;
+    OBJECT_ACTION_PAYLOAD_OFFSET = 3;
+    NIL_OBJECT_TYPE_OFFSET = 0;
+    NIL_OBJECT_ACTION_TYPE_OFFSET = 0;
+    NIL_OBJECT_ACTION_PAYLOAD_OFFSET = 1;
+}
+
+enum NetExecConnInfo {
+    option allow_alias = true;
+    NET_EXEC_CONN_UNKNOWN = 0;
+    NET_EXEC_CONN_CREATE_PAYLOAD_LENGTH = 2;
+    NET_EXEC_CONN_CREATE_PEER_OFFSET = 0;
+    NET_EXEC_CONN_CREATE_NETWORK_TYPE_OFFSET = 1;
+    NET_EXEC_CONN_FALLBACK_PAYLOAD_LENGTH = 4;
+    NET_EXEC_CONN_FALLBACK_ORIGINAL_PROTOCOL_OFFSET = 0;
+    NET_EXEC_CONN_FALLBACK_ATTEMPTED_PROTOCOL_OFFSET = 1;
+    NET_EXEC_CONN_FALLBACK_STATUS_OFFSET = 2;
+    NET_EXEC_CONN_FALLBACK_ERROR_MSG_OFFSET = 3;
+    NET_EXEC_CONN_CLOSE_PAYLOAD_LENGTH = 2;
+    NET_EXEC_CONN_CLOSE_STATUS_OFFSET = 0;
+    NET_EXEC_CONN_CLOSE_ERROR_MSG_OFFSET = 1;
+}
+
+enum WaitEventPayloadInfo {
+    option allow_alias = true;
+    WAIT_EVENT_UNKNOWN = 0;
+    WAIT_EVENT_MIN_LENGTH = 1;
+    WAIT_TYPE_OFFSET = 0;
+    WAIT_PAYLOAD_OFFSET = 1;
+    WAIT_EVENT_INPUT_MIN_LENGTH = 3;
+    WAIT_EVENT_INPUT_STMT_OFFSET = 1;
+    WAIT_EVENT_INPUT_INPUT_OFFSET = 2;
+    WAIT_EVENT_INPUT_SIGNAL_ID_OFFSET = 3;
+    WAIT_EVENT_OUTPUT_MIN_LENGTH = 3;
+    WAIT_EVENT_OUTPUT_STMT_OFFSET = 1;
+    WAIT_EVENT_OUTPUT_OUTPUT_OFFSET = 2;
+    WAIT_EVENT_OUTPUT_SIGNAL_ID_OFFSET = 3;
+}
+
+enum InputReadTracePayloadInfo {
+    option allow_alias = true;
+    INPUT_READ_TRACE_INFO_UNKNOWN = 0;
+    INPUT_READ_MIN_PAYLOAD_LENGTH = 3;
+    INPUT_READ_STMT_OFFSET = 0;
+    INPUT_READ_INPUT_OFFSET = 1;
+    INPUT_READ_TUPLES_OFFSET = 2;
+}
+
+enum IdTraceInfo {
+    option allow_alias = true;
+    ID_OFFSET = 0;
+    ID_TRACE_MIN_PAYLOAD_LENGTH = 1;
+    ID_STMT_OFFSET = 1;
+    ID_TRACE_NO_STATEMENT_INDEX = -1;
+}
+
+enum AttributeTraceInfo {
+    VALUE_TYPE_OFFSET = 0;
+    KEY_OFFSET = 1;
+    VALUE_OFFSET = 2;
+    STMT_ID_OFFSET = 4;
+}
+
+enum PlaqueIdTracePayloadInfo {
+    PLAQUE_ID_EVENT_UNKNOWN = 0;
+    PLAQUE_ID_FUNCTOR_OP_RUN_MIN_PAYLOAD_LENGTH = 2;
+    PLAQUE_ID_FUNCTOR_OP_RUN_STMT_OFFSET = 1;
+}
+
+enum GraphRequestPayloadInfo {
+    option allow_alias = true;
+    GRAPH_REQUEST_ENTRY_UNKNOWN = 0;
+    GRAPH_REQUEST_CREATE_MSG_BATCH_ID_LO_OFFSET = 0;
+    GRAPH_REQUEST_CREATE_MSG_BATCH_ID_HI_OFFSET = 1;
+    GRAPH_REQUEST_CREATE_GID_OFFSET = 2;
+    GRAPH_REQUEST_CREATE_SHARD_OFFSET = 3;
+}
+
+enum EndOfSendPayloadInfo {
+    option allow_alias = true;
+    END_OF_SEND_ENTRY_UNKNOWN = 0;
+    END_OF_SEND_CREATE_MSG_BATCH_ID_LO_OFFSET = 0;
+    END_OF_SEND_CREATE_MSG_BATCH_ID_HI_OFFSET = 1;
+    END_OF_SEND_CREATE_SENDER_SHARD_OFFSET = 2;
+    END_OF_SEND_CREATE_RECV_GID_OFFSET = 3;
+    END_OF_SEND_CREATE_RECV_STMT_OFFSET = 4;
+    END_OF_SEND_RECV_GID_OFFSET = 0;
+    END_OF_SEND_MIN_PAYLOAD_LENGTH = 3;
+    END_OF_SEND_RECV_STMT_OFFSET = 1;
+    END_OF_SEND_SENDER_SHARD_OFFSET = 2;
+}
+
+enum EndTokensPayloadInfo {
+    option allow_alias = true;
+    END_TOKENS_ENTRY_UNKNOWN = 0;
+    END_TOKENS_CREATE_MSG_BATCH_ID_LO_OFFSET = 0;
+    END_TOKENS_CREATE_MSG_BATCH_ID_HI_OFFSET = 1;
+    END_TOKENS_CREATE_SENDER_SHARD_OFFSET = 2;
+    END_TOKENS_CREATE_RECV_GID_OFFSET = 3;
+    END_TOKENS_CREATE_RECV_SHARD_OFFSET = 4;
+    END_TOKENS_CREATE_RECV_STMT_OFFSET = 5;
+    END_TOKENS_CREATE_NUM_TOKENS_OFFSET = 6;
+}
+
+enum OpStartPayloadInfo {
+    option allow_alias = true;
+    OP_START_STMT_OFFSET = 0;
+    OP_START_MIN_PAYLOAD_LENGTH = 1;
+    OP_START_FILENAME_STRING_INDEX_OFFSET = 1;
+    OP_START_LINE_NUMBER_OFFSET = 2;
+    OP_START_WITH_SOURCE_LOC_MIN_PAYLOAD_LENGTH = 3;
+}
+
+enum OpHandleBatchPayloadInfo {
+    OP_HANDLE_BATCH_STMT_OFFSET = 0;
+    OP_HANDLE_BATCH_INPUT_OFFSET = 1;
+    OP_HANDLE_BATCH_TUPLES_OFFSET = 2;
+    OP_HANDLE_BATCH_MIN_PAYLOAD_LENGTH = 3;
+}
+
+enum OpHandleDonePayloadInfo {
+    OP_HANDLE_DONE_STMT_OFFSET = 0;
+    OP_HANDLE_DONE_MIN_PAYLOAD_LENGTH = 1;
+}
+
+enum OpHandleAsyncPayloadInfo {
+    OP_HANDLE_ASYNC_STMT_OFFSET = 0;
+    OP_HANDLE_ASYNC_MIN_PAYLOAD_LENGTH = 1;
+}
+
+enum OpBufferInputPayloadInfo {
+    OP_BUFFER_INPUT_STMT_OFFSET = 0;
+    OP_BUFFER_INPUT_INPUT_OFFSET = 1;
+    OP_BUFFER_INPUT_TUPLES_OFFSET = 2;
+    OP_BUFFER_INPUT_MIN_PAYLOAD_LENGTH = 3;
+}
+
+enum OpHandleEndPayloadInfo {
+    OP_HANDLE_END_STMT_OFFSET = 0;
+    OP_HANDLE_END_INPUT_OFFSET = 1;
+    OP_HANDLE_END_MIN_PAYLOAD_LENGTH = 2;
+}
+
+enum OpHandleBatchAndEndPayloadInfo {
+    OP_HANDLE_BATCH_AND_END_STMT_OFFSET = 0;
+    OP_HANDLE_BATCH_AND_END_INPUT_OFFSET = 1;
+    OP_HANDLE_BATCH_AND_END_TUPLES_OFFSET = 2;
+    OP_HANDLE_BATCH_AND_END_MIN_PAYLOAD_LENGTH = 3;
+}
+
+enum OpDonePayloadInfo {
+    OP_DONE_STMT_OFFSET = 0;
+    OP_DONE_ELAPSED_LO_OFFSET = 1;
+    OP_DONE_ELAPSED_HI_OFFSET = 2;
+    OP_DONE_MIN_PAYLOAD_LENGTH = 3;
+}
+
+enum OpAsyncPayloadInfo {
+    OP_ASYNC_STMT_OFFSET = 0;
+    OP_ASYNC_NEEDED_EVENTS_OFFSET = 1;
+    OP_ASYNC_MIN_PAYLOAD_LENGTH = 2;
+}
+
+enum OpEndOutputPayloadInfo {
+    OP_END_OUTPUT_STMT_OFFSET = 0;
+    OP_END_OUTPUT_OUTPUT_OFFSET = 1;
+    OP_END_OUTPUT_TUPLE_COUNT_OFFSET = 2;
+}
+
+enum OpErrorPayloadInfo {
+    option allow_alias = true;
+    OP_ERROR_STMT_OFFSET = 0;
+    OP_ERROR_STATUS_CODE_OFFSET = 1;
+    OP_ERROR_FILENAME_STRING_INDEX_OFFSET = 2;
+    OP_ERROR_LINE_NUMBER_OFFSET = 3;
+    OP_ERROR_MESSAGE_INDEX_OFFSET = 4;
+    OP_ERROR_MIN_PAYLOAD_LENGTH = 5;
+    OP_ERROR_ERROR_MASK_BYTE = 0;
+    OP_ERROR_ERROR_MASK_MONITORED_BIT = 7;
+}
+
+enum PlaqueMsgBatchSetSizePayloadInfo {
+    option allow_alias = true;
+    PLAQUE_MSG_BATCH_SET_SIZE_ENTRY_UNKNOWN = 0;
+    PLAQUE_MSG_BATCH_SET_SIZE_OFFSET = 0;
+}
+
+enum PlaqueMsgBatchSerializePayloadInfo {
+    option allow_alias = true;
+    PLAQUE_MSG_BATCH_SERIALIZE_ENTRY_UNKNOWN = 0;
+    PLAQUE_MSG_BATCH_SERIALIZE_WIRE_SIZE_OFFSET = 0;
+}
+
+enum PlaqueMsgBatchSendPayloadInfo {
+    option allow_alias = true;
+    PLAQUE_MSG_BATCH_SEND_ENTRY_UNKNOWN = 0;
+    PLAQUE_MSG_BATCH_SEND_CONNECTION_ID_LO_OFFSET = 0;
+    PLAQUE_MSG_BATCH_SEND_CONNECTION_ID_HI_OFFSET = 1;
+}
+
+enum GraphFlushPayloadInfo {
+    GRAPH_FLUSH_DEST_GID_OFFSET = 0;
+    GRAPH_FLUSH_DEST_SHARD_OFFSET = 1;
+    GRAPH_FLUSH_NUM_MSGS_OFFSET = 2;
+    GRAPH_FLUSH_MIN_PAYLOAD_LENGTH = 3;
+}
+
+enum GraphEnqueuePayloadInfo {
+    option allow_alias = true;
+    GRAPH_ENQUEUE_UNKNOWN = 0;
+    GRAPH_ENQUEUE_TYPE_OFFSET = 0;
+    GRAPH_ENQUEUE_STMT_OFFSET = 1;
+}
+
+enum ProcessGraphEntryPayloadInfo {
+    option allow_alias = true;
+    PROCESS_GRAPH_ENTRY_UNKNOWN = 0;
+    PROCESS_GRAPH_ENTRY_TYPE_OFFSET = 0;
+    PROCESS_GRAPH_ENTRY_STMT_OFFSET = 1;
+}
+
+enum BarrierActionPayloadInfo {
+    option allow_alias = true;
+    BARRIER_ACTION_UNKNOWN = 0;
+    BARRIER_ACTION_SIGNAL_KEY_OFFSET = 0;
+    BARRIER_ACTION_WAIT_KEY_OFFSET = 0;
+}
+
+enum PayloadActionPayloadInfo {
+    option allow_alias = true;
+    PAYLOAD_ACTION_UNKNOWN = 0;
+    PAYLOAD_ACTION_CREATE_MIN_PAYLOAD_LENGTH = 1;
+    PAYLOAD_ACTION_CREATE_SEND_STMT_OFFSET = 0;
+    PAYLOAD_ACTION_CREATE_V2_MIN_PAYLOAD_LENGTH = 3;
+    PAYLOAD_ACTION_CREATE_RECV_GID_OFFSET = 1;
+    PAYLOAD_ACTION_CREATE_RECV_STMT_OFFSET = 2;
+    PAYLOAD_ACTION_SET_INFO_SHARD_OFFSET = 0;
+    PAYLOAD_ACTION_SET_INFO_DATA_SIZE_OFFSET = 1;
+    PAYLOAD_ACTION_SET_INFO_TUPLES_COUNT_OFFSET = 2;
+    PAYLOAD_ACTION_MERGE_DST_OBJECT_ID_LO_OFFSET = 0;
+    PAYLOAD_ACTION_MERGE_DST_OBJECT_ID_HI_OFFSET = 1;
+    PAYLOAD_ACTION_BROADCAST_BROADCAST_OBJECT_ID_LO_OFFSET = 0;
+    PAYLOAD_ACTION_BROADCAST_BROADCAST_OBJECT_ID_HI_OFFSET = 1;
+}
+
+enum StartRequestActionPayloadInfo {
+    option allow_alias = true;
+    START_REQUEST_ACTION_UNKNOWN = 0;
+    START_REQUEST_ACTION_CREATE_MIN_PAYLOAD_LENGTH = 4;
+    START_REQUEST_ACTION_CREATE_MSG_BATCH_ID_LO_OFFSET = 0;
+    START_REQUEST_ACTION_CREATE_MSG_BATCH_ID_HI_OFFSET = 1;
+    START_REQUEST_ACTION_CREATE_DST_GID_OFFSET = 2;
+    START_REQUEST_ACTION_CREATE_DST_SHARD_OFFSET = 3;
+    START_REQUEST_ACTION_SET_INFO_GID_OFFSET = 0;
+    START_REQUEST_ACTION_SET_INFO_SHARD_OFFSET = 1;
+}
+
+enum BlockCacheActionPayloadInfo {
+    option allow_alias = true;
+    BLOCK_CACHE_ACTION_UNKNOWN = 0;
+    BLOCK_CACHE_ACTION_CREATE_MIN_PAYLOAD_LENGTH = 3;
+    BLOCK_CACHE_ACTION_CREATE_MSG_BATCH_ID_LO_OFFSET = 0;
+    BLOCK_CACHE_ACTION_CREATE_MSG_BATCH_ID_HI_OFFSET = 1;
+    BLOCK_CACHE_ACTION_CREATE_BLOCK_TYPE_OFFSET = 2;
+}
+
+enum KeyActionPayloadInfo {
+    option allow_alias = true;
+    KEY_ACTION_UNKNOWN = 0;
+    KEY_ACTION_CREATE_MIN_PAYLOAD_LENGTH = 3;
+    KEY_ACTION_CREATE_MSG_BATCH_ID_LO_OFFSET = 0;
+    KEY_ACTION_CREATE_MSG_BATCH_ID_HI_OFFSET = 1;
+    KEY_ACTION_CREATE_KEY_TYPE_OFFSET = 2;
+}
+
+enum VerificationActionPayloadInfo {
+    option allow_alias = true;
+    VERIFICATION_ACTION_UNKNOWN = 0;
+    VERIFICATION_ACTION_CREATE_MIN_PAYLOAD_LENGTH = 3;
+    VERIFICATION_ACTION_CREATE_MSG_BATCH_ID_LO_OFFSET = 0;
+    VERIFICATION_ACTION_CREATE_MSG_BATCH_ID_HI_OFFSET = 1;
+    VERIFICATION_ACTION_CREATE_VERIFIED_OFFSET = 2;
+}
+
+enum MsgBatchActionPayloadInfo {
+    option allow_alias = true;
+    MSG_BATCH_ACTION_UNKNOWN = 0;
+    MSG_BATCH_RECEIVE_MIN_PAYLOAD_LENGTH = 3;
+    MSG_BATCH_SERIALIZE_MIN_PAYLOAD_LENGTH = 0;
+    MSG_BATCH_SERIALIZE_SIZE_OFFSET = 0;
+    MSG_BATCH_SET_SIZE_MIN_PAYLOAD_LENGTH = 1;
+    MSG_BATCH_SET_SIZE_SIZE_OFFSET = 0;
+    MSG_BATCH_ADD_MSG_MSG_OBJECT_ID_LO_OFFSET = 0;
+    MSG_BATCH_ADD_MSG_MSG_OBJECT_ID_HI_OFFSET = 1;
+    MSG_BATCH_MERGE_DST_OBJECT_ID_LO_OFFSET = 0;
+    MSG_BATCH_MERGE_DST_OBJECT_ID_HI_OFFSET = 1;
+}
+
+enum SubprogramStartPayloadInfo {
+    option allow_alias = true;
+    SUBPROGRAM_START_UNKNOWN = 0;
+    SUBPROGRAM_START_MIN_PAYLOAD_LENGTH = 5;
+    SUBPROGRAM_START_STMT_OFFSET = 0;
+    SUBPROGRAM_START_EXEC_ID_A_HI_OFFSET = 1;
+    SUBPROGRAM_START_EXEC_ID_A_LO_OFFSET = 2;
+    SUBPROGRAM_START_EXEC_ID_B_HI_OFFSET = 3;
+    SUBPROGRAM_START_EXEC_ID_B_LO_OFFSET = 4;
+    SUBPROGRAM_START_IS_USER_INITIATED = 5;
+}
+
+enum SubprogramEndPayloadInfo {
+    option allow_alias = true;
+    SUBPROGRAM_END_UNKNOWN = 0;
+    SUBPROGRAM_END_MIN_PAYLOAD_LENGTH = 5;
+    SUBPROGRAM_END_STMT_OFFSET = 0;
+    SUBPROGRAM_END_EXEC_ID_A_HI_OFFSET = 1;
+    SUBPROGRAM_END_EXEC_ID_A_LO_OFFSET = 2;
+    SUBPROGRAM_END_EXEC_ID_B_HI_OFFSET = 3;
+    SUBPROGRAM_END_EXEC_ID_B_LO_OFFSET = 4;
+}
+
+enum FunctorOpActionPayloadInfo {
+    option allow_alias = true;
+    FUNCTOR_OP_ACTION_UNKNOWN_VALUE = 0;
+    FUNCTOR_OP_ACTION_MIN_PAYLOAD_LENGTH = 2;
+    FUNCTOR_OP_ACTION_STMT_OFFSET = 0;
+    FUNCTOR_OP_ACTION_TYPE_OFFSET = 1;
+    FUNCTOR_OP_ACTION_PAYLOAD_OFFSET = 2;
+    FUNCTOR_OP_ACTION_ENQUEUE_INPUT_BATCH_INPUT_OFFSET = 2;
+    FUNCTOR_OP_ACTION_ENQUEUE_INPUT_BATCH_ID_LO_OFFSET = 3;
+    FUNCTOR_OP_ACTION_ENQUEUE_INPUT_BATCH_ID_HI_OFFSET = 4;
+    FUNCTOR_OP_ACTION_ENQUEUE_INPUT_BATCH_TUPLES_OFFSET = 5;
+    FUNCTOR_OP_ACTION_ENQUEUE_INPUT_BATCH_BARRIER_ID_LO_OFFSET = 6;
+    FUNCTOR_OP_ACTION_ENQUEUE_INPUT_BATCH_BARRIER_ID_HI_OFFSET = 7;
+    FUNCTOR_OP_ACTION_RECEIVE_INPUT_TUPLES_INPUT_OFFSET = 2;
+    FUNCTOR_OP_ACTION_RECEIVE_INPUT_TUPLES_ID_LO_OFFSET = 3;
+    FUNCTOR_OP_ACTION_RECEIVE_INPUT_TUPLES_ID_HI_OFFSET = 4;
+    FUNCTOR_OP_ACTION_RECEIVE_INPUT_TUPLES_OFFSET_OFFSET = 5;
+    FUNCTOR_OP_ACTION_RECEIVE_INPUT_TUPLES_TUPLES_OFFSET = 6;
+    FUNCTOR_OP_ACTION_INPUT_ENDED_INPUT_OFFSET = 2;
+    FUNCTOR_OP_ACTION_INPUT_ENDED_BARRIER_ID_LO_OFFSET = 3;
+    FUNCTOR_OP_ACTION_INPUT_ENDED_BARRIER_ID_HI_OFFSET = 4;
+    FUNCTOR_OP_ACTION_EMIT_OUTPUT_BATCH_OUTPUT_OFFSET = 2;
+    FUNCTOR_OP_ACTION_EMIT_OUTPUT_BATCH_ID_LO_OFFSET = 3;
+    FUNCTOR_OP_ACTION_EMIT_OUTPUT_BATCH_ID_HI_OFFSET = 4;
+    FUNCTOR_OP_ACTION_ENQUEUE_OUTPUT_BATCH_OUTPUT_OFFSET = 2;
+    FUNCTOR_OP_ACTION_ENQUEUE_OUTPUT_BATCH_ID_LO_OFFSET = 3;
+    FUNCTOR_OP_ACTION_ENQUEUE_OUTPUT_BATCH_ID_HI_OFFSET = 4;
+    FUNCTOR_OP_ACTION_ENQUEUE_OUTPUT_BATCH_OFFSET_OFFSET = 5;
+    FUNCTOR_OP_ACTION_ENQUEUE_OUTPUT_BATCH_TUPLES_OFFSET = 6;
+    FUNCTOR_OP_ACTION_FLOW_CONTROL_ADMIT_OUTPUT_OFFSET = 2;
+    FUNCTOR_OP_ACTION_FLOW_CONTROL_ADMIT_BATCH_ID_LO_OFFSET = 3;
+    FUNCTOR_OP_ACTION_FLOW_CONTROL_ADMIT_BATCH_ID_HI_OFFSET = 4;
+    FUNCTOR_OP_ACTION_OUTPUT_ENDED_OUTPUT_OFFSET = 2;
+    FUNCTOR_OP_ACTION_SET_INPUT_BARRIER_ID_LO_OFFSET = 2;
+    FUNCTOR_OP_ACTION_SET_INPUT_BARRIER_ID_HI_OFFSET = 3;
+}
+
+enum BatchActionPayloadInfo {
+    option allow_alias = true;
+    BATCH_ACTION_UNKNOWN_VALUE = 0;
+    BATCH_ACTION_MIN_PAYLOAD_LENGTH = 3;
+    BATCH_ACTION_STMT_OFFSET = 0;
+    BATCH_ACTION_OUTPUT_OFFSET = 1;
+    BATCH_ACTION_NUM_TUPLES_OFFSET = 2;
+}
+
+enum NetExecConnPeekEventInfo {
+    option allow_alias = true;
+    NET_EXEC_CONN_PEEK_EVENT_UNKNOWN = 0;
+    NET_EXEC_CONN_PEEK_EVENT_PEEK_DELAY_LO_OFFSET = 0;
+    NET_EXEC_CONN_PEEK_EVENT_PEEK_DELAY_HI_OFFSET = 1;
+}
+
+enum CostDurationsEntryInfo {
+    COST_DURATIONS_WALL_EXCLUSIVE_LO32_OFFSET = 0;
+    COST_DURATIONS_WALL_EXCLUSIVE_HI32_OFFSET = 1;
+    COST_DURATIONS_CPU_EXCLUSIVE_LO32_OFFSET = 2;
+    COST_DURATIONS_CPU_EXCLUSIVE_HI32_OFFSET = 3;
+    COST_DURATIONS_ENTRY_LENGTH = 4;
+}
+
+enum CriticalCostDurationsEntryInfo {
+    CRITICAL_COSTS_DURATIONS_COSTS_OFFSET = 0;
+    CRITICAL_COSTS_DURATIONS_CRITICAL_COSTS_OFFSET = 4;
+    CRITICAL_COSTS_DURATIONS_ENTRY_LENGTH = 8;
+}
+
+enum OpCostsEntryInfo {
+    OP_COSTS_RUN_SOURCE_OFFSET = 0;
+    OP_COSTS_STMT_OFFSET = 1;
+    OP_COSTS_OP_NON_INPUT_COSTS_OFFSET = 2;
+    OP_COSTS_ENTRY_LENGTH = 10;
+}
+
+enum OpInputCostsEntryInfo {
+    OP_INPUT_COSTS_RUN_SOURCE_OFFSET = 0;
+    OP_INPUT_COSTS_STMT_OFFSET = 1;
+    OP_INPUT_COSTS_INPUT_OFFSET = 2;
+    OP_INPUT_COSTS_TUPLE_COUNT_OFFSET = 3;
+    OP_INPUT_COSTS_OP_COST_OFFSET = 4;
+    OP_INPUT_COSTS_ENTRY_LENGTH = 12;
+}
+
+enum MsgBatchCostsEntryInfo {
+    MSG_BATCH_COSTS_TRACE_OBJECT_ID_LO_OFFSET = 0;
+    MSG_BATCH_COSTS_TRACE_OBJECT_ID_HI_OFFSET = 1;
+    MSG_BATCH_COSTS_SRC_PARTICIPANT_OFFSET = 2;
+    MSG_BATCH_COSTS_DEST_PARTICIPANT_OFFSET = 3;
+    MSG_BATCH_COSTS_ENQUEUED_COSTS_OFFSET = 4;
+    MSG_BATCH_COSTS_TRANSMITTING_COSTS_OFFSET = 12;
+    MSG_BATCH_COSTS_ENTRY_LENGTH = 20;
+}
+
+enum GraphCostsEntryInfo {
+    GRAPH_COSTS_RUN_SOURCE_OFFSET = 0;
+    GRAPH_COSTS_GRAPH_RUN_COSTS_OFFSET = 1;
+    GRAPH_COSTS_GRAPH_SCHEDULE_COSTS_OFFSET = 9;
+    GRAPH_COSTS_ENTRY_LENGTH = 17;
+}
+
+enum ExecCostsEntryInfo {
+    EXEC_COSTS_RUN_SOURCE_OFFSET = 0;
+    EXEC_COSTS_NET_CONNECT_COSTS_OFFSET = 1;
+    EXEC_COSTS_NET_SEND_COSTS_OFFSET = 9;
+    EXEC_COSTS_NET_RECV_COSTS_OFFSET = 17;
+    EXEC_COSTS_NET_PEEK_COSTS_OFFSET = 25;
+    EXEC_COSTS_ENTRY_LENGTH = 33;
+}
+
+enum UserEventCostsEntryInfo {
+    USER_EVENT_COSTS_RUN_SOURCE_OFFSET = 0;
+    USER_EVENT_COSTS_STMT_OFFSET = 1;
+    USER_EVENT_COSTS_LABEL_INDEX_OFFSET = 2;
+    USER_EVENT_COSTS_PARENT_INDEX_OFFSET = 3;
+    USER_EVENT_COSTS_OFFSET = 4;
+    USER_EVENT_COSTS_ENTRY_LENGTH = 12;
+    USER_EVENT_COSTS_PARENT_MISSING = -1;
+}
+
+extend .proto2.EnumValueOptions {
+    string str = 209362915;
+}

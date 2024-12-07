@@ -1,4 +1,4 @@
-syntax = "proto3";
+syntax = "editions";
 
 package fireaxe;
 
@@ -12,11 +12,11 @@ option java_outer_classname = "TaskConditionPb";
 option java_package = "com.google.protos.fireaxe.taskcondition";
 
 message TransitionTimingProto {
-    google.protobuf.Timestamp begin_time = 1;
-    google.protobuf.Duration duration = 2;
+    optional google.protobuf.Timestamp begin_time = 1;
+    optional google.protobuf.Duration duration = 2;
 }
 
 message TaskConditionProto {
-    TaskSelectionProto task_selection = 1;
-    TransitionTimingProto slow_undrain = 2;
+    optional TaskSelectionProto task_selection = 1;
+    optional TransitionTimingProto slow_undrain = 2;
 }

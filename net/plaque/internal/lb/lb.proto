@@ -1,0 +1,29 @@
+syntax = "editions";
+
+package plaque.lb;
+
+import "util/task/status.proto";
+
+option java_multiple_files = true;
+option java_package = "com.google.net.plaque.proto";
+
+message PickFeedback {
+    optional fixed64 id = 1;
+    optional util.StatusProto status = 2;
+    optional int64 bytes_in = 3;
+    optional int64 bytes_out = 4;
+    optional int64 wall_time_latency_micros = 5;
+    optional double application_defined_cost = 6;
+    optional TaskLoad task_load = 15;
+}
+
+message TaskLoad {
+    optional int64 updated_at_micros = 1;
+    optional int64 absolute_cpu_usage_micros = 2;
+    optional double cpu_rate = 3;
+    optional double cpu_limit = 4;
+    optional double server_utilization = 5;
+    optional double executions_per_second = 6;
+    optional double errors_per_second = 7;
+    optional int64 lameduck_end_micros = 8;
+}

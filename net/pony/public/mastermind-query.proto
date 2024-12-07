@@ -1,0 +1,31 @@
+syntax = "editions";
+
+package net_pony;
+
+import "google/protobuf/timestamp.proto";
+import "net/hostdatapath/components/broker/rpc/broker-message.proto";
+import "util/task/codes.proto";
+
+message StationHandleResolutionRequest {
+    optional int32 version = 1 [default = 1];
+    repeated int32 station_handles = 2;
+    
+    extend usps.broker.rpc.BrokerMessage {
+        optional StationHandleResolutionRequest ext = 86966208;
+    }
+}
+
+message StationHandleResolutionResponse {
+    optional int32 version = 1 [default = 1];
+    
+    repeated ContainerInfo container_infos = 2;
+    message ContainerInfo {
+        optional string container_name = 1;
+        optional google.protobuf.Timestamp establish_timestamp = 2;
+        optional util.error.Code error_code = 3 [default = OK];
+    }
+    
+    extend usps.broker.rpc.BrokerMessage {
+        optional StationHandleResolutionResponse ext = 86966209;
+    }
+}

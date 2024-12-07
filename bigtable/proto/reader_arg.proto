@@ -1,0 +1,23 @@
+syntax = "editions";
+
+package bigtable;
+
+import "bigtable/proto/rowset.proto";
+
+message ReaderArg {
+    optional bytes global_item_filter = 1;
+    optional BTI_RowSetProto rowset = 2;
+    optional bool range_status = 3;
+    optional bool read_stats = 4 [default = false];
+    optional bool read_lwms = 5 [default = false];
+    optional bool cacheable = 6 [default = true];
+    optional bool cache_read_expressions = 7 [default = false];
+    optional int64 bytes_per_chunk = 8;
+    optional int32 prefetch_bytes = 9;
+    optional bool sequential_invocations = 10 [default = false];
+    optional int32 row_limit = 11;
+    optional int32 ranges_per_read = 12;
+    optional int32 max_reads_per_server = 13;
+    optional int32 max_parallel_reads = 14;
+    optional bool reverse = 15;
+}

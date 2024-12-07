@@ -1,4 +1,4 @@
-syntax = "proto2";
+syntax = "editions";
 
 package chubby;
 
@@ -35,7 +35,7 @@ message LoadShedding {
     }
     
     message TryAnotherTask {
-        
+        optional string suggested_task_address = 1;
     }
     
     message TryAnotherShard {

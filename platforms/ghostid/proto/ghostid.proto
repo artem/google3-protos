@@ -1,8 +1,9 @@
-syntax = "proto2";
+syntax = "editions";
 
 package platforms.ghostid;
 
-message GHostIdData {
-  optional fixed32 id = 1;
-}
+import "storage/datapol/annotations/proto/semantic_annotations.proto";
 
+message GHostIdData {
+    optional fixed32 id = 1;
+}

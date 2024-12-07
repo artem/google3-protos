@@ -5,9 +5,11 @@ package bigtable;
 import "bigtable/proto/cache_sizer_params.proto";
 import "bigtable/proto/change_data_capture.proto";
 import "bigtable/proto/dma_rollout.proto";
+import "bigtable/proto/materialized_views_config.proto";
 import "bigtable/proto/privacy_attributes.proto";
 import "bigtable/proto/rowset.proto";
 import "bigtable/proto/schema_validator_spec.proto";
+import "google/protobuf/duration.proto";
 import "google/protobuf/timestamp.proto";
 import "net/proto2/bridge/proto/message_set.proto";
 import "security/context/proto/audit_requirements.proto";
@@ -117,6 +119,7 @@ message LocalityGroupAgeSettings {
     optional bool ignore_on_non_major_compact = 3;
     optional int32 max_compaction_groups = 4 [default = -1];
     optional int32 target_compaction_groups = 5;
+    optional bool track_aged_out_bytes = 6 [default = false];
 }
 
 message FileStoragePolicy {
@@ -431,6 +434,7 @@ message RebalancerParams {
 
 message ServerResources {
     optional int64 milligcu_limit = 1 [default = 0];
+    optional int64 milligcu_limit_override = 2 [default = 0];
 }
 
 message SubpartitionMetadata {
@@ -524,6 +528,7 @@ message PartitionMetadata {
         INVISIBLE = 1;
         DERIVED = 2;
         DERIVED_ROUND_UP = 3;
+        SELF_MANAGED = 4;
     }
 }
 
@@ -631,6 +636,7 @@ message TableMetadata {
     optional DmaRolloutConfig dma_rollout_config = 62;
     optional int32 min_num_tablets = 27 [deprecated = true];
     optional bool ssd_to_ssd_data_column_override_opt_out = 63 [default = false];
+    optional MaterializedViewsConfig materialized_views_config = 65;
     
     oneof crn_oneof {
         string cloud_resource_name = 51;
@@ -905,7 +911,7 @@ message SetArgs {
         required bytes name = 3;
         required bytes value = 4;
         optional bool replace = 10;
-        optional bool delete_older = 5;
+        optional bool delete_older = 5 [deprecated = true];
         optional int64 micro_timestamp = 9;
     }
     
@@ -964,6 +970,7 @@ message DiffItemProto {
 
 message TableEncryptionSettings {
     optional CloudKMSEncryptionSettings cloud_kms_encryption_settings = 2;
+    optional ShredmillEncryptionSettings shredmill_encryption_settings = 3;
     
     reserved 1;
 }
@@ -974,6 +981,11 @@ message CloudKMSEncryptionSettings {
     optional int64 delegator_service_account = 4;
     
     reserved 2;
+}
+
+message ShredmillEncryptionSettings {
+    optional string erasure_scope_id = 1;
+    optional google.protobuf.Duration shredmill_key_ttl = 2;
 }
 
 enum EncryptionType {

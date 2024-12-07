@@ -1,0 +1,15 @@
+syntax = "editions";
+
+package storage_l4;
+
+message L4Skipped {
+    enum Reason {
+        UNKNOWN = 0;
+        NO_STRIPE_INDEX = 14;
+        CAPABILITY_DOESNT_AUTHORIZE_L4 = 15;
+        CAPABILITY_DOESNT_HAVE_ANY_GRANTS = 34;
+        UNEXPECTED_ERROR = 19;
+        INVALID_BLOCK_SIZE = 26;
+        HDD_READ_IS_RETRY = 35;
+    }
+}

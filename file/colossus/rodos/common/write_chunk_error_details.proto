@@ -1,0 +1,14 @@
+syntax = "editions";
+
+package rodos;
+
+import "net/proto2/bridge/proto/message_set.proto";
+
+message WriteChunkErrorDetails {
+    optional int64 written_chunk_length = 1;
+    optional uint32 resulting_chunk_checksum = 2;
+    
+    extend .proto2.bridge.MessageSet {
+        optional WriteChunkErrorDetails message_set_extension = 341848083;
+    }
+}

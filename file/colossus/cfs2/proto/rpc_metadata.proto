@@ -1,0 +1,43 @@
+syntax = "editions";
+
+package colossus.cfs2;
+
+import "file/colossus/cfs2/proto/folder_role.proto";
+import "file/colossus/proto/base.proto";
+import "net/proto2/bridge/proto/message_set.proto";
+
+message FolderImplMetadata {
+    optional ServerLocation leader_hint = 1;
+    repeated ServerLocation read_replica_hint = 2;
+    optional bool generation_not_found = 3;
+    optional FolderRole curator_role = 5;
+    optional bool folder_marked_hidden = 7;
+    optional bool denied_due_to_max_loadable_layer = 8;
+    
+    reserved 4, 6;
+}
+
+message FlatNamespaceMetadata {
+    optional string folder_name = 1;
+    optional string start_filename = 2;
+    optional string limit_filename = 3;
+}
+
+message RPCResultMetadata {
+    optional int64 generation = 1;
+    optional bool incorrect_partition = 3;
+    optional FolderImplMetadata folder_impl_metadata = 2;
+    optional FlatNamespaceMetadata flat_namespace_metadata = 4;
+    
+    extend .proto2.bridge.MessageSet {
+        optional RPCResultMetadata message_set_extension = 100386487;
+    }
+}
+
+message IncorrectCellErrorMetadata {
+    optional string correct_user_facing_cell = 1;
+    
+    extend .proto2.bridge.MessageSet {
+        optional IncorrectCellErrorMetadata message_set_extension = 387644372;
+    }
+}

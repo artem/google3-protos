@@ -1,0 +1,11 @@
+syntax = "editions";
+
+package bigtable;
+
+import "net/base/qos.proto";
+
+message QosMapping {
+    optional net_base.qos.TrafficClass besteffort_qos = 1 [default = BE1];
+    optional net_base.qos.TrafficClass expedited_qos = 2 [default = AF1];
+    optional net_base.qos.TrafficClass assured_qos = 3 [default = AF2];
+}

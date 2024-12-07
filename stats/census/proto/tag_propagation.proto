@@ -2,7 +2,6 @@ syntax = "proto2";
 
 package stats_census;
 
-option cc_enable_arenas = true;
 option java_outer_classname = "CensusTagPropagation";
 option java_package = "com.google.monitoring.census";
 

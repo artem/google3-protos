@@ -1,0 +1,200 @@
+syntax = "editions";
+
+package colossus.cfs2;
+
+import "file/colossus/cfs2/proto/metadata_layer.proto";
+import "file/colossus/cfs2/proto/metadata_snapshot.proto";
+import "file/colossus/cfs2/proto/paxos.proto";
+import "file/colossus/proto/base.proto";
+import "file/colossus/proto/cfs.proto";
+import "file/colossus/proto/curator.proto";
+import "file/colossus/proto/stats.proto";
+import "net/proto2/bridge/proto/message_set.proto";
+
+service MaintenanceInterface {
+    rpc ReadFolderMetadata(ReadFolderMetadataArg) returns (ReadFolderMetadataResult);
+    rpc MaintainStripe(MaintainStripeArg) returns (MaintainStripeResult);
+    rpc ExpungeLayer(ExpungeLayerArg) returns (ExpungeLayerResult);
+    rpc ExpungeStripes(ExpungeStripesArg) returns (ExpungeStripesResult);
+    rpc MaintainFile(MaintainFileArg) returns (MaintainFileResult);
+    rpc ExpungeFile(ExpungeFileArg) returns (ExpungeFileResult);
+    rpc RollPaxosLogs(RollPaxosLogsArg) returns (RollPaxosLogsResult);
+    rpc RollBTreeLogs(RollBTreeLogsArg) returns (RollBTreeLogsResult);
+    rpc ForceCloseStripe(ForceCloseStripeArg) returns (ForceCloseStripeResult);
+    rpc NotifyCompaction(NotifyCompactionArg) returns (NotifyCompactionResult);
+    rpc MarkFolderExpungeable(MarkFolderExpungeableArg) returns (MarkFolderExpungeableResult);
+    rpc GetFolderLoad(GetFolderLoadArg) returns (GetFolderLoadResult);
+}
+
+message MetadataState {
+    optional int64 paxos_generation = 2;
+    
+    reserved 1;
+}
+
+message ReadFolderMetadataResult {
+    optional FolderSnapshot snapshot = 2;
+    
+    reserved 1;
+}
+
+message ReadFolderMetadataArg {
+    optional ArgHeader header = 1;
+    optional string folder_name = 2;
+    optional int32 requested_layers = 3;
+}
+
+message MarkFolderExpungeableArg {
+    optional ArgHeader header = 1;
+    optional string folder_name = 2;
+}
+
+message MarkFolderExpungeableResult {
+    
+}
+
+message MaintenanceFileKey {
+    optional string path = 1;
+    optional int64 id = 2;
+}
+
+message MaintainStripeArg {
+    optional ArgHeader header = 1;
+    optional MaintenanceFileKey file = 2;
+    optional int32 physical_stripe_index = 3;
+    optional Stripe new_stripe = 4;
+    optional Stripe prior_stripe = 5;
+    optional MetadataState metadata_state = 6;
+}
+
+message MaintainStripeResult {
+    optional FolderSnapshot snapshot = 2;
+    
+    reserved 1;
+}
+
+message ExpungeLayerArg {
+    optional ArgHeader header = 1;
+    optional string folder_name = 2;
+    optional MetadataLayer layer = 5;
+    optional MetadataState metadata_state = 4;
+    
+    reserved 3;
+}
+
+message ExpungeLayerResult {
+    optional FolderSnapshot snapshot = 2;
+    
+    reserved 1;
+}
+
+message ExpungeStripesArg {
+    optional ArgHeader header = 1;
+    optional MaintenanceFileKey file = 2;
+    optional int32 physical_stripe_offset = 3;
+    repeated Stripe prior_stripes = 4;
+    optional MetadataState metadata_state = 5;
+}
+
+message ExpungeStripesResult {
+    optional FolderSnapshot snapshot = 2;
+    
+    reserved 1;
+}
+
+message MaintainFileArg {
+    optional ArgHeader header = 1;
+    optional MaintenanceFileKey file = 2;
+    optional FileDescriptor new_header = 3;
+    optional FileDescriptor prior_header = 4;
+    optional MetadataState metadata_state = 5;
+}
+
+message MaintainFileResult {
+    optional FolderSnapshot snapshot = 2;
+    
+    reserved 1;
+}
+
+message ExpungeFileArg {
+    optional ArgHeader header = 1;
+    optional MaintenanceFileKey file = 2;
+    optional FileDescriptor prior_header = 3;
+    optional MetadataState metadata_state = 4;
+}
+
+message ExpungeFileResult {
+    optional FolderSnapshot snapshot = 2;
+    
+    reserved 1;
+}
+
+message RollPaxosLogsArg {
+    optional ArgHeader header = 1;
+    optional string folder_name = 2;
+    optional PaxosGroup prior_paxos_group = 3;
+    optional RecoveryPriority.Priority recovery_priority = 4;
+    optional RebalanceType.Type rebalance_type = 5;
+    optional string note = 6;
+}
+
+message RollPaxosLogsResult {
+    reserved 1;
+}
+
+message RollBTreeLogsArg {
+    optional ArgHeader header = 1;
+    optional string folder_name = 2;
+    optional MetadataLayer metadata_layer = 3;
+    optional int64 prior_epoch = 4;
+}
+
+message RollBTreeLogsResult {
+    optional FolderSnapshot pre_roll_snapshot = 2;
+    
+    reserved 1;
+}
+
+message ForceCloseStripeArg {
+    optional ArgHeader header = 1;
+    optional MaintenanceFileKey file = 2;
+    optional Curator_CloseStripeArg close_stripe_info = 3;
+    optional MetadataState metadata_state = 4;
+}
+
+message ForceCloseStripeResult {
+    optional Stripe closed_stripe = 5;
+    
+    reserved 1;
+}
+
+message NotifyCompactionArg {
+    optional ArgHeader header = 1;
+    optional string folder_name = 2;
+    optional MetadataLayer requested_layer = 3;
+    optional string temp_log_filename = 5;
+    optional bool remote_logs_compacted = 6;
+    
+    reserved 4;
+}
+
+message NotifyCompactionResult {
+    reserved 1, 2;
+}
+
+message GetFolderLoadArg {
+    optional ArgHeader header = 1;
+    optional string folder_name = 2;
+    optional int64 averaging_interval_secs = 3;
+}
+
+message GetFolderLoadResult {
+    optional double md1_btree_write_bytes_per_second = 1;
+    optional int64 averaging_interval_secs = 2;
+}
+
+message WriteHazardDetected {
+    extend .proto2.bridge.MessageSet {
+        optional WriteHazardDetected message_set_extension = 489000866;
+    }
+}

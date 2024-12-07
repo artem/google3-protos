@@ -1,4 +1,4 @@
-syntax = "proto2";
+syntax = "editions";
 
 package postgres.extensions.postgres_ann;
 
@@ -19,6 +19,20 @@ message KMeansPartitioningConfig {
     optional string distance_measure = 12;
     optional bool use_pca = 13 [default = false];
     optional int32 num_tokenized_branch = 15 [default = 1];
+    optional bool enable_avq = 16 [default = true];
+    optional double avq_eta_value = 17 [default = 2.5];
+    
+    optional LeafQuantization leaf_quantization = 18 [default = FIXED_POINT_INT8];
+    enum LeafQuantization {
+        UNSPECIFIED = 0;
+        FIXED_POINT_INT8 = 1;
+        FLOAT = 2;
+        ASYMMETRIC_HASHING = 3;
+    }
+    
+    optional int32 tree_pre_reordering_num_neighbors = 19 [default = -1];
+    optional bool use_static_kmr = 20 [default = false];
+    optional double noise_shaping_threshold = 21 [default = nan];
     
     reserved 14;
 }

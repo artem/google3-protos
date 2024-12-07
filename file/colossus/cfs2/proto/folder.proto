@@ -1,0 +1,40 @@
+syntax = "editions";
+
+package colossus.cfs2;
+
+import "file/colossus/cfs2/proto/paxos.proto";
+
+message FolderKeyProto {
+    optional string name = 1;
+    optional int64 generation = 2;
+}
+
+message FolderRange {
+    optional string start_filename = 1;
+    optional string limit_filename = 2;
+}
+
+message FolderRangeKeyProto {
+    optional FolderKeyProto key = 1;
+    optional FolderRange range = 2;
+}
+
+message FolderDescriptor {
+    optional State state = 1;
+    enum State {
+        UNINITIALIZED = 0;
+        MUTABLE = 1;
+        DELETED = 2;
+        HIDDEN = 3;
+    }
+    
+    optional int64 generation = 2;
+    optional PaxosGroup active_paxos_group = 3;
+    optional PaxosGroup history_paxos_group = 4;
+    optional int64 creation_time = 5;
+    optional string creator_id = 6;
+    optional string start_filename = 7;
+    optional string limit_filename = 10;
+    repeated FolderKeyProto children = 8;
+    repeated FolderKeyProto parents = 9;
+}

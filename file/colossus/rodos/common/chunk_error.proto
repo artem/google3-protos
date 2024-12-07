@@ -1,0 +1,13 @@
+syntax = "proto3";
+
+package rodos;
+
+import "util/task/status.proto";
+
+message ChunkError {
+    uint64 chunk_handle = 1;
+    util.StatusProto error = 2;
+    fixed64 failed_capability_key_id = 3;
+    string location = 4;
+    int64 volume_id = 5;
+}

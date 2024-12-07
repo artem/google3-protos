@@ -108,7 +108,7 @@ enum Identifiers {
     ID_BLOBSTORE = 95;
 }
 
-extend proto2.EnumValueOptions {
+extend .proto2.EnumValueOptions {
     string warning = 140599355;
     string datapol_equivalent = 140605468;
     string retention_equivalent = 140826283;

@@ -18,6 +18,6 @@ enum PackageVersionStatus {
     NEXT_MAJOR_VERSION_CANDIDATE = 3;
 }
 
-extend proto2.FileOptions {
+extend .proto2.FileOptions {
     StatusAnnotation file_status = 222707719;
 }

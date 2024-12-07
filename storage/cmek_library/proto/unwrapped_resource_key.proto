@@ -1,0 +1,22 @@
+syntax = "proto2";
+
+package storage_cmek;
+
+import "devtools/protoshop/public/parsing_options/parsing_options.proto";
+import "google/protobuf/timestamp.proto";
+import "security/panoptikeys/crypto_key_classes/crypto_key_classes_binding.proto";
+import "storage/datapol/annotations/proto/semantic_annotations.proto";
+
+message UnwrappedResourceKey {
+    optional string resource_key_name = 1;
+    optional bytes resource_key = 2;
+    optional uint32 resource_key_crc32c = 4;
+    optional google.protobuf.Timestamp soft_expiration_time = 5;
+    optional google.protobuf.Timestamp expiration_time = 3;
+}
+
+message ResourceKeyInfo {
+    optional string resource_key_name = 1;
+    optional int32 resource_key_version = 2;
+    optional google.protobuf.Timestamp creation_time = 3;
+}

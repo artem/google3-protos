@@ -1,0 +1,13 @@
+syntax = "editions";
+
+package usps.broker.rpc;
+
+import "net/hostdatapath/components/broker/rpc/broker-message.proto";
+
+message RawBufferMessage {
+    optional bytes payload = 1;
+    
+    extend BrokerMessage {
+        optional RawBufferMessage raw_buffer = 501;
+    }
+}

@@ -11,6 +11,7 @@ import "borg/common/permissions.proto";
 import "borg/common/res_alloc.proto";
 import "borg/common/task_stop_status.proto";
 import "net/rpc/empty-message.proto";
+import "storage/datapol/annotations/proto/semantic_annotations.proto";
 
 option java_outer_classname = "TaskStatus";
 option java_package = "com.google.borg.rpc";
@@ -105,11 +106,21 @@ message RunCommandInTaskReq {
     optional bool repin_master_process = 3;
     optional bool full_fledged_process = 4;
     optional string break_glass_reason = 5;
+    optional bool return_output_designation = 6;
+    
+    optional RcitAccessLayer access_layer = 7;
+    enum RcitAccessLayer {
+        UNSPECIFIED = 0;
+        HOST_CONTAINER = 1;
+        GUEST_ROOT = 2;
+        GUEST_CONTAINER = 3;
+    }
 }
 
 message RunCommandInTaskResp {
     optional int32 attached_pid = 2;
     optional string borglet_name = 3;
+    optional string output_path = 4;
     
     reserved 1;
 }

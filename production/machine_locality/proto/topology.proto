@@ -1,0 +1,20 @@
+syntax = "editions";
+
+package production.machine_locality;
+
+option java_package = "com.google.prod.machinelocality";
+
+message EntityId {
+    optional EntityKind kind = 1;
+    optional string name = 2 [ctype = STRING_PIECE];
+}
+
+enum EntityKind {
+    EK_UNKNOWN = 0;
+    EK_SERVING_LOCATION = 1;
+    EK_METRO = 2;
+    EK_CONTINENT = 3;
+    EK_CLUSTER = 4;
+    EK_SATELLITE = 5;
+    EK_EXTENDED_CLUSTER = 6;
+}

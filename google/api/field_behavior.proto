@@ -25,6 +25,6 @@ enum FieldBehavior {
     MUTABLE_RESOURCE_NAME = 10;
 }
 
-extend proto2.FieldOptions {
+extend .proto2.FieldOptions {
     repeated FieldBehavior field_behavior = 1052 [packed = false];
 }

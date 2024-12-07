@@ -24,6 +24,7 @@ message KMeansFlumeConfig {
     optional int32 num_mini_batches = 16 [default = 10];
     optional bool allow_resume = 18 [default = true];
     optional string error_log_file = 20;
+    optional bool ignore_empty_cluster_errors = 22 [default = false];
     
     oneof InputParams {
         string input_pattern = 1;

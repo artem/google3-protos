@@ -1,0 +1,10 @@
+syntax = "editions";
+
+package k3;
+
+import "storage/k3/borg/borg_task_name.proto";
+
+message BorgTaskPortProto {
+    optional BorgTaskNameProto task = 1;
+    optional string port_name = 2;
+}

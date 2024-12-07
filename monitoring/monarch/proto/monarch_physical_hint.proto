@@ -4,7 +4,6 @@ package monarch;
 
 import "net/proto2/proto/descriptor.proto";
 
-option cc_enable_arenas = true;
 option java_multiple_files = true;
 option java_package = "com.google.monitoring.monarch.proto";
 

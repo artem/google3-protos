@@ -1,0 +1,95 @@
+syntax = "editions";
+
+package colossus.cfs2;
+
+import "file/colossus/cfs2/proto/folder.proto";
+import "file/colossus/cfs2/proto/metadata_layer.proto";
+import "file/colossus/cfs2/proto/paxos.proto";
+import "file/colossus/proto/base.proto";
+import "file/colossus/proto/cfs.proto";
+import "google/protobuf/timestamp.proto";
+
+message ThrashingInfo {
+    optional LeadershipAttempt last_leadership_attempt = 1;
+    message LeadershipAttempt {
+        optional Timestamp timestamp = 1;
+        message Timestamp {
+            optional int64 midpoint = 1;
+            optional int64 uncertainty_radius = 2;
+        }
+        
+        optional int64 thrashing_iteration = 2;
+    }
+}
+
+message CuratorPaxosPerRecordMetadata {
+    optional ServerLocation curator = 1;
+    optional ThrashingInfo thrashing_info = 2;
+    
+    extend PaxosPerRecordMetadata {
+        optional CuratorPaxosPerRecordMetadata ext = 84622879;
+    }
+}
+
+message MetadataFile {
+    optional string path = 1;
+    optional FileDescriptor fd = 2;
+}
+
+message CuratorPaxosPayload {
+    repeated MetadataFile files = 1;
+    
+    optional FolderState folder_state = 9 [default = UNKNOWN];
+    enum FolderState {
+        UNKNOWN = 0;
+        NORMAL = 1;
+        DELETED = 2;
+        REFERENCED = 3;
+        NEW = 4;
+        SPLITTING = 5;
+        MERGING = 6;
+        FORWARDING = 7;
+        REFERENCING = 8;
+        SEMIREF = 9;
+        EXPUNGEABLE = 10;
+    }
+    
+    optional google.protobuf.Timestamp folder_state_transition_time = 10;
+    optional MetadataLayer max_loadable_layer = 3 [default = METADATA1];
+    optional bool read_only = 7;
+    optional int64 generation = 4;
+    
+    optional DebugInfo debug_info = 14;
+    message DebugInfo {
+        optional int64 timestamp = 1;
+        optional string user = 2;
+    }
+    
+    optional int64 recovery_sequence = 5;
+    optional int64 payload_creation_sequence = 8;
+    
+    optional FlatNamespaceMetadata flat_namespace_metadata = 13;
+    message FlatNamespaceMetadata {
+        optional string start_filename = 1;
+        optional FolderRange range = 11;
+        repeated FolderKeyProto parent_folders = 2;
+        repeated FolderRangeKeyProto parent_folder_range_keys = 10;
+        repeated FolderKeyProto transferred_parent_folders = 8;
+        repeated FolderKeyProto child_folders = 3;
+        repeated FolderRangeKeyProto child_folder_range_keys = 12;
+        repeated PaxosGroup child_paxos_groups = 5;
+        optional FolderKeyProto left_parent_key = 6;
+        optional string left_parent_start_filename = 7;
+        optional google.protobuf.Timestamp earliest_merge_timestamp = 9;
+        
+        reserved 4;
+    }
+    
+    optional google.protobuf.Timestamp expiration_time = 15;
+    
+    reserved 2, 6, 12;
+    
+    extend PaxosPayload {
+        optional CuratorPaxosPayload ext = 78973222;
+    }
+}

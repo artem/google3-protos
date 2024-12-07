@@ -5,9 +5,14 @@ package bigtable;
 import "google/protobuf/duration.proto";
 
 option java_multiple_files = true;
-option java_package = "com.google.bigtable.protos.proto1api";
+option java_package = "com.google.bigtable.protos";
 
 message ChangeDataCaptureConfig {
     optional google.protobuf.Duration log_retention_period = 1;
     optional bool create_gc_mutations = 2 [default = true];
+    
+    repeated DynamicRetentionConfig dynamic_retention_configs = 3;
+    message DynamicRetentionConfig {
+        optional string coprocessor_name = 1;
+    }
 }

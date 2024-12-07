@@ -1,8 +1,7 @@
-syntax = "proto2";
+syntax = "editions";
 
 package tech.log;
 
-option cc_enable_arenas = true;
 option java_multiple_files = true;
 option java_package = "com.google.tech.log";
 
@@ -15,13 +14,10 @@ message LogOptions {
         ZLIB = 1;
     }
     
-    optional ChecksumMethod checksum_method = 4;
-    enum ChecksumMethod {
-        SAWMILL = 1;
-    }
-    
     optional int64 ring_buffer_max_bytes = 5;
     repeated string teeing_endpoint = 6;
     
     extensions 1000 to max;
+    
+    reserved 4;
 }

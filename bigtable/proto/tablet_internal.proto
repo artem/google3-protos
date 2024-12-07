@@ -1,0 +1,325 @@
+syntax = "proto2";
+
+package bigtable;
+
+import "bigtable/proto/bigtable.proto";
+import "bigtable/proto/bigtable_internal.proto";
+import "bigtable/proto/bounds_internal.proto";
+import "bigtable/proto/encryption.proto";
+import "bigtable/proto/rowset.proto";
+import "bigtable/proto/size_profile.proto";
+import "bigtable/proto/sstable_bloom_filter_info.proto";
+import "bigtable/replicate/public/replication_log_bounds.proto";
+import "bigtable/replicate/public/replication_log_ranges.proto";
+import "google/protobuf/duration.proto";
+import "google/protobuf/timestamp.proto";
+import "security/credentials/proto/authenticator.proto";
+import "security/thinmint/proto/core/thinmint_core.proto";
+import "stats/histogram/proto/histogram.proto";
+
+option cc_enable_arenas = true;
+option java_package = "com.google.bigtable.protos";
+
+message TabletSpec {
+    required string TabletId = 1;
+    required int64 Incarnation = 2;
+}
+
+message SSTableMetaData {
+    optional int32 version = 22;
+    optional SizeProfileRecord profile = 8;
+    optional LocalityGroup locality_group_settings = 25;
+    optional SSTableBloomFilterInfo bloom_filter_info = 29;
+    
+    reserved 1 to 7, 9 to 10, 17 to 21, 23, 24, 26 to 28;
+    
+    enum Version {
+        option allow_alias = true;
+        UNSET = 0;
+        MIN_SUPPORTED_VERSION = 36;
+        LATEST_VERSION = 36;
+    }
+}
+
+message BTI_SSTableMapping {
+    required string group = 1;
+    
+    repeated group Family = 2 {
+        required int64 family_id = 3;
+        required string family_name = 4;
+    }
+}
+
+message SSTableBulkImportInfo {
+    required BTI_SSTableMapping mapping = 1;
+    required UpdateBounds bounds = 2;
+    
+    optional BloomFilterMode bloom_filter_mode = 3 [default = NONE];
+    enum BloomFilterMode {
+        NONE = 0;
+        LEGACY = 1;
+        SHARDED = 2;
+    }
+    
+    optional int32 ts_version = 4 [default = 0];
+}
+
+message LogSource {
+    required int64 end_sequence = 1;
+    optional int64 verify_end_sequence = 5 [default = -2];
+    required int64 table_version = 2;
+    optional string cell = 3;
+    optional string table_key = 4;
+}
+
+message TabletMetaData {
+    required int32 version = 34;
+    required BTI_Tablet tablet = 16;
+    optional int64 incarnation = 27;
+    repeated int64 recent_load_times = 131;
+    required int32 split_count = 13;
+    optional uint64 serial = 56;
+    optional int64 btls_used_generation_limit = 57 [default = 0];
+    optional int64 logical_clock = 37;
+    optional int64 last_update_logical_clock = 121 [default = 0];
+    optional double auto_merge_barrier = 54 [default = 0];
+    
+    optional group SharedLog = 18 {
+        required string fileprefix = 19;
+        repeated string fileprefixes = 73;
+        required int64 sequence = 20;
+        optional LogSource source = 58;
+        
+        reserved 117;
+    }
+    
+    repeated group OldSharedLog = 28 {
+        required string fileprefix = 29;
+        repeated string fileprefixes = 74;
+        required int64 sequence = 33;
+        optional LogSource source = 59;
+        optional bytes start_row = 75;
+        optional bytes limit_row = 76;
+        
+        reserved 118;
+    }
+    
+    optional ParentKeyData encryption_parent_key = 139;
+    
+    repeated group LocalityGroup = 6 {
+        required string name = 7;
+        
+        optional OfflineSkip offline_skip = 145;
+        message OfflineSkip {
+            optional bool skip_lg = 1;
+            optional string reason = 2;
+        }
+        
+        repeated group Table = 14 {
+            required string filename = 15;
+            optional string extension = 66;
+            optional string extension_override = 137;
+            optional string sstable_options = 174;
+            optional bool recall_required = 126 [default = false];
+            optional bytes chronicle_path = 129;
+            repeated security.credentials.DataAccessReason recall_reasons = 162;
+            optional AgeGroup age_group = 111;
+            optional int64 file_size = 22;
+            optional int64 disk_size = 67;
+            map<string, int64> disk_size_by_cfs_partition = 130;
+            map<string, int64> disk_overhead_by_cfs_partition = 133;
+            optional double creation_time = 52;
+            optional fixed64 sstable_checksum = 65;
+            optional bytes start_row = 38 [ctype = CORD];
+            optional bytes end_row = 39 [ctype = CORD];
+            optional BTI_RowSetProto keep_ranges = 112;
+            repeated int64 keep_families = 144;
+            optional uint64 import_replay_id = 71;
+            optional float used_fraction = 40 [default = 1];
+            optional UpdateBounds bounds = 46;
+            optional BTIR_LogBounds repl_log_bounds = 47;
+            optional bool is_base = 114;
+            optional bool is_bloomfilter_sharded = 115;
+            optional bool deletions_only = 116 [default = false];
+            optional int32 initial_stack_depth_index = 123;
+            
+            optional group Stats = 23 {
+                optional int64 values_size = 24;
+                optional int64 num_versions = 25;
+                optional int64 num_cells = 26;
+                optional int64 bloomfilter_size = 36;
+                optional int64 index_size = 51;
+                optional int64 level0_index_size = 63;
+                optional int64 inmemory_index_size = 64;
+                
+                repeated group Family = 41 {
+                    optional int64 family_id = 42;
+                    optional int64 values_size = 43;
+                    optional int64 num_versions = 44;
+                    optional int64 num_cells = 45;
+                    optional string instantiated_gcexpr = 122;
+                }
+                
+                optional stats.HistogramState sstable_key_size_stats = 156;
+                optional stats.HistogramState sstable_value_size_stats = 157;
+            }
+            
+            optional EncryptionType encryption_type = 124 [default = ENCRYPTEDFILE];
+            optional BTI_EncryptionMasterKey master_key = 119;
+            optional EncryptionKeyData encryption_key_data = 138;
+            optional .thinmint.ThinMint mint = 127;
+            optional int32 ts_version = 134 [default = 0];
+            optional int32 sstable_version = 135;
+            optional SSTableBloomFilterInfo bloom_filter_info = 140;
+            optional string creator = 142;
+            optional double cdc_disk_fraction = 164 [default = 0];
+            optional uint64 compaction_uid = 167;
+            optional bool is_ssd_to_hdd_spillover = 171;
+            
+            reserved 17, 21, 57, 60, 61, 62, 128, 136;
+        }
+        
+        optional int64 time_step = 150;
+        optional int64 effective_time_step = 153;
+        optional int32 last_merge_index = 151 [default = -1];
+        optional double average_minor_size = 154 [default = -1];
+        
+        reserved 4, 8;
+    }
+    
+    repeated group PreparedGroup = 77 {
+        required string name = 78;
+        
+        repeated group Table = 79 {
+            required string filename = 80;
+            optional string extension = 81;
+            optional int64 file_size = 82;
+            optional int64 disk_size = 83;
+            optional double creation_time = 84;
+            optional fixed64 sstable_checksum = 85;
+            optional bytes start_row = 86;
+            optional bytes end_row = 87;
+            optional BTI_RowSetProto keep_ranges = 113;
+            optional uint64 import_replay_id = 88;
+            optional float used_fraction = 89 [default = 1];
+            optional UpdateBounds bounds = 90;
+            optional BTIR_LogBounds repl_log_bounds = 91;
+            
+            optional group Stats = 92 {
+                required int64 values_size = 93;
+                required int64 num_versions = 94;
+                required int64 num_cells = 95;
+                optional int64 bloomfilter_size = 96;
+                optional int64 index_size = 97;
+                optional int64 level0_index_size = 98;
+                optional int64 inmemory_index_size = 99;
+                
+                repeated group Family = 100 {
+                    required int64 family_id = 101;
+                    required int64 values_size = 102;
+                    required int64 num_versions = 103;
+                    required int64 num_cells = 104;
+                }
+            }
+            
+            optional BTI_EncryptionMasterKey master_key = 120;
+            optional EncryptionType encryption_type = 125 [default = ENCRYPTEDFILE];
+        }
+        
+        reserved 105 to 110;
+    }
+    
+    optional BatchReplicationGroup batch_replication_group = 143;
+    message BatchReplicationGroup {
+        repeated LocalBatch local_batches = 1;
+        message LocalBatch {
+            optional BTIR_LogManager repl_log_manager = 1;
+            repeated LocalityGroup.Table sstables = 2;
+        }
+        
+        reserved 2;
+    }
+    
+    repeated group ColumnMapping = 10 {
+        optional int64 family_id = 5;
+        required string localitygroup = 12;
+        
+        reserved 11;
+    }
+    
+    optional group Stats = 30 {
+        required int64 num_rows = 31;
+        required double timestamp = 32;
+        optional double start_timestamp = 72;
+        optional double update_timestamp = 68;
+        optional int64 num_sstable_built = 69;
+        optional int64 num_sstable_discarded = 70;
+        optional double oldest_delete_timestamp = 158;
+    }
+    
+    optional fixed32 _checksum = 55;
+    optional fixed32 _crc_checksum = 168;
+    optional GlobalSequencerProto dropped_sequencer_upper_bound = 146;
+    optional bytes index_gc_resume_from_row = 147;
+    optional double last_corruption_check_time = 148;
+    optional int64 deleted_boundary_timestamp = 149;
+    optional int64 deleted_boundary_merge_timestamp = 152;
+    map<int64, int64> migrated_family_id_map = 155;
+    optional google.protobuf.Duration major_compaction_cycle = 159;
+    optional int64 split_size_bytes = 160;
+    optional int64 ssd_split_size_bytes = 169;
+    optional bool use_new_offset_calculation = 175;
+    
+    optional MigrationState migration_state = 161 [default = NONE, deprecated = true];
+    enum MigrationState {
+        NONE = 0;
+        PREPARED = 1;
+        MIGRATING = 2;
+        MIGRATED = 3;
+        REVERTING = 4;
+    }
+    
+    optional google.protobuf.Timestamp last_discard_compaction_time = 163;
+    map<string, int64> repl_logs_max_gced_logical_clock = 165;
+    map<string, uint64> repl_logs_max_gced_incarnation = 166;
+    
+    optional MoveReplicaStatus move_replica_status = 170;
+    message MoveReplicaStatus {
+        optional MoveStatus status = 1 [default = ACTIVE];
+        enum MoveStatus {
+            ACTIVE = 0;
+            ACTIVE_MOVING = 10;
+            STANDBY_MOVING = 20;
+            STANDBY = 30;
+        }
+        
+        optional int64 last_updated_logical_clock = 2;
+        optional int64 last_standby_to_active_time_micros = 3;
+    }
+    
+    optional int64 aged_out_bytes = 172;
+    optional int64 last_minor_compaction_start_time_micros = 173;
+    
+    reserved 9, 35, 48, 49, 50, 53, 132, 141;
+}
+
+message MetadataBootstrap {
+    optional int32 version = 8;
+    required TabletMetaData tablet0 = 1;
+    optional TabletErrors errors = 5;
+    
+    repeated group InUse = 2 {
+        required TabletMetaData meta = 3;
+        required int64 version = 4;
+    }
+    
+    repeated string sstable = 6;
+    optional fixed32 _checksum = 7;
+    optional fixed32 _crc_checksum = 10;
+    optional ChubbyCompressed chubby_compressed = 9;
+}
+
+message BTI_SecondaryError {
+    required int32 error_code = 1;
+    required string message = 2;
+}

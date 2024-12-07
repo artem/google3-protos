@@ -1,0 +1,7 @@
+syntax = "proto2";
+
+package storage_useccfs;
+
+import public "storage/colossus/client/useccfs/common/descriptor.proto";
+
+

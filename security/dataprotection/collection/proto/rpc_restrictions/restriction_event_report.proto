@@ -1,4 +1,4 @@
-syntax = "proto2";
+syntax = "editions";
 
 package security.dataprotection.collection.proto.rpc_restrictions;
 
@@ -7,6 +7,8 @@ import "production/dependency/rpc/outboundacl/proto/protocols.proto";
 import "production/resources/dataplatform/idx/time_series/public/proto/idx_time_series_record.proto";
 import "security/dataprotection/collection/public/collection_service.proto";
 import "security/rpc_restrictions/restriction_usage_reporting.proto";
+import "third_party/java/protobuf/java_features.proto";
+import "third_party/protobuf/cpp_features.proto";
 
 option java_multiple_files = true;
 option java_package = "com.google.security.dataprotection.collection.proto.rpcrestrictions";

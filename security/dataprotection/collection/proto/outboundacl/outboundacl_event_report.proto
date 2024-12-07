@@ -1,4 +1,4 @@
-syntax = "proto2";
+syntax = "editions";
 
 package security.dataprotection.collection.proto.outboundacl;
 
@@ -8,6 +8,8 @@ import "production/dependency/rpc/outboundacl/proto/protocols.proto";
 import "production/dependency/rpc/outboundacl/proto/reasons.proto";
 import "production/resources/dataplatform/idx/time_series/public/proto/idx_time_series_record.proto";
 import "security/dataprotection/collection/public/collection_service.proto";
+import "third_party/java/protobuf/java_features.proto";
+import "third_party/protobuf/cpp_features.proto";
 
 option java_multiple_files = true;
 option java_package = "com.google.security.dataprotection.collection.proto.outboundacl";
@@ -38,7 +40,7 @@ message RpcEvent {
     optional production.dependency.rpc.outboundacl.Language language = 11;
     optional string proto_package_name = 12;
     optional string service_name_suffix = 13;
-    repeated production.dependency.rpc.outboundacl.Reason rejection_reasons = 14 [packed = true];
+    repeated production.dependency.rpc.outboundacl.Reason rejection_reasons = 14;
     optional production.dependency.rpc.outboundacl.Verdict verdict = 15;
     optional google.protobuf.Timestamp state_change_timestamp = 16;
     optional string remote_borg_user = 17;

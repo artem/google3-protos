@@ -1,0 +1,145 @@
+syntax = "editions";
+
+package bigtable.cdc;
+
+import "bigtable/proto/bigtable_internal.proto";
+import "bigtable/proto/mutation_internal.proto";
+import "google/protobuf/duration.proto";
+
+option java_multiple_files = true;
+option java_package = "com.google.bigtable.cdc.protos";
+
+message ChangeLogPosition {
+    repeated Source sources = 1;
+    message Source {
+        optional string source_id = 1;
+        
+        repeated Range ranges = 2;
+        message Range {
+            optional bytes start = 1 [ctype = CORD];
+            optional bytes limit = 2 [ctype = CORD];
+            optional int64 timestamp_micros = 3;
+            optional uint64 incarnation = 4;
+        }
+        
+        repeated RangeReplicationState range_states = 3;
+        message RangeReplicationState {
+            optional bytes start = 1 [ctype = CORD];
+            optional bytes limit = 2 [ctype = CORD];
+            
+            optional ReplicationState state = 3;
+            enum ReplicationState {
+                ACTIVE = 0;
+                INACTIVE = 1;
+            }
+        }
+    }
+    
+    optional int64 start_timestamp_micros = 2;
+}
+
+message ReadChangeLogRequest {
+    optional BTI_Request request = 1;
+    optional string table = 2;
+    optional uint64 table_version = 3;
+    optional bytes tablet_start = 4 [ctype = CORD];
+    optional bytes tablet_limit = 5 [ctype = CORD];
+    optional ChangeLogPosition start_position = 6;
+    
+    optional RetentionHorizonEnforcement retention_horizon_enforcement = 15;
+    enum RetentionHorizonEnforcement {
+        RETENTION_HORIZON_ENFORCEMENT_UNKNOWN = 0;
+        WITHIN_RETENTION_HORIZON = 1;
+        IGNORE_RETENTION_HORIZON = 2;
+    }
+    
+    optional google.protobuf.Duration heartbeat_interval = 7;
+    optional int64 end_timestamp_micros = 8;
+    
+    optional ReadMode read_mode = 9;
+    enum ReadMode {
+        READMODE_UNKNOWN = 0;
+        OLDEST_FIRST = 1;
+        AS_SOON_AS_POSSIBLE = 2;
+    }
+    
+    optional bool match_sources = 10 [default = true];
+    repeated string ignore_sources = 11;
+    optional int32 target_update_size = 12;
+    optional google.protobuf.Duration max_batching_delay = 13;
+    optional bool ignore_gc_mutations = 16;
+    repeated string column_families = 17;
+    
+    reserved 14;
+}
+
+message CdcUpdate {
+    repeated Change change = 1;
+    message Change {
+        optional BTI_Mutation mutation = 1;
+        optional string source_id = 2;
+        optional int64 logical_clock = 3;
+    }
+    
+    optional ChangeLogPositionUpdate position_update = 2;
+    message ChangeLogPositionUpdate {
+        repeated SourceUpdate source_updates = 1;
+        message SourceUpdate {
+            optional string source_id = 1;
+            
+            repeated RangeUpdate range_updates = 2;
+            message RangeUpdate {
+                optional bytes start = 1 [ctype = CORD];
+                optional bytes limit = 2 [ctype = CORD];
+                optional int64 timestamp_micros = 3;
+                optional uint64 incarnation = 4;
+            }
+        }
+        
+        reserved 2;
+    }
+}
+
+message StatusUpdate {
+    optional MisalignedTablet misaligned_tablet = 1;
+    message MisalignedTablet {
+        optional bytes new_tablet_start = 1 [ctype = CORD];
+        optional bytes new_tablet_limit = 2 [ctype = CORD];
+        optional bytes new_right_tablet_start = 3 [ctype = CORD];
+        optional bytes new_right_tablet_limit = 4 [ctype = CORD];
+    }
+    
+    optional UnloadedTablet unloaded_tablet = 2;
+    message UnloadedTablet {
+        
+    }
+    
+    optional UpdatedColumnFamily column_family_update = 3;
+    message UpdatedColumnFamily {
+        repeated string added_families = 1;
+        repeated string removed_families = 2;
+    }
+    
+    optional MismatchedReplicationSource replication_source_update = 4;
+    message MismatchedReplicationSource {
+        repeated string missing_sources = 1;
+        repeated string unknown_sources = 2;
+    }
+}
+
+message FlowControlTokenRequest {
+    optional int64 new_window_size = 1;
+}
+
+message Acknowledge {
+    
+}
+
+message ReadChangeLogResponse {
+    oneof update {
+        CdcUpdate stream_update = 1;
+        StatusUpdate status_update = 2;
+        FlowControlTokenRequest flow_control_token_request = 3;
+        Acknowledge ack = 4;
+    }
+}

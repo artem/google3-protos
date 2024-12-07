@@ -1,37 +1,36 @@
-syntax = "proto3";
+syntax = "editions";
 
 package stats_census;
 
 import "google/protobuf/timestamp.proto";
 import "stats/census/proto/google-rpc-status.proto";
 
-option cc_enable_arenas = true;
 option java_multiple_files = true;
 option java_outer_classname = "GoogleTraceProto";
 option java_package = "com.google.tracing";
 
 message TraceId {
-    string hex_encoded = 1;
+    optional string hex_encoded = 1;
 }
 
 message Module {
-    string module = 1;
-    string build_id = 2;
+    optional string module = 1;
+    optional string build_id = 2;
 }
 
 message StackTrace {
     repeated StackFrame stack_frame = 1;
     message StackFrame {
-        string function_name = 1;
-        string orig_function_name = 2;
-        string file_name = 3;
-        int64 line_number = 4;
-        int64 column_number = 5;
-        Module load_module = 6;
-        string source_version = 7;
+        optional string function_name = 1;
+        optional string orig_function_name = 2;
+        optional string file_name = 3;
+        optional int64 line_number = 4;
+        optional int64 column_number = 5;
+        optional Module load_module = 6;
+        optional string source_version = 7;
     }
     
-    uint64 stack_trace_hash_id = 2;
+    optional uint64 stack_trace_hash_id = 2;
 }
 
 message LabelValue {
@@ -43,17 +42,17 @@ message LabelValue {
 }
 
 message Span {
-    fixed64 id = 1;
-    string name = 2;
-    fixed64 parent_id = 3;
-    google.protobuf.Timestamp local_start_time = 4;
-    google.protobuf.Timestamp local_end_time = 5;
+    optional fixed64 id = 1;
+    optional string name = 2;
+    optional fixed64 parent_id = 3;
+    optional google.protobuf.Timestamp local_start_time = 4;
+    optional google.protobuf.Timestamp local_end_time = 5;
     map<string, LabelValue> labels = 6;
-    StackTrace stack_trace = 7;
+    optional StackTrace stack_trace = 7;
     
     repeated TimeEvent time_events = 8;
     message TimeEvent {
-        google.protobuf.Timestamp local_time = 1;
+        optional google.protobuf.Timestamp local_time = 1;
         
         oneof value {
             Annotation annotation = 2;
@@ -61,31 +60,31 @@ message Span {
         }
         
         message Annotation {
-            string description = 1;
+            optional string description = 1;
             map<string, LabelValue> labels = 2;
         }
         
         message NetworkEvent {
-            google.protobuf.Timestamp kernel_time = 1;
+            optional google.protobuf.Timestamp kernel_time = 1;
             
-            Type type = 2;
+            optional Type type = 2;
             enum Type {
                 UNSPECIFIED = 0;
                 SENT = 1;
                 RECV = 2;
             }
             
-            uint64 message_id = 3;
-            uint64 message_size = 4;
+            optional uint64 message_id = 3;
+            optional uint64 message_size = 4;
         }
     }
     
     repeated Link links = 9;
     message Link {
-        TraceId trace_id = 1;
-        fixed64 span_id = 2;
+        optional TraceId trace_id = 1;
+        optional fixed64 span_id = 2;
         
-        Type type = 3;
+        optional Type type = 3;
         enum Type {
             UNSPECIFIED = 0;
             CHILD = 1;
@@ -93,11 +92,11 @@ message Span {
         }
     }
     
-    Status status = 10;
-    bool has_remote_parent = 11;
+    optional Status status = 10;
+    optional bool has_remote_parent = 11;
 }
 
 message Trace {
-    TraceId trace_id = 1;
+    optional TraceId trace_id = 1;
     repeated Span spans = 2;
 }

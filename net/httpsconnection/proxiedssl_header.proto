@@ -1,38 +1,57 @@
-syntax = "proto2";
+syntax = "editions";
 
-import "net/proto2/bridge/proto/message_set.proto";
 package net_httpsconnection;
+
+import "logs/eventid/eventid.proto";
+import "net/proto2/bridge/proto/message_set.proto";
 
 option java_package = "com.google.net.httpsconnection";
 
 message TcpProxyHeaderProto {
-  enum SslResumeType {
-    SESSION_TICKET = 0;
-    SESSION_ID = 1;
-  }
-  optional string client_address = 2;
-  optional uint32 client_vnid = 21;
-  optional uint64 client_gce_project_number = 22;
-  optional string pzf_data = 3;
-  optional string datacenter = 4;
-  optional string server_vip = 5;
-  optional string no_sni_certificate_name = 7;
-  optional string pzf3_signature = 8;
-  optional string ssl_client_certificate_hash = 9;
-  optional string requested_servername_via_sni = 10;
-  optional string gslb_service = 11;
-  optional bool ssl_session_resumed = 12;
-  optional .net_httpsconnection.TcpProxyHeaderProto.SslResumeType ssl_resumption_mechanism = 13;
-  repeated string intermediate_gfe = 14;
-  optional bool ssl_terminated = 15;
-  optional bool starttls_supported = 16;
-  repeated string preferred_location = 18;
-  optional string requested_tcp_proxy_service = 19;
-  optional string sticky_picking_backend_ip_and_port = 20;
-  extend .proto2.bridge.MessageSet {
-    optional .net_httpsconnection.TcpProxyHeaderProto message_set_extension = 11108534;
-  }
-  reserved 17;
+    optional string client_address = 2;
+    optional string pzf_data = 3 [deprecated = true];
+    optional string datacenter = 4;
+    optional string metro = 34;
+    optional string server_vip = 5;
+    optional string no_sni_certificate_name = 7;
+    optional string pzf3_signature = 8;
+    optional string ssl_client_certificate_hash = 9;
+    optional string requested_servername_via_sni = 10;
+    optional string gslb_service = 11;
+    optional bool ssl_session_resumed = 12;
+    
+    optional SslResumeType ssl_resumption_mechanism = 13;
+    enum SslResumeType {
+        SESSION_TICKET = 0;
+        SESSION_ID = 1;
+    }
+    
+    repeated string intermediate_gfe = 14;
+    optional bool ssl_terminated = 15;
+    optional bool starttls_supported = 16;
+    optional int32 tls_version = 31;
+    repeated string preferred_location = 18;
+    optional string requested_tcp_proxy_service = 19;
+    optional string sticky_picking_backend_ip_and_port = 20;
+    optional uint32 client_vnid = 21;
+    optional uint64 client_gce_project_number = 22;
+    optional int64 client_rtt_ms = 23;
+    optional bool munge_response = 24;
+    optional bytes packed_client_address = 25;
+    optional bytes packed_server_vip = 26;
+    optional bool is_udp_proxy_health_check = 27;
+    optional bool is_psp = 28;
+    optional string request_uuid = 29;
+    optional EventIdMessage event_id = 30;
+    optional string gecc_fingerprint = 32;
+    optional uint64 cloud_project_id = 33;
+    optional uint32 asn = 35;
+    optional string tls_ja3_fingerprint = 36;
+    optional string tls_ja4_fingerprint = 37;
+    
+    reserved 1, 6, 17;
+    
+    extend .proto2.bridge.MessageSet {
+        optional TcpProxyHeaderProto message_set_extension = 11108534;
+    }
 }
-
-

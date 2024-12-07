@@ -38,14 +38,16 @@ message RPC_ServiceDescriptor {
         optional int64 client_initial_tokens = 25;
         optional int64 server_initial_tokens = 26;
         optional string token_unit = 27;
-        optional string security_level = 28;
-        optional string server_required_security_level = 39;
-        optional string security_label = 29;
-        optional int32 client_logging = 30;
-        optional int32 server_logging = 31;
         optional double deadline = 32;
         optional bool fail_fast = 33;
         optional bool end_user_creds_requested = 35;
+        optional int32 client_logging = 30;
+        optional int32 server_logging = 31;
+        optional string security_level = 28;
+        optional string server_required_security_level = 39;
+        optional string security_label = 29;
+        optional string response_format = 40;
+        optional string request_format = 41;
         optional string log_level = 37;
     }
 }

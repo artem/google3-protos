@@ -1,0 +1,67 @@
+syntax = "proto2";
+
+package net_bwenforcer;
+
+import "net/base/qos.proto";
+import "net/bwenforcer/proto/network_config.proto";
+
+option cc_enable_arenas = true;
+option cc_generic_services = true;
+option java_multiple_files = true;
+option java_package = "com.google.net.bwenforcer.proto";
+
+message SchedulerBusyStat {
+    optional uint64 busy_ns = 1;
+    optional uint64 idle_ns = 2;
+    optional uint64 timestamp_ns = 3;
+    
+    optional ComputationMethod computation_method = 6;
+    enum ComputationMethod {
+        UNKNOWN = 0;
+        RAW = 1;
+        P90_AGGREGATE = 2;
+    }
+    
+    reserved 4, 5;
+    
+    reserved "events", "busy_bytes";
+}
+
+message BwHostStat {
+    optional double timestamp_sec = 1;
+    optional double report_interval_sec = 2;
+    optional int64 avg_usage = 3;
+    optional double avg_pps = 4;
+    optional int64 total_bytes = 5;
+    optional SchedulerBusyStat scheduler_busy_stat = 6;
+    optional bool is_parent = 7;
+    optional ClusterConnectivityType connectivity_type = 8;
+    optional bool sampled_telemetry = 9;
+}
+
+message HostQosAllocation {
+    optional int64 min_supported_client_version = 1;
+    
+    repeated RemarkAction actions = 2;
+    message RemarkAction {
+        repeated HashRange matches = 1;
+        optional net_base.qos.TrafficClass remarked_qos = 2;
+    }
+    
+    message HashRange {
+        optional fixed64 start = 1;
+        optional fixed64 end = 2;
+    }
+}
+
+message BwHostRule {
+    optional double report_interval_sec = 1;
+    optional int64 avg_limit = 2;
+    optional bool clear_limits = 4;
+    optional HostQosAllocation qos_allocation = 5;
+    optional bool should_clear_qos_allocation = 6;
+    
+    reserved 3;
+    
+    reserved "dscp_rule";
+}

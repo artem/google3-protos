@@ -1,0 +1,16 @@
+syntax = "proto2";
+
+package bigtable;
+
+import "util/task/status.proto";
+
+message StateManagerCheckPoint {
+    optional fixed32 _checksum = 1;
+    optional fixed32 _crc_checksum = 6;
+    required int32 incarnation = 2;
+    optional string name = 3 [ctype = CORD];
+    optional util.StatusProto status = 4;
+    optional string client = 5;
+    
+    extensions 100 to 199;
+}

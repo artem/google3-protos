@@ -40,7 +40,9 @@ message LoadExtensionRequest {
     optional google.protobuf.Duration blocking_timeout = 6;
     optional tech.env.ExtensionSpec extension_spec = 7;
     
-    reserved 1 to 5, "path", "flags", "name", "label", "version_id";
+    reserved 1 to 5;
+    
+    reserved "path", "flags", "name", "label", "version_id";
 }
 
 message LoadExtensionResponse {
@@ -62,7 +64,9 @@ message ReloadExtensionRequest {
     optional tech.env.ExtensionSpec extension_spec = 3;
     optional google.protobuf.Duration blocking_timeout = 4;
     
-    reserved 1, "load_request";
+    reserved 1;
+    
+    reserved "load_request";
 }
 
 message ReloadExtensionResponse {

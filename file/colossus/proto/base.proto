@@ -1,4 +1,4 @@
-syntax = "proto2";
+syntax = "editions";
 
 package colossus;
 
@@ -14,14 +14,15 @@ option java_package = "com.google.io.file.colossus";
 
 message RequestID {
     optional uint64 client_id = 1;
-    optional int64 local_id = 2 [default = 0];
-    optional int64 DEPRECATED_done_id = 3 [deprecated = true];
+    optional int64 local_id = 2;
+    
+    reserved 3;
 }
 
 message ArgHeader {
-    required int32 client_version = 1;
-    required int32 required_server_version = 2;
-    required string cell = 3;
+    optional int32 client_version = 1;
+    optional int32 required_server_version = 2;
+    optional string cell = 3;
     optional int32 priority = 4;
     optional int32 op_time = 5;
     optional string client_id = 6;
@@ -31,7 +32,7 @@ message ArgHeader {
     optional string secondary_capabilities_user = 28;
     optional string charge_user = 12;
     
-    optional Source source = 10 [default = UNKNOWN];
+    optional Source source = 10;
     enum Source {
         UNKNOWN = 0;
         NAMESPACE = 1;
@@ -65,7 +66,7 @@ message ArgHeader {
     }
     
     optional string user_facing_cell_name = 30;
-    optional bool bypass_cell_virtualization = 32 [default = false];
+    optional bool bypass_cell_virtualization = 32;
     optional string opname = 33;
     
     oneof capabilities_realm_policy {
@@ -174,8 +175,8 @@ message ArgHeader {
 }
 
 message Challenge {
-    required int64 id = 13;
-    required int64 new_generation = 14;
+    optional int64 id = 13;
+    optional int64 new_generation = 14;
     optional int64 cur_generation = 16;
     
     reserved 15;
@@ -230,13 +231,12 @@ message CFSGrantRestriction {
 }
 
 message CFSCapability {
-    optional CFSGrant grant = 1 [deprecated = true];
     optional bytes serialized_grant = 7;
     optional int64 key_id = 2;
     optional bytes signature = 3;
     optional .thinmint.ThinMint mint = 6;
     
-    reserved 4, 5;
+    reserved 1, 4, 5;
     
     extend .proto2.bridge.MessageSet {
         optional CFSCapability message_set_extension = 16532497;
@@ -297,20 +297,20 @@ message ServerLocation {
 message CFS2ArgHeader {
     optional int64 generation = 1;
     optional string flat_namespace_folder_name = 5;
-    optional bool flat_namespace_op = 6 [default = false];
+    optional bool flat_namespace_op = 6;
     optional CFS2ProxyArgHeader proxy_arg = 2;
-    optional bool internal_op = 3 [default = false];
-    optional bool loopback_op = 4 [default = false];
+    optional bool internal_op = 3;
+    optional bool loopback_op = 4;
     optional .colossus.cfs2.FolderRole expected_folder_role = 9;
     optional int32 DEPRECATED_num_retries = 10 [deprecated = true];
     optional string original_request_rpc_user = 11;
-    optional bool curator_remote_btree_op = 12 [default = false];
+    optional bool curator_remote_btree_op = 12;
     
     reserved 7, 8;
 }
 
 message CFS2ProxyArgHeader {
-    optional int32 proxy_hop_count = 1 [default = 0];
+    optional int32 proxy_hop_count = 1;
     optional ServerLocation proxy_source = 2;
     
     reserved 3;

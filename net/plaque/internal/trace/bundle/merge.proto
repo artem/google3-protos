@@ -1,0 +1,14 @@
+syntax = "editions";
+
+package plaque.internal.trace;
+
+message TraceData {
+    repeated fixed32 trace = 1;
+    repeated fixed32 trace_cpu = 2;
+    repeated fixed32 trace_thread = 3;
+    repeated fixed64 trace_thread_cpu_usage = 4;
+}
+
+message TraceDataList {
+    repeated TraceData trace_data = 1;
+}

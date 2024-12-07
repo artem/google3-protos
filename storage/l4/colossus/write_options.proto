@@ -1,0 +1,10 @@
+syntax = "editions";
+
+package storage_l4;
+
+import "storage/l4/public/cache_name.proto";
+
+message WriteOptionsProto {
+    optional CacheNameProto tiering_cache = 1;
+    optional string l4_resource_user = 2;
+}

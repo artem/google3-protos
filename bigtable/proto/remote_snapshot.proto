@@ -1,0 +1,295 @@
+syntax = "editions";
+
+package bigtable;
+
+import "bigtable/proto/bigtable.proto";
+import "bigtable/proto/bigtable_internal.proto";
+import "bigtable/proto/local_snapshot.proto";
+import "bigtable/proto/protocol_versioning.proto";
+import "bigtable/proto/snapshot_creator.proto";
+import "bigtable/util/state_manager/state_manager.proto";
+import "net/proto2/proto/empty.proto";
+import "storage/cmek_library/proto/unwrapped_resource_key.proto";
+import "util/task/status.proto";
+
+service RemoteSnapshotDestinationInterface {
+    rpc StartSnapshot(DestinationStartSnapshotRequest) returns (DestinationStartSnapshotResponse);
+    rpc CopiedSnapshotMD(DestinationCopiedSnapshotMDRequest) returns (.proto2.Empty);
+    rpc FinishSnapshot(DestinationFinishSnapshotRequest) returns (DestinationFinishSnapshotResponse);
+}
+
+message RemoteFileState {
+    optional int64 remote_snapshot_version = 1;
+    
+    optional FileState file_state = 2;
+    enum FileState {
+        NOT_PRESENT = 0;
+        PENDING = 1;
+        IN_TRANSIT = 3;
+        PRESENT = 4;
+        ABORTING = 5;
+        ABORTED = 6;
+    }
+    
+    optional string remote_path = 3;
+    
+    optional FileType file_type = 5;
+    enum FileType {
+        MAJOR_SSTABLE = 0;
+        MINOR_SSTABLE = 1;
+        SHARED_LOG = 2;
+    }
+    
+    optional bool registration_done = 6 [default = false];
+    optional string cfs_extension = 7 [ctype = CORD];
+    optional string bandwidth_user = 8 [ctype = CORD];
+    optional string target_isolation_class = 9;
+    optional string source_isolation_class = 10;
+    optional bool latency_tolerant = 11;
+    
+    reserved 4;
+}
+
+message LocalSnapshotIdProto {
+    optional string name = 1 [ctype = CORD];
+    optional int64 version = 2;
+    optional .util.StatusProto status = 3;
+}
+
+message LineageProto {
+    optional BTI_Protocol protocol = 1;
+    optional string source_name = 2;
+    optional int64 source_version = 3;
+    optional string dest_cell_name = 4;
+    optional uint64 dest_cell_id = 5;
+    optional LocalSnapshotIdProto snapshot_in_progress = 6;
+    optional int64 snapshot_in_progress_copy_size = 9;
+    repeated LocalSnapshotIdProto snapshot = 7;
+    
+    reserved 8;
+    
+    extend StateManagerCheckPoint {
+        optional LineageProto state = 101;
+    }
+}
+
+message RemoteSnapshotSource {
+    optional string bandwidth_user = 1;
+    optional string cell_name = 2;
+    optional uint64 cell_id = 3;
+    optional string table_name = 4;
+    optional int64 table_version = 5;
+    optional bytes table_metadata_blob = 6 [ctype = CORD];
+    optional LocalSnapshotIdProto ephemeral_snapshot = 7;
+    optional int32 num_shards = 8 [default = 1];
+    optional bool copy_repl_manager = 10 [default = false];
+    optional PerCfsPartitionSnapshotUsage per_cfs_partition_usage = 14;
+    optional int64 death_epoch_seconds = 18 [default = 0x7fffffffffffffff];
+    optional int64 mutation_end_time_epoch_ns = 21;
+    optional bool latency_tolerant = 22;
+    
+    reserved 9, 11, 12, 13, 19, 20;
+}
+
+message RemoteSnapshotDestination {
+    optional string cell_name = 1;
+    optional uint64 cell_id = 2;
+    optional int32 fsroot_id = 3;
+    optional string cfs_extension = 7;
+    optional string top_level_dir = 10 [ctype = CORD];
+    optional LocalSnapshotIdProto snapshot = 5;
+    repeated LocalSnapshotIdProto preceding_snapshot = 6;
+    optional bool force_copy_files = 8 [default = false];
+    optional FsReroots fs_reroots = 9;
+    optional bool deflash = 11;
+    optional bool request_reflash = 15;
+    optional bool reflash_allowed = 16;
+    map<int32, FsRootInfo> fs_root_info = 12;
+    optional string target_partition = 13;
+    optional CloudKMSEncryptionSettings destination_cloud_kms_encryption_settings = 14;
+    optional string target_effingo_isolation_class = 17;
+    
+    reserved 4;
+}
+
+message BTI_RemoteSnapshotArg {
+    optional int32 remote_fsroot_id = 1;
+    optional string remote_snapshot_key = 3 [ctype = CORD];
+    optional int64 remote_snapshot_version = 4;
+    optional bool paranoid_sanity_checks = 6 [default = true];
+    optional string cfs_extension = 7 [ctype = CORD];
+    optional string bandwidth_user = 8 [ctype = CORD];
+    optional bool force_copy_files = 9 [default = false];
+    optional int64 max_reuse_version = 10 [default = 0x7fffffffffffffff];
+    optional FsReroots fs_reroots = 11;
+    optional string top_level_dir = 12 [ctype = CORD];
+    optional bool deflash = 13;
+    map<int32, FsRootInfo> fs_root_info = 14;
+    optional string target_isolation_class = 15;
+    optional string source_isolation_class = 16;
+    map<string, FileStoragePolicy> locality_group_storage_policies = 17;
+    optional bool latency_tolerant = 18;
+    
+    reserved 2, 5;
+}
+
+message BTI_RemoteSnapshotFileInfo {
+    optional FileType file_type = 1 [default = SSTABLE];
+    enum FileType {
+        SSTABLE = 0;
+        LOG_POINTER = 1;
+        LOG = 2;
+    }
+    
+    optional LogPointer logpointer = 2;
+    message LogPointer {
+        optional int64 min_sequence = 3;
+        optional int64 end_sequence = 4 [default = -1];
+        repeated string logprefixes = 6;
+    }
+    
+    optional string locality_group_name = 7;
+    
+    reserved 5;
+}
+
+message BTI_RemoteFilesReuseResult {
+    optional string orig_path = 1 [ctype = CORD];
+    optional string translated_path = 2 [ctype = CORD];
+}
+
+message BTI_SnapshotRemoteCreator {
+    optional RemoteSnapshotSource source = 1;
+    optional RemoteSnapshotDestination destination = 2;
+    
+    extend BTI_SnapshotCreator {
+        optional BTI_SnapshotRemoteCreator ext = 102;
+    }
+}
+
+message BTI_RemoteSnapshotOperation {
+    optional BTI_Protocol protocol_version = 1;
+    
+    optional Phase phase = 2 [default = INITIAL_STATE];
+    enum Phase {
+        INITIAL_STATE = 0;
+        EPHEMERAL_SNAPSHOT_COMPLETE = 1;
+        DESTINATION_SNAPSHOT_STARTED = 2;
+        FINALIZE_METADATA = 13;
+        METADATA_COPIED = 3;
+        METADATA_COPY_FAIL = 14;
+        COPIES_REGISTERED = 4;
+        WAIT_FOR_COPIES = 5;
+        FILES_COPIED = 6;
+        DESTINATION_SNAPSHOT_COMPLETE = 7;
+        ABORT_COPYING_FILES = 8;
+        ABORT_WAIT = 9;
+        ABORT_NOTIFY_DESTINATION = 10;
+        ABORT_READY_FOR_CLEANUP = 11;
+        CLEANUP_DONE = 12;
+    }
+    
+    optional RemoteSnapshotSource source = 3;
+    optional RemoteSnapshotDestination destination = 4;
+    optional .util.StatusProto status = 5;
+    optional SnapshotOverrides destination_overrides = 6;
+    optional bool using_compactions = 7 [default = false];
+    optional double compaction_absolute_deadline = 8;
+    optional BTI_SnapshotCreator copy_snapshot_creator = 9;
+    
+    extend BTI_SnapshotMetadata {
+        optional BTI_RemoteSnapshotOperation ext = 100;
+    }
+}
+
+message RemoteSnapshotProtocol {
+    enum TypeId {
+        PROTOCOL_TYPE_ID = 29370851;
+    }
+    
+    enum Version {
+        REMOTE_SNAPSHOT_BASE = 1;
+        REMOTE_SNAPSHOT_WIDE_SHARD = 2;
+        REMOTE_SNAPSHOT_SNAPSHOT_COMPACT = 3;
+        REMOTE_SNAPSHOT_COPY_REPL_MANAGER = 4;
+    }
+}
+
+message BTI_CopyRemoteSnapshotTabletMetadataRequest {
+    optional BTI_Protocol protocol = 1;
+    optional RemoteSnapshotSource source = 2;
+    optional RemoteSnapshotDestination destination = 3;
+    optional bool using_compactions = 5;
+    optional bool force_copy_files = 6 [default = false];
+    optional string target_isolation_class = 9;
+    optional string source_isolation_class = 10;
+    map<string, FileStoragePolicy> locality_group_storage_policies = 11;
+    optional bool latency_tolerant = 12;
+    
+    reserved 4, 7, 8;
+}
+
+message BTI_CopyRemoteSnapshotTabletMetadataResult {
+    optional BTI_Protocol protocol = 1;
+    optional int64 bytes_to_copy = 2;
+    optional int32 log_free_tablets = 6;
+    optional int32 total_tablets = 7;
+    
+    reserved 3, 4, 5;
+}
+
+message DestinationStartSnapshotRequest {
+    optional RemoteSnapshotSource source = 1;
+    optional RemoteSnapshotDestination destination = 2;
+    optional storage_cmek.UnwrappedResourceKey resource_key = 3;
+}
+
+message DestinationStartSnapshotResponse {
+    optional RemoteSnapshotDestination destination = 1;
+}
+
+message DestinationCopiedSnapshotMDRequest {
+    optional LocalSnapshotIdProto destination_snapshot = 1;
+}
+
+message DestinationFinishSnapshotRequest {
+    optional LocalSnapshotIdProto destination_snapshot = 1;
+    optional bool aborted = 2 [default = false];
+    optional bool cleanup = 3 [default = false];
+    optional SnapshotOverrides overrides = 4;
+}
+
+message DestinationFinishSnapshotResponse {
+    
+}
+
+message FileCopiesStatusStats {
+    optional int32 finished_copies = 1 [default = 0];
+    optional int32 pending_copies = 2 [default = 0];
+    optional int32 active_copies = 3 [default = 0];
+    optional int32 aborted_copies = 4 [default = 0];
+}
+
+message FileCopiesStatusCoprocessor {
+    optional string address_and_port = 1;
+    optional string start_row = 2 [ctype = CORD];
+    optional string limit_row = 3 [ctype = CORD];
+    
+    optional State state = 4 [default = RUNNING];
+    enum State {
+        INITIALIZING = 0;
+        RUNNING = 1;
+        FAILED = 2;
+        FREEZED = 3;
+    }
+    
+    optional string failure_message = 5;
+}
+
+message FileCopiesStatusResponse {
+    optional string remote_snapshot_prefix = 1;
+    optional FileCopiesStatusCoprocessor coproc = 2;
+    optional FileCopiesStatusStats stats = 3;
+    
+    reserved 4;
+}

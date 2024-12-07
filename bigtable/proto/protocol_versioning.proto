@@ -1,0 +1,17 @@
+syntax = "proto2";
+
+package bigtable;
+
+option java_package = "com.google.bigtable.protos";
+
+message BTI_ProtocolRange {
+    required int32 min_version = 1;
+    required int32 max_version = 2;
+}
+
+message BTI_Protocol {
+    optional int32 version = 1;
+    optional int32 type_id = 2;
+    optional bool unsupported_version = 3 [default = false];
+    repeated BTI_ProtocolRange supported_range = 4;
+}

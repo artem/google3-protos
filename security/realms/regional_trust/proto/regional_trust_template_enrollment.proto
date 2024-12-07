@@ -1,7 +1,10 @@
-syntax = "proto2";
+syntax = "editions";
 
 package security_realms;
 
 message RegionalTrustTemplateEnrollment {
     repeated string trust_all_tpc_universes = 1;
+    repeated string live_deny_tsp_and_darklaunch_tpc_default_deny = 2;
+    repeated string trust_berlin_and_staging_but_deny_paris = 4;
+    repeated string tpc_default_deny_darklaunch = 3;
 }

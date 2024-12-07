@@ -1,4 +1,4 @@
-syntax = "proto2";
+syntax = "editions";
 
 package speckle_dogfish.dogfish_proto;
 
@@ -35,6 +35,6 @@ message SealOutstandingWalRequest {
 }
 
 message SealOutstandingWalResponse {
-    repeated int32 shards_with_outstanding_wal = 1 [packed = true];
+    repeated int32 shards_with_outstanding_wal = 1;
     optional int64 min_target_seal_through_lsn = 2;
 }

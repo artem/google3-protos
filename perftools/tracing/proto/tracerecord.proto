@@ -72,7 +72,7 @@ message TraceRecord {
             optional int32 int32_value = 21;
             optional int64 int64_value = 22;
             optional double double_value = 23;
-            optional proto2.bridge.MessageSet message_value = 24;
+            optional .proto2.bridge.MessageSet message_value = 24;
             optional bool boolean_value = 30;
             
             repeated group SymbolizedStackFrame = 25 {
@@ -87,7 +87,7 @@ message TraceRecord {
     
     reserved 3 to 8, 35;
     
-    extend proto2.bridge.MessageSet {
+    extend .proto2.bridge.MessageSet {
         optional TraceRecord message_set_extension = 6076542;
     }
 }
@@ -96,7 +96,7 @@ message EncryptedAnnotationPlaceholder {
     optional int32 num_cipher_bytes = 1;
     optional uint64 encrypted_annotation_id = 2;
     
-    extend proto2.bridge.MessageSet {
+    extend .proto2.bridge.MessageSet {
         optional EncryptedAnnotationPlaceholder message_set_extension = 444581584;
     }
 }

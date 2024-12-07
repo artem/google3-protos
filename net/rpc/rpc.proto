@@ -119,6 +119,8 @@ message RPC_ConnectionFailureStatus {
         SERVER_CONNECTION_LIMIT_REACHED = 1;
         CONNECTION_LIMIT_PER_USER_REACHED = 2;
         TRANSIENT_PSP_ERROR = 3;
+        EARLY_CONNECTION_LIMIT_PER_USER_REACHED = 4;
+        FLOW_CONTROL = 5;
     }
 }
 

@@ -38,10 +38,10 @@ message FieldAnnotation {
     repeated EligibleUseCase eligible_uses = 5 [packed = true];
 }
 
-extend proto2.FieldOptions {
+extend .proto2.FieldOptions {
     repeated FieldAnnotation collection_basis = 238270952;
 }
 
-extend proto2.MessageOptions {
+extend .proto2.MessageOptions {
     repeated MessageAnnotation msg_collection_basis = 271193650;
 }

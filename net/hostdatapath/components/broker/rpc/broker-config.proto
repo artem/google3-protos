@@ -1,0 +1,17 @@
+syntax = "editions";
+
+package usps.broker.rpc;
+
+message EndpointConfig {
+    optional WireFormat wire_format = 1 [default = PROTOCOL_BUFFER];
+    enum WireFormat {
+        UNKNOWN = 0;
+        PROTOCOL_BUFFER = 1;
+        RAW_BUFFER = 2;
+        SEQ_PROTOCOL_BUFFER = 3;
+    }
+    
+    optional uint64 max_fds = 2 [default = 253];
+    optional uint64 max_message_size = 3 [default = 0x10000];
+    optional bool memory_conserving = 4 [default = false];
+}

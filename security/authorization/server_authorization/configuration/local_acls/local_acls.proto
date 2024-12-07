@@ -1,4 +1,4 @@
-syntax = "proto3";
+syntax = "editions";
 
 package server_authz;
 
@@ -6,7 +6,7 @@ import "security/credentials/proto/principal.proto";
 import "storage/datapol/annotations/proto/semantic_annotations.proto";
 
 message TargetInfo {
-    string target = 1;
+    optional string target = 1;
     repeated security.credentials.PrincipalProto whitelisted_principals = 2;
     repeated string whitelisted_realm_acls = 3;
 }

@@ -1,10 +1,9 @@
-syntax = "proto3";
+syntax = "editions";
 
 package secure_collection;
 
 import "google/protobuf/any.proto";
 
-option cc_enable_arenas = true;
 option java_multiple_files = true;
 option java_outer_classname = "CollectionServiceProtoFile";
 option java_package = "com.google.security.dataprotection.collection";
@@ -17,55 +16,54 @@ service SecureDataCollectionPublisher {
 message PublishRequest {
     repeated Message messages = 1;
     
-    Environment environment = 2;
+    optional Environment environment = 2;
     enum Environment {
         ENVIRONMENT_UNSPECIFIED = 0;
         PROD = 1;
         DEV = 2;
     }
     
-    ClientProvidedSourceFields client_provided_source_fields = 4;
+    optional ClientProvidedSourceFields client_provided_source_fields = 4;
     
     reserved 3;
 }
 
 message PublishWindowedRequest {
-    string drip_name = 1;
-    Message message = 2;
-    PublishRequest.Environment environment = 3;
+    optional string drip_name = 1;
+    optional Message message = 2;
+    optional PublishRequest.Environment environment = 3;
     
-    AggregationStrategy aggregation_strategy = 4;
+    optional AggregationStrategy aggregation_strategy = 4;
     enum AggregationStrategy {
         STRATEGY_UNSPECIFIED = 0;
         PICK_LATEST = 1;
         BATCH_AND_DEDUP = 2;
     }
     
-    ClientProvidedSourceFields client_provided_source_fields = 5;
+    optional ClientProvidedSourceFields client_provided_source_fields = 5;
 }
 
 message Message {
-    string table_name = 1 [ctype = CORD];
-    string dedup_key = 3 [ctype = CORD];
-    google.protobuf.Any data = 4;
+    optional string table_name = 1 [ctype = CORD];
+    optional string dedup_key = 3 [ctype = CORD];
+    optional google.protobuf.Any data = 4;
     
     reserved 2;
 }
 
 message MessageSource {
-    bool is_borg_job = 1;
-    string borg_cell = 2;
-    string user = 3;
-    string job_name = 4;
-    int32 borg_task_index = 5;
-    string host = 6;
-    string blaze_build_target = 7;
-    int64 piper_cl = 8;
+    optional bool is_borg_job = 1;
+    optional string borg_cell = 2;
+    optional string user = 3;
+    optional string job_name = 4;
+    optional int32 borg_task_index = 5;
+    optional string host = 6;
+    optional string blaze_build_target = 7;
+    optional int64 piper_cl = 8;
+    optional int64 borg_job_uid = 10;
+    optional int64 borg_task_uid = 11;
     
-    oneof _aggregator_type {
-        AggregatorType aggregator_type = 9;
-    }
-    
+    optional AggregatorType aggregator_type = 9;
     enum AggregatorType {
         UNSPECIFIED = 0;
         PROXY = 1;
@@ -78,12 +76,14 @@ message PublishResponse {
 }
 
 message ClientProvidedSourceFields {
-    string job_name = 1;
-    string build_target = 2;
-    int64 piper_cl = 3;
+    optional string job_name = 1;
+    optional string build_target = 2;
+    optional int64 piper_cl = 3;
+    optional int64 borg_job_uid = 4;
+    optional int64 borg_task_uid = 5;
 }
 
 message WindowKey {
-    string drip_name = 1;
-    ClientProvidedSourceFields source_fields = 2;
+    optional string drip_name = 1;
+    optional ClientProvidedSourceFields source_fields = 2;
 }

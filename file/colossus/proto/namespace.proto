@@ -1,0 +1,2699 @@
+syntax = "proto2";
+
+package colossus;
+
+import "file/base/fileproperties.proto";
+import "file/colossus/encryption/encryption.proto";
+import "file/colossus/proto/base.proto";
+import "file/colossus/proto/cfs.proto";
+import "file/colossus/proto/config.proto";
+import "file/colossus/proto/options.proto";
+import "file/colossus/proto/public.proto";
+import "file/colossus/proto/route_mutation.proto";
+import "file/colossus/proto/stack_trace.proto";
+import "file/colossus/proto/watcher.proto";
+import "file/colossus/proto/write_tiering_arg.proto";
+import "google/protobuf/any.proto";
+import "google/protobuf/duration.proto";
+import "net/proto2/bridge/proto/message_set.proto";
+import "net/rpc/empty-message.proto";
+import "privacy/context/proto/privacy_context.proto";
+import "privacy/pgraph/proto/proxied_attributes/dataset_attributes.proto";
+import "production/time/public/true_time.proto";
+import "security/context/proto/context.proto";
+import "security/credentials/proto/principal.proto";
+import "security/thinmint/proto/core/thinmint_core.proto";
+import "storage/datapol/annotations/proto/semantic_annotations.proto";
+import "storage/security/aaa/proto/public/authority.proto";
+import "storage/security/aaa/proto/public/policy_reference.proto";
+import "storage/util/int128/int128.proto";
+import "tech/file/proto/cns2_stripe_sharing_extended_attribute.proto";
+import "tech/file/proto/types.proto";
+import "util/task/status.proto";
+
+option cc_generic_services = true;
+option java_package = "com.google.io.file.colossus";
+
+service NamespaceInterface {
+    rpc CreateDir(EmptyMessage) returns (EmptyMessage);
+    rpc CreateRow(EmptyMessage) returns (EmptyMessage);
+    rpc DeleteDir(EmptyMessage) returns (EmptyMessage);
+    rpc DeleteRow(EmptyMessage) returns (EmptyMessage);
+    rpc GetStats(EmptyMessage) returns (EmptyMessage);
+    rpc Match(EmptyMessage) returns (EmptyMessage);
+    rpc OpenFile(EmptyMessage) returns (EmptyMessage);
+    rpc SetAttr(EmptyMessage) returns (EmptyMessage);
+    rpc UpdateRow(EmptyMessage) returns (EmptyMessage);
+    rpc StatFile(EmptyMessage) returns (EmptyMessage);
+    rpc Snapshot(EmptyMessage) returns (EmptyMessage);
+    rpc Acquire(EmptyMessage) returns (EmptyMessage);
+    rpc Commit(EmptyMessage) returns (EmptyMessage);
+    rpc Release(EmptyMessage) returns (EmptyMessage);
+    rpc CreateName(EmptyMessage) returns (EmptyMessage);
+    rpc Truncate(EmptyMessage) returns (EmptyMessage);
+    rpc UpdateTree(EmptyMessage) returns (EmptyMessage);
+    rpc PreSplit(EmptyMessage) returns (EmptyMessage);
+    rpc StartWatch(EmptyMessage) returns (EmptyMessage);
+    rpc FetchWatchEvents(EmptyMessage) returns (EmptyMessage);
+    rpc Transcoded(EmptyMessage) returns (EmptyMessage);
+}
+
+message Namespace_FileOptions {
+    optional string owner = 1;
+    optional string group = 2;
+    optional uint32 attributes = 3;
+    optional uint32 permissions = 4;
+    optional int64 mtime = 5;
+    optional string mode = 6;
+    repeated google.protobuf.Any extended_attributes = 9;
+    optional bool create_iff_new = 7 [default = false];
+    optional bool file_must_exist = 8;
+    optional bool disallow_world_access = 10;
+}
+
+message Namespace_PolicyReference {
+    optional storage_security.OpaquePolicyReference reference = 1;
+}
+
+message Namespace_DatasetAttributesEntry {
+    optional .pgraph.DatasetAttributes dataset_attributes = 1;
+}
+
+message Namespace_ComplianceInfo {
+    optional Namespace_DatasetAttributesEntry live_dataset_attributes = 1;
+}
+
+message Namespace_Permissions {
+    required string owner = 1;
+    required string group = 2;
+    required int32 mode = 3;
+    optional Namespace_PolicyReference live_tenant_policy = 4;
+    optional bytes data_governance_extended_attribute = 5 [ctype = CORD];
+}
+
+message Namespace_Credentials {
+    required string end_user = 1;
+    required string rpc_user = 2;
+    optional string capabilities_user = 3;
+    optional string secondary_capabilities_user = 6;
+    optional string peer_realm = 4;
+    optional string capabilities_realm = 5;
+    optional string jobname = 8;
+    optional string borgcell = 9;
+    
+    reserved 7;
+}
+
+message Namespace_Trace {
+    required double start_timestamp = 1;
+    required double end_timestamp = 2;
+    optional string producer = 3;
+    
+    repeated Event event = 4;
+    message Event {
+        required double timestamp = 1;
+        optional string text = 2;
+        optional Namespace_Trace nested = 3;
+    }
+    
+    extend .proto2.bridge.MessageSet {
+        optional Namespace_Trace message_set_extension = 27079188;
+    }
+}
+
+message Namespace_FileStat {
+    optional int64 length = 1;
+    optional int64 mtime = 2;
+    optional int32 attributes = 3;
+    optional int32 mode = 4;
+    optional string owner = 5;
+    optional string group = 6;
+    optional int32 data_members = 7;
+    optional int32 code_members = 8;
+    optional FileEncoding encoding = 13;
+    optional .file.FileProperties properties = 11;
+    optional fixed32 plaintext_crc32c = 14;
+    optional tech.file.QuotaAccounting quota_accounting = 15;
+    
+    oneof file_id_representation {
+        int64 __identifier = 10 [deprecated = true];
+        storage_util.Int128 __large_identifier = 16 [deprecated = true];
+    }
+    
+    reserved 9;
+}
+
+message Namespace_BlobInfo {
+    optional string path = 1;
+    optional tech.file.EncryptionProperties encryption_properties = 2;
+    optional string source_path = 3;
+}
+
+message Namespace_BlobDelegate {
+    optional string path = 1;
+    optional WrappedCfsEncryptionData encryption_data = 2;
+    optional .thinmint.ThinMint blobmint = 3;
+}
+
+message Namespace_BlobUserInfo {
+    optional CnsFileInfo cns_file_info = 1;
+    message CnsFileInfo {
+        optional string path = 1;
+        
+        oneof file_id_representation {
+            int64 __id = 2 [deprecated = true];
+            storage_util.Int128 __large_id = 3 [deprecated = true];
+        }
+    }
+    
+    optional BlobInfo source_blob_info = 2;
+    message BlobInfo {
+        optional string path = 1;
+    }
+    
+    optional CreationInfo creation_info = 3;
+    message CreationInfo {
+        optional string namespace_id = 1;
+    }
+}
+
+message Namespace_DirectoryMigrationInfo {
+    optional production_time.TrueTimestampProto timestamp = 3;
+    repeated string source_store_cells = 1;
+    optional string destination_store_cell = 2;
+}
+
+message Namespace_AnchorPointMigration {
+    optional production_time.TrueTimestampProto timestamp = 4;
+    repeated string source_store_cells = 2;
+    optional string destination_store_cell = 3;
+    
+    reserved 1;
+}
+
+message Namespace_BackingFileMigrationInfo {
+    optional string destination_store_file_link = 1;
+    optional string source_store_file_link = 2;
+    optional int64 source_store_file_id = 3;
+    optional int64 source_store_file_generation = 4;
+    optional bool file_modification_detected = 5;
+    optional int64 start_micros = 7;
+    
+    reserved 6;
+}
+
+message Namespace_DataMigrationDestinationFiles {
+    repeated DestinationFile destination_files = 1;
+    message DestinationFile {
+        optional string store_file_link = 1;
+        optional int64 start_micros = 2;
+    }
+}
+
+message Namespace_RemoteFileMarker {
+    optional string store_file_link = 1;
+    optional int64 store_file_id = 5;
+    optional string cns_file_path = 3;
+    
+    oneof remote_mode {
+        MigratingRemoteFile migrating = 2;
+        SoftDeletedRemoteFile soft_deleted = 4;
+    }
+    
+    message MigratingRemoteFile {
+        optional string remote_store_cell_name = 1;
+    }
+    
+    message SoftDeletedRemoteFile {
+        optional production_time.TrueTimestampProto gc_timestamp = 1;
+    }
+}
+
+message Namespace_RemoteFileMarkerLocation {
+    optional string store_cell_name = 1;
+    optional uint32 store_cell_id = 4;
+    optional string cns_file_path = 2;
+    optional int64 timestamp_micros = 3;
+}
+
+message Namespace_AnchorPointSpaceAttributes {
+    optional DataMigration data_migration = 1;
+    message DataMigration {
+        optional string queue_name = 1;
+    }
+    
+    optional TieringConfig tiering_config = 3;
+    message TieringConfig {
+        optional TieringPolicy tiering_policy = 1;
+        enum TieringPolicy {
+            TIERING_POLICY_UNSPECIFIED = 0;
+            TIERING_POLICY_GLOBAL = 1;
+        }
+    }
+    
+    optional NamedPlacementPolicy named_placement_policy = 4;
+    message NamedPlacementPolicy {
+        optional string policy_name = 1;
+        optional string user = 2;
+        
+        optional PhysicalPlacement physical_placement = 3;
+        message PhysicalPlacement {
+            optional string store_cell = 1;
+        }
+        
+        optional string manager = 4;
+        optional int64 policy_version = 5;
+    }
+    
+    reserved 2;
+}
+
+message Namespace_SecondaryReplica {
+    optional string store_cell = 1;
+}
+
+message Namespace_IntermediateReplicatedDirectoryData {
+    optional production_time.TrueTimestampProto event_timestamp = 3;
+    
+    oneof directory {
+        Namespace_DirectoryData directory_data = 1;
+        DirectoryTombstone directory_tombstone = 2;
+    }
+    
+    message DirectoryTombstone {
+        reserved 1;
+    }
+}
+
+message Namespace_IntermediateReplicatedFileData {
+    optional production_time.TrueTimestampProto event_timestamp = 4;
+    optional storage_util.Int128 parent_file_id = 5;
+    
+    oneof file {
+        Namespace_FileData file_data = 1;
+        FileTombstone file_tombstone = 2;
+    }
+    
+    reserved 3;
+    
+    message FileTombstone {
+        reserved 1;
+    }
+}
+
+message Namespace_DirectoryData {
+    optional int64 deleted_timestamp = 12;
+    optional Namespace_Argument nascent = 11;
+    repeated Namespace_Permissions permissions = 2;
+    repeated uint64 permissions_change_counter = 22 [packed = true];
+    optional string home_store_prefix = 9;
+    optional int32 gc_delay_secs = 4 [default = 0x3f480];
+    optional int64 gc_delay_change_time_secs = 19;
+    optional FileEncoding default_encoding = 5;
+    optional int32 default_ttl_secs = 6 [default = 0x7fffffff];
+    optional int64 default_expiration_time_secs = 14;
+    optional string default_partition = 13;
+    optional int64 mtime = 7;
+    optional int32 attributes = 8 [default = 0];
+    optional bool file_count_reached = 10 [default = false];
+    optional tech.file.QuotaAccounting default_quota_accounting = 15;
+    optional string DEPRECATED_import_store_path = 3 [deprecated = true];
+    optional bool DEPRECATED_is_nascent = 1 [deprecated = true];
+    optional bool is_anchor_point = 16 [default = false];
+    optional int32 parent_anchor_point_depth = 17;
+    repeated Namespace_SecondaryReplica secondary_replicas = 24;
+    optional Namespace_DirectoryMigrationInfo migration_info = 18;
+    repeated Namespace_AnchorPointMigration migrations = 20;
+    optional Namespace_ComplianceInfo compliance_info = 21;
+    optional Namespace_AnchorPointSpaceAttributes anchor_point_space_attributes = 23;
+    optional bool is_secondary_replica = 25;
+    optional storage_util.Int128 file_id = 28;
+    
+    reserved 26, 27;
+}
+
+message Namespace_FileData {
+    optional FileType file_type = 1 [default = FILE];
+    enum FileType {
+        FILE = 0;
+        DIRECTORY = 1;
+    }
+    
+    optional BackingStoreType backing_store_type = 34 [default = CFS];
+    enum BackingStoreType {
+        BACKING_STORE_TYPE_UNSPECIFIED = 0;
+        CFS = 1;
+        BLOBSTORE = 2;
+    }
+    
+    optional Namespace_Permissions permissions = 2;
+    optional uint64 permissions_change_counter = 50;
+    optional int32 attributes = 3 [default = 0];
+    optional int32 ttl_secs = 5 [default = 0x7fffffff];
+    optional int64 expiration_time_secs = 23;
+    optional string link = 6;
+    optional int64 store_file_id = 8 [default = 0];
+    optional Namespace_BlobInfo blob_info = 35;
+    optional string partition = 16;
+    optional int64 cached_mtime = 10;
+    optional FileEncoding encoding = 17;
+    optional tech.file.EncryptionProperties encryption_properties = 19;
+    optional bool default_encrypted_file = 20;
+    optional PlacementPolicy placement_policy = 18;
+    optional FileEncoding target_encoding = 9;
+    optional Namespace_TransitionData.CfsTransition target_cfs_transition = 46;
+    optional int64 first_transcode_time_us = 22;
+    optional int64 target_encoding_last_set_micros = 51;
+    optional string creator_id = 11;
+    optional Namespace_DirectoryData deleted_dir_data = 12;
+    optional int64 store_file_capability_generation = 13 [deprecated = true];
+    optional int64 final_length = 14;
+    optional int64 final_mtime = 15;
+    optional int64 ttl_accounting_state_change_time = 21;
+    optional int64 expiration_state_change_time = 24;
+    optional int64 gc_accounting_state_change_time_secs = 40;
+    optional tech.file.QuotaAccounting quota_accounting = 26;
+    optional bytes testing_extended_attribute = 27 [ctype = CORD];
+    optional bytes data_context_extended_attribute = 32 [ctype = CORD];
+    optional bytes data_governance_extended_attribute = 28 [ctype = CORD];
+    optional bytes dogfish_extended_attribute = 29 [ctype = CORD];
+    optional bytes negba_extended_attribute = 42 [ctype = CORD];
+    optional bytes original_encoding_extended_attribute = 43 [ctype = CORD];
+    optional bytes astro_extended_attribute = 44 [ctype = CORD];
+    optional bytes snakebyte_extended_attribute = 47 [ctype = CORD];
+    optional bytes compliance_write_observations_extended_attribute = 48 [ctype = CORD];
+    optional bytes ml_lineage_extended_attribute = 52 [ctype = CORD];
+    optional bytes malachite_extended_attribute = 53 [ctype = CORD];
+    optional bytes negba_finalization_extended_attribute = 54 [ctype = CORD];
+    optional int64 DEPRECATED_mtime = 7 [deprecated = true];
+    optional tech.file.EncryptionMode encryption_mode = 33;
+    optional bool is_anchor_point = 36 [default = false];
+    optional Namespace_BackingFileMigrationInfo backing_file_migration_info = 38;
+    optional Namespace_RemoteFileMarkerLocation remote_file_marker_location = 41;
+    optional Namespace_ComplianceInfo compliance_info = 45;
+    optional bool is_cold_for_tiering = 55 [default = false];
+    optional bool auto_transcoding = 57;
+    
+    optional WriteToken last_write_token = 58;
+    message WriteToken {
+        optional uint64 token_id = 1;
+    }
+    
+    optional Cns2OpenForWriteState cns2_open_for_write_state = 59;
+    enum Cns2OpenForWriteState {
+        FILE_STATE_UNSPECIFIED = 0;
+        CNS2_MAYBE_OPEN_FOR_WRITE = 1;
+        CNS2_CLOSED_FOR_WRITE = 2;
+    }
+    
+    oneof file_id_representation {
+        int64 __file_id = 4 [default = 0, deprecated = true];
+        storage_util.Int128 __large_file_id = 37 [deprecated = true];
+    }
+    
+    reserved 30, 31, 39, 49, 56;
+}
+
+message Namespace_CreateDir {
+    message Argument {
+        required string path = 1;
+        optional FileParameters parameters = 2;
+        optional Namespace_FileOptions options = 3;
+        optional string recovery_path = 4;
+        optional Namespace_FileData recovery_file_data = 5;
+        
+        reserved 6;
+    }
+    
+    message Checkpoint {
+        optional Entry entry = 1;
+        message Entry {
+            required Namespace_FileData dir_file_data = 1;
+            required Namespace_DirectoryData dir_data = 2;
+            required fixed64 operation_id = 3;
+            optional production_time.TrueTimestampProto operation_timestamp = 4;
+            optional string physical_placement = 5;
+        }
+    }
+    
+    message Result {
+        
+    }
+}
+
+message Namespace_CreateRow {
+    message Argument {
+        required string path = 1;
+        required Namespace_DirectoryData data = 2;
+    }
+    
+    message Checkpoint {
+        
+    }
+    
+    message Result {
+        
+    }
+}
+
+message Namespace_DeleteDir {
+    message Argument {
+        required string path = 1;
+        optional bool recursive = 2 [default = false];
+        optional bool delete_iff_expired = 4 [default = false];
+        optional bool also_delete_file = 6 [default = false];
+        optional bool orphan_deletion = 7 [default = false];
+        
+        oneof file_id_representation {
+            int64 __file_id = 3 [default = 0, deprecated = true];
+            storage_util.Int128 __large_file_id = 8 [deprecated = true];
+        }
+        
+        reserved 5;
+    }
+    
+    message Checkpoint {
+        optional DeleteRowCp delete_dir_row_cp = 1;
+        message DeleteRowCp {
+            required fixed64 operation_id = 1;
+            optional Namespace_FileData file_data = 2;
+            optional bool skip_recovery_entity = 3;
+            optional bool is_orphan = 4 [default = false];
+            optional production_time.TrueTimestampProto operation_timestamp = 5;
+        }
+        
+        optional fixed64 unlink_remote_file_operation_id = 2;
+        optional production_time.TrueTimestampProto unlink_remote_file_operation_timestamp = 3;
+        optional int32 anchor_point_depth = 4;
+        optional production_time.TrueTimestampProto gc_timestamp = 5;
+        repeated Namespace_Permissions ancestors_permissions = 6;
+    }
+    
+    message Result {
+        optional bool expired_dir_deleted = 1 [default = false];
+    }
+}
+
+message Namespace_DeleteRow {
+    message Argument {
+        required string path = 1;
+        required bool recursive = 2;
+        optional bool delete_iff_expired = 3 [default = false];
+        optional bool is_orphan = 4;
+    }
+    
+    message Checkpoint {
+        
+    }
+    
+    message Result {
+        required int64 timestamp = 1;
+        optional Namespace_DirectoryData deleted_dir_data = 2;
+        optional cns2.RouteMutation route_mutation = 3;
+        optional string store_cell = 4;
+    }
+}
+
+message Namespace_Match {
+    message RestartCookie {
+        required string range_start = 1;
+        required string range_limit = 2;
+        required string basename = 3;
+    }
+    
+    message Argument {
+        required string pattern = 1;
+        optional uint64 show_mask = 4 [default = 3];
+        optional uint64 want_mask = 5 [default = 1];
+        repeated string extended_attributes_types = 10;
+        optional bool DEPRECATED_file_data_cache_hint = 6 [deprecated = true];
+        optional bool generate_restart_cookie = 7 [deprecated = true];
+        optional RestartCookie restart_cookie = 8;
+        optional int32 max_results_returned = 9;
+        optional bool generate_blobmint = 11;
+        
+        reserved 2, 3;
+        
+        reserved "show_dotfiles", "deprecated_show_dotfiles", "DEPRECATED_show_dotfiles", "show_backups", "deprecated_show_backups", "DEPRECATED_show_backups", "DEPRECATED_show_recovery_entries";
+        
+        enum ShowMask {
+            SHOW_FILES = 1;
+            SHOW_DIRECTORIES = 2;
+            SHOW_DOTFILES = 4;
+            SHOW_RECOVERY_ENTRIES = 8;
+            MATCH_STRICT = 16;
+        }
+        
+        enum WantMask {
+            WANT_PATH = 1;
+            DEPRECATED_WANT_STORE_PATH = 2;
+            DEPRECATED_WANT_FILE_STAT = 4;
+            WANT_FILE_TYPE = 8;
+            WANT_FAST_FILE_STAT = 16;
+            WANT_OPEN_CAPABILITY = 32;
+        }
+    }
+    
+    message Checkpoint {
+        
+    }
+    
+    message Result {
+        repeated bytes path = 1;
+        repeated Namespace_FileStat file_stat = 2;
+        repeated Namespace_FileData.FileType file_type = 4;
+        repeated bytes open_capability = 6;
+        optional RestartCookie restart_cookie = 5;
+        
+        reserved 3;
+        
+        reserved "store_path";
+    }
+}
+
+message Namespace_MatchEntries {
+    message Argument {
+        optional string path = 1;
+        optional string basename_pattern = 2;
+        optional string restart_at_basename = 3;
+        optional int32 max_results = 4;
+        optional uint64 show_mask = 5 [default = 3];
+        optional uint64 want_mask = 6 [default = 1];
+        repeated string extended_attributes_types = 7;
+        
+        enum ShowMask {
+            SHOW_UNSPECIFIED = 0;
+            SHOW_FILES = 1;
+            SHOW_DIRECTORIES = 2;
+            SHOW_DOTFILES = 4;
+            SHOW_RECOVERY_ENTRIES = 8;
+            MATCH_STRICT = 16;
+        }
+        
+        enum WantMask {
+            WANT_UNSPECIFIED = 0;
+            WANT_PATH = 1;
+            WANT_FILE_TYPE = 2;
+            WANT_FAST_FILE_STAT = 4;
+            WANT_OPEN_CAPABILITY = 8;
+        }
+    }
+    
+    message Checkpoint {
+        
+    }
+    
+    message Result {
+        repeated bytes paths = 1;
+        repeated Namespace_FileStat file_stats = 2;
+        repeated Namespace_FileData.FileType file_types = 3 [packed = true];
+        repeated bytes open_capabilities = 4;
+        repeated bytes unprocessed_directories = 5;
+        
+        repeated PartiallyProcessedDirectory partially_processed_directory = 6;
+        message PartiallyProcessedDirectory {
+            optional string path = 1;
+            optional string restart_at_basename = 2;
+        }
+        
+        repeated bytes wrong_cell_directories = 7;
+    }
+}
+
+message Namespace_GetStats {
+    message Argument {
+        
+    }
+    
+    message Checkpoint {
+        
+    }
+    
+    message Result {
+        repeated InstanceStat instance_stat = 1;
+        message InstanceStat {
+            optional string host = 1;
+            optional int32 port = 2;
+            optional int64 lamport_time = 3;
+            required int64 min_supported_version = 4;
+            required int64 current_version = 5;
+            repeated Range ranges = 6;
+            optional CellParameters parameters = 8;
+            optional ScannerStat scanner_stat = 9;
+            repeated LockInfo orphaned_locks = 10;
+            optional SweeperStats sweeper_stats = 15;
+            optional string url = 12;
+            repeated WatcherInfo watcher_infos = 13;
+            
+            reserved 7, 11, 14;
+        }
+        
+        message Range {
+            required string start = 1;
+            required string limit = 2;
+        }
+        
+        message HighFileCountDir {
+            required string dir = 1;
+            optional string owner = 2;
+            optional string group = 3;
+            optional int64 count = 4;
+            optional double fraction = 5;
+        }
+        
+        message ScannerRangeStats {
+            optional Range range = 1;
+            optional int64 start_timestamp_ms = 12;
+            optional int64 duration_ms = 13 [default = 0];
+            optional int64 num_rows = 4 [default = 0];
+            optional int64 num_files = 5 [default = 0];
+            optional int64 num_dirs = 6 [default = 0];
+            optional int64 max_gc_delay_secs = 7 [default = 0];
+            optional int64 gc_files = 8 [default = 0];
+            optional int64 max_ttl_delay_secs = 9 [default = 0];
+            optional int64 ttl_files = 10 [default = 0];
+            optional int64 ttl_dirs = 11 [default = 0];
+            optional int64 max_expiration_time_delay_secs = 14 [default = 0];
+            optional int64 expiration_time_files = 15 [default = 0];
+            optional int64 expiration_time_dirs = 16 [default = 0];
+            
+            reserved 2, 3;
+        }
+        
+        message ScannerStat {
+            optional double end_walltime = 1;
+            optional double duration_secs = 2 [default = 0];
+            optional int64 num_rows = 3 [default = 0];
+            optional int64 num_files = 4 [default = 0];
+            optional double high_file_count_fraction = 5;
+            repeated HighFileCountDir high_file_count_dirs = 6;
+            optional int64 num_corrupted_files = 7;
+            repeated ScannerRangeStats scanner_rangestats = 9;
+        }
+        
+        message SweeperRangeStats {
+            optional Range range = 1;
+            optional int64 start_timestamp_ms = 2;
+            optional int64 duration_ms = 3;
+            optional int64 num_files = 4;
+            optional int64 num_deleted = 5;
+            optional int64 num_rpc_errors = 6;
+            optional int64 num_not_found = 7;
+            optional int64 max_sweeper_delay_secs = 8;
+            optional int64 median_sweeper_delay_secs = 9;
+            optional int64 max_end_to_end_delay_secs = 10;
+            optional int64 median_end_to_end_delay_secs = 11;
+        }
+        
+        message SweeperStats {
+            optional int64 start_timestamp_ms = 1;
+            optional int64 duration_ms = 2;
+            optional int64 num_files = 3;
+            optional int64 num_deleted = 4;
+            optional int64 num_rpc_errors = 5;
+            optional int64 num_not_found = 6;
+            optional int64 max_sweeper_delay_secs = 7;
+            optional int64 max_end_to_end_delay_secs = 8;
+            repeated SweeperRangeStats sweeper_rangestats = 9;
+        }
+        
+        message LockInfo {
+            required string pathname = 1;
+            optional int64 timestamp = 2;
+            optional Namespace_LockData data = 3;
+            optional bool removed = 4;
+        }
+        
+        message WatcherInfo {
+            repeated string patterns = 1;
+            required fixed64 fingerprint = 2;
+            optional double timestamp = 3;
+            optional int32 buffered_events = 4;
+            optional int64 total_events = 5;
+            optional int32 num_streams = 6;
+            optional int32 total_streams = 7;
+        }
+    }
+}
+
+message Namespace_OpenFile {
+    message Argument {
+        required string path = 1;
+        optional FileParameters parameters = 2;
+        optional Namespace_FileOptions options = 3;
+        optional string prefer_store = 10;
+        optional Challenge challenge_response = 4;
+        optional bool want_capabilities = 5 [default = true];
+        optional string additional_readonly_capability_grantee = 11;
+        optional bool curator_lookup_on_read = 6 [default = true];
+        optional int32 max_stripe_count = 7;
+        
+        optional BlobOptions blob_options = 13;
+        message BlobOptions {
+            optional string path = 1;
+            optional FileEncoding encoding = 2;
+            optional tech.file.EncryptionProperties encryption_properties = 3;
+            optional string billing_user = 5;
+            optional .thinmint.ThinMint blobmint = 4;
+        }
+        
+        optional WriteTieringArgProto write_tiering_arg = 14;
+        optional StackTraceProto call_site = 15;
+        optional bool generate_blobmint = 16;
+        optional bool encrypted_per_file_plaintext_crc = 17;
+        
+        reserved 8, 9, 12;
+    }
+    
+    message Checkpoint {
+        optional OpenWritable open_writable = 2;
+        message OpenWritable {
+            optional Namespace_FileData file_data = 1;
+        }
+        
+        optional OpenRemoteWritable open_remote_writable = 3;
+        message OpenRemoteWritable {
+            optional fixed64 opid = 1;
+            optional storage_util.Int128 rfm_cns_file_id = 2;
+            optional Namespace_FileData file_data = 3;
+        }
+        
+        reserved 1;
+    }
+    
+    message Result {
+        optional Namespace_FileData.BackingStoreType backing_store_type = 9;
+        optional string partition = 8;
+        optional Namespace_FileData file_data = 6;
+        optional string link = 1;
+        optional int64 store_file_id = 7;
+        optional FileDelegate curator_delegate = 3;
+        optional Challenge challenge_request = 4;
+        optional Namespace_BlobDelegate blob_delegate = 10;
+        optional string backing_store_cell_name = 12;
+        
+        oneof file_id_representation {
+            int64 __file_id = 2 [deprecated = true];
+            storage_util.Int128 __large_file_id = 11 [deprecated = true];
+        }
+        
+        reserved 5;
+        
+        reserved "DEPRECATED_restart_writer_exclusion";
+    }
+}
+
+message Namespace_OpenRemoteFile {
+    message Argument {
+        optional string directory_path = 1;
+        optional storage_util.Int128 cns_file_id = 2;
+        optional string cns_file_path = 3;
+        optional string remote_store_cell_name = 4;
+        
+        optional OpenWritableArg open_writable_arg = 5;
+        message OpenWritableArg {
+            optional FileParameters file_parameters = 1;
+            optional Namespace_FileOptions file_options = 2;
+            optional storage_util.Int128 new_cns_file_id = 3;
+            optional Challenge challenge_response = 4;
+        }
+        
+        optional WriteTieringArgProto write_tiering_arg = 14;
+    }
+    
+    message Checkpoint {
+        
+    }
+    
+    message Result {
+        optional FileDelegate curator_delegate = 1;
+        optional Challenge challenge_request = 2;
+    }
+}
+
+message Namespace_SetAttr {
+    message Argument {
+        required string path = 1;
+        optional FileParameters parameters = 2;
+        optional Namespace_FileOptions options = 3;
+        optional int64 generation = 7;
+        optional int64 length = 5 [default = -1];
+        optional tech.file.EncryptionProperties encryption_properties = 6;
+        optional tech.file.ChecksumKey checksum_key = 9;
+        optional Namespace_TransitionData.CfsTransition cfs_transition = 10;
+        optional bool allow_non_frozen_snapshot = 11;
+        optional bool is_auto_transcoding = 12;
+        optional FileEncoding from_encoding = 13;
+        optional bool refresh_named_placement_policy = 14;
+        
+        oneof file_id_representation {
+            int64 __file_id = 4 [default = 0, deprecated = true];
+            storage_util.Int128 __large_file_id = 8 [deprecated = true];
+        }
+    }
+    
+    message Checkpoint {
+        optional UpdateRow update_row = 1;
+        message UpdateRow {
+            required Namespace_FileData dir_file_data = 1;
+            required fixed64 operation_id = 2;
+            optional production_time.TrueTimestampProto operation_timestamp = 3;
+        }
+        
+        optional SetStoreAttr set_store_attr = 2;
+        message SetStoreAttr {
+            required Namespace_FileData file_data = 1;
+            optional string store_path = 2;
+            optional bool finalizing_file = 3 [default = false];
+            optional bool unprotect_file = 4 [default = false];
+        }
+        
+        optional AcquireTree acquire_tree = 3;
+        message AcquireTree {
+            required fixed64 operation_id = 1;
+            optional int32 depth = 2 [default = -1];
+            optional Namespace_FileData dir_file_data = 3;
+            optional int64 freeze_timestamp = 5;
+            optional fixed64 update_opid = 6;
+            optional int64 total_rows_to_expect = 7;
+            repeated string store_cell = 8;
+            optional Namespace_AnchorPointSpaceAttributes anchor_point_space_attributes = 9;
+            optional bool should_cross_anchor_points = 10;
+            optional string physical_placement = 11;
+            optional bool clear_named_placement_policy = 12;
+        }
+        
+        optional UpdateTree update_tree = 4;
+        message UpdateTree {
+            required fixed64 operation_id = 1;
+            optional int64 timestamp = 2;
+        }
+    }
+    
+    message Result {
+        optional string OBSOLETE_link = 1;
+    }
+}
+
+message Namespace_StatFile {
+    message Argument {
+        required string path = 1;
+        optional bool want_file_stat = 2 [default = false];
+        optional bool want_store_path = 3 [default = false];
+        optional int32 stripe_index = 5 [default = -1];
+        optional bool want_space_usage_by_partition = 8 [default = false];
+        optional uint64 file_stat_mask = 9;
+        repeated string extended_attributes_types = 11;
+        optional bool omit_full_default_encryption_properties = 10 [default = false];
+        optional bool skip_dir_data_lookup_if_directory_entry = 13;
+        
+        oneof file_id_representation {
+            int64 __file_id = 4 [default = 0, deprecated = true];
+            storage_util.Int128 __large_file_id = 12 [deprecated = true];
+        }
+        
+        reserved 6, 7;
+    }
+    
+    message Checkpoint {
+        
+    }
+    
+    message Result {
+        optional Namespace_FileStat file_stat = 1;
+        optional bool is_directory = 2;
+        optional Namespace_FileData.BackingStoreType backing_store_type = 8;
+        optional string store_path = 3;
+        optional int64 store_file_id = 5;
+        optional string blob_path = 9;
+        optional KeystoreInstance keystore_affinity = 7;
+        
+        reserved 4, 6;
+    }
+}
+
+message Namespace_LookupDirData {
+    message Argument {
+        optional string path = 1;
+    }
+    
+    message Checkpoint {
+        
+    }
+    
+    message Result {
+        optional Namespace_DirectoryData dir_data = 1;
+        optional string serving_store_cell_name = 2;
+        
+        reserved 3;
+    }
+}
+
+message Namespace_UpdateRow {
+    message Argument {
+        required string path = 1;
+        optional Namespace_Permissions permissions = 2;
+        optional int32 gc_delay_secs = 3;
+        optional FileEncoding default_encoding = 4;
+        optional string default_partition = 8;
+        optional int32 default_ttl_secs = 5;
+        optional int64 mtime = 6;
+        optional uint32 attributes = 7;
+        optional int64 default_expiration_time_secs = 9;
+        optional tech.file.QuotaAccounting default_quota_accounting = 15;
+        optional string anchor_point_placement = 10;
+        optional Namespace_ComplianceInfo compliance_info = 11;
+    }
+    
+    message Checkpoint {
+        
+    }
+    
+    message Result {
+        optional int64 timestamp = 1;
+    }
+}
+
+message Namespace_UpdateTree {
+    message Argument {
+        optional Namespace_Permissions permissions = 1;
+        optional int32 permissions_depth = 2;
+        optional int64 mutation_timestamp = 3;
+        optional int64 freeze_timestamp = 4;
+        optional int32 gc_delay_secs = 5;
+        optional FileEncoding default_encoding = 6;
+        optional int32 default_ttl_secs = 7;
+        optional int64 default_expiration_time_secs = 11;
+        optional string default_partition = 10;
+        optional tech.file.QuotaAccounting default_quota_accounting = 12;
+        optional int64 mtime = 8;
+        optional uint32 attributes = 9;
+        optional string anchor_point_placement = 13;
+        optional Namespace_ComplianceInfo compliance_info = 15;
+        
+        optional AnchorPointSpaceAttributesUpdate anchor_point_space_attributes_update = 16;
+        message AnchorPointSpaceAttributesUpdate {
+            optional string anchor_point_space_root = 1;
+            optional Namespace_AnchorPointSpaceAttributes anchor_point_space_attributes = 2;
+            optional bool clear_named_placement_policy = 3;
+        }
+        
+        reserved 14;
+    }
+    
+    message Checkpoint {
+        
+    }
+    
+    message Result {
+        
+    }
+}
+
+message Namespace_Snapshot {
+    message Argument {
+        required string src_path = 1;
+        required string dst_path = 2;
+        optional bool rename = 3;
+        optional bool overwrite_file = 6 [default = true];
+        optional tech.file.SnapshotOptions snapshot_options = 9;
+        optional FileParameters src_parameters = 7;
+        optional FileParameters dst_parameters = 8;
+        optional .thinmint.ThinMint keystore_thinmint = 10;
+        
+        reserved 4, 5;
+    }
+    
+    message Checkpoint {
+        optional Acquire acquire = 1;
+        message Acquire {
+            required fixed64 opid = 1;
+            optional int32 depth = 2 [default = -1];
+            optional int64 total_rows_to_expect = 16;
+            optional Namespace_FileData src_file_data = 3;
+            optional bool src_name_lock = 4;
+            optional int64 freeze_timestamp = 5;
+            optional production_time.TrueTimestampProto operation_timestamp = 20;
+            optional Namespace_FileData dst_file_data = 6;
+            optional Namespace_DirectoryData dst_dir_data = 7;
+            optional FileParameters src_path_params = 8;
+            optional FileParameters dst_path_params = 9;
+            optional FileEncoding file_encoding = 11;
+            repeated int64 acquired_rows = 12;
+            optional .thinmint.ThinMint keystore_thinmint = 13;
+            repeated string store_cell = 15;
+            optional string destination_store_cell = 17;
+            optional int32 src_file_anchor_point_depth = 21;
+            
+            oneof snapshot_id_representation {
+                int64 __snapshot_id = 10 [deprecated = true];
+                storage_util.Int128 __large_snapshot_id = 14 [deprecated = true];
+            }
+            
+            reserved 18, 19;
+        }
+        
+        optional Commit commit = 2;
+        message Commit {
+            required fixed64 opid = 1;
+            optional int64 timestamp = 2;
+            optional int64 nascent_timestamp = 6;
+            optional string extension = 3;
+            optional Namespace_FileData dst_file_data = 5;
+            optional int32 create_name_arg_parent_dir_opt = 7;
+            optional int64 DEPRECATED_mtime = 4 [deprecated = true];
+            optional bool commit_op_done = 9;
+            optional Namespace_RemoteFileMarker remote_file_marker = 10;
+            
+            reserved 8;
+        }
+        
+        optional Release release = 3;
+        message Release {
+            required fixed64 opid = 1;
+        }
+        
+        optional .util.StatusProto final = 4;
+    }
+    
+    message Result {
+        
+    }
+}
+
+message Namespace_Acquire {
+    message Argument {
+        optional string path = 1;
+        optional Namespace_Credentials credentials = 2;
+        required bool write_lock = 3;
+        optional bool count_names = 7 [default = true];
+        optional bool write_access = 4;
+        optional bool chown_access = 8;
+        optional bool chgrp_access = 9;
+        optional bool include_recovery_entries = 5 [default = false];
+        optional double timeout_s = 6 [default = 10000000];
+        
+        optional Scope scope = 13;
+        enum Scope {
+            UNSPECIFIED = 0;
+            SOURCE = 1;
+            DESTINATION = 2;
+            UNSCOPED = 3;
+        }
+        
+        optional uint64 permissions_change_counter_value = 15;
+        optional int32 permissions_change_path_depth = 16;
+        optional string anchor_point_space_root = 17;
+        
+        reserved 10, 11, 12, 14;
+        
+        reserved "destination_path", "destination_permission_mask", "recursive_root";
+    }
+    
+    message Result {
+        optional int64 total_rows = 1;
+        optional int64 total_dirs = 2;
+        optional int64 total_files = 3;
+        optional int64 allow_rows = 4;
+        optional int64 allow_files = 5;
+        optional Namespace_DirectoryData dir_data = 6;
+        optional Namespace_FileData file_data = 7;
+        
+        reserved 8;
+        
+        reserved "error_status";
+    }
+    
+    message Checkpoint {
+        
+    }
+}
+
+message Namespace_AcquireName {
+    message Argument {
+        optional string path = 1;
+        optional google.protobuf.Duration lock_timeout = 3;
+        optional bool file_rename_with_overwrite = 7;
+        optional bool rename_within_same_dir = 8;
+        
+        reserved 2, 4, 5, 6;
+    }
+    
+    message Result {
+        optional Namespace_DirectoryData parent_data = 6;
+        optional Namespace_FileData entry_data = 7;
+        
+        reserved 8;
+    }
+    
+    message Checkpoint {
+        
+    }
+}
+
+message Namespace_Release {
+    message Argument {
+        optional string path = 1;
+        required bool write_lock = 2;
+        optional int64 nascent_timestamp = 3 [default = 0x7fffffffffffffff];
+        optional int64 delete_timestamp = 4;
+        optional bool delete_store_file = 5;
+        optional int64 victim_timestamp = 6;
+        optional bool restore_backpointers_after_failed_rename = 8;
+        optional string destination_store_cell = 9;
+        optional int32 destination_anchor_point_depth = 10;
+        optional int32 source_subtree_root_depth = 11;
+        optional int32 destination_subtree_root_depth = 12;
+        optional fixed64 work_result_operation_id = 7;
+        
+        optional HomunculusLogType log_to_homunculus_on_release = 14;
+        enum HomunculusLogType {
+            LOG_NOTHING = 0;
+            LOG_DIRECTORY_READ = 1;
+            LOG_DIRECTORY_WRITE = 2;
+        }
+        
+        reserved 13;
+    }
+    
+    message Result {
+        optional int64 released_rows = 1;
+        optional int64 released_names = 2;
+        optional int64 deleted_dirs = 3;
+        optional int64 errors = 5;
+        optional int64 DEPRECATED_deleted_files = 4 [deprecated = true];
+    }
+    
+    message Checkpoint {
+        
+    }
+}
+
+message Namespace_ReleaseName {
+    message Argument {
+        optional string path = 1;
+        
+        optional DeletionPolicy deletion_policy = 2;
+        enum DeletionPolicy {
+            DELETE_NOTHING = 0;
+            DELETE_ENTRY = 1;
+        }
+        
+        optional int32 anchor_point_depth = 3;
+    }
+    
+    message Result {
+        
+    }
+    
+    message Checkpoint {
+        
+    }
+}
+
+message Namespace_Commit {
+    message Argument {
+        optional Namespace_Credentials credentials = 26;
+        required int64 commit_timestamp = 1;
+        optional string cfs_extension = 2;
+        required string src_row_prefix = 3;
+        required string dst_row_prefix = 4;
+        optional uint32 dir_mask = 7 [default = 0];
+        optional uint32 file_mask = 14 [default = 0];
+        optional int64 mtime = 8;
+        optional int64 nascent_timestamp = 9 [default = 0x7fffffffffffffff];
+        optional int64 freeze_timestamp = 10 [default = 0x7fffffffffffffff];
+        optional bool include_recovery_entries = 11;
+        optional int32 ancestors_old_suffix = 12;
+        repeated Namespace_Permissions ancestors_new_suffix = 13;
+        repeated uint64 ancestors_new_permissions_change_counter_suffix = 36 [packed = true];
+        optional string new_owner = 15;
+        optional string new_group = 16;
+        optional bool force_ttl = 20;
+        optional int32 ttl_secs = 17 [default = 0x7fffffff];
+        optional bool force_gc_delay = 21;
+        optional int32 gc_delay_secs = 18 [default = 0x3f480];
+        optional bool force_expiration_time = 29;
+        optional int64 expiration_time_secs = 30;
+        optional bool force_encoding = 22;
+        optional FileEncoding encoding = 19;
+        optional FileEncoding dir_encoding = 25;
+        optional int32 column_flush_freq = 23 [default = 0x7fffffff];
+        optional int32 test_abort_after_n_names = 24 [default = 0x7fffffff];
+        optional string OBSOLETE_src_gfs_prefix = 5;
+        optional string OBSOLETE_dst_gfs_prefix = 6;
+        optional .thinmint.ThinMint keystore_thinmint = 27;
+        optional tech.file.QuotaAccounting quota_accounting = 28;
+        optional SnapshotOptions snapshot_options = 37;
+        optional int32 destination_anchor_point_depth = 31;
+        optional int32 source_subtree_root_depth = 32;
+        optional string destination_store_cell = 33;
+        optional Namespace_DirectoryMigrationInfo destination_parent_dir_migration_info = 35;
+        optional Namespace_AnchorPointSpaceAttributes destination_parent_aps_attrs = 38;
+        
+        reserved 34;
+    }
+    
+    message Result {
+        optional int64 copied_rows = 1;
+        optional int64 copied_names = 2;
+        optional int64 copied_live_dirs = 8;
+        optional int64 copied_live_rows = 9;
+        optional int64 error_rows = 3;
+        optional int64 error_names = 4;
+        optional int32 cycles = 5;
+        optional string frontier = 6;
+        optional .util.StatusProto error_status = 7;
+        
+        optional IntermediateState intermediate_state = 10;
+        message IntermediateState {
+            optional string src_dir = 1;
+            optional string dst_dir = 2;
+            optional FileParameters src_inline_params = 3;
+            optional FileParameters dst_inline_params = 4;
+            optional Namespace_DirectoryData dst_dir_data = 5;
+            optional int64 timestamp_unix_micros = 6;
+            repeated storage_util.Int128 file_ids = 7;
+            optional string dst_store_cell = 8;
+        }
+    }
+    
+    message Checkpoint {
+        
+    }
+}
+
+message Namespace_CommitDestination {
+    message Argument {
+        optional string path = 1;
+        optional Namespace_DirectoryData dir_data = 3;
+        
+        repeated Entry entries = 4;
+        message Entry {
+            optional string basename = 1;
+            optional Namespace_FileData file_data = 2;
+        }
+        
+        optional int32 anchor_point_depth = 5;
+        
+        reserved 2;
+    }
+    
+    message Result {
+        
+    }
+    
+    message Checkpoint {
+        
+    }
+}
+
+message Namespace_CreateDirEntry {
+    message Argument {
+        optional string path = 1;
+        optional Namespace_FileData file_data = 2;
+    }
+    
+    message Checkpoint {
+        
+    }
+    
+    message Result {
+        
+    }
+}
+
+message Namespace_CreateName {
+    message Argument {
+        required string path = 1;
+        required Namespace_FileData file_data = 2;
+        required Namespace_Credentials credentials = 3;
+        optional bool rename = 4;
+        optional bool overwrite = 5;
+        optional double timeout_s = 6 [default = 10000000];
+        optional int32 parent_dir_opt = 7;
+        optional string store_file_name = 8;
+        optional int64 store_file_id = 9;
+        optional bool revoke_cfs_capabilities = 10;
+        
+        optional BlobInfo blob_info = 13;
+        message BlobInfo {
+            optional string path = 1;
+        }
+        
+        optional .thinmint.ThinMint keystore_thinmint = 11;
+        optional SnapshotOptions snapshot_options = 14;
+        
+        reserved 12;
+        
+        reserved "quota_accounting";
+        
+        enum ParentDirOption {
+            INHERIT_GRP = 1;
+            INHERIT_TTL = 2;
+            DEPRECATED_INHERIT_ENC = 4;
+            INHERIT_QUOTA_ACCOUNTING = 8;
+            INHERIT_EXPIRATION_TIME = 16;
+        }
+    }
+    
+    message Checkpoint {
+        
+    }
+    
+    message Result {
+        optional int64 timestamp = 1;
+    }
+}
+
+message Namespace_Transcoded {
+    message Argument {
+        required string path = 1;
+        optional fixed64 id = 2;
+        optional Namespace_FileData file_data = 3;
+        optional string original = 5;
+        optional .util.StatusProto result = 4;
+        optional bool verify_only = 6;
+        optional int64 bytes_written = 7;
+        optional bool nack_on_rejection = 8;
+        optional bool clear_target_encoding = 9;
+        
+        oneof transition_type {
+            Namespace_TransitionData.SpecType spec_type = 10;
+            Namespace_TransitionData.CfsTransition cfs_transition = 11;
+        }
+    }
+    
+    message Result {
+        
+    }
+    
+    message Checkpoint {
+        
+    }
+}
+
+message Namespace_GetCapability {
+    message Argument {
+        required string path = 1;
+        optional uint32 rights = 3;
+        
+        oneof file_id_representation {
+            int64 __file_id = 2 [default = 0, deprecated = true];
+            storage_util.Int128 __large_file_id = 4 [deprecated = true];
+        }
+    }
+    
+    message Result {
+        required string link = 1;
+        required int64 store_file_id = 2;
+        required CFSCapability capability = 3;
+    }
+    
+    message Checkpoint {
+        
+    }
+}
+
+message Namespace_PushCapabilityKey {
+    option deprecated = true;
+    
+    message Argument {
+        option deprecated = true;
+        optional CFSCapabilityKey cfs1_key = 1;
+        optional CFSCapabilityKey cfs2_key = 2;
+    }
+    
+    message Result {
+        option deprecated = true;
+    }
+    
+    message Checkpoint {
+        option deprecated = true;
+    }
+}
+
+message Namespace_NotifyError {
+    message Argument {
+        required string path = 1;
+        
+        optional Action action = 3;
+        enum Action {
+            kInvalidAction = 0;
+            FIX_BACKPOINTER = 1;
+            FIX_METADATA = 2;
+            BACKFILL_ENCRYPTION_PROPERTIES = 3;
+            REMOVE_SINGLE_WRAPPED_KEY = 4;
+            REMOVE_SINGLE_WRAPPED_KEY_ROLLBACK = 5;
+        }
+        
+        oneof file_id_representation {
+            int64 __file_id = 2 [default = 0, deprecated = true];
+            storage_util.Int128 __large_file_id = 4 [deprecated = true];
+        }
+    }
+    
+    message Result {
+        
+    }
+    
+    message Checkpoint {
+        
+    }
+}
+
+message Namespace_Truncate {
+    message Argument {
+        required string path = 1;
+        required int64 new_length = 3;
+        optional bytes encryption_auth_code = 4;
+        optional fixed32 plaintext_crc32c = 5;
+        
+        oneof file_id_representation {
+            int64 __file_id = 2 [deprecated = true];
+            storage_util.Int128 __large_file_id = 6 [deprecated = true];
+        }
+    }
+    
+    message Result {
+        
+    }
+    
+    message Checkpoint {
+        optional Successor successor = 1;
+        message Successor {
+            optional Namespace_FileData file_data = 1;
+            optional string store_file_name = 2;
+            optional string extension = 3;
+            optional int64 store_file_id = 4;
+            optional tech.file.QuotaAccounting quota_accounting = 5;
+        }
+        
+        optional RemoteData remote_data = 2;
+        message RemoteData {
+            optional production_time.TrueTimestampProto operation_timestamp = 1;
+            optional .util.StatusProto final_status = 2;
+        }
+    }
+}
+
+message Namespace_PreSplit {
+    message Argument {
+        required string path = 1;
+        repeated string split_key = 2;
+        optional int32 min_merge_delay_seconds = 3;
+        optional string reason_for_presplit = 4;
+    }
+    
+    message Checkpoint {
+        
+    }
+    
+    message Result {
+        
+    }
+}
+
+message Namespace_StartWatch {
+    message Argument {
+        required int64 stream_id = 1;
+        repeated string patterns = 2;
+    }
+    
+    message Checkpoint {
+        
+    }
+    
+    message Result {
+        required int32 stream_timeout_secs = 1;
+        optional string host = 2;
+        optional int32 port = 3;
+    }
+}
+
+message Namespace_FetchWatchEvents {
+    message Argument {
+        required int64 stream_id = 1;
+        required int64 sequence_num = 2;
+    }
+    
+    message Checkpoint {
+        
+    }
+    
+    message Result {
+        repeated Watch_EventBatch events = 1;
+        optional string host = 2;
+        optional int32 port = 3;
+    }
+}
+
+message Namespace_CheckEntryExistence {
+    message Argument {
+        optional string path = 1;
+        optional google.protobuf.Duration lock_timeout = 2;
+    }
+    
+    message Checkpoint {
+        
+    }
+    
+    message Result {
+        optional State state = 1;
+        enum State {
+            STATE_UNSPECIFIED = 0;
+            DIRNAME_EXISTS_AND_PATH_DOES_NOT = 1;
+            DIRNAME_NOT_SERVED_HERE = 2;
+            PATH_IS_A_FILE = 3;
+            PATH_IS_A_DIRECTORY = 4;
+        }
+    }
+}
+
+message Namespace_MigrateAnchorPointSpace {
+    message Argument {
+        optional string path = 1;
+        optional Namespace_DirectoryMigrationInfo migration_intent = 2;
+        optional fixed64 internal_request_id = 4;
+        
+        reserved 3, 5, 6;
+    }
+    
+    message Checkpoint {
+        optional fixed64 sub_request_id = 1;
+        
+        optional InitializeMigration initialize_migration = 2;
+        message InitializeMigration {
+            optional fixed64 opid = 1;
+            optional production_time.TrueTimestampProto operation_timestamp = 3;
+            optional int32 depth = 2;
+        }
+        
+        optional MigrateDirectories migrate_directories = 3;
+        message MigrateDirectories {
+            optional fixed64 opid = 1;
+            optional production_time.TrueTimestampProto operation_timestamp = 5;
+            optional int32 depth = 3;
+            
+            reserved 2, 4;
+        }
+        
+        optional FinalizeMigration finalize_migration = 4;
+        message FinalizeMigration {
+            optional fixed64 opid = 1;
+            optional production_time.TrueTimestampProto operation_timestamp = 5;
+            optional int32 depth = 2;
+            optional fixed64 remove_active_migration_opid = 4;
+            
+            reserved 3;
+        }
+        
+        optional bool run_directory_metadata_migration_in_parallel = 5;
+    }
+    
+    message Result {
+        
+    }
+}
+
+message Namespace_InitializeMigration {
+    message Argument {
+        optional string anchor_point_space_root = 1;
+        optional Namespace_DirectoryMigrationInfo migration_intent = 2;
+        
+        reserved 3, 4;
+    }
+    
+    message Result {
+        optional bool processed_rows = 2;
+        
+        reserved 1;
+    }
+    
+    message Checkpoint {
+        
+    }
+}
+
+message Namespace_MigrateDirectories {
+    message Argument {
+        optional string anchor_point_space_root = 2;
+        optional production_time.TrueTimestampProto timestamp = 3;
+        optional string presplit_destination_cell = 6;
+        optional bool run_directory_metadata_migration_in_parallel = 7;
+        
+        reserved 1, 4, 5;
+    }
+    
+    message Checkpoint {
+        
+    }
+    
+    message Result {
+        optional bool processed_rows = 1;
+    }
+}
+
+message Namespace_MigrateDirectoryMetadata {
+    message Argument {
+        optional string path = 1;
+        optional string anchor_point_space_root = 3;
+        optional production_time.TrueTimestampProto timestamp = 4;
+        
+        reserved 2, 5, 6, 7;
+    }
+    
+    message Checkpoint {
+        optional string entries_frontier = 1;
+        optional fixed64 replay_protection_frontier = 2;
+        optional bool copied_all_metadata = 8;
+        optional bool dst_lock_is_released = 6;
+        repeated fixed64 dst_operation_ids = 5 [packed = true];
+        optional string dst_store_cell_name = 7;
+        optional int64 num_entries_copied = 9;
+        optional int64 num_replays_copied = 10;
+        optional int64 num_bytes_copied = 11;
+        optional int64 num_batches_copied = 12;
+        optional int64 copy_started_time_micros = 13;
+        
+        reserved 3, 4;
+    }
+    
+    message Result {
+        reserved 1, 2;
+    }
+}
+
+message Namespace_MigrateDirectoryMetadataDestination {
+    message Argument {
+        optional string path = 1;
+        optional Namespace_DirectoryData dir_data = 2;
+        
+        repeated Entry entries = 3;
+        message Entry {
+            optional string basename = 1;
+            optional Namespace_FileData file_data = 2;
+        }
+        
+        repeated ReplayDataItem replay_data = 4;
+        message ReplayDataItem {
+            optional int64 operation_id = 1;
+            optional int64 original_timestamp_micros = 2;
+            optional Namespace_ResultData replay_data = 3;
+        }
+        
+        optional bool ensure_no_prior_directory_contents_and_lock_persisted = 5;
+        optional bool release_persistent_lock = 6;
+        optional string anchor_point_space_root = 10;
+        optional production_time.TrueTimestampProto timestamp = 11;
+        
+        reserved 7, 8, 9;
+    }
+    
+    message Result {
+        
+    }
+    
+    message Checkpoint {
+        
+    }
+}
+
+message Namespace_FinalizeMigration {
+    message Argument {
+        optional string anchor_point_space_root = 1;
+        optional production_time.TrueTimestampProto timestamp = 6;
+        optional bool remove_anchor_point_migration = 11;
+        
+        reserved 2, 3, 4, 5, 7, 8, 9, 10;
+    }
+    
+    message Checkpoint {
+        
+    }
+    
+    message Result {
+        optional bool processed_rows = 2;
+        
+        reserved 1;
+    }
+}
+
+message Namespace_UnlinkRemoteFile {
+    message Argument {
+        optional string path = 1;
+        optional storage_util.Int128 cns_file_id = 2;
+        optional string cns_file_path = 3;
+        optional string remote_store_cell_name = 4;
+        optional bool delete_cfs_file = 5 [default = true];
+    }
+    
+    message Result {
+        
+    }
+    
+    message Checkpoint {
+        
+    }
+}
+
+message Namespace_SnapshotRemoteFile {
+    message Argument {
+        optional string path = 1;
+        optional storage_util.Int128 rfm_cns_file_id = 2;
+        optional string rfm_cns_file_path = 3;
+        optional google.protobuf.Duration lock_timeout = 8;
+        
+        oneof action {
+            Rename rename = 4;
+            Snapshot snapshot = 5;
+            Truncate truncate = 9;
+            RenameRollback rename_rollback = 6;
+            SnapshotRollback snapshot_rollback = 7;
+            TruncateRollback truncate_rollback = 10;
+            BatchUpdateRemoteFileMarker batch_update_remote_file_marker = 11;
+            SoftDelete soft_delete = 13;
+            MutateGcTime mutate_gc_time = 14;
+        }
+        
+        reserved 12;
+        
+        message Rename {
+            optional string src_store_cell_name = 1;
+            optional string dst_store_cell_name = 2;
+            optional string dst_path = 3;
+        }
+        
+        message RenameRollback {
+            optional string src_store_cell_name = 1;
+            optional string dst_store_cell_name = 2;
+            optional string src_path = 3;
+        }
+        
+        message Snapshot {
+            optional string src_store_cell_name = 1;
+            optional string dst_store_cell_name = 2;
+            optional string dst_path = 3;
+            optional storage_util.Int128 dst_cns_file_id = 4;
+            optional bool revoke_cfs_capabilities = 5;
+            optional .thinmint.ThinMint keystore_thinmint = 6;
+            optional string dst_link = 7;
+            optional Namespace_Permissions permissions = 8;
+            optional tech.file.QuotaAccounting quota_accounting = 9;
+            optional uint32 file_mask = 10;
+            optional SnapshotOptions snapshot_options = 11;
+        }
+        
+        message SnapshotRollback {
+            optional string dst_store_cell_name = 1;
+        }
+        
+        message Truncate {
+            optional string src_store_cell_name = 1;
+            optional string src_path = 2;
+            optional storage_util.Int128 src_cns_file_id = 3;
+            optional string snapshot_extension = 4;
+            optional Namespace_Permissions permissions = 5;
+            optional tech.file.QuotaAccounting quota_accounting = 6;
+            optional int64 new_length = 7;
+            optional bytes encryption_auth_code = 8;
+            optional fixed32 plaintext_crc32c = 9;
+        }
+        
+        message TruncateRollback {
+            optional string src_store_cell_name = 1;
+            optional string src_path = 2;
+            optional string snapshot_extension = 3;
+            optional string store_file_link_prev = 4;
+        }
+        
+        message BatchUpdateRemoteFileMarker {
+            optional string src_store_cell_name = 1;
+            
+            repeated Update update = 2;
+            message Update {
+                optional storage_util.Int128 rfm_cns_file_id = 1;
+                optional string rfm_cns_file_path = 2;
+                optional string remote_store_cell_name = 3;
+            }
+        }
+        
+        message SoftDelete {
+            optional production_time.TrueTimestampProto gc_timestamp = 1;
+        }
+        
+        message MutateGcTime {
+            optional production_time.TrueTimestampProto gc_timestamp = 1;
+        }
+    }
+    
+    message Result {
+        oneof action_result {
+            Snapshot snapshot = 1;
+            Truncate truncate = 2;
+        }
+        
+        message Snapshot {
+            optional int64 store_file_id = 1;
+            
+            optional CuratorResult curator_result = 2;
+            message CuratorResult {
+                optional int64 store_file_id = 1;
+                optional int64 mtime = 2;
+                optional int64 length = 3;
+                optional tech.file.EncryptionMode encryption_mode = 4;
+                optional tech.file.EncryptionProperties encryption_properties = 5;
+            }
+        }
+        
+        message Truncate {
+            optional int64 store_file_id = 1;
+            optional tech.file.QuotaAccounting quota_accounting = 2;
+        }
+    }
+    
+    message Checkpoint {
+        
+    }
+}
+
+message Namespace_NotifyDataMigrationStart {
+    message Argument {
+        optional string path = 1;
+        optional storage_util.Int128 file_id = 2;
+        optional string snapshot_tree_id = 6;
+        optional string source_store_file_path = 4;
+        optional string copy_service_user = 5;
+        
+        reserved 3;
+    }
+    
+    message Checkpoint {
+        
+    }
+    
+    message Result {
+        optional string destination_store_file_path = 1;
+        optional int64 source_store_file_id = 2;
+        optional Namespace_FileData.BackingStoreType source_backing_store_type = 14;
+        optional Namespace_FileData.BackingStoreType destination_backing_store_type = 15;
+        optional string shared_prefix_store_file_path = 11;
+        optional int64 shared_prefix_store_file_id = 12;
+        optional int64 shared_prefix_length = 13;
+        optional .thinmint.ThinMint source_store_thinmint = 4;
+        optional .thinmint.ThinMint destination_store_thinmint = 5;
+        optional FileEncoding target_encoding = 6;
+        
+        reserved 3, 7, 10;
+    }
+}
+
+message Namespace_NotifyDataMigrated {
+    message Argument {
+        optional string path = 1;
+        optional storage_util.Int128 file_id = 2;
+        optional string source_store_file_path = 3;
+        optional int64 source_store_file_id = 4;
+        optional string destination_store_file_path = 6;
+        optional Namespace_FileData.BackingStoreType source_backing_store_type = 13;
+        optional Namespace_FileData.BackingStoreType destination_backing_store_type = 14;
+        optional .util.StatusProto status = 7;
+        optional bool is_remove_remote_file_marker_request = 8;
+        optional bool transcoding_done = 11;
+        optional bool copy_stripe_sharing_extended_attribute = 15;
+        
+        reserved 5, 9, 10, 12;
+    }
+    
+    message Checkpoint {
+        optional Namespace_FileData file_data = 1;
+        optional int64 destination_file_identifier = 2;
+        optional int64 file_length = 7;
+        optional int64 physical_file_length = 8;
+        optional bool transcoding_done = 11;
+        optional tech.file.Cns2StripeSharingExtendedAttribute stripe_sharing_extended_attribute = 12;
+        
+        oneof stage {
+            UnlinkSourceBackingFile unlink_source_backing_file = 3;
+            SetDestinationFileBackpointerAndAccept set_destination_file_backpointer_and_accept = 4;
+            CleanUpFailedDestinationFile clean_up_failed_destination_file = 5;
+            RemoveRFMInLocalCell remove_rfm_in_local_cell = 6;
+        }
+        
+        reserved 10, 9;
+        
+        message UnlinkSourceBackingFile {
+            optional uint64 remote_call_operation_id = 1;
+            optional production_time.TrueTimestampProto operation_timestamp = 2;
+        }
+        
+        message SetDestinationFileBackpointerAndAccept {
+            
+        }
+        
+        message CleanUpFailedDestinationFile {
+            optional .util.StatusProto status = 1;
+        }
+        
+        message RemoveRFMInLocalCell {
+            optional uint64 remote_call_operation_id = 1;
+            optional production_time.TrueTimestampProto operation_timestamp = 2;
+        }
+    }
+    
+    message Result {
+        optional int64 file_length = 1;
+        optional int64 physical_file_length = 2;
+    }
+}
+
+message Namespace_PublishRoute {
+    message Argument {
+        optional string path = 1;
+        optional cns2.RouteMutation route_mutation = 2;
+    }
+    
+    message Result {
+        
+    }
+    
+    message Checkpoint {
+        
+    }
+}
+
+message Namespace_RepublishRoutes {
+    message Argument {
+        optional bool dry_run = 1;
+    }
+    
+    message Result {
+        optional uint64 directory_routes_published = 1;
+        optional uint64 entry_routes_published = 2;
+        optional uint64 directories_scanned = 3;
+    }
+    
+    message Checkpoint {
+        
+    }
+}
+
+message Namespace_UnsafeDeleteEntry {
+    message Argument {
+        optional string path = 1;
+        
+        oneof validation_check {
+            string is_file_with_link_matching_regex = 2;
+            string is_file_with_blobstore_path_matching_regex = 4;
+            bool is_anchor_point_directory = 3;
+        }
+    }
+    
+    message Result {
+        
+    }
+    
+    message Checkpoint {
+        
+    }
+}
+
+message Namespace_UnsafeDeleteWorkItem {
+    message Argument {
+        optional string path = 1;
+        optional string work_item_queue_name = 2;
+        optional uint64 numeric_work_item_id = 3;
+    }
+    
+    message Result {
+        
+    }
+    
+    message Checkpoint {
+        
+    }
+}
+
+message Namespace_UnsafeDeleteJunkEntry {
+    message Argument {
+        optional string path = 1;
+        optional int64 timestamp_microseconds = 2;
+        optional string store_file_path = 3;
+    }
+    
+    message Result {
+        
+    }
+    
+    message Checkpoint {
+        
+    }
+}
+
+message Namespace_UnsafeDeleteMigrationIntent {
+    message Argument {
+        optional string path = 1;
+        optional production_time.TrueTimestampProto migration_timestamp = 2;
+    }
+    
+    message Result {
+        
+    }
+    
+    message Checkpoint {
+        
+    }
+}
+
+message Namespace_UnsafeSetPermissions {
+    message Argument {
+        optional string path = 1;
+        optional Namespace_Permissions permissions = 2;
+        optional string directory_row_store_cell = 3;
+    }
+    
+    message Result {
+        
+    }
+    
+    message Checkpoint {
+        optional Namespace_FileData file_data = 1;
+        optional production_time.TrueTimestampProto operation_timestamp = 2;
+    }
+}
+
+message Namespace_UnsafeSetDirectoryPermissions {
+    message Argument {
+        optional string path = 1;
+        optional Namespace_Permissions permissions = 2;
+    }
+    
+    message Result {
+        
+    }
+    
+    message Checkpoint {
+        
+    }
+}
+
+message Namespace_ScheduleDataMigration {
+    message Argument {
+        optional string basename = 2;
+        
+        reserved 1;
+    }
+    
+    message Checkpoint {
+        
+    }
+    
+    message Result {
+        
+    }
+}
+
+message Namespace_ScanDmsIndex {
+    message Argument {
+        optional int32 anchor_point_depth = 1;
+    }
+    
+    message Checkpoint {
+        
+    }
+    
+    message Result {
+        optional int64 entry_count = 1;
+        
+        repeated DmsIndexDirectory dms_index_directories = 2;
+        message DmsIndexDirectory {
+            optional string dir_path = 1;
+            repeated string basenames = 2;
+        }
+    }
+}
+
+message Namespace_AcceptEntryReplicationEvent {
+    message Argument {
+        optional string path = 1;
+        optional Namespace_IntermediateReplicatedFileData intermediate_replicated_file_data = 3;
+        
+        reserved 2;
+    }
+    
+    message Checkpoint {
+        
+    }
+    
+    message Result {
+        
+    }
+}
+
+message Namespace_AcceptDirectoryReplicationEvent {
+    message Argument {
+        optional string path = 1;
+        optional Namespace_IntermediateReplicatedDirectoryData intermediate_replicated_directory_data = 4;
+        
+        reserved 3;
+    }
+    
+    message Checkpoint {
+        
+    }
+    
+    message Result {
+        
+    }
+}
+
+message Namespace_IsAnchorPointStable {
+    message Argument {
+        optional string path = 1;
+        repeated string unstable_directory_paths = 2;
+    }
+    
+    message Checkpoint {
+        
+    }
+    
+    message Result {
+        repeated Namespace_ScanDmsIndex.Result.DmsIndexDirectory unstable_directories = 1;
+    }
+}
+
+message Namespace_ProbePath {
+    message Argument {
+        optional string path = 1;
+    }
+    
+    message Checkpoint {
+        
+    }
+    
+    message Result {
+        
+    }
+}
+
+message Namespace_CloseFile {
+    message Argument {
+        optional string path = 1;
+        optional storage_util.Int128 file_id = 2;
+        optional uint64 write_token_id = 3;
+    }
+    
+    message Checkpoint {
+        
+    }
+    
+    message Result {
+        
+    }
+}
+
+message Namespace_ClientOpTest {
+    message Argument {
+        repeated string row = 1;
+    }
+    
+    message Checkpoint {
+        
+    }
+    
+    message Result {
+        repeated string data = 1;
+        optional ArgHeader header = 2;
+    }
+}
+
+message Namespace_ServerOpTest {
+    message Argument {
+        required string path = 1;
+        required TestType test = 2;
+        optional string data = 3;
+        optional .util.StatusProto reverb = 4;
+    }
+    
+    message Checkpoint {
+        required string data = 1;
+        optional string unused = 2;
+    }
+    
+    message Result {
+        optional string data = 1;
+    }
+    
+    enum TestType {
+        BASIC = 1;
+        REVERB = 2;
+        NO_OP = 3;
+    }
+}
+
+message Namespace_ShardTest {
+    message Argument {
+        optional string path = 1;
+        optional bool fail = 2 [deprecated = true];
+        optional bool wait = 3;
+        optional int32 assign = 4;
+        optional int32 error = 5;
+    }
+    
+    message Checkpoint {
+        
+    }
+    
+    message Result {
+        optional int64 sequence_count = 1;
+    }
+}
+
+message Namespace_ShardMultirowTest {
+    message Argument {
+        optional string path = 1;
+        optional bool wait = 2;
+        optional int32 error = 3;
+        optional int32 assign = 4;
+    }
+    
+    message Checkpoint {
+        
+    }
+    
+    message Result {
+        optional int64 sequence_count = 1;
+    }
+}
+
+message Namespace_Argument {
+    required fixed64 operation_id = 1 [default = 0];
+    optional fixed64 request_id = 2 [default = 0];
+    optional int32 trace_level = 3 [default = -1];
+    optional string originator = 25;
+    optional bool return_path_in_result = 33;
+    optional production_time.TrueTimestampProto operation_timestamp = 37;
+    optional Namespace_CreateDir.Argument create_dir = 5;
+    optional Namespace_CreateRow.Argument create_row = 6;
+    optional Namespace_DeleteDir.Argument delete_dir = 7;
+    optional Namespace_DeleteRow.Argument delete_row = 8;
+    optional Namespace_GetStats.Argument get_stats = 10;
+    optional Namespace_Match.Argument match = 12;
+    optional Namespace_OpenFile.Argument open_file = 13;
+    optional Namespace_SetAttr.Argument set_attr = 14;
+    optional Namespace_StatFile.Argument stat_file = 15;
+    optional Namespace_UpdateRow.Argument update_row = 16;
+    optional Namespace_Snapshot.Argument snapshot = 17;
+    optional Namespace_Acquire.Argument acquire = 18;
+    optional Namespace_Commit.Argument commit = 19;
+    optional Namespace_Release.Argument release = 20;
+    optional Namespace_UpdateTree.Argument update_tree = 21;
+    optional Namespace_Transcoded.Argument transcoded = 23;
+    optional Namespace_GetCapability.Argument get_capability = 24;
+    optional Namespace_NotifyError.Argument notify_error = 27;
+    optional Namespace_Truncate.Argument truncate = 28;
+    optional Namespace_PreSplit.Argument presplit = 29;
+    optional Namespace_CreateName.Argument create_name = 30;
+    optional Namespace_StartWatch.Argument start_watch = 31;
+    optional Namespace_FetchWatchEvents.Argument fetch_watch_events = 32;
+    optional Namespace_CommitDestination.Argument commit_destination = 34;
+    optional Namespace_CheckEntryExistence.Argument check_entry_existence = 35;
+    optional Namespace_LookupDirData.Argument lookup_dir_data = 36;
+    optional Namespace_CreateDirEntry.Argument create_dir_entry = 38;
+    optional Namespace_MatchEntries.Argument match_entries = 39;
+    optional Namespace_AcquireName.Argument acquire_name = 40;
+    optional Namespace_ReleaseName.Argument release_name = 41;
+    optional Namespace_NotifyDataMigrationStart.Argument notify_data_migration_start = 42;
+    optional Namespace_NotifyDataMigrated.Argument notify_data_migrated = 43;
+    optional Namespace_RepublishRoutes.Argument republish_routes = 44;
+    optional Namespace_MigrateDirectoryMetadata.Argument migrate_directory_metadata = 45;
+    optional Namespace_MigrateDirectoryMetadataDestination.Argument migrate_directory_metadata_destination = 46;
+    optional Namespace_MigrateDirectories.Argument migrate_directories = 47;
+    optional Namespace_InitializeMigration.Argument initialize_migration = 48;
+    optional Namespace_MigrateAnchorPointSpace.Argument migrate_anchor_point_space = 49;
+    optional Namespace_FinalizeMigration.Argument finalize_migration = 50;
+    optional Namespace_UnlinkRemoteFile.Argument unlink_remote_file = 51;
+    optional Namespace_SnapshotRemoteFile.Argument snapshot_remote_file = 52;
+    optional Namespace_OpenRemoteFile.Argument open_remote_file = 53;
+    optional Namespace_PublishRoute.Argument publish_route = 54;
+    optional Namespace_UnsafeDeleteEntry.Argument unsafe_delete_entry = 55;
+    optional Namespace_UnsafeDeleteWorkItem.Argument unsafe_delete_work_item = 56;
+    optional Namespace_UnsafeDeleteJunkEntry.Argument unsafe_delete_junk_entry = 57;
+    optional Namespace_UnsafeDeleteMigrationIntent.Argument unsafe_delete_migration_intent = 58;
+    optional Namespace_UnsafeSetPermissions.Argument unsafe_set_permissions = 59;
+    optional Namespace_UnsafeSetDirectoryPermissions.Argument unsafe_set_directory_permissions = 60;
+    optional Namespace_ScheduleDataMigration.Argument schedule_data_migration = 61;
+    optional Namespace_ScanDmsIndex.Argument scan_dms_index = 63;
+    optional Namespace_AcceptEntryReplicationEvent.Argument accept_entry_replication_event = 64;
+    optional Namespace_AcceptDirectoryReplicationEvent.Argument accept_directory_replication_event = 65;
+    optional Namespace_IsAnchorPointStable.Argument is_anchor_point_stable = 66;
+    optional Namespace_ProbePath.Argument probe_path = 67;
+    optional Namespace_CloseFile.Argument close_file = 68;
+    optional Namespace_ClientOpTest.Argument client_op_test = 100;
+    optional Namespace_ServerOpTest.Argument server_op_test = 101;
+    optional Namespace_ShardTest.Argument shard_test = 102;
+    optional Namespace_ShardMultirowTest.Argument shard_multirow_test = 103;
+    optional bool OBSOLETE_access_file = 4;
+    optional bool OBSOLETE_link_file = 11;
+    optional bool OBSOLETE_import = 22;
+    optional bool OBSOLETE_delete_file = 9;
+    
+    reserved 26, 62;
+    
+    reserved "push_capability_key";
+}
+
+message Namespace_Request {
+    repeated Namespace_Argument argument = 1;
+    optional bool multiple_ops = 2;
+    
+    extend .proto2.bridge.MessageSet {
+        optional Namespace_Request message_set_extension = 14103943;
+    }
+}
+
+message Namespace_Result {
+    required fixed64 operation_id = 1;
+    required .util.StatusProto status = 2;
+    optional Namespace_Trace trace = 3;
+    optional string path = 32;
+    optional Namespace_CreateDir.Result create_dir = 5;
+    optional Namespace_CreateRow.Result create_row = 6;
+    optional Namespace_DeleteDir.Result delete_dir = 7;
+    optional Namespace_DeleteRow.Result delete_row = 8;
+    optional Namespace_GetStats.Result get_stats = 10;
+    optional Namespace_Match.Result match = 12;
+    optional Namespace_OpenFile.Result open_file = 13;
+    optional Namespace_SetAttr.Result set_attr = 14;
+    optional Namespace_StatFile.Result stat_file = 15;
+    optional Namespace_UpdateRow.Result update_row = 16;
+    optional Namespace_Snapshot.Result snapshot = 17;
+    optional Namespace_Acquire.Result acquire = 18;
+    optional Namespace_Commit.Result commit = 19;
+    optional Namespace_Release.Result release = 20;
+    optional Namespace_UpdateTree.Result update_tree = 21;
+    optional Namespace_Transcoded.Result transcoded = 23;
+    optional Namespace_GetCapability.Result get_capability = 24;
+    optional Namespace_NotifyError.Result notify_error = 26;
+    optional Namespace_Truncate.Result truncate = 27;
+    optional Namespace_PreSplit.Result presplit = 28;
+    optional Namespace_CreateName.Result create_name = 29;
+    optional Namespace_StartWatch.Result start_watch = 30;
+    optional Namespace_FetchWatchEvents.Result fetch_watch_events = 31;
+    optional Namespace_CommitDestination.Result commit_destination = 33;
+    optional Namespace_CheckEntryExistence.Result check_entry_existence = 34;
+    optional Namespace_LookupDirData.Result lookup_dir_data = 35;
+    optional Namespace_CreateDirEntry.Result create_dir_entry = 36;
+    optional Namespace_MatchEntries.Result match_entries = 37;
+    optional Namespace_AcquireName.Result acquire_name = 38;
+    optional Namespace_ReleaseName.Result release_name = 39;
+    optional Namespace_NotifyDataMigrationStart.Result notify_data_migration_start = 40;
+    optional Namespace_NotifyDataMigrated.Result notify_data_migrated = 41;
+    optional Namespace_RepublishRoutes.Result republish_routes = 42;
+    optional Namespace_MigrateDirectoryMetadata.Result migrate_directory_metadata = 43;
+    optional Namespace_MigrateDirectoryMetadataDestination.Result migrate_directory_metadata_destination = 44;
+    optional Namespace_MigrateDirectories.Result migrate_directories = 45;
+    optional Namespace_InitializeMigration.Result initialize_migration = 46;
+    optional Namespace_MigrateAnchorPointSpace.Result migrate_anchor_point_space = 47;
+    optional Namespace_FinalizeMigration.Result finalize_migration = 48;
+    optional Namespace_UnlinkRemoteFile.Result unlink_remote_file = 49;
+    optional Namespace_SnapshotRemoteFile.Result snapshot_remote_file = 50;
+    optional Namespace_OpenRemoteFile.Result open_remote_file = 51;
+    optional Namespace_PublishRoute.Result publish_route = 52;
+    optional Namespace_UnsafeDeleteEntry.Result unsafe_delete_entry = 53;
+    optional Namespace_UnsafeDeleteWorkItem.Result unsafe_delete_work_item = 54;
+    optional Namespace_UnsafeDeleteJunkEntry.Result unsafe_delete_junk_entry = 55;
+    optional Namespace_UnsafeDeleteMigrationIntent.Result unsafe_delete_migration_intent = 56;
+    optional Namespace_UnsafeSetPermissions.Result unsafe_set_permissions = 57;
+    optional Namespace_UnsafeSetDirectoryPermissions.Result unsafe_set_directory_permissions = 58;
+    optional Namespace_ScheduleDataMigration.Result schedule_data_migration = 59;
+    optional Namespace_ScanDmsIndex.Result scan_dms_index = 61;
+    optional Namespace_AcceptEntryReplicationEvent.Result accept_entry_replication_event = 62;
+    optional Namespace_AcceptDirectoryReplicationEvent.Result accept_directory_replication_event = 63;
+    optional Namespace_IsAnchorPointStable.Result is_anchor_point_stable = 64;
+    optional Namespace_ProbePath.Result probe_path = 65;
+    optional Namespace_CloseFile.Result close_file = 66;
+    optional Namespace_ClientOpTest.Result client_op_test = 100;
+    optional Namespace_ServerOpTest.Result server_op_test = 101;
+    optional Namespace_ShardTest.Result shard_test = 102;
+    optional Namespace_ShardMultirowTest.Result shard_multirow_test = 103;
+    optional bool OBSOLETE_access_file = 4;
+    optional bool OBSOLETE_link_file = 11;
+    optional bool OBSOLETE_import = 22;
+    optional bool OBSOLETE_delete_file = 9;
+    
+    reserved 25, 60;
+    
+    reserved "push_capability_key";
+}
+
+message Namespace_Reply {
+    repeated Namespace_Result result = 1;
+    optional int64 lamport_time = 2;
+    
+    extend .proto2.bridge.MessageSet {
+        optional Namespace_Reply message_set_extension = 14832815;
+    }
+}
+
+message Namespace_LockData {
+    required bool writer = 1;
+    optional bool hold = 3;
+    optional Namespace_Argument argument = 2;
+    optional bool belongs_to_checkpoint = 4;
+}
+
+message SerializedAuthority {
+    optional ValidatedEucAuthority validated_authority = 1;
+    message ValidatedEucAuthority {
+        optional .security.credentials.UserPrincipalProto principal = 1;
+        optional .security.context.LoggableSecurityContextProto loggable_context = 2;
+    }
+}
+
+message Namespace_CheckpointData {
+    required string method = 1;
+    required ArgHeader header = 2;
+    required Namespace_Argument argument = 3;
+    required Namespace_Credentials credentials = 4;
+    optional CFSThinMintOptions thinmint_options = 34;
+    optional CFSThinMintOptions destination_thinmint_options = 38;
+    optional SerializedAuthority euc_authority = 39;
+    optional .security.context.LoggablePeerProto logging_peer = 69;
+    optional storage_security.SerializedAuthority tentative_anthority = 52;
+    optional int32 traffic_class = 22 [deprecated = true];
+    optional string build_label = 29;
+    optional double absolute_deadline = 32;
+    optional int32 ssl_security_level = 35;
+    optional Namespace_CreateDir.Checkpoint create_dir = 6;
+    optional Namespace_CreateRow.Checkpoint create_row = 7;
+    optional Namespace_DeleteDir.Checkpoint delete_dir = 8;
+    optional Namespace_DeleteRow.Checkpoint delete_row = 9;
+    optional Namespace_GetStats.Checkpoint get_stats = 11;
+    optional Namespace_Match.Checkpoint match = 13;
+    optional Namespace_OpenFile.Checkpoint open_file = 14;
+    optional Namespace_SetAttr.Checkpoint set_attr = 15;
+    optional Namespace_StatFile.Checkpoint stat_file = 16;
+    optional Namespace_UpdateRow.Checkpoint update_row = 17;
+    optional Namespace_Snapshot.Checkpoint snapshot = 18;
+    optional Namespace_Acquire.Checkpoint acquire = 19;
+    optional Namespace_Commit.Checkpoint commit = 20;
+    optional Namespace_Release.Checkpoint release = 21;
+    optional Namespace_UpdateTree.Checkpoint update_tree = 23;
+    optional Namespace_Transcoded.Checkpoint transcoded = 25;
+    optional Namespace_GetCapability.Checkpoint get_capability = 26;
+    optional Namespace_NotifyError.Checkpoint notify_error = 28;
+    optional Namespace_Truncate.Checkpoint truncate = 30;
+    optional Namespace_PreSplit.Checkpoint presplit = 31;
+    optional Namespace_CreateName.Checkpoint create_name = 33;
+    optional Namespace_StartWatch.Checkpoint start_watch = 36;
+    optional Namespace_FetchWatchEvents.Checkpoint fetch_watch_events = 37;
+    optional Namespace_CommitDestination.Checkpoint commit_destination = 40;
+    optional Namespace_CheckEntryExistence.Checkpoint check_entry_existence = 41;
+    optional Namespace_LookupDirData.Checkpoint lookup_dir_data = 42;
+    optional Namespace_CreateDirEntry.Checkpoint create_dir_entry = 43;
+    optional Namespace_MatchEntries.Checkpoint match_entries = 44;
+    optional Namespace_AcquireName.Checkpoint acquire_name = 45;
+    optional Namespace_ReleaseName.Checkpoint release_name = 46;
+    optional Namespace_NotifyDataMigrationStart.Checkpoint notify_data_migration_start = 47;
+    optional Namespace_NotifyDataMigrated.Checkpoint notify_data_migrated = 48;
+    optional Namespace_RepublishRoutes.Checkpoint republish_routes = 49;
+    optional Namespace_MigrateDirectoryMetadata.Checkpoint migrate_directory_metadata = 50;
+    optional Namespace_MigrateDirectoryMetadataDestination.Checkpoint migrate_directory_metadata_destination = 51;
+    optional Namespace_MigrateDirectories.Checkpoint migrate_directories = 53;
+    optional Namespace_InitializeMigration.Checkpoint initialize_migration = 54;
+    optional Namespace_MigrateAnchorPointSpace.Checkpoint migrate_anchor_point_space = 55;
+    optional Namespace_FinalizeMigration.Checkpoint finalize_migration = 56;
+    optional Namespace_UnlinkRemoteFile.Checkpoint unlink_remote_file = 57;
+    optional Namespace_SnapshotRemoteFile.Checkpoint snapshot_remote_file = 58;
+    optional Namespace_OpenRemoteFile.Checkpoint open_remote_file = 59;
+    optional Namespace_PublishRoute.Checkpoint publish_route = 60;
+    optional Namespace_UnsafeDeleteEntry.Checkpoint unsafe_delete_entry = 61;
+    optional Namespace_UnsafeDeleteWorkItem.Checkpoint unsafe_delete_work_item = 62;
+    optional Namespace_UnsafeDeleteJunkEntry.Checkpoint unsafe_delete_junk_entry = 64;
+    optional Namespace_UnsafeDeleteMigrationIntent.Checkpoint unsafe_delete_migration_intent = 65;
+    optional Namespace_UnsafeSetPermissions.Checkpoint unsafe_set_permissions = 66;
+    optional Namespace_UnsafeSetDirectoryPermissions.Checkpoint unsafe_set_directory_permissions = 67;
+    optional Namespace_ScheduleDataMigration.Checkpoint schedule_data_migration = 68;
+    optional Namespace_ScanDmsIndex.Checkpoint scan_dms_index = 71;
+    optional Namespace_AcceptEntryReplicationEvent.Checkpoint accept_entry_replication_event = 72;
+    optional Namespace_AcceptDirectoryReplicationEvent.Checkpoint accept_directory_replication_event = 73;
+    optional Namespace_IsAnchorPointStable.Checkpoint is_anchor_point_stable = 74;
+    optional Namespace_ProbePath.Checkpoint probe_path = 75;
+    optional Namespace_CloseFile.Checkpoint close_file = 76;
+    optional Namespace_ClientOpTest.Checkpoint client_op_test = 100;
+    optional Namespace_ServerOpTest.Checkpoint server_op_test = 101;
+    optional Namespace_ShardTest.Checkpoint shard_test = 102;
+    optional Namespace_ShardMultirowTest.Checkpoint shard_multirow_test = 103;
+    optional bool OBSOLETE_access_file = 5;
+    optional bool OBSOLETE_link_file = 12;
+    optional bool OBSOLETE_import = 24;
+    optional bool OBSOLETE_delete_file = 10;
+    
+    reserved 27, 70;
+    
+    reserved "push_capability_key";
+}
+
+message Namespace_ResultData {
+    optional Namespace_Result result = 1;
+}
+
+message Namespace_JunkData {
+    optional Namespace_FileData.BackingStoreType backing_store_type = 5 [default = CFS];
+    optional string store_path = 1;
+    optional int64 id = 4;
+    
+    optional BlobInfo blob_info = 6;
+    message BlobInfo {
+        optional string path = 1;
+    }
+    
+    optional int64 removal_eligible_time = 2;
+    
+    optional RemovalReason reason = 3;
+    enum RemovalReason {
+        INVALID = 0;
+        GC_EXPIRED = 1;
+        TTL_EXPIRED = 2;
+        DO_NOT_ACCOUNT = 3;
+        EXPIRATION_TIME_REACHED = 4;
+        OVERWRITTEN = 5;
+        FAILED_DIRECT_DELETE = 6;
+        INTERNAL_COPY = 7;
+    }
+}
+
+message Namespace_HistoryData {
+    optional fixed64 operation_id = 1;
+    optional fixed64 request_id = 2;
+    optional string originator = 8;
+    optional string client_id = 9;
+    optional bool write_dir = 5;
+    optional Namespace_DirectoryData dir_data = 3;
+    optional bool write_file = 6;
+    optional Namespace_FileData file_data = 4;
+    optional bool delete_file = 11;
+    optional bool delete_all_files = 10;
+    optional Namespace_CheckpointData checkpoint = 7;
+    optional privacy.context.PrivacyContext privacy_context = 12;
+}
+
+message Namespace_TransitionData {
+    optional string successor = 1;
+    optional Namespace_FileData file_data = 2;
+    optional string actual_encoding = 5;
+    optional .util.StatusProto completion_status = 3;
+    optional fixed64 operation_id = 4;
+    
+    oneof transition_type {
+        SpecType spec_type = 6 [default = TRANSCODE];
+        CfsTransition cfs_transition = 7;
+    }
+    
+    enum SpecType {
+        TRANSCODE = 0;
+        DEFAULT_ENCRYPTION_ROLLFORWARD_VIA_TRANSCODE = 1;
+        DEFAULT_ENCRYPTION_ROLLBACK_VIA_TRANSCODE = 2;
+        DEFAULT_ENCRYPTION_ROLLFORWARD_VIA_MIGRATE = 3;
+        DEFAULT_ENCRYPTION_ROLLBACK_VIA_MIGRATE = 4;
+        DEFAULT_ENCRYPTION_CANCELLATION = 5;
+    }
+    
+    enum CfsTransition {
+        CFS_TRANSITION_UNSPECIFIED = 0;
+        CFS1_TO_CFS2 = 1;
+        CFS2_TO_CFS1 = 2;
+        CFS1_TO_CANCEL = 3;
+        CFS2_TO_CANCEL = 4;
+    }
+}
+
+message Namespace_RecoveryMRSpec {
+    required string cell = 1;
+    required string nmeta = 2;
+}
+
+message Namespace_RecoveryEntry {
+    optional string basename = 1;
+    optional string store_path = 2;
+    optional Namespace_FileData file_data = 3;
+    optional Namespace_DirectoryData dir_data = 4;
+}
+
+message Namespace_EventOp {
+    optional string method = 1;
+    optional ArgHeader header = 2;
+    optional Namespace_Argument argument = 3;
+    optional string client_borgcell = 5;
+    optional string client_user = 6;
+    optional string client_job = 7;
+    optional .util.StatusProto status = 4;
+    map<string, google.protobuf.Any> additional_properties = 8;
+    optional string primary_end_user = 9;
+    optional string destination_end_user = 10;
+    optional privacy.context.PrivacyContext privacy_context = 11;
+}
+
+message Namespace_TranscoderSpec {
+    optional fixed64 id = 1;
+    optional string dst_filename = 3;
+    optional string pathname = 4;
+    optional Namespace_FileData metadata = 5;
+    optional string src_encoding = 6;
+    optional int64 original_timestamp = 7;
+    optional Namespace_TransitionData.SpecType spec_type = 8 [default = TRANSCODE];
+}
+
+message Namespace_TransitionSpec {
+    optional fixed64 operation_id = 1;
+    optional string dst_store_pathname = 2;
+    optional string cns_pathname = 3;
+    optional Namespace_FileData cns_metadata = 4;
+    
+    oneof transition_type {
+        Namespace_TransitionData.CfsTransition cfs_transition = 5;
+    }
+}
+
+message Namespace_TranscoderEvent {
+    optional string author = 1;
+    optional string text = 2;
+    optional int64 offset = 3;
+}
+
+message Namespace_TranscoderLease {
+    optional string leaseholder = 1;
+}
+
+message Namespace_MigratorEvent {
+    optional string debug_info = 1;
+}
+
+message Namespace_MigratorLease {
+    optional string leaseholder = 1;
+}
+
+message Namespace_DmsIndexEntry {
+    
+}

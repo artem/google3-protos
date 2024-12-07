@@ -1,0 +1,81 @@
+syntax = "proto3";
+
+package pgraph.attributes;
+
+import "privacy/compliance_controls/proto/core_platform_service.proto";
+import "privacy/data_governance/attributes/proto/approval.proto";
+import "privacy/pgraph/proto/attributes/data_content.proto";
+
+option java_multiple_files = true;
+
+message Dma52Scope {
+    oneof _contains_data_in_scope {
+        bool contains_data_in_scope = 1;
+    }
+}
+
+message Approvals {
+    repeated privacy.data_governance.attributes.Approval approvals = 1;
+}
+
+message Dma52AggregateComplianceControls {
+    oneof sharing_controls {
+        CorePlatformService sharing_enabled_for_cps = 1;
+        bool sharing_enabled_for_all_cps = 2;
+    }
+    
+    message CorePlatformService {
+        repeated .compliance_controls.CorePlatformService cps = 1;
+    }
+}
+
+message NoAdsAccess {
+    DataContent contains_data_in_scope = 1;
+    
+    repeated Reason reasons = 2;
+    enum Reason {
+        REASON_UNSPECIFIED = 0;
+        CONTAINS_FAROE_DATA = 1;
+        CONTAINS_HEALTH_INFORMATION = 2;
+        CONTAINS_SMART_HOME_DATA = 3;
+    }
+}
+
+message BcidMlVerification {
+    SoftwareLevel bcid_policy_level = 1;
+    enum SoftwareLevel {
+        LEVEL_UNKNOWN = 0;
+        L0_UNPROTECTED_ARTIFACT = 1;
+        L1_ARTIFACT_IDENTITY = 100;
+        L2_SOURCE_IDENTITY = 200;
+        L3_CHANGES_AUTHORIZED = 300;
+    }
+    
+    VerificationStatus verification_status = 2;
+    enum VerificationStatus {
+        NOT_SPECIFIED = 0;
+        PASSED = 1;
+        FAILED = 2;
+    }
+}
+
+message BcidPolicyDetails {
+    Level bcid_policy_level = 1;
+    enum Level {
+        BCID_LEVEL_UNSPECIFIED = 0;
+        L0_DATA_PROTECTION_NOT_REQUIRED = 50;
+        L2_SOURCE_AUDITABILITY = 200;
+        A2_AUDITABLE_CODE_IN_SANDBOX = 210;
+        A3_LIMITED_OUTPUT_SANDBOX = 215;
+        L2_5_SUBMITTED_OR_AUDITED_CODE = 250;
+        L3_SUBMITTED_AND_AUTHORIZED_CODE = 300;
+        L4_SUBMITTED_AND_AUTHORIZED_CONFIG = 400;
+        NO_LEVEL = 9999;
+    }
+    
+    bool enforcement_enabled = 2;
+    bool configured_policy_exists = 3;
+    bool deny_all_jobs_configured = 4;
+    string policy_file_path = 5;
+    bool asserted_config_provenance_enabled = 6;
+}

@@ -18,6 +18,8 @@ message BNSAddrs {
     }
     
     repeated int32 index_purposely_descheduled = 8;
+    
+    extensions 482675313;
 }
 
 message BNSMeta {
@@ -27,5 +29,5 @@ message BNSMeta {
     optional int32 serving_size = 4;
     optional bool failure_aware = 5 [default = false];
     
-    extensions 482675313;
+    extensions 482675313, 482675314;
 }

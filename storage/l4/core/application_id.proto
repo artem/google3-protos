@@ -1,0 +1,20 @@
+syntax = "editions";
+
+package storage_l4;
+
+import "logs/proto/logs_annotations/logs_annotations.proto";
+
+enum ApplicationId {
+    APPLICATION_ID_UNKNOWN = 0;
+    APPLICATION_ID_BIGTABLE = 1;
+    APPLICATION_ID_SPANNER = 2;
+    APPLICATION_ID_SAWMILL = 3;
+    APPLICATION_ID_L4_PROBER = 4;
+    APPLICATION_ID_GENERIC = 6;
+    APPLICATION_ID_DAX_SHUFFLE = 7;
+    APPLICATION_ID_MINDMELD_SHUFFLE = 8;
+    APPLICATION_ID_BLOBSTORE_SHARD_STORE = 9;
+    APPLICATION_ID_WOODSHED = 13;
+    APPLICATION_ID_CNS_BLOB = 14;
+    APPLICATION_ID_L4_STAGING_CLIENT = 18;
+}

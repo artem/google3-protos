@@ -1,4 +1,4 @@
-syntax = "proto3";
+syntax = "editions";
 
 package fireaxe;
 
@@ -8,12 +8,12 @@ option java_outer_classname = "TaskSelectionPb";
 option java_package = "com.google.protos.fireaxe.taskselection";
 
 message TaskIndexRangeProto {
-    int32 first_index = 1;
-    int32 last_index = 2;
+    optional int32 first_index = 1;
+    optional int32 last_index = 2;
 }
 
 message TaskSelectionProto {
-    Type type = 1;
+    optional Type type = 1;
     enum Type {
         TYPE_DEFAULT = 0;
         TYPE_ALL = 1;

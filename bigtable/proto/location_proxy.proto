@@ -1,0 +1,45 @@
+syntax = "editions";
+
+package bigtable;
+
+import "bigtable/proto/bigtable_internal.proto";
+import "third_party/protobuf/cpp_features.proto";
+
+option java_multiple_files = true;
+
+service TabletLocationService {
+    rpc Lookup(TabletLocationRequest) returns (TabletLocationResponse);
+}
+
+message LocationProxyClientVersion {
+    enum Version {
+        UNSPECIFIED = 0;
+        INITIAL = 1;
+        CLIENT_UNSUPPORTED_SUPPORT = 2;
+    }
+}
+
+message LocationProxyServerVersion {
+    enum Version {
+        UNSPECIFIED = 0;
+        INITIAL = 1;
+    }
+}
+
+message TabletLocationRequest {
+    optional LocationProxyClientVersion.Version client_version = 8;
+    optional LocationProxyServerVersion.Version min_proxy_version = 9;
+    optional string cell = 1;
+    optional uint64 table_version = 2;
+    optional string table_key = 3;
+    optional string table_name = 4;
+    optional bytes rowkey = 5;
+    optional TabletLocation previous_location = 6;
+    optional int32 max_locations = 7;
+    optional bool best_effort = 10 [default = false];
+}
+
+message TabletLocationResponse {
+    optional LocationProxyServerVersion.Version server_version = 2;
+    repeated TabletAndLocation locations = 1;
+}

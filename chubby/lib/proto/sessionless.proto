@@ -1,0 +1,19 @@
+syntax = "editions";
+
+package tech.chubby;
+
+service ChubbySessionless {
+    rpc Read(ReadRequest) returns (ReadReply);
+}
+
+message ReadRequest {
+    optional string filename = 1;
+    optional bytes version_id = 2;
+}
+
+message ReadReply {
+    optional bytes version_id = 1;
+    optional bool is_directory = 2 [default = false];
+    optional bool version_id_matched = 3 [default = false];
+    optional bytes contents = 10;
+}

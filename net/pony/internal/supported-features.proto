@@ -1,0 +1,13 @@
+syntax = "editions";
+
+package net_pony;
+
+option java_multiple_files = true;
+
+message SupportedFeatures {
+    optional bool fake_feature = 4 [default = false];
+    optional bool appaloosa_unique_qpns = 3 [default = false];
+    optional bool d_pad_v0 = 5 [default = false];
+    
+    reserved 1, 2;
+}

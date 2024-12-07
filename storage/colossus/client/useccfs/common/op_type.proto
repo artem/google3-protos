@@ -1,0 +1,22 @@
+syntax = "editions";
+
+package storage_useccfs;
+
+enum MethodClass {
+    READ = 0;
+    WRITE = 1;
+    RMA_ALLOC = 2;
+    RMA_WRITE = 3;
+    RMA_DEALLOC = 4;
+}
+
+enum StorageType {
+    SSD = 0;
+    HDD = 1;
+}
+
+enum UsecApiType {
+    USEC_CFS = 0;
+    USEC_D = 1;
+    WAL_CLIENT = 2;
+}

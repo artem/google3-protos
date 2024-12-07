@@ -1,0 +1,50 @@
+syntax = "editions";
+
+package consensus.config;
+
+import "consensus/common/proto/domain.proto";
+import "consensus/config/proto/deployment_type.proto";
+import "consensus/shards/proto/shard_config.proto";
+import "google/protobuf/any.proto";
+import "storage/datapol/annotations/proto/semantic_annotations.proto";
+
+option java_multiple_files = true;
+option java_package = "com.google.consensus.config";
+
+message ConfigID {
+    optional string name = 1;
+    optional Domain domain = 2;
+    optional string owner = 3;
+    optional string service = 4;
+    optional DeploymentType deployment_type = 6;
+    optional Domain replicated_domain = 5;
+}
+
+message VersionID {
+    optional int64 timestamp_ms = 1;
+}
+
+message Version {
+    optional VersionID id = 1;
+    
+    optional DeploymentState deployment_state = 2;
+    enum DeploymentState {
+        NOT_DEPLOYED = 0;
+        STAGING = 1;
+        LIVE = 2;
+    }
+    
+    optional int32 payload_count = 3;
+    optional shards.EpochID replication_epoch = 4;
+}
+
+message Payload {
+    optional string name = 1;
+    optional google.protobuf.Any contents = 2;
+}
+
+message Config {
+    optional ConfigID config_id = 1;
+    optional Version version = 2;
+    repeated Payload payloads = 3;
+}

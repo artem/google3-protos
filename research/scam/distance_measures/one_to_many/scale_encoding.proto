@@ -1,0 +1,9 @@
+syntax = "proto2";
+
+package research_scam;
+
+enum ScaleEncoding {
+    UNSPECIFIED_SCALE_ENCODING = 0;
+    FLOAT32_SCALE_SUFFIX = 1;
+    FLOAT32_SCALE_BOTTOM_BITS = 2;
+}

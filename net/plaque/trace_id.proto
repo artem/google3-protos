@@ -1,0 +1,58 @@
+syntax = "editions";
+
+package plaque.trace;
+
+import "net/plaque/trace_id_options.proto";
+
+message PlaqueTraceId {
+    enum Value {
+        TEST_ID = 1;
+        TEST_ATTRIBUTE_KEY0 = 2;
+        TEST_ATTRIBUTE_KEY1 = 3;
+        TEST_ATTRIBUTE_KEY2 = 4;
+        NET_CONN_DETACH = 5;
+        NET_CLOSE = 6;
+        INIT_PARTICIPANT = 7;
+        SCHEDULE_DELIVERY = 9;
+        HANDLE_EXEC_MSGS = 10;
+        SERVER_CONNECT = 11;
+        HANDLE_OOE = 12;
+        HANDLE_MSG_DELIVER = 13;
+        HANDLE_MSG_ENDPOINT = 14;
+        PRE_HANDLE_MSG = 15;
+        POST_HANDLE_MSG = 16;
+        TEST_BLOCKING_COUNTER_BARRIER = 17;
+        TEST_BLOCKING_COUNTER_DECREMENT = 18;
+        FUNCTOR_OP_RUN = 19;
+        RPC_NET_CONNECT = 20;
+        RPC_NET_SEND = 21;
+        RPC_NET_RECV = 22;
+        BAMM2_NET_CONNECT = 23;
+        BAMM2_NET_SEND = 24;
+        BAMM2_NET_RECV = 25;
+        BAMM2_NET_PEEK = 26;
+        TCP_NET_CONNECT = 27;
+        TCP_NET_SEND = 28;
+        TCP_NET_RECV = 29;
+        SCHEDULE_EMIT = 30;
+        SCHEDULE_END_OUTPUT = 31;
+        SCHEDULE_FINISH = 32;
+        SCHEDULED_EMIT = 33;
+        SCHEDULED_END_OUTPUT = 34;
+        SCHEDULED_FINISH = 35;
+        OP_REF_CHECK_FINISH = 36;
+        SCHEDULE_ERROR = 37;
+        SCHEDULED_ERROR = 38;
+        SCHEDULE_INPUT_NOT_NEEDED = 39;
+        SCHEDULED_INPUT_NOT_NEEDED = 40;
+        SCHEDULE_CLOSURE = 41;
+        RUN_CLOSURE = 42;
+        SCHEDULE_EMIT_AND_END_OUTPUT = 44;
+        SCHEDULED_EMIT_AND_END_OUTPUT = 45;
+        OP_REF_FLOW_CONTROL = 46;
+        DESTROY_OPS = 43;
+        EXECUTOR_CANCEL = 47;
+        GRAPHQUEUE_FLOW_CONTROL = 48;
+        WAIT_FOR_DESTRUCTION_HOLDS = 49;
+    }
+}

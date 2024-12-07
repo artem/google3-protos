@@ -1,0 +1,141 @@
+syntax = "editions";
+
+package colossus;
+
+import "file/colossus/proto/base.proto";
+import "file/colossus/proto/cfs.proto";
+import "file/colossus/proto/curator_signed_capability.proto";
+import "file/colossus/proto/namespace.proto";
+import "storage/datapol/annotations/proto/semantic_annotations.proto";
+import "storage/util/int128/int128.proto";
+import "util/task/status.proto";
+
+service MetadataCacheInterface {
+    rpc Lookup(MetadataCache_LookupArg) returns (MetadataCache_LookupResult);
+    rpc LookupStripes(MetadataCache_LookupStripesArg) returns (MetadataCache_LookupStripesResult);
+    rpc Stat(MetadataCache_StatArg) returns (MetadataCache_StatResult);
+    rpc GetStats(MetadataCache_GetStatsArg) returns (MetadataCache_GetStatsResult);
+    rpc Prefetch(MetadataCache_PrefetchArg) returns (MetadataCache_PrefetchResult);
+}
+
+message MetadataCache_ArgHeader {
+    optional ArgHeader header = 1;
+    optional int64 force_load_entry_ts = 2 [default = 0];
+    optional bool force_load_entry = 4 [default = false];
+    optional int32 max_age_secs = 3;
+    optional int64 store_file_id = 5 [default = 0];
+    optional string link = 6;
+    optional CFSCapability cfs_capability = 7;
+    optional string additional_readonly_capability_grantee = 8;
+}
+
+message MetadataCache_ResultHeader {
+    optional int64 entry_ts = 1;
+}
+
+message MetadataCache_InstanceStats {
+    optional int64 total_misses = 1;
+    optional int64 total_hits = 2;
+    optional int64 total_retries = 3;
+    optional int64 total_errors = 4;
+    optional int64 total_id_history_hits = 5;
+    optional int64 cache_size = 6;
+    optional int64 max_cache_size = 7;
+    optional int64 cache_entries = 8;
+}
+
+message MetadataCache_LookupArg {
+    optional MetadataCache_ArgHeader header = 1;
+    optional string path = 2;
+    optional int32 stripe_index = 4;
+    optional int32 max_stripe_count = 5;
+    
+    oneof file_id_representation {
+        int64 __id = 3 [default = 0, deprecated = true];
+        storage_util.Int128 __large_id = 6 [deprecated = true];
+    }
+}
+
+message MetadataCache_LookupResult {
+    optional MetadataCache_ResultHeader header = 1;
+    optional FileDescriptor fd = 2;
+    optional string link = 4;
+    optional CFSCapability cfs_capability = 5;
+    optional KeystoreInstance keystore_affinity = 7;
+    optional CuratorSignedCapability curator_signed_capability = 9;
+    
+    oneof file_id_representation {
+        int64 __id = 3 [default = 0, deprecated = true];
+        storage_util.Int128 __large_id = 8 [deprecated = true];
+    }
+    
+    reserved 6;
+}
+
+message MetadataCache_LookupStripesArg {
+    optional MetadataCache_ArgHeader header = 1;
+    optional string path = 2;
+    optional int64 id = 3;
+    repeated int32 indices = 4;
+    optional bool want_encryption_info = 5 [default = false];
+}
+
+message MetadataCache_LookupStripesResult {
+    optional MetadataCache_ResultHeader header = 1;
+    repeated int32 indices = 2;
+    repeated Stripe stripes = 3;
+    optional FileEncryptionInfo encryption_info = 4;
+    optional int64 cfs_file_id = 5;
+    optional CuratorSignedCapability curator_signed_capability = 6;
+}
+
+message MetadataCache_StatArg {
+    optional MetadataCache_ArgHeader header = 1;
+    optional string path = 2;
+    repeated int32 stripe_indexes = 4;
+    
+    oneof file_id_representation {
+        int64 __id = 3 [default = 0, deprecated = true];
+        storage_util.Int128 __large_id = 5 [deprecated = true];
+    }
+}
+
+message MetadataCache_StatResult {
+    optional MetadataCache_ResultHeader header = 1;
+    repeated Namespace_FileStat file_stat = 2;
+    optional KeystoreInstance keystore_affinity = 7;
+}
+
+message MetadataCache_GetStatsArg {
+    optional MetadataCache_ArgHeader header = 1;
+}
+
+message MetadataCache_GetStatsResult {
+    optional MetadataCache_ResultHeader header = 1;
+    optional MetadataCache_InstanceStats instance_stats = 2;
+}
+
+message MetadataCache_PrefetchArg {
+    optional MetadataCache_ArgHeader header = 1;
+    optional string path = 2;
+    optional int32 num_stripes = 4;
+    
+    oneof file_id_representation {
+        int64 __id = 3 [default = 0, deprecated = true];
+        storage_util.Int128 __large_id = 5 [deprecated = true];
+    }
+}
+
+message MetadataCache_PrefetchResult {
+    optional MetadataCache_ResultHeader header = 1;
+}
+
+message MetadataCache_EventOp {
+    optional string method = 1;
+    optional .util.StatusProto status = 2;
+    optional MetadataCache_LookupArg lookup = 3;
+    optional MetadataCache_LookupStripesArg lookup_stripes = 4;
+    optional MetadataCache_StatArg stat = 5;
+    optional MetadataCache_GetStatsArg get_stats = 6;
+    optional MetadataCache_PrefetchArg prefetch = 7;
+}

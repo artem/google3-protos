@@ -1,0 +1,9 @@
+syntax = "editions";
+
+package storage_useccfs.protocol;
+
+option cc_enable_arenas = true;
+
+message ClientCapability {
+    reserved 1;
+}

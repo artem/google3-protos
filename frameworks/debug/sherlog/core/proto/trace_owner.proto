@@ -1,4 +1,4 @@
-syntax = "proto2";
+syntax = "editions";
 
 package sherlog.core;
 
@@ -18,5 +18,6 @@ message TraceOwner {
     oneof secondary_user_id {
         int64 android_id = 4;
         string youtube_visitor_id = 5;
+        string mdb_user = 6;
     }
 }

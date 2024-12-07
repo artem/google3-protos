@@ -1,0 +1,11 @@
+syntax = "proto2";
+
+package bigtable;
+
+option java_package = "com.google.bigtable.protos";
+
+message SizeProfileRecord {
+    optional int32 samplerate = 1;
+    optional double samplerate_fp = 3;
+    repeated bytes row = 2;
+}

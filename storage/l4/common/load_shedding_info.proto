@@ -1,0 +1,17 @@
+syntax = "editions";
+
+package storage_l4;
+
+import "net/proto2/bridge/proto/message_set.proto";
+
+message LoadSheddingInfo {
+    optional double max_rate_hz = 1;
+    optional int64 token_bucket_capacity = 5;
+    optional double cpu_limit = 4;
+    
+    reserved 2 to 3;
+    
+    extend .proto2.bridge.MessageSet {
+        optional LoadSheddingInfo message_set_extension = 307740978;
+    }
+}

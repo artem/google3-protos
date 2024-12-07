@@ -1,0 +1,9 @@
+syntax = "editions";
+
+package k3;
+
+message BorgJobNameProto {
+    optional string borg_cell = 1;
+    optional string borg_user = 2;
+    optional string job_name = 3;
+}

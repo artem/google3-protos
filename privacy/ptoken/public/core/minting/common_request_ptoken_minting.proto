@@ -1,4 +1,4 @@
-syntax = "proto2";
+syntax = "editions";
 
 package ptoken;
 
@@ -21,6 +21,7 @@ message CommonRequestPTokenForMinting {
                 optional bool is_dark_launch_request = 331;
                 optional int32 origin_associated_product_id = 371;
                 optional bool vertex_traffic_for_grounding = 571;
+                optional bool gemini_traffic_for_grounding = 614;
             }
         }
     }

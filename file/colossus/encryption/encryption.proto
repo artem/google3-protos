@@ -1,0 +1,11 @@
+syntax = "editions";
+
+package colossus;
+
+import "file/colossus/proto/cfs.proto";
+import "tech/file/proto/types.proto";
+
+message WrappedCfsEncryptionData {
+    optional FileEncoding encoding = 1;
+    optional tech.file.EncryptionProperties encryption_properties = 2;
+}

@@ -1,0 +1,13 @@
+syntax = "proto3";
+
+package storage_l4;
+
+import "logs/proto/logs_annotations/logs_annotations.proto";
+
+enum DPriority {
+    D_PRIORITY_UNKNOWN = 0;
+    D_PRIORITY_BEST_EFFORT = 1;
+    D_PRIORITY_BEST_EFFORT_PLUS = 4;
+    D_PRIORITY_THROUGHPUT = 2;
+    D_PRIORITY_LATENCY = 3;
+}

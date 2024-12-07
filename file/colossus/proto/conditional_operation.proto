@@ -1,0 +1,13 @@
+syntax = "editions";
+
+package colossus;
+
+import "google/protobuf/any.proto";
+
+message CfsConditionalOperation {
+    optional ExpectedStat expected_stat = 1;
+}
+
+message ExpectedStat {
+    repeated google.protobuf.Any extended_attribute = 1;
+}

@@ -12,7 +12,7 @@ message KeyMetadata {
     required string name = 1;
     required int64 proto_spec_version = 3;
     
-    required Purpose purpose = 4;
+    required Purpose purpose = 4 [deprecated = true];
     enum Purpose {
         DECRYPT = 0;
         ENCRYPT = 3;
@@ -216,8 +216,8 @@ message URLParameters {
 }
 
 message Key {
-    optional bytes random_bits = 1;
-    required bytes key_material = 2;
+    optional bytes random_bits = 1 [ctype = STRING_PIECE];
+    required bytes key_material = 2 [ctype = STRING_PIECE];
     optional URLParameters url_parameters = 3;
     optional int32 hmac_signature_length = 4;
     optional KeyMetadata.SignatureType signature_type = 5 [default = SIG_UNKNOWN];
@@ -264,12 +264,12 @@ message RSAPublicKey {
 
 message RSAPrivateKey {
     required RSAPublicKey public_key = 1;
-    required bytes private_exponent = 2;
-    optional bytes facp = 3;
-    optional bytes q = 4;
-    optional bytes dmp1 = 5;
-    optional bytes dmq1 = 6;
-    optional bytes iqmp = 7;
+    required bytes private_exponent = 2 [ctype = STRING_PIECE];
+    optional bytes facp = 3 [ctype = STRING_PIECE];
+    optional bytes q = 4 [ctype = STRING_PIECE];
+    optional bytes dmp1 = 5 [ctype = STRING_PIECE];
+    optional bytes dmq1 = 6 [ctype = STRING_PIECE];
+    optional bytes iqmp = 7 [ctype = STRING_PIECE];
 }
 
 message DSAPublicKey {

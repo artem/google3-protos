@@ -1,0 +1,11 @@
+syntax = "proto2";
+
+package rodos;
+
+import "tech/file/proto/types.proto";
+
+message DResourceSettingsProto {
+    optional string resource_user = 1;
+    optional string isolation_class = 2;
+    optional tech.file.DiskTimeBucket.Priority priority = 3;
+}

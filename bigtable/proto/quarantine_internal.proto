@@ -1,0 +1,22 @@
+syntax = "editions";
+
+package bigtable;
+
+import "net/proto2/bridge/proto/message_set.proto";
+
+message BTI_QuarantineReason {
+    optional Reason reason = 1;
+    enum Reason {
+        UNKNOWN = 0;
+        AGGREGATE_OVERFLOW = 1;
+        MANUAL = 2;
+        RESOURCE_KEY_ERROR = 3;
+        CMEK_DISABLED = 4;
+    }
+    
+    optional bytes row = 2;
+    
+    extend .proto2.bridge.MessageSet {
+        optional BTI_QuarantineReason message_set_extension = 158880272;
+    }
+}

@@ -1,4 +1,4 @@
-syntax = "proto2";
+syntax = "editions";
 
 package monitoring.streamz;
 
@@ -8,8 +8,6 @@ import "monitoring/streamz/api/hierarchical_isolation.proto";
 import "monitoring/streamz/proto/lazy_point_set.proto";
 import "net/base/qos.proto";
 import "util/task/status.proto";
-
-option cc_enable_arenas = true;
 
 service MonarchCollector {
     rpc ReadSchedules(ReadSchedulesRequest) returns (ReadSchedulesResponse);

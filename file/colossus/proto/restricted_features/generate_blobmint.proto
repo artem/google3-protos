@@ -1,0 +1,7 @@
+syntax = "editions";
+
+package colossus.restricted_features;
+
+message GenerateBlobMint {
+    
+}

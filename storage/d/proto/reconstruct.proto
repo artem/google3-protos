@@ -1,0 +1,9 @@
+syntax = "editions";
+
+package storage_d;
+
+import "storage/d/proto/server.proto";
+
+service StorageDReconstruct {
+    rpc ReconstructFiles(ReconstructFilesRequest) returns (ReconstructFilesReply);
+}

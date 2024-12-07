@@ -24,7 +24,7 @@ message CloudResource {
     
     reserved 14;
     
-    extend proto2.FieldOptions {
+    extend .proto2.FieldOptions {
         optional string path = 390276077;
     }
 }

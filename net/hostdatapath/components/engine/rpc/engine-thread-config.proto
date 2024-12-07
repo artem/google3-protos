@@ -1,0 +1,28 @@
+syntax = "editions";
+
+package usps.engine.rpc;
+
+message EngineBalancingOptions {
+    extensions 100 to max;
+}
+
+message HubAndSpokeEngineOptions {
+    optional int64 demand_escalation_delay_usec = 1 [default = 100];
+    optional int64 demand_attenuation_delay_usec = 2 [default = 200];
+    optional double demand_scaling_factor = 3;
+    optional int64 epoll_idle_threshold_usec = 4 [default = 250];
+    
+    optional ScaleOutMode scale_out_mode = 5 [default = BEST_EFFORT];
+    enum ScaleOutMode {
+        NONE = 0;
+        BEST_EFFORT = 1;
+        REPEL = 2;
+        FORCE = 3;
+    }
+    
+    optional bool anchored_to_hub = 6 [default = false];
+    
+    extend EngineBalancingOptions {
+        optional HubAndSpokeEngineOptions extension = 260928599;
+    }
+}

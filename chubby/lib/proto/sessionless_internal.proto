@@ -1,0 +1,39 @@
+syntax = "editions";
+
+package chubby.sessionless.internal;
+
+service ChubbySessionlessInternal {
+    rpc Read(ReadRequest) returns (ReadReply);
+}
+
+message Capabilities {
+    optional bool exponential_backoff = 1 [default = false];
+}
+
+message ReadRequest {
+    optional string filename = 1;
+    optional bytes freeform_client_id = 4;
+    optional Capabilities client_capabilities = 5;
+    optional int64 instance_number = 12 [default = 0];
+    optional int64 generation_number = 13 [default = 0];
+}
+
+message ReadReply {
+    optional GenerationCheckResult check_result = 1 [default = CHECK_FULL_MATCH];
+    optional bool is_directory = 3 [default = false];
+    optional int64 instance_number = 6 [default = 0];
+    optional int64 generation_number = 7 [default = 0];
+    optional string suggested_server = 10;
+    optional bytes contents = 20;
+}
+
+message OpaqueVersionId {
+    optional int64 instance_number = 1 [default = 0];
+    optional int64 generation_number = 2 [default = 0];
+}
+
+enum GenerationCheckResult {
+    CHECK_FULL_MATCH = 0;
+    CHECK_NEEDS_REFRESH = 1;
+    CHECK_NOT_REQUESTED = 2;
+}

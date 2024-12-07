@@ -16,6 +16,6 @@ message ApiInclusion {
     repeated string scopes = 1;
 }
 
-extend proto2.FileOptions {
+extend .proto2.FileOptions {
     ApiInclusion inclusion = 525000017;
 }

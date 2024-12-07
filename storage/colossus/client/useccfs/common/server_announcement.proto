@@ -1,0 +1,13 @@
+syntax = "editions";
+
+package storage_useccfs;
+
+message ServerAnnouncement {
+    optional DescriptorSupport descriptor_support = 1;
+    optional int32 max_known_message_type = 2;
+}
+
+enum DescriptorSupport {
+    DESCRIPTOR_SUPPORT_NONE = 1;
+    DESCRIPTOR_SUPPORT_ACCEPTED = 2;
+}

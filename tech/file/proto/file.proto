@@ -1,0 +1,185 @@
+syntax = "editions";
+
+package tech.file;
+
+import "storage/datapol/annotations/proto/semantic_annotations.proto";
+import "tech/file/proto/types.proto";
+
+option py_generic_services = false;
+option java_generic_services = false;
+option cc_generic_services = false;
+option java_outer_classname = "FileApi";
+
+service File {
+    rpc Open(OpenRequest) returns (OpenReply);
+    rpc Read(ReadRequest) returns (ReadReply);
+    rpc Write(WriteRequest) returns (WriteReply);
+    rpc Stat(StatRequest) returns (StatReply);
+    rpc SetStat(SetStatRequest) returns (SetStatReply);
+    rpc Delete(DeleteRequest) returns (Empty);
+    rpc CreateDir(CreateDirRequest) returns (CreateDirReply);
+    rpc Match(MatchRequest) returns (stream MatchReply);
+    rpc Rename(RenameRequest) returns (Empty);
+    rpc Snapshot(SnapshotRequest) returns (Empty);
+}
+
+message Empty {
+    
+}
+
+message RequestHeader {
+    optional fixed64 operation_id = 1 [default = 0];
+    optional int32 priority = 2;
+    optional int64 client_changelist = 3;
+    optional Resources resources = 4;
+    optional OpenOptions open_options = 5;
+    optional uint64 file_handle_id = 6;
+}
+
+message FileHandle {
+    optional string path = 1;
+    optional string version = 2;
+    optional EncryptionAccess encryption_access = 3 [default = DEFAULT_ACCESS];
+    optional int32 keystore_config_id = 4;
+    optional string master_key_name = 5;
+    
+    reserved 6;
+}
+
+message OpenRequest {
+    optional RequestHeader header = 11;
+    optional FileHandle handle = 1;
+    optional bool readable = 2;
+    optional bool writable = 3;
+    optional bool truncate = 4;
+    optional bool fail_if_exists = 5;
+    optional bool create_if_missing = 6;
+    optional StatProto create_stat = 7;
+    optional uint64 stat_mask = 8 [default = 0xffffffffffffffff];
+    optional bool parallel_write = 9;
+    optional bool serial_write = 14;
+    optional bool verify_authorship = 10 [default = false];
+    optional bool use_file_handle_id = 15;
+    
+    reserved 12, 13;
+}
+
+message OpenReply {
+    optional StatProto stat = 1;
+    optional int32 write_segment = 2 [default = 1];
+    optional uint64 file_handle_id = 3;
+}
+
+message ReadRequest {
+    optional RequestHeader header = 6;
+    optional FileHandle handle = 1;
+    optional int64 offset = 2;
+    optional int64 length = 3;
+    optional bool client_verifies_checksum = 4;
+    optional ReadOptions read_options = 7;
+    
+    reserved 5;
+    
+    reserved "allow_short";
+}
+
+message ReadReply {
+    optional bytes data = 1 [ctype = CORD];
+    optional fixed32 data_checksum = 2;
+    optional bool eof = 3 [default = false];
+    
+    reserved 4;
+}
+
+message WriteRequest {
+    optional RequestHeader header = 4;
+    optional FileHandle handle = 1;
+    optional int64 offset = 2;
+    optional bytes data = 3 [ctype = CORD];
+    optional fixed32 data_crc = 10;
+    optional string encoding = 5;
+    optional EncryptionProperties encryption_properties = 8;
+    optional fixed32 plaintext_crc32c = 9;
+    optional WriteOptions write_options = 11;
+    
+    reserved 6, 7;
+}
+
+message WriteReply {
+    optional int64 bytes_written = 1;
+    
+    reserved 2;
+}
+
+message StatRequest {
+    optional RequestHeader header = 3;
+    optional FileHandle handle = 1;
+    optional StatOptions options = 4;
+    
+    reserved 2;
+}
+
+message StatReply {
+    optional StatProto stat = 1;
+}
+
+message SetStatRequest {
+    optional RequestHeader header = 4;
+    optional FileHandle handle = 1;
+    optional StatProto stat = 2;
+    optional SetStatOptions options = 5;
+    
+    reserved 3;
+}
+
+message SetStatReply {
+    reserved 1;
+}
+
+message DeleteRequest {
+    optional RequestHeader header = 2;
+    optional FileHandle handle = 1;
+    optional DeleteOptions delete_options = 3;
+}
+
+message CreateDirRequest {
+    optional RequestHeader header = 4;
+    optional string path = 1;
+    optional StatProto stat = 2;
+    optional CreateDirOptions create_dir_options = 5;
+    
+    reserved 3;
+}
+
+message CreateDirReply {
+    reserved 1;
+}
+
+message MatchRequest {
+    optional RequestHeader header = 5;
+    optional string pattern = 1;
+    optional uint64 stat_mask = 2 [default = 0];
+    optional StatOptions stat_options = 6;
+    optional int32 limit = 3;
+    optional MatchOptions options = 4;
+}
+
+message MatchReply {
+    repeated string paths = 1;
+    repeated StatProto stats = 2;
+}
+
+message RenameRequest {
+    optional RequestHeader header = 4;
+    optional FileHandle source_handle = 1;
+    optional FileHandle destination_handle = 2;
+    optional bool fail_if_destination_exists = 3;
+    optional RenameOptions rename_options = 5;
+}
+
+message SnapshotRequest {
+    optional RequestHeader header = 4;
+    optional FileHandle source_handle = 1;
+    optional string destination_path = 2;
+    optional SnapshotOptions options = 3;
+}

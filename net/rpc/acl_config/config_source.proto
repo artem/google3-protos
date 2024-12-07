@@ -11,5 +11,6 @@ enum ConfigSource {
     FLAGS = 4;
     CDD = 2;
     FLAGS_AND_FIREAXE = 5;
+    ENV_AND_FIREAXE = 6;
     FIREAXE = 3;
 }

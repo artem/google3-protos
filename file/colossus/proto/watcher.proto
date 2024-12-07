@@ -1,0 +1,58 @@
+syntax = "proto2";
+
+package colossus;
+
+import "storage/util/int128/int128.proto";
+
+service WatchServerInterface {
+    rpc StartWatch(Watch_StartWatchArg) returns (Watch_StartWatchResult);
+    rpc FetchWatchEvents(Watch_FetchWatchEventsArg) returns (Watch_FetchWatchEventsResult);
+    rpc ListDirectory(Watch_ListDirectoryArg) returns (Watch_ListDirectoryResult);
+}
+
+message Watch_EventBatch {
+    repeated Event events = 1;
+    message Event {
+        required EventType type = 1;
+        required string basename = 2;
+        required int64 identifier = 3 [deprecated = true];
+        optional storage_util.Int128 large_identifier = 4;
+    }
+    
+    required string path = 2;
+    
+    enum EventType {
+        DIR_CREATE = 0;
+        DIR_DELETE = 1;
+        FILE_CREATE = 2;
+        FILE_DELETE = 3;
+        PAUSE = 4;
+        FILE_FINALIZE = 5;
+    }
+}
+
+message Watch_StartWatchArg {
+    repeated string patterns = 1;
+    required int64 stream_id = 2;
+}
+
+message Watch_StartWatchResult {
+    required int32 stream_timeout_secs = 1;
+}
+
+message Watch_FetchWatchEventsArg {
+    required int64 stream_id = 1;
+    required int64 sequence_num = 2;
+}
+
+message Watch_FetchWatchEventsResult {
+    repeated Watch_EventBatch events = 1;
+}
+
+message Watch_ListDirectoryArg {
+    required string path = 1;
+}
+
+message Watch_ListDirectoryResult {
+    required Watch_EventBatch entries = 1;
+}

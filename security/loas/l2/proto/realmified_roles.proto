@@ -1,0 +1,14 @@
+syntax = "editions";
+
+package security_loas_l2;
+
+import "security/loas/l2/proto/common.proto";
+import "security/realms/realmified_roles/proto/signed_role_realm_control_policy.proto";
+
+message RoleRealmPolicy {
+    optional security_realms.SignedRoleRealmControlPolicy policy = 1;
+    
+    extend AuthenticatedOptions {
+        optional RoleRealmPolicy role_realm_policy = 1014;
+    }
+}

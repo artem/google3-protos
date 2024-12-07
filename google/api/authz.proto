@@ -16,6 +16,6 @@ message AuthorizationRule {
     string permissions = 2;
 }
 
-extend proto2.FieldOptions {
+extend .proto2.FieldOptions {
     AuthorizationRule authz = 119718449;
 }

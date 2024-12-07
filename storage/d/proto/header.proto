@@ -21,6 +21,7 @@ message RequestHeader {
         P0 = 0;
         BEST_EFFORT = 0;
         P1 = 1;
+        BEST_EFFORT_PLUS = 1;
         P2 = 2;
         P3 = 3;
         BATCH = 3;

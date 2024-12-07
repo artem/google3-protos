@@ -1,0 +1,17 @@
+syntax = "editions";
+
+package rodos;
+
+message EnableRodos {
+    optional RodosLocality locality = 1;
+}
+
+enum RodosLocality {
+    RODOS_LOCALITY_UNSPECIFIED = 0;
+    RODOS_LOCALITY_DIFFERENT_CLUSTER = 1;
+    RODOS_LOCALITY_DIFFERENT_FABRIC = 5;
+    RODOS_LOCALITY_DIFFERENT_CAMPUS = 6;
+    RODOS_LOCALITY_DIFFERENT_METRO = 7;
+    RODOS_LOCALITY_ANY = 8;
+    RODOS_LOCALITY_NONE = 9;
+}

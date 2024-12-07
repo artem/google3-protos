@@ -1,0 +1,192 @@
+syntax = "editions";
+
+package bamm2.internal.pony;
+
+import "net/bamm2/connector/connect.proto";
+import "net/base/qos.proto";
+import "net/pony/internal/pony-control.proto";
+import "net/pony/public/endpoint-state.proto";
+import "net/pony/public/pony-flash.proto";
+import "perftools/tracing/proto/tracecontext.proto";
+import "util/task/codes.proto";
+
+message RegionInfo {
+    optional uint64 bamm2_handle = 1;
+    optional uint32 pony_handle = 2;
+    optional uint64 pony_virtual_address = 3;
+    optional uint64 base_address = 4;
+    
+    repeated Segment segments = 5;
+    message Segment {
+        optional int32 fd = 1;
+        optional uint64 address = 2;
+        optional uint64 length = 3;
+        optional uint64 offset = 4;
+    }
+    
+    optional uint32 trim_region_id = 8;
+    
+    oneof remote_memory {
+        net_pony.AttachPcieRegionRequest.DioritePcieRegionInfo diorite_pcie_info = 6;
+        net_pony.FlashConfig flash_config = 7;
+    }
+    
+    reserved 9, 10;
+}
+
+message RegionTable {
+    repeated RegionInfo regions = 1;
+    optional int64 next_region_handle = 2;
+}
+
+message ConnectionInfo {
+    optional uint64 bamm2_handle = 1;
+    optional uint64 user_data = 2;
+    optional uint32 pony_handle = 3;
+    optional int32 pony_cmd_queue = 4;
+    optional int32 remote_inline_message_size = 5;
+    optional int32 completion_queue = 6;
+    repeated net_base.qos.TrafficClass qoses = 7;
+    optional bool encrypted = 8;
+}
+
+message ConnectionTable {
+    repeated ConnectionInfo connections = 1;
+}
+
+message ConnectionManager {
+    optional uint32 pony_buffer_pool_handle = 1;
+    optional int32 inline_message_size = 2;
+    optional int32 num_cmdqs = 3;
+    optional bool server_stripe_round_robin = 4;
+    optional bool zero_copy_rx = 5;
+    optional ConnectionTable connection_table = 6;
+    optional ConnectionCapabilities connection_capabilities = 7;
+}
+
+message StreamInfo {
+    optional uint64 bamm2_handle = 1;
+    optional uint64 user_data = 2;
+    optional uint32 pony_handle = 3;
+    optional int32 queue_num = 4;
+    optional int32 pony_cmdq = 5;
+    optional uint64 bamm2_connection_handle = 6;
+    optional bool allocate_issued = 7;
+    optional bool notify_on_abort = 8;
+}
+
+message StreamTable {
+    repeated StreamInfo streams = 1;
+}
+
+message PonyStreamCache {
+    optional int32 max_free_streams = 1;
+    optional int32 max_streams_per_cmdq_list = 2;
+    repeated uint32 clean_streams = 3;
+    
+    repeated PerEngineStreams per_engine_streams = 4;
+    message PerEngineStreams {
+        repeated uint32 recycled_streams = 1;
+        repeated uint32 dirty_streams = 2;
+    }
+}
+
+message OpTraceInterval {
+    optional IntervalType interval_type = 1;
+    enum IntervalType {
+        UNSPECIFIED = 0;
+        PONY_COMMAND_QUEUE = 1;
+        WAIT_CONNECTION = 2;
+        PONY_RTS = 3;
+        PONY_CTS = 4;
+        PONY_WAIT_TO_SEND = 5;
+        PONY_SENDING = 6;
+        PONY_WAIT_TO_RECV = 7;
+        PONY_RECVING = 8;
+        PONY_WAIT_TX_FINISHED = 9;
+        COMPLETION_LATENCY = 10;
+    }
+    
+    optional int32 latency_us = 2;
+}
+
+message PonyCwndInfo {
+    optional uint32 congestion_window = 1;
+    optional bool engine_was_minimum_window = 2;
+}
+
+message DelayMetrics {
+    optional bool completion_received = 1;
+    optional int32 ecwnd_delay = 2 [default = -1];
+    optional int32 fcwnd_delay = 3 [default = -1];
+    optional int32 retransmit_delay = 4 [default = -1];
+    optional int32 pacing_delay = 5 [default = -1];
+    optional int32 intra_engine_scheduling_delay = 6 [default = -1];
+    optional int32 inter_engine_scheduling_delay = 7 [default = -1];
+    optional int32 other_delay = 8 [default = -1];
+}
+
+message TraceState {
+    optional int64 command_submit_timestamp = 1;
+    optional int64 pony_timestamp = 2;
+    optional int64 bamm2_timestamp = 3;
+    optional int64 op_size = 4;
+    optional uint32 pony_latency = 5;
+    optional util.error.Code error_code = 6;
+    repeated OpTraceInterval intervals = 7;
+    optional PonyCwndInfo min_cwnd = 8;
+    optional PonyCwndInfo max_cwnd = 9;
+    optional bool max_cwnd_updated_last = 10;
+    optional DelayMetrics local_delays = 11;
+    optional DelayMetrics remote_delays = 12;
+}
+
+message OpInfo {
+    optional OpType op_type = 1;
+    enum OpType {
+        UNSPECIFIED = 0;
+        SEND = 1;
+        RECV = 2;
+        PEEK = 3;
+    }
+    
+    optional uint64 user_data = 2;
+    optional perftools.tracing.TraceContextProto trace_context = 3;
+    optional TraceState trace_state = 4;
+    optional uint64 bamm2_stream_handle = 5;
+    optional uint64 stream_user_data = 6;
+    optional uint64 immediate = 7;
+    optional uint64 cookie = 8;
+}
+
+message OpManager {
+    repeated OpInfo op_infos = 1;
+    optional uint64 next_cookie_sequence_number = 2;
+}
+
+message TransportBufferManager {
+    optional int32 num_transport_buffers = 1;
+    optional int32 transport_buffer_size = 2;
+    optional int32 backing_memory_fd_index = 3;
+    optional int64 backing_memory_size = 4;
+}
+
+message PonyTransportState {
+    optional RegionTable region_table = 1;
+    optional ConnectionManager connection_manager = 2;
+    optional StreamTable stream_table = 3;
+    optional PonyStreamCache pony_stream_cache = 4;
+    repeated OpManager op_manager = 5;
+    optional TransportBufferManager transport_buffer_manager = 6;
+    optional uint32 transport_buffer_pool = 7;
+    optional bool disconnect_on_pony_not_alive_completion = 8;
+    optional bool enable_accepted_connection_completions = 9;
+    optional bool enable_background_command_pusher = 10;
+    optional bool enable_ku_channel_completion_latency_stats = 11;
+    optional bool enable_delay_metric_completions = 12;
+    optional bool enable_rma_op_tracking = 13;
+    optional bool use_cliquemap_completion_denylist = 14;
+    optional int32 num_transport_buffers = 15;
+    optional int32 transport_buffer_size = 16;
+    optional net_pony.EndpointState pony_endpoint_state = 17;
+}

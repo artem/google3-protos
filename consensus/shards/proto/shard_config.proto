@@ -1,0 +1,74 @@
+syntax = "editions";
+
+package consensus.shards;
+
+import public "consensus/common/proto/domain.proto";
+import public "consensus/shards/proto/cluster.proto";
+import "google/protobuf/timestamp.proto";
+import "storage/datapol/annotations/proto/semantic_annotations.proto";
+
+message ShardConfig {
+    optional string name = 1;
+    optional Domain domain = 2;
+    optional string prod_universe = 6;
+    repeated Epoch epochs = 3;
+    
+    optional TurnupStatus turnup_status = 5;
+    enum TurnupStatus {
+        INVALID = 0;
+        READY = 1;
+        IN_EARLY_TURNUP = 2;
+        IN_TURNUP = 3;
+        IN_TURNDOWN = 4;
+        TESTONLY = 5;
+    }
+    
+    repeated string emergency_disabled_backends = 7;
+    
+    reserved 4;
+}
+
+message EpochID {
+    optional int64 primary_epoch = 1;
+    optional int64 secondary_epoch = 2;
+}
+
+message Epoch {
+    optional EpochID epoch_id = 1;
+    repeated EpochShard shards = 2;
+    optional google.protobuf.Timestamp creation_time = 3;
+    optional bool transitional = 4;
+    optional bool slo_compliant = 5;
+    
+    optional DiversityType enforced_diversity = 6;
+    enum DiversityType {
+        DIVERSITY_NOT_SPECIFIED = 0;
+        NOT_ENFORCED = 1;
+        ZONE_SEPARATED = 2;
+        ZONE_ISOLATED = 3;
+        ZONE_ISOLATED_MINUS = 4;
+        CLOUD_REGION = 5;
+        CONTINENT = 6;
+    }
+    
+    optional Domain remote_coverage_domain = 7;
+}
+
+message EpochShard {
+    repeated Backend backends = 3;
+}
+
+message Backend {
+    optional Cluster cluster = 1;
+    optional string name = 2;
+    
+    optional BackendType type = 4;
+    enum BackendType {
+        CLUSTER = 0;
+        CHUBBY_DEFAULT = 1;
+        CHUBBY_UNMANAGED = 2;
+        CHUBBY_RAW_FILE = 3;
+    }
+    
+    reserved 3;
+}

@@ -1,0 +1,35 @@
+syntax = "proto2";
+
+package ptoken;
+
+import "google/protobuf/timestamp.proto";
+import "net/proto2/go/annotation/go_annotation.proto";
+import "privacy/compliance_controls/proto/core_platform_service.proto";
+import "privacy/pattributes/public/proto/gaia_waa_state.proto";
+import "privacy/ptoken/public/core/common_personal_data_defs.proto";
+import "privacy/ptoken/public/core/ptoken_type.proto";
+import "storage/datapol/annotations/proto/semantic_annotations.proto";
+
+option java_multiple_files = true;
+option java_package = "com.google.privacy.ptoken.proto.minting";
+
+message MintingAttributesCommonPersonalData {
+    optional int64 gaia_liable_id = 1;
+    optional uint64 zwieback_id = 10;
+    optional string youtube_visitor_id = 11;
+    optional int32 origin_associated_product_id = 2;
+    repeated int32 provenance_product_ids = 3 [packed = true];
+    repeated .compliance_controls.CorePlatformService dma52_user_consents_snapshot = 4 [packed = true];
+    optional bool dma52_data_sharing_enabled_for_all_cps_snapshot = 7;
+    optional google.protobuf.Timestamp dma52_user_consents_snapshot_timestamp = 8;
+    optional bool dma52_preprod = 6;
+    optional google.protobuf.Timestamp data_last_modified_timestamp = 9;
+    optional bool dma52_explicit_data_is_exempted = 5;
+    optional bool dma52_data_is_irreversibly_combined = 12;
+    optional Dma52RevocationExemption dma52_revocation_exemption = 15;
+    optional int32 rollout_priority_bucket_snapshot = 13;
+    optional bool dma52_pretesting = 14;
+    optional bool data_origin_unknown = 16;
+    optional .pattributes.GaiaWebAndAppActivityState gaia_waa_state = 17;
+    repeated int32 dual_observation_product_ids = 18 [packed = true];
+}

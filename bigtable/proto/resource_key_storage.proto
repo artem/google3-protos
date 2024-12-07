@@ -1,0 +1,16 @@
+syntax = "editions";
+
+package bigtable;
+
+import "google/protobuf/timestamp.proto";
+import "storage/cmek_library/proto/wrapped_resource_key.proto";
+import "util/task/status.proto";
+
+message BTI_ResourceKeyFileStorage {
+    optional storage_cmek.WrappedResourceKey wrapped_resource_key = 1;
+    optional string filepath = 3;
+    optional util.StatusProto kms_key_status = 4;
+    optional google.protobuf.Timestamp kms_key_status_received_time = 5;
+    optional fixed32 _checksum = 2;
+    optional fixed32 _crc_checksum = 6;
+}

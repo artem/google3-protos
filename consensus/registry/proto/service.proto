@@ -1,0 +1,31 @@
+syntax = "editions";
+
+package consensus.registry;
+
+import "google/protobuf/any.proto";
+import "storage/datapol/annotations/proto/semantic_annotations.proto";
+
+option java_multiple_files = true;
+option java_package = "com.google.consensus.registry";
+
+message ServiceMetadata {
+    optional string backend = 1;
+    optional google.protobuf.Any metadata = 2;
+}
+
+enum Service {
+    SERVICE_UNKNOWN = 0;
+    CHUBBY = 1;
+    CNS2 = 2;
+    CNS2_EPHEMERAL = 5;
+    CNS2_STORE_CELLS = 6;
+    CNS2_EPHEMERAL_STORE_CELLS = 7;
+    VCNS = 3;
+    STORAGE_D = 4;
+}
+
+enum DeploymentType {
+    DEPLOYMENT_TYPE_UNSPECIFIED = 0;
+    PROD = 1;
+    NONPROD = 2;
+}

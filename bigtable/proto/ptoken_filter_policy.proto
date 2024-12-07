@@ -1,0 +1,12 @@
+syntax = "editions";
+
+package bigtable;
+
+option java_multiple_files = true;
+option java_package = "com.google.bigtable.protos";
+
+enum PtokenFilterPolicy {
+    POLICY_USE_SCHEMA_DEFAULT = 0;
+    POLICY_FILTER_CELLS = 1;
+    POLICY_FAIL_REQUEST = 2;
+}

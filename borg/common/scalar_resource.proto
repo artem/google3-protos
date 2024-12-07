@@ -34,7 +34,7 @@ message ScalarResource {
         DRAGONFISH = 16;
         DRAGONDONUT = 28;
         GPU_TESLA_V100 = 17;
-        GPU_TESLA_V100_32GIB = 32;
+        GPU_TESLA_V100_32GIB = 32 [deprecated = true];
         GPU_TESLA_A100_40GIB = 46;
         GPU_TESLA_VNEXT_40GIB = 46;
         GPU_TESLA_A100_80GIB = 66;
@@ -42,6 +42,8 @@ message ScalarResource {
         GPU_NVIDIA_H200 = 86;
         GPU_NVIDIA_B100 = 79 [deprecated = true];
         GPU_NVIDIA_B200 = 87;
+        GPU_NVIDIA_B40_48TH = 93;
+        GPU_NVIDIA_GB200 = 89;
         TIN_VP9 = 18;
         CAVIUM_HSM = 19;
         GNEISS = 20;
@@ -85,7 +87,9 @@ message ScalarResource {
         GHOSTLITE = 63;
         ROBOT_ALOHA = 82;
         ROBOT_ALPHAPET = 83;
+        ROBOT_ATARI_ALPHA = 91;
         ROBOT_BIMANUAL_IIWA = 84;
+        ROBOT_FR3 = 90;
         ROBOT_IIWA14 = 85;
         ROBOT_META = 80;
         ROBOT_PANDA = 65;
@@ -98,6 +102,7 @@ message ScalarResource {
         MILLIACU = 75;
         ACU = 75;
         GHOSTLITE_POD = 76;
+        GHOSTFISH = 92;
     }
     
     optional int64 value = 3 [jstype = JS_STRING];

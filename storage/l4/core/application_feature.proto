@@ -1,0 +1,14 @@
+syntax = "editions";
+
+package storage_l4;
+
+import "storage/l4/core/application_feature_tag.proto";
+
+message ApplicationFeature {
+    optional ApplicationFeatureTag tag = 1;
+    
+    oneof value {
+        string value_string = 2;
+        int64 value_int64 = 3;
+    }
+}

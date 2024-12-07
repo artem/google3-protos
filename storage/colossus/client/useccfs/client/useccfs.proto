@@ -1,0 +1,21 @@
+syntax = "editions";
+
+package storage_useccfs;
+
+import "storage/datapol/annotations/proto/semantic_annotations.proto";
+
+option cc_enable_arenas = true;
+
+message UsecCfsOpenOptions {
+    optional bool enable_useccfs = 1;
+}
+
+message UsecCfsReadOptions {
+    optional bool enable_zero_copy = 1;
+    
+    reserved 2;
+}
+
+message UsecCfsFallbackReadDetails {
+    optional int64 cell_wide_latency_prediction_us = 1;
+}

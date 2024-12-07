@@ -1,4 +1,4 @@
-syntax = "proto3";
+syntax = "editions";
 
 package fireaxe.config_realm;
 

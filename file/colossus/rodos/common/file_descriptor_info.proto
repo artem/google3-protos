@@ -1,0 +1,23 @@
+syntax = "proto3";
+
+package rodos;
+
+import "file/colossus/proto/cfs.proto";
+import "storage/l4/common/file_descriptor_info.proto";
+
+message FileDescriptorInfoProto {
+    .colossus.FileEncoding encoding = 1;
+    double ctime_unix_seconds = 2 [deprecated = true];
+    
+    oneof _extended_attributes {
+        .colossus.CfsExtendedAttributes extended_attributes = 3 [deprecated = true];
+    }
+    
+    oneof _ssd_capacity_quota_user {
+        string ssd_capacity_quota_user = 4;
+    }
+    
+    oneof _l4_fd_info {
+        storage_l4.FileDescriptorInfoProto l4_fd_info = 5;
+    }
+}

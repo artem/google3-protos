@@ -1,4 +1,4 @@
-syntax = "proto2";
+syntax = "editions";
 
 package logging.proto;
 
@@ -21,7 +21,7 @@ message Event {
     repeated Value value = 7;
     optional RequestContext request_context = 8;
     repeated KeyValue log_context = 33;
-    optional perftools.tracing.ProcessInfo process_info = 34;
+    optional perftools.tracing.ProcessInfo process_info = 34 [deprecated = true];
     optional remote_debug_logging.MissingData missing_data = 35;
     
     extensions 1000 to 1100, 2000 to 2100;
@@ -35,12 +35,10 @@ message Value {
         bytes literal = 6 [ctype = CORD];
         int64 i64 = 2;
         uint64 u64 = 3;
-        double dbl = 4;
-        bool boolean = 5;
         TaggedMessage proto = 10;
     }
     
-    reserved 8, 15;
+    reserved 4, 5, 8, 15;
 }
 
 message TaggedMessage {
@@ -51,6 +49,7 @@ message TaggedMessage {
 message RequestContext {
     optional perftools.tracing.TraceContextProto trace_context = 1;
     optional .ptoken.PToken ptoken = 2;
+    optional bool should_redact_for_privacy_context = 3;
 }
 
 message KeyValue {

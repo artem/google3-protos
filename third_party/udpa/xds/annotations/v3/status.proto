@@ -30,14 +30,14 @@ enum PackageVersionStatus {
     NEXT_MAJOR_VERSION_CANDIDATE = 3;
 }
 
-extend proto2.FileOptions {
+extend .proto2.FileOptions {
     FileStatusAnnotation file_status = 226829418;
 }
 
-extend proto2.MessageOptions {
+extend .proto2.MessageOptions {
     MessageStatusAnnotation message_status = 226829418;
 }
 
-extend proto2.FieldOptions {
+extend .proto2.FieldOptions {
     FieldStatusAnnotation field_status = 226829418;
 }

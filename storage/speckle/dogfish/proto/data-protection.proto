@@ -1,4 +1,4 @@
-syntax = "proto2";
+syntax = "editions";
 
 package speckle_dogfish.dogfish_proto;
 
@@ -60,6 +60,7 @@ message VerificationObjectRecord {
     optional ObjectPath object_path = 1;
     optional uint64 lsn = 2;
     optional bool is_tombstone = 3;
+    optional uint32 canonical_data_crc32c_scrambled = 4;
 }
 
 message ChecksumInfo {
@@ -76,6 +77,7 @@ message ChecksumInfo {
 message ShardBackupMetadata {
     optional int32 shard_id = 1;
     optional uint64 shard_backup_lsn = 4;
+    optional uint64 requested_shard_backup_lsn = 11;
     optional uint32 keys_checksum = 5;
     optional uint64 total_objects = 6;
     optional uint32 incremental_keys_checksum = 8;
@@ -120,7 +122,7 @@ message StartBackupResponse {
 
 message RelationNumBlocks {
     repeated RelFileId rel_file_id = 1;
-    repeated uint32 num_blocks = 2 [packed = true];
+    repeated uint32 num_blocks = 2;
 }
 
 message GetBackupStatusRequest {

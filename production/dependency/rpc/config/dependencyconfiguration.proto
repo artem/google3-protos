@@ -52,6 +52,7 @@ message Constraint {
         REMOTE_ZONE = 11;
         CLUSTER = 20;
         LOCALHOST = 30;
+        MACHINE = 32;
         CLOUD_REGION = 40;
         CLOUD_ZONE = 50;
         PROD_REGION = 60;

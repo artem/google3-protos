@@ -34,6 +34,7 @@ message CanonicalStub {
     
     optional double smoothing_linear_acceleration = 25 [default = 0];
     optional net.loadshedding.RequestQoSOverrides request_qos_overrides = 22;
+    optional bool enable_request_qos_overrides_for_batch = 33 [default = true];
     optional bool enable_monitoring = 14;
     repeated string hooks = 19;
     optional bool enable_query_origin = 8;

@@ -5,6 +5,7 @@ package storage_d;
 import "logs/eventid/eventid.proto";
 import "net/base/qos.proto";
 import "storage/d/proto/header.proto";
+import "storage/d/proto/ssd-ops-dimension.proto";
 import "storage/d/proto/storage-partition.proto";
 
 option cc_enable_arenas = true;
@@ -92,6 +93,7 @@ message SampledWrite {
     optional int64 bytes_written = 4;
     optional SampledEntry.Zone zone = 5 [default = UNKNOWN];
     optional bool rmw = 6;
+    optional bool is_rma_write = 7;
 }
 
 message SampledOpen {
@@ -165,6 +167,9 @@ message SampledEntry {
         optional double cfs_file_sample = 3;
     }
     
+    optional double ssd_ops_cost = 25;
+    optional SSDOpsDimension ssd_ops_limiting_dimension = 26;
+    
     reserved 20;
     
     enum Zone {
@@ -182,11 +187,9 @@ message RequestSample {
     optional int64 reservoir_size = 10;
     optional int64 collection_period_usec = 11;
     repeated int32 space_used = 4 [packed = true];
-    repeated double raw_aio_cost = 5;
-    repeated double raw_transitional_aio_cost = 9;
     optional double entry_weight = 7 [default = 1];
     
-    reserved 6, 8;
+    reserved 5, 6, 8, 9;
 }
 
 message FileDict {

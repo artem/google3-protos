@@ -1,0 +1,98 @@
+syntax = "editions";
+
+package bamm2;
+
+import "net/pony/public/pony-endpoint-config.proto";
+
+message PonyExpressOptions {
+    optional string engine_path = 1 [default = "/pony/listener"];
+    optional uint64 init_wait_ms = 2;
+    optional int32 connection_credits = 3;
+    optional uint32 initial_memory = 4 [default = 1];
+    optional uint32 maximum_memory = 5;
+    optional uint32 memory_cushion = 19 [default = 1];
+    optional uint32 memory_increment = 6 [default = 1];
+    optional uint64 command_queue_size = 8;
+    optional net_pony.EndpointConfig.EngineHint engine_hint = 7;
+    optional net_pony.EndpointConfig.ClientType client_type = 9;
+    repeated net_pony.StreamzRootLabel trim_streamz_root_labels = 40;
+    optional bool use_cliquemap_completion_denylist = 10 [default = false];
+    optional bool disconnect_on_completion_queue_overflow = 11;
+    optional bool disconnect_on_pony_not_alive_completion = 12;
+    optional uint32 client_overload_threshold_us = 15;
+    optional bool enable_inline_send_acks = 16;
+    optional net_pony.EndpointConfig.WanSelection wan_selection = 18;
+    optional bool enable_mpr = 20;
+    optional bool enable_delay_metric_completions = 21;
+    optional bool use_flash = 22 [default = false];
+    optional int32 minimum_engine_version = 23;
+    optional int32 disconnect_completion_delay_ms = 25 [default = 100];
+    optional int32 max_free_pony_streams = 26 [default = 1000];
+    optional bool enable_bamm2_rd_recv_with_timestamp_completion = 27 [default = false];
+    optional int32 num_window_panes = 28 [default = 0];
+    optional bool use_region_panes = 34;
+    optional bool enable_borg_task_migration = 29 [default = false];
+    optional bool server_stripe_round_robin = 31 [default = false];
+    optional bool client_stripe_round_robin = 32 [default = false];
+    optional bool enable_per_job_metrics = 33;
+    optional bool shard_completion_queues = 35 [default = false];
+    optional string client_details = 36;
+    optional bool enable_client_hitless_restart = 37;
+    optional string borg_container_name = 38;
+    optional int32 transport_allocator_num_shards = 39 [default = 1];
+    optional bool use_unchecked_region_translation = 41;
+    
+    reserved 13, 14, 17, 24, 30;
+}
+
+message VerbsOptions {
+    optional string device_name = 1;
+    optional bool request_complete_in_error = 2 [default = false];
+}
+
+message EndpointConfig {
+    optional EndpointType type = 1 [default = PONY_ONLY];
+    optional string name = 20 [default = "Endpoint"];
+    optional int32 num_completion_queues = 2 [default = 1];
+    optional uint64 transport_buffer_size = 5 [default = 1024];
+    optional uint64 inline_message_size = 10 [default = 0];
+    optional uint64 num_transport_buffers = 6 [default = 1000];
+    optional uint64 completion_queue_size = 7 [default = 0x200000];
+    
+    optional StatsMode stats_mode = 8 [default = STATS_MODE_CONNECTIONS];
+    enum StatsMode {
+        STATS_MODE_NONE = 1;
+        STATS_MODE_CONNECTIONS = 2;
+        STATS_MODE_STREAMS = 3;
+        STATS_MODE_OPS = 4;
+    }
+    
+    optional PonyExpressOptions pony_options = 3;
+    optional VerbsOptions verbs_options = 26;
+    optional bool enable_fathom_connection_stats = 11 [default = true];
+    optional bool enable_fathom_send_stats = 15 [deprecated = true];
+    optional int32 connector_num_slots = 13;
+    optional int32 connector_admission_limit = 14;
+    optional bool enable_accepted_connection_completions = 16;
+    optional bool enable_background_command_push = 17;
+    optional bool enable_ku_channel_completion_latency_stats = 18;
+    optional int64 max_connections = 21 [default = 0x40000];
+    optional bool enable_rma_op_tracking = 22;
+    optional bool enable_stream_v2 = 23 [default = false];
+    optional bool connection_cancel_on_unannounce = 24 [default = true];
+    optional string trim_aot_file = 25;
+    map<string, string> trim_module_flags = 28;
+    optional net_pony.EndpointConfig.TrimOptions trim_options = 29;
+    optional bool trim_track_connection_ids = 27 [default = false];
+    
+    reserved 9, 12;
+}
+
+enum EndpointType {
+    INVALID = 1;
+    FAKE = 2;
+    PONY_ONLY = 3;
+    META = 4;
+    TCP_ONLY = 5;
+    VERBS_ONLY = 6;
+}

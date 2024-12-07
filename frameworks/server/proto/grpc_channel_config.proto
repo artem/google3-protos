@@ -31,6 +31,7 @@ message GrpcChannelConfig {
         int32 max_message_size = 4;
         double keep_alive_timeout_seconds = 6;
         string load_balancing_policy_name = 7;
+        AuthenticationType authentication_type = 8;
     }
     
     message InProcessChannel {
@@ -64,5 +65,11 @@ message GrpcChannelConfig {
     
     message GrpcSocketOptions {
         bool enable_torpedo = 1;
+    }
+    
+    enum AuthenticationType {
+        AUTHENITCATION_TYPE_UNSPECIFIED = 0;
+        AUTHENTICATION_TYPE_LOAS2 = 1;
+        AUTHENTICATION_TYPE_LOAS3 = 2;
     }
 }

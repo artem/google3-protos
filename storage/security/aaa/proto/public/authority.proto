@@ -1,0 +1,32 @@
+syntax = "proto2";
+
+package storage_security;
+
+import "security/credentials/proto/end_user_credentials.proto";
+import "storage/datapol/annotations/proto/semantic_annotations.proto";
+
+option java_multiple_files = true;
+
+message UnprocressedAuthority {
+    optional string peer_username = 1;
+    optional string peer_realm = 2;
+    optional security.credentials.EndUserCredentialsProto end_user_creds = 3;
+}
+
+message ProcessedAuthority {
+    optional string username = 1;
+}
+
+message AuthorizationCache {
+    optional ProcessedAuthority authority = 1;
+    map<uint64, CachedPermissions> permissions = 2;
+    
+    message CachedPermissions {
+        repeated string policy_permissions = 1;
+    }
+}
+
+message SerializedAuthority {
+    optional UnprocressedAuthority tentative_authority = 1;
+    optional AuthorizationCache cache = 2;
+}

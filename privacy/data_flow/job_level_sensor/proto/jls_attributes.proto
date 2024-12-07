@@ -1,0 +1,9 @@
+syntax = "editions";
+
+package privacy.data_flow.job_level_sensor.proto;
+
+option java_multiple_files = true;
+
+message JlsAttributes {
+    optional string guardian_execution_id = 1;
+}

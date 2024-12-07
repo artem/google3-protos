@@ -1,4 +1,4 @@
-syntax = "proto2";
+syntax = "editions";
 
 package local_chubby;
 
@@ -309,6 +309,8 @@ message LockRequest {
     optional LockType type = 2;
     optional bool try = 3 [default = false];
     optional bool reacquire = 4 [default = false];
+    optional bytes new_contents = 5;
+    optional int64 old_generation = 6;
 }
 
 message LockResponse {

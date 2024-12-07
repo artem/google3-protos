@@ -1,10 +1,11 @@
-syntax = "proto2";
+syntax = "editions";
 
 package security;
 
 import "net/proto2/bridge/proto/message_set.proto";
 import "security/thinmint/proto/thinmint.proto";
 import "storage/datapol/annotations/proto/semantic_annotations.proto";
+import "third_party/boundary_proxy/proto_compare/annotation.proto";
 
 option java_package = "com.google.net.security.labelacl";
 

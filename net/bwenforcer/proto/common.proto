@@ -1,0 +1,44 @@
+syntax = "proto2";
+
+package net_bwenforcer;
+
+import "storage/datapol/annotations/proto/semantic_annotations.proto";
+
+option cc_enable_arenas = true;
+option java_multiple_files = true;
+option java_package = "com.google.net.bwenforcer.proto";
+
+message DelegatedUser {
+    optional string domain = 1;
+    optional string name = 2;
+}
+
+message TcpSocketControl {
+    reserved 1, 2;
+    
+    reserved "congestion_control_mechanism", "supersonic_params";
+    
+    enum CongestionControlMechanism {
+        UNKNOWN = 0;
+        CUBIC = 1;
+        BBR = 3;
+        BBR2 = 4;
+    }
+}
+
+message NetworkScope {
+    optional Type network_scope_type_to_include = 1;
+    enum Type {
+        UNSPECIFIED = 0;
+        INTRA_CLUSTER = 6;
+        INTRA_FABRIC = 1;
+        INTRA_CAMPUS = 2;
+        INTRA_SECTOR = 8;
+        INTRA_METRO = 3;
+        INTRA_CONTINENTAL = 4;
+        GLOBAL = 5;
+        INTRA_CLOUD_REGION = 7;
+    }
+    
+    optional Type network_scope_type_to_exclude = 2;
+}

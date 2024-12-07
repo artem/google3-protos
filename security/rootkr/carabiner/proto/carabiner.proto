@@ -1,0 +1,89 @@
+syntax = "editions";
+
+package carabiner;
+
+import "google/protobuf/empty.proto";
+import "google/protobuf/timestamp.proto";
+import "security/realms/realmified_roles/proto/role_realm_control_policy.proto";
+import "storage/datapol/annotations/proto/semantic_annotations.proto";
+
+message Lifetime {
+    repeated RevocationId revocation_ids = 1;
+    optional google.protobuf.Timestamp issuance_time = 2;
+    optional google.protobuf.Timestamp expiration_time = 3;
+}
+
+message RevocationId {
+    oneof revocation_id {
+        uint64 serial = 1;
+    }
+}
+
+message SignedMessage {
+    optional bytes prefix = 1;
+    optional bytes serialized_message = 2;
+    optional bytes signature = 3;
+}
+
+message Domain {
+    oneof domain {
+        google.protobuf.Empty global = 1;
+        string security_realm = 2;
+    }
+}
+
+message Authority {
+    repeated Purpose purposes = 1;
+    enum Purpose {
+        PURPOSE_ANY = 0;
+        PURPOSE_RRCP = 1;
+        PURPOSE_NONE = 2;
+    }
+    
+    optional Domain domain = 2;
+    optional Lifetime lifetime = 3;
+    optional bytes serialized_keyset = 4;
+}
+
+message RootAuthority {
+    optional string identifier = 1;
+    optional Authority authority = 2;
+}
+
+message TrustBundle {
+    optional Metadata metadata = 1;
+    message Metadata {
+        
+    }
+    
+    repeated RootAuthority roots = 2;
+}
+
+message SubordinateAuthorityConfig {
+    optional string root_identifier = 1;
+    optional SignedMessage subordinate = 2;
+    
+    oneof signing_key {
+        string root_keystore_keyset_name = 3;
+        bytes testonly_serialized_keyset = 4;
+    }
+}
+
+message SubordinateAuthorityConfigSet {
+    repeated SubordinateAuthorityConfig configs = 1;
+}
+
+message Payload {
+    optional Lifetime lifetime = 1;
+    
+    oneof payload {
+        security_realms.RoleRealmControlPolicy rrcp = 2;
+        google.protobuf.Empty none = 3;
+    }
+}
+
+message Carabiner {
+    optional string root_identifier = 1;
+    optional SignedMessage subordinate = 2;
+    optional SignedMessage payload = 3;
+}

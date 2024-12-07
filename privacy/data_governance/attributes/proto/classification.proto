@@ -187,7 +187,7 @@ enum Pseudonymization {
     PSEUDONYMIZATION_MULTI_USER_NONSTANDARD = 9;
 }
 
-extend proto2.EnumValueOptions {
+extend .proto2.EnumValueOptions {
     string label = 204438976;
     string description = 204438977;
     string parent = 206747693;
@@ -198,7 +198,7 @@ extend proto2.EnumValueOptions {
     bool deprecated_as_an_error = 376796538;
 }
 
-extend proto2.FieldOptions {
+extend .proto2.FieldOptions {
     string field_label = 233938569;
     string field_description = 233938575;
     string field_expected_confidentiality = 307041375;
@@ -208,12 +208,12 @@ extend proto2.FieldOptions {
     bool field_deprecated_as_an_error = 377276026;
 }
 
-extend proto2.EnumOptions {
+extend .proto2.EnumOptions {
     string enum_description = 306455367;
     string enum_go_link = 321189327;
 }
 
-extend proto2.MessageOptions {
+extend .proto2.MessageOptions {
     string message_description = 306457841;
     string message_go_link = 321173585;
 }

@@ -1,0 +1,12 @@
+syntax = "proto2";
+
+package storage_security;
+
+import "google/protobuf/any.proto";
+import "storage/datapol/annotations/proto/semantic_annotations.proto";
+
+option java_multiple_files = true;
+
+message OpaquePolicyReference {
+    optional google.protobuf.Any reference = 1;
+}

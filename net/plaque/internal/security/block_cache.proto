@@ -1,0 +1,37 @@
+syntax = "editions";
+
+package plaque;
+
+import "net/plaque/util/digest.proto";
+import "util/task/status.proto";
+
+option java_multiple_files = true;
+option java_package = "com.google.net.plaque.net.protocol";
+
+message BlockCacheMsgProto {
+    oneof kind {
+        BlockRequestProto block_request = 1;
+        BlockResponseProto block_response = 2;
+    }
+}
+
+message BlockRequestProto {
+    optional BlockType type = 1;
+    optional Digest256Proto digest = 2;
+}
+
+message BlockResponseProto {
+    optional BlockType type = 1;
+    optional Digest256Proto digest = 2;
+    optional .util.StatusProto status = 3;
+    
+    oneof kind {
+        bytes data_uncompressed = 4 [ctype = CORD];
+        bytes data_compressed_zstd = 5 [ctype = CORD];
+    }
+}
+
+enum BlockType {
+    BLOCK_TYPE_UNKNOWN = 0;
+    BLOCK_TYPE_SERIALIZED_COMPILED_PROGRAM_PROTO = 1;
+}

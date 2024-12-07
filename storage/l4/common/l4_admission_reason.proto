@@ -1,0 +1,23 @@
+syntax = "proto3";
+
+package storage_l4;
+
+import "logs/proto/logs_annotations/logs_annotations.proto";
+
+message L4Admission {
+    enum Reason {
+        UNKNOWN = 0;
+        SHOULD_INSERT = 13;
+        NO_INSERT_REFUSED_FOR_HOLDBACK = 10;
+        NO_INSERT_FREE_WINDOW = 3;
+        NO_INSERT_GHOST_MISS = 4;
+        NO_INSERT_GHOST_INDEX_ENTRY_TOO_OLD = 15;
+        NO_INSERT_BAD_STATUS = 11;
+        NO_INSERT_PREWARMING = 28;
+        NO_INSERT_NEVER_ADMIT = 29;
+        NO_INSERT_FINAL_READ = 34;
+        NO_INSERT_NON_TEMPORAL = 42;
+        NO_INSERT_OVER_SSD_CEILING = 37;
+        NO_INSERT_COALESCED_MISS = 38;
+    }
+}

@@ -13,7 +13,7 @@ message ChildSpanLink {
     optional fixed64 child_trace_id_hi = 4;
     optional TraceSystem child_trace_system = 5 [default = DAPPER];
     
-    extend proto2.bridge.MessageSet {
+    extend .proto2.bridge.MessageSet {
         optional ChildSpanLink message_set_extension = 13616823;
     }
 }
@@ -25,9 +25,11 @@ message ParentSpanLink {
     optional fixed64 parent_trace_id_hi = 4;
     optional TraceSystem parent_trace_system = 5 [default = DAPPER];
     
-    reserved 6, "parent_owner";
+    reserved 6;
     
-    extend proto2.bridge.MessageSet {
+    reserved "parent_owner";
+    
+    extend .proto2.bridge.MessageSet {
         optional ParentSpanLink message_set_extension = 13768969;
     }
 }

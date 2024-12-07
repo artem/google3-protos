@@ -1,0 +1,12 @@
+syntax = "proto3";
+
+package storage_l4;
+
+import "storage/k3/net/socket_address.proto";
+import "storage/l4/common/entry_geometry.proto";
+
+message EntryLocationProto {
+    .k3.SocketAddressProto d_server_address = 1;
+    string filename = 2;
+    EntryGeometryProto geometry = 3;
+}

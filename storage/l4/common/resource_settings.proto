@@ -1,0 +1,11 @@
+syntax = "editions";
+
+package storage_l4;
+
+import "storage/l4/common/d_priority.proto";
+
+message ResourceSettingsProto {
+    optional string resource_user = 1;
+    optional string isolation_class = 2;
+    optional DPriority priority = 3;
+}

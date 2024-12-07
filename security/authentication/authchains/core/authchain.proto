@@ -1,4 +1,4 @@
-syntax = "proto2";
+syntax = "editions";
 
 package security.authentication.authchains;
 
@@ -51,8 +51,8 @@ message AuthChainHopProto {
 message AuthChainKeyMaterial {
     repeated Key keys = 1;
     message Key {
-        required AuthChainKeyIdentifier identifier = 1;
-        required bytes secret_key = 2;
+        optional AuthChainKeyIdentifier identifier = 1;
+        optional bytes secret_key = 2;
     }
     
     optional Usage usage = 2 [default = USE_IF_PRESENT];

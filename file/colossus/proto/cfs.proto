@@ -69,7 +69,6 @@ message RebalanceAnnotation {
         RISK_DIVERSITY = 3;
         PARTITION = 4;
         USER = 5;
-        SOFT_OVERFULL = 7;
         UNHEALTHY = 8;
         EVICTION = 9;
         LDD = 10;
@@ -134,7 +133,6 @@ message RebalanceType {
         RISK_DIVERSITY = 3;
         PARTITION = 4;
         USER = 5;
-        SOFT_OVERFULL = 7;
         UNHEALTHY = 8;
         TIERING_EVICTION = 9;
         PREEMPTIVE = 10;
@@ -182,7 +180,7 @@ message Stripe {
     repeated fixed32 checksums = 4;
     optional int64 close_time = 3;
     optional int64 close_time_secs_with_missing_chunks = 24 [deprecated = true];
-    optional int64 oldest_invalid_or_missing_chunk_time_secs = 33;
+    optional int64 oldest_broken_chunk_time_secs = 33;
     repeated StripeChunk chunks = 10;
     repeated int32 chunks_length_overhead = 17;
     
@@ -200,6 +198,7 @@ message Stripe {
     repeated StripeAnnotation annotation = 6;
     optional bytes encryption_auth_code = 18;
     optional fixed32 plaintext_crc32c = 20;
+    optional fixed32 beginning_plaintext_crc32c = 35;
     optional bool spilled_over = 22;
     optional bool reencrypt_on_open = 23;
     optional StripeWriteTieringInfo write_tiering_info = 25;
@@ -427,6 +426,8 @@ message CfsExtendedAttributes {
     optional bytes cns2_stripe_sharing_extended_attribute = 7 [ctype = CORD];
     optional bytes negba_finalization_extended_attribute = 8 [ctype = CORD];
     optional bytes fastbyte_writer_sequence_number_attribute = 9 [ctype = CORD];
+    optional bytes fastbyte_fragment_debug_info_attribute = 10 [ctype = CORD];
+    optional bytes hardware_aware_allocation_attribute = 11 [ctype = CORD];
 }
 
 message DeadChunk {
@@ -549,11 +550,13 @@ message FileDescriptor {
     optional FileEvents file_events = 39;
     message FileEvents {
         optional StackTraceProto create_stack_trace = 1;
+        optional bool mutable_snapshot_of_frozen_src = 2;
     }
     
     optional SupportedFeatures supported_features = 41;
     message SupportedFeatures {
         optional bool allow_snapshot_of_mutable_file = 1 [default = true];
+        optional bool allow_nonfrozen_snapshot_of_frozen_file = 2 [default = true];
     }
     
     extensions 10000 to max;
@@ -630,7 +633,7 @@ message MetadataInfo {
     optional EncryptionMetadata encryption_metadata = 6;
     message EncryptionMetadata {
         optional int32 keystore_config_id = 1;
-        optional string master_key_hash = 2;
+        optional bytes master_key_hash = 2;
         optional fixed32 wrapped_key_crc32c = 3;
         optional bytes encryption_key_hash = 4;
         optional bytes double_wrapped_key = 5;
@@ -690,6 +693,14 @@ message ColossusKeyWithMetadata {
     enum KeyType {
         UNKNOWN = 0;
         NON_AEAD_WRAPPED_KEY = 1;
+    }
+}
+
+message AllowlistedEncodings {
+    repeated EncodingGroup encoding_groups = 1;
+    message EncodingGroup {
+        repeated string encodings = 1;
+        repeated string owners = 2;
     }
 }
 

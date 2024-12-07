@@ -1,0 +1,65 @@
+syntax = "proto2";
+
+package borg;
+
+import "production/tpc/change_management/equivalence/proto/annotation.proto";
+import "third_party/boundary_proxy/proto_compare/annotation.proto";
+
+option cc_enable_arenas = true;
+
+message OutlierParams {
+    repeated DetectionRule detection_rules = 1;
+    message DetectionRule {
+        optional string name = 1;
+        optional float stddev_multiplier = 3 [deprecated = true];
+        optional float high_threshold = 4;
+        optional float low_threshold = 5;
+        optional int32 stable_minutes = 6;
+        optional int32 delay_minutes = 12;
+        
+        optional MonarchSource monarch_source = 7;
+        message MonarchSource {
+            optional MonarchPrecomputation monarch_precomp = 1;
+            optional MonarchExpression monarch_expr = 2;
+        }
+        
+        optional TaskCfhAction task_cfh_action = 13;
+        optional bool disable_for_champ = 14;
+        optional bool dry_mode = 8;
+        optional int32 stop_time = 9;
+        
+        optional Datasource datasource = 10;
+        message Datasource {
+            optional MonarchExpression monarch_expr = 1;
+            optional MonarchPrecomputation monarch_precomp = 3;
+            
+            optional DatasourceHint hint = 2;
+            enum DatasourceHint {
+                DATASOURCE_HINT_UNSPECIFIED = 0;
+                DATASOURCE_HINT_MORE_IS_WORSE = 1;
+                DATASOURCE_HINT_LESS_IS_WORSE = 2;
+            }
+        }
+        
+        reserved 2, 11;
+    }
+}
+
+message MonarchPrecomputation {
+    optional string mdb_role = 1;
+    optional string module_name = 2;
+    optional string precomputation_name = 3;
+    optional string monarch_node_service = 4;
+}
+
+message MonarchExpression {
+    optional string expression = 1;
+}
+
+enum TaskCfhAction {
+    ACTION_UNSPECIFIED = 0;
+    ACTION_SIMULATE = 2;
+    ACTION_RESCHEDULE = 3;
+    ACTION_FIX_IN_PLACE = 4;
+    ACTION_FIX_IN_PLACE_OR_RESCHEDULE = 5;
+}

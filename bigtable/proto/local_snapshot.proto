@@ -1,0 +1,227 @@
+syntax = "editions";
+
+package bigtable;
+
+import "bigtable/proto/auditlog.proto";
+import "bigtable/proto/bigtable.proto";
+import "bigtable/proto/bigtable_internal.proto";
+import "bigtable/proto/protocol_versioning.proto";
+import "bigtable/proto/rowset.proto";
+import "bigtable/proto/snapshot_creator.proto";
+import "bigtable/util/state_manager/state_manager.proto";
+import "util/task/status.proto";
+
+message LocalSnapshotProtocol {
+    enum TypeId {
+        PROTOCOL_TYPE_ID = 18125384;
+    }
+    
+    enum Version {
+        SNAPSHOT_V2_BASE = 1;
+        SNAPSHOT_V2_WIDE_SHARD = 2;
+        SNAPSHOT_V2_SNAPSHOT_COMPACT = 3;
+        SNAPSHOT_V2_PARTIAL_NO_SNAPSHOT_COMPACT = 4;
+        SNAPSHOT_V2_PARTIAL_WITH_SNAPSHOT_COMPACT = 5;
+        SNAPSHOT_V2_COPY_REPL_MANAGER = 6;
+    }
+}
+
+message RowSpaceCoverageProto {
+    repeated Range range = 1;
+    message Range {
+        optional string start = 1 [ctype = CORD];
+        optional string limit = 2 [ctype = CORD];
+        optional bool good = 3;
+    }
+}
+
+message BTI_SnapshotTabletMetadataRequest {
+    optional BTI_Protocol protocol = 1;
+    optional int64 snapshot_version = 2;
+    optional int64 shard_number = 3;
+    optional bool ignore_logs = 5 [default = false];
+    optional int64 source_table_version = 7;
+    optional string source_table_key = 8;
+    optional string source_table_name = 9;
+    optional int32 snapshot_round = 11;
+    optional bool copy_repl_manager = 12 [default = false];
+    optional bool copy_repl_logs = 18 [default = false];
+    repeated string groups_to_keep = 13;
+    optional bool log_free = 14 [default = false];
+    optional bool check_recalls = 15 [default = false];
+    optional BTI_RowSetProto rowset = 16;
+    optional bool disallow_sharedlog_reference = 17;
+    
+    reserved 4, 6, 10;
+}
+
+message BTI_SnapshotTabletMetadataResult {
+    optional BTI_Protocol protocol = 1;
+}
+
+message BTI_VerifySnapshotTabletMetadataRequest {
+    optional BTI_Protocol protocol = 1;
+    optional int32 snapshot_round = 5;
+    optional bool disallow_sharedlog_reference = 7;
+    
+    reserved 2, 3, 4, 6;
+}
+
+message BTI_VerifySnapshotTabletMetadataResult {
+    optional BTI_Protocol protocol = 1;
+    optional RowSpaceCoverageProto coverage = 3;
+    
+    optional VerifyRunInfo run_info = 5;
+    message VerifyRunInfo {
+        optional string start = 1 [ctype = CORD];
+        optional string limit = 2 [ctype = CORD];
+        optional string verify_id = 3;
+    }
+    
+    optional PerCfsPartitionSnapshotUsage per_cfs_partition_usage = 9;
+    
+    reserved 2, 4, 6, 7, 8;
+}
+
+message BTI_MarkVerifiedSnapshotMetadataRequest {
+    optional BTI_Protocol protocol = 1;
+    optional int32 snapshot_round = 2;
+    optional string verify_id = 3;
+}
+
+message BTI_MarkVerifiedSnapshotMetadataResult {
+    optional BTI_Protocol protocol = 1;
+}
+
+message BTI_FinalizeSnapshotTabletMetadataRequest {
+    optional BTI_Protocol protocol = 1;
+    
+    reserved 2;
+}
+
+message BTI_FinalizeSnapshotTabletMetadataResult {
+    optional BTI_Protocol protocol = 1;
+    optional int64 num_rows_total = 3;
+    optional int64 num_rows_compact_done = 4;
+    
+    reserved 2;
+}
+
+message BTI_WriteEmptyTabletsRequest {
+    optional BTI_Protocol protocol = 1;
+    optional int64 snapshot_version = 2;
+    optional BTI_RowSetProto empty_ranges = 4;
+    optional int32 shard_num = 5;
+    optional string user_start = 6 [ctype = CORD];
+    optional string user_limit = 7 [ctype = CORD];
+    
+    reserved 3;
+}
+
+message BTI_WriteEmptyTabletsResult {
+    optional BTI_Protocol protocol = 1;
+    optional RowSpaceCoverageProto coverage = 2;
+}
+
+message BTI_WriteSnapshotIgnoreMarkersRequest {
+    optional BTI_Protocol protocol = 1;
+    optional int32 snapshot_round = 2;
+}
+
+message BTI_WriteSnapshotIgnoreMarkersResult {
+    optional BTI_Protocol protocol = 1;
+}
+
+message BTI_CopySnapshotTabletMetadataRequest {
+    optional BTI_Protocol protocol = 1;
+    optional string destination_table_key = 2;
+    optional int64 destination_table_version = 3;
+    optional BTI_RowSetProto restore_rowset = 4;
+    optional int64 snapshot_version = 5;
+    optional bool copy_repl_manager = 6 [default = false];
+    optional string moved_from_repl_source_id = 7;
+    optional uint64 moved_from_incarnation = 8;
+    optional bool move_status_to_standby = 9 [default = false];
+}
+
+message BTI_CopySnapshotTabletMetadataResult {
+    optional BTI_Protocol protocol = 1;
+    optional BTI_RowSetProto rows_covered = 2;
+}
+
+message SnapshotOverrides {
+    optional bool ephemeral = 1 [default = false];
+    optional bool row_space_gaps = 2 [default = false];
+    optional bool missing_files = 3 [default = false];
+    optional bool ephemeral_gc_ready = 4 [default = false];
+    repeated string groups_to_keep = 5;
+    optional bool keep_repl_logs = 6 [default = false];
+}
+
+message BTI_SnapshotMetadata {
+    optional string snapshot_name = 1;
+    optional uint64 snapshot_version = 2;
+    optional BTI_TableMetadata source_metadata = 3;
+    optional int32 num_shards = 5;
+    
+    optional SnapshotState snapshot_state = 8;
+    enum SnapshotState {
+        IN_PROGRESS = 0;
+        COMPLETE = 1;
+        PENDING_CLEANUP = 2;
+    }
+    
+    optional BTI_SnapshotCreator creator = 9;
+    optional SnapshotOverrides overrides = 11;
+    optional bool using_random_md_ids = 12 [default = false];
+    optional bool copy_repl_manager = 13 [default = false];
+    optional PerCfsPartitionSnapshotUsage per_cfs_partition_usage = 19;
+    optional int64 logical_clock = 17;
+    optional int64 death_epoch_seconds = 18 [default = 0x7fffffffffffffff];
+    optional bytes barrier = 20;
+    optional AuditLogEntry audit_entry = 21;
+    optional BTI_RowSetProto partial_snapshot_rowset = 22;
+    optional int64 mutation_end_time_epoch_ns = 23;
+    
+    extensions 100 to 119;
+    
+    reserved 6, 7, 10, 14, 15, 16;
+    
+    extend StateManagerCheckPoint {
+        optional BTI_SnapshotMetadata state = 100;
+    }
+}
+
+message SnapshotAuditEntry {
+    optional string name = 1;
+    optional int64 version = 2;
+    optional string destination = 3;
+    optional bool deflash = 4;
+    optional .util.StatusProto status = 5;
+    optional bool ignore_logs = 6;
+    optional bool force_copy_files = 7;
+    optional bool copy_repl_logs = 13;
+    repeated string groups_to_keep = 8;
+    optional int64 death_epoch_seconds = 9;
+    
+    oneof creator {
+        PolicyCreator policy = 10;
+        ClientCreator client = 11;
+        RemoteCreator remote = 12;
+    }
+    
+    extend AuditLogEntry {
+        optional SnapshotAuditEntry ext = 101;
+    }
+}
+
+message BTI_FinalizeSnapshotShardWinnerRequest {
+    optional int64 version = 1;
+    optional int64 shard_number = 2;
+}
+
+enum BTI_MetadataSnapshotsScanType {
+    SNAPSHOT_SCAN_ALL = 0;
+    SNAPSHOT_SCAN_STABLE = 1;
+    SNAPSHOT_SCAN_STABLE_GAP_CHECK = 2;
+}

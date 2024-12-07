@@ -1,8 +1,9 @@
-syntax = "proto2";
+syntax = "editions";
 
 package security_rpc_restrictions;
 
 import "net/proto2/bridge/proto/message_set.proto";
+import "third_party/boundary_proxy/proto_compare/annotation.proto";
 
 option java_multiple_files = true;
 option java_package = "com.google.net.security.rpcrestrictions.extensions";
@@ -16,5 +17,17 @@ message RequireSameUserOverUDS {
 message RequireZammAcceptedCheck {
     extend .proto2.bridge.MessageSet {
         optional RequireZammAcceptedCheck message_set_extension = 525001140;
+    }
+}
+
+message RequireGRPC {
+    extend .proto2.bridge.MessageSet {
+        optional RequireGRPC message_set_extension = 525002235;
+    }
+}
+
+message DirectPathAccessPolicy {
+    extend .proto2.bridge.MessageSet {
+        optional DirectPathAccessPolicy message_set_extension = 525002721;
     }
 }

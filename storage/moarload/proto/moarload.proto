@@ -1,0 +1,272 @@
+syntax = "editions";
+
+package moarload;
+
+import public "google/protobuf/empty.proto";
+import public "storage/d/proto/error-code.proto";
+import public "storage/d/proto/request-sampler.proto";
+import public "storage/d/proto/server.proto";
+import "google/protobuf/duration.proto";
+import "net/proto2/bridge/proto/message_set.proto";
+import "storage/datapol/annotations/proto/semantic_annotations.proto";
+
+service MoarloadStorageD {
+    rpc Statfs(StatfsRequest) returns (ServerStats);
+    rpc GetCapabilityKey(GetCapabilityKeyRequest) returns (GetCapabilityKeyReply);
+    rpc GetReservation(GetReservationRequest) returns (GetReservationReply);
+    rpc ReleaseReservation(ReleaseReservationRequest) returns (ReleaseReservationReply);
+    rpc CreateDir(CreateDirRequest) returns (StatInfoResults);
+    rpc RemoveDir(RemoveDirRequest) returns (ErrorStatuses);
+    rpc Match(MatchRequest) returns (MatchReply);
+    rpc Open(OpenRequest) returns (StatInfoResults);
+    rpc Read(ReadRequest) returns (ReadReply);
+    rpc ReadHDD(ReadRequest) returns (ReadReply);
+    rpc ReadSSD(ReadRequest) returns (ReadReply);
+    rpc Write(WriteRequest) returns (WriteReply);
+    rpc RmaAlloc(RmaAllocRequest) returns (RmaAllocReply);
+    rpc RmaDealloc(RmaDeallocRequest) returns (RmaDeallocReply);
+    rpc Stat(StatRequest) returns (StatInfoResults);
+    rpc WriteStat(WriteStatRequest) returns (StatInfoResults);
+    rpc Remove(RemoveRequest) returns (ErrorStatuses);
+    rpc ReconstructFiles(ReconstructFilesRequest) returns (ReconstructFilesReply);
+    rpc Sync(SyncRequest) returns (ErrorStatuses);
+    rpc VerifyFile(VerifyFileRequest) returns (VerifyFileReply);
+    rpc CollectSamples(CollectSamplesRequest) returns (CollectSamplesReply);
+    rpc PullBlocks(PullBlocksRequest) returns (PullBlocksReply);
+    rpc CheckCapability(CheckCapabilityRequest) returns (CheckCapabilityReply);
+    rpc NotifyReadStatus(storage_d.StatusNotification) returns (google.protobuf.Empty);
+}
+
+message ProtocolVersion {
+    enum Version {
+        option allow_alias = true;
+        MINIMUM = 0;
+        CURRENT = 0;
+    }
+}
+
+message RequestHeader {
+    optional ProtocolVersion.Version version = 1;
+}
+
+message DelayInjection {
+    optional google.protobuf.Duration duration = 1;
+    optional bool is_net = 2;
+}
+
+message ReplyHeader {
+    optional DelayInjection delay = 1;
+}
+
+message StatfsRequest {
+    optional RequestHeader header = 1;
+    optional storage_d.StatfsRequest d_request = 2;
+}
+
+message ServerStats {
+    optional ReplyHeader header = 1;
+    optional storage_d.ServerStats d_reply = 2;
+}
+
+message GetCapabilityKeyRequest {
+    optional RequestHeader header = 1;
+    optional storage_d.GetCapabilityKeyRequest d_request = 2;
+}
+
+message GetCapabilityKeyReply {
+    optional ReplyHeader header = 1;
+    optional storage_d.GetCapabilityKeyReply d_reply = 2;
+}
+
+message GetReservationRequest {
+    optional RequestHeader header = 1;
+    optional storage_d.GetReservationRequest d_request = 2;
+}
+
+message GetReservationReply {
+    optional ReplyHeader header = 1;
+    optional storage_d.GetReservationReply d_reply = 2;
+}
+
+message ReleaseReservationRequest {
+    optional RequestHeader header = 1;
+    optional storage_d.ReleaseReservationRequest d_request = 2;
+}
+
+message ReleaseReservationReply {
+    optional ReplyHeader header = 1;
+    optional storage_d.ReleaseReservationReply d_reply = 2;
+}
+
+message CreateDirRequest {
+    optional RequestHeader header = 1;
+    optional storage_d.CreateDirRequest d_request = 2;
+}
+
+message StatInfoResults {
+    optional ReplyHeader header = 1;
+    optional storage_d.StatInfoResults d_reply = 2;
+}
+
+message RemoveDirRequest {
+    optional RequestHeader header = 1;
+    optional storage_d.RemoveDirRequest d_request = 2;
+}
+
+message ErrorStatuses {
+    optional ReplyHeader header = 1;
+    optional storage_d.ErrorStatuses d_reply = 2;
+}
+
+message MatchRequest {
+    optional RequestHeader header = 1;
+    optional storage_d.MatchRequest d_request = 2;
+}
+
+message MatchReply {
+    optional ReplyHeader header = 1;
+    optional storage_d.MatchReply d_reply = 2;
+}
+
+message OpenRequest {
+    optional RequestHeader header = 1;
+    optional storage_d.OpenRequest d_request = 2;
+}
+
+message ReadSpec {
+    optional PayloadType payload_type = 1;
+    enum PayloadType {
+        option allow_alias = true;
+        DEFAULT = 0;
+        MOSTLY_EMPTY = 0;
+        MOSTLY_ZEROS = 1;
+    }
+}
+
+message ReadRequest {
+    optional RequestHeader header = 1;
+    optional storage_d.ReadRequest d_request = 2;
+    optional ReadSpec read_spec = 3;
+}
+
+message ReadReply {
+    optional ReplyHeader header = 1;
+    optional storage_d.ReadReply d_reply = 2;
+    optional int64 bytes_read = 3;
+}
+
+message WriteSpec {
+    optional int64 length = 1;
+    optional bool persist_data = 2;
+}
+
+message WriteRequest {
+    optional RequestHeader header = 1;
+    optional storage_d.WriteRequest d_request = 2;
+    optional WriteSpec write_spec = 3;
+}
+
+message WriteReply {
+    optional ReplyHeader header = 1;
+    optional storage_d.WriteReply d_reply = 2;
+}
+
+message RmaAllocRequest {
+    optional RequestHeader header = 1;
+    optional storage_d.RmaAllocRequest d_request = 2;
+}
+
+message RmaAllocReply {
+    optional ReplyHeader header = 1;
+    optional storage_d.RmaAllocReply d_reply = 2;
+}
+
+message RmaDeallocRequest {
+    optional RequestHeader header = 1;
+    optional storage_d.RmaDeallocRequest d_request = 2;
+}
+
+message RmaDeallocReply {
+    optional ReplyHeader header = 1;
+    optional storage_d.RmaDeallocReply d_reply = 2;
+}
+
+message StatRequest {
+    optional RequestHeader header = 1;
+    optional storage_d.StatRequest d_request = 2;
+}
+
+message WriteStatRequest {
+    optional RequestHeader header = 1;
+    optional storage_d.WriteStatRequest d_request = 2;
+}
+
+message RemoveRequest {
+    optional RequestHeader header = 1;
+    optional storage_d.RemoveRequest d_request = 2;
+}
+
+message ReconstructFilesRequest {
+    optional RequestHeader header = 1;
+    optional storage_d.ReconstructFilesRequest d_request = 2;
+}
+
+message ReconstructFilesReply {
+    optional ReplyHeader header = 1;
+    optional storage_d.ReconstructFilesReply d_reply = 2;
+}
+
+message SyncRequest {
+    optional RequestHeader header = 1;
+    optional storage_d.SyncRequest d_request = 2;
+}
+
+message VerifyFileRequest {
+    optional RequestHeader header = 1;
+    optional storage_d.VerifyFileRequest d_request = 2;
+}
+
+message VerifyFileReply {
+    optional ReplyHeader header = 1;
+    optional storage_d.VerifyFileReply d_reply = 2;
+}
+
+message CollectSamplesRequest {
+    optional RequestHeader header = 1;
+    optional storage_d.CollectSamplesRequest d_request = 2;
+}
+
+message CollectSamplesReply {
+    optional ReplyHeader header = 1;
+    optional storage_d.CollectSamplesReply d_reply = 2;
+}
+
+message PullBlocksRequest {
+    optional RequestHeader header = 1;
+    optional storage_d.PullBlocksRequest d_request = 2;
+}
+
+message PullBlocksReply {
+    optional ReplyHeader header = 1;
+    optional storage_d.PullBlocksReply d_reply = 2;
+}
+
+message CheckCapabilityRequest {
+    optional RequestHeader header = 1;
+    optional storage_d.CheckCapabilityRequest d_request = 2;
+}
+
+message CheckCapabilityReply {
+    optional ReplyHeader header = 1;
+    optional storage_d.CheckCapabilityReply d_reply = 2;
+}
+
+message StatusPayload {
+    optional storage_d.ErrorCode d_error_code = 1;
+}
+
+message MoarloadAdminOverride {
+    extend .proto2.bridge.MessageSet {
+        optional MoarloadAdminOverride message_set_extension = 433791192;
+    }
+}

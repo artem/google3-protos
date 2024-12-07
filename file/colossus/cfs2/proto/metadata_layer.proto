@@ -1,0 +1,10 @@
+syntax = "editions";
+
+package colossus.cfs2;
+
+enum MetadataLayer {
+    NOLAYER = 0;
+    PAXOS = 1;
+    METADATA0 = 2;
+    METADATA1 = 4;
+}

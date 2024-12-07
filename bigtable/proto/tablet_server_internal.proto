@@ -1,0 +1,884 @@
+syntax = "editions";
+
+package bigtable;
+
+import "bigtable/proto/bigtable.proto";
+import "bigtable/proto/bigtable_internal.proto";
+import "bigtable/proto/bti_request.proto";
+import "bigtable/proto/change_data_capture_internal.proto";
+import "bigtable/proto/encryption.proto";
+import "bigtable/proto/invertible_bloom_filter.proto";
+import "bigtable/proto/mutation_internal.proto";
+import "bigtable/proto/ptoken_filter_policy.proto";
+import "bigtable/proto/range_status.proto";
+import "bigtable/proto/rowset.proto";
+import "bigtable/proto/side_ptoken_msg.proto";
+import "bigtable/proto/size_profile.proto";
+import "bigtable/proto/snapshot_compact.proto";
+import "bigtable/proto/stats.proto";
+import "bigtable/proto/tablet_internal.proto";
+import "bigtable/replicate/public/replicated_table.proto";
+import "bigtable/replicate/public/replication_log_ranges.proto";
+import "net/proto/typed_message.proto";
+import "net/proto2/bridge/proto/message_set.proto";
+import "net/rpc/empty-message.proto";
+import "storage/cmek_library/proto/unwrapped_resource_key.proto";
+import "util/existencefilter/proto/existence_filter.proto";
+
+option java_package = "com.google.bigtable.protos";
+
+service BTI_TabletServer {
+    rpc Apply(BTI_Mutation) returns (BTI_ApplyResult);
+    rpc StreamingScanner(BTI_ScannerArg) returns (stream BTI_StreamingScannerMessage);
+    rpc WaitForSecondary(BTI_SecondaryWaitForArg) returns (EmptyMessage);
+    rpc CommitTransaction(BTI_Transaction) returns (BTI_ApplyResult);
+    rpc AbortTransaction(BTI_Transaction) returns (EmptyMessage);
+    rpc CPInvoke(BTI_CPArg) returns (stream BTI_CPResult);
+    rpc Compact(BTI_CompactTabletRequest) returns (EmptyMessage);
+    rpc Split(BTI_SplitCommand) returns (EmptyMessage);
+    rpc GetSequenceForSnapshot(BTI_GetSequenceForSnapshotRequest) returns (BTI_GetSequenceForSnapshotReply);
+    rpc ReadChangeLog(stream cdc.ReadChangeLogRequest) returns (stream cdc.ReadChangeLogResponse);
+    rpc CloseSharedLogs(EmptyMessage) returns (EmptyMessage);
+    rpc Ping(BTI_PingRequest) returns (EmptyMessage);
+    rpc Crash(BTI_CrashRequest) returns (EmptyMessage);
+}
+
+message BTI_ScannerArg {
+    optional BTI_Request request = 1;
+    optional string table = 2;
+    optional uint64 version = 3;
+    optional fixed64 tid_client_id = 40;
+    optional fixed64 tid = 41;
+    optional bool release_txn_locks_after_read = 59;
+    optional bool write_lock = 42;
+    optional bytes start_row = 4;
+    optional bytes end_row = 5;
+    optional bytes row_regexp = 6;
+    optional int64 row_count = 18;
+    repeated bytes row_restrict = 14;
+    
+    repeated Stream stream = 7;
+    message Stream {
+        optional bytes column = 8;
+        optional bytes subcolumn_regexp = 50;
+        optional int32 match_type = 13;
+        optional int64 ts_family_id = 47;
+        optional bytes ts_column_part = 48;
+        optional int32 max_newest = 9 [default = 1];
+        optional int32 max_columns_per_row = 51;
+        optional int64 min_micro_timestamp = 45 [default = 0];
+        optional int64 max_micro_timestamp = 46 [default = 0x7fffffffffffffff];
+        optional int64 max_bytes = 17;
+        optional bytes user_label = 49;
+        optional bool count_dropped_items = 52 [default = true];
+        
+        reserved 10 to 12, 19;
+        
+        enum MatchType {
+            COLUMN_EXACT = 0;
+            COLUMN_PREFIX = 1;
+            ALL_READABLE = 10;
+            ALL = 11;
+        }
+    }
+    
+    optional int32 max_buffer_size = 16;
+    optional int32 max_chunk_size = 22;
+    optional bool block_cacheable = 56 [default = true];
+    optional int64 max_bytes = 15;
+    repeated int64 internal_family_id = 34;
+    optional int32 quarantine_retries = 55;
+    optional bool read_stats = 57 [default = false];
+    optional bool read_lwms = 58 [default = false];
+    optional PtokenFilterPolicy ptoken_filter_policy = 60;
+    
+    reserved 10, 11, 12, 19, 20, 21, 23, 24, 25, 26, 27, 28, 29, 30, 31, 32, 33, 35, 36, 37, 38, 39, 43, 44, 53, 54;
+}
+
+message BTI_StreamingScannerMessage {
+    optional BTI_Response response = 31;
+    
+    repeated Element element = 1;
+    message Element {
+        optional bytes row_delta = 2;
+        optional bytes streams_bitmask = 3;
+        optional int64 family_id = 4;
+        optional bytes column = 5;
+        optional bytes column_delta = 6;
+        optional int64 timestamp = 7;
+        optional bytes value = 13;
+        optional SidePtokenMsg side_ptoken = 37;
+        optional fixed32 crc = 8;
+        optional fixed64 key_checksum = 9;
+        repeated int64 dropped = 14;
+        optional bool end_of_row = 15 [default = false];
+    }
+    
+    repeated FamilyMapping familymapping = 20;
+    message FamilyMapping {
+        optional int64 family_id = 21;
+        optional string family_name = 22;
+    }
+    
+    optional int64 tablet_active_time_us = 29;
+    optional int64 transaction_instance = 33;
+    optional int64 transaction_server_clock = 36;
+    optional bytes restart_row = 30;
+    optional ReaderStatsProto read_stats = 32;
+    optional BTIR_WaterMarks low_water_marks = 35;
+    
+    reserved 16;
+}
+
+message BTI_ReaderVersion {
+    optional int32 platform = 6 [default = 0];
+    optional int32 version = 7 [default = 0];
+    
+    enum Platform {
+        OLD_PLATFORM = 0;
+        BIGTABLE_PLATFORM = 1;
+        SPANNER_PLATFORM = 2;
+    }
+    
+    enum BigtableVersion {
+        BIGTABLE_BASE_VERSION = 0;
+        BIGTABLE_LARGE_ROWS = 1;
+    }
+    
+    enum SpannerVersion {
+        SPANNER_BASE_VERSION = 0;
+    }
+}
+
+message BTI_ReaderSequentialState {
+    optional uint64 row_limit = 1;
+}
+
+message BTI_ReaderArg {
+    optional BTI_Request request = 1;
+    optional uint64 table_version = 2;
+    optional bytes item_filter_expression = 3;
+    optional bytes restart_cookie = 4 [ctype = CORD];
+    optional BTI_ReaderSequentialState sequential_state = 5;
+    optional BTI_ReaderVersion client_version = 6;
+    optional BTI_RowSetProto rowset = 11;
+    optional bool cacheable = 16 [default = true];
+    optional bool cache_read_expressions = 24 [default = false];
+    optional bool enable_optimization = 29 [default = true];
+    optional fixed64 tid_client_id = 18;
+    optional fixed64 tid = 19;
+    optional bool acquire_locks_in_write_mode = 20;
+    optional int64 bytes_per_chunk = 21 [default = 0x7fffffffffffffff];
+    optional int64 bytes_per_read = 22 [default = 0x7fffffffffffffff];
+    optional int32 prefetch_bytes = 25;
+    optional bool read_stats = 23 [default = false];
+    optional bool read_lwms = 27 [default = false];
+    optional int32 row_limit = 26;
+    optional bool use_parallel_prefetcher = 30 [default = true];
+    optional int64 read_time = 31 [default = -1];
+    optional bool allow_reading_secondaries = 32 [default = true];
+    optional int64 max_row_bytes = 33 [default = 0x7fffffffffffffff];
+    optional PtokenFilterPolicy ptoken_filter_policy = 34;
+    
+    reserved 17, 28;
+    
+    extend .proto2.bridge.MessageSet {
+        optional BTI_ReaderArg message_set_extension = 9976;
+    }
+}
+
+message BTI_ReaderResultHeader {
+    repeated FamilyMapping familymapping = 1;
+    message FamilyMapping {
+        optional int64 id = 2;
+        optional string name = 3;
+    }
+    
+    repeated TagMapping tagmapping = 4;
+    message TagMapping {
+        optional int64 tag = 5;
+        optional bytes label = 6;
+    }
+    
+    optional BTI_ReaderSequentialState sequential_state = 7;
+    optional BTI_ReaderVersion server_version = 8;
+    optional int64 tablet_active_time_us = 20;
+    optional int64 transaction_instance = 22;
+    optional BTIR_WaterMarks low_water_marks = 23;
+    
+    reserved 21;
+}
+
+message BTI_ReaderResultRow {
+    optional bytes row_delta = 1;
+    optional int64 item_count = 2;
+    optional bool completed = 3 [default = true];
+    repeated int64 dropped = 4;
+}
+
+message BTI_ReaderResultItem {
+    optional int64 family_id = 1;
+    optional bytes column_delta = 2;
+    optional int64 timestamp = 3;
+    optional int64 tag = 5;
+    optional bytes value = 4 [ctype = CORD];
+    optional SidePtokenMsg side_ptoken = 10;
+    optional fixed64 value_checksum = 7;
+    optional fixed64 key_checksum = 8;
+    optional bytes streams_bitmask = 9;
+    
+    reserved 6;
+}
+
+message BTI_ReaderResultFooter {
+    optional BTI_Response response = 2;
+    optional ReaderStatsProto stats = 3;
+    
+    reserved 4, 5;
+}
+
+message BTI_ReaderResult {
+    optional BTI_ReaderResultHeader header = 1;
+    repeated BTI_ReaderResultRow rows = 3;
+    repeated BTI_ReaderResultItem items = 4;
+    optional BTI_ReaderResultFooter footer = 5;
+    
+    extend .proto2.bridge.MessageSet {
+        optional BTI_ReaderResult message_set_extension = 9978;
+    }
+}
+
+message BTI_TransactionRow {
+    optional string cell = 1;
+    optional string table = 2;
+    optional uint64 tableversion = 3;
+    optional bytes row = 4;
+    optional int64 tablet_active_time_us = 5;
+    optional int64 transaction_instance = 7;
+    optional int64 transaction_server_clock = 8;
+    optional BTI_Mutation mutation = 6;
+}
+
+message BTI_Transaction {
+    optional BTI_Request request = 1;
+    optional fixed64 client_id = 2;
+    optional fixed64 tid = 3;
+    repeated BTI_TransactionRow row = 7;
+}
+
+message BTI_CPArg {
+    optional BTI_Request request = 1;
+    optional uint64 table_version = 2;
+    optional string table_key = 12;
+    optional string method = 4;
+    optional .proto.TypedMessage typed_arg = 6;
+    optional BTI_RowSetProto rowset = 11;
+    optional bool suppress_results_on_error = 16 [default = true];
+    optional int32 server_flush_threshold = 17 [default = 8192];
+    optional bool sequential_invocation = 18;
+    optional int64 suggested_result_size = 19;
+    optional bool request_server_stats = 20;
+    
+    reserved 10;
+}
+
+message BTI_CPResult {
+    repeated Item item = 1;
+    message Item {
+        optional int32 tablet_id = 5;
+        optional .proto.TypedMessage typed_result = 6;
+        optional RangeStatusProto processed = 3;
+        
+        reserved 2, 4;
+    }
+    
+    optional CoprocessorServerStats server_stats = 7;
+}
+
+message CoprocessorServerStats {
+    optional int64 server_cpu_recent_milligcu = 1;
+    optional int64 server_cpu_limit_milligcu = 2;
+}
+
+message BTI_CP_DeleteArg {
+    optional bytes reader_expr = 1;
+    optional int32 mutation_size = 2 [default = 0x32000];
+    optional bool allow_family_deletions = 4;
+    optional bool allow_delete_secondaries = 5 [default = false];
+    
+    optional BTI_SecondariesFilter bti_secondariesfilter = 6;
+    message BTI_SecondariesFilter {
+        optional int64 cm_start_time_micro = 7 [default = 0];
+        optional int64 cm_end_time_micro = 8 [default = 0x7fffffffffffffff];
+    }
+    
+    reserved 3;
+}
+
+message BTI_CP_DeleteResult {
+    optional int64 num_items_deleted = 1;
+    optional int64 num_mutation_bytes = 2;
+    optional int32 num_mutations = 3;
+}
+
+message BTI_CP_GetSizeProfileArg {
+    optional int32 num_samples = 1;
+    repeated bytes column = 2;
+}
+
+message BTI_CP_GetSizeProfileResult {
+    optional bytes tablet_start_key = 1;
+    optional bytes tablet_end_key = 2;
+    optional SizeProfileRecord profile = 3;
+}
+
+message BTI_CP_CompactArg {
+    optional int32 type = 1;
+    optional int64 major_compaction_threshold_micro = 2;
+    optional bool compact_forces_unsafe_import = 4 [default = false];
+    optional bool major_compaction_force_rewrite = 5 [default = false];
+    optional int32 max_sstables = 6;
+    optional string group_filter = 7;
+    optional double TESTING_max_start_time = 8;
+    optional BTI_SnapshotCompactArg snapshot_arg = 9;
+    optional double minor_compaction_threshold = 10 [default = 0];
+    
+    oneof minor_compaction_threshold_oneof {
+        int64 minor_compaction_true_time_latest_threshold_micros = 12;
+    }
+    
+    reserved 3, 11;
+}
+
+message BTI_CP_CompactResult {
+    optional bytes tablet_start_key = 1;
+    optional bytes tablet_end_key = 2;
+    optional CompactionStats compaction_stats = 3;
+}
+
+message BTI_CP_RotateParentKeyArg {
+    optional int64 age_seconds = 1 [default = 0];
+}
+
+message BTI_CP_RotateParentKeyResult {
+    optional bytes tablet_start_key = 1;
+    optional bytes tablet_end_key = 2;
+    optional EncryptionParentKeyStats stats = 3;
+    optional bytes skip_rotation_reason = 4;
+}
+
+message BTI_CP_GetMoveReplicaStatusResult {
+    optional bytes tablet_start_key = 1;
+    optional bytes tablet_end_key = 2;
+    optional TabletMetaData.MoveReplicaStatus.MoveStatus move_status = 3;
+}
+
+message BTI_CP_UpdateMoveReplicaStatusArgs {
+    optional TabletMetaData.MoveReplicaStatus.MoveStatus new_status = 1;
+    optional BTIR_ReplicatedTableMetadata.Move move = 2;
+    optional BTIR_LogManager target_replication_log_position = 3;
+    optional int64 downtime_start_logical_clock = 4;
+}
+
+message BTI_CP_UpdateMoveReplicaStatusResult {
+    optional bytes tablet_start_key = 1;
+    optional bytes tablet_end_key = 2;
+    optional int64 logical_clock = 4;
+    optional BTIR_LogManager replication_log_position = 3;
+}
+
+message UpdateMoveReplicaStatusError {
+    optional TabletMetaData.MoveReplicaStatus.MoveStatus move_status = 1;
+    optional BTIR_ReplicatedTableMetadata.Move latest_move = 3;
+    optional bool permanent = 4 [default = false];
+    optional bytes tablet_start_key = 5;
+    optional bytes tablet_end_key = 6;
+    
+    extend .proto2.bridge.MessageSet {
+        optional UpdateMoveReplicaStatusError message_set_extension = 525002367;
+    }
+}
+
+message BTI_SamplePrecedingRowKeysRequest {
+    optional bytes smallest_row_key = 1 [ctype = CORD];
+    optional int32 max_num_samples = 2 [default = 0x7fffffff];
+    optional bytes item_filter_expression = 3 [ctype = CORD];
+    optional bool read_stats = 4 [default = false];
+}
+
+message BTI_SamplePrecedingRowKeysResponse {
+    repeated bytes row_keys = 1 [ctype = CORD];
+    optional TabletIteratorStatsProto iterator_stats = 2;
+}
+
+message BTI_CP_GetReplicationPullingStateResult {
+    optional bytes tablet_start_key = 1;
+    optional bytes tablet_end_key = 2;
+    optional bool puller_enabled = 3;
+    optional int32 in_flight_applies = 4;
+}
+
+message BTI_CP_GetReplicationServingStateResult {
+    optional bytes tablet_start_key = 1;
+    optional bytes tablet_end_key = 2;
+    optional bool serving_enabled = 3;
+    optional int32 in_flight_pulls = 4;
+}
+
+message BTI_SecondaryWaitForArg {
+    optional BTI_Request request = 1;
+    optional uint64 version = 2;
+    optional string table_name = 7;
+    optional string table_key = 8;
+    optional bytes row = 3;
+    optional int64 start_timestamp = 4;
+    optional int32 count = 5;
+    optional fixed64 sourceid = 6;
+}
+
+message BTI_OperationToken {
+    extensions 100 to 190;
+    
+    reserved 1;
+}
+
+message BTI_TabletSplit {
+    optional BTI_Tablet source = 1;
+    optional bytes split_row = 2;
+    optional string child_id1 = 3;
+    optional string child_id2 = 4;
+}
+
+message BTI_SplitCommand {
+    optional BTI_Request request = 7;
+    optional string table = 1;
+    optional uint64 version = 2;
+    optional bytes split_row = 3;
+    optional bool unload_first = 5 [default = false];
+    optional bool unload_second = 8 [default = false];
+    optional int32 merge_delay_secs = 9 [default = 0];
+    optional bool test_crash_ts_before_split_commit = 22;
+    optional bool test_crash_ts_before_split_cleanup = 21;
+    optional bool test_crash_ts_before_telling_master = 20;
+    optional bool test_hold_command_until_unload_done = 40;
+    
+    reserved 4, 6, 16, 17;
+}
+
+message BTI_MergeTabletRequest {
+    optional BTI_Tablet tablet1 = 1;
+    optional BTI_Tablet tablet2 = 2;
+    optional bool test_crash_ts_before_commit = 20;
+    optional bool test_crash_ts_during_commit = 21;
+    optional bool test_crash_ts_before_telling_master = 22;
+    optional int32 test_hold_merge = 30;
+    optional bool test_force_fullstate = 31;
+}
+
+message BTI_TabletMerged {
+    optional int32 error = 1;
+    optional string error_message = 2;
+    optional BTI_Tablet tablet1 = 3;
+    optional BTI_Tablet tablet2 = 4;
+    optional string child_id = 5;
+}
+
+message BTI_Load {
+    repeated double value = 1;
+    
+    enum Type {
+        MEMORY = 0;
+        DISKSPACE = 1;
+        SSDSPACE = 59;
+        SEEKS = 2;
+        OPS = 3;
+        OPLATENCY = 4;
+        READ_BYTES = 5;
+        WRITE_BYTES = 6;
+        ERRORS = 7;
+        TOTAL_LATENCY = 8;
+        LOG_OPS = 9;
+        LOG_LATENCY = 10;
+        LOG_LONG = 11;
+        LOG_MAX = 12;
+        ACTIVE_OPS = 13;
+        APPLY_OPS = 45;
+        MMAP = 14;
+        REQUESTED_MMAP = 58;
+        LOG_BYTES = 16;
+        PUSH_BACK = 17;
+        SERVING_TABLETS = 18;
+        ACTIVE_TABLETS = 19;
+        MAJOR_COMPACTIONS = 22;
+        MINOR_COMPACTIONS = 23;
+        INMEMORY_COMMITS = 24;
+        INMEMORY_REPLLOG = 26;
+        DISK_REPLLOG = 27;
+        CPU = 28;
+        CPU_INITIAL_LIMIT = 53;
+        CACHE_MIN = 29;
+        CACHE_USED = 30;
+        CACHE_MAX = 52;
+        OPTIMAL_CACHE_LIMIT = 55;
+        PUSH_BACK_START = 56;
+        FLUSH_THRESHOLD = 57;
+        CP_COUNT = 31;
+        CP_MEMORY = 32;
+        CP_DISK = 33;
+        CP_CPU = 34;
+        CP_QLEN = 42;
+        OSBOLETE_CP_PENDING_COUNT = 35;
+        OSBOLETE_CP_PENDING_MEMORY = 36;
+        OSBOLETE_CP_PENDING_DISK = 37;
+        OSBOLETE_CP_PENDING_CPU_MHZ = 38;
+        FSDELAY = 39;
+        FSREADCOUNT = 40;
+        REPLICATION = 44;
+        UNLOADING_CPU = 46;
+        UNLOADING_MEMORY = 47;
+        UNLOADING_ACTIVE_OPS = 48;
+        MOVEMENT_CPU = 49;
+        TRANSIENT_CPU = 50;
+        MEMORY_LIMIT = 51;
+        CPU_LIMIT_OVERRIDE = 60;
+    }
+}
+
+message BTI_TSState {
+    optional BTI_Load Capacity = 1;
+}
+
+message BTI_UnloadGoal {
+    optional Operation operation = 1;
+    enum Operation {
+        REBALANCING = 0;
+        LOAD_SHED = 1;
+        SPLIT = 2;
+        COLOCATION = 3;
+        DRAINING = 4;
+        TABLET_NONLOADABLE = 5;
+        WRONG_PARTITION = 6;
+        FS_ROOT_CHANGED = 7;
+        OVERLOAD_RELIEF = 8;
+    }
+}
+
+message BTI_UnqualifiedUnload {
+    optional fixed64 cookie = 1;
+    optional int32 reason = 2;
+    optional string target = 3;
+    optional BTI_Load src_ideal = 4;
+    optional BTI_Load dst_load = 5;
+    optional BTI_Load dst_max = 6;
+    optional BTI_Load dst_ideal = 7;
+    optional BTI_Load max_move = 8;
+    optional int32 rebal_num = 9;
+    optional bool user_initiated = 10;
+}
+
+message BTI_RebalanceUnload {
+    optional Reason reason = 2;
+    enum Reason {
+        CPU = 0;
+        MEMORY = 1;
+        QUEUE = 2;
+        IDLE_TABLETS = 3;
+    }
+    
+    optional bool urgent = 3 [default = false];
+    optional double amount = 4;
+    optional int32 rebalancer_round = 5;
+    optional bool enable_logging = 6 [default = false];
+    
+    reserved 1;
+}
+
+message BTI_PreLoadFixup {
+    optional bool abort_load_after_fixup = 1 [default = false];
+    optional bool remove_partition_override = 2 [default = false];
+    optional TabletPartitionInfo partition_override = 4;
+    optional BTI_TabletFixup tablet_fixup = 6;
+    
+    reserved 3, 5;
+    
+    enum Type {
+        FIXUP_PARTITION_OVERRIDE = 1;
+        FIXUP_TABLET = 3;
+    }
+}
+
+message BTI_LoadTablet {
+    optional BTI_Tablet tablet = 1;
+    optional double master_unassigned_time = 2;
+    optional BTI_PreLoadFixup pre_load_fixup = 3;
+    optional double master_first_seen = 4;
+    optional double write_throughput_load = 5;
+    optional double read_throughput_load = 6;
+    optional storage_cmek.UnwrappedResourceKey unwrapped_resource_key = 10;
+    optional UnwrappedKeystoreKeyData unwrapped_keystore_parent_key = 11;
+    
+    reserved 7, 8, 9;
+}
+
+message BTI_QualifiedUnload {
+    optional fixed64 cookie = 1;
+    optional BTI_Tablet tablet = 2;
+    optional BTI_UnloadGoal goal = 3;
+    optional bool user_initiated = 4;
+    optional BTI_UnloadType unload_type = 5;
+}
+
+message BTI_TabletUnloaded {
+    optional int32 error = 1;
+    optional string message = 2;
+    optional BTI_Tablet tablet = 3;
+    optional BTI_Load load = 4;
+    optional fixed64 cookie = 5;
+    optional int32 reason = 6;
+    optional BTI_UnloadGoal goal = 7;
+    optional bool user_initiated = 8;
+    optional bool problematic = 9 [default = false];
+    optional double write_throughput = 10;
+    optional double read_throughput = 11;
+    
+    reserved 20;
+}
+
+message BTI_TS_CPStatusProto {
+    repeated BTI_CPTaskStatusProto coprocessor = 2;
+    repeated BTI_TS_RemoteCpStatusProto remotecp = 3;
+    
+    reserved 1;
+}
+
+message BTI_TS_RemoteCpStatusFullStateProto {
+    optional double last_lease_change_time = 1;
+    optional string cp_location = 2;
+    optional int64 cp_lease_count = 3;
+}
+
+message BTI_TS_RemoteCpEventProto {
+    optional int64 id = 1;
+    optional double timestamp = 2;
+    optional string desc = 3;
+}
+
+message BTI_TS_RemoteCpStatusProto {
+    optional string cp_key = 1;
+    optional BTI_TS_RemoteCpStatusFullStateProto full_state = 2;
+    repeated BTI_TS_RemoteCpEventProto recent_event = 3;
+    optional string cp_name = 4;
+    repeated uint64 table_version = 5;
+    optional int32 num_tablets = 6;
+}
+
+message BTI_CPTabletHealthStatsProto {
+    optional int32 unknown = 1;
+    optional int32 loaded = 3;
+    optional int32 missing = 5;
+    optional int32 loading = 2;
+    optional int32 unhealthy = 4;
+}
+
+message BTI_CPTaskStatusProto {
+    optional string cp_id = 1;
+    
+    optional Status status = 2;
+    enum Status {
+        STARTING = 0;
+        READY = 1;
+        STOPPING = 3;
+        STOPPED = 4;
+    }
+    
+    optional int32 cp_priorities_in_pushback = 20;
+    optional BorgResourceSetProto reserved = 4;
+    optional BorgResourceSetProto used = 5;
+    optional CP_ProcessStatsProto process_stats = 19;
+    optional BTI_CPTabletHealthStatsProto tablet_health = 11;
+    
+    optional FullState fullstate = 7;
+    message FullState {
+        optional string borglet_hostport = 8;
+        optional string borglet_task_handle = 9;
+        optional string cp_hostport = 17;
+        optional string status_msg = 10;
+    }
+    
+    reserved 3, 6, 12, 13, 14, 15, 16, 18;
+}
+
+message BTI_TaskInfo {
+    optional string borg_cell = 1;
+    optional string job_name = 2;
+    optional string job_user = 5;
+    optional int32 task_num = 3;
+    optional string bns_name = 4;
+    optional bool in_alloc = 6;
+    optional string alloc_name = 7;
+    optional string alloc_user = 8;
+    optional int32 alloc_num = 9;
+}
+
+message BTI_GetSequenceForSnapshotRequest {
+    optional BTI_Request request = 1;
+    optional uint64 tsid = 2;
+    optional string target_cell = 3;
+    optional uint64 target_table_version = 4;
+    optional uint64 source_table_version = 5;
+}
+
+message BTI_GetSequenceForSnapshotReply {
+    optional int64 sequence = 1;
+}
+
+message BTI_WatchRegionProto {
+    optional ColMatchType col_match_type = 1;
+    enum ColMatchType {
+        EXACT = 0;
+        PREFIX = 1;
+    }
+    
+    optional bytes col = 2;
+    optional int64 min_ts = 3;
+    optional int64 max_ts = 4 [default = 0x7fffffffffffffff];
+    optional bool ignore_deletes = 5;
+}
+
+message BTI_WatchRequestProto {
+    optional BTI_WatchRegionProto region = 1;
+    optional bytes read_expression = 2;
+    optional bool supports_large_rows = 4;
+    
+    reserved 3;
+}
+
+message BTI_WatchResponseProto {
+    optional int32 event_type = 1;
+    optional BTI_RowSetProto rowset = 2;
+    optional bytes read_results = 3 [ctype = CORD];
+    optional int64 timestamp = 4;
+    optional bytes chunked_read_results_key = 5 [ctype = CORD];
+    optional int32 chunked_read_results_seq = 6;
+    
+    enum EventType {
+        CONNECTED = 0;
+        ROW_MODS = 1;
+        READ_RESULTS = 2;
+    }
+}
+
+message DiffRetryStatus {
+    extend .proto2.bridge.MessageSet {
+        optional DiffRetryStatus message_set_extension = 100432747;
+    }
+}
+
+message InvertibleBloomFilterOptionsProto {
+    optional uint32 num_hashes = 1;
+    optional uint32 num_cells = 2;
+    optional int32 version = 3;
+}
+
+message ExistenceFilterOptionsProto {
+    optional uint32 estimated_insertions = 1;
+    optional int32 version = 2;
+    optional double error_rate = 3;
+    optional double flexible_error_rate = 4;
+    optional uint32 approximate_bytes = 5;
+    optional uint32 num_hashes = 6;
+}
+
+message BTI_DiffRequest {
+    repeated string table_specs = 1;
+    repeated string families = 2;
+    optional InvertibleBloomFilterOptionsProto ibf_options = 3;
+    optional ExistenceFilterOptionsProto ef_options = 4;
+    optional int64 custom_lwm = 5;
+}
+
+message BTI_DiffResponse {
+    repeated DiffItemProto diff_items = 1;
+    repeated string table_specs = 2;
+    optional bool success = 3;
+}
+
+message BTI_GetDiffDigestRequest {
+    repeated Family families = 1;
+    message Family {
+        optional string name = 1;
+        optional int64 canonical_id = 2;
+        optional string gc_expression = 3;
+    }
+    
+    optional GlobalSequencerProto threshold = 2;
+    optional InvertibleBloomFilterOptionsProto ibf_options = 3;
+    optional ExistenceFilterOptionsProto ef_options = 4;
+    optional int64 gc_time_micros = 5;
+    optional int32 retry_count = 6;
+}
+
+message DiffDigestProto {
+    optional InvertibleBloomFilterProto invertible_bloom_filter = 1;
+    optional ExistenceFilterMsg recent_updates = 2;
+    optional int64 recent_updates_count_added = 3;
+    optional int64 recent_updates_count_subtracted = 4;
+}
+
+message BTI_GetDiffDigestResponse {
+    optional DiffDigestProto diff_digest = 1;
+    
+    optional GcStats gc_stats = 2;
+    message GcStats {
+        optional int64 values_stripped = 1;
+        optional int64 entries_dropped = 2;
+        optional bool found_value_error = 3;
+    }
+    
+    repeated bytes split_rows = 3;
+}
+
+message BTI_GetStateReply {
+    optional uint64 Id = 1;
+    optional BTI_TSState HardwareSpec = 2;
+    
+    repeated Tablet tablet = 7;
+    message Tablet {
+        optional BTI_Tablet id = 8;
+        optional BTI_Load load = 9;
+    }
+    
+    optional BTI_Load Load = 6;
+    repeated BTI_Tablet Unloading = 5;
+    optional int64 mts_count = 10;
+    optional int64 successful_mts_count = 11;
+}
+
+message BTI_CompactTabletRequest {
+    optional BTI_Request request = 3;
+    optional BTI_Tablet tablet = 1;
+    optional int32 type = 2;
+    optional bool compact_forces_unsafe_import = 4 [default = false];
+    optional bool major_compaction_force_rewrite = 5 [default = false];
+    optional int32 max_sstables = 6;
+    optional string group_filter = 7;
+    optional double minor_compaction_threshold = 8 [default = 0];
+}
+
+message BTI_PingRequest {
+    optional Subsystem subsystem = 1 [default = NETWORK_ONLY];
+    enum Subsystem {
+        NETWORK_ONLY = 0;
+        SHARED_LOG = 1;
+    }
+    
+    optional bool raw = 2;
+    
+    extend .proto2.bridge.MessageSet {
+        optional BTI_PingRequest message_set_extension = 18641744;
+    }
+}
+
+extend BTI_OperationToken {
+    optional BTI_SecondaryWaitForArg secondary = 100;
+}

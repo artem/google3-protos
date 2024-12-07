@@ -1,0 +1,16 @@
+syntax = "proto3";
+
+package storage_l4;
+
+import "logs/proto/logs_annotations/logs_annotations.proto";
+
+enum L4rPolicyProto {
+    UNSPECIFIED_POLICY = 0;
+    ADMIT_ON_SECOND_MISS = 1;
+    ADMIT_ON_MISS = 2;
+    ADMIT_ON_WRITE = 3;
+    NEVER_ADMIT = 4;
+    ADMIT_MIB_ON_MISS = 8;
+    ADMIT_MIB_ON_SECOND_MISS = 7;
+    ADMIT_MIB_ON_WRITE = 9;
+}

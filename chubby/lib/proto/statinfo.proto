@@ -1,31 +1,32 @@
-syntax = "proto2";
+syntax = "editions";
 
 import "chubby/lib/proto/chubby_checksums.proto";
 
 option java_package = "com.google.chubby.impl.chubbyprotos";
 
 message LockServerWire_LockServiceACL {
-    required string entity = 1;
-    required string security_realm = 2;
+    optional string entity = 1;
+    optional string security_realm = 2;
 }
 
 message LockServerWire_StatInfo {
-    required string name = 1;
-    required uint64 instance = 2;
-    required uint64 generation = 3;
-    required uint64 acl_generation = 13;
-    required uint64 lock_generation = 14;
-    required int32 node_type = 4;
-    required string acl_owner = 5;
-    required string acl_write = 6;
-    required string acl_read = 7;
+    optional string name = 1;
+    optional uint64 instance = 2;
+    optional uint64 generation = 3;
+    optional uint64 acl_generation = 13;
+    optional uint64 lock_generation = 14;
+    optional int32 node_type = 4;
+    optional string acl_owner = 5;
+    optional string acl_write = 6;
+    optional string acl_read = 7;
     optional LockServerWire_LockServiceACL lockservice_acl_owner = 36;
     repeated LockServerWire_LockServiceACL lockservice_acl_writers = 34;
     repeated LockServerWire_LockServiceACL lockservice_acl_readers = 35;
     
-    repeated group Action = 8 {
-        required int64 time = 9;
-        required string who = 10;
+    repeated Action action = 8;
+    message Action {
+        optional int64 time = 9;
+        optional string who = 10;
         optional int64 session = 22;
         optional string host = 23;
         optional int32 pid = 24;
@@ -34,8 +35,8 @@ message LockServerWire_StatInfo {
         optional int64 call_id = 27;
     }
     
-    required int32 lock_mode = 11;
-    required int64 expiry_time = 12;
+    optional int32 lock_mode = 11;
+    optional int64 expiry_time = 12;
     optional int64 lock_delay_duration = 37 [default = 0];
     optional string lock_delay_master_epoch = 38;
     optional fixed64 checksum = 15;

@@ -1,0 +1,12 @@
+syntax = "editions";
+
+package tech.file;
+
+message Cns2StripeSharingExtendedAttribute {
+    repeated Snapshot snapshots = 1;
+    message Snapshot {
+        optional uint32 store_cell_id = 4;
+        optional int64 store_file_id = 2;
+        optional int64 length = 3;
+    }
+}

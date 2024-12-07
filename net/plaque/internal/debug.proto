@@ -1,0 +1,67 @@
+syntax = "editions";
+
+package plaque.internal;
+
+import "net/plaque/opdef/opdef.proto";
+import "net/plaque/trace.proto";
+
+service DebugService {
+    rpc GetOperators(GetOperatorsRequest) returns (GetOperatorsResponse);
+    rpc SampleTrace(SampleTraceRequest) returns (trace.Bundle);
+    rpc SampleCPUTrace(SampleCPUTraceRequest) returns (trace.Bundle);
+}
+
+message TraceRecord {
+    optional fixed64 execid_a = 1;
+    optional fixed64 execid_b = 2;
+    optional string program_name = 3;
+    optional fixed64 start_time_micros = 4;
+    optional fixed64 done_time_micros = 5;
+    optional string group_name = 6;
+    optional int32 trace_level = 7;
+    optional trace.TraceType trace_type = 8;
+    optional bool active = 9;
+}
+
+message GetPlaqueRequest {
+    optional int32 min_trace_level = 1;
+}
+
+message GetPlaqueResponse {
+    repeated TraceRecord traces = 2;
+    
+    reserved 1;
+}
+
+message GetProgramRequest {
+    optional fixed64 fp = 1;
+}
+
+message GetTraceRequest {
+    optional fixed64 execid_a = 1;
+    optional fixed64 execid_b = 2;
+}
+
+message GetOperatorsRequest {
+    
+}
+
+message OpDefWithPackage {
+    optional string package = 1;
+    optional OpDef op = 2;
+    optional OpFile.Version version = 3;
+}
+
+message GetOperatorsResponse {
+    repeated OpDefWithPackage operators = 1;
+}
+
+message SampleTraceRequest {
+    optional string program_name = 1;
+    optional string group_name = 2;
+    optional int32 trace_level = 3;
+}
+
+message SampleCPUTraceRequest {
+    optional fixed64 collection_time_micros = 1;
+}

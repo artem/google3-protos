@@ -218,7 +218,7 @@ enum DataFormat {
     DF_LOGGING_ELEMENT_TYPE_ID = 7;
 }
 
-extend proto2.FieldOptions {
+extend .proto2.FieldOptions {
     optional SemanticType semantic_type = 40075780 [default = ST_NOT_SPECIFIED];
     optional Qualifier qualifier = 40270992;
     optional LocationQualifier location_qualifier = 69646961;
@@ -227,7 +227,7 @@ extend proto2.FieldOptions {
     repeated RetentionSpec retention = 40223876;
 }
 
-extend proto2.MessageOptions {
+extend .proto2.MessageOptions {
     optional SemanticType msg_semantic_type = 41149386 [default = ST_NOT_SPECIFIED];
     optional Qualifier msg_qualifier = 41551199;
     optional LocationQualifier msg_location_qualifier = 69646961;
@@ -235,11 +235,11 @@ extend proto2.MessageOptions {
     repeated RetentionSpec msg_retention = 41909987;
 }
 
-extend proto2.FileOptions {
+extend .proto2.FileOptions {
     optional bool file_vetted_for_datapol_annotations = 43601160 [default = false];
     optional string file_vetting_status = 71304954;
 }
 
-extend proto2.EnumOptions {
+extend .proto2.EnumOptions {
     optional EnumDetails enum_details = 525000035;
 }

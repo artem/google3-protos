@@ -1,0 +1,19 @@
+syntax = "proto3";
+
+package production_time;
+
+import "storage/datapol/annotations/proto/semantic_annotations.proto";
+
+option java_multiple_files = true;
+option java_package = "com.google.prod.time.truetime.proto";
+
+message TrueTimestampProto {
+    string rfc3339_timestamp = 2;
+    
+    reserved 1;
+}
+
+message TrueTimeIntervalProto {
+    TrueTimestampProto earliest = 1;
+    TrueTimestampProto latest = 2;
+}

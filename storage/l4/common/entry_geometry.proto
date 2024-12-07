@@ -1,0 +1,11 @@
+syntax = "editions";
+
+package storage_l4;
+
+message EntryGeometryProto {
+    optional int64 file_offset = 1;
+    optional int64 footer_length = 2;
+    optional int64 value_length = 3;
+    
+    reserved 4;
+}

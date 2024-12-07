@@ -1,0 +1,25 @@
+syntax = "editions";
+
+package consensus.registry;
+
+import "consensus/common/proto/domain.proto";
+import "consensus/registry/proto/service.proto";
+import "google/protobuf/timestamp.proto";
+import "storage/datapol/annotations/proto/semantic_annotations.proto";
+
+option java_multiple_files = true;
+option java_package = "com.google.consensus.registry";
+
+message RegisteredName {
+    optional Service service = 1;
+    optional Domain domain = 2;
+    optional string name = 3;
+    optional ServiceMetadata service_metadata = 4;
+    
+    optional RegistryMetadata registry_metadata = 5;
+    message RegistryMetadata {
+        optional google.protobuf.Timestamp registration_timestamp = 1;
+    }
+    
+    optional DeploymentType deployment_type = 6;
+}

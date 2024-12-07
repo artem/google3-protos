@@ -1,4 +1,4 @@
-syntax = "proto2";
+syntax = "editions";
 
 package privacy.context;
 
@@ -12,6 +12,9 @@ enum BitfieldIndex {
     ALLOW_ENFORCEMENT_WITHOUT_CONSENT = 3;
     VERTEX_TRAFFIC_FOR_GROUNDING = 4;
     PAYMENTS_TRAFFIC_FOR_NAME_SCREENING = 5;
+    GEMINI_TRAFFIC_FOR_GROUNDING = 6;
+    GENERATIVE_AI_TRAFFIC_FOR_GROUNDING = 7;
+    GENERATIVE_AI_TRAFFIC_FOR_TRAINING = 8;
     EXAMPLE_FOO = 14;
     EXAMPLE_BAR = 15;
 }

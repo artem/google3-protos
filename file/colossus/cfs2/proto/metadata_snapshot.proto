@@ -1,0 +1,30 @@
+syntax = "editions";
+
+package colossus.cfs2;
+
+import "file/colossus/cfs2/proto/curator.proto";
+import "file/colossus/cfs2/proto/metadata_layer.proto";
+import "file/colossus/cfs2/proto/paxos.proto";
+
+message LogFileSnapshot {
+    optional string file_path = 1;
+    optional int64 commit_length = 2;
+    optional bool frozen = 3;
+}
+
+message FolderOpenTime {
+    optional PaxosGroupEpoch epoch = 1;
+    optional ViewID view_id = 2;
+}
+
+message FolderSnapshot {
+    optional CuratorPaxosPayload paxos_log = 1;
+    repeated LogFileSnapshot md0_log = 2;
+    repeated LogFileSnapshot md1_log = 3;
+    optional PaxosGroup paxos_group = 4;
+    optional CuratorPaxosPayload.FolderState state = 9;
+    optional MetadataLayer max_loadable_layer = 6;
+    optional bool read_only_folder = 7;
+    optional FolderOpenTime open_time = 8;
+    optional bool folder_deleted = 5 [deprecated = true];
+}

@@ -1,11 +1,11 @@
-syntax = "proto3";
+syntax = "editions";
 
 package thinmint;
 
 import "security/keymaster/keymaster.proto";
 
 message Keyset {
-    security.SerializedReader serialized_reader = 1;
+    optional security.SerializedReader serialized_reader = 1;
     
     reserved 2;
 }
@@ -15,9 +15,9 @@ message CryptoMonitoringAnnotations {
 }
 
 message CombinedKeyset {
-    uint64 version = 1;
-    string digest = 2;
-    string digest_v2 = 5;
+    optional uint64 version = 1;
+    optional string digest = 2;
+    optional string digest_v2 = 5;
     map<string, Keyset> keysets = 3;
     map<string, CryptoMonitoringAnnotations> annotations = 6;
     map<string, Keyset> keysets_default_deny = 4;

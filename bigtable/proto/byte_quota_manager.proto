@@ -1,0 +1,31 @@
+syntax = "editions";
+
+package bigtable;
+
+import "bigtable/proto/bigtable.proto";
+import "bigtable/util/state_manager/state_manager.proto";
+
+message BTI_DenyWritesRequest {
+    repeated DenyWritesTuple tuples = 1;
+    message DenyWritesTuple {
+        optional string bigtable_partition = 1;
+        optional string owner = 2;
+        optional CellMetadata.CfsPartition cfs_partition = 3;
+        optional string justification = 4;
+    }
+    
+    repeated DenyWritesTuple snapshot_tuples = 2;
+}
+
+message BTI_DenyWritesResponse {
+    optional float max_allocation_fraction = 1;
+}
+
+message DenyWritesCheckpoint {
+    optional BTI_DenyWritesRequest request = 1;
+    optional int64 timestamp_millis = 2;
+    
+    extend StateManagerCheckPoint {
+        optional DenyWritesCheckpoint state = 106;
+    }
+}

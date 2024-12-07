@@ -1,4 +1,4 @@
-syntax = "proto2";
+syntax = "editions";
 
 package bns;
 
@@ -9,8 +9,12 @@ option java_multiple_files = true;
 option java_package = "com.google.net.bns";
 
 message BNSAliasConfig {
+    optional bool enable_task_alias = 3;
+    
     repeated Target targets = 1;
     message Target {
+        optional int32 traffic_split_weight = 3;
+        
         oneof address {
             string bns = 1;
             ResolvedAddr ip = 2;
@@ -22,9 +26,23 @@ message BNSAliasConfig {
         TASK_RESOLUTION_MODE_UNSPECIFIED = 0;
         TASK_RESOLUTION_MODE_CONCAT = 1;
         TASK_RESOLUTION_MODE_MERGE = 2;
+        TASK_RESOLUTION_MODE_NONE = 3;
     }
     
     extend BNSMeta {
         optional BNSAliasConfig bns_alias_config = 482675313;
+    }
+}
+
+message BNSAliasAddrsConfig {
+    repeated TaskAlias task_aliases = 1;
+    message TaskAlias {
+        repeated int32 indices = 1;
+        optional string target_job_bns = 2;
+        repeated int32 target_task_indices = 3;
+    }
+    
+    extend BNSAddrs {
+        optional BNSAliasAddrsConfig bns_alias_addrs_config = 482675313;
     }
 }

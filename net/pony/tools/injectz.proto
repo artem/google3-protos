@@ -1,0 +1,97 @@
+syntax = "editions";
+
+package net_pony.injectz;
+
+import "google/protobuf/duration.proto";
+import "net/pony/public/pony-address.proto";
+import "util/task/codes.proto";
+import "util/task/status.proto";
+
+message Matcher {
+    optional string match_regexp = 1;
+    optional MatchType match_type = 2 [default = COMMANDS];
+    optional int32 completion_queue_id = 3;
+    optional string remote_ip_address = 4;
+    optional uint32 remote_station_handle = 5;
+    repeated string remote_cluster = 6;
+}
+
+message CompletionStatus {
+    optional util.error.Code error_code = 1;
+    optional uint32 completion_which_message = 2;
+    optional uint64 cookie = 3;
+}
+
+message ImmediateStatus {
+    optional util.StatusProto return_status = 1;
+}
+
+message SingleAction {
+    optional int32 weight = 3;
+    
+    oneof action_type {
+        CompletionStatus completion_status = 1;
+        uint32 delay_ms = 2;
+        ImmediateStatus immediate_status = 4;
+    }
+}
+
+message Rule {
+    optional Matcher match = 1;
+    repeated SingleAction action_list = 2;
+    optional bool inject_lame_completions_on_matching_connections = 3 [default = false];
+}
+
+message ActionStats {
+    optional int32 num_actions_taken = 1;
+}
+
+message RuleWithStats {
+    optional Rule rule = 1;
+    repeated ActionStats stats = 2;
+    optional int32 total_weight = 3;
+}
+
+message BatchCreateRulesReq {
+    repeated Rule rules = 1;
+    optional bool verify_send_payloads = 2;
+    optional google.protobuf.Duration disconnect_after_delay = 3;
+}
+
+message BatchCreateRulesResp {
+    
+}
+
+message DeleteAllRulesReq {
+    
+}
+
+message DeleteAllRulesResp {
+    
+}
+
+message LookupRulesReq {
+    
+}
+
+message LookupRulesForEndpoint {
+    optional Address endpoint_address = 1;
+    repeated RuleWithStats rule_list = 2;
+}
+
+message LookupRulesResp {
+    repeated LookupRulesForEndpoint endpoint_rules = 1;
+}
+
+message InitiateDisconnectReq {
+    
+}
+
+message InitiateDisconnectResp {
+    
+}
+
+enum MatchType {
+    COMMANDS = 1;
+    METHODS = 2;
+}

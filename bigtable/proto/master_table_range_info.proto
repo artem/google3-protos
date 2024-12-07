@@ -1,0 +1,31 @@
+syntax = "editions";
+
+package bigtable;
+
+import "bigtable/proto/bigtable_internal.proto";
+
+option java_package = "com.google.bigtable.protos";
+
+message BTI_TableRangeInfoRequest {
+    optional BTI_Request request = 1;
+    optional string table = 2;
+    optional uint64 version = 3;
+    optional bytes start_row = 4;
+    optional bytes end_row = 5;
+}
+
+message BTI_TabletKeyRange {
+    optional bytes start_key = 1;
+    optional bytes end_key = 2;
+}
+
+message BTI_TableRangeInfoReply {
+    optional int32 tablet_count = 1;
+    optional int32 server_count = 2;
+    optional int32 unleased_count = 3;
+    optional int32 num_servers = 4;
+    optional int32 num_balanced = 5;
+    optional int32 num_heavy = 6;
+    optional int32 ideal_moves = 7;
+    repeated BTI_TabletKeyRange tablet_range = 8;
+}

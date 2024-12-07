@@ -1,4 +1,4 @@
-syntax = "proto2";
+syntax = "editions";
 
 package speckle_dogfish.dcp.storage;
 
@@ -7,6 +7,8 @@ import "google/protobuf/timestamp.proto";
 import "storage/datapol/annotations/proto/semantic_annotations.proto";
 import "storage/speckle/dogfish/proto/data-protection.proto";
 import "storage/speckle/dogfish/proto/database-type.proto";
+import "third_party/java/protobuf/java_features.proto";
+import "third_party/protobuf/cpp_features.proto";
 
 message VolumeSettings {
     optional bool wrap_record_in_input_buffer = 1 [default = false];
@@ -33,6 +35,8 @@ message ChangeableVolumeSettings {
     optional bool use_spanner_for_gc = 7 [default = false, deprecated = true];
     optional DatabaseFlags database_flags = 9;
     repeated StorageUsageAdjustment storage_usage_adjustments = 10;
+    optional bool ignore_input_buffer_checksum_verification_failures = 11 [default = false];
+    optional bool ignore_wal_saving_checksum_verification_failures = 12 [default = false];
     
     reserved 8;
 }
@@ -97,6 +101,7 @@ message ShardMetadata {
     
     optional int32 volume_settings_version = 4;
     optional int64 latest_canonical_checksum_lsn = 5 [default = 0x7fffffffffffffff];
+    optional bool use_shard_snapshots = 6 [default = false];
 }
 
 message ShardSize {
@@ -109,7 +114,7 @@ message BackupMetadata {
     optional dogfish_proto.BackupEncryption encryption = 2;
     optional bool report_cmek_versions_for_pitr = 3;
     
-    repeated VerificationStatus verification_statuses = 4 [packed = true];
+    repeated VerificationStatus verification_statuses = 4;
     enum VerificationStatus {
         NONE = 0;
         GCS_SCAN = 1;

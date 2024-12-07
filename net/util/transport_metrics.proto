@@ -140,7 +140,7 @@ message Timestamps {
         optional int64 stream_seq = 7;
     }
     
-    extend proto2.bridge.MessageSet {
+    extend .proto2.bridge.MessageSet {
         optional Timestamps message_set_extension = 141924095;
     }
 }

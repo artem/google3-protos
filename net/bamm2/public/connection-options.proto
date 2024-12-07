@@ -1,0 +1,54 @@
+syntax = "editions";
+
+package bamm2;
+
+import "google/protobuf/duration.proto";
+import "net/base/qos.proto";
+import "security/loas/l2/proto/securitylevel.proto";
+
+message SecurityOptions {
+    optional string security_protocol = 1 [default = "loas2"];
+    optional int32 security_protocol_version = 10 [default = 1];
+    optional int32 supported_security_protocol_version = 11 [default = 1];
+    repeated string server_username = 4;
+    optional security_loas_l2.SecurityLevel minimum_security_level = 13 [default = SECURITY_NONE];
+    optional bool instance_info_required = 14 [default = false];
+    
+    oneof local_credential {
+        string desired_local_id = 2;
+        int64 desired_local_gaia_id = 12;
+    }
+    
+    reserved 3, 5, 6, 7, 8, 9;
+}
+
+message PonyOptions {
+    optional uint32 shard_key = 1;
+    optional int32 selector = 2;
+    optional net_base.qos.TrafficClass wan_qos = 7;
+    optional bool query_pony_connectivity = 3 [default = true, deprecated = true];
+    optional bool require_pony_connectivity = 4 [default = true];
+    optional bool demand_expressed = 5 [default = false];
+    optional uint32 local_stripe_requested = 6;
+    optional uint32 remote_stripe_requested = 8;
+}
+
+message ConnectionOptions {
+    optional SecurityOptions security_options = 1;
+    optional PonyOptions pony_options = 2;
+    optional net_base.qos.TrafficClass traffic_class = 3 [default = LLQ1];
+    repeated net_base.qos.TrafficClass additional_traffic_classes = 10;
+    optional int32 connection_queue = 4 [default = 0];
+    optional int32 stream_queue = 5 [default = 0];
+    optional uint32 protection_domain = 6;
+    optional google.protobuf.Duration connect_deadline = 7;
+    optional string service = 8;
+    optional bytes data = 9;
+    optional string delegated_user = 11;
+}
+
+message AcceptConnectionOptions {
+    optional int32 connection_queue = 1 [default = -1];
+    optional int32 stream_queue = 2 [default = -1];
+    optional uint32 protection_domain = 3;
+}

@@ -1,11 +1,9 @@
-syntax = "proto2";
+syntax = "editions";
 
 package stats_census.tracing;
 
 import "stats/census/proto/view.proto";
 import "util/task/status.proto";
-
-option cc_enable_arenas = true;
 
 message Op {
     optional fixed64 trace_id = 1;

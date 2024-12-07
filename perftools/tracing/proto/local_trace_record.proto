@@ -11,7 +11,7 @@ option java_package = "com.google.tracing";
 message LocalTraceRecord {
     required TraceRecord tr = 1;
     
-    extend proto2.bridge.MessageSet {
+    extend .proto2.bridge.MessageSet {
         optional LocalTraceRecord message_set_extension = 14610079;
     }
 }

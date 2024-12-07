@@ -6,6 +6,6 @@ import "net/proto2/proto/descriptor.proto";
 
 option go_package = "github.com/cncf/xds/go/udpa/annotations";
 
-extend proto2.FieldOptions {
+extend .proto2.FieldOptions {
     bool sensitive = 76569463;
 }

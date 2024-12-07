@@ -57,7 +57,7 @@ message DiskSSTableInfo {
     optional int64 level1_index_offset = 4;
     optional int64 level1_index_size = 5;
     
-    extend proto2.bridge.MessageSet {
+    extend .proto2.bridge.MessageSet {
         optional DiskSSTableInfo message_set_extension = 7748790;
     }
 }
@@ -76,7 +76,7 @@ message Metadata {
     optional string type = 1;
     optional Creator creator = 15;
     optional Stats stats = 2;
-    optional proto2.bridge.MessageSet info = 3;
+    optional .proto2.bridge.MessageSet info = 3;
     optional string sharder = 4;
     optional ExistenceFilterStats existence_filter_stats = 5;
 }

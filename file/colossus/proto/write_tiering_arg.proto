@@ -1,0 +1,26 @@
+syntax = "proto2";
+
+package colossus;
+
+import "tech/file/proto/types.proto";
+
+option java_multiple_files = true;
+
+message WriteTieringArgProto {
+    optional L4wFlexRegistrationsSource l4w_flex_registrations_source = 1;
+    optional L4wFlexCacheCell l4w_flex_cache_cell = 2;
+    optional tech.file.DiskTimeBucket eviction_bucket = 3;
+    map<string, string> census_tags = 4;
+}
+
+enum L4wFlexRegistrationsSource {
+    L4W_FLEX_REGISTRATIONS_SOURCE_UNKNOWN = 0;
+    L4W_FLEX_REGISTRATIONS_SOURCE_ALL = 1;
+    L4W_FLEX_REGISTRATIONS_SOURCE_USER_ONLY = 2;
+}
+
+enum L4wFlexCacheCell {
+    L4W_FLEX_CACHE_CELL_UNKNOWN = 0;
+    L4W_FLEX_CACHE_CELL_D_CELL = 1;
+    L4W_FLEX_CACHE_CELL_DEV = 2;
+}

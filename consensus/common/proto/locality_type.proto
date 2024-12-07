@@ -1,0 +1,24 @@
+syntax = "editions";
+
+package consensus;
+
+option java_multiple_files = true;
+option java_package = "com.google.consensus.common";
+
+enum LocalityType {
+    UNKNOWN = 0;
+    CLUSTER = 1;
+    METRO = 2;
+    GLOBAL = 3;
+    CLOUD_ZONE = 4;
+    CLOUD_REGION = 5;
+    CLOUD_GEO = 13;
+    PROD_ZONE = 6;
+    PROD_REGION = 7;
+    CLOUD_ZONE_STAGING = 8;
+    CLOUD_REGION_STAGING = 9;
+    FABRIC = 10;
+    CLOUD_ZONE_TPC_LITE = 11;
+    CLOUD_REGION_TPC_LITE = 12;
+    CHUBBY = 14;
+}

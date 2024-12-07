@@ -1,0 +1,17 @@
+syntax = "editions";
+
+package bigtable;
+
+import "bigtable/proto/bigtable.proto";
+import "bigtable/proto/bigtable_internal.proto";
+
+message UnloadedTableInfo {
+    optional uint64 version = 1;
+    optional BTI_TableMetadata.UnloadReason unload_reason = 2;
+}
+
+message BTI_UnloadedTables {
+    repeated UnloadedTableInfo table = 1;
+    optional ChubbyCompressed chubby_compressed = 3;
+    optional fixed32 _checksum = 2;
+}

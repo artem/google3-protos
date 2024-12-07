@@ -1,0 +1,14 @@
+syntax = "editions";
+
+package tech.file;
+
+import "storage/l4/core/application_feature.proto";
+import "storage/l4/core/application_id.proto";
+import "storage/l4/core/version.proto";
+import "third_party/protobuf/cpp_features.proto";
+
+message L4ExtendedAttribute {
+    optional storage_l4.Version.Type producer_version = 3;
+    optional storage_l4.ApplicationId application_id = 1;
+    repeated storage_l4.ApplicationFeature application_features = 2;
+}

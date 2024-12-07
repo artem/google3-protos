@@ -1,4 +1,4 @@
-syntax = "proto3";
+syntax = "editions";
 
 package stats_census;
 
@@ -8,15 +8,15 @@ import "util/task/status.proto";
 option java_multiple_files = true;
 
 message ForwardRecordCollectorWriteRequest {
-    string record_collector_target = 1;
+    optional string record_collector_target = 1;
     
     oneof request {
         record_collector.WriteRequest write_request = 2;
-        bytes raw_write_request = 3;
+        bytes raw_write_request = 3 [ctype = STRING_PIECE];
     }
 }
 
 message ForwardRecordCollectorWriteResponse {
-    util.StatusProto rpc_status = 1;
-    record_collector.WriteResponse write_response = 2;
+    optional util.StatusProto rpc_status = 1;
+    optional record_collector.WriteResponse write_response = 2;
 }

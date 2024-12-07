@@ -1,0 +1,13 @@
+syntax = "editions";
+
+package plaque;
+
+import "privacy/data_governance/attributes/proto/ddt.proto";
+
+option java_multiple_files = true;
+option java_package = "com.google.net.plaque.proto";
+
+message RpcOpResponseMetadata {
+    optional double server_elapsed_time_seconds = 1;
+    optional privacy.data_governance.attributes.DDTContext ddt = 2;
+}

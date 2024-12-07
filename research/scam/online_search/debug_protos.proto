@@ -2,6 +2,7 @@ syntax = "proto2";
 
 package research_scam;
 
+import "google/api/inclusion.proto";
 import "research/scam/proto/restricts.proto";
 import "storage/datapol/annotations/proto/semantic_annotations.proto";
 

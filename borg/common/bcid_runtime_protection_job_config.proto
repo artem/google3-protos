@@ -1,0 +1,22 @@
+syntax = "proto2";
+
+package borg;
+
+message BcidRuntimeProtectionJobConfig {
+    optional BcidDynamicMpmProtectionJobConfig dynamic_mpm = 1;
+    message BcidDynamicMpmProtectionJobConfig {
+        optional BcidRuntimeProtectionFeatureState state = 1;
+    }
+    
+    optional BcidCDPushProtectionJobConfig cdpush = 2;
+    message BcidCDPushProtectionJobConfig {
+        optional BcidRuntimeProtectionFeatureState state = 1;
+    }
+    
+    enum BcidRuntimeProtectionFeatureState {
+        UNSPECIFIED_FEATURE_STATE = 0;
+        OPT_OUT = 1;
+        DRY_RUN = 2;
+        ENFORCED = 3;
+    }
+}

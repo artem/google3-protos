@@ -1,0 +1,17 @@
+syntax = "proto2";
+
+package storage_d;
+
+import "storage/k3/borg/borg_job_port.proto";
+import "storage/k3/net/socket_address.proto";
+
+message JobOrSocketAddressesProto {
+    oneof variant {
+        .k3.BorgJobPortProto job = 1;
+        SocketAddressesProto socket_addresses = 2;
+    }
+}
+
+message SocketAddressesProto {
+    repeated .k3.SocketAddressProto addresses = 1;
+}

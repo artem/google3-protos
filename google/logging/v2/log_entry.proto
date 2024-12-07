@@ -25,6 +25,30 @@ option java_multiple_files = true;
 option java_outer_classname = "LogEntryProto";
 option java_package = "com.google.logging.v2";
 
+message AppHubApplication {
+    string host_project_id = 1;
+    string location = 2;
+    string id = 3;
+}
+
+message AppHubService {
+    string id = 1;
+    string environment_type = 2;
+    string criticality_type = 3;
+}
+
+message AppHubWorkload {
+    string id = 1;
+    string environment_type = 2;
+    string criticality_type = 3;
+}
+
+message AppHub {
+    AppHubApplication application = 1;
+    AppHubService service = 2;
+    AppHubWorkload workload = 3;
+}
+
 message LogEntry {
     string log_name = 12;
     api.MonitoredResource resource = 8;
@@ -48,6 +72,7 @@ message LogEntry {
     string error_group = 26;
     repeated LogErrorGroup error_groups = 36;
     InternalMetadata internal_metadata = 32;
+    AppHub apphub = 37;
     
     oneof payload {
         protobuf.Any proto_payload = 2;

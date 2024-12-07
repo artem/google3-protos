@@ -1,0 +1,23 @@
+syntax = "editions";
+
+package storage_l4;
+
+import "storage/l4/common/d_user_isolation_class.proto";
+import "storage/l4/public/cache_name.proto";
+
+message FileEncodingInfoProto {
+    optional int64 block_length = 1;
+    optional int32 kind = 2;
+    optional int32 data_chunks = 3;
+    optional int32 code_chunks = 4;
+}
+
+message FileDescriptorInfoProto {
+    optional FileEncodingInfoProto encoding = 1;
+    optional double ctime_seconds = 2;
+    optional bytes l4_extended_attribute = 3 [ctype = CORD];
+    optional DUserIsolationClassProto eviction_user = 4;
+    optional CacheNameProto tiering_cache = 6;
+    
+    reserved 5;
+}

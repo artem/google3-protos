@@ -1,0 +1,12 @@
+syntax = "editions";
+
+package security_loas_l2;
+
+import "security/loas/l2/internal/transport_security/transport_security_common.proto";
+import "security/loas/l2/proto/common.proto";
+
+option java_package = "com.google.net.loas.l2";
+
+extend AuthenticatedOptions {
+    optional .transport_security.RpcProtocolVersions rpc_protocol_versions = 1005;
+}

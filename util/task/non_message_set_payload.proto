@@ -10,7 +10,7 @@ option java_package = "com.google.net.util";
 message NonMessageSetPayload {
     repeated google.protobuf.Any payloads = 1;
     
-    extend proto2.bridge.MessageSet {
+    extend .proto2.bridge.MessageSet {
         optional NonMessageSetPayload message_set_extension = 258191113;
     }
 }

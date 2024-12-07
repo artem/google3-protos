@@ -1,7 +1,8 @@
-syntax = "proto2";
+syntax = "editions";
 
 package research_scam;
 
+import "research/scam/proto/input_output.proto";
 import "research/scam/proto/scam.proto";
 import "smartass/datasync/base/resources.proto";
 
@@ -24,6 +25,7 @@ message ServiceConfig {
     optional bool parallel_load_on_startup = 22;
     optional bool root_partitioning = 7 [default = false, deprecated = true];
     optional int32 n_server_replicas = 8 [default = 1, deprecated = true];
+    repeated InputOutputConfig.TeamsterConfig teamster = 25;
 }
 
 message ShardUpdatePollingConfig {

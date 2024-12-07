@@ -20,6 +20,7 @@ message InitRequest {
     optional uint64 redo_lsn = 3;
     optional int64 num_shards = 4;
     optional int64 chunk_size = 5;
+    optional string resource_name = 6;
 }
 
 message InitResponse {

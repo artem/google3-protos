@@ -1,0 +1,34 @@
+syntax = "proto2";
+
+package storage_cmek;
+
+import "google/protobuf/duration.proto";
+import "google/protobuf/timestamp.proto";
+import "storage/datapol/annotations/proto/semantic_annotations.proto";
+
+message ResourceKeyManagementConfig {
+    optional google.protobuf.Duration rotation_period = 4;
+    optional google.protobuf.Duration heartbeat_interval = 5;
+    optional google.protobuf.Duration soft_unwrapped_expiration = 9;
+    optional google.protobuf.Duration unwrapped_expiration = 6;
+    optional string resource_key_name = 8;
+    
+    optional ResourceKeyManagementConfigType config_type = 13 [default = RESOURCE_KEY_MANAGEMENT_TYPE_CLOUD_KMS];
+    enum ResourceKeyManagementConfigType {
+        RESOURCE_KEY_MANAGEMENT_TYPE_UNSPECIFIED = 0;
+        RESOURCE_KEY_MANAGEMENT_TYPE_CLOUD_KMS = 1;
+        RESOURCE_KEY_MANAGEMENT_TYPE_SHREDMILL = 2;
+    }
+    
+    optional string kms_key_reference = 1;
+    optional string cloud_service_account = 7;
+    optional int64 delegator_service_account_id = 12;
+    optional string cloud_resource_name = 3;
+    optional string cloud_resource_type = 10;
+    optional string cloud_service_name = 11;
+    optional string erasure_scope_id = 14;
+    optional google.protobuf.Timestamp shredmill_expiration_time = 15;
+    optional google.protobuf.Duration shredmill_key_ttl = 16;
+    
+    reserved 2;
+}

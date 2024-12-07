@@ -1,82 +1,133 @@
-syntax = "proto3";
+syntax = "editions";
 
 package stats_census;
 
 message Censusz {
-    bool is_census_enabled = 1;
+    optional bool is_census_enabled = 1;
     
     repeated View views = 2;
     message View {
-        string name = 1;
-        ViewType view_type = 2;
-        string resource_name = 3;
-        string measure_name = 4;
+        optional string name = 1;
+        optional ViewType view_type = 2;
+        optional string resource_name = 3;
+        optional string measure_name = 4;
         repeated TagSelector tag_selectors = 5;
     }
     
-    LayerLocalTags layer_local_tags = 3;
+    optional LayerLocalTags layer_local_tags = 3;
     message LayerLocalTags {
         repeated string registered = 1;
         repeated string accepted_and_propagated = 2;
     }
     
-    CpuStats cpu_stats = 4;
+    optional CpuStats cpu_stats = 4;
     message CpuStats {
-        Stats tick_count_delta = 1;
-        Stats rsd_tick_count_delta = 2;
-        Stats stuck_pc_count_delta = 3;
+        optional Stats tick_count_delta = 1;
+        optional Stats rsd_tick_count_delta = 2;
+        optional Stats stuck_pc_count_delta = 3;
     }
     
     repeated UserDefinedSinkStats user_defined_sink_stats = 5;
     message UserDefinedSinkStats {
-        Stats write_calls_num = 1;
-        Stats sampled_records_num = 2;
-        int64 sampled_capacity = 3;
-        Stats dropped_records_num = 4;
-        Stats flush_duration_millis = 5;
-        int64 flush_interval_millis = 6;
-        string id = 7;
+        optional Stats write_calls_count = 1;
+        optional Stats sampled_records_count = 2;
+        optional int64 sampled_capacity = 3;
+        optional Stats dropped_records_count = 4;
+        optional Stats flush_duration_millis = 5;
+        optional int64 flush_interval_millis = 6;
+        optional string id = 7;
     }
     
     repeated Tag tags = 6;
     message Tag {
-        string key = 1;
-        Stats observed_cardinality = 2;
-        int64 max_allowed_inbound_cardinality = 3;
-        Stats over_quota_count = 4;
-        string config_link = 5;
+        optional string key = 1;
+        optional Stats observed_cardinality = 2;
+        optional int64 max_allowed_inbound_cardinality = 3;
+        optional Stats over_quota_count = 4;
+        optional string config_link = 5;
+        optional string tag_type = 6;
+        optional string tag_quota_source = 7;
     }
     
-    bytes meta = 7;
+    optional bytes meta = 7;
     
-    Exporter exporter = 8;
+    optional Exporter exporter = 8;
     message Exporter {
         repeated MetricStat metric_stats = 1;
         message MetricStat {
-            string name = 1;
-            Stats point_count = 2;
-            Stats bytes_sent = 3;
+            optional string name = 1;
+            optional Stats point_count = 2;
+            optional Stats bytes_sent = 3;
         }
         
-        int64 entities_count = 2;
-        int64 requests_count = 3;
+        optional int64 entities_count = 2;
+        optional int64 requests_count = 3;
         
         repeated BatchesStat batches_stats = 4;
         message BatchesStat {
-            int64 requests_count = 1;
-            int64 latency_time_millis = 2;
+            optional int64 requests_count = 1;
+            optional int64 latency_time_millis = 2;
         }
     }
     
+    optional Aggregation aggregation = 9;
+    message Aggregation {
+        optional Stats record_count = 1;
+        optional Stats dropped_record_count = 2;
+        
+        repeated ResourceStats resource_stats = 3;
+        message ResourceStats {
+            optional string resource_id = 1;
+            optional Stats record_count = 2;
+            optional Stats bytes_harvested = 3;
+        }
+        
+        repeated RecordTypeStats record_type_stats = 4;
+        message RecordTypeStats {
+            optional string record_type = 1;
+            optional Stats record_count = 2;
+            optional Stats bytes_harvested = 3;
+        }
+        
+        optional Stats bytes_harvested = 5;
+        optional Stats harvest_duration_millis = 6;
+        optional Stats harvest_interval_millis = 8;
+        optional Stats batch_cycle_duration_millis = 7;
+    }
+    
+    optional LibraryConfiguration library_configuration = 10;
+    message LibraryConfiguration {
+        optional bool census_go_linkage = 1;
+        optional bool java_launcher_linkage = 2;
+        optional bool census_jni_linkage = 3;
+        optional bool python_launcher_linkage = 4;
+        optional bool census_python_linkage = 5;
+    }
+    
+    optional Flags flags = 11;
+    message Flags {
+        optional bool census_memory_budget_enable = 1;
+        optional int32 census_memory_budget_mb = 2;
+        optional bool census_contention_accounting_enabled = 3;
+        optional bool census_cpu_accounting_enabled = 4;
+        optional string census_default_tags = 5;
+        optional bool census_enable_auto_stats = 6;
+        optional uint64 census_min_sampling_rate = 7;
+        optional string census_aggregator_query_only_views = 8;
+        optional string census_resourcez_views = 9;
+        optional bool census_memory_accounting_enabled = 10;
+        optional double census_log_harvest_interval_in_secs = 11;
+    }
+    
     message Stats {
-        int64 latest = 1;
-        int64 max = 2;
+        optional int64 latest = 1;
+        optional int64 max = 2;
     }
     
     message TagSelector {
-        string key = 1;
-        string allowlist = 2;
-        string blocklist = 3;
+        optional string key = 1;
+        optional string allowlist = 2;
+        optional string blocklist = 3;
     }
     
     enum ViewType {

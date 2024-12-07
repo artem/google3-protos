@@ -1,1177 +1,2156 @@
 syntax = "proto2";
 
-import "borg/common/fs_dir.proto";
-import public "borg/common/pcpu.proto";
-import "borg/common/remote_resource.proto";
-import "net/proto2/bridge/proto/message_set.proto";
-import "security/thinmint/proto/core/thinmint_core.proto";
-import "security/thinmint/proto/thinmint.proto";
-import "tech/label/proto/label.proto";
 package borg;
 
-option java_package = "com.google.borg.rpc";
-option java_outer_classname = "Common";
+import "net/proto2/proto/descriptor.proto";
+import "borg/common/bcid_runtime_protection_job_config.proto";
+import "borg/common/fs_dir.proto";
+import "borg/common/machine_domain.proto";
+import "borg/common/network_queue.proto";
+import "borg/common/outlier_params.proto";
+import "borg/common/pcpu.proto";
+import "borg/common/raw_ssd.proto";
+import "borg/common/remote_resource.proto";
+import "borg/common/res_alloc.proto";
+import "borg/common/scalar_resource.proto";
+import "google/protobuf/duration.proto";
+import "google/protobuf/timestamp.proto";
+import "net/proto2/bridge/proto/message_set.proto";
+import "tech/label/proto/label.proto";
+import "production/tpc/change_management/equivalence/proto/annotation.proto";
+import "third_party/boundary_proxy/proto_compare/annotation.proto";
+
 option cc_enable_arenas = true;
-
-enum RawSSDSecurityMode {
-  UNSPECIFIED_RAW_SSD_SECURITY = 0;
-  BORG_MANAGED_RAW_SSD_SECURITY = 1;
-  TASK_MANAGED_RAW_SSD_SECURITY = 2;
-  NO_RAW_SSD_SECURITY = 3;
-}
-
-enum ResourceStateIntent {
-  UP = 0;
-  DOWN = 1;
-}
-
-enum Outlook {
-  NEVER = 0;
-  IN_FUTURE = 1;
-  NOW = 2;
-}
-
-enum AllocChildDiskState {
-  CHILD_DISK_PRESENT = 0;
-  CHILD_DISK_REMOVED = 1;
-}
-
-enum BorgPackageType {
-  UNSPECIFIED = 0;
-  LEGACY = 1;
-  REMOTE = 2;
-  LOCAL_RAM_FS_DIR = 3;
-}
-
-enum CredentialType {
-  TASK_CREDENTIALS = 0;
-  MACHINE_CREDENTIALS = 1;
-}
-
-enum DisableReason {
-  NONE = 0;
-  UNKNOWN_REASON = 1;
-  CHANGE_SCHEDULABILITY_RPC = 2;
-  MAINTENANCE_EVENT = 3;
-  BATCH_QUEUED = 4;
-  WAITING_FOR_AUTOPILOT = 5;
-  CONGESTION = 6;
-}
+option java_outer_classname = "Common";
+option java_package = "com.google.borg.rpc";
 
 message StorageType {
-  enum E {
-    DISK = 0;
-    SSD_FS = 1;
-  }
-  optional .borg.StorageType.E e = 10 [default = DISK];
+    optional E e = 10 [default = DISK];
+    enum E {
+        DISK = 0;
+        SSD_FS = 1;
+    }
 }
 
-message DiskIds {
-  repeated int32 id = 1;
-}
-
-message DiskPriority {
-  enum E {
-    NORMAL = 1;
-    PRIORITY = 2;
-    EXCLUSIVE = 3;
-  }
-  optional .borg.DiskPriority.E e = 10 [default = NORMAL];
+message FsIds {
+    repeated int32 id = 1;
 }
 
 message StorageSpec {
-  optional int32 min_devices = 1;
-  optional int32 max_devices = 2;
-  optional int64 space = 3;
-  optional float time_fraction = 4;
-  optional int32 external_user_foes = 5;
-  optional .borg.DiskPriority.E priority = 6 [default = NORMAL];
-  optional int32 required_features = 7;
-  optional int32 prohibited_features = 8;
+    optional int32 min_devices = 1;
+    optional int32 max_devices = 2;
+    optional int64 space = 3 [jstype = JS_STRING];
+    optional float time_fraction = 4;
+    optional int32 external_user_foes = 5;
+    optional int32 required_features = 7;
+    optional int32 prohibited_features = 8;
+    
+    reserved 6;
 }
 
-message RawSSDSpec {
-  optional int64 size = 1;
-  optional .borg.RawSSDSecurityMode security_mode = 2 [default = UNSPECIFIED_RAW_SSD_SECURITY];
-}
-
-message ScalarResource {
-  enum Key {
-    GPU = 0;
-    SEASTAR = 1;
-    PONYEXPRESS = 2;
-    JELLYFISH = 3;
-    HOST_IPV4 = 4;
-    NVM = 5;
-    HPN_BANDWIDTH = 6;
-    SWINETREK = 7;
-    ARGOS = 8;
-    GPU_GRID_K2 = 9;
-    GPU_FIREPRO_S9300X2 = 10;
-    GPU_TESLA_K20 = 11;
-    GPU_TESLA_K40 = 12;
-    GPU_TESLA_K80 = 13;
-    GPU_TESLA_P100 = 14;
-    GPU_MI25_16TH = 15;
-  }
-  optional .borg.ScalarResource.Key key = 1;
-  optional int64 value = 3;
+message LocalSSDPartitionFsDirSpec {
+    optional int64 raw_size = 1;
+    optional string name = 2;
+    optional PrimaryFsDirEligible primary_eligible = 3 [default = UNSPECIFIED_ELIGIBILITY];
 }
 
 message LocalRamFsDirSpec {
-  optional int64 size = 1;
-  optional string name = 2;
-  optional .borg.PrimaryFsDirEligible primary_eligible = 4;
-  optional .borg.FsDirUpdatePolicy update_policy = 5;
-  reserved 3;
+    optional int64 size = 1;
+    optional string name = 2;
+    optional PrimaryFsDirEligible primary_eligible = 4 [default = UNSPECIFIED_ELIGIBILITY];
+    optional FsDirUpdatePolicy update_policy = 5 [default = NO_FSDIR_UPDATE_POLICY];
+    
+    reserved 3;
 }
 
 message ResSpec {
-  message Pcpu {
-    optional .borg.PlatformSpecification platform = 15;
-    optional int64 millicores = 16;
-  }
-  required int64 memory = 1;
-  required int64 disk = 5;
-  optional float disk_time_fraction = 11;
-  optional int32 num_disks = 6 [default = 1];
-  optional int32 min_disks = 7 [default = 1];
-  optional .borg.DiskPriority disk_priority = 10;
-  optional .borg.StorageSpec ssd_fs = 12;
-  repeated .borg.RawSSDSpec raw_ssds = 19;
-  optional float cpu_rate = 2;
-  optional int64 milligcu = 13;
-  optional int64 network_rate = 8;
-  repeated .borg.ResSpec.Pcpu pcpu = 17;
-  repeated .borg.ScalarResource scalar = 18;
-  repeated .borg.LocalRamFsDirSpec local_ram_fs_dir = 20;
-  reserved 9;
+    required int64 memory = 1 [jstype = JS_NUMBER];
+    optional int64 regular_memory = 23 [jstype = JS_NUMBER];
+    required int64 disk = 5 [jstype = JS_NUMBER];
+    optional float disk_time_fraction = 11 [deprecated = true];
+    optional int32 num_disks = 6 [default = 1];
+    optional int32 min_disks = 7 [default = 1];
+    optional StorageSpec ssd_fs = 12;
+    repeated RawSSDSpec raw_ssds = 19;
+    optional float cpu_rate = 2;
+    optional int64 milligcu = 13 [jstype = JS_NUMBER];
+    optional int64 network_rate = 8 [jstype = JS_NUMBER];
+    
+    repeated Pcpu pcpu = 17;
+    message Pcpu {
+        optional PlatformSpecification platform = 15;
+        optional int64 millicores = 16 [jstype = JS_NUMBER];
+    }
+    
+    repeated ScalarResource scalar = 18;
+    repeated LocalRamFsDirSpec local_ram_fs_dir = 20;
+    repeated LocalSSDPartitionFsDirSpec local_ssd_partition_fs_dir = 21;
+    
+    repeated ResourceExtension resource_extensions = 24;
+    message ResourceExtension {
+        optional System system = 1;
+        enum System {
+            SYSTEM_UNSPECIFIED = 0;
+            SYSTEM_XEXECUTOR = 1;
+            SYSTEM_GCE = 2;
+        }
+        
+        optional string name = 2;
+        optional int64 value = 3;
+    }
+    
+    reserved 9, 10, 22;
 }
 
-message DiskAlloc {
-  enum ExternalUser {
-    SWAP = 1;
-    STORAGE = 2;
-    LOGS = 4;
-    ROOT = 8;
-  }
-  required int32 id = 3;
-  optional int32 storage_id = 12 [default = -1];
-  required int64 space = 2;
-  optional float time_fraction = 6;
-  optional bool priority = 7 [default = false];
-  optional int32 external_users = 4;
-  optional string path = 1;
-  optional int32 files = 5;
+message PerDomainRequirementSpec {
+    optional ResSpec res = 1;
+    optional string primary_fs_dir_name = 3;
+    
+    reserved 2;
 }
 
-message RawSSDAlloc {
-  optional string name = 1;
-  optional int64 size = 2;
-  optional .borg.RawSSDSecurityMode security_mode = 3 [default = UNSPECIFIED_RAW_SSD_SECURITY];
-}
-
-message FsDirState {
-  optional .borg.ResourceStateIntent intent = 1;
-  optional .borg.Outlook outlook = 2;
-}
-
-message FsDirError {
-  enum ErrorCode {
-    NO_ERROR = 0;
-    OUT_OF_SPACE = 1;
-    UNKNOWN_ERROR = 2;
-    OUT_OF_MEMORY = 3;
-  }
-  optional .borg.FsDirError.ErrorCode error_code = 1;
-  optional string error_msg = 2;
-}
-
-message ScratchFsDirInfo {
-  enum Type {
-    LOCAL_HDD_FS_DIR = 0;
-    LOCAL_SSD_FS_DIR = 1;
-    LOCAL_RAM_FS_DIR = 2;
-    REMOTE_HDD_FS_DIR = 3;
-  }
-  optional string nickname = 1;
-  optional string in_context_name = 2;
-  optional string path = 3;
-  optional int64 size = 4;
-  optional int64 usage = 6;
-  optional .borg.ScratchFsDirInfo.Type type = 5;
-  optional .borg.FsDirState state = 7;
-  optional string infrastructure_container_name = 8;
-  optional int64 memory_usage = 9;
-  optional int64 memory_reservation = 10;
-  optional float cpurate = 11;
-  optional string device_name = 12;
-}
-
-message ScratchFsDirs {
-  repeated .borg.ScratchFsDirInfo scratch_fs_dir = 1;
-  optional string primary_fs_dir_nickname = 2;
-  optional string primary_fs_dir_in_context_name = 3;
-}
-
-message CliqueSsdInfo {
-  optional string d_cell = 3;
-  optional int64 volume_id = 1;
-  optional int64 size = 2;
-}
-
-message BorgletDapSupport {
-  enum E {
-    NONE = 0;
-    SIMPLE = 1;
-    FRACTION = 2;
-  }
-  required .borg.BorgletDapSupport.E e = 1;
-}
-
-message MemLimitMode {
-  enum E {
-    STRICT = 1;
-    ELASTIC = 2;
-    UNLIMITED = 3;
-  }
+message TaskUpdateStatus {
+    optional UpdateState update_state = 1;
+    enum UpdateState {
+        RUNNING = 1;
+        UPDATE_FAILED = 2;
+        COMPLETED = 3;
+    }
+    
+    optional string status_message = 2;
+    optional int64 deadline = 3;
 }
 
 message TestCkpt {
-  required int32 val = 1;
+    required int32 val = 1;
 }
 
-message ResAlloc {
-  required int64 memory = 1;
-  repeated .borg.DiskAlloc disk = 4;
-  repeated .borg.DiskAlloc ssd_fs = 9;
-  repeated .borg.RawSSDAlloc ssd_raw_partition = 11;
-  optional float cpusecs = 5;
-  optional float cpurate = 6;
-  optional float cpuload = 8;
-  optional float sustained_cpurate = 13;
-  optional float sustained_cpuload = 14;
-  optional int64 elastic_exclusive_cpus = 16;
-  optional int64 max_scheduling_delay_ns = 15;
-  optional int64 network_rate = 7;
-  repeated .borg.ScalarResource scalar = 12;
+message AcceleratorTopology {
+    optional ScalarResource.Key type = 1;
+    map<string, Device> device = 2;
+    
+    message Device {
+        optional int32 numa_node = 1;
+        map<string, DeviceConnectionInfo> connected_device_id = 2;
+        
+        message DeviceConnectionInfo {
+            repeated int32 nvlink_lane_id = 1;
+        }
+    }
+}
+
+message DomainResEstimateCkpt {
+    optional MachineDomain.Type domain = 1;
+    optional ResAlloc limit = 2;
+    optional ResAlloc old_out = 3;
+    optional int32 requested_cores = 4;
+}
+
+message PowerEstimateCkpt {
+    optional PowerConsumption old_out = 1;
 }
 
 message ResEstimateCkpt {
-  optional .borg.ResAlloc limit = 1;
-  optional .borg.RemoteResAlloc remote_limit = 5;
-  optional .borg.ResAlloc old_out = 2;
-  optional int32 requested_cores = 3;
-  optional double first_update = 6;
-  reserved 4;
-}
-
-message VMDirMemoryState {
-  enum E {
-    UNDER_MEMORY_LIMIT = 0;
-    OVER_MEMORY_LIMIT = 1;
-  }
-  optional .borg.VMDirMemoryState.E e = 1 [default = UNDER_MEMORY_LIMIT];
-}
-
-message Permissions {
-  required string user = 1;
-  optional string group = 2;
-  optional int32 mode = 3;
-  repeated string read_access_role = 4;
-  reserved 5;
+    optional ResAlloc limit = 1;
+    optional RemoteResAlloc remote_limit = 5;
+    optional ResAlloc old_out = 2;
+    optional int32 requested_cores = 3;
+    optional double first_update = 6;
+    optional google.protobuf.Timestamp last_limit_update = 11;
+    repeated DomainResEstimateCkpt domain_res_estimate = 7;
+    
+    repeated CpuPercentile cpu_utilization_percentiles = 9;
+    message CpuPercentile {
+        optional float key = 1;
+        optional float value = 2;
+    }
+    
+    optional float borglet_cpu_reservation = 10;
+    optional PowerEstimateCkpt power_estimate = 12;
+    
+    reserved 4;
 }
 
 message BorgObjRef {
-  optional int64 uid = 1;
-  optional string name = 2;
+    optional int64 uid = 1 [jstype = JS_STRING];
+    optional string name = 2;
 }
 
 message PackageSetSpec {
-  repeated group Package = 1 {
-    required .borg.BorgObjRef objref = 2;
-    optional string shortname = 3;
-    optional .borg.TaskNotifier notifier = 4;
-  }
+    repeated group Package = 1 {
+        required BorgObjRef objref = 2;
+        optional string shortname = 3;
+        optional TaskNotifier notifier = 4;
+        optional MachineDomain.Type domain = 5;
+    }
 }
 
 message RequirementsSpec {
-  optional .borg.ResSpec res = 1;
-  optional .borg.RemoteResSpec remote_resources = 12;
-  optional string primary_fs_dir_name = 15;
-  optional .borg.ResSpec child_res = 2;
-  optional .borg.PackageSetSpec pkgs = 3;
-  optional .borg.ConstraintSetSpec constraints = 4;
-  optional bool exclusive = 5;
-  optional bool different_machines = 6 [deprecated = true];
-  optional int32 priority = 7;
-  optional int32 priority_when_preempting = 10;
-  optional bool ignore_configpkg_constraints = 11 [default = false];
-  reserved 13, 14;
+    optional ResSpec res = 1;
+    optional RemoteResSpec remote_resources = 12;
+    optional string primary_fs_dir_name = 15;
+    optional ResSpec child_res = 2;
+    optional PackageSetSpec pkgs = 3;
+    optional ConstraintSetSpec constraints = 4;
+    optional bool exclusive = 5 [deprecated = true];
+    optional bool different_machines = 6 [deprecated = true];
+    optional int32 priority = 7;
+    optional int32 priority_when_preempting = 10;
+    optional int32 availability_domain_index = 18;
+    optional bool ignore_configpkg_constraints = 11 [default = false, deprecated = true];
+    
+    reserved 13, 14;
 }
 
 message Overrides {
-  repeated group Override = 1 {
-    required int32 index = 2;
-    required .borg.RequirementsSpec req = 3;
-  }
+    repeated group Override = 1 {
+        required int32 index = 2;
+        required RequirementsSpec req = 3;
+    }
 }
 
 message ResSpecPrediction {
-  required float confidence_level = 1;
-  optional int64 memory = 2;
-  optional int64 disk_space = 3;
-  optional double cpu_rate = 4;
-  optional int64 milligcu = 5;
+    required float confidence_level = 1;
+    optional int64 memory = 2 [jstype = JS_STRING];
+    optional int64 disk_space = 3 [jstype = JS_STRING];
+    optional double cpu_rate = 4;
+    optional int64 milligcu = 5 [jstype = JS_STRING];
 }
 
 message FractionalResourceReservationSpec {
-  optional int32 memory = 1;
-  optional int32 disk_space = 2;
-  optional int32 cpu_rate = 3;
-  optional int32 milligcu = 4;
+    optional int32 memory = 1;
+    optional int32 disk_space = 2;
+    optional int32 cpu_rate = 3;
+    optional int32 milligcu = 4;
 }
 
 message ResourceAdviceSpec {
-  optional .borg.FractionalResourceReservationSpec top_usage = 1;
-  optional .borg.FractionalResourceReservationSpec lower_bound = 2;
+    optional FractionalResourceReservationSpec top_usage = 1;
+    optional FractionalResourceReservationSpec lower_bound = 2;
 }
 
 message ResourcePrediction {
-  repeated .borg.ResSpecPrediction default_res_prediction = 1;
-  repeated group Override = 2 {
-    repeated int32 index = 3;
-    repeated .borg.ResSpecPrediction res_prediction = 4;
-  }
-  optional string notes = 5;
+    repeated ResSpecPrediction default_res_prediction = 1;
+    
+    repeated group Override = 2 {
+        repeated int32 index = 3;
+        repeated ResSpecPrediction res_prediction = 4;
+    }
+    
+    optional string notes = 5;
 }
 
 message PlatformCpiSpec {
-  optional string platform_family = 1;
-  optional string platform_genus = 2;
-  optional string platform_species = 3;
-  optional string platform_subspecies = 4;
-  optional int32 measure_count = 5;
-  optional float average_cpi = 6;
-  optional float std_cpi = 7;
-  optional float average_cpu_usage = 8;
-  optional uint64 timestamp = 9;
-}
-
-message CompressedPlatformCpiSpec {
-  optional uint32 platform_taxonomy = 1;
-  optional int32 measure_count = 2;
-  optional float average_cpi = 3;
-  optional float std_cpi = 4;
-  optional float average_cpu_usage = 5;
+    optional string platform_family = 1;
+    optional string platform_genus = 2;
+    optional string platform_species = 3;
+    optional string platform_subspecies = 4;
+    optional int32 measure_count = 5;
+    optional float average_cpi = 6;
+    optional float std_cpi = 7;
+    optional float average_cpu_usage = 8;
+    optional uint64 timestamp = 9;
 }
 
 message CpiPrediction {
-  repeated .borg.PlatformCpiSpec cpi_per_platform = 1;
-}
-
-message CompressedCpiPredictionSpec {
-  repeated .borg.CompressedPlatformCpiSpec cpi_per_platform = 1;
+    repeated PlatformCpiSpec cpi_per_platform = 1;
 }
 
 message ResourceExceededType {
-  enum E {
-    MEMORY = 1;
-    DISK = 2;
-    SSD_FS = 3;
-    DEADLINE = 4;
-    JAVA_HEAP = 5;
-  }
-  optional .borg.ResourceExceededType.E e = 1;
+    optional E e = 1;
+    enum E {
+        MEMORY = 1;
+        DISK = 2;
+        SSD_FS = 3;
+        DEADLINE = 4;
+        JAVA_HEAP = 5;
+    }
 }
 
 message ConstraintSpec {
-  enum Relation {
-    PRESENT = 1;
-    ABSENT = 2;
-    EQUAL = 3;
-    NOT_EQUAL = 4;
-    LT = 5;
-    LE = 6;
-    GT = 7;
-    GE = 8;
-    HASH_LT = 9;
-    HASH_GT = 10;
-    IN = 11;
-    HASH_LE = 12;
-    HASH_GE = 13;
-  }
-  required string key = 1;
-  required int32 relation = 2;
-  optional string value = 3;
-  optional bool preferred = 4;
+    required string key = 1;
+    required int32 relation = 2;
+    optional string value = 3;
+    optional bool preferred = 4;
+    
+    enum Relation {
+        PRESENT = 1;
+        ABSENT = 2;
+        EQUAL = 3;
+        NOT_EQUAL = 4;
+        LT = 5;
+        LE = 6;
+        GT = 7;
+        GE = 8;
+        HASH_LT = 9;
+        HASH_GT = 10;
+        IN = 11;
+        HASH_LE = 12;
+        HASH_GE = 13;
+        CONTAINS = 14;
+    }
 }
 
 message ConstraintSetSpec {
-  repeated .borg.ConstraintSpec c = 1;
+    repeated ConstraintSpec c = 1;
 }
 
 message ConstraintExpr {
-  optional group AndExp = 1 {
-    repeated .borg.ConstraintExpr exp = 2;
-  }
-  optional group OrExp = 3 {
-    repeated .borg.ConstraintExpr exp = 4;
-  }
-  optional group NotExp = 5 {
-    optional .borg.ConstraintExpr exp = 6;
-  }
-  optional .borg.ConstraintSpec primitive = 7;
+    optional group AndExp = 1 {
+        repeated ConstraintExpr exp = 2;
+    }
+    
+    optional group OrExp = 3 {
+        repeated ConstraintExpr exp = 4;
+    }
+    
+    optional group NotExp = 5 {
+        optional ConstraintExpr exp = 6;
+    }
+    
+    optional ConstraintSpec primitive = 7;
 }
 
 message ResourceEstimationFlags {
-  optional bool allow_estimation = 14 [default = true];
-  optional bool allow_cpu_estimation = 1 [default = false];
-  optional double estimation_checkpoint_period = 2 [default = 300];
-  optional double estimation_checkpoint_min_fraction = 3 [default = 0.2];
-  optional double estimation_initial_delay = 4 [default = 300];
-  optional double estimation_half_life = 5 [default = 90];
-  optional double estimation_slack_multiplier = 6 [default = 1.15];
-  optional double cpu_estimation_half_life = 7 [default = 225];
-  optional double cpu_estimation_downward_half_life_adjustment = 8 [default = 1.383983];
-  optional double cpu_estimation_target_percentile = 9 [default = 0.9];
-  optional double cpu_estimation_slack_multiplier = 10 [default = 1.05];
-  optional double cpu_estimation_safety_margin = 11 [default = 0.3];
-  optional double cpu_estimation_safety_margin_with_prediction = 12 [default = 0.1];
-  optional double resource_update_interval_seconds = 13 [default = 60];
-  optional bool enable_overscheduling_tier1_memory = 15 [default = true];
-  reserved 16 to 19;
+    optional bool allow_estimation = 14 [default = true];
+    optional bool allow_cpu_estimation = 1 [default = false];
+    optional double estimation_checkpoint_period = 2 [default = 300];
+    optional double estimation_checkpoint_min_fraction = 3 [default = 0.2];
+    optional double estimation_initial_delay = 4 [default = 300];
+    optional double estimation_half_life = 5 [default = 90];
+    optional double estimation_slack_multiplier = 6 [default = 1.15];
+    optional double cpu_estimation_half_life = 7 [default = 225];
+    optional double cpu_estimation_downward_half_life_adjustment = 8 [default = 1.383983];
+    optional double cpu_estimation_target_percentile = 9 [default = 0.9];
+    optional double cpu_estimation_slack_multiplier = 10 [default = 1.05];
+    optional double cpu_estimation_safety_margin = 11 [default = 0.3];
+    optional double cpu_estimation_safety_margin_with_prediction = 12 [default = 0.1];
+    optional double resource_update_interval_seconds = 13 [default = 60];
+    optional bool enable_overscheduling_tier1_memory = 15 [default = true];
+    
+    reserved 16 to 19;
 }
 
 message AttrLimitSpec {
-  required string key = 1;
-  required int32 limit = 2;
-  optional bool preferred = 3;
-  optional bool auto_generated = 4;
+    required string key = 1;
+    required int32 limit = 2;
+    optional bool preferred = 3;
+    optional bool auto_generated = 4;
+    optional string label = 5;
 }
 
 message BorgletConfig {
-  enum AttributeSource {
-    BORGMASTER_GUESS = 0;
-    DERIVED = 1;
-    BORGLET = 2;
-    CLIENT = 3;
-    BORGMASTER = 4;
-  }
-  repeated group Item = 1 {
-    required string name = 2;
-    repeated string value = 3;
-    optional bool discard = 12;
-    optional .borg.BorgletConfig.AttributeSource source = 11;
-    optional bool persistent = 4;
-    optional float sample = 5 [default = 1];
-    optional .borg.ConstraintExpr constraints = 8;
-    optional bool flagfile = 7;
-  }
-  repeated .borg.BorgletInstallVersion install_version = 9;
-  reserved 10;
+    repeated group Item = 1 {
+        required string name = 2;
+        repeated string value = 3;
+        optional bool discard = 12;
+        optional AttributeSource source = 11;
+        optional bool persistent = 4;
+        optional ConstraintExpr constraints = 8;
+    }
+    
+    optional NormalizedAcceleratorPerformanceMap nap_map = 13;
+    
+    reserved 5, 7, 9, 10;
+    
+    enum AttributeSource {
+        BORGMASTER_GUESS = 0;
+        DERIVED = 1;
+        BORGLET = 2;
+        CLIENT = 3;
+        BORGMASTER = 4;
+    }
 }
 
 message BorgletVersion {
-  required string name = 1;
-  optional float sample = 3 [default = 1];
-  optional .borg.BorgletConfig config = 5;
-  optional .borg.ConstraintExpr constraints = 6;
-  optional string label = 7;
-}
-
-message BorgletInstallVersion {
-  required string version_name = 1;
-  optional bool restart_into = 2;
+    required string name = 1;
+    optional float sample = 3 [default = 1];
+    optional BorgletConfig config = 5;
+    optional ConstraintExpr constraints = 6;
+    optional string label = 7;
 }
 
 message TaskNotifier {
-  optional int32 signal = 1;
-  optional string url = 3;
-  optional string portname = 4;
-  optional string filename = 5;
-  optional bytes filecontents = 6;
-  reserved 2, 7;
+    optional int32 signal = 1;
+    optional string url = 3;
+    optional string portname = 4;
+    optional string filename = 5;
+    optional bytes filecontents = 6;
+    
+    reserved 2, 7;
 }
 
 message PortMonitor {
-  optional string url = 1 [default = "/healthz"];
-  optional int32 check_seconds = 2 [default = 30];
-  optional int32 max_consecutive_failures = 3;
-  optional int32 max_initial_failures = 4;
-  optional int32 timeout_seconds = 5 [default = 5];
-  optional int32 history_size = 6;
-  optional int32 stop_time = 7 [default = 2];
-  optional bool disabled = 8 [default = false];
-  optional .borg.TaskNotifier notifier = 9;
+    optional string url = 1 [default = "/healthz"];
+    optional int32 check_seconds = 2 [default = 30];
+    optional int32 max_consecutive_failures = 3;
+    optional int32 max_initial_failures = 4;
+    optional int32 timeout_seconds = 5 [default = 5];
+    optional int32 history_size = 6;
+    optional int32 stop_time = 7 [default = 2];
+    optional bool disabled = 8 [default = false];
+    optional TaskNotifier notifier = 9;
 }
 
 message PortList {
-  enum QOS {
-    BEST_EFFORT = 0;
-    EXPEDITED = 1;
-    ASSURED = 2;
-  }
-  enum TOS {
-    BE1 = 0;
-    AF1 = 1;
-    AF2 = 2;
-    AF3 = 3;
-    AF4 = 4;
-  }
-  enum Visibility {
-    PUBLIC = 0;
-    PRIVATE = 1;
-  }
-  repeated group Port = 1 {
-    optional string name = 2;
-    optional int32 static_port = 3;
-    optional bool shared = 8;
-    optional .borg.PortMonitor monitor = 4;
-    optional int32 qos = 5;
-    optional .borg.PortList.TOS tos = 7;
-    optional string default_url = 6 [default = "/"];
-    optional bool is_virtual = 9;
-    optional .borg.PortList.Visibility visibility = 10 [default = PUBLIC];
-  }
+    repeated group Port = 1 {
+        optional string name = 2;
+        optional int32 static_port = 3;
+        optional bool shared = 8;
+        optional PortMonitor monitor = 4;
+        optional PortMonitor health = 13;
+        optional int32 qos = 5;
+        optional TOS tos = 7;
+        optional string default_url = 6 [default = "/"];
+        optional bool is_virtual = 9;
+        optional Visibility visibility = 10 [default = PUBLIC];
+        optional int64 port_reuse_delay_after_migration_secs = 12;
+        optional bool app_metrics = 14;
+        
+        reserved 11;
+    }
+    
+    enum QOS {
+        BEST_EFFORT = 0;
+        EXPEDITED = 1;
+        ASSURED = 2;
+    }
+    
+    enum TOS {
+        BE1 = 0;
+        AF1 = 1;
+        AF2 = 2;
+        AF3 = 3;
+        AF4 = 4;
+    }
+    
+    enum Visibility {
+        PUBLIC = 0;
+        PRIVATE = 1;
+        HIDDEN = 2;
+    }
+}
+
+message PortPool {
+    repeated Port port = 1;
+    message Port {
+        optional int32 count = 1;
+        optional PortList.TOS tos = 2 [default = BE1];
+    }
 }
 
 message ExternalSchedulerCollectionParams {
-  message URL {
-    required string href = 1;
-    required string text = 2;
-  }
-  optional bool runnable = 1 [default = true];
-  optional bool updatable = 2 [default = true];
-  optional double auto_release_time = 3;
-  optional .proto2.bridge.MessageSet scheduler_data = 4;
-  optional string scheduler_name = 5;
-  optional .borg.ExternalSchedulerCollectionParams.URL url = 6;
-  optional uint64 version_token = 7;
+    optional bool runnable = 1 [default = true];
+    optional double auto_release_time = 3;
+    optional .proto2.bridge.MessageSet scheduler_data = 4;
+    optional string scheduler_name = 5;
+    
+    optional URL url = 6;
+    message URL {
+        required string href = 1;
+        required string text = 2;
+    }
+    
+    optional uint64 version_token = 7 [jstype = JS_STRING];
+    optional string external_scheduler = 8;
+}
+
+message VcbmSchedulerParams {
+    optional bool disable_new_vms_for_vcbm_migration = 1;
+    repeated int32 vms_disabled_by_virtual_borg = 2;
+    optional int32 num_vms_disabled_by_virtual_borg = 3;
+    optional bool allow_waiting_for_autopilot = 4 [default = true];
+    
+    extend .proto2.bridge.MessageSet {
+        optional VcbmSchedulerParams message_set_extension = 312950997;
+    }
 }
 
 message Capability {
-  enum Type {
-    TOS_BE1 = 0;
-    MLOCK = 1;
-    SCHED_OVERRIDE = 2;
-    RESOURCE_OVERRIDE = 3;
-    CHROOT = 4;
-    MKNOD = 93;
-    SYS_RAWIO = 96;
-    CRITICAL = 5;
-    SEMI_CRITICAL = 56;
-    MACHINE_ADMIN = 6;
-    NET_BIND = 7;
-    JOB_ADMIN = 11;
-    INSECURE_CHROOT = 12;
-    TOS_AF1 = 15;
-    TOS_AF2 = 16;
-    TOS_AF3 = 17;
-    TOS_AF4 = 18;
-    TOS_NC0 = 62;
-    USER_OVERRIDE = 19;
-    ESTIMATION_EXEMPTION = 21;
-    EXTERNAL_SCHEDULER = 22;
-    CHROOT_OVERRIDE = 23;
-    DISK_MEDIATOR = 25 [deprecated = true];
-    PERSISTENT_ALLOC = 26;
-    ACCESS_B4 = 27;
-    NET_RAW = 28;
-    STORAGE_INFRASTRUCTURE = 29;
-    DISK_TIME_FRACTION_USER = 30;
-    NET_ADMIN = 31;
-    EXCLUSIVE_CORES = 32;
-    ELASTIC_EXCLUSIVE_CORES = 91;
-    POWER_EXEMPT = 33;
-    KVM_SANDBOX_STRICT = 34;
-    KVM_SANDBOX_RELAXED = 35;
-    BORGLET_VERSION = 36;
-    BORGLET_CONFIG = 57;
-    MORE_FILE_DESCRIPTORS = 38;
-    IGNORE_CONFIGPKG_CONSTRAINTS = 40;
-    HD_NO_HIDE_STALE = 42;
-    MORE_UDP_PORTS = 43;
-    SSD_FS_USER_EXCEEDING_LIMITS = 44;
-    CPUTHROTTLING_OFFENSIVE_BATCH = 45;
-    EDIT_CONFIG = 46;
-    MAINTENANCE = 48;
-    VIRTUALIZATION = 49;
-    MIGRATE_FAILOVER_CLASS = 50;
-    NET_RDMA = 51;
-    NET_RDMA_HIPRI = 52;
-    FLEX_ADMIN = 53;
-    DEDICATED_FAILOVER_CLASS = 55;
-    LINGER_FAILOVER_CLASS = 58;
-    EXTENDED_NOTIFICATION = 59;
-    LABS = 60;
-    PERSISTENT_TASK = 63;
-    GETS_READ_BLOCK_ACCESS_TO_DISK_FS = 64;
-    GETS_READ_BLOCK_ACCESS_TO_SSD_FS = 65;
-    GETS_WRITE_BLOCK_ACCESS_TO_FIRST_RAW_SSD_PARTITION = 66;
-    UNIX_GROUP_TAPE = 67;
-    HDD_SECURE_BACKUP_DATA = 68;
-    BORG_NAMESPACE_USER = 70;
-    NETWORK_BLOCK_DEVICE = 71;
-    BORG_BUILD_HORIZON_EXEMPTION = 72;
-    EXCLUSIVE_MACHINES = 73;
-    CSSD = 75;
-    DISKLESS_OPT_OUT = 76;
-    RESERVE_MACHINE = 77;
-    NET_VIP_TCP_INCOMING = 78;
-    NET_VIP_TCP_OUTGOING = 79;
-    NET_VIP_UDP_RECEIVE = 80;
-    NET_VIP_UDP_TRANSMIT = 81;
-    NET_VIP_ICMP_PING = 82;
-    NET_ENCAP_GRE_MPLS = 83;
-    NET_ENCAP_GRE_GUE = 84;
-    NET_ENCAP_VM = 85;
-    COLOCATION_GROUP_USER = 86 [deprecated = true];
-    PUBLISH_IPV6_BNS = 87;
-    AUTONOMOUS_RESTART = 88;
-    MORE_DISK_INODES = 89;
-    CUSTOMIZED_ID_MAPPINGS_FOR_USER_NS = 90;
-    RUN_AS_ROOT = 92;
-    DEDICATED_BOUNDARY_CHECK_OPT_OUT = 94;
-    RAW_SSD_USER_MANAGED_SECURITY = 95;
-  }
-  required int32 type = 1;
+    required int32 type = 1;
+    
+    enum Type {
+        TOS_BE1 = 0;
+        MLOCK = 1 [deprecated = true];
+        SCHED_OVERRIDE = 2;
+        RESOURCE_OVERRIDE = 3;
+        MKNOD = 93;
+        SYS_RAWIO = 96;
+        CRITICAL = 5;
+        SEMI_CRITICAL = 56;
+        MACHINE_ADMIN = 6;
+        NET_BIND = 7;
+        JOB_ADMIN = 11;
+        INSECURE_CHROOT = 12 [deprecated = true];
+        TOS_AF1 = 15;
+        TOS_AF2 = 16;
+        TOS_AF3 = 17;
+        TOS_AF4 = 18;
+        TOS_NC0 = 62;
+        USER_OVERRIDE = 19 [deprecated = true];
+        ESTIMATION_EXEMPTION = 21;
+        EXTERNAL_SCHEDULER = 22;
+        CHROOT_OVERRIDE = 23;
+        DISK_MEDIATOR = 25 [deprecated = true];
+        PERSISTENT_ALLOC = 26;
+        ACCESS_B4 = 27;
+        NET_RAW = 28;
+        STORAGE_INFRASTRUCTURE = 29;
+        DISK_TIME_FRACTION_USER = 30 [deprecated = true];
+        NET_ADMIN = 31;
+        EXCLUSIVE_CORES = 32;
+        ELASTIC_EXCLUSIVE_CORES = 91;
+        POWER_EXEMPT = 33 [deprecated = true];
+        KVM_SANDBOX_STRICT = 34 [deprecated = true];
+        KVM_SANDBOX_RELAXED = 35 [deprecated = true];
+        MORE_FILE_DESCRIPTORS = 38;
+        IGNORE_CONFIGPKG_CONSTRAINTS = 40 [deprecated = true];
+        HD_NO_HIDE_STALE = 42 [deprecated = true];
+        MORE_UDP_PORTS = 43 [deprecated = true];
+        SSD_FS_USER_EXCEEDING_LIMITS = 44;
+        CPUTHROTTLING_OFFENSIVE_BATCH = 45 [deprecated = true];
+        EDIT_CONFIG = 46;
+        MAINTENANCE = 48;
+        VIRTUALIZATION = 49;
+        MIGRATE_FAILOVER_CLASS = 50;
+        NET_RDMA = 51 [deprecated = true];
+        NET_RDMA_HIPRI = 52 [deprecated = true];
+        FLEX_ADMIN = 53;
+        DEDICATED_FAILOVER_CLASS = 55;
+        LINGER_FAILOVER_CLASS = 58;
+        EXTENDED_NOTIFICATION = 59;
+        LABS = 60 [deprecated = true];
+        PERSISTENT_TASK = 63;
+        GETS_READ_BLOCK_ACCESS_TO_DISK_FS = 64 [deprecated = true];
+        GETS_READ_BLOCK_ACCESS_TO_SSD_FS = 65 [deprecated = true];
+        GETS_WRITE_BLOCK_ACCESS_TO_FIRST_RAW_SSD_PARTITION = 66 [deprecated = true];
+        UNIX_GROUP_TAPE = 67 [deprecated = true];
+        HDD_SECURE_BACKUP_DATA = 68;
+        BORG_NAMESPACE_USER = 70 [deprecated = true];
+        NETWORK_BLOCK_DEVICE = 71 [deprecated = true];
+        BORG_BUILD_HORIZON_EXEMPTION = 72;
+        EXCLUSIVE_MACHINES = 73;
+        CSSD = 75;
+        DISKLESS_OPT_OUT = 76;
+        RESERVE_MACHINE = 77;
+        NET_VIP_TCP_INCOMING = 78;
+        NET_VIP_TCP_OUTGOING = 79;
+        NET_VIP_UDP_RECEIVE = 80;
+        NET_VIP_UDP_TRANSMIT = 81;
+        NET_VIP_ICMP_PING = 82;
+        NET_ENCAP_GRE_MPLS = 83;
+        NET_ENCAP_GRE_GUE = 84;
+        NET_ENCAP_VM = 85;
+        AUTONOMOUS_RESTART = 88;
+        MORE_DISK_INODES = 89;
+        CUSTOMIZED_ID_MAPPINGS_FOR_USER_NS = 90;
+        RUN_AS_ROOT = 92;
+        DEDICATED_BOUNDARY_CHECK_OPT_OUT = 94 [deprecated = true];
+        TASK_MANAGED_RAW_SSD_SECURITY_USER = 97;
+        SUSPECT_MACHINE_HINTS = 98;
+        RESERVED_MEMORY = 99;
+        DIRECT_PATH = 101;
+        KAISER_OVERRIDE = 102;
+        NS_SYS_ADMIN = 103;
+        NET_RAW_XMIT = 104;
+        UNENCRYPTED_LOCAL_FS_DIRS = 106;
+        DRILL_ADMIN = 107;
+        NVSWITCH_ACCESS = 108;
+        RESOURCE_CAPPING_CONFIG_ADMIN = 109;
+        BATCH_CONFIG_ADMIN = 110;
+        CLOUDAC_OCM_CONFIG_ADMIN = 113;
+        RPC_SECURITY_POLICY_ADMIN = 117;
+        BATCH_BUDGET_CONSUMPTION_CONFIG_ADMIN = 118;
+        CLOUDAC_MANAGEMENT_CONFIG_ADMIN = 121;
+        VCBM_MIGRATION_RESOURCES_CONFIG_ADMIN = 123;
+        NET_BARE_METAL = 111;
+        SUPERPOD_ADMIN = 112;
+        PRODUID_CONFIG_ADMIN = 114;
+        SEV_ACCESS = 115;
+        PLATFORM_SCALING_MAP_ADMIN = 116;
+        PID_NS_OPT_OUT = 119;
+        MOUNT_NS_OPT_OUT = 120;
+        INTERNAL_PACKAGES_ADMIN = 122;
+        LATENCY_OPTIMIZED = 124;
+        RUN_ON_OFFLOAD_NODE = 125;
+        RESERVED_CORES = 126;
+        PROTECTED_POOLS_CONFIG_ADMIN = 127;
+        NS_NET_ADMIN = 128;
+        NS_NET_RAW = 129;
+        BYOUS_CONVERSION_CONFIG_ADMIN = 130;
+        GCE_DEMAND_GROUPS_ADMIN = 131;
+        BSR_USER_SECURITY_RING_ADMIN = 132;
+        HOST_LAYOUT_CONFIG_ADMIN = 133;
+        CREATE_CLOUD_COLLECTIONS = 134;
+        GHOST_ACCESS = 135;
+        AUTOWIZ_ADMIN = 136;
+        PLATFORM_ALLOWLIST_ADMIN = 137;
+        SUPERBLOCK_CAPACITY_CONSTRAINTS_ADMIN = 138;
+        CORE_TAG = 139;
+        APC_OPT_OUT = 140;
+        USE_SECONDARY_NIC_BNS = 141;
+        CLUSTER_RACK_NETWORK_STATE_ADMIN = 142;
+        CONFIDENTIAL_VM = 143;
+        LBNS_ADMIN = 144;
+        NOTARY_VERIFICATION_KEY_ADMIN = 145;
+        FLEX_UPDATE_CONFIG_ADMIN = 146;
+        DATA_PROTECTION_ATTRIBUTES_CONFIG_ADMIN = 147;
+        IDLE_MACHINES_CONFIG_ADMIN = 148;
+        TASK_RETRY_BLOCKLISTS_CONFIG_ADMIN = 149;
+        DENSE_CLUSTER_CAPPING_CONFIG_ADMIN = 150;
+        DENSE_CLUSTER_CAPPING_STATIC_EVENT_ADMIN = 154;
+        DYNAMIC_DENSE_CLUSTER_CAPPING_COOLING_CONFIG_ADMIN = 155;
+        POWER_HIERARCHY_CONFIG_ADMIN = 157;
+        POWER_STATES_CONFIG_ADMIN = 158;
+        NUMA_NODE_PREFERENCE = 151;
+        MACHINE_GROUP_RESERVATION = 152;
+        REPORT_CRITICAL_MACHINE_PROBLEMS = 153;
+        BORG_USPS_NIC_VF = 156;
+        USER_NS_OPT_OUT = 159;
+        NET_ALL_OUTGOING = 160;
+        DIRECT_PATH_C2P = 161;
+        DIRECT_PATH_P2C = 162;
+    }
 }
 
 message ChrootSpec {
-  repeated group Mount = 1 {
-    required string source = 2;
-    optional string target = 3;
-    optional bool merge = 4;
-    optional bool missingok = 8;
-  }
-  repeated group Open = 5 {
-    required string path = 6;
-    required string shortname = 7;
-  }
-  repeated group Service = 10 {
-    enum ServiceId {
-      DEV_KVM_SANDBOX_STRICT = 1;
-      DEV_KVM_SANDBOX_RELAXED = 2;
-      DEV_KVM_VIRTUALIZATION = 3;
-      DEV_GVISOR_SANDBOX = 4;
-      DEV_NBD = 5;
+    repeated group Mount = 1 {
+        required string source = 2;
+        optional string target = 3;
+        optional bool merge = 4;
+        optional bool missingok = 8;
+        optional bool readonly = 13;
     }
-    required .borg.ChrootSpec.Service.ServiceId id = 11;
-    optional string target = 12;
-  }
-  optional bool no_chroot = 9;
+    
+    repeated group Service = 10 {
+        optional ServiceId id = 11;
+        enum ServiceId {
+            DEV_KVM_SANDBOX_STRICT = 1;
+            DEV_KVM_SANDBOX_RELAXED = 2;
+            DEV_GVISOR_SANDBOX = 4;
+            DEV_SEV = 8;
+            DEV_VHOST = 7;
+            FUSE_MOUNT = 9;
+            DEV_USERFAULTFD = 10;
+            DEV_SGX = 11;
+        }
+        
+        optional string target = 12;
+    }
+    
+    optional bool no_chroot = 9;
+    
+    reserved 5;
 }
 
 message ManagedDirs {
-  repeated group Dir = 1 {
-    required string path = 2;
-    optional bool show_logs = 3 [default = true];
-    optional bool reclaim_standard_logs = 4;
-    repeated string reclaim_glob = 5;
-    repeated string critical_glob = 6;
-    optional int32 mode = 7;
-  }
-  optional float max_diskused_fraction = 8 [default = 1];
-  optional bool semi_critical = 9 [default = false];
+    repeated group Dir = 1 {
+        required string path = 2;
+        optional bool show_logs = 3 [default = true];
+        optional bool reclaim_standard_logs = 4;
+        repeated string reclaim_glob = 5;
+        repeated string critical_glob = 6;
+        optional int32 mode = 7;
+        optional bool encrypt = 10;
+    }
+    
+    optional float max_diskused_fraction = 8 [default = 1];
+    optional bool semi_critical = 9 [default = false];
 }
 
 message AffinityGroupSpec {
-  enum LocusType {
-    UNSPECIFIED = 0;
-    POD = 1;
-    CLIQUE = 2;
-  }
-  optional string label = 1;
-  optional .borg.AffinityGroupSpec.LocusType preferred_colocation = 2 [deprecated = true];
-  optional string locus_type = 3;
-  extend .proto2.bridge.MessageSet {
-    optional .borg.AffinityGroupSpec message_set_extension = 146285331;
-  }
+    optional string label = 1;
+    
+    optional LocusType preferred_colocation = 2 [deprecated = true];
+    enum LocusType {
+        UNSPECIFIED = 0;
+        POD = 1;
+        CLIQUE = 2;
+    }
+    
+    optional string locus_type = 3;
+    
+    extend .proto2.bridge.MessageSet {
+        optional AffinityGroupSpec message_set_extension = 146285331;
+    }
 }
 
 message Lab {
-  enum Type {
-    USER_SPECIFIED = 0;
-    AUTO = 1;
-  }
-  optional string name = 1;
-  optional .borg.Lab.Type type = 2 [default = USER_SPECIFIED];
+    optional string name = 1;
+    
+    reserved 2;
 }
 
 message Labs {
-  repeated .borg.Lab lab = 1;
-  extend .proto2.bridge.MessageSet {
-    optional .borg.Labs message_set_extension = 46888719;
-  }
+    repeated Lab lab = 1;
+    
+    extend .proto2.bridge.MessageSet {
+        optional Labs message_set_extension = 46888719;
+    }
 }
 
 message VMLabelSpec {
-  optional int32 index = 1;
-  optional .tech.label.Labels labels = 2;
+    optional int32 index = 1;
+    optional tech.label.Labels labels = 2;
 }
 
 message VMLabelsSpec {
-  repeated .borg.VMLabelSpec vm_label = 1;
-  extend .proto2.bridge.MessageSet {
-    optional .borg.VMLabelsSpec message_set_extension = 74571303;
-  }
+    repeated VMLabelSpec vm_label = 1;
+    
+    extend .proto2.bridge.MessageSet {
+        optional VMLabelsSpec message_set_extension = 74571303;
+    }
 }
 
 message CollectionSpec {
-  message SingleVolumeRemoteResource {
-    optional .borg.CliqueSsdSpec clique_ssd_fs = 1;
-    reserved 2;
-  }
-  optional .tech.label.Labels labels = 1;
-  optional .borg.BorgletParams borgletparams = 2;
-  optional .borg.PortList additional_ports = 3;
-  optional .borg.ManagedDirs md = 4;
-  optional .borg.CollectionSpec.SingleVolumeRemoteResource remote_resources = 7;
-  extend .proto2.bridge.MessageSet {
-    optional .borg.CollectionSpec message_set_extension = 72776700;
-  }
-  reserved 5, 6, 8, 9;
+    optional tech.label.Labels labels = 1;
+    optional BorgletParams borgletparams = 2;
+    optional PortList additional_ports = 3;
+    optional ManagedDirs md = 4;
+    
+    reserved 5, 6, 7, 8, 9;
+    
+    extend .proto2.bridge.MessageSet {
+        optional CollectionSpec message_set_extension = 72776700;
+    }
 }
 
 message BorgletParams {
-  message StaticResources {
-    optional bool raw_ssd_partitions = 1;
-  }
-  message MemoryCompressionOptions {
-    optional bool disable_top_level_compression = 1 [default = false];
-    optional bool deduct_compressible_from_reservation = 2 [default = true];
-    reserved 3;
-    reserved "apply_compressible_soft_limit_only";
-  }
-  message GVisorConfig {
-    optional string device_node_name = 1;
-  }
-  enum MemoryCompression {
-    MEMORY_COMPRESSION_DEFAULT = 0;
-    MEMORY_COMPRESSION_ALWAYS = 1;
-    MEMORY_COMPRESSION_NEVER = 2;
-  }
-  optional bool tmpfs = 1;
-  optional bool huge_tmpfs = 44;
-  optional bool hugetlbfs = 3;
-  optional int64 hugetlbfs_mb = 23;
-  optional int32 reserved_cores = 19;
-  optional bool allow_on_public_cpus = 12 [default = true];
-  optional bool background_task = 13;
-  optional int64 network_tx_max_rate = 2;
-  optional int64 network_rx_max_rate = 11 [deprecated = true];
-  optional int32 working_set_age = 4;
-  optional bool container = 5;
-  optional float min_memalloc_fraction = 6;
-  optional float min_memunused_fraction = 7;
-  optional bool allow_overlimit_mem = 14;
-  optional int64 max_overlimit_mem = 43;
-  optional int64 max_overlimit_mem_delta = 50;
-  optional bool account_child_mem_to_alloc = 15;
-  optional bool unauthenticated_world_readable_files_for_testing = 22 [deprecated = true];
-  optional float dtf_prio_split_fraction = 25;
-  optional bool read_access_allows_group_execute = 26;
-  optional bool cpu_soft_limit = 30 [default = true];
-  optional bool storage_infrastructure = 31;
-  optional int32 dtf_weight_on_shared_disks = 32;
-  optional bool exclude_background_on_reserved = 33 [default = false];
-  optional bool dump_memory_debug_info = 37 [default = false];
-  optional bool throttle_offensive_batch_task = 39 [default = false];
-  optional bool kmem_charge_usage = 41 [default = true];
-  optional bool zero_soft_limit = 42 [default = false];
-  optional .borg.BorgletParams.StaticResources static_resources = 45;
-  optional .borg.BorgletParams.MemoryCompression memory_compression = 46 [default = MEMORY_COMPRESSION_DEFAULT];
-  optional int64 static_memory_soft_limit = 47;
-  optional .borg.BorgletParams.MemoryCompressionOptions memory_compression_options = 48;
-  optional uint32 compression_sampling_ratio = 49;
-  optional bool enable_elastic_reserved_core = 52 [default = false];
-  optional .borg.BorgletParams.GVisorConfig gvisor_config = 53;
-  optional .borg.NamespaceParams ns_params = 56;
+    optional bool tmpfs = 1;
+    optional bool huge_tmpfs = 44;
+    optional bool hugetlbfs = 3;
+    optional int64 hugetlbfs_mb = 23;
+    optional int32 reserved_cores = 19;
+    optional bool opt_out_reserved_core_deprecation = 77;
+    optional bool allow_on_public_cpus = 12 [default = true];
+    optional bool background_task = 13 [deprecated = true];
+    
+    optional Xpu xpu = 110;
+    message Xpu {
+        optional bool opt_out_xpu_inflation = 1;
+        optional bool opt_out_membw_qos_enforcement = 2;
+        optional double cpu_utilization_limit_percentage = 3;
+        optional double xpu_utilization_limit_percentage = 4;
+        optional bool cooperative_hardcapping = 5;
+    }
+    
+    optional bool disable_numa_scheduling = 86;
+    
+    optional NumaScoreCfhMode numa_score_cfh_mode = 94 [default = NUMA_SCORE_CFH_DEFAULT];
+    enum NumaScoreCfhMode {
+        NUMA_SCORE_CFH_DEFAULT = 0;
+        NUMA_SCORE_CFH_ENABLED = 1;
+        NUMA_SCORE_CFH_DISABLED = 2;
+    }
+    
+    optional int64 preferred_numa_node_id = 107;
+    optional int64 network_tx_max_rate = 2;
+    optional int64 network_rx_max_rate = 11 [deprecated = true];
+    optional int32 working_set_age = 4;
+    optional bool container = 5;
+    optional float min_memalloc_fraction = 6;
+    optional float min_memunused_fraction = 7;
+    optional bool allow_overlimit_mem = 14;
+    optional int64 max_overlimit_mem = 43;
+    optional int64 max_overlimit_mem_delta = 50;
+    optional bool account_child_mem_to_alloc = 15;
+    optional bool unauthenticated_world_readable_files_for_testing = 22 [deprecated = true];
+    optional float dtf_prio_split_fraction = 25 [deprecated = true];
+    optional bool cpu_soft_limit = 30 [default = true];
+    optional bool storage_infrastructure = 31;
+    optional int32 dtf_weight_on_shared_disks = 32;
+    optional bool exclude_background_on_reserved = 33 [default = false];
+    optional bool dump_memory_debug_info = 37 [default = false];
+    optional bool zero_soft_limit = 42 [default = false];
+    
+    optional StaticResources static_resources = 45;
+    message StaticResources {
+        optional bool raw_hdd_devices = 2;
+        optional bool raw_ssd_partitions = 1;
+        optional bool nvswitches = 3;
+    }
+    
+    optional MemoryCompression memory_compression = 46 [default = MEMORY_COMPRESSION_DEFAULT];
+    enum MemoryCompression {
+        MEMORY_COMPRESSION_DEFAULT = 0;
+        MEMORY_COMPRESSION_ALWAYS = 1;
+        MEMORY_COMPRESSION_NEVER = 2;
+    }
+    
+    optional int64 static_memory_soft_limit = 47;
+    
+    optional MemoryCompressionOptions memory_compression_options = 48;
+    message MemoryCompressionOptions {
+        optional bool disable_top_level_compression = 1 [default = false];
+        
+        reserved 2, 3;
+        
+        reserved "deduct_compressible_from_reservation", "apply_compressible_soft_limit_only";
+    }
+    
+    optional uint32 compression_sampling_ratio = 49 [deprecated = true];
+    optional bool enable_elastic_reserved_core = 52 [default = false];
+    
+    optional GVisorConfig gvisor_config = 53;
+    message GVisorConfig {
+        optional string device_node_name = 1;
+        optional string textproto_path = 2;
+        optional bool experimental_run_task_in_gvisor = 3;
+    }
+    
+    repeated VirtualNumaNode virtual_numa_nodes = 61;
+    message VirtualNumaNode {
+        optional int32 vcpus = 1;
+        optional int64 memory = 2;
+        
+        optional HugeTlbfsMount hugetlbfs_mount = 3;
+        message HugeTlbfsMount {
+            optional HugeTlbfsPageSize page_size = 1 [default = KERNEL_DEFAULT];
+            enum HugeTlbfsPageSize {
+                KERNEL_DEFAULT = 0;
+                PAGE_SIZE_2M = 1;
+                PAGE_SIZE_1G = 2;
+            }
+        }
+        
+        repeated VirtualLLC virtual_llc = 4;
+        message VirtualLLC {
+            optional int32 vcpus = 1;
+        }
+        
+        reserved 5;
+    }
+    
+    optional int64 usps_memory_donation = 58;
+    optional bool reserved_memory = 59;
+    optional bool disable_kaiser = 60;
+    optional bool disable_thp = 72;
+    
+    repeated StreamzDefaultRootLabel streamz_default_root_labels = 62;
+    message StreamzDefaultRootLabel {
+        optional string name = 1;
+        optional string type = 2;
+        optional string value = 3;
+    }
+    
+    repeated string borg_experiments = 63;
+    optional bool unencrypted_local_fs_dirs = 64;
+    
+    optional USPSConfig usps_config = 65;
+    message USPSConfig {
+        repeated string required_feature = 2;
+        
+        reserved 1;
+    }
+    
+    optional bool disable_snappy_cores = 67 [deprecated = true];
+    optional bool profile_exclusive_cores = 69;
+    
+    optional CoreTaggingMode core_tagging_mode = 70 [default = CORE_TAGGING_DEFAULT];
+    enum CoreTaggingMode {
+        CORE_TAGGING_DEFAULT = 0;
+        CORE_TAGGING_ENABLED = 1;
+        CORE_TAGGING_DISABLED = 2;
+    }
+    
+    optional MemoryMigrationInternalMode memory_migration_internal_mode = 96 [default = MEMORY_MIGRATION_INTERNAL_DEFAULT];
+    enum MemoryMigrationInternalMode {
+        MEMORY_MIGRATION_INTERNAL_DEFAULT = 0;
+        MEMORY_MIGRATION_INTERNAL_ENABLED = 1;
+        MEMORY_MIGRATION_INTERNAL_DISABLED = 2;
+    }
+    
+    optional ByousDepFinderMode byous_dep_finder_mode = 71;
+    enum ByousDepFinderMode {
+        BYOUS_DEP_FINDER_DEFAULT = 0;
+        BYOUS_DEP_FINDER_DISABLED = 1;
+        BYOUS_DEP_FINDER_ENABLED = 2;
+    }
+    
+    optional AppMetrics app_metrics = 74;
+    message AppMetrics {
+        optional StreamzMetricSelector throughput = 1;
+        message StreamzMetricSelector {
+            optional string streamz_path = 1;
+            repeated StreamzPointColumn column = 2;
+        }
+        
+        optional StreamzMetricSelector latency = 2;
+        optional StreamzMetricSelector load_average = 3;
+        
+        message StreamzPointColumn {
+            optional string name = 1;
+            optional string value = 2;
+        }
+    }
+    
+    repeated SubcontainerConfig subcontainer_configs = 76;
+    message SubcontainerConfig {
+        repeated string platform_taxonomy = 1;
+        optional uint32 cpu_freq_mhz = 2;
+    }
+    
+    optional bool cache_antagonist = 75;
+    
+    optional SymUserspaceMode sym_userspace_mode = 78;
+    enum SymUserspaceMode {
+        SYM_USERSPACE_DEFAULT = 0;
+        SYM_USERSPACE_DISABLED = 1;
+        SYM_USERSPACE_ENABLED = 2;
+    }
+    
+    optional UserspaceMonitorConfig userspace_monitor = 79;
+    message UserspaceMonitorConfig {
+        optional Config prod_hostname = 1;
+        message Config {
+            optional MonitorMode monitor_mode = 1 [default = MONITOR_UNSPECIFIED];
+            enum MonitorMode {
+                MONITOR_UNSPECIFIED = 0;
+                MONITOR_DISABLED = 1;
+            }
+            
+            optional int32 limit = 2 [default = -1];
+        }
+    }
+    
+    repeated string chargeuser_subcontainers = 80;
+    optional bool enable_core_aware_scheduling = 81;
+    
+    optional MigrationTracingParams migration_tracing = 82;
+    message MigrationTracingParams {
+        optional OnTaskTermination trace_on_task_termination = 1;
+        message OnTaskTermination {
+            optional Mode mode = 1 [default = MODE_UNSPECIFIED];
+            optional Mode coroner_mode = 2 [default = MODE_UNSPECIFIED];
+        }
+        
+        enum Mode {
+            MODE_UNSPECIFIED = 0;
+            MODE_DISABLED = 1;
+            MODE_ENABLED = 2;
+        }
+    }
+    
+    optional bool disable_slab_caches = 83;
+    optional HostNetworkConfig host_network_config = 84;
+    optional BcidRuntimeProtectionJobConfig bcid_protection_config = 85;
+    optional string memory_cgroup_feature_override = 87;
+    optional int32 custom_membw_saturation_threshold = 88;
+    
+    optional VMConfig vm_config = 89;
+    message VMConfig {
+        optional CpuOvercommitSettings cpu_overcommit_settings = 1;
+        message CpuOvercommitSettings {
+            optional int32 minimum_cpu = 1;
+        }
+        
+        optional CryForHelpSettings cfh = 2 [deprecated = true];
+        message CryForHelpSettings {
+            optional bool enable_vnuma_wait_time = 1 [deprecated = true];
+        }
+        
+        optional MemoryMigratorSettings mem_migrator = 3;
+        message MemoryMigratorSettings {
+            optional bool support_memory_migration = 1;
+        }
+        
+        optional bool is_rdma = 4;
+        
+        optional MemBWSettings membw = 5;
+        message MemBWSettings {
+            optional int32 amd_max_per_ccd_bandwidth = 1;
+            optional bool enable_reactive_membw = 2;
+        }
+        
+        optional NvmeDoorbellInterpositionSettings nvme_doorbell_interposition = 6;
+        message NvmeDoorbellInterpositionSettings {
+            optional bool subcontainer_enabled = 1 [default = false];
+            optional string subcontainer_name = 2;
+        }
+    }
+    
+    optional ProactiveReclaimerMode proactive_reclaimer_mode = 90 [default = PROACTIVE_RECLAIMER_DEFAULT];
+    enum ProactiveReclaimerMode {
+        PROACTIVE_RECLAIMER_DEFAULT = 0;
+        BORGLET_CONTROLLED = 1;
+    }
+    
+    optional AcceleratorOptions accelerator_options = 92;
+    message AcceleratorOptions {
+        optional bool enable_hermosa_peak_frequency = 1 [default = false];
+        optional bool enable_hermosa_custom_firmware = 2;
+        optional string hermosa_custom_firmware_filename = 3;
+        optional AcceleratorAppclass accelerator_appclass = 4;
+    }
+    
+    optional bool latency_optimized = 93;
+    
+    optional NetMemChargingMode netmem_charging_mode = 95;
+    enum NetMemChargingMode {
+        NETMEM_CHARGING_DEFAULT = 0;
+        NETMEM_CHARGING_DISABLED = 1;
+        NETMEM_CHARGING_ENABLED = 2;
+    }
+    
+    optional int64 ohc_memory_limit_bytes = 97;
+    optional bool report_workingset_as_usage_for_task_in_alloc = 98;
+    optional bool apc_opt_out = 99 [default = false];
+    optional bool dump_memory_debug_info_for_tasks_in_alloc = 100;
+    
+    optional MadvFreeMode madv_free_mode = 101;
+    enum MadvFreeMode {
+        MADV_FREE_UNSPECIFIED = 0;
+        MADV_FREE_DISABLED = 1;
+        MADV_FREE_ENABLED = 2;
+    }
+    
+    optional bool memory_cgroup_use_asi = 102;
+    optional double nonprod_wattwise_cpu_core_percent = 103;
+    optional double nonprod_wattwise_cpu_io_percent = 104;
+    
+    optional WattwiseCpu wattwise_cpu = 105;
+    enum WattwiseCpu {
+        WATTWISE_CPU_NOT_SET = 0;
+        RECOMMENDED_POWER = 1;
+        LOWER_POWER = 2;
+        LOW_POWER = 3;
+        HIGH_POWER = 4;
+        HIGHER_POWER = 5;
+    }
+    
+    optional Streamz streamz = 106;
+    message Streamz {
+        repeated string servers = 1;
+    }
+    
+    optional bool enable_tcp_fastrak = 108;
+    optional bool enable_report_critical_machine_problems = 109;
+    
+    reserved 8 to 10, 16 to 18, 20, 21, 24, 26, 27 to 29, 34 to 36, 38 to 40, 51, 54, 55 to 57, 66, 68, 73, 91;
+    
+    enum AcceleratorAppclass {
+        ACCELERATOR_APPCLASS_UNSPECIFIED = 0;
+        SINGLE_TENANCY = 1;
+        PRIMARY_MULTI_TENANCY = 2;
+        SECONDARY_MULTI_TENANCY = 3;
+    }
 }
 
 message ElasticParams {
-  optional int32 min_size = 1 [default = 1];
+    optional int32 min_size = 1 [default = 1];
 }
 
 message TaskMessage {
-  enum Type {
-    PROXY_RPC = 1;
-  }
-  required int32 type = 1;
-  required bytes data = 2;
+    required int32 type = 1;
+    required bytes data = 2;
+    
+    enum Type {
+        PROXY_RPC = 1;
+    }
 }
 
 message Hints {
-  optional int32 min_instances_hint = 1;
-  optional int32 max_restarts_per_hour_hint = 2;
+    optional int32 min_instances_hint = 1;
+    optional int32 max_restarts_per_hour_hint = 2;
+    optional int32 max_task_cfh_restarts_per_hour_percent_hint = 3;
+}
+
+message LabelBasedSpreading {
+    optional string spreading_key = 1;
+    
+    repeated SpreadingRule spreading_rules = 2;
+    message SpreadingRule {
+        optional Level level = 1;
+        optional int32 instance_limit = 2;
+        optional bool preferred = 3;
+    }
+    
+    enum Level {
+        UNSPECIFIED = 0;
+        MAINTENANCE_ZONE = 1;
+        HOST = 2;
+    }
 }
 
 message CheckpointTransaction {
-  required bytes data = 1 [ctype = CORD];
-  optional bool full_checkpoint = 2;
+    required bytes data = 1 [ctype = CORD];
+    optional bool full_checkpoint = 2;
+}
+
+message FlexPoolAssociation {
+    optional EffectivePoolState effective_pool_state = 1;
+    enum EffectivePoolState {
+        UNDEFINED = 0;
+        SPECIFIED_BY_USER = 1;
+        DEDUCED_BY_BORGMASTER = 2;
+        NON_FLEX = 3;
+        NON_PER_POOL_ACCOUNTING = 4;
+        SPECIFIED_BY_USER_DEDUCED_BY_BORGMASTER = 5;
+    }
+    
+    optional string effective_pool = 2;
+    optional string dedicated_label = 3;
+    optional string requested_pool = 4;
+}
+
+message UpdateTrack {
+    optional Track track = 1 [default = UNSPECIFIED];
+    enum Track {
+        UNSPECIFIED = 0;
+        TRIVIAL = 1;
+    }
 }
 
 message UpdateApi {
-  enum Version {
-    CURRENT = 0;
-    FUTURE = 1;
-  }
-  enum Action {
-    IMMEDIATE = 0;
-    IN_PLACE = 1;
-    RESCHEDULE = 2;
-    ERROR = 3;
-  }
+    enum Version {
+        CURRENT = 0;
+        FUTURE = 1;
+    }
+    
+    enum Action {
+        IMMEDIATE = 0;
+        IN_PLACE = 1;
+        IN_PLACE_NEW_PROCESS = 4;
+        IN_PLACE_RESTART = 5;
+        RESCHEDULE = 2;
+        ERROR = 3;
+    }
 }
 
 message FailoverClass {
-  enum Type {
-    MIGRATE = 1;
-    DRAIN = 2;
-    DEDICATED = 4;
-    LINGER = 5;
-    AUTO = 3;
-  }
-  optional .borg.FailoverClass.Type type = 1;
+    optional Type type = 1;
+    enum Type {
+        MIGRATE = 1;
+        DRAIN = 2;
+        DEDICATED = 4;
+        LINGER = 5;
+        AUTO = 3;
+    }
 }
 
 message EvictionPolicy {
-  message ReschedulableClasses {
-    repeated .borg.FailoverClass failover_class = 1;
-  }
-  optional .borg.EvictionPolicy.ReschedulableClasses reschedulable_classes = 1;
+    optional ReschedulableClasses reschedulable_classes = 1;
+    message ReschedulableClasses {
+        repeated FailoverClass failover_class = 1;
+    }
 }
 
 message PreinstallPolicy {
-  enum E {
-    YES = 1;
-    NO = 2;
-    UNSET_TREAT_AS_YES = 3;
-  }
+    enum E {
+        YES = 1;
+        NO = 2;
+        UNSET_TREAT_AS_YES = 3;
+    }
 }
 
 message NetworkConfig {
-  message SLBConfig {
-    optional bool slb_gre_tunnel = 1;
-    optional bool dsr_user_traffic = 2;
-    optional bool enable_ipv6 = 3;
-    optional bool tcp_fast_open = 4 [default = true];
-    optional bool no_tcp_timestamps = 5;
-  }
-  message SysctlConfig {
-    optional int32 net_core_rmem_default = 1;
-    optional int32 net_core_wmem_default = 2;
-  }
-  message SnatConfig {
-    optional bool snat_ipv4 = 1 [default = true];
-    optional bool snat_ipv6 = 2;
-  }
-  message NoTcpTimestamps {
-  }
-  message ShellfishEgressControl {
-  }
-  optional .borg.NetworkConfig.SLBConfig slb_config = 1;
-  optional .borg.NetworkConfig.SysctlConfig sysctl_config = 2;
-  optional .borg.NetworkConfig.SnatConfig snat_config = 3;
-  optional .borg.NetworkConfig.NoTcpTimestamps no_tcp_timestamps = 4;
-  optional .borg.NetworkConfig.ShellfishEgressControl shellfish_egress_control = 5;
-  repeated string config_type = 6;
+    optional SLBConfig slb_config = 1;
+    message SLBConfig {
+        optional bool slb_gre_tunnel = 1;
+        optional bool dsr_user_traffic = 2;
+        optional bool enable_ipv6 = 3;
+        optional bool tcp_fast_open = 4 [default = true];
+        optional bool no_tcp_timestamps = 5;
+    }
+    
+    optional SysctlConfig sysctl_config = 2;
+    message SysctlConfig {
+        optional int32 net_core_rmem_default = 1;
+        optional int32 net_core_wmem_default = 2;
+    }
+    
+    optional SnatConfig snat_config = 3;
+    message SnatConfig {
+        optional bool snat_ipv4 = 1 [default = true];
+        optional bool snat_ipv6 = 2;
+    }
+    
+    optional NoTcpTimestamps no_tcp_timestamps = 4;
+    message NoTcpTimestamps {
+        
+    }
+    
+    optional ShellfishEgressControl shellfish_egress_control = 5;
+    message ShellfishEgressControl {
+        
+    }
+    
+    repeated string config_type = 6;
 }
 
 message MigrationPolicy {
-  message VirtualizationSpec {
+    optional Type type = 1 [default = UNSET_TREAT_AS_NO];
     enum Type {
-      UNSET_TREAT_AS_NONE = 0;
-      NONE = 1;
-      KVM_VIRTUALIZED = 2;
+        UNSET_TREAT_AS_NO = 0;
+        NO = 1;
+        YES = 2;
     }
-    optional bool use_custom_vmm = 1 [default = false, deprecated = true];
-    optional bool use_virtual_ip = 2 [default = false];
-  }
-  enum Type {
-    UNSET_TREAT_AS_NO = 0;
-    NO = 1;
-    YES = 2;
-  }
-  enum ImplementationType {
-    VIRTLET = 0;
-    DILITHIUM = 1;
-  }
-  optional .borg.MigrationPolicy.Type type = 1 [default = UNSET_TREAT_AS_NO];
-  optional bool custom = 3 [default = false];
-  optional .borg.MigrationPolicy.ImplementationType implementation_type = 4 [default = VIRTLET];
-  optional .borg.MigrationPolicy.VirtualizationSpec virtualization_spec = 2;
+    
+    optional bool custom = 3 [default = false];
+    
+    optional ImplementationType implementation_type = 4 [default = VIRTLET];
+    enum ImplementationType {
+        VIRTLET = 0;
+    }
+    
+    optional FailurePolicy failure_policy = 5 [default = UNSPECIFIED];
+    enum FailurePolicy {
+        UNSPECIFIED = 0;
+        RESTART = 1;
+        IGNORE = 2;
+    }
+    
+    optional int64 max_migration_time = 6;
+    
+    optional VirtualizationSpec virtualization_spec = 2;
+    message VirtualizationSpec {
+        optional bool use_custom_vmm = 1 [default = false, deprecated = true];
+        optional bool use_virtual_ip = 2 [default = false];
+        
+        enum Type {
+            UNSET_TREAT_AS_NONE = 0;
+            NONE = 1;
+            KVM_VIRTUALIZED = 2;
+        }
+    }
 }
 
 message Virtualization {
-  message Image {
-    enum Type {
-      IMAGE_VMM_BIN = 0;
-      IMAGE_BASE_IMAGE = 1;
-      IMAGE_KERNEL_BIN = 2;
+    repeated Image image = 1;
+    message Image {
+        optional Type type = 1;
+        enum Type {
+            IMAGE_VMM_BIN = 0;
+            IMAGE_BASE_IMAGE = 1;
+            IMAGE_KERNEL_BIN = 2;
+        }
+        
+        optional string extrashard_shortname = 2;
+        optional string filename = 3;
     }
-    optional .borg.Virtualization.Image.Type type = 1;
-    optional string extrashard_shortname = 2;
-    optional string filename = 3;
-  }
-  message VirtualIp {
-    optional string address = 1;
-    optional string netmask = 2;
-    optional string gateway = 3;
-  }
-  repeated .borg.Virtualization.Image image = 1;
-  optional string vmm_kvm_node = 3;
-  optional string remote_task_dir = 4;
-  optional bool use_virtual_ip = 6;
-  optional .borg.Virtualization.VirtualIp virtual_ip = 7;
-  optional .borg.MigrationPolicy.VirtualizationSpec.Type type = 8 [default = UNSET_TREAT_AS_NONE];
-  optional bool migratable = 9;
-  optional bool custom = 11;
-  optional .borg.MigrationPolicy.ImplementationType implementation_type = 12 [default = VIRTLET];
-  optional string virtual_task_status_file = 10;
+    
+    optional string vmm_kvm_node = 3;
+    optional string remote_task_dir = 4;
+    optional bool use_virtual_ip = 6;
+    optional MigrationPolicy.VirtualizationSpec.Type type = 8 [default = UNSET_TREAT_AS_NONE];
+    optional bool migratable = 9;
+    optional bool custom = 11 [deprecated = true];
+    optional MigrationPolicy.ImplementationType implementation_type = 12 [default = VIRTLET, deprecated = true];
+    
+    reserved 10;
 }
 
-message Migration {
-  optional int32 port = 1;
-  optional string source_hostport = 2;
-  optional .thinmint.ThinMint mint = 3;
-  optional string source_shandle = 4 [deprecated = true];
-  optional bool disable_cpu_hardcap_treat_overlimit_ls_tasks_as_abusive = 5 [default = false];
-  optional string migration_reason = 6;
+message VirtualNetworkingSpec {
+    optional Type type = 1;
+    enum Type {
+        UNSPECIFIED = 0;
+        VM = 1;
+        DIRECT_PATH = 2;
+        NAT46 = 3;
+        BARE_METAL = 4;
+        A3_NAT46 = 5;
+    }
+    
+    optional DirectPathSpec direct_path = 2;
+    message DirectPathSpec {
+        optional bool c2p = 1;
+        optional bool p2c = 2;
+    }
+}
+
+message SliceMigrationState {
+    optional State state = 1;
+    enum State {
+        UNSPECIFIED = 0;
+        SLICE_INITIALIZED = 1;
+        SLICE_REPLACEMENT_CREATED = 5;
+        SLICE_REPLACEMENT_READY = 2;
+        SLICE_MIGRATION_SUCCESS_NOTIFIED = 6;
+        SLICE_MIGRATION_FAILURE_NOTIFIED = 7;
+        SLICE_COMPLETED = 3;
+        SLICE_ABORT = 4;
+    }
+    
+    optional google.protobuf.Duration max_rescheduling_time = 2;
+    optional bool soft_migration = 3;
+    optional string why = 4;
+}
+
+message SliceMigrationWorkerState {
+    optional State state = 1;
+    enum State {
+        UNSPECIFIED = 0;
+        SOURCE_NOTIFIED = 1;
+        SOURCE_QUIESCED = 2;
+        SOURCE_SAVED = 3;
+        TARGET_RUN = 4;
+        TARGET_COMPLETE = 5;
+    }
 }
 
 message ResChange {
-  optional int64 memory = 1;
-  optional int64 disk = 2;
-  optional float cpu_rate = 3;
-  optional int64 milligcu = 4;
-  optional int64 pcpu_millicores = 5;
+    optional int64 memory = 1;
+    optional int64 regular_memory = 6;
+    optional int64 disk = 2;
+    optional float cpu_rate = 3;
+    optional int64 milligcu = 4;
+    optional int64 pcpu_millicores = 5;
 }
 
 message DisklessChange {
-  optional int64 conversion_size = 1;
-  optional int64 child_conversion_size = 2;
-  optional .borg.AllocChildDiskState child_disk_state = 3;
+    optional int64 conversion_size = 1;
+    optional int64 child_conversion_size = 2;
+    optional AllocChildDiskState child_disk_state = 3;
 }
 
 message FsDirResChange {
-  repeated .borg.LocalRamFsDirSpec local_ram_fs_dir_change = 1;
-  repeated .borg.RemoteHddFsDirSpec remote_hdd_fs_dir_change = 2;
+    repeated LocalRamFsDirSpec local_ram_fs_dir_change = 1;
+    
+    reserved 2;
 }
 
 message LastModBy {
-  optional string role = 1;
-  optional string account = 2;
-  optional double when = 3;
-  optional string on_behalf_of = 4;
+    optional string role = 1;
+    optional string account = 2;
+    optional double when = 3;
+    optional string on_behalf_of = 4;
+}
+
+message CreatedBy {
+    optional string role = 1;
+    optional string account = 2;
+    optional string on_behalf_of = 3;
 }
 
 message MachineEvent {
-  required double time = 1;
-  optional string msg = 2;
-  optional group StateChange = 3 {
-    required int32 state = 4;
-  }
+    required double time = 1;
+    optional string msg = 2;
+    
+    optional group StateChange = 3 {
+        required int32 state = 4;
+    }
+    
+    optional int64 downtime_sec = 5;
 }
 
 message MaintenanceState {
-  enum E {
-    PREPARE = 0;
-    READY = 1;
-    ACTIVE = 2;
-    NONE = 3;
-  }
+    optional E state = 1;
+    enum E {
+        PREPARE = 0;
+        READY = 1;
+        ACTIVE = 2;
+        NONE = 3;
+    }
 }
 
 message MaintenanceEventSpec {
-  enum Type {
-    UNKNOWN = 0;
-    EMERGENCY_UNPLANNED_OUTAGE = 1;
-    TESTING = 2;
-    SUPERCLUSTER_PCR = 3;
-    RACKSWITCH_UPGRADE_DISRUPTIVE = 4;
-    RACKSWITCH_UPGRADE_FAILURE_RECOVERY = 5;
-    RACKSWITCH_REPAIR = 6;
-    BDM_RACK_RETROFIT = 7;
-    SMALL_FAILURE_DOMAIN_DRAIN = 8;
-    SOLE_TENANCY_DRAIN = 9;
-  }
+    optional Type type = 1;
+    enum Type {
+        UNKNOWN = 0;
+        EMERGENCY_UNPLANNED_OUTAGE = 1;
+        TESTING = 2;
+        SUPERCLUSTER_PCR = 3;
+        RACKSWITCH_UPGRADE_DISRUPTIVE = 4;
+        RACKSWITCH_UPGRADE_FAILURE_RECOVERY = 5;
+        RACKSWITCH_REPAIR = 6;
+        RACKSWITCH_PROBLEM_MITIGATION = 10;
+        BDM_RACK_RETROFIT = 7;
+        SMALL_FAILURE_DOMAIN_DRAIN = 8;
+        SOLE_TENANCY_DRAIN = 9;
+        STABLE_FLEET_DRAIN = 11;
+        NETWORK_AVAILABILITY_IMPACTED = 12;
+        PENDING_LOGICAL_MOVE_DRAIN = 13;
+        MAINTENANCE_WINDOW = 14;
+        GCE_CUSTOMER_REPORTED_FAULTY_HOST = 15;
+        GCE_REQUESTED_HOST_REPLACEMENT = 16;
+        POWER_CAPPING_IMPACTED = 17;
+    }
 }
 
-message CpuArchitecture {
-  enum Type {
-    X86 = 1;
-    PPC = 2;
-    ARM = 3;
-    ANY = 4;
-    HASWELL = 5;
-    BROADWELL = 6;
-  }
-}
-
-message MpmPackageTag {
-  optional string key = 1;
-  optional string value = 2;
-}
-
-message MpmPackageSpec {
-  enum MpmType {
-    UNSPECIFIED = 0;
-    FETCH_ONLY = 1;
-    MOUNTABLE = 2;
-    MOUNTABLE_CONVERTED = 3;
-  }
-  optional string pkg_name = 1;
-  optional string version = 2;
-  optional string label = 3;
-  repeated string filegroups = 4;
-  repeated string signed_by = 5;
-  optional bool verify_all_signers = 7;
-  optional .borg.MpmPackageSpec.MpmType mpm_type = 8 [default = UNSPECIFIED];
-  repeated .borg.CpuArchitecture.Type cpu_architectures = 9;
-  optional bytes signed_build_provenance = 10;
-  repeated .borg.MpmPackageTag tags = 11;
-  optional .borg.CpuArchitecture.Type architecture_override = 12;
-}
-
-message MpmPackageHints {
-  optional bytes version_pb = 1;
+message InternalPackageSpec {
+    optional Upgrade upgrade = 1;
+    enum Upgrade {
+        UPGRADE_UNSPECIFIED = 0;
+        UPGRADE_OUTDATED = 1;
+    }
 }
 
 message CircleTrait {
-  enum E {
-    option allow_alias = true;
-    SUPERCLUSTER = 0;
-    MONITORING_PRIORITY = 1;
-    DEDICATED_HIGH_PRIORITY = 12;
-    DEDICATED_HIGH_PRIORITY_LS = 28;
-    DEDICATED_HIGH_PRIORITY_LT = 29;
-    FLEX = 2;
-    AUTO_PILOT = 5;
-    MANUAL_PILOT = 6;
-    TIER_1 = 7;
-    TIER_1_5 = 8;
-    TIER_1_7 = 11;
-    TIER_2 = 9;
-    TIER_1_5_OR_BETTER = 10;
-    BATCH = 13;
-    GUARANTEED_BATCH = 31;
-    HIGHLY_AVAILABLE_LS = 7;
-    HIGHLY_AVAILABLE_LT = 8;
-    HIGHLY_AVAILABLE = 10;
-    MOSTLY_AVAILABLE_LS = 23;
-    MOSTLY_AVAILABLE_LT = 24;
-    MOSTLY_AVAILABLE = 25;
-    MOSTLY_AVAILABLE_OR_BETTER = 30;
-    WEAKLY_AVAILABLE_LS = 19;
-    WEAKLY_AVAILABLE_LT = 20;
-    WEAKLY_AVAILABLE = 14;
-    BEST_EFFORT_LS = 21;
-    BEST_EFFORT_LT = 22;
-    BEST_EFFORT = 9;
-    GPU_GRID_K2 = 26;
-    GPU_TESLA_K80 = 27;
-    GPU_FIREPRO_S9300X2 = 56;
-    GPU_TESLA_P100 = 33;
-    LOCAL_SSD_3TB = 32;
-    FUTURE_TRAIT_34_PLEASE_REBUILD = 34;
-    FUTURE_TRAIT_35_PLEASE_REBUILD = 35;
-    FUTURE_TRAIT_36_PLEASE_REBUILD = 36;
-    FUTURE_TRAIT_37_PLEASE_REBUILD = 37;
-    FUTURE_TRAIT_38_PLEASE_REBUILD = 38;
-    FUTURE_TRAIT_39_PLEASE_REBUILD = 39;
-    FUTURE_TRAIT_40_PLEASE_REBUILD = 40;
-    FUTURE_TRAIT_41_PLEASE_REBUILD = 41;
-    FUTURE_TRAIT_42_PLEASE_REBUILD = 42;
-    FUTURE_TRAIT_43_PLEASE_REBUILD = 43;
-    FUTURE_TRAIT_44_PLEASE_REBUILD = 44;
-    FUTURE_TRAIT_45_PLEASE_REBUILD = 45;
-    FUTURE_TRAIT_46_PLEASE_REBUILD = 46;
-    FUTURE_TRAIT_47_PLEASE_REBUILD = 47;
-    FUTURE_TRAIT_48_PLEASE_REBUILD = 48;
-    FUTURE_TRAIT_49_PLEASE_REBUILD = 49;
-    FUTURE_TRAIT_50_PLEASE_REBUILD = 50;
-    CPU_64_HIGHMEM = 51;
-    CPU_64_HIGHMEM_SSD = 52;
-    PLATFORM_BROADWELL = 53;
-    PLATFORM_SKYLAKE = 57;
-    CPU_80_HIGHMEM = 54;
-    CPU_80_HIGHMEM_SSD = 55;
-    LOCAL_SSD = 58;
-  }
-  optional .borg.CircleTrait.E trait = 1;
-  extend .proto2.bridge.MessageSet {
-    optional .borg.CircleTrait message_set_extension = 46251230;
-  }
+    optional E trait = 1;
+    enum E {
+        option allow_alias = true;
+        SUPERCLUSTER = 0;
+        MONITORING_PRIORITY = 1;
+        DEDICATED_HIGH_PRIORITY = 12;
+        DEDICATED_HIGH_PRIORITY_LS = 28;
+        DEDICATED_HIGH_PRIORITY_LT = 29;
+        FLEX = 2;
+        AUTO_PILOT = 5;
+        MANUAL_PILOT = 6;
+        HIGHLY_AVAILABLE_LS = 7;
+        HIGHLY_AVAILABLE_LT = 8;
+        HIGHLY_AVAILABLE_LO = 34;
+        HIGHLY_AVAILABLE = 10;
+        SHEDDABLE_HIGHLY_AVAILABLE = 60;
+        SHEDDABLE_HIGHLY_AVAILABLE_LS = 61;
+        SHEDDABLE_HIGHLY_AVAILABLE_LT = 62;
+        MOSTLY_AVAILABLE_LS = 23;
+        MOSTLY_AVAILABLE_LT = 24;
+        MOSTLY_AVAILABLE = 25;
+        MOSTLY_AVAILABLE_OR_BETTER = 30;
+        WEAKLY_AVAILABLE_LS = 19;
+        WEAKLY_AVAILABLE_LT = 20;
+        WEAKLY_AVAILABLE = 14;
+        BEST_EFFORT_LS = 21;
+        BEST_EFFORT_LT = 22;
+        BEST_EFFORT = 9;
+        TIER_1 = 7 [deprecated = true];
+        TIER_1_5 = 8 [deprecated = true];
+        TIER_1_7 = 11 [deprecated = true];
+        TIER_2 = 9 [deprecated = true];
+        TIER_1_5_OR_BETTER = 10 [deprecated = true];
+        BATCH = 13;
+        GUARANTEED_BATCH = 31;
+        UNIFIED_BATCH = 35;
+        UNIFIED_BATCH_24HOURS = 59;
+        SHEDDABLE_BATCH = 63;
+        GPU_GRID_K2 = 26;
+        GPU_TESLA_K80 = 27;
+        GPU_FIREPRO_S9300X2 = 56;
+        GPU_TESLA_P100 = 33;
+        LOCAL_SSD_3TB = 32;
+        CPU_64_HIGHMEM = 51;
+        CPU_64_HIGHMEM_SSD = 52;
+        PLATFORM_BROADWELL = 53;
+        PLATFORM_SKYLAKE = 57;
+        CPU_80_HIGHMEM = 54;
+        CPU_80_HIGHMEM_SSD = 55;
+        LOCAL_SSD = 58;
+    }
+    
+    extend .proto2.bridge.MessageSet {
+        optional CircleTrait message_set_extension = 46251230;
+    }
+}
+
+message CircleTraitProto3Wrapper {
+    optional CircleTrait.E trait = 1;
 }
 
 message AggregateResourceSet {
-  optional int32 top_level_instances = 1;
-  optional int64 milli_cpu = 2;
-  optional int64 milli_gcu = 3;
-  optional int64 ram_bytes = 4;
-  optional int64 disk_bytes = 5;
-  optional int64 network_bps = 6;
+    optional int32 top_level_instances = 1;
+    optional int64 milli_cpu = 2 [jstype = JS_STRING];
+    optional int64 milli_gcu = 3 [jstype = JS_STRING];
+    optional int64 ram_bytes = 4 [jstype = JS_STRING];
+    optional int64 disk_bytes = 5 [jstype = JS_STRING];
+    optional int64 network_bps = 6 [jstype = JS_STRING];
+    repeated ScalarResource scalar = 7;
+    optional int64 membw = 8 [jstype = JS_STRING];
+}
+
+message AggregateTpuResource {
+    optional ScalarResource.Key type = 1;
+    
+    repeated Slice slice = 2;
+    message Slice {
+        optional string attribute_key = 1;
+        optional int64 total_size = 2;
+        optional int64 schedulable_capacity = 3;
+        optional int64 bad_in_borg_slice_count = 4;
+        optional int64 free_class1_high_priority_max = 5;
+        optional int64 free_class2 = 6;
+        optional int64 healthy_capacity = 7;
+        optional int64 free_hp_healthy_slice_count = 8;
+    }
+    
+    repeated SuperpodCapacity superpod_capacity = 3;
+    message SuperpodCapacity {
+        optional string superpod_locus_id = 1;
+        optional int64 healthy_cubes_count = 2;
+        optional int64 degraded_cubes_count = 3;
+    }
+    
+    optional int64 healthy_chip_capacity = 4;
+    optional int64 free_hp_healthy_chip_count = 5;
+    optional int64 spatially_flexible_chip_count = 6;
+}
+
+message CellTpuResources {
+    repeated AggregateTpuResource tpu_resources = 1;
+}
+
+message ExcessSystemOverhead {
+    optional float cpurate = 1;
+}
+
+message MachineGroupStateEnumProto3Wrapper {
+    optional MachineGroupState machine_group_state = 1;
 }
 
 message NamespaceParams {
-  message User {
-    message IdMapping {
-      oneof inside_ns {
-        uint32 id_inside_ns = 1;
-        string name_inside_ns = 2;
-      }
-      oneof outside_ns {
-        uint32 id_outside_ns = 3;
-        string name_outside_ns = 4;
-      }
-      optional uint32 length = 5;
+    optional User user = 1;
+    message User {
+        optional Mode mode = 5 [default = MODE_UNSPECIFIED];
+        
+        repeated IdMapping uid_mapping = 1;
+        message IdMapping {
+            optional uint32 length = 5;
+            
+            oneof inside_ns {
+                uint32 id_inside_ns = 1;
+                string name_inside_ns = 2;
+            }
+            
+            oneof outside_ns {
+                uint32 id_outside_ns = 3;
+                string name_outside_ns = 4;
+            }
+        }
+        
+        repeated IdMapping gid_mapping = 2;
+        optional bool request_cap_sys_admin = 4;
+        optional bool request_cap_net_admin = 10;
+        optional bool request_cap_net_raw = 11;
+        
+        optional RootUserMapping root_user_mapping = 6 [default = ROOT_USER_UNSPECIFIED];
+        enum RootUserMapping {
+            ROOT_USER_UNSPECIFIED = 0;
+            ROOT_USER_NONE = 1;
+            ROOT_USER_SYSTEM = 2 [deprecated = true];
+            ROOT_USER_JOB_OWNER = 3;
+        }
+        
+        repeated string additional_user = 7;
+        repeated uint32 additional_uid = 8;
+        
+        reserved 3, 9;
     }
-    repeated .borg.NamespaceParams.User.IdMapping uid_mapping = 1;
-    repeated .borg.NamespaceParams.User.IdMapping gid_mapping = 2;
-    optional bool disabled = 3 [default = false];
-  }
-  message Pid {
-    optional bool disabled = 1 [default = false];
-  }
-  message Mount {
-    optional bool disabled = 1 [default = false];
-    optional bool mount_clean_proc = 2 [default = false];
-    optional bool mount_clean_sys = 3 [default = false];
-  }
-  message Ipc {
-  }
-  message Uts {
-    optional bool disabled = 1 [default = false];
-  }
-  message Net {
-    optional bool disabled = 1 [default = false];
-  }
-  optional .borg.NamespaceParams.User user = 1;
-  optional .borg.NamespaceParams.Pid pid = 2;
-  optional .borg.NamespaceParams.Mount mount = 3;
-  optional .borg.NamespaceParams.Ipc ipc = 4;
-  optional .borg.NamespaceParams.Uts uts = 5;
-  optional .borg.NamespaceParams.Net net = 6;
+    
+    optional Pid pid = 2;
+    message Pid {
+        optional Mode mode = 3 [default = MODE_UNSPECIFIED];
+        
+        optional PidNsType pid_ns_type = 2 [default = PID_NS_DEFAULT];
+        enum PidNsType {
+            PID_NS_DEFAULT = 0;
+            PID_NS_UPSTREAM = 1;
+            PID_NS_LITE = 2;
+        }
+        
+        reserved 1;
+    }
+    
+    optional Mount mount = 3;
+    message Mount {
+        optional Mode mode = 4 [default = MODE_UNSPECIFIED];
+        optional bool mount_clean_sys = 3 [default = false, deprecated = true];
+        
+        reserved 1, 2;
+    }
+    
+    optional Uts uts = 5;
+    message Uts {
+        optional Mode mode = 2 [default = MODE_UNSPECIFIED];
+        
+        optional HostnameType hostname_type = 3 [default = UNSPECIFIED_HOSTNAME];
+        enum HostnameType {
+            UNSPECIFIED_HOSTNAME = 0;
+            MACHINE_HOSTNAME = 1;
+            MACHINE_HOSTNAME_WITH_CONTAINER_IP = 3;
+            VIRTUALIZED_HOSTNAME = 4;
+        }
+        
+        reserved 1;
+    }
+    
+    optional Net net = 6;
+    message Net {
+        optional Mode mode = 4 [default = MODE_UNSPECIFIED];
+        
+        optional PortAllocation port_allocation = 2;
+        enum PortAllocation {
+            UNSPECIFIED = 0;
+            MACHINE_LEVEL_UNIQUE_PORTS = 1;
+            VIRTUAL_PORTS = 2;
+        }
+        
+        optional PortAllocation dynamic_port_allocation_override = 3;
+        optional Mode tproxy = 5;
+        optional Mode torpedo = 6;
+        optional int64 ip_grace_period = 7;
+        optional Mode udp_tproxy = 8;
+        optional Mode tcp_reflect_tos = 9;
+        
+        reserved 1;
+    }
+    
+    optional uint32 anonymous_kuids = 7;
+    
+    reserved 4;
+    
+    enum Mode {
+        MODE_UNSPECIFIED = 0;
+        MODE_DISABLED = 1;
+        MODE_ENABLED = 2;
+    }
 }
 
 message BorgMasterLockSeq {
-  optional string sequence = 1;
-  optional string name = 2;
-  optional string timestamp = 3;
-  optional string cell = 4;
-  optional int64 commit = 5;
-  optional bool force_accept = 6;
+    optional string sequence = 1;
+    optional string name = 2;
+    optional string timestamp = 3;
+    optional string cell = 4;
+    optional int64 commit = 5;
+    optional bool force_accept = 6;
 }
 
 message ColocationSchedulingPolicy {
-  enum Policy {
-    UNSPECIFIED = 0;
-    STRICT = 1;
-    BEST_EFFORT = 2;
-  }
-  optional .borg.ColocationSchedulingPolicy.Policy policy = 1;
+    optional Policy policy = 1;
+    enum Policy {
+        UNSPECIFIED = 0;
+        STRICT = 1;
+        BEST_EFFORT = 2;
+        AUTO_COLOCATION = 3;
+        STRICT_INCREMENTAL = 4;
+        STRICT_FOR_COLLECTION_INSTANCE_GROUP = 5;
+    }
 }
 
+message RegionalColocationSchedulingPolicy {
+    optional Policy policy = 1;
+    enum Policy {
+        UNSPECIFIED = 0;
+        SAME_CELL = 3;
+        SAME_FABRIC = 4;
+        SAME_CAMPUS = 5;
+        SAME_METRO = 6;
+        SAME_PRODZONE = 7;
+        DIFFERENT_PRODZONES = 8;
+    }
+}
 
+message TemporalColocationPolicy {
+    optional Policy policy = 1;
+    enum Policy {
+        UNSPECIFIED = 0;
+        RUN_TOGETHER = 1;
+    }
+}
+
+message TemporalColocationSpec {
+    optional TemporalColocationPolicy policy = 1;
+    optional string flex_pool = 2;
+    optional string accounting_user = 3;
+    optional google.protobuf.Duration minimum_duration = 4;
+    optional double importance = 5;
+}
+
+message DisableInfo {
+    optional DisableReason disable_reason = 1;
+}
+
+message DisableReasonProto3Wrapper {
+    optional DisableReason disable_reason = 1;
+}
+
+message NetworkEnvironment {
+    optional Type type = 1;
+    enum Type {
+        UNSPECIFIED = 0;
+        IP_AGNOSTIC_DUALSTACK = 1;
+        IP_AGNOSTIC_FRONTEND = 3;
+        IPV6_DUALSTACK = 4;
+        IPV6_FRONTEND = 5;
+        IPV6_ONLY = 6;
+        INCONSISTENT = 7;
+    }
+}
+
+message IPv6Autoconversion {
+    optional State state = 1;
+    enum State {
+        UNSPECIFIED = 0;
+        OPT_OUT = 1;
+        DISABLED = 2;
+        ENABLED = 3;
+    }
+    
+    optional int64 threshold_cl = 2 [jstype = JS_STRING];
+    optional int64 min_package_cl = 3;
+}
+
+message NetNsAutoconversion {
+    optional NamespaceParams ns_params = 1;
+    optional int64 threshold_cl = 2 [jstype = JS_STRING];
+    optional int64 min_package_cl = 3;
+}
+
+message TaskMigrationSpec {
+    optional Mode mode = 1;
+    enum Mode {
+        MODE_UNSPECIFIED = 0;
+        CHECKPOINT_RESTORE = 1;
+        BORGLET_TO_BORGLET = 2;
+        TRACING = 3;
+    }
+}
+
+message TaskMigrationEnvironment {
+    repeated Incompatibility incompatibility = 1;
+    message Incompatibility {
+        optional string reason = 1;
+    }
+}
+
+message CheckpointAttempt {
+    optional State state = 1 [default = UNSPECIFIED];
+    enum State {
+        UNSPECIFIED = 0;
+        NOT_ATTEMPTED = 5;
+        IN_PROGRESS = 1;
+        FAILED = 3;
+        SUCCESS = 2;
+    }
+    
+    optional string error_message = 2;
+    optional google.protobuf.Timestamp start_time = 3;
+    optional google.protobuf.Timestamp end_time = 4;
+}
+
+message RestoreAttempt {
+    optional State state = 1 [default = UNSPECIFIED];
+    enum State {
+        UNSPECIFIED = 0;
+        IN_PROGRESS = 2;
+        FAILED = 3;
+        SUCCESS = 4;
+    }
+    
+    optional string error_message = 2;
+    optional google.protobuf.Timestamp start_time = 3;
+    optional google.protobuf.Timestamp end_time = 4;
+}
+
+message NormalizedAcceleratorPerformanceMap {
+    repeated Item item = 1;
+    message Item {
+        optional ScalarResource.Key key = 1;
+        optional double naps_per_accel_unit = 2;
+        optional double equivalent_gcus_per_accel_unit = 3;
+        optional Domain domain = 4;
+        optional bool in_shared_borg = 5;
+        optional bool in_probation = 6;
+    }
+    
+    enum Domain {
+        UNDEFINED = 0;
+        MACHINE_LEARNING = 1;
+        RENDERING = 2;
+        TRANSCODING = 3;
+        SEARCH = 4;
+    }
+}
+
+message BatchEffectiveDuration {
+    optional google.protobuf.Duration duration = 1;
+    
+    optional DurationSource source = 2;
+    enum DurationSource {
+        UNKNOWN = 0;
+        BATCH_PARAMS = 1;
+        DURATION_HINT = 2;
+        AUTO_RENEWAL = 3;
+        DEFAULT = 4;
+        UNCONDITIONAL_RENEWAL = 5;
+    }
+}
+
+message ByousConfig {
+    optional string package_name = 1;
+    
+    optional ByousMode mode = 2;
+    enum ByousMode {
+        UNSET = 0;
+        ENABLED = 1;
+        DISABLED = 2;
+        AUTO_ENABLED = 3 [deprecated = true];
+        SYM_USERSPACE_BTM = 4;
+    }
+    
+    optional OverlayPackage overlay_package = 3;
+    message OverlayPackage {
+        optional string merged_package_name = 1;
+        repeated string packages_to_layer = 2;
+    }
+}
+
+message TaskMigrationConfig {
+    optional TaskMigrationMode mode = 1;
+    enum TaskMigrationMode {
+        UNSPECIFIED = 0;
+        NOT_ALLOWED = 1;
+        REGULAR = 2;
+        STRICT = 3;
+        AUTO = 4;
+    }
+    
+    optional AutoPopulateConfigs auto_populate_configs = 2;
+    enum AutoPopulateConfigs {
+        AUTOPOPULATE_UNSPECIFIED = 0;
+        AUTOPOPULATE_NOT_ALLOWED = 1;
+        AUTOPOPULATE_ALLOWED = 2;
+    }
+}
+
+message OvercommitFactors {
+    optional double cpu_overcommit_factor = 1;
+    optional double memory_overcommit_factor = 2;
+}
+
+message BorgletEstimatedFreeCapacity {
+    optional ResourceType resource_type = 1;
+    enum ResourceType {
+        UNKNOWN_RESOURCE = 0;
+        GCU = 1;
+        RAM = 2;
+        MEMBW = 3;
+    }
+    
+    optional BorgTier borg_tier = 2;
+    enum BorgTier {
+        UNKNOWN_TIER = 0;
+        HALO = 1;
+        HALS = 2;
+        HALT = 3;
+        MALS = 4;
+        MALT = 5;
+        WALS = 6;
+        WALT = 7;
+        BELS = 8;
+        BELT = 9;
+    }
+    
+    optional int64 free_capacity = 4;
+    map<uint64, int64> vm_limits = 5;
+}
+
+message PredictionStats {
+    optional double predicted_peak = 1;
+}
+
+message PredictorState {
+    optional double cpu_rate_limit = 1;
+}
+
+message PerResourcePredictions {
+    optional PredictionStats cpu_rate = 1;
+    map<int64, PredictorState> vm_states = 2;
+}
+
+message PredictionsByTiers {
+    optional PerResourcePredictions tier1_predictions = 1;
+    optional PerResourcePredictions hals_predictions = 2;
+}
+
+message PowerConsumption {
+    optional int64 host_usage = 1;
+    optional int64 accelerator_usage = 2;
+}
+
+message ResourceSignals {
+    optional float lt_cpu_throttling = 1;
+    optional OvercommitFactors target_tier1_overcommit_factors = 2;
+    repeated BorgletEstimatedFreeCapacity borglet_estimated_free_capacity = 3;
+    optional PredictionsByTiers machine_predictions = 4;
+    optional PowerConsumption machine_power_consumption = 5;
+    optional PowerConsumption machine_idle_power_consumption = 6;
+}
+
+message HostNetworkConfig {
+    repeated string etp_labels = 1;
+    optional int32 external_ip_network_bandwidth_cap_gbps = 2;
+    optional int64 total_network_bandwidth_cap_gbps = 3;
+    optional int32 num_vcpus = 4;
+    optional int64 ram_bytes = 5;
+    optional bool cpu_overcommitted = 6;
+    
+    repeated NicInfo nic = 7;
+    message NicInfo {
+        optional int32 network_interface_id = 1;
+        optional int32 max_tx_queue_count = 2;
+        optional int32 max_rx_queue_count = 3;
+        optional NicType nic_type = 4;
+        optional NetworkQueueConfiguration network_queue_configuration = 5;
+    }
+    
+    optional bool ram_overcommitted = 8;
+    optional bool bandwidth_demand_expressed = 9;
+    
+    optional NetworkTelemetryData network_telemetry_data = 12;
+    message NetworkTelemetryData {
+        optional int64 grouping_id = 1;
+        optional bool bandwidth_demand_expressed = 2;
+    }
+    
+    repeated string additional_protocols = 10;
+    
+    optional NetworkUsageProfile network_usage_profile = 11;
+    enum NetworkUsageProfile {
+        NETWORK_USAGE_PROFILE_UNSPECIFIED = 0;
+        NETWORK_INTENSIVE = 1;
+        NOT_NETWORK_INTENSIVE = 2;
+    }
+    
+    optional AllowOutgoingTraffic allow_outgoing_traffic = 13;
+    enum AllowOutgoingTraffic {
+        ALLOW_OUTGOING_UNSPECIFIED = 0;
+        ALLOW_OUTGOING_ALL = 1;
+    }
+    
+    enum NicType {
+        UNSPECIFIED_NIC_TYPE = 0;
+        VIRTIO_NET = 1;
+        GVNIC = 2;
+        RDMA = 3;
+        IRDMA = 5;
+        MRDMA = 6;
+        IDPF = 4;
+    }
+}
+
+message TaskPerformanceInfo {
+    optional int64 uid = 1;
+    optional TaskCfhAction suggested_task_cfh_action = 4;
+    optional string performance_degraded_reason = 5;
+    optional int64 stop_time_seconds = 6;
+    optional google.protobuf.Timestamp reported_time = 3;
+    
+    reserved 2;
+}
+
+message PercentileUsage {
+    optional Percentile percentile = 1;
+    enum Percentile {
+        PERCENTILE_UNSPECIFIED = 0;
+        P90 = 1;
+    }
+    
+    optional float value = 2;
+}
+
+message CpuUsageMetric {
+    optional Metric metric = 1;
+    enum Metric {
+        METRIC_UNSPECIFIED = 0;
+        PERCENTILE_90 = 1;
+        AVERAGE = 2;
+        STD_DEV = 3;
+    }
+    
+    optional float value = 2;
+}
+
+message DeviceAlternate {
+    optional string name = 3;
+    optional double estimated_performance = 2;
+    optional ScalarResource scalar_resource = 1;
+    
+    optional AffinityGroupOverrides affinity_group_overrides = 6;
+    message AffinityGroupOverrides {
+        optional string locus_type = 1;
+        optional ColocationSchedulingPolicy colocation_policy = 2;
+        optional int32 size = 3;
+    }
+    
+    optional .proto2.bridge.MessageSet external_params = 7;
+    
+    oneof collection_overrides {
+        AllocOverrides alloc_overrides = 4;
+        JobOverrides job_overrides = 5;
+    }
+    
+    message AllocOverrides {
+        optional int32 size = 1;
+        optional int64 child_memory = 2;
+        optional int64 child_milligcu = 3;
+    }
+    
+    message JobOverrides {
+        optional int32 size = 1;
+        
+        repeated DeviceSpecificTaskArg device_arg_tokens = 2;
+        message DeviceSpecificTaskArg {
+            optional string key = 1;
+            optional string value = 2;
+        }
+        
+        optional int64 memory = 3;
+        repeated LocalRamFsDirSpec local_ram_fs_dir = 4;
+        optional int64 milligcu = 5;
+    }
+}
+
+message DeviceAlternateGroup {
+    optional Policy policy = 1;
+    enum Policy {
+        POLICY_UNKNOWN = 0;
+        POLICY_USER_ORDER = 1;
+        POLICY_AUTO_SELECT = 2;
+        POLICY_FLEXIBLE_SELECT = 3;
+    }
+    
+    repeated DeviceAlternate alternates = 2;
+    optional .proto2.bridge.MessageSet external_params = 3;
+}
+
+message CollectionState {
+    repeated DeviceAlternate selected_alternates = 1;
+}
+
+message MachineAttestationResult {
+    optional State state = 1;
+    enum State {
+        UNKNOWN = 0;
+        FAILED = 1;
+        SUCCEEDED = 2;
+    }
+    
+    repeated bytes serialized_failures = 2;
+    optional bytes serialized_remediation_info = 3;
+    repeated bytes serialized_rot_boot_epochs = 4;
+}
+
+message SecurityPolicyOnJobExit {
+    optional Policy policy = 1;
+    enum Policy {
+        UNSPECIFIED = 0;
+        POWER_CYCLE = 1;
+    }
+}
+
+message PowerProtectedLabels {
+    optional bool power_protected_from_kill = 1;
+    optional double min_allowable_ml_power_throttling_multiplier = 2;
+}
+
+message GroupReservationState {
+    optional State state = 1;
+    enum State {
+        UNKNOWN = 0;
+        PENDING = 1;
+        READY = 2;
+        DELETED = 3;
+    }
+}
+
+enum DeviceAllocationMode {
+    UNKNOWN_ALLOCATION_MODE = 0;
+    LINEAR = 1;
+    CONTIGUOUS_PARTITIONS = 2;
+    CONTIGUOUS_ALIGNED_PARTITIONS = 3;
+    VF_EXTENDED_BITMAP = 4;
+}
+
+enum AllocChildDiskState {
+    CHILD_DISK_PRESENT = 0;
+    CHILD_DISK_REMOVED = 1;
+}
+
+enum BorgPackageType {
+    UNSPECIFIED = 0;
+    LEGACY = 1;
+    REMOTE = 2;
+    LOCAL_RAM_FS_DIR = 3;
+}
+
+enum BorgPackageVisibility {
+    VISIBILITY_UNSPECIFIED = 0;
+    VISIBILITY_INTERNAL = 1;
+}
+
+enum MachineGroupState {
+    MACHINE_GROUP_STATE_UNSPECIFIED = 0;
+    MACHINE_GROUP_STATE_AVAILABLE = 1;
+    MACHINE_GROUP_STATE_UNAVAILABLE = 2;
+    MACHINE_GROUP_STATE_FLAPPING = 3;
+    MACHINE_GROUP_STATE_DEGRADED = 4;
+    MACHINE_GROUP_STATE_PRERELEASE = 5;
+}
+
+enum AutoColocationPolicy {
+    AUTO_COLOCATION_UNSPECIFIED = 0;
+    AUTO_COLOCATION_ENABLED = 1;
+    AUTO_COLOCATION_DISABLED = 2;
+}
+
+enum CredentialType {
+    TASK_CREDENTIALS = 0;
+    MACHINE_CREDENTIALS = 1;
+}
+
+enum DisableReason {
+    NONE = 0;
+    UNKNOWN_REASON = 1;
+    CHANGE_SCHEDULABILITY_RPC = 2;
+    MAINTENANCE_EVENT = 3;
+    BATCH_QUEUED = 4;
+    WAITING_FOR_AUTOPILOT = 5;
+    CONGESTION = 6;
+    CRY_FOR_HELP = 7;
+    TARGETED_BY_AVAILABILITY_SLO_DRILL = 8;
+    DISABLED_BY_EXTERNAL_SCHEDULER = 9;
+    WAITING_FOR_ALLOC = 10;
+    VCBM_MIGRATION = 11;
+    ANTAGONISM = 12;
+    VIRTUAL_BORG = 13;
+    CROSS_POOL_SHARING_CONGESTION = 14;
+    WAITING_FOR_ENQUEUE = 15;
+    OVERSUB_RESOURCES_CONGESTION = 16;
+    DENSE_CLUSTER_CONGESTION = 17;
+    DYNAMIC_HOLDBACK_CONGESTION = 18;
+    THROUGHPUT_QUOTA_CONGESTION = 19;
+    TPU_SLICE_CONGESTION = 20;
+}
+
+enum SameContainerUpdateState {
+    SCU_NOT_UPDATING = 0;
+    SCU_UPDATE_IN_PROGRESS = 1;
+    SCU_SUCCESSFUL_UPDATE = 2;
+    SCU_FAILED_UPDATE = 3;
+    SCU_UPDATE_INTENDED = 4;
+}
+
+enum GoogleSyscallsForTaskMigration {
+    GOOGLE_SYSCALLS_UNSPECIFIED = 0;
+    GOOGLE_SYSCALLS_SELECTIVELY_DISABLED = 1;
+}
+
+enum MachineCategory {
+    NON_CLOUD_MACHINE = 0;
+    CLOUD_EMPTY_MACHINE_NO_HIGH_PRIORITY_CLOUD_JOBS = 1;
+    CLOUD_EMPTY_MACHINE_NO_GCE_VMS_HISD_ELIGIBLE = 4;
+    CLOUD_EMPTY_MACHINE_NO_CLOUD_JOBS = 3;
+    CLOUD_NON_EMPTY_MACHINE = 2;
+}
+
+enum ContainerRuntime {
+    RUNTIME_MACHINE_DEFAULT = 0;
+    RUNTIME_RUNC = 1;
+    RUNTIME_CONTAINER_TOOLS = 2;
+}
+
+enum AcceleratorIntentType {
+    INTENT_TYPE_UNSPECIFIED = 0;
+    INTENT_TYPE_SERVE = 1;
+    INTENT_TYPE_RESERVATION = 2;
+    INTENT_TYPE_IDLE = 3;
+    INTENT_TYPE_SHEDDABLE = 4;
+}
+
+enum PlaceholderState {
+    PLACEHOLDER_STATE_UNSPECIFIED = 0;
+    PLACEHOLDER_STATE_UNCONSUMED = 1;
+    PLACEHOLDER_STATE_CONSUMING = 2;
+    PLACEHOLDER_STATE_CONSUMED = 3;
+    PLACEHOLDER_STATE_CONSUMPTION_FAILED = 4;
+}

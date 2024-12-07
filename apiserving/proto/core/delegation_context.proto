@@ -1,4 +1,4 @@
-syntax = "proto2";
+syntax = "editions";
 
 package com.google.api.server.rest.adapter.context;
 

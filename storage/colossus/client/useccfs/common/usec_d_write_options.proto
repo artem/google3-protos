@@ -1,0 +1,12 @@
+syntax = "editions";
+
+package storage_useccfs;
+
+import "storage/d/proto/server.proto";
+import "storage/datapol/annotations/proto/semantic_annotations.proto";
+
+message UsecDWriteOptions {
+    optional bytes user_info = 1 [ctype = CORD];
+    optional fixed32 user_info_checksum = 2;
+    map<int32, storage_d.UpdateXattr> xattrs = 3;
+}

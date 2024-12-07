@@ -140,6 +140,12 @@ message DeviceStats {
         optional double wearout_indicator = 2 [default = 0];
     }
     
+    optional LatencyCategory latency_category = 11;
+    enum LatencyCategory {
+        LATENCY_CATEGORY_NORMAL = 0;
+        LATENCY_CATEGORY_FAST = 1;
+    }
+    
     reserved 4, 5;
     
     enum Fields {
@@ -152,6 +158,7 @@ message DeviceStats {
         DEV_UNIVERSAL_NAME = 512;
         DEV_SSD_OPS_STATS_V2 = 2048;
         DEV_DURABILITY = 4096;
+        DEV_LATENCY_CATEGORY = 8192;
         DEPRECATED_DEV_NAME = 1;
         DEPRECATED_DEV_INFO_BITS = 32;
         DEPRECATED_DEV_SPINDLE_CATEGORY = 64;
@@ -242,7 +249,7 @@ message VolumeStats {
     
     enum VolumeBits {
         VOL_BIT_DEFAULT_VOLUME = 1;
-        VOL_BIT_COLD_VOLUME = 2;
+        VOL_BIT_DEPRECATED_COLD_VOLUME = 2 [deprecated = true];
         VOL_BIT_LOCKABLE_VOLUME = 4;
         VOL_BIT_IMMUTABLE_VOLUME = 8;
         VOL_BIT_DEPRECATED_LOCKED_VOLUME = 16 [deprecated = true];
@@ -566,7 +573,7 @@ message ReadRequest {
 
 message ReadReply {
     optional ReplyHeader header = 3;
-    required bytes data = 1 [ctype = CORD];
+    optional bytes data = 1 [ctype = CORD];
     optional bool buffer_cache_hit = 2;
     optional fixed32 data_checksum = 4;
     map<int32, Xattr> xattrs = 7;
@@ -767,6 +774,7 @@ message ReconstructFilesRequest {
     optional Encoding encoding = 14;
     repeated ReconstructFilesSource potential_sources = 15;
     optional bool is_hail_mary = 16;
+    optional AllocatorInfo allocator_info = 17;
     
     reserved 8;
 }

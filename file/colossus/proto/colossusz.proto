@@ -1,0 +1,44 @@
+syntax = "editions";
+
+package colossus;
+
+option java_multiple_files = true;
+
+message ColossuszRepresentation {
+    oneof data {
+        Table table = 1;
+        List list = 2;
+        HtmlText text = 3;
+    }
+    
+    message HtmlText {
+        optional string text = 1;
+    }
+    
+    message Table {
+        optional RowData headers = 1;
+        message RowData {
+            repeated HtmlText values = 1;
+        }
+        
+        repeated RowData rows = 2;
+    }
+    
+    message List {
+        repeated HtmlText values = 1;
+    }
+}
+
+message ColossuszSection {
+    repeated ColossuszRepresentation representation = 1;
+}
+
+message ColossuszPage {
+    optional string title = 1;
+    
+    repeated Subsection sub_sections = 2;
+    message Subsection {
+        optional string name = 1;
+        optional ColossuszSection content = 2;
+    }
+}

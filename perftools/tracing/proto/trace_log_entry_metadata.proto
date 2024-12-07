@@ -1,4 +1,4 @@
-syntax = "proto2";
+syntax = "editions";
 
 package perftools.tracing;
 
@@ -7,7 +7,7 @@ import "net/proto2/bridge/proto/message_set.proto";
 option java_package = "com.google.tracing";
 
 message TraceLogEntryMetadata {
-    required double timestamp = 1;
+    optional double timestamp = 1;
     optional fixed64 global_process_id = 2;
     
     extend .proto2.bridge.MessageSet {

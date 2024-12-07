@@ -1,0 +1,21 @@
+syntax = "editions";
+
+package colossus;
+
+message CfsStripeWriterState {
+    enum State {
+        STRIPE_OPEN_BIT = 8;
+        ALLOW_UPDATES_BIT = 16;
+        ALLOW_WRITERS_BIT = 32;
+        ALLOW_REGRANTING_LOCKS_BIT = 64;
+        INIT = 0;
+        OPENING = 1;
+        REOPENING = 2;
+        POISONED = 3;
+        WRITING = 124;
+        WRITING_WITH_RECOVERY = 125;
+        AGGRESSIVE_CLOSE = 63;
+        CLOSING = 56;
+        CLOSED = 57;
+    }
+}

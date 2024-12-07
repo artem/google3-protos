@@ -1,0 +1,67 @@
+syntax = "proto2";
+
+package bigtable;
+
+import "monitoring/streamz/proto/distribution.proto";
+import "storage/datapol/annotations/proto/semantic_annotations.proto";
+
+option java_package = "com.google.bigtable.protos";
+
+message CompactionStats {
+    required string type = 1;
+    required double time = 2;
+    optional int64 external_compactor_cpu_nanos = 25 [default = 0];
+    optional double external_compactor_milligcu = 28 [default = 0];
+    optional int64 bytes_read = 3;
+    optional int64 bytes_written = 4;
+    optional string justification = 11;
+    optional double score = 12;
+    optional double threshold = 13;
+    
+    optional MemtableSize input_memtable_size = 36;
+    message MemtableSize {
+        optional int64 update_bytes = 1;
+        optional int64 secondary_bytes = 2;
+        optional int64 replication_log_bytes = 3;
+    }
+    
+    repeated group LocalityGroupStats = 5 {
+        optional int32 location = 15;
+        optional string compactor_ip_port = 21;
+        required string group = 6;
+        optional bool compacting_to_base = 34;
+        optional int32 input_sstables = 9;
+        optional int32 input_memtables = 20 [default = 0];
+        optional int64 input_sstable_block_bytes = 7;
+        optional int64 input_sstable_block_fs_bytes = 16;
+        optional int64 input_sstable_block_fs_reads = 17;
+        optional int64 output_sstables = 18;
+        optional int64 output_sstable_bytes = 8;
+        optional float duration_secs = 10;
+        repeated int64 families_with_values = 14;
+        optional int64 sequencers_stripped = 19;
+        optional int64 aggregates_stripped = 22;
+        optional int64 values_stripped = 23;
+        map<string, int64> max_gced_logical_clock = 24;
+        map<string, uint64> max_gced_incarnation = 26;
+        optional int64 external_compactor_cpu_nanos = 27 [default = 0];
+        optional double external_compactor_milligcu = 29 [default = 0];
+        optional double compaction_milligcu = 30 [default = 0];
+        
+        repeated AgeGroupStats age_group_stats = 35;
+        message AgeGroupStats {
+            optional string age_group = 1;
+            optional int64 output_sstable_bytes = 2;
+            optional uint64 aged_out_bytes = 3;
+        }
+        
+        optional monitoring.streamz.DistributionProto aggregate_changelog_entry_count = 32;
+        optional monitoring.streamz.DistributionProto aggregate_changelog_compaction_efficiency = 33;
+    }
+}
+
+enum CompactionLocation {
+    UNKNOWN = 0;
+    TABLET_SERVER = 1;
+    EXTERNAL_COMPACTOR = 2;
+}

@@ -1,0 +1,149 @@
+syntax = "editions";
+
+package colossus.maintenance;
+
+import "file/colossus/proto/base.proto";
+import "file/colossus/proto/cfs.proto";
+import "file/colossus/proto/checksummed_bytes.proto";
+import "google/protobuf/timestamp.proto";
+import "storage/d/proto/capability.proto";
+import "storage/datapol/annotations/proto/semantic_annotations.proto";
+import "storage/k3/net/socket_address.proto";
+import "tech/file/proto/types.proto";
+import "util/task/status.proto";
+
+service StripeMaintenance {
+    rpc Start(StartArg) returns (StartResult);
+    rpc Finish(FinishArg) returns (FinishResult);
+}
+
+message StartArg {
+    optional ArgHeader header = 1;
+    optional string path = 2;
+    optional int64 cfs_file_id = 3;
+    optional int32 physical_stripe_index = 4;
+    optional google.protobuf.Timestamp expiration_time = 5;
+    
+    optional SourceChunk source_chunk = 8;
+    message SourceChunk {
+        optional uint64 handle = 1;
+        optional int32 index = 2;
+    }
+    
+    repeated DestChunk destinations = 9;
+    message DestChunk {
+        optional uint64 volume_id = 1;
+        optional uint64 handle = 2;
+        optional string d_server_hostport = 3;
+        optional int32 index = 4;
+    }
+    
+    optional string capability_user = 10;
+    
+    oneof type_specific_info {
+        RecoveryInfo recovery_info = 6;
+        RebalanceInfo rebalance_info = 7;
+    }
+    
+    message RecoveryInfo {
+        
+    }
+    
+    message RebalanceInfo {
+        optional RebalanceType.Type type = 1;
+    }
+}
+
+message StartResult {
+    optional Status status = 1;
+    enum Status {
+        UNKNOWN = 0;
+        SUCCESS = 1;
+        NOT_NEEDED = 2;
+    }
+    
+    repeated SourceInfo source_info = 2;
+    message SourceInfo {
+        optional uint64 volume_id = 1;
+        optional uint64 handle = 2;
+        optional .k3.SocketAddressProto d_server_address = 3;
+        optional int32 index = 4;
+        optional fixed32 checksum = 5;
+        optional storage_d.Capability capability = 6;
+    }
+    
+    repeated DestInfo dest_info = 3;
+    message DestInfo {
+        optional uint64 handle = 1;
+        optional uint64 volume_id = 2;
+        optional string d_server_hostport = 3;
+        optional .k3.SocketAddressProto d_server_address = 4;
+        optional int32 index = 5;
+        optional fixed32 checksum = 6;
+        optional int64 chunk_length = 7;
+        optional storage_d.Capability capability = 8;
+        optional bytes debug_info = 9;
+        optional fixed32 debug_info_checksum = 13;
+        optional ChecksummedBytes metadata_info = 11;
+        optional ChecksummedBytes data_offset_info = 12;
+        optional bool is_cold = 10;
+    }
+    
+    optional int64 stripe_generation = 4;
+    optional Stripe.State stripe_state = 5;
+    optional int64 stripe_data_length = 6;
+    optional FileDescriptor file_descriptor = 7;
+    optional google.protobuf.Timestamp new_chunks_mtime = 8;
+    
+    optional DResourceSettings source_resource_settings = 9;
+    message DResourceSettings {
+        optional string resource_user = 1;
+        optional string isolation_class = 2;
+        optional tech.file.DiskTimeBucket.Priority priority = 3;
+    }
+    
+    optional DResourceSettings destination_resource_settings = 10;
+    optional string chunk_owner = 11;
+}
+
+message FinishArg {
+    optional ArgHeader header = 1;
+    optional string path = 2;
+    optional int64 cfs_file_id = 3;
+    optional int32 physical_stripe_index = 4;
+    
+    repeated DestChunk dest_chunk = 7;
+    message DestChunk {
+        optional uint64 handle = 1;
+        optional uint64 volume_id = 2;
+        optional string d_server_hostport = 3;
+        optional int32 index = 4;
+        optional util.StatusProto status = 5;
+        optional fixed32 checksum = 6;
+        optional int32 chunk_length_overhead = 7;
+    }
+    
+    optional int64 generation = 8;
+    
+    oneof type_specific_info {
+        RecoveryInfo recovery_info = 5;
+        RebalanceInfo rebalance_info = 6;
+    }
+    
+    message RecoveryInfo {
+        
+    }
+    
+    message RebalanceInfo {
+        optional RebalanceType.Type type = 1;
+    }
+}
+
+message FinishResult {
+    optional Status status = 1;
+    enum Status {
+        UNKNOWN = 0;
+        SUCCESS = 1;
+        GENERATION_MISMATCH = 4;
+    }
+}

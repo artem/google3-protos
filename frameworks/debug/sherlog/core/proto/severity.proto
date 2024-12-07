@@ -3,7 +3,6 @@ syntax = "proto2";
 package sherlog;
 
 option objc_class_prefix = "SHERLOG";
-option cc_enable_arenas = true;
 option java_package = "com.google.repository.pipelinediagnostics.sherlog.protos";
 
 message DummyMessageForFileDescriptorLookup {

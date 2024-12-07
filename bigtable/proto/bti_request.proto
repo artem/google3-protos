@@ -1,0 +1,135 @@
+syntax = "proto2";
+
+package bigtable;
+
+import "net/base/qos.proto";
+
+option cc_enable_arenas = true;
+option java_package = "com.google.bigtable.protos";
+
+message BTI_Request {
+    required int32 version = 6;
+    optional int64 baseline_cl = 24;
+    optional int32 required_server_version = 7;
+    required string userid = 1;
+    optional string delegated_role = 17;
+    optional int32 priority = 2;
+    optional net_base.qos.TrafficClass traffic_class = 18 [default = BE1];
+    optional int32 channel_group = 22 [default = 0];
+    required fixed64 client_id = 3;
+    required fixed64 local_id = 4;
+    optional fixed64 done_id = 9;
+    optional bytes server_lock = 16;
+    required string cellname = 5;
+    optional bytes lock_token = 8;
+    
+    optional ClientLanguage client_language = 23 [default = LANG_UNKNOWN];
+    enum ClientLanguage {
+        LANG_UNKNOWN = 0;
+        LANG_CPP = 1;
+        LANG_JAVA = 2;
+        LANG_GO = 3;
+        LANG_PYTHON = 4;
+    }
+    
+    oneof resource_delegation {
+        string resource_user = 21;
+        bool table_owner_as_resource_user = 25;
+    }
+    
+    reserved 19, 20;
+    
+    enum Version {
+        BASE = 0;
+        RELEASE_21_6 = 1971;
+        POST_RELEASE_21_6 = 1979;
+        RELEASE_21_7 = 1981;
+        POST_RELEASE_21_7 = 1989;
+        RELEASE_21_8 = 1991;
+        POST_RELEASE_21_8 = 1999;
+        RELEASE_21_9 = 2001;
+        POST_RELEASE_21_9 = 2009;
+        RELEASE_22_0 = 2011;
+        POST_RELEASE_22_0 = 2019;
+        RELEASE_22_1 = 2021;
+        POST_RELEASE_22_1 = 2029;
+        RELEASE_22_2 = 2031;
+        POST_RELEASE_22_2 = 2039;
+        RELEASE_22_3 = 2041;
+        POST_RELEASE_22_3 = 2049;
+        RELEASE_22_4 = 2051;
+        POST_RELEASE_22_4 = 2059;
+        RELEASE_22_5 = 2061;
+        POST_RELEASE_22_5 = 2069;
+        RELEASE_22_6 = 2071;
+        POST_RELEASE_22_6 = 2079;
+        RELEASE_22_7 = 2081;
+        POST_RELEASE_22_7 = 2089;
+        RELEASE_22_8 = 2091;
+        POST_RELEASE_22_8 = 2099;
+        RELEASE_22_9 = 2101;
+        POST_RELEASE_22_9 = 2109;
+        RELEASE_23_0 = 2111;
+        POST_RELEASE_23_0 = 2119;
+        RELEASE_23_1 = 2121;
+        POST_RELEASE_23_1 = 2129;
+        RELEASE_23_2 = 2131;
+        POST_RELEASE_23_2 = 2139;
+        RELEASE_23_3 = 2141;
+        POST_RELEASE_23_3 = 2149;
+        RELEASE_23_4 = 2151;
+        POST_RELEASE_23_4 = 2159;
+        RELEASE_23_5 = 2161;
+        POST_RELEASE_23_5 = 2169;
+        RELEASE_23_6 = 2171;
+        POST_RELEASE_23_6 = 2179;
+        RELEASE_23_7 = 2181;
+        POST_RELEASE_23_7 = 2189;
+        RELEASE_23_8 = 2191;
+        POST_RELEASE_23_8 = 2199;
+        RELEASE_23_9 = 2201;
+        POST_RELEASE_23_9 = 2209;
+        RELEASE_24_0 = 2211;
+        POST_RELEASE_24_0 = 2219;
+        RELEASE_24_1 = 2221;
+        POST_RELEASE_24_1 = 2229;
+        RELEASE_24_2 = 2231;
+        POST_RELEASE_24_2 = 2239;
+        RELEASE_24_3 = 2241;
+        POST_RELEASE_24_3 = 2249;
+        RELEASE_24_4 = 2251;
+        POST_RELEASE_24_4 = 2259;
+        RELEASE_24_5 = 2261;
+        POST_RELEASE_24_5 = 2269;
+        RELEASE_24_6 = 2271;
+        POST_RELEASE_24_6 = 2279;
+        RELEASE_24_7 = 2281;
+        POST_RELEASE_24_7 = 2289;
+        RELEASE_24_8 = 2291;
+        POST_RELEASE_24_8 = 2299;
+        RELEASE_24_9 = 2301;
+        POST_RELEASE_24_9 = 2309;
+        RELEASE_25_0 = 2311;
+        POST_RELEASE_25_0 = 2319;
+        RELEASE_25_1 = 2321;
+        POST_RELEASE_25_1 = 2329;
+        RELEASE_25_2 = 2331;
+        POST_RELEASE_25_2 = 2339;
+        RELEASE_25_3 = 2341;
+        POST_RELEASE_25_3 = 2349;
+        RELEASE_25_4 = 2351;
+        POST_RELEASE_25_4 = 2359;
+        RELEASE_25_5 = 2361;
+        POST_RELEASE_25_5 = 2369;
+        RELEASE_25_6 = 2371;
+        POST_RELEASE_25_6 = 2379;
+        RELEASE_25_7 = 2381;
+        POST_RELEASE_25_7 = 2389;
+        RELEASE_25_8 = 2391;
+        POST_RELEASE_25_8 = 2399;
+        RELEASE_25_9 = 2401;
+        POST_RELEASE_25_9 = 2409;
+        RELEASE_26_0 = 2411;
+        POST_RELEASE_26_0 = 2419;
+    }
+}

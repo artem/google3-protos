@@ -1,0 +1,9 @@
+syntax = "proto3";
+
+package unsmear;
+
+message LeapTableProto {
+    repeated int32 positive_leaps = 1;
+    repeated int32 negative_leaps = 2;
+    int32 end_jdn = 3;
+}

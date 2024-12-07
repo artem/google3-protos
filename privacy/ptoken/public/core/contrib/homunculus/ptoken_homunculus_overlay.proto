@@ -1,0 +1,30 @@
+syntax = "editions";
+
+package ptoken;
+
+import "privacy/ptoken/public/core/ptoken_type.proto";
+import "storage/datapol/annotations/proto/semantic_annotations.proto";
+
+message PTokenOverlayForHomunculus {
+    optional ScalarPTokenV2Overlay scalar_ptoken = 6;
+    message ScalarPTokenV2Overlay {
+        optional BasicTokenAttributesOverlay basic_attributes = 7;
+        message BasicTokenAttributesOverlay {
+            optional Attributes attributes = 1;
+            message Attributes {
+                optional PTokenType.Enum ptoken_type = 5;
+                optional int32 origin_associated_product_id = 371;
+            }
+        }
+    }
+    
+    optional StoredCompoundPTokenV2Overlay compound_ptoken = 7;
+    message StoredCompoundPTokenV2Overlay {
+        repeated StoredScalarPTokenOverlay scalar_ptokens = 1;
+        message StoredScalarPTokenOverlay {
+            oneof scalar_ptoken_version {
+                ScalarPTokenV2Overlay scalar_ptoken_v2 = 1;
+            }
+        }
+    }
+}

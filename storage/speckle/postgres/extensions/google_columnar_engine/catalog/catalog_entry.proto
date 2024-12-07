@@ -11,7 +11,8 @@ message ColumnProto {
     optional int32 format = 3;
     optional int32 compression_level = 4;
     optional int32 storage_medium = 5;
-    optional uint64 size_in_bytes = 6;
+    optional bool detoast_column = 6;
+    optional uint64 size_in_bytes = 7;
 }
 
 message RelationProto {
@@ -24,8 +25,9 @@ message RelationProto {
     optional int32 compression_level = 7;
     optional int32 storage_medium = 8;
     optional double benefit = 9;
-    repeated uint32 full_cu_start_pages = 10;
-    repeated ColumnProto column_protos = 11;
+    optional bool detoast_columns = 10;
+    repeated uint32 full_cu_start_pages = 11;
+    repeated ColumnProto column_protos = 12;
 }
 
 message PolicyProto {

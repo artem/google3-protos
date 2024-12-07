@@ -1,0 +1,15 @@
+syntax = "editions";
+
+package colossus;
+
+import "storage/datapol/annotations/proto/semantic_annotations.proto";
+
+message CuratorSignedCapability {
+    optional int64 cfs_file_id = 1;
+    optional string colossus_cell = 2;
+    repeated string grantee = 3;
+    optional string security_realm = 4;
+    optional int64 expiration_time_secs = 5;
+    optional int64 version = 6;
+    optional bytes signature = 32;
+}

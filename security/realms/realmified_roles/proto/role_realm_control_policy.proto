@@ -1,0 +1,29 @@
+syntax = "editions";
+
+package security_realms;
+
+import "security/credentials/proto/principal.proto";
+
+message RoleRealmControlPolicy {
+    optional security.credentials.PrincipalProto principal = 1;
+    
+    optional CredentialControlRestrictions enforced_restrictions = 2;
+    message CredentialControlRestrictions {
+        optional SecurityRealmSet allowed_security_realms = 1;
+    }
+    
+    optional CredentialControlRestrictions provisional_restrictions = 3;
+    
+    message SecurityRealmSet {
+        repeated string security_realms = 1;
+        repeated SecurityRealmSet all_of = 2;
+        repeated SecurityRealmSet any_of = 3;
+    }
+}
+
+message CredentialControlPolicyType {
+    enum Enum {
+        CREDENTIAL_CONTROL_POLICY_TYPE_UNSPECIFIED = 0;
+        ALLOWED_SECURITY_REALMS = 1;
+    }
+}

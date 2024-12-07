@@ -1,0 +1,28 @@
+syntax = "editions";
+
+package plaque;
+
+import "java/com/google/apps/jspb/jspb.proto";
+import "net/proto2/bridge/proto/message_set.proto";
+
+option java_package = "com.google.net.plaque.proto";
+
+message PlaqueTraceInfo {
+    optional fixed64 execid_a = 1;
+    optional fixed64 execid_b = 2;
+    optional string group_name = 3;
+    
+    extend .proto2.bridge.MessageSet {
+        optional PlaqueTraceInfo message_set_extension = 525001329;
+    }
+}
+
+message RetainedTraceInfo {
+    optional fixed64 execid_a = 1;
+    optional fixed64 execid_b = 2;
+    optional string source = 3;
+    
+    extend .proto2.bridge.MessageSet {
+        optional RetainedTraceInfo message_set_extension = 525001376;
+    }
+}

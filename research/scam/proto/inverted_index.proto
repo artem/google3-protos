@@ -13,6 +13,40 @@ message InvertedIndex {
     }
 }
 
+message InvertedIndexSmallEntryRemovalConfig {
+    optional double query_removal_fraction = 1 [default = 0];
+    optional double database_removal_fraction = 2 [default = 0];
+    
+    optional WeightingType weighting_type = 3 [default = L2_WEIGHTING];
+    enum WeightingType {
+        UNIFORM_WEIGHTING = 0;
+        L1_WEIGHTING = 1;
+        L2_WEIGHTING = 2;
+    }
+    
+    optional bool process_inverted_index_by_dimension = 4 [default = false];
+    optional uint32 max_query_dimensions = 5 [default = 0xffffffff];
+    optional uint32 min_query_dimensions = 6 [default = 1];
+    optional uint32 max_database_dimensions_or_datapoints = 7 [default = 0xffffffff];
+    optional uint32 min_database_dimensions_or_datapoints = 8 [default = 1];
+    
+    optional RenormalizationType renormalization_type = 9 [default = NO_RENORMALIZATION];
+    enum RenormalizationType {
+        NO_RENORMALIZATION = 0;
+        L1_RENORMALIZATION = 1;
+        L2_RENORMALIZATION = 2;
+    }
+    
+    optional TiedEntryBehavior database_tied_entry_behavior = 10 [default = INCLUDE];
+    enum TiedEntryBehavior {
+        INCLUDE = 0;
+        EXCLUDE = 1;
+        ARBITRARY = 2;
+    }
+    
+    optional TiedEntryBehavior query_tied_entry_behavior = 11 [default = INCLUDE];
+}
+
 message ChunkedInvertedIndexConfig {
     repeated uint64 zeroed_dimension = 12;
     repeated uint64 intercept_dimension = 13;
@@ -27,40 +61,7 @@ message ChunkedInvertedIndexConfig {
         UINT16_FIXED_POINT = 3 [deprecated = true];
     }
     
-    optional SmallEntryRemovalConfig small_entry_removal = 11;
-    message SmallEntryRemovalConfig {
-        optional double query_removal_fraction = 1 [default = 0];
-        optional double database_removal_fraction = 2 [default = 0];
-        
-        optional WeightingType weighting_type = 3 [default = L2_WEIGHTING];
-        enum WeightingType {
-            UNIFORM_WEIGHTING = 0;
-            L1_WEIGHTING = 1;
-            L2_WEIGHTING = 2;
-        }
-        
-        optional bool process_inverted_index_by_dimension = 4 [default = false];
-        optional uint32 max_query_dimensions = 5 [default = 0xffffffff];
-        optional uint32 min_query_dimensions = 6 [default = 1];
-        optional uint32 max_database_dimensions_or_datapoints = 7 [default = 0xffffffff];
-        optional uint32 min_database_dimensions_or_datapoints = 8 [default = 1];
-        
-        optional RenormalizationType renormalization_type = 9 [default = NO_RENORMALIZATION];
-        enum RenormalizationType {
-            NO_RENORMALIZATION = 0;
-            L1_RENORMALIZATION = 1;
-            L2_RENORMALIZATION = 2;
-        }
-        
-        optional TiedEntryBehavior database_tied_entry_behavior = 10 [default = INCLUDE];
-        enum TiedEntryBehavior {
-            INCLUDE = 0;
-            EXCLUDE = 1;
-            ARBITRARY = 2;
-        }
-        
-        optional TiedEntryBehavior query_tied_entry_behavior = 11 [default = INCLUDE];
-    }
+    optional InvertedIndexSmallEntryRemovalConfig small_entry_removal = 11;
     
     optional DirectDistanceImplementation direct_distance_implementation = 19 [default = STANDARD];
     enum DirectDistanceImplementation {
@@ -92,7 +93,7 @@ message LegacyInvertedIndexConfig {
     optional uint32 chunk_size = 1 [default = 1];
     optional bool binary_search = 2 [default = false];
     optional int32 min_intersect = 10 [default = 1];
-    optional ChunkedInvertedIndexConfig.SmallEntryRemovalConfig small_entry_removal = 11;
+    optional InvertedIndexSmallEntryRemovalConfig small_entry_removal = 11;
     repeated uint64 zeroed_dimension = 12;
     repeated uint64 intercept_dimension = 13;
     optional bool return_intercept_only_neighbors = 14 [default = true];
@@ -135,5 +136,6 @@ message DynamicInvertedIndexConfig {
         VERY_SPARSE_MINIMIZE_TEMP_STORAGE = 1;
     }
     
+    optional InvertedIndexSmallEntryRemovalConfig small_entry_removal = 12;
     optional uint32 num_updates_between_garbage_collections = 4 [default = 100000, deprecated = true];
 }

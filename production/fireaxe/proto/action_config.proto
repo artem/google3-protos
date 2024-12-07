@@ -1,4 +1,4 @@
-syntax = "proto3";
+syntax = "editions";
 
 package fireaxe;
 
@@ -14,14 +14,14 @@ option java_outer_classname = "ActionConfigPb";
 option java_package = "com.google.protos.fireaxe.actionconfig";
 
 message ActionConfigProto {
-    string action_id = 1;
-    google.protobuf.Any action_spec = 2;
+    optional string action_id = 1;
+    optional google.protobuf.Any action_spec = 2;
     repeated TaskConditionProto task_condition = 3;
-    TaskSelectionProto preview_tasks = 8;
-    .thinmint.ThinMint action_mint = 4;
-    bool action_mint_is_superuser = 7;
-    OperationInfoProto create_info = 5;
-    OperationInfoProto modify_info = 6;
+    optional TaskSelectionProto preview_tasks = 8;
+    optional .thinmint.ThinMint action_mint = 4;
+    optional bool action_mint_is_superuser = 7;
+    optional OperationInfoProto create_info = 5;
+    optional OperationInfoProto modify_info = 6;
 }
 
 message ActionConfigFileProto {
@@ -29,10 +29,10 @@ message ActionConfigFileProto {
 }
 
 message JobConfigProto {
-    string borg_cell = 1;
-    string user = 2;
-    string job_or_group = 3;
-    ActionConfigFileProto config = 4;
+    optional string borg_cell = 1;
+    optional string user = 2;
+    optional string job_or_group = 3;
+    optional ActionConfigFileProto config = 4;
 }
 
 message GlobalConfigProto {

@@ -27,12 +27,15 @@ message AdTeam {
         ADS_FORMAT_QUALITY = 45;
         ADS_HOMESERVICES_SERVING = 31;
         ADS_IDENTITY_INFRASTRUCTURE = 171;
+        ADS_IMMERSIVE = 229;
         ADS_KEYVAL = 32;
         ADS_LANDING_PAGES = 131;
+        ADS_OMNICHANNEL_BIDDING = 230;
         ADS_ON_BACK = 47;
         ADS_PERSONALIZATION_INFRA_CORE = 88;
         ADS_QUERY_UNDERSTANDING = 175;
         ADS_SAFETY_SHOPPING = 219;
+        ADS_SECURITY_RISK_MITIGATION = 238;
         ADS_SERVING_INFRA_SERVICES = 133;
         ADS_SERVING_IRT = 140;
         ADS_SIM = 48;
@@ -40,6 +43,7 @@ message AdTeam {
         ADS_STORE_SALES = 160;
         ADS_STORE_VISITS = 134;
         ADS_TEAMSTER = 168;
+        ADS_TRUST_AND_CONSUMER_EXPERIENCES = 231;
         ADS_UI_EXPERIENCES = 71;
         ADS_USER_LISTS = 126;
         ADS_VITAMINS = 169;
@@ -67,7 +71,7 @@ message AdTeam {
         AUCTION_WARDEN_ERROR_TRIAGE = 52;
         AUDIENCE_ONE_INFRA = 108;
         AUTOMOBILE_ADS = 98;
-        CALL_ADS = 8 [deprecated = true];
+        CALL_ADS = 8;
         CLOAKING = 209;
         COMPOSITE_ADS = 53;
         CONTRA_TEAM = 81;
@@ -77,14 +81,15 @@ message AdTeam {
         DISCOVERY_ADS_USER_VALUE = 147;
         DISCOVERY_BIDDING = 87;
         DISCOVERY_DYNAMIC_ADS = 90;
-        DISCOVER_ADS_AUCTION = 117;
+        DISCOVER_ADS_AUCTION = 117 [deprecated = true];
         DISCOVER_ADS_AUCTION_MODEL = 202;
         DISCOVER_ADS_FORMATS = 145;
         DISCOVER_ADS_FRONTEND_INFRA = 146;
-        DISCOVER_ADS_INVENTORY = 143;
+        DISCOVER_ADS_INVENTORY_AND_AUCTION = 143;
         DISCOVER_ADS_RETRIEVAL = 35 [deprecated = true];
         DISCOVER_ADS_SERVING = 34;
         DISPLAY_ADS = 104;
+        DISPLAY_ADS_CATEGORIES = 237;
         DPA_TEAM = 95;
         DSA = 10;
         DSA_RSA = 55;
@@ -114,8 +119,9 @@ message AdTeam {
         IMAGE_EXTENSION_FORMAT = 123;
         IMPAQT = 137;
         LANGUAGE_EXPANSIONS = 225;
-        LEADGEN_ADS = 58;
-        LEAD_FORMS_AND_MESSAGING_ADS = 27;
+        LEADGEN_ADS = 58 [deprecated = true];
+        LEAD_FORMS_AND_MESSAGING_ADS = 27 [deprecated = true];
+        LEAD_FORM_ADS = 235;
         LITE = 152;
         LOCAL_ADS = 14;
         LOCAL_ADS_UI = 59;
@@ -123,12 +129,12 @@ message AdTeam {
         LOCAL_SEARCH_ADS = 37;
         LSA_FORMATS = 76;
         MAP_ADS = 97;
+        MERCHANT_LOYALTY = 232;
         MERCHANT_OFFERS = 60;
+        MESSAGING_ADS = 236;
         MOLYNEW = 61 [deprecated = true];
         NBU_ADS = 15;
-        NBU_ADS_QUALITY = 127;
         NBU_MONETIZATION_FORMFILL = 124;
-        NBU_MONETIZATION_QUALITY = 62;
         NEWTON_CORE = 119;
         ODA_PLUS = 201;
         OLA_ADS = 148;
@@ -199,6 +205,7 @@ message AdTeam {
         TRAVEL_ADS_ACTIVITIES = 129;
         TRAVEL_ADS_QUALITY = 170;
         TRAVEL_ADS_SERVING = 80;
+        TRAVEL_ADS_SMART_BIDDING = 233;
         UAC = 154;
         UAC_DISCOVER = 153;
         UAC_PRE = 142;
@@ -221,6 +228,7 @@ message AdTeam {
         YT_ADS_CLIENT_INFRA = 179;
         YT_ADS_CREATIVE_OPTIMIZATION = 189;
         YT_ADS_DATA_INFRA_TEAM = 166;
+        YT_ADS_INDEXING_INFRA = 234;
         YT_ADS_LEMON = 182;
         YT_ADS_LIVE_TV = 187;
         YT_ADS_LIVING_ROOM = 186;
@@ -228,7 +236,7 @@ message AdTeam {
         YT_ADS_REFORMAT = 178;
         YT_ADS_SHOPPING = 181;
         YT_ADS_SHORTS = 190;
-        YT_ADS_SRE = 207;
+        YT_ADS_SMB = 228;
         YT_ADS_VIRAL_QUALITY = 199;
         YT_ADS_VIRAL_RESERVE = 180;
     }

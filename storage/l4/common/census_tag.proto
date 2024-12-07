@@ -1,0 +1,20 @@
+syntax = "proto3";
+
+package storage_l4;
+
+import "logs/proto/logs_annotations/logs_annotations.proto";
+
+message CensusTag {
+    Key key = 1;
+    enum Key {
+        CENSUS_TAG_KEY_UNKNOWN = 0;
+        CENSUS_TAG_KEY_ORIGINATOR = 1;
+        CENSUS_TAG_KEY_SPANNER_MAJOR_KEY = 2;
+        CENSUS_TAG_KEY_DREMEL_ACCOUNTING_GROUP = 3;
+        CENSUS_TAG_KEY_F1_ACCOUNTING_GROUP = 4;
+        CENSUS_TAG_KEY_RESSI_BLOCK_KIND = 5;
+        CENSUS_TAG_KEY_SPANNER_FILE_PROVENANCE = 6;
+    }
+    
+    string value = 2;
+}

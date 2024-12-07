@@ -17,6 +17,7 @@ message CfsErrorDetails {
     optional bool stubby_go_away = 3;
     optional bool stripe_does_not_exist = 4;
     optional bool cfs_capability_expired = 5;
+    optional bool opened_cfs_file_not_found = 6;
     
     extend .proto2.bridge.MessageSet {
         optional CfsErrorDetails message_set_extension = 1104098291;

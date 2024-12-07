@@ -1,0 +1,44 @@
+syntax = "editions";
+
+package colossus.cfs2;
+
+import "file/colossus/cfs2/proto/metadata_snapshot.proto";
+import "file/colossus/proto/base.proto";
+
+service LeadershipInterface {
+    rpc IsLeader(IsLeaderArg) returns (IsLeaderResult);
+    rpc StatMetadata(StatMetadataArg) returns (StatMetadataResult);
+}
+
+message IsLeaderArg {
+    optional ArgHeader header = 1;
+    optional string folder_name = 2;
+}
+
+message IsLeaderResult {
+    optional bool is_leader = 2;
+    
+    reserved 1;
+}
+
+message ReadReplicaLoadReport {
+    optional int64 report_timestamp_micros = 1;
+    optional double folder_gcu_used = 2;
+    optional bool drop_requested = 3;
+    optional bool burst_detected = 4;
+}
+
+message StatMetadataArg {
+    optional ArgHeader header = 1;
+    optional string folder_name = 2;
+    optional int32 requested_layers = 3;
+    optional ServerLocation replica_location = 4;
+    optional ReadReplicaLoadReport replica_load_report = 5;
+}
+
+message StatMetadataResult {
+    optional FolderSnapshot snapshot = 2;
+    optional bool denied = 3;
+    
+    reserved 1;
+}

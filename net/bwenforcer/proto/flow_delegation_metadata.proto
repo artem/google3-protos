@@ -1,0 +1,49 @@
+syntax = "proto2";
+
+package net_bwenforcer;
+
+import "net/bwenforcer/proto/bwe_aggregate.proto";
+import "storage/datapol/annotations/proto/semantic_annotations.proto";
+
+option java_multiple_files = true;
+option java_package = "com.google.net.bwenforcer.proto";
+
+message CloudProject {
+    optional string domain = 1;
+    optional string project_number = 2;
+}
+
+message CloudUser {
+    optional CloudProject cloud_project = 1;
+}
+
+message BweSpecialUser {
+    optional BweAggregate bwe_aggregate = 1;
+}
+
+message FlowDelegationMetadata {
+    optional BweSpecialUser bwe_special_user = 3;
+    
+    oneof flow_delegation_metadata_oneof {
+        Cloud cloud = 1;
+        Mdb mdb = 2;
+    }
+    
+    message Cloud {
+        optional CloudUser cloud_user = 1;
+        optional NetworkTier network_tier = 2;
+        optional string bandwidth_policy_id = 3;
+    }
+    
+    message Mdb {
+        optional string user_name = 1;
+    }
+}
+
+enum NetworkTier {
+    INVALID_NETWORK_TIER = 0;
+    CLOUD_NETWORK_PREMIUM = 1;
+    CLOUD_NETWORK_SELECT = 2;
+    CLOUD_NETWORK_STANDARD = 3;
+    CLOUD_NETWORK_FIXED_STANDARD = 4;
+}

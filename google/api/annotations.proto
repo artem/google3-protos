@@ -12,6 +12,6 @@ option java_multiple_files = true;
 option java_outer_classname = "AnnotationsProto";
 option java_package = "com.google.api";
 
-extend proto2.MethodOptions {
+extend .proto2.MethodOptions {
     HttpRule http = 72295728;
 }

@@ -1,4 +1,4 @@
-syntax = "proto2";
+syntax = "editions";
 
 package perftools.tracing;
 
@@ -37,10 +37,12 @@ message ProcessInfo {
     optional string user = 5;
     optional uint32 prod_uid = 26;
     
-    optional group BorgData = 6 {
+    optional BorgData borgdata = 6;
+    message BorgData {
         optional string borg_cell = 7;
         optional string chubby_cell = 8;
         optional string borguser = 9;
+        optional string accounting_user = 31;
         optional string jobname = 10;
         optional int64 jobuid = 30;
         optional int32 taskid = 11;
@@ -59,7 +61,9 @@ message ProcessInfo {
     
     extensions 200 to 300;
     
-    reserved 15, "preferred_job_name";
+    reserved 15;
+    
+    reserved "preferred_job_name";
     
     extend .proto2.bridge.MessageSet {
         optional ProcessInfo message_set_extension = 6295415;

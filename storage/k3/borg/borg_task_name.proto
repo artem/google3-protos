@@ -1,0 +1,10 @@
+syntax = "editions";
+
+package k3;
+
+import "storage/k3/borg/borg_job_name.proto";
+
+message BorgTaskNameProto {
+    optional BorgJobNameProto job = 1;
+    optional int64 task_number = 2;
+}

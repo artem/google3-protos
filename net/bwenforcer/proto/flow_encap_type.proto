@@ -1,0 +1,8 @@
+syntax = "proto3";
+
+package net_bwenforcer;
+
+enum FlowEncapType {
+    FE_UNSPECIFIED = 0;
+    FE_MIDDLEBRIDGE = 1;
+}

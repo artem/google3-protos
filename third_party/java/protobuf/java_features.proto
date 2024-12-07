@@ -18,9 +18,8 @@ message JavaFeatures {
     }
     
     optional bool large_enum = 3;
-    optional bool use_old_outer_classname_default = 4;
 }
 
-extend proto2.FeatureSet {
+extend .proto2.FeatureSet {
     optional JavaFeatures java = 1001;
 }

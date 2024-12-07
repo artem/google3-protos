@@ -1,0 +1,58 @@
+syntax = "editions";
+
+package bigtable;
+
+import "bigtable/proto/bigtable.proto";
+import "bigtable/proto/bigtable_internal.proto";
+
+option java_package = "com.google.bigtable.protos";
+
+message BTI_DiagnosticsRequest {
+    optional BTI_Request request = 1;
+    optional CellMetadata cell_metadata = 2;
+    
+    optional Action action = 3 [default = SCAN_AND_REPORT];
+    enum Action {
+        SCAN_AND_REPORT = 0;
+        GET_ROW_RANGES = 3;
+        GET_LOG_PREFIXES = 5;
+        DEPRECATED_1 = 1;
+        DEPRECATED_2 = 2;
+        DEPRECATED_4 = 4;
+    }
+    
+    repeated string unanchored_sstable_path = 5;
+    repeated string unanchored_shared_log_prefix = 6;
+    map<int64, string> family_mapping = 7;
+}
+
+message BTI_DiagnosticsResponse {
+    repeated BadTablet badtablet = 1;
+    message BadTablet {
+        optional BTI_Tablet tablet = 2;
+        
+        repeated SSTable sstable = 4;
+        message SSTable {
+            optional string unanchored_sstable_path = 5;
+            
+            repeated MissingRange missingrange = 6;
+            message MissingRange {
+                optional bytes start_key = 7;
+                optional bytes end_key = 8;
+            }
+            
+            optional string error_msg = 12;
+        }
+        
+        repeated string unanchored_shared_log_prefix = 9;
+        
+        reserved 3;
+    }
+    
+    repeated string unanchored_shared_log_prefix = 13;
+    
+    optional Stats stats = 10;
+    message Stats {
+        optional uint64 num_sstables_scanned = 11 [default = 0];
+    }
+}

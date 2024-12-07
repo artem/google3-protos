@@ -2,6 +2,8 @@ syntax = "proto2";
 
 package colossus;
 
+import "google/protobuf/timestamp.proto";
+import "production/resources/dataplatform/idx/time_series/public/proto/idx_time_series_record.proto";
 import "storage/d/proto/health.proto";
 import "storage/util/int128/int128.proto";
 
@@ -70,7 +72,14 @@ message DiskLayer_ServerStatus {
     
     optional string d_bucket = 13;
     
-    reserved 2, 7, 11, 12;
+    reserved 2, 7, 11, 12, 17;
+}
+
+message DiskLayer_ServerStatusIdxRecord {
+    optional DiskLayer_ServerStatus server_status = 1;
+    optional google.protobuf.Timestamp timestamp = 2;
+    optional .idx.time_series.ingestion.proto.IDXTimeSeriesMetadata idx_internal_metadata = 3;
+    optional string colossus_cell_name = 4;
 }
 
 message DiskLayer_DiskProblem {

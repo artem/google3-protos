@@ -1,0 +1,30 @@
+syntax = "proto3";
+
+package bigtable;
+
+message SSTableBloomFilterInfo {
+    FilterType filter_type = 1;
+    enum FilterType {
+        FILTER_TYPE_UNKNOWN = 0;
+        FILTER_TYPE_NONE = 1;
+        FILTER_TYPE_LEGACY = 2;
+        FILTER_TYPE_SHARDED = 3;
+    }
+    
+    KeyType key_type = 2;
+    enum KeyType {
+        KEY_TYPE_UNKNOWN = 0;
+        KEY_TYPE_COLUMN = 1;
+        KEY_TYPE_FAMILY = 2;
+        KEY_TYPE_HYBRID = 3;
+    }
+    
+    Algorithm algorithm = 3;
+    enum Algorithm {
+        ALGORITHM_UNKNOWN = 0;
+        OBSOLETE_ALGORITHM_FINGERPRINT = 1;
+        ALGORITHM_FARMHASH = 2;
+    }
+    
+    string row_prefix_separator = 4;
+}

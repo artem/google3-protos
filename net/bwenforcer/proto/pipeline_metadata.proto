@@ -1,0 +1,21 @@
+syntax = "proto2";
+
+package net_bwenforcer;
+
+message PipelineMetadata {
+    optional OriginInformation origin_information = 2;
+    message OriginInformation {
+        required Component component = 1;
+        optional int64 origin_timestamp_ms = 2;
+        optional string server = 3;
+        optional int64 model_creation_timestamp_ms = 4;
+    }
+    
+    enum Component {
+        UNSPECIFIED = 0;
+        ORION = 1;
+        SINAPSE2 = 2;
+        AXON = 3;
+        SINAPSE = 4;
+    }
+}

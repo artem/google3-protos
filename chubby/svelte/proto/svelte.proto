@@ -1,4 +1,4 @@
-syntax = "proto2";
+syntax = "editions";
 
 import public "chubby/svelte/proto/common.proto";
 import "chubby/lib/proto/client_library_name.proto";
@@ -10,6 +10,8 @@ import "frameworks/platform/endpoints/rpc/options/generic_services.proto";
 import "google/protobuf/duration.proto";
 import "google/protobuf/timestamp.proto";
 import "net/rpc/empty-message.proto";
+import "third_party/java/protobuf/java_features.proto";
+import "third_party/protobuf/cpp_features.proto";
 
 option java_package = "com.google.chubby.svelte.protocol";
 
@@ -83,10 +85,11 @@ message SVFile {
 }
 
 message RedirectEntry {
-    required string filename = 1;
-    required int32 status = 2;
+    optional string filename = 1;
+    optional int32 status = 2;
     repeated ServerGroup server_group = 3;
     optional string original_cell = 4;
+    optional string blacklisted_reason = 5;
     
     enum STATUS {
         NOERROR = 0;
@@ -122,7 +125,7 @@ message LimitEntry {
 }
 
 message SVModifyRequest {
-    required fixed64 ClientID = 1;
+    optional fixed64 ClientID = 1;
     repeated SVFile ToDelete = 2;
     repeated SVFile ToAdd = 3;
     optional string ClientDescription = 4;
@@ -188,9 +191,9 @@ message SVFiles {
 }
 
 message SVFileInfo {
-    required string filename = 1;
-    required bytes z_svfile = 2;
-    required bool is_file = 3;
+    optional string filename = 1;
+    optional bytes z_svfile = 2;
+    optional bool is_file = 3;
     optional int64 uncompressed_size = 4;
     optional int64 compressed_size = 5;
     optional uint64 num_watching_clients = 6;
@@ -208,34 +211,35 @@ message SVSnapshotInfo {
 
 message SVSnapshotEntry {
     option deprecated = true;
-    required bytes z_svfile = 1;
+    optional bytes z_svfile = 1;
     
     repeated StatContents directory_stat_contents = 2;
     message StatContents {
-        required string data = 1;
-        required string resume_marker = 2;
+        optional string data = 1;
+        optional string resume_marker = 2;
     }
 }
 
 message SVFileChecksums {
-    repeated group File = 1 {
-        required string Filename = 2;
+    repeated File file = 1;
+    message File {
+        optional string Filename = 2;
         optional string MD5 = 3;
     }
 }
 
 message SVMultiServerUpdate {
-    required uint32 suggested_concurrency = 1;
+    optional uint32 suggested_concurrency = 1;
 }
 
 message SVCellLocation {
-    required string cell = 1;
+    optional string cell = 1;
     optional string location = 2;
 }
 
 message SVLoad {
-    required int32 NumClients = 1;
-    required int32 NumOutstandingWaits = 2;
+    optional int32 NumClients = 1;
+    optional int32 NumOutstandingWaits = 2;
     optional int32 ActualNumClients = 3;
     optional bool IsWarm = 4 [default = true];
     repeated SVCellLocation CellLocations = 5;
@@ -243,10 +247,11 @@ message SVLoad {
     optional google.protobuf.Duration remaining_shutdown_duration = 7;
     optional int32 num_client_file_pairs = 8;
     optional bool is_healthy = 9 [default = true];
+    optional google.protobuf.Duration remaining_drop_duration = 10;
 }
 
 message EndSessionRequest {
-    required uint64 ClientID = 1;
+    optional uint64 ClientID = 1;
 }
 
 message ResetClientsRequest {

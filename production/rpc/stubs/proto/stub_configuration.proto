@@ -12,7 +12,6 @@ import "production/rpc/stubs/proto/deadline_policies.proto";
 import "production/rpc/stubs/proto/embedded_status_extraction.proto";
 import "production/rpc/stubs/proto/hedging.proto";
 import "production/rpc/stubs/proto/latency_based_deadline.proto";
-import "production/rpc/stubs/proto/shard_target.proto";
 import "production/rpc/stubs/routing/proto/traffic_routing_configuration.proto";
 import "util/task/status.proto";
 
@@ -38,6 +37,7 @@ message CanonicalStubConfiguration {
     
     optional double smoothing_linear_acceleration = 25 [default = 0];
     optional net.loadshedding.RequestQoSOverrides request_qos_overrides = 22;
+    optional bool enable_request_qos_overrides_for_batch = 33 [default = true];
     optional bool enable_monitoring = 14;
     repeated string hooks = 19;
     optional bool enable_query_origin = 8;
@@ -63,13 +63,12 @@ message CanonicalStubConfiguration {
     oneof transport_configuration {
         .rpc2.contrib.SmartService smart_service = 6;
         frameworks.server.GrpcChannelConfig grpc_channel_config = 26;
-        ShardTarget shard_target = 27 [deprecated = true];
         routing.proto.TrafficRoutingConfiguration traffic_routing_configuration = 32;
     }
     
     extensions 100 to max;
     
-    reserved 13, 24;
+    reserved 13, 24, 27;
     
     extend .proto2.bridge.MessageSet {
         optional CanonicalStubConfiguration message_set_extension = 263716962;

@@ -63,6 +63,6 @@ enum TimeUnit {
     GOOGLE_DATE = 11;
 }
 
-extend proto2.FieldOptions {
+extend .proto2.FieldOptions {
     optional RpcreplayFieldOptions processing = 198108359;
 }

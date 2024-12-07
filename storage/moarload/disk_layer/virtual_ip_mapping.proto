@@ -1,0 +1,13 @@
+syntax = "editions";
+
+package moarload;
+
+message VirtualIpMapping {
+    optional string subnet = 1;
+    
+    repeated CellUserRule cell_user_rule = 2;
+    message CellUserRule {
+        optional string cell_regex = 1;
+        optional string user = 2;
+    }
+}

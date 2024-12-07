@@ -1,7 +1,8 @@
-syntax = "proto3";
+syntax = "editions";
 
 package stats_census;
 
+import "google/protobuf/duration.proto";
 import "monitoring/streamz/api/aggregation.proto";
 import "util/task/status.proto";
 
@@ -10,10 +11,11 @@ option java_multiple_files = true;
 message ForwardBulkWriteRequest {
     repeated string streamz_aggregation_targets = 1;
     repeated .streamz.BulkAggregateWriteRequest bulk_write_requests = 2;
-    repeated bytes raw_bulk_write_requests = 3;
+    repeated bytes raw_bulk_write_requests = 3 [ctype = STRING_PIECE];
 }
 
 message ForwardBulkWriteResponse {
     repeated util.StatusProto rpc_statuses = 1;
     repeated .streamz.BulkAggregateWriteResponse bulk_write_responses = 2;
+    repeated google.protobuf.Duration rpc_latencies = 3;
 }

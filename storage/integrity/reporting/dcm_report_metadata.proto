@@ -22,6 +22,7 @@ message BorgTaskIdentifier {
 
 message OptionalAttributes {
     optional int64 suspect_count = 1;
+    optional string accused_vm_instance_id = 2;
 }
 
 message DcmReportBatch {

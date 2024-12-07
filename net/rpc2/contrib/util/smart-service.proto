@@ -7,9 +7,11 @@ import "net/proto2/bridge/proto/message_set.proto";
 import "net/proto2/contrib/proto_builder/proto/proto_builder.proto";
 import "net/proto2/contrib/validator/annotations.proto";
 import "production/rpc/stubs/proto/canonical_stub.proto";
+import "production/tpc/change_management/equivalence/proto/annotation.proto";
 import "security/authorization/server_authorization/public/policy/client_policy.proto";
 import "security/loas/l2/internal/securewrapper/loas2_crypto.proto";
 import "storage/datapol/annotations/proto/semantic_annotations.proto";
+import "third_party/boundary_proxy/proto_compare/annotation.proto";
 
 option cc_enable_arenas = true;
 option java_outer_classname = "SmartServiceProtoHolder";
@@ -162,7 +164,9 @@ message SmartService {
         optional server_authz.UnrestrictedClientPolicy server_authorization_policy = 10;
         optional security_loas_l2.SecureWrapperCryptoOptions securewrapper_crypto_options = 11;
         
-        reserved 5, 9, "server_full_authentication", "check_server_hostname";
+        reserved 5, 9;
+        
+        reserved "server_full_authentication", "check_server_hostname";
     }
     
     message SocketOptions {
@@ -184,6 +188,7 @@ message SmartService {
         optional string local_address = 9;
         optional string tcp_congestion_control = 10;
         optional uint32 mark = 11;
+        optional bool bypass_torpedo = 12;
     }
     
     extend .proto2.bridge.MessageSet {

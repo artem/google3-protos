@@ -2,6 +2,7 @@ syntax = "proto2";
 
 package research_scam;
 
+import "google/api/inclusion.proto";
 import "google/protobuf/timestamp.proto";
 import "net/proto2/bridge/proto/message_set.proto";
 import "research/scam/coscam/v2_restricts.proto";
@@ -9,7 +10,6 @@ import "research/scam/proto/query_metadata.proto";
 import "research/scam/proto/restricts.proto";
 import "storage/datapol/annotations/proto/semantic_annotations.proto";
 
-option cc_enable_arenas = true;
 option java_package = "com.google.research.scam";
 
 message GenericFeatureVector {
@@ -66,6 +66,13 @@ message GenericFeatureVector {
     }
     
     optional bytes userinfo = 17 [ctype = CORD];
+    
+    optional InsertionTimestamps insertion_timestamps = 26;
+    message InsertionTimestamps {
+        optional google.protobuf.Timestamp insertion_timestamp = 1;
+        optional google.protobuf.Timestamp metadata_insertion_timestamp = 2;
+    }
+    
     optional google.protobuf.Timestamp expiration_timestamp = 20;
     optional QueryMetadata query_metadata = 22;
     optional uint64 feature_dim = 10 [default = 0xffffffffffffffff];
@@ -74,6 +81,8 @@ message GenericFeatureVector {
     optional bool internal_only_is_secondary_partition = 24 [default = false];
     
     extensions 1000 to max;
+    
+    reserved 25;
     
     extend .proto2.bridge.MessageSet {
         optional GenericFeatureVector message_set_extension = 111412305;

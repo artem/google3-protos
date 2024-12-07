@@ -1,0 +1,89 @@
+syntax = "editions";
+
+package storage_d;
+
+import "storage/d/proto/header.proto";
+import "util/task/status.proto";
+
+service DChunkserverInfoReader {
+    rpc ReadChunkserverInfo(ReadChunkserverInfoRequest) returns (ReadChunkserverInfoReply);
+}
+
+service DChunkserverInfoWriter {
+    rpc WriteChunkserverInfo(WriteChunkserverInfoRequest) returns (WriteChunkserverInfoReply);
+    rpc ReadAllChunkserverInfo(ReadAllChunkserverInfoRequest) returns (ReadAllChunkserverInfoReply);
+    rpc RenewGeneration(RenewGenerationRequest) returns (RenewGenerationReply);
+    rpc DeleteAllChunkserverInfo(DeleteAllChunkserverInfoRequest) returns (DeleteAllChunkserverInfoReply);
+}
+
+message ChunkserverInfo {
+    optional string server = 1;
+    optional bytes data = 2 [ctype = CORD];
+}
+
+message ReadChunkserverInfoRequest {
+    optional RequestHeader header = 1;
+    optional string colossus_cell = 6;
+    optional int32 max_results = 4 [default = 10000];
+    optional bytes cookie = 5;
+}
+
+message ReadChunkserverInfoReply {
+    repeated ChunkserverInfo info = 1;
+    optional bytes new_cookie = 2;
+    optional bool is_final = 3 [default = true];
+}
+
+message VolumeReplyHeader {
+    
+}
+
+message WriteChunkserverInfoRequest {
+    optional RequestHeader header = 1;
+    optional string colossus_cell = 4;
+    repeated ChunkserverInfo info = 2;
+    optional int64 generation = 3;
+}
+
+message WriteChunkserverInfoReply {
+    optional VolumeReplyHeader header = 1;
+    
+    repeated Error errors = 2;
+    message Error {
+        optional string server = 1;
+        optional util.StatusProto status = 2;
+    }
+    
+    optional int64 next_generation = 3;
+}
+
+message DeleteAllChunkserverInfoRequest {
+    optional RequestHeader header = 1;
+    optional string colossus_cell = 4;
+    optional int64 generation = 3;
+}
+
+message DeleteAllChunkserverInfoReply {
+    
+}
+
+message ReadAllChunkserverInfoRequest {
+    optional RequestHeader header = 1;
+    optional string colossus_cell = 2;
+}
+
+message ReadAllChunkserverInfoReply {
+    optional VolumeReplyHeader header = 1;
+    repeated ChunkserverInfo info = 2;
+    optional int64 next_generation = 3;
+}
+
+message RenewGenerationRequest {
+    optional RequestHeader header = 1;
+    optional string colossus_cell = 2;
+}
+
+message RenewGenerationReply {
+    optional VolumeReplyHeader header = 1;
+    optional int64 next_generation = 2;
+}

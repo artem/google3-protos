@@ -1,0 +1,41 @@
+syntax = "editions";
+
+package plaque;
+
+import "google/protobuf/timestamp.proto";
+import "storage/datapol/annotations/proto/semantic_annotations.proto";
+
+option java_multiple_files = true;
+
+message KeySetProto {
+    optional bytes internal_serialized_keyset = 1;
+    optional google.protobuf.Timestamp key_expiration_time = 2;
+}
+
+message KeyRequestProto {
+    
+}
+
+message KeyResponseProto {
+    optional SecurityKeyType key_type = 1;
+    optional KeySetProto key_set = 2;
+}
+
+message KeyMsgProto {
+    oneof kind {
+        KeyRequestProto key_request = 1;
+        KeyResponseProto key_response = 2;
+    }
+}
+
+message SignatureProto {
+    optional string borg_user = 1;
+    optional SecurityKeyType key_type = 2;
+    optional bytes mac_signature = 3;
+}
+
+enum SecurityKeyType {
+    KEY_NONE = 0;
+    KEY_HMAC_SHA512 = 1;
+    KEY_AES_CMAC = 2;
+}

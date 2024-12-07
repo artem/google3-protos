@@ -1,0 +1,17 @@
+syntax = "proto2";
+
+package boundary_proxy;
+
+option go_package = "envoy/policy_result";
+option java_multiple_files = true;
+
+enum PolicyResult {
+    POLICYRESULT_UNSPECIFIED = 0;
+    CEL_POLICY_REJECTED = 1;
+    EXEMPLAR_REJECTED = 2;
+    OBSERVABILITY_REJECTED = 4;
+    UNKNOWN_FIELD_REJECTED = 5;
+    REDACTION_OPTION_REJECTED = 6;
+    CHANGE_ID_REJECTED = 7;
+    ACCEPTED = 3;
+}

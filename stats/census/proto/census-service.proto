@@ -1,4 +1,4 @@
-syntax = "proto2";
+syntax = "editions";
 
 package stats_census;
 
@@ -6,7 +6,6 @@ import "stats/census/proto/census-service-types.proto";
 import "stats/census/proto/delta-collection.proto";
 import "stats/census/proto/trace-collection.proto";
 
-option cc_enable_arenas = true;
 option java_outer_classname = "CensusServiceProto";
 option java_package = "com.google.monitoring.census";
 

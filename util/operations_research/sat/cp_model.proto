@@ -40,9 +40,6 @@ message ElementConstraintProto {
     int32 index = 1;
     int32 target = 2;
     repeated int32 vars = 3;
-    LinearExpressionProto linear_index = 4;
-    LinearExpressionProto linear_target = 5;
-    repeated LinearExpressionProto exprs = 6;
 }
 
 message IntervalConstraintProto {

@@ -1,10 +1,8 @@
-syntax = "proto2";
+syntax = "editions";
 
 package monitoring.streamz;
 
 import "monitoring/streamz/api/data_model.proto";
-
-option cc_enable_arenas = true;
 
 message LazyPointSet {
     optional .streamz.PointSet point_set = 1 [unverified_lazy = true];

@@ -23,6 +23,7 @@ message DmaRolloutConfig {
         optional int32 audit_only_rollout_percentage = 1;
         optional .ptoken.policy_rollouts.RequestContextEnforceableModeConfig.RequestContextEnforceableMode online_request_enforceable_mode = 5 [default = NOT_ENFORCEABLE];
         optional .ptoken.policy_rollouts.RequestContextEnforceableModeConfig.RequestContextEnforceableMode offline_request_enforceable_mode = 6 [default = NOT_ENFORCEABLE];
+        optional int32 offline_traffic_hard_launch_percentage = 7;
         
         reserved 2, 3;
     }

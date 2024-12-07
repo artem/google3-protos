@@ -1,0 +1,9 @@
+syntax = "proto3";
+
+package storage_l4;
+
+enum BorgStrategy {
+    BORG_STRATEGY_UNKNOWN = 0;
+    BORG_STRATEGY_CONTINUOUS = 1;
+    BORG_STRATEGY_BATCH = 2;
+}

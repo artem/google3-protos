@@ -1,0 +1,31 @@
+syntax = "proto2";
+
+package bigtable;
+
+import "bigtable/proto/snapshot_creator.proto";
+
+option java_package = "com.google.bigtable.protos";
+
+message BTI_SnapshotOrigin {
+    optional bool is_restoring = 1;
+    optional string snapshot_cell = 2;
+    optional string snapshot_name = 3;
+    optional uint64 snapshot_version = 4;
+    optional BTI_SnapshotCreator snapshot_creator = 5;
+}
+
+message BTI_VerifyTargetRequest {
+    required int64 target_table_version = 2;
+    required string target_table_key = 3;
+    optional bytes OBSOLETE_target_sequencer = 4;
+    
+    reserved 1;
+}
+
+message BTI_VerifyTargetResult {
+    required string target_tablet_id = 1;
+    required bytes start_key = 2;
+    required bytes end_key = 3;
+    optional uint64 timestamp = 4;
+    optional int64 size = 5;
+}

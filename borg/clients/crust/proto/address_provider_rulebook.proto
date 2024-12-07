@@ -1,0 +1,14 @@
+syntax = "editions";
+
+package borg.clients;
+
+option java_outer_classname = "RulebookProtos";
+option java_package = "com.google.borg.addressprovider";
+
+message AddressProviderRulebook {
+    repeated RegexRule regex_rule = 2;
+    message RegexRule {
+        optional string regex = 1;
+        optional string address_placeholder = 2;
+    }
+}

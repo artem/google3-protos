@@ -1,0 +1,18 @@
+syntax = "proto2";
+
+package storage_cmek;
+
+import "devtools/protoshop/public/parsing_options/parsing_options.proto";
+import "google/protobuf/timestamp.proto";
+import "security/panoptikeys/crypto_key_classes/crypto_key_classes_binding.proto";
+import "storage/cmek_library/proto/resource_key_management_config.proto";
+import "storage/datapol/annotations/proto/semantic_annotations.proto";
+
+message WrappedResourceKey {
+    optional ResourceKeyManagementConfig config = 1;
+    optional string resource_key_name = 2;
+    optional bytes wrapped_resource_key = 3;
+    optional uint32 wrapped_resource_key_crc32c = 6;
+    optional string kms_key_reference_version = 4;
+    optional google.protobuf.Timestamp last_rotation = 5;
+}

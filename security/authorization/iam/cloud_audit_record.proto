@@ -41,4 +41,5 @@ message CloudAuditRecordProto {
     }
     
     string insert_id = 11;
+    string trace = 12;
 }

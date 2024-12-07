@@ -1,0 +1,22 @@
+syntax = "proto3";
+
+package google.crypto.tink;
+
+option go_package = "github.com/tink-crypto/tink-go/v2/proto/aes_cmac_go_proto";
+option java_multiple_files = true;
+option java_package = "com.google.crypto.tink.proto";
+
+message AesCmacParams {
+    uint32 tag_size = 1;
+}
+
+message AesCmacKey {
+    uint32 version = 1;
+    bytes key_value = 2 [ctype = STRING_PIECE];
+    AesCmacParams params = 3;
+}
+
+message AesCmacKeyFormat {
+    uint32 key_size = 1;
+    AesCmacParams params = 2;
+}

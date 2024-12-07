@@ -1,4 +1,4 @@
-syntax = "proto3";
+syntax = "editions";
 
 package storage.speckle.proto.dataplane_internal.proxy_server;
 
@@ -9,27 +9,12 @@ service ProxyServerInternal {
 }
 
 message SyncIAMGroupUserRequest {
+    optional string access_token = 1;
+    optional string client_ip_address = 2;
     repeated string iam_groups = 3;
-    
-    oneof _access_token {
-        string access_token = 1;
-    }
-    
-    oneof _client_ip_address {
-        string client_ip_address = 2;
-    }
-    
-    oneof _database_username {
-        string database_username = 4;
-    }
-    
-    oneof _database {
-        string database = 5;
-    }
-    
-    oneof _database_session_id {
-        int32 database_session_id = 6;
-    }
+    optional string database_username = 4;
+    optional string database = 5;
+    optional int32 database_session_id = 6;
 }
 
 message SyncIAMGroupUserResponse {

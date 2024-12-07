@@ -1,0 +1,24 @@
+syntax = "editions";
+
+package usps.fd.rpc;
+
+message ShmemRegionList {
+    repeated ShmemRegion regions = 1;
+    message ShmemRegion {
+        optional int32 fd_index = 1;
+        optional uint64 offset_from_base = 2;
+        optional uint64 length = 3;
+        optional uint64 offset = 4;
+    }
+}
+
+message ContiguousMappedShmemRegionList {
+    repeated ContiguousShmemRegion regions = 1;
+    message ContiguousShmemRegion {
+        optional int32 fd_index = 1;
+        optional uint64 length_page_count = 2;
+        optional uint64 fd_offset_page_count = 3;
+    }
+    
+    optional uint64 page_size = 2;
+}

@@ -1,0 +1,36 @@
+syntax = "proto2";
+
+package net_bwenforcer;
+
+import "logs/proto/logs_annotations/logs_annotations.proto";
+import "storage/datapol/annotations/proto/semantic_annotations.proto";
+
+option java_multiple_files = true;
+option java_package = "com.google.net.bwenforcer.proto";
+
+enum ClusterConnectivityType {
+    GOOGLE_BACKBONE = 0;
+    BACKEND_BACKBONE = 1;
+    THUNDERDOME = 2;
+    COLOCATED = 3;
+    INACTIVE = 4;
+    FREEDOME = 5;
+    B4_BACKBONE = 6;
+    OTHER_CONNECTIVITY = 7 [deprecated = true];
+    UNKNOWN = 8;
+    GOOGLE_BACKBONE_LRBB = 9;
+    B4_BACKBONE_TE = 10;
+    JUPITER_INTERCONNECT = 11;
+    JUPITER_FABRIC = 12;
+    CAMPUS = 13;
+    ALPHANET = 14;
+    RESERVED5 = 15;
+    RESERVED6 = 16;
+    RESERVED7 = 17;
+    RESERVED8 = 18;
+    RESERVED9 = 19;
+    RESERVED10 = 20;
+    RESERVED11 = 21;
+    RESERVED12 = 22;
+    RESERVED13 = 23;
+}

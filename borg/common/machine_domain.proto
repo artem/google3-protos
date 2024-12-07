@@ -1,0 +1,17 @@
+syntax = "proto2";
+
+package borg;
+
+option cc_enable_arenas = true;
+
+message MachineDomain {
+    enum Type {
+        UNSPECIFIED = 0;
+        COMPUTE_NODE = 1;
+        OFFLOAD_NODE = 2;
+    }
+}
+
+message MachineDomainTypeMessage {
+    optional MachineDomain.Type value = 1;
+}

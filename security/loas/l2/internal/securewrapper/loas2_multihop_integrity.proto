@@ -1,12 +1,21 @@
-syntax = "proto3";
+syntax = "proto2";
 
 package security_loas_l2;
 
 import "gfe/membrane/thinmint_attestation/boundary_proxy_attestation_signature.proto";
-import "security/thinmint/xuniverse/proto/core/cross_universe_token.proto";
+import "net/proto2/bridge/proto/message_set.proto";
+import "security/thinmint/xuniverse/proto/core/notarization_wrapper.proto";
 import public "google/protobuf/timestamp.proto";
 
 message LOAS2E2EIntegritySignature {
-    .xuniverse.NotarizationWrapper signature = 1;
-    gfe.membrane.BoundaryProxyAttestationSignature attestation_signature = 2;
+    optional .xuniverse.NotarizationWrapper signature = 1;
+    optional gfe.membrane.BoundaryProxyAttestationSignature attestation_signature = 2;
+}
+
+message LOAS2MultihopEncryptedExtensions {
+    optional .proto2.bridge.MessageSet encrypted_extensions = 1;
+    
+    extend .proto2.bridge.MessageSet {
+        optional LOAS2MultihopEncryptedExtensions message_set_extension = 525002207;
+    }
 }

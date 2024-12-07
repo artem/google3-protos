@@ -1,0 +1,94 @@
+syntax = "proto2";
+
+package net_bwenforcer;
+
+import "storage/datapol/annotations/proto/semantic_annotations.proto";
+
+option cc_enable_arenas = true;
+option java_multiple_files = true;
+option java_package = "com.google.net.bwenforcer.proto";
+
+message SloType {
+    optional string slo_type = 1;
+    
+    reserved 2;
+    
+    reserved "demand_spillover";
+}
+
+message OrderedSloTypes {
+    repeated SloType slo_type = 1;
+}
+
+message UserAggregate {
+    optional string name = 1;
+    optional string slo_type = 3;
+    
+    reserved 2;
+    
+    reserved "slo_level";
+}
+
+message SloEndpoint {
+    optional string name = 1;
+    
+    optional Type type = 2;
+    enum Type {
+        UNKNOWN = 0;
+        B4_NEIGHBORHOOD = 1;
+        METRO = 2;
+        CAMPUS = 3;
+        CLUSTER = 4;
+        FABRIC = 5;
+        SECTOR = 6;
+        TOPOLOGY_DOMAIN = 7;
+    }
+}
+
+message UserAggregateSloKey {
+    optional UserAggregate user_aggregate = 1;
+    optional string connectivity_type = 2 [default = "B4_BACKBONE"];
+    optional SloEndpoint src = 3;
+    optional SloEndpoint dst = 4;
+}
+
+message ClusterConstraint {
+    optional string cluster = 1;
+    optional double approved_bps = 2;
+}
+
+message UserAggregateSlo {
+    optional UserAggregate user_aggregate = 1;
+    repeated string additional_user_aggregate_names = 21;
+    optional double approved_bps = 4;
+    optional bool enable_approval_cascading = 13 [default = true];
+    optional bool enable_demand_spillover = 14 [default = true];
+    optional bool enable_strict_prioritization = 22;
+    optional bool enable_conditional_enforcement = 23;
+    optional string connectivity_type = 5 [default = "B4_BACKBONE"];
+    repeated string additional_connectivity_types = 12;
+    optional SloEndpoint src = 10;
+    optional SloEndpoint dst = 11;
+    optional double netcap_approved_bps = 8;
+    optional double forecast_bps = 9;
+    repeated ClusterConstraint egress_cluster_constraints = 17;
+    repeated ClusterConstraint ingress_cluster_constraints = 18;
+    
+    reserved 2, 3, 6, 7, 15, 16, 19, 20;
+    
+    reserved "src_metro", "dst_metro", "src_b4_neighborhood", "dst_b4_neighborhood", "waterfill_bonus_max_allocation_fraction", "prog_rollout_annotations", "user_bonus_capped_by_unused_approval", "enable_approval_bonus_on_bottleneck_links";
+}
+
+message B4NeighborhoodsInCampus {
+    optional string campus = 1;
+    repeated string b4_neighborhoods = 2;
+}
+
+message UserAggregateSloDB {
+    repeated UserAggregateSlo slo = 1;
+    repeated B4NeighborhoodsInCampus b4_neighborhoods_in_campus = 3 [deprecated = true];
+    
+    reserved 2;
+    
+    reserved "b4_neighborhood_overrides";
+}

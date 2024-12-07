@@ -61,35 +61,35 @@ message FindingOptouts {
     repeated Category.Subcategory categories = 1;
 }
 
-extend proto2.FileOptions {
+extend .proto2.FileOptions {
     optional FindingOptouts file_optouts = 358478963;
     optional bool suppress_all_findings = 358509105;
 }
 
-extend proto2.MessageOptions {
+extend .proto2.MessageOptions {
     optional FindingOptouts message_optouts = 358478821;
 }
 
-extend proto2.FieldOptions {
+extend .proto2.FieldOptions {
     optional FindingOptouts field_optouts = 358472119;
 }
 
-extend proto2.EnumOptions {
+extend .proto2.EnumOptions {
     optional FindingOptouts enum_optouts = 358464019;
 }
 
-extend proto2.EnumValueOptions {
+extend .proto2.EnumValueOptions {
     optional FindingOptouts enum_value_optouts = 358463286;
 }
 
-extend proto2.OneofOptions {
+extend .proto2.OneofOptions {
     optional FindingOptouts oneof_optouts = 525000013;
 }
 
-extend proto2.ServiceOptions {
+extend .proto2.ServiceOptions {
     optional FindingOptouts service_optouts = 358444555;
 }
 
-extend proto2.MethodOptions {
+extend .proto2.MethodOptions {
     optional FindingOptouts method_optouts = 358439204;
 }

@@ -1,0 +1,13 @@
+syntax = "editions";
+
+package bigtable;
+
+option java_package = "com.google.bigtable.protos";
+
+message BTI_OperationFault {
+    optional bool crash_before_commit = 1 [default = false];
+    optional bool crash_during_commit = 2 [default = false];
+    optional bool crash_before_end = 3 [default = false];
+    optional int32 hold_operation = 10 [default = 0];
+    optional bool force_fullstate = 11 [default = false];
+}

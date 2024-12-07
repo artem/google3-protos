@@ -1,0 +1,12 @@
+syntax = "editions";
+
+package consensus.config;
+
+option java_multiple_files = true;
+option java_package = "com.google.consensus.config";
+
+enum DeploymentType {
+    DEPLOYMENT_TYPE_DEFAULT = 0;
+    DEPLOYMENT_TYPE_PROD = 1;
+    DEPLOYMENT_TYPE_NONPROD = 2;
+}

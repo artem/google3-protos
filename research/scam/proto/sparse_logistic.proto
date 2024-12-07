@@ -7,5 +7,5 @@ import "research/scam/proto/inverted_index.proto";
 message SparseLogisticConfig {
     optional bool use_sparse_optimized_restrict_implementation = 1 [default = false];
     optional bool return_intercept_only_neighbors = 2 [default = false];
-    optional ChunkedInvertedIndexConfig.SmallEntryRemovalConfig small_entry_removal = 3;
+    optional InvertedIndexSmallEntryRemovalConfig small_entry_removal = 3;
 }

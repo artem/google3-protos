@@ -1,0 +1,12 @@
+syntax = "proto3";
+
+package rodos;
+
+import "file/colossus/rodos/common/version.proto";
+import "google/protobuf/timestamp.proto";
+
+message RequestHeader {
+    int64 client_baseline_changelist = 1;
+    Version version = 2;
+    google.protobuf.Timestamp request_start_time = 3;
+}

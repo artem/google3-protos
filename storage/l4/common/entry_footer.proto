@@ -1,0 +1,15 @@
+syntax = "editions";
+
+package storage_l4;
+
+import "storage/l4/common/identity_fingerprint.proto";
+import "storage/l4/core/version.proto";
+
+message EntryFooter {
+    optional fixed32 value_len = 3;
+    optional fixed32 padding_length = 5;
+    optional Version version = 7;
+    optional IdentityFingerprintProto key_fingerprint = 9;
+    
+    reserved 1, 2, 4, 6, 8, 10, 15;
+}

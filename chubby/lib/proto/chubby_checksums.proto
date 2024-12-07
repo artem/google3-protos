@@ -1,12 +1,12 @@
-syntax = "proto3";
+syntax = "editions";
 
 package chubby;
 
 message ChubbyChecksumData {
-    uint64 checksum = 1;
-    int32 checksum_version = 2;
+    optional uint64 checksum = 1;
+    optional int32 checksum_version = 2;
     
-    ChecksumType type = 3;
+    optional ChecksumType type = 3;
     enum ChecksumType {
         UNDEFINED = 0;
         FULL_STAT = 1;

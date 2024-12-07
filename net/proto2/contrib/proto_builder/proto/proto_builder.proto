@@ -53,7 +53,9 @@ message MessageBuilderOptions {
     repeated string builder_include = 12;
     map<string, FieldBuilderOptions> type_map = 13;
     
-    reserved 10, "dependency";
+    reserved 10;
+    
+    reserved "dependency";
 }
 
 message ProtoBuilderConfig {

@@ -29,6 +29,6 @@ message TypeReference {
     string api_versions = 2;
 }
 
-extend proto2.FieldOptions {
+extend .proto2.FieldOptions {
     FieldInfo field_info = 291403980;
 }

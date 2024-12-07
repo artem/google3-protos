@@ -1,0 +1,45 @@
+syntax = "proto2";
+
+package storage_d;
+
+import "storage/d/internal/job_or_socket_addresses.proto";
+import "storage/d/internal/leader_elected_task.proto";
+
+message CellConfig {
+    optional bool read_only = 4;
+    optional bool tempstore_advertised = 5 [default = true];
+    optional bool enforce_quota = 8 [default = true];
+    optional bool safe_to_ignore_removal_rate_limit = 26;
+    optional LeaderElectedTaskProto manager = 16;
+    optional JobOrSocketAddressesProto accountant = 17;
+    optional JobOrSocketAddressesProto aggregator = 18;
+    optional LeaderElectedTaskProto dml_proxy = 19;
+    optional LeaderElectedTaskProto enclosure_groups_service = 20;
+    optional JobOrSocketAddressesProto reconstructor = 21;
+    optional JobOrSocketAddressesProto best_effort_reconstructor = 22;
+    optional LeaderElectedTaskProto volume_allocator_for_colossus = 23;
+    optional LeaderElectedTaskProto volume_allocator_for_timelock = 24;
+    optional LeaderElectedTaskProto legacy_volume_allocator = 25;
+    
+    reserved 1 to 3, 6 to 7, 9, 10 to 15;
+}
+
+message ClientMatchRule {
+    optional bool enabled = 1;
+    optional string borg_cell = 2;
+    optional string borg_job_name_regexp = 3;
+    optional string borg_user_regexp = 4;
+    optional string borg_user = 6;
+    optional double fraction_borg_tasks = 5;
+    
+    reserved 7;
+}
+
+message BammConfig {
+    repeated ClientMatchRule useccfs_rules = 4;
+    repeated ClientMatchRule usec_d_write_rules = 5;
+    repeated ClientMatchRule wal_rules = 6;
+    repeated string target_ip_range = 2;
+    
+    reserved 1, 3;
+}

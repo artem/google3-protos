@@ -1,4 +1,4 @@
-syntax = "proto2";
+syntax = "editions";
 
 package xuniverse;
 
@@ -9,4 +9,13 @@ message NotarizationMetadata {
     optional string principal = 2;
     optional google.protobuf.Timestamp notarization_time = 3;
     optional google.protobuf.Timestamp expiration_time = 4;
+    optional NotarizationDurability durability = 6;
+    
+    reserved 5;
+}
+
+enum NotarizationDurability {
+    NOTARIZATION_DURABILITY_UNSPECIFIED = 0;
+    NOTARIZATION_DURABILITY_EPHEMERAL = 1;
+    NOTARIZATION_DURABILITY_DURABLE = 2;
 }

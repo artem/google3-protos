@@ -19,10 +19,12 @@ message CacheRecommendationModel {
     enum Type {
         MODEL_TYPE_UNSPECIFIED = 0;
         PERF_PER_TCO = 1;
+        COHORT = 2;
     }
     
     optional string tag = 2;
     optional int64 generate_recommendations_interval_secs = 3;
+    optional double min_hit_rate_threshold = 4;
 }
 
 message CacheLimitApplierParams {

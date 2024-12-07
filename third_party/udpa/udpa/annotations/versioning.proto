@@ -10,6 +10,6 @@ message VersioningAnnotation {
     string previous_message_type = 1;
 }
 
-extend proto2.MessageOptions {
+extend .proto2.MessageOptions {
     VersioningAnnotation versioning = 7881811;
 }

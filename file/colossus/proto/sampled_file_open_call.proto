@@ -1,0 +1,61 @@
+syntax = "editions";
+
+package colossus;
+
+import "file/colossus/proto/stack_trace.proto";
+import "google/protobuf/timestamp.proto";
+
+option java_multiple_files = true;
+
+message SampledFileOpenCall {
+    optional string absolute_path = 1;
+    
+    optional OpenMode open_mode = 2;
+    message OpenMode {
+        optional bool can_read = 1;
+        optional bool can_write = 2;
+        optional bool can_create_new = 3;
+        optional bool truncate = 4;
+        optional bool append = 5;
+        optional bool serial = 6;
+        optional bool parallel = 7;
+    }
+    
+    optional google.protobuf.Timestamp instant = 3;
+    
+    optional BuildInfo build_info = 4;
+    message BuildInfo {
+        optional StackTraceProto open_stack_trace = 1;
+        optional int64 rollup_cl = 2;
+    }
+    
+    optional BorgTask borg_task = 5;
+    message BorgTask {
+        optional string physical_hostname = 1;
+        optional string borg_cell = 2;
+        optional string bns_address = 3;
+        optional string borg_user = 4;
+        optional string borg_job = 5;
+        optional int32 borg_task_num = 6;
+    }
+    
+    optional FeatureFlags feature_flags = 6;
+    message FeatureFlags {
+        optional Mode mode = 1;
+        enum Mode {
+            UNSPECIFIED_MODE = 0;
+            COLOSSUS_TESTS = 1;
+            NON_PROD = 2;
+            EARLY_ADOPTER = 3;
+            DEFAULT = 4;
+            DISABLE_ALL = 6;
+            RANDOMLY_DISABLE = 7;
+        }
+    }
+    
+    optional Sampler sampler = 7;
+    message Sampler {
+        optional int64 request_id = 1;
+        optional double sampling_rate = 2;
+    }
+}

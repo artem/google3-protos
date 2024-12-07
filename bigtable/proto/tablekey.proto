@@ -1,0 +1,10 @@
+syntax = "editions";
+
+package bigtable;
+
+option java_package = "com.google.bigtable.protos";
+
+message TableKeyProto {
+    optional uint64 table_version = 1;
+    optional string original_name = 2 [ctype = CORD];
+}

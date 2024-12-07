@@ -15,15 +15,15 @@ message ThinMintDescription {
     optional int64 not_after = 3;
     repeated uint64 revocation_id = 7;
     repeated string path_segment = 4;
-    optional proto2.bridge.MessageSet restrictions = 5;
-    optional proto2.bridge.MessageSet comments = 6;
+    optional .proto2.bridge.MessageSet restrictions = 5;
+    optional .proto2.bridge.MessageSet comments = 6;
     repeated string security_realms = 8;
 }
 
 message ThinMintArgs {
     repeated ThinMint mint = 1;
     
-    extend proto2.bridge.MessageSet {
+    extend .proto2.bridge.MessageSet {
         optional ThinMintArgs message_set_extension = 16343551;
     }
 }

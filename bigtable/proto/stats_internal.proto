@@ -1,0 +1,115 @@
+syntax = "editions";
+
+package bigtable;
+
+import "stats/histogram/proto/histogram.proto";
+
+option java_package = "com.google.bigtable.protos";
+
+message TableProperties {
+    optional int32 num_tablets = 1;
+    optional int64 num_sstables = 2;
+    optional int64 num_rows = 3;
+    optional int64 num_cells = 4;
+    optional int64 num_versions = 5;
+    optional int64 values_size = 6;
+    optional int64 file_size = 7;
+    optional int64 disk_file_size = 10;
+    optional int64 disk_file_size_by_cfs_partition_hdd = 14;
+    optional int64 disk_file_size_by_cfs_partition_ssd = 15;
+    optional int64 bloomfilter_size = 8;
+    optional int64 index_size = 9;
+    optional int64 level0_index_size = 11;
+    optional int64 inmemory_index_size = 12;
+    optional int64 num_snapshots = 13;
+    optional stats.HistogramState sstable_key_size_stats = 16;
+    optional stats.HistogramState sstable_value_size_stats = 17;
+    optional int64 aged_out_bytes = 18;
+}
+
+message GroupProperties {
+    optional int64 num_sstables = 1;
+    optional int64 num_cells = 2;
+    optional int64 num_versions = 3;
+    optional int64 values_size = 4;
+    optional int64 file_size = 5;
+    optional int64 disk_file_size = 16;
+    optional int64 disk_file_size_by_cfs_partition_hdd = 26;
+    optional int64 disk_file_size_by_cfs_partition_ssd = 27;
+    optional int64 bloomfilter_size = 6;
+    optional int64 index_size = 7;
+    optional int64 level0_index_size = 18;
+    optional int64 inmemory_index_size = 19;
+    
+    optional Base base = 8;
+    message Base {
+        optional int64 num_sstables = 9;
+        optional int64 num_cells = 10;
+        optional int64 num_versions = 11;
+        optional int64 values_size = 12;
+        optional int64 file_size = 13;
+        optional int64 disk_file_size = 17;
+        optional int64 disk_file_size_by_cfs_partition_hdd = 24;
+        optional int64 disk_file_size_by_cfs_partition_ssd = 25;
+        optional int64 bloomfilter_size = 14;
+        optional int64 index_size = 15;
+        optional int64 level0_index_size = 20;
+        optional int64 inmemory_index_size = 21;
+    }
+    
+    optional bool is_aged = 22 [default = false];
+}
+
+message FamilyProperties {
+    optional int64 num_cells = 1;
+    optional int64 num_versions = 2;
+    optional int64 values_size = 3;
+    
+    optional Base base = 4;
+    message Base {
+        optional int64 num_cells = 5;
+        optional int64 num_versions = 6;
+        optional int64 values_size = 7;
+    }
+}
+
+message TabletProperties {
+    optional int64 values_size = 1;
+    optional int64 file_size = 2;
+    optional int64 disk_file_size = 3;
+    optional int64 disk_file_size_by_cfs_partition_hdd = 5;
+    optional int64 disk_file_size_by_cfs_partition_ssd = 6;
+    optional int64 aged_out_bytes = 7;
+    optional int64 num_sstables = 4;
+}
+
+message TableStats {
+    optional TableProperties properties = 1;
+    
+    repeated Group group = 2;
+    message Group {
+        optional string name = 3;
+        optional GroupProperties properties = 4;
+    }
+    
+    repeated Family family = 5;
+    message Family {
+        optional string name = 6;
+        optional FamilyProperties properties = 7;
+    }
+    
+    repeated Tablet tablet = 8;
+    message Tablet {
+        optional bytes endkey = 9;
+        optional TabletProperties properties = 10;
+    }
+}
+
+message CellStats {
+    repeated Table table = 1;
+    message Table {
+        optional uint64 table_version = 4;
+        optional string name = 2;
+        optional TableStats stats = 3;
+    }
+}

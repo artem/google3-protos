@@ -1,0 +1,11 @@
+syntax = "proto2";
+
+package pgraph.attributes;
+
+import "privacy/ptoken/public/core/ptoken_type.proto";
+
+option java_multiple_files = true;
+
+message PTokenTypes {
+    repeated .ptoken.PTokenType.Enum types = 1 [packed = true];
+}

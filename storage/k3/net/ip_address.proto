@@ -1,0 +1,9 @@
+syntax = "editions";
+
+package k3;
+
+message IpAddressProto {
+    optional fixed64 hi = 1;
+    optional fixed64 lo = 2;
+    optional bool ipv4 = 3;
+}

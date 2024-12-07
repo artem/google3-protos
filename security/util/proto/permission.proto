@@ -12,7 +12,7 @@ message AcctRestrictions {
     optional AcctSrcRestriction src_restriction = 2 [deprecated = true];
     optional DestinationRestriction destination_restriction = 3 [lazy = true];
     
-    extend proto2.bridge.MessageSet {
+    extend .proto2.bridge.MessageSet {
         optional AcctRestrictions message_set_extension = 43674265;
     }
 }

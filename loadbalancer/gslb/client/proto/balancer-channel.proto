@@ -1,4 +1,4 @@
-syntax = "proto2";
+syntax = "editions";
 
 package loadbalancer_gslb.client;
 
@@ -7,8 +7,6 @@ import "loadbalancer/gslb/client/proto/load.proto";
 import "loadbalancer/gslb/client/proto/priority.proto";
 import "net/proto2/bridge/proto/message_set.proto";
 import "storage/datapol/annotations/proto/semantic_annotations.proto";
-
-option cc_enable_arenas = true;
 
 service BalancerChannelControl {
     rpc PickTargetAndReport(TargetRequestAndReport) returns (BackendTargets);
@@ -64,7 +62,7 @@ message ClientInfo {
 
 message TargetRequestAndReport {
     optional string client_namespace = 1 [default = "blade"];
-    required string service_name = 2;
+    optional string service_name = 2;
     repeated rpc.LBLoad lb_load = 3;
     optional DscClientStats stats = 4;
 }
@@ -102,7 +100,7 @@ message AssignmentRequest {
 
 message ServiceAssignment {
     optional string client_namespace = 1 [default = "blade"];
-    required string service_name = 2;
+    optional string service_name = 2;
     
     optional Status status = 3 [default = NOT_OK];
     enum Status {

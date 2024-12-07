@@ -1,8 +1,6 @@
-syntax = "proto2";
+syntax = "editions";
 
 package proto2.contrib.fingerprint;
-
-option cc_enable_arenas = true;
 
 message NormalizationSpec {
     optional int32 floating_point_rounding_length = 1 [default = 9];

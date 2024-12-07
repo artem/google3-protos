@@ -1,0 +1,29 @@
+syntax = "editions";
+
+package security.dataprotection.collection.proto.privacy_boost;
+
+import "google/protobuf/timestamp.proto";
+import "production/resources/dataplatform/idx/time_series/public/proto/idx_time_series_record.proto";
+import "security/dataprotection/collection/public/collection_service.proto";
+import "storage/datapol/annotations/proto/semantic_annotations.proto";
+
+option java_multiple_files = true;
+
+message InsecureHTTPEvent {
+    optional secure_collection.MessageSource message_source = 1;
+    optional google.protobuf.Timestamp event_timestamp = 2;
+    optional string path = 3;
+    
+    optional Verdict verdict = 4;
+    enum Verdict {
+        UNKNOWN = 0;
+        ALLOWED = 1;
+        DISALLOWED = 2;
+        BLOCKED = 3;
+    }
+    
+    optional string source_ip_address = 5;
+    optional string method = 6;
+    optional string host = 7;
+    optional .idx.time_series.ingestion.proto.IDXTimeSeriesMetadata idx_internal_metadata = 9;
+}

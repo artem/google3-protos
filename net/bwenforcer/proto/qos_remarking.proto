@@ -1,0 +1,125 @@
+syntax = "proto3";
+
+package net_bwenforcer;
+
+import "google/protobuf/timestamp.proto";
+import "net/base/qos.proto";
+
+message CaterpillarHasherProto {
+    fixed64 start = 1;
+    double size = 2;
+}
+
+message BitmapQosMapperProto {
+    uint32 bitmap_size = 1;
+    net_base.qos.TrafficClassValue default_qos = 2;
+    
+    repeated QosBitmap qos_bitmap = 3;
+    message QosBitmap {
+        net_base.qos.TrafficClassValue qos = 1;
+        bytes bitmap = 2;
+    }
+}
+
+message QosAllocation {
+    net_base.qos.TrafficClassValue remarked_qos = 2;
+    google.protobuf.Timestamp last_update_time = 3;
+    bool suppress_enforcement = 4;
+    
+    oneof task_ps_mapper {
+        CaterpillarHasherProto hash_matcher = 1;
+        BitmapQosMapperProto bitmap_hash_mapper = 5;
+    }
+}
+
+message RemarkingActionDetails {
+    repeated PerQosIntent intent = 5;
+    message PerQosIntent {
+        net_base.qos.TrafficClassValue qos = 1;
+        double fraction_of_flows = 2;
+    }
+    
+    oneof controller {
+        ProportionalController proportional_controller = 2;
+        ImmediateStatefulController immediate_stateful_controller = 3;
+    }
+    
+    oneof _early_stop {
+        EarlyStop early_stop = 1;
+    }
+    
+    reserved 4;
+    
+    reserved "prev_intent";
+    
+    message EarlyStop {
+        oneof _reason {
+            Reason reason = 1;
+        }
+        
+        oneof _excess_usage_fraction {
+            double excess_usage_fraction = 2;
+        }
+        
+        oneof _static_allowed_excess_usage_fraction {
+            double static_allowed_excess_usage_fraction = 3;
+        }
+        
+        oneof _estimated_steady_state_usage_error {
+            double estimated_steady_state_usage_error = 4;
+        }
+        
+        enum Reason {
+            UNKNOWN = 0;
+            DID_NOT_STOP = 1;
+            LIMIT_IS_ZERO = 2;
+            EXCESS_WITHIN_STATIC_THRESHOLD = 3;
+            EXCESS_WITHIN_STEADY_STATE_ERROR = 4;
+            ALLOCATION_NOT_SETTLED = 5;
+        }
+    }
+    
+    message ProportionalController {
+        oneof _response {
+            Response response = 1;
+        }
+        
+        oneof _requested_qos_error {
+            double requested_qos_error = 2;
+        }
+        
+        oneof _downgrade_fraction_delta {
+            double downgrade_fraction_delta = 3;
+        }
+        
+        enum Response {
+            UNKNOWN = 0;
+            UPGRADED_FIXED_AMOUNT = 1;
+            DOWNGRADED_PROPORTIONAL_TO_ERROR = 2;
+        }
+    }
+    
+    message ImmediateStatefulController {
+        oneof _response {
+            Response response = 1;
+        }
+        
+        oneof _multiplier {
+            double multiplier = 2;
+        }
+        
+        enum Response {
+            UNKNOWN = 0;
+            MULTIPLIED_REQUESTED_QOS_FRACTION_BY_CONSTANT = 1;
+            MULTIPLIED_REQUESTED_QOS_FRACTION_BY_LIMIT_OVER_RQ_USAGE = 2;
+        }
+    }
+}
+
+enum RemarkingSupportType {
+    REMARKING_SUPPORT_UNSPECIFIED = 0;
+    REMARKING_SUPPORTED = 1;
+    REMARKING_UNSUPPORTED_DELEGATION = 2;
+    REMARKING_UNSUPPORTED_VC2 = 3;
+    REMARKING_UNSUPPORTED_DATAPATH = 4;
+}

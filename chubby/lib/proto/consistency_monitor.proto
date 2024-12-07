@@ -1,0 +1,72 @@
+syntax = "editions";
+
+package chubby_lib_internal.consistency_monitor;
+
+import public "chubby/lib/proto/statinfo.proto";
+
+service ConsistencyMonitorService {
+    rpc Report(ReportRequest) returns (ReportResponse);
+}
+
+message ClientInfo {
+    optional int32 version = 1;
+    optional string binary = 2;
+    optional string user = 3;
+    optional int32 report_interval_sec = 4;
+    optional string host_addr = 5;
+}
+
+message TrueTimeIntervalProto {
+    optional int64 earliest_ns = 1;
+    optional int64 latest_ns = 2;
+}
+
+message OperationLog {
+    optional string filename = 10;
+    optional OpType operation = 1;
+    optional int64 session = 9;
+    optional int32 status = 2;
+    optional int32 error_code = 3;
+    optional string sequencer = 7;
+    optional int32 check_sequencer_flags = 8;
+    optional LockServerWire_StatInfo stat = 4;
+    optional TrueTimeIntervalProto start = 5;
+    optional TrueTimeIntervalProto end = 6;
+}
+
+message ReportRequest {
+    optional ClientInfo client = 1;
+    repeated OperationLog logs = 2;
+}
+
+message ReportResponse {
+    
+}
+
+enum OpType {
+    CREATE = 0;
+    CREATE_WEAK = 1;
+    READ_OR_CREATE = 2;
+    READ_OR_CREATE_WEAK = 3;
+    DELETE = 4;
+    DELETE_WEAK = 5;
+    READ = 6;
+    SET_CONTENTS = 7;
+    SET_CONTENTS_WEAK = 8;
+    SET_ACL = 9;
+    SET_LATENCY_CLASS = 10;
+    ACQUIRE_EXCLUSIVE = 11;
+    ACQUIRE_SHARED = 12;
+    REACQUIRE_EXCLUSIVE = 13;
+    REACQUIRE_SHARED = 14;
+    RELEASE_EXCLUSIVE = 15;
+    RELEASE_SHARED = 16;
+    READ_DIR = 17;
+    GET_SEQUENCE = 18;
+    CHECK_SEQUENCE = 19;
+    READ_FOR_OPEN = 20;
+    READ_OR_CREATE_MUST_NOT_EXIST = 21;
+    READ_OR_CREATE_MIGHT_NOT_EXIST = 22;
+    READ_OR_CREATE_MUST_NOT_EXIST_WEAK = 23;
+    READ_OR_CREATE_MIGHT_NOT_EXIST_WEAK = 24;
+}

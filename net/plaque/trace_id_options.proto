@@ -1,0 +1,19 @@
+syntax = "editions";
+
+package plaque.trace;
+
+import "net/proto2/proto/descriptor.proto";
+
+message PlaqueTraceIdRangeOptions {
+    optional string name = 1;
+    optional int32 min = 2;
+    optional int32 max = 3;
+}
+
+extend .proto2.EnumValueOptions {
+    optional string label = 260769881;
+}
+
+extend .proto2.MessageOptions {
+    repeated PlaqueTraceIdRangeOptions range = 85932179;
+}

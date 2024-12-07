@@ -1,0 +1,8 @@
+syntax = "editions";
+
+package colossus.restricted_features;
+
+message EnableIncrementalEncoding {
+    optional int32 min_data_chunks = 1;
+    optional int32 chunk_to_encode_at_once = 2;
+}

@@ -14,7 +14,3 @@ message FractionalRolloutConfigurationProto {
     
     reserved 1;
 }
-
-message FractionalRolloutOptionsProto {
-    optional int64 external_gaia_id = 1;
-}

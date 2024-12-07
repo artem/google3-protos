@@ -1,0 +1,24 @@
+syntax = "proto2";
+
+package pgraph.attributes;
+
+import "privacy/data_governance/attributes/proto/ptoken.proto";
+import "storage/datapol/annotations/proto/semantic_annotations.proto";
+
+option java_multiple_files = true;
+
+message DatapolSemanticTypes {
+    repeated .datapol.SemanticType semantic_types = 1 [packed = true];
+}
+
+message DatapolQualifiers {
+    repeated .datapol.Qualifier qualifiers = 1;
+}
+
+message DatapolLocationQualifiers {
+    repeated .datapol.LocationQualifier location_qualifiers = 1;
+}
+
+message PTokenRowLevelProductProvenance {
+    optional privacy.data_governance.attributes.PToken.Storage.RowLevelProductProvenance value = 1;
+}

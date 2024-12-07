@@ -1,0 +1,19 @@
+syntax = "editions";
+
+package plaque;
+
+import "java/com/google/apps/jspb/jspb.proto";
+import "net/plaque/internal/security/block_cache.proto";
+import "net/plaque/internal/security/key_management.proto";
+import "net/plaque/internal/security/verification.proto";
+
+option java_multiple_files = true;
+option java_package = "com.google.net.plaque.net.protocol";
+
+message SecurityS3MsgProto {
+    optional uint64 execid_a = 1;
+    optional uint64 execid_b = 2;
+    repeated VerificationMsgProto verification_messages = 3;
+    repeated KeyMsgProto key_messages = 4;
+    repeated BlockCacheMsgProto block_cache_messages = 5;
+}

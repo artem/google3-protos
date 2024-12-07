@@ -1,11 +1,13 @@
-syntax = "proto2";
+syntax = "editions";
 
 package colossus;
 
 import "file/colossus/proto/base.proto";
 import "google/protobuf/timestamp.proto";
+import "production/resources/dataplatform/idx/time_series/public/proto/idx_time_series_record.proto";
 import "storage/d/proto/health.proto";
 import "storage/datapol/annotations/proto/semantic_annotations.proto";
+import "storage/k3/borg/borg_job_port.proto";
 import "tech/file/proto/types.proto";
 
 option java_package = "com.google.io.file.colossus";
@@ -24,7 +26,7 @@ message CellClientConfig {
 }
 
 message CellConfig {
-    required Version DEPRECATED_version = 1;
+    optional Version DEPRECATED_version = 1;
     enum Version {
         option allow_alias = true;
         CURRENT_VERSION = 3;
@@ -34,10 +36,10 @@ message CellConfig {
         NEW_CFS2_PATHS = 4;
     }
     
-    required string cell_name = 2;
-    required int32 num_chunkserver_shards = 3;
+    optional string cell_name = 2;
+    optional int32 num_chunkserver_shards = 3;
     
-    required MetadataKind metadata_kind = 4;
+    optional MetadataKind metadata_kind = 4;
     enum MetadataKind {
         MEMORY = 0;
         BIGTABLE = 1;
@@ -47,9 +49,10 @@ message CellConfig {
     optional MetadataKind nmeta_metadata_kind = 21;
     repeated string change_history = 6;
     optional string bigtable_location_prefix = 7;
-    optional string curator_bns = 18;
-    optional string custodian_bns = 19;
-    optional string console_bns = 23;
+    optional .k3.BorgJobPortProto curator_job = 36;
+    optional .k3.BorgJobPortProto custodian_job = 37;
+    optional string legacy_curator_bns = 18 [deprecated = true];
+    optional string legacy_custodian_bns = 19 [deprecated = true];
     optional string admin_user = 28;
     repeated string keystore_thinmint_admins = 34;
     
@@ -58,7 +61,6 @@ message CellConfig {
         ERROR_DISK_LAYER = 0;
         D_DISK_LAYER = 1;
         DEPRECATED_RF_DISK_LAYER = 2;
-        FAKE_DISK_LAYER = 3;
         TIMELOCK_DISK_LAYER = 4;
         DUMPED_CHUNK_DISKLAYER = 6;
         MOARLOAD_DISK_LAYER = 7;
@@ -85,32 +87,43 @@ message CellConfig {
     optional CellClientConfig client_config = 30;
     optional string d_server_user = 32;
     optional string fake_cfs1_curator_address = 33;
+    
+    reserved 23, 35;
 }
 
 message DiskInfo {
-    required int64 id = 1;
+    optional int64 id = 1;
     optional fixed64 label = 2;
     optional storage_d.Health.Status d_state = 8;
     optional bool removable = 6 [default = false];
     optional int64 d_health_version = 5;
     optional int64 removal_start_time = 11;
-    optional int64 d_drain_priority = 12;
+    optional int64 vote_time = 13;
     
-    reserved 3, 4, 7, 9, 10;
+    reserved 3, 4, 7, 9, 10, 12;
 }
 
 message ChunkserverInfo {
-    required string name = 1;
+    optional string name = 1;
     optional storage_d.Health.Status d_state = 7;
-    required int32 version = 3;
+    optional int32 version = 3;
     optional int32 d_drain_priority = 11;
     optional int64 d_health_version = 6;
-    required bool removable = 4;
+    optional bool removable = 4;
     optional int64 removal_start_time = 8;
-    optional int64 remaining_chunks_upper_bound = 9;
+    optional int64 vote_time = 13;
     repeated DiskInfo disks = 5;
     
-    reserved 2, 10, "state";
+    reserved 2, 9, 10, 12;
+    
+    reserved "state";
+}
+
+message ChunkserverInfoIdxRecord {
+    optional ChunkserverInfo chunkserver_info = 1;
+    optional google.protobuf.Timestamp timestamp = 2;
+    optional .idx.time_series.ingestion.proto.IDXTimeSeriesMetadata idx_internal_metadata = 3;
+    optional string colossus_cell_name = 4;
 }
 
 message ChunkserversConfig {
@@ -120,10 +133,10 @@ message ChunkserversConfig {
 }
 
 message PathAclConfig {
-    required string path = 1;
-    required fixed32 mode = 2;
-    required string owner = 3;
-    required string group = 4;
+    optional string path = 1;
+    optional fixed32 mode = 2;
+    optional string owner = 3;
+    optional string group = 4;
     optional bool managed_by_namespace = 5 [default = false];
     repeated string realm = 6;
     optional bool realm_enforced = 10 [default = true];
@@ -146,7 +159,7 @@ message NamespacePathAdmin {
 message AclConfig {
     repeated string admin = 1;
     repeated string readonly_admin = 13;
-    repeated string namespace_admin = 11;
+    repeated string namespace_admin = 11 [deprecated = true];
     repeated NamespacePathAdmin namespace_path_admin = 12;
     repeated PathAclConfig path_acl = 3;
     optional string last_change_user = 8;
@@ -156,7 +169,7 @@ message AclConfig {
 }
 
 message CellParameter {
-    required string name = 1;
+    optional string name = 1;
     optional string value = 2;
     optional string default_value = 3;
     optional string description = 4;
@@ -201,7 +214,7 @@ message CellParameters {
 }
 
 message ProhibitedEntry {
-    required string name = 1;
+    optional string name = 1;
     optional string partition = 4;
     optional int32 soft_excess = 6;
     optional int32 hard_excess = 3;
@@ -232,7 +245,7 @@ message ProhibitedUsers {
 message AutoPlacementConstraints {
     repeated Group groups = 1;
     message Group {
-        required string name = 1;
+        optional string name = 1;
         optional string partition = 2 [default = "ssd"];
         optional int64 max_bytes = 4;
         optional int32 replication_factor = 7;
@@ -244,7 +257,7 @@ message AutoPlacementConstraints {
     }
     
     message FilePattern {
-        required string regexp = 1;
+        optional string regexp = 1;
         optional int32 min_ttl_secs = 2;
         optional int32 max_ttl_secs = 3;
         optional int64 max_bytes = 4;
@@ -255,7 +268,7 @@ message AutoPlacementConstraints {
 message AutoPlacementSolutions {
     repeated Group groups = 1;
     message Group {
-        required string name = 1;
+        optional string name = 1;
         optional float probability = 2;
         optional int32 ttl_secs = 3;
         repeated FilePattern file_patterns = 5;
@@ -263,7 +276,7 @@ message AutoPlacementSolutions {
     }
     
     message FilePattern {
-        required string regexp = 1;
+        optional string regexp = 1;
         optional float probability = 2;
         optional int32 ttl_secs = 3;
     }
@@ -274,9 +287,11 @@ message NamespaceConfig {
     message Rule {
         optional string store = 1;
         optional string cfs2_store = 4;
-        required string anchor = 2;
+        optional string anchor = 2;
         
-        reserved 3, "folder_prefix", "has_metadata";
+        reserved 3;
+        
+        reserved "folder_prefix", "has_metadata";
     }
     
     reserved 2;
@@ -285,7 +300,7 @@ message NamespaceConfig {
 message ProxyIsolationConfig {
     repeated User users = 1;
     message User {
-        required string username = 1;
+        optional string username = 1;
         repeated int32 task_ids = 2;
     }
 }
@@ -301,7 +316,7 @@ message StopRemovalsConfig {
 message MetadataCacheConfig {
     repeated User users = 1;
     message User {
-        required string username = 1;
+        optional string username = 1;
         repeated int32 task_ids = 2;
     }
     

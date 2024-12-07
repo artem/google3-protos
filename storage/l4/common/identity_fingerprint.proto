@@ -1,0 +1,10 @@
+syntax = "editions";
+
+package storage_l4;
+
+message IdentityFingerprintProto {
+    optional fixed64 a = 1;
+    optional fixed64 b = 2;
+    optional fixed64 c = 3;
+    optional fixed64 d = 4;
+}

@@ -1,0 +1,26 @@
+syntax = "editions";
+
+package storage_useccfs;
+
+option cc_enable_arenas = true;
+
+message Descriptor {
+    optional int64 descriptor_id = 1;
+    optional string acting_user = 3;
+    optional string resource_user = 4;
+    optional string isolation_class = 5;
+    optional string service_class = 8;
+    optional string colossus_cell = 6;
+    optional bool is_cfs2 = 7;
+    optional bool internal_operation = 12;
+    
+    reserved 2, 9, 10, 11, 13, 14 to max;
+}
+
+message DescriptorAck {
+    optional int64 descriptor_id = 1;
+    optional int32 status_code = 2;
+    optional int32 max_known_message_type = 3;
+    
+    reserved 4;
+}

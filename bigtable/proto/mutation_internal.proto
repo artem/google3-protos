@@ -1,0 +1,258 @@
+syntax = "proto2";
+
+package bigtable;
+
+import "bigtable/proto/aggregate.proto";
+import "bigtable/proto/bigtable.proto";
+import "bigtable/proto/bigtable_internal.proto";
+import "bigtable/proto/bti_request.proto";
+import "bigtable/proto/side_ptoken_msg.proto";
+import "perftools/tracing/proto/tracecontext.proto";
+import "privacy/data_governance/attributes/proto/purpose.proto";
+
+option cc_enable_arenas = true;
+option java_package = "com.google.bigtable.protos";
+
+message BTI_DocumentState {
+    required bool exist = 1;
+    optional uint64 current = 2;
+    required uint64 next = 3;
+    optional int64 last_commit_walltime = 4;
+    optional int64 mark_for_gc_walltime = 5;
+}
+
+message BTI_DocVerState {
+    required uint64 version = 1;
+    optional bool deleted = 2 [default = false];
+    optional int64 write_walltime = 100;
+}
+
+message ComplianceInfo {
+    repeated int32 origin_associated_product_id = 1;
+    repeated bytes serialized_privacy_context_portability = 3;
+    repeated privacy.data_governance.attributes.ProcessingPurpose.Purpose processing_purpose = 2 [deprecated = true];
+}
+
+message BTI_Mutation {
+    optional BTI_Request request = 23;
+    required string table = 1;
+    required uint64 version = 2;
+    optional string table_key = 12;
+    required bytes row = 3;
+    optional int32 num_batched_writes = 38 [default = 1];
+    optional bool replicate = 25 [default = true];
+    optional Idempotency idempotency = 94;
+    
+    optional group TS_Replication = 49 {
+        required int64 repl_cell_id = 50;
+        required int64 repl_table_id = 51;
+        required string source_cell = 52;
+        required int64 source_table_id = 53;
+        required uint64 source_incarnation = 55;
+        required int64 logical_clock = 56;
+    }
+    
+    optional bool ts_may_proxy = 79 [default = true];
+    optional GlobalSequencerProto global_sequencer = 5;
+    optional bool ts_pass_old_global_sequencer = 75;
+    optional bool return_global_sequencer = 83 [default = false];
+    
+    repeated group Mod = 7 {
+        optional bytes row_delta = 11;
+        
+        optional group TS_Replication = 47 {
+            required int64 repl_family_id = 48;
+        }
+        
+        optional bool use_sequencer = 58;
+        optional ComplianceInfo compliance_info = 89;
+        
+        optional group SetCell = 8 {
+            required bytes column = 16;
+            optional int64 ts_family_id = 45;
+            optional bytes ts_column_part = 46;
+            optional int32 ts_aggregate_type = 26;
+            optional bytes raw_value = 17 [ctype = CORD];
+            optional bytes compressed_value = 24 [ctype = CORD];
+            optional SidePtokenMsg side_ptoken = 95;
+            optional fixed64 key_checksum = 84;
+            optional fixed32 value_crc = 77;
+            optional int64 micro_timestamp = 40;
+            optional bool delete_older = 19 [deprecated = true];
+            
+            optional SubOp sub_op = 93;
+            enum SubOp {
+                UNKNOWN = 0;
+                OVERWRITE = 1;
+                AGGREGATE = 2;
+            }
+        }
+        
+        optional group DeleteCell = 9 {
+            optional int64 ts_family_id = 43;
+            optional bytes ts_column_part = 44;
+            required bytes column = 20;
+            optional int64 start_micro_timestamp = 41;
+            optional int64 end_micro_timestamp = 42;
+            optional bool internal_cell_gc = 57 [default = false];
+            optional int32 ts_aggregate_type = 91;
+        }
+        
+        optional group DeleteFamily = 60 {
+            required string family = 61;
+            optional int64 ts_family_id = 62;
+            optional int32 ts_aggregate_type = 92;
+        }
+        
+        optional bool DeleteRow = 10;
+        
+        optional group SetIndex = 63 {
+            required int32 overwrite_policy = 64;
+            optional int64 timestamp = 73;
+            
+            repeated group Token = 65 {
+                required bytes name = 66;
+                
+                repeated group Hit = 67 {
+                    required int32 position = 68;
+                    required int32 attribute = 69;
+                }
+            }
+            
+            optional bytes encoded_tokens = 81 [ctype = CORD];
+            optional bool want_checksum = 78 [deprecated = true];
+            optional BTI_Mutation finale = 70;
+            optional uint64 ts_assigned_version = 72;
+            optional int32 ts_hit_shard_bits = 80 [default = 15];
+            
+            enum OverwritePolicy {
+                FULL_UPDATE = 0;
+                INCREMENTAL = 1;
+            }
+        }
+    }
+    
+    optional bool enforce_quota = 54 [default = true];
+    repeated bytes secondary = 27 [ctype = CORD];
+    optional fixed64 ts_secondary_client_id = 28;
+    optional int64 ts_secondary_clock_start = 30;
+    optional fixed64 mutation_checksum = 85;
+    optional perftools.tracing.TraceContextProto trace_context = 86;
+    optional bytes proxy_source_id = 87;
+    optional int64 ts_max_sequencer_backwards_skew_seconds = 88;
+    optional ComplianceInfo compliance_info = 90;
+    
+    reserved 4, 18, 21, 22, 71, 74, 82;
+}
+
+message ModAnnotation {
+    optional uint32 original_mod_index = 1;
+    optional bytes row_delta = 2;
+    optional int64 repl_family_id = 3;
+    optional bool ignore = 4 [default = false];
+    optional bool use_sequencer = 10;
+    
+    oneof command {
+        SetCell set_cell = 5;
+        DeleteCell delete_cell = 6;
+        DeleteFamily delete_family = 7;
+        SetIndex set_index = 8;
+        BTI_Mutation.Mod bti_mod = 9;
+    }
+    
+    message SetCell {
+        optional int64 ts_family_id = 1;
+        optional bytes ts_column_part = 2;
+        optional int32 ts_aggregate_type = 5;
+        
+        reserved 3, 4;
+    }
+    
+    message DeleteCell {
+        optional int64 ts_family_id = 1;
+        optional bytes ts_column_part = 2;
+        optional int32 ts_aggregate_type = 3;
+    }
+    
+    message DeleteFamily {
+        optional int64 ts_family_id = 1;
+        optional int32 ts_aggregate_type = 2;
+    }
+    
+    message SetIndex {
+        optional BTI_MutationAnnotations finale_annotations = 1;
+        optional bool make_finale_inline = 2 [default = false];
+        optional bool make_finale_secondary = 3 [default = false];
+        optional int32 overwrite_policy = 4;
+        optional int64 timestamp = 5;
+        optional uint64 ts_assigned_version = 6;
+        optional int32 ts_hit_shard_bits = 7 [default = 15];
+        optional bytes encoded_tokens = 8 [ctype = CORD];
+    }
+}
+
+message BTI_MutationAnnotations {
+    repeated ModAnnotation mod_annotations = 2;
+    
+    optional TS_Replication ts_replication = 4;
+    message TS_Replication {
+        required int64 repl_cell_id = 1;
+        required int64 repl_table_id = 2;
+        required string source_cell = 3;
+        required int64 source_table_id = 4;
+        required uint64 source_incarnation = 5;
+        required int64 logical_clock = 6;
+    }
+    
+    optional bool ts_may_proxy = 5 [default = true];
+    optional GlobalSequencerProto global_sequencer = 6;
+    optional bool ts_pass_old_global_sequencer = 7;
+    optional int64 replica_tiebreaker = 17;
+    repeated bytes secondary = 8 [ctype = CORD];
+    optional fixed64 ts_secondary_client_id = 9;
+    optional int64 ts_secondary_clock_start = 10;
+    optional bool mirror_apply = 11 [default = false];
+    optional int32 num_batched_writes = 12;
+    optional BTI_Request request = 13;
+    optional int32 additional_secondary_size = 15 [default = 0];
+    optional bool is_index = 16;
+    optional bool add_materialized_view_last_update_timestamp = 18;
+    
+    reserved 1, 14;
+}
+
+message BTI_ApplyResult {
+    optional BTI_Response response = 5;
+    optional bytes row = 7;
+    optional int32 num_assigned = 6;
+    optional fixed64 client_id = 8;
+    optional int64 clock_start = 9;
+    optional GlobalSequencerProto global_sequencer = 10;
+    
+    reserved 1, 2, 3;
+}
+
+message BTI_SecondaryUpdate {
+    optional fixed64 label = 1;
+    repeated fixed64 waitfor = 2;
+    required BTI_Mutation mutation = 10;
+}
+
+message BTI_CondMutation {
+    required bytes predicate = 1;
+    optional BTI_Mutation true_action = 2;
+    optional BTI_Mutation false_action = 3;
+    optional bool return_reader_items = 4 [default = false];
+}
+
+message BTI_CondMutationResult {
+    required bytes row = 1 [ctype = CORD];
+    required bool eval_result = 2;
+    optional BTI_ApplyResult apply_result = 3;
+    optional bytes reader_result = 4 [ctype = CORD];
+}
+
+message BTI_CPApplyResult {
+    repeated bytes row = 1 [ctype = CORD];
+    required BTI_ApplyResult apply_result = 2;
+}

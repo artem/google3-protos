@@ -1,21 +1,22 @@
-syntax = "proto2";
+syntax = "editions";
 
 package tech.log;
 
 import "google/protobuf/any.proto";
-import "tech/log/proto/entity.proto";
+import "privacy/data_flow/homunculus/core/homunculus_override_signals.proto";
 
-option cc_enable_arenas = true;
 option java_package = "com.google.tech.log";
 
 message ContextMetadata {
     optional int32 origin_associated_product_id = 1;
+    optional privacy.data_flow.homunculus.proto.HomunculusOverrideSignals homunculus_override_signals = 2;
 }
 
 message Metadata {
     optional int64 timestamp_ns = 1;
-    optional Entity producing_entity = 2;
     optional ContextMetadata context_metadata = 3;
+    
+    reserved 2;
 }
 
 message LogEntry {

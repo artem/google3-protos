@@ -1,4 +1,4 @@
-syntax = "proto2";
+syntax = "editions";
 
 package bigtable;
 
@@ -17,6 +17,7 @@ message TableUnloadedInfo {
         CLOUD_KMS_ERROR = 1;
         INTERNAL_FAILED_PRECONDITION = 2;
         USER_ERROR = 3;
+        SHREDMILL_KEY_EXPIRED = 4;
     }
 }
 

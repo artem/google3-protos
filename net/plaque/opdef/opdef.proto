@@ -1,0 +1,283 @@
+syntax = "proto3";
+
+package plaque;
+
+import "net/proto2/proto/descriptor.proto";
+
+option cc_enable_arenas = true;
+option java_package = "com.google.net.plaque.proto";
+
+message SourceLocation {
+    string file_path = 1;
+    int64 start_byte = 2;
+    int64 last_byte = 3;
+    int32 start_line = 4;
+}
+
+message OpDefType {
+    repeated Part part = 1;
+    message Part {
+        oneof kind {
+            Field field = 1;
+            string attribute = 2;
+        }
+    }
+    
+    repeated string used_constraints = 16;
+    
+    message Field {
+        ElemType type = 2;
+        string proto = 3;
+        string custom = 5;
+        SourceLocation name_source_location = 6;
+        
+        oneof kind {
+            string name = 1;
+            string attribute = 4;
+        }
+    }
+    
+    enum ElemType {
+        INT64 = 0;
+        UINT64 = 1;
+        BYTES = 2;
+        BOOL = 3;
+        DOUBLE = 4;
+        INT32 = 5;
+        UINT32 = 6;
+        FLOAT = 7;
+        STRING = 8;
+        PROTO = 9;
+        CUSTOM = 10;
+        OBJECT = 11;
+        ENUM = 12;
+    }
+}
+
+message OpDefFieldList {
+    repeated Part part = 1;
+    message Part {
+        oneof kind {
+            string field = 1;
+            string attribute = 2;
+            string type_spec_attribute = 3;
+        }
+    }
+}
+
+message OpDef {
+    string name = 1;
+    string comment = 2;
+    
+    repeated Input input = 3;
+    message Input {
+        string name = 1;
+        bool is_optional = 10;
+        
+        RepeatType repeats = 3;
+        enum RepeatType {
+            NO_REPEAT = 0;
+            SAME_TYPES = 1;
+            DIFFERENT_TYPES = 2;
+        }
+        
+        bool predeliver = 6;
+        bool non_activating = 11;
+        bool on_demand = 12;
+        string comment = 5;
+        OpDefType has = 8;
+        OpDefFieldList.Part sharding = 9;
+        SourceLocation name_source_location = 13;
+        
+        reserved 2, 7;
+    }
+    
+    repeated Output output = 4;
+    message Output {
+        string name = 1;
+        string comment = 5;
+        OpDefType adds = 6;
+        repeated string forwards = 7;
+        OpDefFieldList keeps = 8;
+        OpDefFieldList drops = 10;
+        
+        Count count = 12;
+        message Count {
+            oneof kind {
+                string attribute_value = 1;
+                string input_count = 2;
+                int64 num_value = 3;
+            }
+        }
+        
+        SourceLocation name_source_location = 11;
+        
+        reserved 2;
+    }
+    
+    repeated Attribute attribute = 5;
+    message Attribute {
+        string name = 1;
+        bool repeats = 3;
+        bool is_optional = 4;
+        string comment = 5;
+        OpDefType.ElemType elem_type = 6;
+        string proto = 7;
+        string op_class = 9;
+        bool allow_any_type = 8;
+        SourceLocation name_source_location = 10;
+        
+        reserved 2;
+    }
+    
+    OpProperties properties = 7;
+    
+    API api = 9;
+    message API {
+        string name = 1;
+        bool hide = 2;
+    }
+    
+    SourceLocation opname_source_location = 10;
+    SourceLocation func_call_source_location = 11;
+    
+    reserved 6, 8;
+    
+    message Constraint {
+        string name = 1;
+        string type = 2;
+        repeated string used_constraints = 16;
+        SourceLocation name_source_location = 11;
+        
+        reserved 3, 4, 5, 6, 7, 8, 9, 10;
+    }
+}
+
+message CppType {
+    string type = 1;
+    repeated string header = 2;
+}
+
+message JavaType {
+    string pkg = 1;
+    string classname = 2;
+}
+
+message OpClassDef {
+    string name = 1;
+    string comment = 2;
+    CppType cpp = 3;
+    JavaType java = 4;
+    SourceLocation name_source_location = 5;
+}
+
+message OpProperties {
+    bool is_blocking = 1;
+    
+    SplitType split = 2 [deprecated = true];
+    enum SplitType {
+        NO_SPLIT = 0;
+        INTERLEAVE_MERGE = 1;
+        SELF_MERGE = 2;
+    }
+    
+    bool end_when_outputs_done = 3;
+    bool skip_on_empty_inputs = 4;
+}
+
+message CustomFieldInfo {
+    string fully_qualified_name = 1;
+    bool serializable = 2;
+    CppType cpp = 3;
+    JavaType java = 4;
+}
+
+message OpFile {
+    string package = 1;
+    repeated OpDef.Constraint constraint = 3;
+    
+    repeated CustomFieldTypesEntry custom_field_types = 6;
+    message CustomFieldTypesEntry {
+        string key = 1;
+        CustomFieldInfo value = 2;
+    }
+    
+    repeated OpDef op = 2;
+    repeated OpClassDef op_class = 7;
+    
+    Version version = 4;
+    enum Version {
+        VERSION_UNKNOWN = 0;
+        POP = 1;
+    }
+    
+    PackageOptions package_options = 5;
+    message PackageOptions {
+        string cc_namespace = 1;
+        string alias = 2;
+    }
+    
+    OpEvolutionInfo op_evolution_info = 8;
+    message OpEvolutionInfo {
+        repeated ProtoAliasInfo proto_alias_info = 1;
+        message ProtoAliasInfo {
+            string name = 1;
+            string alias = 2;
+            Type type = 3;
+        }
+        
+        enum Type {
+            UNKNOWN = 0;
+            MESSAGE = 1;
+            ENUM = 2;
+        }
+    }
+    
+    repeated SourceLocation package_source_location = 9;
+}
+
+message OpFileAnnotation {
+    repeated LoadedModule loaded_modules = 1;
+    message LoadedModule {
+        string filepath = 1;
+        SourceLocation module_source_location = 2;
+        string package = 3;
+        
+        repeated ImportAnnotation import_annotations = 4;
+        message ImportAnnotation {
+            string name = 1;
+            SourceLocation source_location = 2;
+            
+            ImportType type = 3;
+            enum ImportType {
+                TYPE_UNKNOWN = 0;
+                TYPE_FUNCTION = 1;
+                TYPE_TYPE = 2;
+            }
+        }
+    }
+    
+    repeated Method methods = 2;
+    message Method {
+        string name = 1;
+        SourceLocation name_source_location = 2;
+    }
+}
+
+message PlaqueOptions {
+    repeated string package_alias = 1;
+    repeated string message_alias = 2;
+    repeated string enum_alias = 3;
+}
+
+extend .proto2.FileOptions {
+    PlaqueOptions file_options = 405918268;
+}
+
+extend .proto2.MessageOptions {
+    PlaqueOptions message_options = 405918268;
+}
+
+extend .proto2.EnumOptions {
+    PlaqueOptions enum_options = 405918268;
+}

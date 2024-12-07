@@ -1,0 +1,13 @@
+syntax = "editions";
+
+package storage_l4;
+
+import "net/proto2/bridge/proto/message_set.proto";
+
+message DServerInfo {
+    optional string unauthenticated_hostname = 1;
+    
+    extend .proto2.bridge.MessageSet {
+        optional DServerInfo message_set_extension = 388444634;
+    }
+}

@@ -1,0 +1,56 @@
+syntax = "proto2";
+
+package bigtable;
+
+import "security/thinmint/proto/core/thinmint_core.proto";
+
+option java_package = "com.google.bigtable.protos";
+
+message BaseThinMints {
+    optional int32 fsroot_id = 1;
+    optional .thinmint.ThinMint mint = 2;
+}
+
+message FSRootToFSRoot {
+    required int32 prev_id = 1;
+    required int32 cur_id = 2;
+}
+
+message ChronicleLoc {
+    optional string universe = 1;
+    optional string site = 2;
+    optional string archive = 3;
+}
+
+message BackupInfo {
+    required ChronicleLoc loc = 1;
+    optional string cell = 2;
+    optional string table_name = 3;
+    optional string ts_label = 6;
+    
+    reserved 4;
+}
+
+message BTI_ChronicleBackupStats {
+    optional double last_storefile_time = 1;
+    required int64 chronicle_md_ss_saves = 2;
+    required int64 chronicle_ss_saves = 3;
+}
+
+message BTI_OfflineBackupStats {
+    optional BTI_ChronicleBackupStats chronicle = 1;
+}
+
+message BTI_OfflineSetupGap {
+    optional string description = 3;
+    optional int32 first_shard = 4;
+    optional int32 last_shard = 5;
+    optional int64 failed_backups = 6;
+    
+    reserved 1, 2;
+}
+
+enum ChronicleBackend {
+    DEFAULT_TAPE = 0;
+    TIMELOCK = 1;
+}

@@ -1,0 +1,11 @@
+syntax = "editions";
+
+package security_loas_l2;
+
+option java_package = "com.google.net.loas.l2";
+
+enum ThinMintVerificationKeyTrustTier {
+    THIN_MINT_VERIFICATION_KEY_TRUST_TIER_UNSPECIFIED = 0;
+    THIN_MINT_VERIFICATION_KEY_TRUST_TIER_DEFAULT_ALLOW = 1;
+    THIN_MINT_VERIFICATION_KEY_TRUST_TIER_DEFAULT_DENY = 2;
+}

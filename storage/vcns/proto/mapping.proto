@@ -1,0 +1,20 @@
+syntax = "editions";
+
+package storage.vcns;
+
+import "storage/datapol/annotations/proto/semantic_annotations.proto";
+
+option java_outer_classname = "MappingProto";
+option java_package = "com.google.storage.vcns.proto";
+
+message Mapping {
+    optional Type type = 1;
+    enum Type {
+        UNKNOWN_TYPE = 0;
+        HOME_DIR = 1;
+    }
+    
+    optional string virtual_cell = 2;
+    optional string user = 3;
+    optional string cns_cell = 4;
+}
