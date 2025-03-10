@@ -1,76 +1,78 @@
-syntax = "proto3";
+syntax = "editions";
 
 package storage_speckle_postgres_extensions_google_columnar_engine;
 
 import "storage/datapol/annotations/proto/semantic_annotations.proto";
 
 message RecommendationStat {
-    string recommendation_algorithm = 1;
-    int64 average_latency_us = 2;
+    optional string recommendation_algorithm = 1;
+    optional int64 average_latency_us = 2;
     map<string, int64> quality_counts = 3;
 }
 
 message PopulationStats {
-    int64 num_manual_population_errors = 1;
-    int64 num_auto_population_errors = 2;
-    int64 num_manual_refresh_errors = 3;
-    int64 num_auto_refresh_errors = 4;
-    int64 num_manual_population_known_errors = 5;
-    int64 num_auto_population_known_errors = 6;
-    int64 num_manual_refresh_known_errors = 7;
-    int64 num_auto_refresh_known_errors = 8;
+    optional int64 num_manual_population_errors = 1;
+    optional int64 num_auto_population_errors = 2;
+    optional int64 num_manual_refresh_errors = 3;
+    optional int64 num_auto_refresh_errors = 4;
+    optional int64 num_manual_population_known_errors = 5;
+    optional int64 num_auto_population_known_errors = 6;
+    optional int64 num_manual_refresh_known_errors = 7;
+    optional int64 num_auto_refresh_known_errors = 8;
 }
 
 message AutoColumnarization {
-    int64 num_errors = 1;
-    int64 num_user_specified_column_sets = 2;
-    int64 num_workload_column_sets = 3;
-    int64 inprogress_whatif_count = 4;
-    int64 total_whatif_count = 5;
-    int64 total_whatif_error_count = 6;
+    optional int64 num_errors = 1;
+    optional int64 num_user_specified_column_sets = 2;
+    optional int64 num_workload_column_sets = 3;
+    optional int64 inprogress_whatif_count = 4;
+    optional int64 total_whatif_count = 5;
+    optional int64 total_whatif_error_count = 6;
     repeated RecommendationStat recommendation_stats = 7;
-    bool enable_columnar_recommendation = 8;
+    optional bool enable_columnar_recommendation = 8;
 }
 
 message MemoryStat {
-    string memory_name = 1;
-    int64 memory_total = 2;
-    int64 memory_available = 3;
-    int64 memory_reserved = 4;
-    float memory_available_percentage = 5;
+    optional string memory_name = 1;
+    optional int64 memory_total = 2;
+    optional int64 memory_available = 3;
+    optional int64 memory_reserved = 4;
+    optional float memory_available_percentage = 5;
 }
 
 message ColumnarEngineContent {
-    int64 num_relations = 1;
-    int64 total_uncompressed_size_in_bytes = 2;
-    int64 total_invalid_block_count = 3;
-    int64 total_block_count_in_cc = 4;
+    optional int64 num_relations = 1;
+    optional int64 total_uncompressed_size_in_bytes = 2;
+    optional int64 total_invalid_block_count = 3;
+    optional int64 total_block_count_in_cc = 4;
     map<string, ColumnTypeStat> column_type_stats = 5;
     repeated MemoryStat memory_stats = 6;
-    int64 local_storage_configured_size = 7;
-    int64 local_storage_used_size = 8;
-    float refresh_threshold_percentage = 9;
+    optional int64 local_storage_configured_size = 7;
+    optional int64 local_storage_used_size = 8;
+    optional float refresh_threshold_percentage = 9;
 }
 
 message ColumnTypeStat {
-    int64 num_colmns = 1;
-    int64 total_uncompressed_size_in_bytes = 2;
+    optional int64 num_colmns = 1;
+    optional int64 total_uncompressed_size_in_bytes = 2;
 }
 
 message ColumnarProcessingStats {
-    int64 read_bytes_cached_count = 3;
-    int64 read_bytes_swapped_in_count = 4;
+    optional int64 swap_in_jobs_count = 1;
+    optional int64 swap_out_jobs_count = 2;
+    optional int64 read_bytes_cached_count = 3;
+    optional int64 read_bytes_swapped_in_count = 4;
 }
 
 message JobSchedulerStats {
-    int64 pending_job_count = 1;
-    int64 inprogress_job_count = 2;
+    optional int64 pending_job_count = 1;
+    optional int64 inprogress_job_count = 2;
 }
 
 message ColumnarEngineStats {
-    AutoColumnarization auto_columnarization = 1;
-    PopulationStats population_stats = 2;
-    ColumnarEngineContent columnar_engine_content = 3;
-    ColumnarProcessingStats columnar_processing_stats = 4;
-    JobSchedulerStats job_scheduler_stats = 5;
+    optional AutoColumnarization auto_columnarization = 1;
+    optional PopulationStats population_stats = 2;
+    optional ColumnarEngineContent columnar_engine_content = 3;
+    optional ColumnarProcessingStats columnar_processing_stats = 4;
+    optional JobSchedulerStats job_scheduler_stats = 5;
 }

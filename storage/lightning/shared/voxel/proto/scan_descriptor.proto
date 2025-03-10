@@ -18,6 +18,7 @@ message StandardPseudocolumnSourceProto {
         PSEUDOCOLUMN_VERSION = 7;
         PSEUDOCOLUMN_INDEX_KEY_ARRAY = 8;
         PSEUDOCOLUMN_IMPORT_CELL = 9;
+        PSEUDOCOLUMN_PTOKEN = 10;
     }
 }
 
@@ -34,6 +35,7 @@ message LogsPseudocolumnSourceProto {
         PSEUDOCOLUMN_LOG_METADATA_END_OFFSET = 7;
         PSEUDOCOLUMN_LOG_DIFF_LOG_KEY = 8;
         PSEUDOCOLUMN_LOG_DIFF_LOG_TIMESTAMP = 9;
+        PSEUDOCOLUMN_LOG_LOOKUP_TOKEN = 10;
     }
 }
 

@@ -94,10 +94,11 @@ enum SignatureArgumentKind {
     ARG_TYPE_CONNECTION = 12;
     ARG_TYPE_DESCRIPTOR = 13;
     ARG_TYPE_LAMBDA = 17;
-    ARG_RANGE_TYPE_ANY = 18;
+    ARG_RANGE_TYPE_ANY_1 = 18;
     ARG_TYPE_GRAPH_NODE = 19;
     ARG_TYPE_GRAPH_EDGE = 20;
     ARG_TYPE_GRAPH_ELEMENT = 21;
+    ARG_TYPE_GRAPH_PATH = 30;
     ARG_TYPE_SEQUENCE = 22;
     ARG_MAP_TYPE_ANY_1_2 = 29;
     __SignatureArgumentKind__switch_must_have_a_default__ = -1;

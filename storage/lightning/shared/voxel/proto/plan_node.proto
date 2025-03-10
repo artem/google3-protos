@@ -10,6 +10,7 @@ message PlanNodeProto {
     optional TableDescriptorProto output_table_descriptor = 1;
     optional int64 limit = 2 [default = -1];
     optional int64 offset = 3;
+    optional PlanNodeInfoExtensionProto extension = 16;
     
     oneof node {
         AggregatePlanNodeInfo aggregate = 4;
@@ -68,6 +69,10 @@ message ScanPlanNodeInfo {
 
 message ScanInfoProto {
     extensions 1, 2, 65536 to 524999999, 525000000 to max;
+}
+
+message PlanNodeInfoExtensionProto {
+    extensions 1000 to max;
 }
 
 message AnyPlanNodeInfo {

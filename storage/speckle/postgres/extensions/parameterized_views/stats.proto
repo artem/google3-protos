@@ -1,0 +1,20 @@
+syntax = "editions";
+
+package storage.speckle.postgres.extensions.parameterized_views;
+
+import "storage/datapol/annotations/proto/semantic_annotations.proto";
+
+message ParameterizedViewsExecuteCounts {
+    optional uint64 total = 1;
+    optional uint64 success = 2;
+    optional uint64 limit_exceeded = 3;
+    optional uint64 unsupported = 4;
+    optional uint64 pv_error = 5;
+}
+
+message ParameterizedViewsStats {
+    optional uint64 parameterized_views_count = 1;
+    optional ParameterizedViewsExecuteCounts json = 2;
+    optional ParameterizedViewsExecuteCounts cursor = 3;
+    optional ParameterizedViewsExecuteCounts execute = 4;
+}

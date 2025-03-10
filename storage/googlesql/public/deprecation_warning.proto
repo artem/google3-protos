@@ -18,6 +18,7 @@ message DeprecationWarning {
         PROTO3_FIELD_PRESENCE = 3;
         QUERY_TOO_COMPLEX = 4;
         DEPRECATED_ANONYMIZATION_OPTION_KAPPA = 5;
+        PIVOT_OR_UNPIVOT_ON_ARRAY_SCAN = 6;
     }
     
     extend .proto2.bridge.MessageSet {

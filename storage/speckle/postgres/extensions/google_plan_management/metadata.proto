@@ -1,0 +1,9 @@
+syntax = "editions";
+
+package storage.speckle.postgres.extensions.google_plan_management;
+
+import "storage/datapol/annotations/proto/semantic_annotations.proto";
+
+message PlanManagementMetadata {
+    optional string instance_name = 1;
+}

@@ -52,7 +52,9 @@ message ColumnarColumn {
 message ColumnarEngineInfo {
     repeated ColumnarColumns columns = 2;
     
-    reserved 1, "columnar_columns";
+    reserved 1;
+    
+    reserved "columnar_columns";
 }
 
 message ColumnarColumns {
@@ -244,6 +246,7 @@ message TuneStats {
     optional uint64 num_hash_mem_multiplier = 5;
     optional uint64 num_tunes = 6;
     optional uint64 num_tune_errors = 7;
+    optional uint64 num_sort_work_mem = 8;
 }
 
 message QueryAdvisorStats {
@@ -329,4 +332,5 @@ enum TuneAdviceType {
     TUNE_ADVICE_TYPE_SCAN_PARALLEL_WORKERS_PER_GATHER = 3;
     TUNE_ADVICE_TYPE_GATHER_PARALLEL_WORKERS = 4;
     TUNE_ADVICE_TYPE_HASH_MEM_MULTIPLIER = 5;
+    TUNE_ADVICE_TYPE_SORT_WORK_MEM = 6;
 }

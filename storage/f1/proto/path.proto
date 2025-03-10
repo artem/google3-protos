@@ -1,4 +1,4 @@
-syntax = "proto2";
+syntax = "editions";
 
 package f1.query;
 
@@ -71,6 +71,7 @@ message DecodePathElementInfo {
         PARTITION_DATE_STRING_COLUMN = 17;
         LOG_DIFF_LOG_KEY = 18;
         LOG_DIFF_LOG_TIMESTAMP = 19;
+        LOG_LOOKUP_TOKEN = 23;
         F1_QUERY_OPTIMIZED_IMPORT_CELL_COLUMN = 20;
         PTOKEN = 21;
         CUSTOM_PSEUDO_COLUMN = 22;

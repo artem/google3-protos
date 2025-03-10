@@ -376,6 +376,9 @@ message Snapshot {
         optional double percent_towards_emergency_autovac = 24;
         optional int64 num_canceled_autovac = 25;
         optional int64 num_failed_autovac = 26;
+        optional int64 num_total_vacuums_in_user_dbs = 27;
+        optional int64 num_autovacuums_in_user_dbs = 28;
+        optional int64 num_manual_vacuums_in_user_dbs = 29;
     }
     
     repeated ChillCacheIntStats chill_cache_int_stats = 31;

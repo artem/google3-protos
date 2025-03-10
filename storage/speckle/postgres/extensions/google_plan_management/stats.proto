@@ -1,41 +1,176 @@
-syntax = "proto3";
+syntax = "editions";
 
 package storage.speckle.postgres.extensions.google_plan_management;
 
 import "storage/datapol/annotations/proto/semantic_annotations.proto";
 
+message GroupingSteeringStats {
+    optional uint64 num_steered_groupings = 1;
+    optional uint64 num_steered_partial_groupings = 2;
+    optional uint64 num_pruned_grouping_paths = 3;
+    optional uint64 num_pruned_partial_grouping_paths = 4;
+    optional uint64 num_pruned_partial_grouping_partial_paths = 5;
+}
+
+message ScanSteeringStats {
+    optional uint64 num_steered_scans = 1;
+    optional uint64 num_pruned_scan_paths = 2;
+    optional uint64 num_pruned_scan_partial_paths = 3;
+    optional uint64 num_pre_scan_errors = 4;
+    optional uint64 num_post_scan_errors = 5;
+}
+
+message JoinSteeringStats {
+    optional uint64 num_steered_joins = 1;
+    optional uint64 num_pruned_join_combs = 2;
+    optional uint64 num_pruned_join_paths = 3;
+    optional uint64 num_pruned_join_partial_paths = 4;
+    optional uint64 num_pre_join_errors = 5;
+    optional uint64 num_post_join_errors = 6;
+}
+
+message DistinctSteeringStats {
+    optional uint64 num_steered_distincts = 1;
+    optional uint64 num_pruned_distinct_paths = 2;
+    optional uint64 num_pruned_distinct_partial_paths = 3;
+}
+
+message OrderBySteeringStats {
+    optional uint64 num_steered_orders = 1;
+    optional uint64 num_pruned_order_paths = 2;
+    optional uint64 num_pruned_order_partial_paths = 3;
+}
+
+message WindowSteeringStats {
+    optional uint64 num_steered_windows = 1;
+    optional uint64 num_pruned_window_paths = 2;
+    optional uint64 num_pruned_window_partial_paths = 3;
+    optional uint64 num_pre_window_errors = 4;
+    optional uint64 num_post_window_errors = 5;
+}
+
+message QuerySteeringStats {
+    optional uint64 num_steered_plans = 1;
+    optional uint64 num_plan_setup_errors = 2;
+    optional uint64 num_plan_reset_errors = 3;
+    optional uint64 num_plan_steering_errors = 4;
+}
+
 message PlanSteeringStats {
-    uint64 num_steered_plans = 1;
-    uint64 num_plan_setup_errors = 2;
-    uint64 num_plan_reset_errors = 3;
-    uint64 num_plan_steering_errors = 4;
-    uint64 num_steered_scans = 5;
-    uint64 num_pruned_scan_paths = 6;
-    uint64 num_pruned_scan_partial_paths = 7;
-    uint64 num_pre_scan_errors = 8;
-    uint64 num_post_scan_errors = 9;
-    uint64 num_steered_joins = 10;
-    uint64 num_pruned_join_combs = 11;
-    uint64 num_pruned_join_paths = 12;
-    uint64 num_pruned_join_partial_paths = 13;
-    uint64 num_pre_join_errors = 14;
-    uint64 num_post_join_errors = 15;
-    uint64 num_steered_groupings = 16;
-    uint64 num_pruned_grouping_paths = 17;
-    uint64 num_pruned_grouping_partial_paths = 18;
-    uint64 num_steered_distincts = 19;
-    uint64 num_pruned_distinct_paths = 20;
-    uint64 num_pruned_distinct_partial_paths = 21;
-    uint64 num_steered_orders = 22;
-    uint64 num_pruned_order_paths = 23;
-    uint64 num_pruned_order_partial_paths = 24;
-    uint64 num_steered_windows = 25;
-    uint64 num_pruned_window_paths = 26;
-    uint64 num_pruned_window_partial_paths = 27;
-    uint64 num_pre_window_errors = 28;
-    uint64 num_post_window_errors = 29;
+    optional QuerySteeringStats query_steering_stats = 1;
+    optional ScanSteeringStats scan_steering_stats = 2;
+    optional JoinSteeringStats join_steering_stats = 3;
+    optional GroupingSteeringStats grouping_steering_stats = 4;
+    optional DistinctSteeringStats distinct_steering_stats = 5;
+    optional OrderBySteeringStats orderby_steering_stats = 6;
+    optional WindowSteeringStats window_steering_stats = 7;
+}
+
+message PlanSpecGenUnsupportedRelKind {
+    optional string rel_kind = 1;
+    optional uint64 count = 2;
+}
+
+message PlanSpecGenStats {
+    optional uint64 num_total_queries = 1;
+    optional uint64 num_success_queries = 2;
+    optional uint64 num_unsupported_queries = 3;
+    optional uint64 num_unexpected_errors_queries = 4;
+    optional uint64 num_total_subqueries = 5;
+    optional uint64 num_success_subqueries = 6;
+    optional uint64 num_unsupported_subqueries = 7;
+    optional uint64 num_unexpected_errors_subqueries = 8;
+}
+
+message PlanSpecGenUnsupportedStats {
+    optional uint64 unsupported_plan_specs = 1;
+    optional uint64 unsupported_append_path = 2;
+    optional uint64 unsupported_merge_append_path = 3;
+    optional uint64 unsupported_subquery_scan_path = 4;
+    optional uint64 unsupported_custom_path = 5;
+    optional uint64 unsupported_groupingsets_path = 6;
+    repeated PlanSpecGenUnsupportedRelKind unsupported_upperrelkind = 7;
+    optional uint64 unsupported_minmaxagg_path = 8;
+    optional uint64 unsupported_windowagg_path = 9;
+}
+
+message PlanSpecGenUnexpectedStats {
+    optional uint64 unexpected_plan_spec_errors = 1;
+    optional uint64 unexpected_no_node_under_gather = 2;
+    optional uint64 unexpected_no_node_under_gathermerge = 3;
+    optional uint64 unexpected_no_indexname_bitmapindex = 4;
+    optional uint64 unexpected_scan_path = 5;
+}
+
+message PlanIdStatus {
+    optional string status = 1;
+    optional uint64 count = 2;
+}
+
+message PlanIdStats {
+    repeated PlanIdStatus plan_id_status = 1;
+}
+
+message PlanSpecGenerationStats {
+    optional PlanSpecGenStats stats = 1;
+    optional PlanSpecGenUnsupportedStats unsupported_stats = 2;
+    optional PlanSpecGenUnexpectedStats unexpected_stats = 3;
+}
+
+message PlanSteerVerifierStatsCounters {
+    optional uint64 verified_count = 1;
+    optional uint64 success_count = 2;
+    optional uint64 failed_count = 3;
+}
+
+message PlanSteerVerifierStageStats {
+    optional PlanSteerVerifierStatsCounters counters = 1;
+    optional string stage_name = 2;
+}
+
+message PlanSteerVerifierStats {
+    optional PlanSteerVerifierStatsCounters plan_stats = 1;
+    repeated PlanSteerVerifierStageStats pathlist_stats = 2;
+    repeated PlanSteerVerifierStageStats partial_pathlist_stats = 3;
+}
+
+message ManagedPlansStats {
+    optional uint64 max_num_managed_plans = 1;
+    optional uint64 num_approved_plans = 2;
+    optional uint64 num_rejected_plans = 3;
+    optional uint64 num_invalid_plans = 4;
+    optional uint64 approve_plans_total_count = 5;
+    optional uint64 approve_plans_error_count = 6;
+    optional uint64 reject_plans_total_count = 7;
+    optional uint64 reject_plans_error_count = 8;
+    optional uint64 atomic_total_plans_count = 9;
+}
+
+message TrackedPlansStats {
+    optional uint64 max_tracked_plans = 1;
+    optional uint64 num_tracked_plans = 2;
+    optional uint64 update_total_count = 3;
+    optional uint64 update_error_count = 4;
+    optional uint64 insert_total_count = 5;
+    optional uint64 insert_error_count = 6;
+    optional uint64 insert_skipped_count = 7;
+    optional uint64 insert_skipped_storage_full_count = 8;
+    optional uint64 insert_skipped_data_invalid_count = 9;
+}
+
+message SyncPlansStats {
+    optional uint64 sync_total_count = 1;
+    optional uint64 sync_error_count = 2;
+    optional uint64 load_total_count = 3;
+    optional uint64 load_error_count = 4;
 }
 
 message PlanManagementStats {
-    PlanSteeringStats plan_steering_stats = 1;
+    optional PlanSteeringStats plan_steering_stats = 1;
+    optional PlanSpecGenerationStats plan_spec_generation_stats = 2;
+    optional PlanSteerVerifierStats plan_steer_verifier_stats = 3;
+    optional PlanIdStats plan_id_stats = 4;
+    optional ManagedPlansStats managed_plans_stats = 5;
+    optional TrackedPlansStats tracked_plans_stats = 6;
+    optional SyncPlansStats sync_plans_stats = 7;
 }

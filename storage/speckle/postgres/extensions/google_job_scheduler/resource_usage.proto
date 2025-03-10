@@ -1,4 +1,4 @@
-syntax = "proto3";
+syntax = "editions";
 
 package storage.speckle.postgres.extensions.google_job_scheduler;
 
@@ -6,23 +6,34 @@ import "google/protobuf/timestamp.proto";
 import "storage/datapol/annotations/proto/semantic_annotations.proto";
 
 message ResourceUsageSnapshot {
-    google.protobuf.Timestamp timestamp = 1;
-    double used_cpu_percent = 2;
-    double used_memory_percent = 3;
+    optional google.protobuf.Timestamp timestamp = 1;
+    optional double used_cpu_percent = 2;
+    optional double used_memory_percent = 3;
 }
 
 message JobDurationCount {
-    float duration_sec = 1;
-    int64 count = 2;
+    optional float duration_sec = 1;
+    optional int64 count = 2;
 }
 
 message JobDuration {
-    string job_class = 1;
+    optional string job_class = 1;
     repeated JobDurationCount job = 2;
+}
+
+message Histogram {
+    repeated double bounds = 1;
+    repeated uint64 buckets = 2;
+}
+
+message JobDurationStats {
+    optional string job_class = 1;
+    optional Histogram duration = 2;
 }
 
 message JobSchedulerStatistics {
     repeated JobDuration job_duration_histograms = 1;
+    repeated JobDurationStats job_duration_stats = 2;
 }
 
 message ResourceUsageReport {
