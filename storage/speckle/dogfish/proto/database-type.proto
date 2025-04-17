@@ -1,4 +1,4 @@
-syntax = "proto3";
+syntax = "editions";
 
 package speckle_dogfish.dogfish_proto;
 

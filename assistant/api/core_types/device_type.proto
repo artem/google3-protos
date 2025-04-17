@@ -1,0 +1,117 @@
+syntax = "proto2";
+
+package assistant.api.core_types;
+
+import "assistant/api/annotations/version_annotations.proto";
+import "frameworks/protobuf/protoui/protoui.proto";
+import "google/api/inclusion.proto";
+import "java/com/google/apps/jspb/jspb.proto";
+import "logs/proto/logs_annotations/logs_annotations.proto";
+import "storage/datapol/annotations/proto/semantic_annotations.proto";
+
+option objc_class_prefix = "ASTCT";
+option cc_enable_arenas = true;
+option java_outer_classname = "DeviceProto";
+option java_package = "com.google.assistant.api.proto.proto1api";
+
+message CastDevice {
+    optional CastDeviceType cast_device_type = 1;
+    enum CastDeviceType {
+        UNKNOWN = 0;
+        CHROMECAST = 1;
+        AUDIOCAST = 2;
+        CHIRP = 3;
+    }
+    
+    optional string human_friendly_name = 2;
+    optional string device_id = 3;
+}
+
+message DeviceId {
+    optional string device_type = 3 [deprecated = true];
+    optional string canonical_device_id = 13;
+    optional string client_instance_id = 2;
+    optional string agsa_client_instance_id = 8;
+    optional string cast_device_id = 1;
+    optional string allo_device_id = 4;
+    optional string multi_hotword_arbitration_device_id = 5;
+    optional DeviceConfig device_config = 6;
+    optional string quartz_device_id = 7;
+    optional string libassistant_device_id = 9;
+    optional string opa_ios_device_id = 10;
+    optional string home_graph_device_id = 11;
+    optional string connected_dock_id = 12;
+}
+
+message DeviceConfig {
+    optional string device_id = 1;
+    optional string agent_id = 2;
+    
+    reserved 3, 4;
+}
+
+message SurfaceType {
+    optional Type type = 1;
+    enum Type {
+        UNKNOWN = 0;
+        ANDROID_ALLO = 14;
+        ANDROID_AUTO = 4 [deprecated = true];
+        ANDROID_THINGS_CUBE = 47;
+        ANDROID_THINGS_JASPER = 33;
+        ANDROID_TV = 5;
+        ANDROID_TV_KIDS = 45;
+        ANDROID_WEAR = 2;
+        AR_GLASSES = 57;
+        ASSISTANT_SDK = 28;
+        AUDIOWEAR = 13;
+        BUBBLE_CHARACTERS_IOS = 58;
+        CAPABILITY_BASED_SURFACE = 29;
+        CHROMECAST_ASSISTANT = 27;
+        CHROMECAST_MANHATTAN = 42;
+        CHROMECAST_SEARCH = 18;
+        CLOUD_DEVICE = 54;
+        COMPANION_SCREEN = 31;
+        DYNAMITE_WEB = 25;
+        ENSEMBLE = 3;
+        EYESFREE_AGSA = 7;
+        EYESFREE_GMM = 8;
+        GBOARD = 24;
+        GLASS = 9;
+        GOOGLE_HOME = 6;
+        HANGOUTS_CHATBOT = 19;
+        IOS_ALLO = 15;
+        IOS_GSA = 10;
+        IOS_WEAR = 11;
+        LIBASSISTANT = 35;
+        LINE_CHATBOT = 20;
+        MATTER = 59;
+        MULTIMODAL_AGSA = 1;
+        NON_ASSISTANT_SURFACE = 41;
+        OPA_AGSA = 12;
+        OPA_AGSA_CHROME_OS = 26 [deprecated = true];
+        OPA_ANDROID_AUTO = 17;
+        OPA_ANDROID_LITE = 34;
+        OPA_ANDROID_SCREENLESS = 23;
+        OPA_ANDROID_SMART_DISPLAY = 56;
+        OPA_ANDROID_TABLET = 40;
+        OPA_CROS = 46;
+        OPA_GACS = 51;
+        OPA_IOS = 16;
+        OPA_IOS_SCREENLESS = 30;
+        OPA_KAIOS = 38;
+        OPA_MOBILE_WEB = 53;
+        RTOS_PHONE = 55;
+        SMS_CHATBOT = 21;
+        TELEGRAM_CHATBOT = 22;
+        TELEPHONE_ASSISTANT = 49;
+        VERILY_ONDUO = 32;
+        YOUTUBE_APP = 36;
+        AGSA_BISTO_FOR_EVAL = 37;
+        COGSWORTH_FOR_EVAL = 39;
+        LOCKHART_MIC_FOR_EVAL = 48;
+        OPA_ANDROID_AUTO_EMBEDDED_FAKE = 50 [deprecated = true];
+        SPARK = 43;
+        WALLE = 52;
+        UNIT_TESTING = 44;
+    }
+}

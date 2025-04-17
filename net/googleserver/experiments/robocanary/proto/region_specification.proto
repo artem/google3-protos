@@ -1,0 +1,22 @@
+syntax = "editions";
+
+package experiments;
+
+import "net/proto2/proto/descriptor.proto";
+
+option java_outer_classname = "RegionSpecificationProto";
+
+message RegionSpecification {
+    optional bool select_all_regions = 1;
+    
+    repeated Region regions = 2;
+    enum Region {
+        NORTH_AMERICA = 0;
+        EUROPE = 1;
+        ASIA = 2;
+    }
+}
+
+extend .proto2.EnumValueOptions {
+    optional string description = 73258820;
+}

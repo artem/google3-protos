@@ -1,0 +1,57 @@
+syntax = "proto2";
+
+package frameworks.debug.settings.proto;
+
+import "frameworks/debug/settings/proto/identity.proto";
+import "google/api/auditing.proto";
+import "google/protobuf/any.proto";
+import "google/protobuf/timestamp.proto";
+import "storage/datapol/annotations/proto/semantic_annotations.proto";
+
+option objc_class_prefix = "DBGS";
+option java_outer_classname = "DebugSettingsProto";
+option java_package = "com.google.frameworks.debug.settings.protos";
+
+message DebugSetting {
+    optional google.protobuf.Any value = 1;
+}
+
+message DebugSettings {
+    optional Identity identity = 1;
+    map<int32, DebugSetting> settings = 2;
+    map<int32, DebugSetting> overrides = 4;
+    map<int32, DebugSetting> defaults = 6;
+    
+    optional Category category = 3;
+    enum Category {
+        CATEGORY_UNSPECIFIED = 0;
+        CATEGORY_NOT_INITIALIZED = 1;
+        CATEGORY_NORMAL_USER = 2;
+        CATEGORY_SPECIAL_USER = 3;
+        CATEGORY_ERROR = 4;
+    }
+    
+    optional google.protobuf.Timestamp expiration_ts = 5;
+    optional string requester_loas = 7;
+}
+
+message DebugSettingWithMetadata {
+    optional DebugSetting setting = 1;
+    optional google.protobuf.Timestamp expiration_ts = 2;
+    optional google.protobuf.Timestamp last_modified_ts = 4;
+    
+    oneof origin {
+        string unsanitized_debug_settings_url = 3;
+    }
+}
+
+message DebugSettingsWithMetadata {
+    optional Identity identity = 1;
+    map<int32, DebugSettingWithMetadata> settings = 2;
+}
+
+message SignedDebugSettings {
+    optional DebugSettings settings = 1;
+    optional bytes signature = 2;
+    optional bytes serialized_settings = 3;
+}

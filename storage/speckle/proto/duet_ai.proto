@@ -1,0 +1,58 @@
+syntax = "proto3";
+
+package speckle;
+
+import "google/protobuf/timestamp.proto";
+import "storage/datapol/annotations/proto/semantic_annotations.proto";
+
+option java_multiple_files = true;
+
+message DuetAIMetadataConfig {
+    bool enable_duet_ai = 1;
+}
+
+message DuetAIInstanceConfig {
+    bool enable_duet_ai = 4;
+    DuetAITier duet_ai_tier = 1 [deprecated = true];
+    bool enable_active_query = 2;
+    bool enable_index_advisor = 3;
+    bool enable_oom_session_cancel = 5;
+    bool enable_vacuum_mgmt = 6;
+    bool enable_flag_recommender = 7;
+}
+
+message DuetAIProjectConfig {
+    DuetAITier duet_ai_tier = 1 [deprecated = true];
+    bool enable_duet_ai = 2;
+    google.protobuf.Timestamp event_publish_time = 3;
+}
+
+message DuetAIProjectConfigUpdateEvent {
+    EntitlementState entitlement_state = 3;
+    google.protobuf.Timestamp event_publish_time = 5;
+    
+    oneof _project_id {
+        int64 project_id = 1;
+    }
+    
+    oneof _number_of_retries {
+        int32 number_of_retries = 2;
+    }
+    
+    oneof _project {
+        string project = 4;
+    }
+}
+
+enum DuetAITier {
+    DUET_AI_TIER_UNSPECIFIED = 0;
+    DISABLED = 1;
+    GOOD = 2;
+    BETTER = 3;
+}
+
+enum EntitlementState {
+    DUET_AI_UNSPECIFIED = 0;
+    DUET_AI_ENTITLED = 1;
+    DUET_AI_NOT_ENTITLED = 2;
+}

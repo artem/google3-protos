@@ -9,6 +9,7 @@ import "google/protobuf/duration.proto";
 import "google/protobuf/empty.proto";
 import "google/rpc/status.proto";
 import "net/proto2/proto/descriptor.proto";
+import "third_party/boundary_proxy/proto_compare/annotation.proto";
 
 option php_namespace = "Google\\LongRunning";
 option csharp_namespace = "Google.LongRunning";

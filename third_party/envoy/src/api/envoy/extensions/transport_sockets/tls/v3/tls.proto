@@ -21,6 +21,8 @@ option java_package = "io.envoyproxy.envoy.extensions.transport_sockets.tls.v3";
 message UpstreamTlsContext {
     CommonTlsContext common_tls_context = 1;
     string sni = 2;
+    bool auto_host_sni = 6;
+    bool auto_sni_san_validation = 7;
     bool allow_renegotiation = 3;
     google.protobuf.UInt32Value max_session_keys = 4;
     google.protobuf.BoolValue enforce_rsa_key_usage = 5;

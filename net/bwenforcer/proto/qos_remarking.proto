@@ -32,7 +32,15 @@ message QosAllocation {
     }
 }
 
+message RemarkingLimitAdjustments {
+    net_base.qos.TrafficClassValue qos = 1;
+    int64 shortage_buffer_bps = 2;
+    int64 shortage_buffer_upper_bound_bps = 3;
+}
+
 message RemarkingActionDetails {
+    repeated RemarkingLimitAdjustments limit_adjustments = 6;
+    
     repeated PerQosIntent intent = 5;
     message PerQosIntent {
         net_base.qos.TrafficClassValue qos = 1;
@@ -121,5 +129,4 @@ enum RemarkingSupportType {
     REMARKING_SUPPORTED = 1;
     REMARKING_UNSUPPORTED_DELEGATION = 2;
     REMARKING_UNSUPPORTED_VC2 = 3;
-    REMARKING_UNSUPPORTED_DATAPATH = 4;
 }

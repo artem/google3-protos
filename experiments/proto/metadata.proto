@@ -1,0 +1,41 @@
+syntax = "editions";
+
+package experiments;
+
+option java_outer_classname = "MetadataProto";
+option java_package = "com.google.experiments";
+
+message Metadata {
+    optional bool conditions_v2_only = 1;
+    optional bool executable_only = 2;
+    optional bool validation_only = 3;
+    optional string top_level_package = 4;
+    optional bool is_linking_package_deps = 5;
+    optional string build_target = 6;
+    optional string fingerprint = 8;
+    optional TeamGraphMetadata team_graph_metadata = 11;
+    optional string parent_fingerprint = 14;
+    
+    optional DeployableSnapshotType deployable_snapshot_type = 15;
+    enum DeployableSnapshotType {
+        DEPLOYABLE_SNAPSHOT_TYPE_UNSPECIFIED = 0;
+        MENDEL_BINARY = 1;
+        PARTIAL_EVALED = 2;
+        SANITIZED_FOR_TPC = 3;
+        PRUNED = 4;
+        REMOVED_OF_CONDS_V1 = 5;
+        ISOLATED_FOR_BOQ = 6;
+        UPDATED_TAGS = 7;
+    }
+    
+    optional bool is_heterodyne_snapshot = 16;
+    
+    extensions 12, 13;
+    
+    reserved 7, 9;
+}
+
+message TeamGraphMetadata {
+    optional int64 team_id = 1;
+    map<string, int64> package_to_team_id = 2;
+}

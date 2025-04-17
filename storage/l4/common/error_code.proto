@@ -7,6 +7,7 @@ import "util/task/contrib/proto_status/proto_status.proto";
 enum ErrorCode {
     SSD_READ_CHECKSUM_MISMATCH = 4;
     THROTTLED_IN_CLIENT = 5;
+    THROTTLED_IN_CLIENT_UNREACHABLE = 44;
     FAILED_TO_PARSE_ENTRY_FOOTER = 12;
     ENTRY_FOOTER_TOO_SMALL = 31;
     ENTRY_PADDING_LENGTH_MISMATCH = 32;

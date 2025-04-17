@@ -303,4 +303,22 @@ enum CloudDataResidencyLocation {
     TW = 292;
     US_EAST10 = 293;
     ASIA_SOUTHEAST3 = 294;
+    PROD_US_GUM_1 = 295;
+    PROD_DE_HDF_1 = 296;
+    EUROPE_NORTH3 = 297;
+    EVENTARC_NAM7 = 298;
+    PROD_NZ_AKL_1 = 299;
+    PROD_US_LNK_1 = 300;
+    PROD_GR_ATH_1 = 301;
+    PROD_NO_SKE_1 = 302;
+    BE = 303;
+    ES = 304;
+    FI = 305;
+    FR = 306;
+    HK = 307;
+    MX = 308;
+    NL = 309;
+    PL = 310;
+    QA = 311;
+    ZA = 312;
 }

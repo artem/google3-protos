@@ -1,4 +1,4 @@
-syntax = "proto2";
+syntax = "editions";
 
 package speckle_dogfish.dogfish_proto;
 
@@ -17,6 +17,13 @@ message ShardConfigurationState {
     optional ShardConfiguration target = 3;
     optional uint64 global_repd_trim_lsn = 4;
     optional ChecksummedLsn global_repd_trim_checksummed_lsn = 7;
+    
+    optional GlobalRePDTrimChecksummedLsnSource global_repd_trim_checksummed_lsn_source = 9;
+    enum GlobalRePDTrimChecksummedLsnSource {
+        SOURCE_UNSPECIFIED = 0;
+        BACKFILL_GRTL_SHARD_CONFIG_DOGTOOL = 1;
+        EXPERIMENT_ENABLED_INSTANCE = 2;
+    }
     
     optional ShardReconfigurationProtocol target_reconfiguration_protocol_version = 5;
     enum ShardReconfigurationProtocol {

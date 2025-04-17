@@ -67,6 +67,14 @@ message ReadOrPrefetchBlocksRequest {
         CACHE_VERIFIER = 3;
         PREWARMER = 4;
     }
+    
+    optional TransportMethod transport_method = 7;
+    enum TransportMethod {
+        NONE = 0;
+        SYNC_IPC = 1;
+        ASYNC_IPC = 2;
+        SYNC_GRPC = 3;
+    }
 }
 
 message ReadOrPrefetchBlockData {

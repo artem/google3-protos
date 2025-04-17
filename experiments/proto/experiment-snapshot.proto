@@ -1,0 +1,51 @@
+syntax = "editions";
+
+package experiments;
+
+import "experiments/proto/conditions.proto";
+import "experiments/proto/feature.proto";
+import "experiments/proto/flagset.proto";
+import "experiments/proto/generic_container.proto";
+import "experiments/proto/metadata.proto";
+import "experiments/proto/package.proto";
+import "experiments/proto/property.proto";
+import "experiments/proto/source_level_deps.proto";
+import "experiments/proto/study.proto";
+import "net/googleserver/experiments/experiment-config.proto";
+import "net/googleserver/experiments/robocanary/proto/experiment_extractor_coordinator.proto";
+
+option java_outer_classname = "ExperimentSnapshotProto";
+option java_package = "com.google.protos.experiments.proto1api";
+
+message ExperimentDisabledIds {
+    repeated int32 experiment_id = 1;
+}
+
+message ExperimentSnapshot {
+    optional int32 source_version = 20;
+    optional int32 snapshot_version = 21;
+    optional bool skip_snapshot_version_check = 10 [default = false];
+    repeated net.googleserver.experiments.robocanary.ClInfo version_assignments = 25;
+    repeated ExperimentFlagDefinition experiment_flag_definitions = 14;
+    repeated ExperimentLayerDefinition experiment_layer_definitions = 12;
+    repeated ExperimentMessage experiment_messages = 1;
+    repeated ExperimentFlags experiment_flag_values = 15;
+    optional ExperimentDisabledIds disabled_experiments = 4;
+    repeated string validation_types = 23;
+    optional ConditionTable condition_table = 24;
+    repeated Study studies = 26;
+    repeated Feature features = 27;
+    repeated FlagSet flag_sets = 33;
+    repeated PackageData packages = 29;
+    optional SourceLevelDeps srcdeps = 31 [deprecated = true];
+    repeated GenericContainer generic_containers = 32;
+    repeated PropertyDefinition propdefs = 34;
+    optional Metadata metadata = 36;
+    optional bytes internal_extensions = 37;
+    
+    extensions 38, 39;
+    
+    reserved 19, 22, 28, 30, 35, 953;
+    
+    reserved "hostname_filter";
+}

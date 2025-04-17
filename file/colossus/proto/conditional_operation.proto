@@ -2,12 +2,8 @@ syntax = "editions";
 
 package colossus;
 
-import "google/protobuf/any.proto";
+import "file/colossus/proto/expectation.proto";
 
 message CfsConditionalOperation {
-    optional ExpectedStat expected_stat = 1;
-}
-
-message ExpectedStat {
-    repeated google.protobuf.Any extended_attribute = 1;
+    optional Expectation expectation = 1;
 }

@@ -9,6 +9,7 @@ option java_package = "com.google.protos.fireaxe.rpcserveractions";
 
 message RpcServerDisconnectClientAction {
     optional string peer_role = 1;
+    optional int32 error_code = 2;
 }
 
 message RpcServerLimitClientConnectionsAction {
@@ -20,16 +21,21 @@ message RpcServerBlockClientRequestsAction {
     optional string peer_role = 1;
     optional string peer_cell = 2;
     optional string peer_job = 3;
+    optional string rpc_method = 5;
+    optional int32 error_code = 4;
 }
 
 message RpcServerLimitClientRequestsAction {
     optional string peer_role = 1;
     optional string peer_cell = 3;
     optional string peer_job = 4;
+    optional string rpc_method = 6;
     optional double max_per_task_qps = 2;
+    optional int32 error_code = 5;
 }
 
 message RpcServerBlockExternalRequestsAction {
     repeated string internal_peer_role = 1;
     repeated string internal_peer_group = 2;
+    optional int32 error_code = 3;
 }

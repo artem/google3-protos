@@ -1,0 +1,77 @@
+syntax = "editions";
+
+package assistant.api.core_types;
+
+import "logs/proto/logs_annotations/logs_annotations.proto";
+
+option objc_class_prefix = "ASTCT";
+option cc_enable_arenas = true;
+option java_package = "com.google.assistant.api.proto";
+
+message Surface {
+    optional Type type = 1;
+    enum Type {
+        UNKNOWN_TYPE = 0;
+        ACCL = 13;
+        AGSA = 12;
+        ANDROID = 8;
+        ANDROID_AUTO = 16;
+        ANDROID_LITE = 17;
+        ANDROID_PHONE = 18;
+        ANDROID_SCREENLESS = 19;
+        ANDROID_SMART_DISPLAY = 20;
+        ANDROID_TABLET = 21;
+        ANDROID_THINGS = 22;
+        ANDROID_THINGS_CUBE = 23;
+        ANDROID_THINGS_JASPER = 24;
+        ANDROID_TV = 25;
+        ANDROID_WEAR = 26;
+        ASSISTANT_KIT = 15;
+        ASSISTANT_SDK = 27;
+        AUTO = 7;
+        CAST_OS = 11;
+        CHROME_OS = 29;
+        CHROMECAST_MANHATTAN = 28;
+        CLOUD_DEVICE = 30;
+        CROS = 31;
+        FITBIT_OS_WATCH = 50;
+        FITBIT_OS_WATCH_ANDROID = 51;
+        FITBIT_OS_WATCH_IOS = 52;
+        GOOGLE_HOME = 32;
+        HEADPHONE = 43;
+        HEADPHONE_ANDROID = 47;
+        HEADPHONE_ANDROID_SCREENLESS = 59;
+        HEADPHONE_IOS = 48;
+        IOPA = 33;
+        IOS = 9;
+        IOS_SCREENLESS = 34;
+        IPAD = 40;
+        IPHONE = 41;
+        KAI_OS = 10;
+        KAI_OS_AMA = 35;
+        LIBASSISTANT = 14;
+        MATTER = 61;
+        PHONE = 1;
+        PIXEL = 37;
+        PIXEL5 = 38;
+        PIXEL6 = 39;
+        PIXEL7 = 42;
+        PIXEL8 = 58;
+        PIXEL9 = 62;
+        PIXEL_BUDS = 49;
+        PIXEL_BUDS_SCREENLESS = 60;
+        PIXEL_TABLET = 55;
+        PIXEL_TABLET_HUB_MODE = 56;
+        PIXEL_TABLET_PERSONAL_MODE = 57;
+        PIXEL_WATCH = 54;
+        SCREENLESS = 6;
+        SMART_DISPLAY = 5;
+        SPEAKER = 3;
+        TABLET = 2;
+        TELEPHONE = 36;
+        THING = 4;
+        WATCH = 44;
+        WEAR_OS = 45;
+        WEAR_OS_WATCH = 53;
+    }
+}

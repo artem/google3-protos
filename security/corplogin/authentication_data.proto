@@ -1,0 +1,16 @@
+syntax = "proto2";
+
+package security.corplogin;
+
+import "storage/datapol/annotations/proto/semantic_annotations.proto";
+
+option java_multiple_files = true;
+option java_package = "com.google.security.corplogin.protos";
+
+message AuthenticationData {
+    optional string session_id = 1;
+}
+
+message SignedAuthenticationData {
+    optional bytes data = 1;
+}

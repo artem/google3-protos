@@ -5,6 +5,11 @@ package boundary_proxy;
 option go_package = "envoy/policy_result";
 option java_multiple_files = true;
 
+message PolicyStatus {
+    optional PolicyResult result = 1;
+    optional string details = 2;
+}
+
 enum PolicyResult {
     POLICYRESULT_UNSPECIFIED = 0;
     CEL_POLICY_REJECTED = 1;

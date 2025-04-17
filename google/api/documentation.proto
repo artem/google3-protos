@@ -2,6 +2,7 @@ syntax = "proto3";
 
 package google.api;
 
+import "google/api/inclusion.proto";
 import "google/api/visibility.proto";
 
 option objc_class_prefix = "GAPI";
@@ -17,6 +18,7 @@ message Documentation {
     string documentation_root_url = 4;
     string service_root_url = 6;
     string overview = 2;
+    string additional_iam_info = 12;
     repeated DocumentationPerVersion documentation_per_version = 7;
     string unattached_type_behaviors = 8;
     repeated Page section_overrides = 9;

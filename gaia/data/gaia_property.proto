@@ -2,7 +2,6 @@ syntax = "proto2";
 
 import "storage/datapol/annotations/proto/semantic_annotations.proto";
 
-option cc_enable_arenas = true;
 option java_package = "com.google.gaia.client.proto";
 
 message GaiaKey {

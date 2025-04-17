@@ -1,0 +1,871 @@
+syntax = "proto2";
+
+package wireless_android_play_playlog;
+
+import "assistant/api/core_types/device_type.proto";
+import "assistant/api/core_types/surface.proto";
+import "experiments/framework/extensions/heterodyne/proto/experiment_ids.proto";
+import "google/protobuf/timestamp.proto";
+import "java/com/google/android/gmscore/proto/gmscore_build.proto";
+import "java/com/google/android/gmscore/proto/gmscore_device.proto";
+import "java/com/google/apps/jspb/jspb.proto";
+import "java/com/google/apps/jspb/jspb_generate_object_format.proto";
+import "logs/proto/logs_annotations/logs_annotations.proto";
+import "logs/proto/wireless/android/play/playlog/accessibility/ios_accessibility_state.proto";
+import "logs/proto/wireless/android/play/playlog/accessibility_state.proto";
+import "logs/proto/wireless/android/play/playlog/webview_version_info.proto";
+import "nest/platform/mesh/platform/proto/platform_information_no_lite_runtime.proto";
+import "net/proto2/bridge/proto/message_set.proto";
+import "storage/datapol/annotations/proto/semantic_annotations.proto";
+import "wireless/android/play/playlog/proto/clearcut_logger_remote_config_metadata.proto";
+import "wireless/android/play/playlog/proto/compliance.proto";
+import "wireless/android/play/playlog/proto/device_restriction_enum.proto";
+import "wireless/android/play/playlog/proto/log_source_enum.proto";
+import "wireless/android/privacy/annotations/proto/collection_basis_annotations.proto";
+
+option objc_class_prefix = "CADP";
+option cc_enable_arenas = true;
+option java_outer_classname = "ClientAnalytics";
+option java_package = "com.google.wireless.android.play.playlog.proto.proto1api";
+
+message LogEventKeyValues {
+    optional string key = 1;
+    optional string value = 2;
+}
+
+message ActiveExperiments {
+    repeated string client_altering_experiment = 1;
+    repeated string other_experiment = 2;
+    repeated int32 gws_experiment = 3;
+    repeated int64 play_experiment = 4;
+    repeated int64 unsupported_play_experiment = 5;
+}
+
+message LogEvent {
+    optional int64 event_time_ms = 1;
+    optional int64 event_uptime_ms = 17;
+    optional int64 boot_count = 22;
+    optional int64 sequence_position = 21;
+    optional string tag = 2;
+    optional int32 event_code = 11;
+    optional string component_id = 26;
+    optional int64 event_flow_id = 12;
+    optional bool is_user_initiated = 10;
+    repeated LogEventKeyValues value = 3;
+    optional bytes store = 4 [deprecated = true];
+    optional AppUsage1pLogEvent app_usage_1p = 9 [deprecated = true];
+    optional bytes source_extension = 6;
+    optional string source_extension_js = 8;
+    optional string source_extension_json = 13;
+    optional string source_extension_json_proto3 = 29;
+    optional ActiveExperiments exp = 7;
+    optional string test_id = 14;
+    optional sint64 timezone_offset_seconds = 15 [default = 180000];
+    optional experiments.heterodyne.ExperimentIds experiment_ids = 16;
+    optional bytes client_ve = 18;
+    optional string client_ve_js = 24;
+    
+    optional InternalEvent internal_event = 19;
+    enum InternalEvent {
+        NONE = 0;
+        WALL_CLOCK_SET = 1;
+        DEVICE_BOOT = 2;
+    }
+    
+    repeated int32 test_code = 20;
+    repeated int32 generic_dimensions = 27 [packed = true];
+    optional NetworkConnectionInfo network_connection_info = 23;
+    optional bool in_direct_boot_mode = 25;
+    optional string zwieback_cookie_override = 28;
+    optional double module_applied_sampling_rate = 30;
+    optional double client_applied_sampling_rate = 32;
+    optional ClearcutLoggerRemoteConfigMetadata remote_config_metadata = 35;
+    optional ComplianceData compliance_data = 33;
+    optional bool use_session_zwieback = 34;
+    
+    extensions 31, 1000 to max;
+}
+
+message NetworkConnectionInfo {
+    optional NetworkType network_type = 1 [default = NONE];
+    enum NetworkType {
+        NONE = -1;
+        MOBILE = 0;
+        WIFI = 1;
+        MOBILE_MMS = 2;
+        MOBILE_SUPL = 3;
+        MOBILE_DUN = 4;
+        MOBILE_HIPRI = 5;
+        WIMAX = 6;
+        BLUETOOTH = 7;
+        DUMMY = 8;
+        ETHERNET = 9;
+        MOBILE_FOTA = 10;
+        MOBILE_IMS = 11;
+        MOBILE_CBS = 12;
+        WIFI_P2P = 13;
+        MOBILE_IA = 14;
+        MOBILE_EMERGENCY = 15;
+        PROXY = 16;
+        VPN = 17;
+    }
+    
+    optional MobileSubtype mobile_subtype = 2 [default = UNKNOWN_MOBILE_SUBTYPE];
+    enum MobileSubtype {
+        UNKNOWN_MOBILE_SUBTYPE = 0;
+        GPRS = 1;
+        EDGE = 2;
+        UMTS = 3;
+        CDMA = 4;
+        EVDO_0 = 5;
+        EVDO_A = 6;
+        RTT = 7;
+        HSDPA = 8;
+        HSUPA = 9;
+        HSPA = 10;
+        IDEN = 11;
+        EVDO_B = 12;
+        LTE = 13;
+        EHRPD = 14;
+        HSPAP = 15;
+        GSM = 16;
+        TD_SCDMA = 17;
+        IWLAN = 18;
+        LTE_CA = 19;
+        NR = 20;
+        COMBINED = 100;
+    }
+}
+
+message AndroidDeviceType {
+    optional bool is_watch = 1;
+    optional bool is_automotive = 2;
+    optional bool is_chrome_os = 3;
+    optional bool is_android_tv = 4;
+    optional bool is_bstar = 5;
+    optional bool is_android_xr = 6;
+}
+
+message AndroidClientInfo {
+    optional int64 android_id = 1;
+    optional string logging_id = 2 [deprecated = true];
+    optional int64 device_id = 18;
+    optional int32 sdk_version = 3;
+    
+    repeated ExtensionVersion extension_version = 34;
+    message ExtensionVersion {
+        optional int32 extension = 1;
+        optional int32 version = 2;
+    }
+    
+    optional string model = 4;
+    optional string product = 5;
+    optional string hardware = 8;
+    optional string device = 9;
+    optional string os_build = 6;
+    optional string application_build = 7;
+    optional string mcc_mnc = 10;
+    optional string locale = 11;
+    optional string country = 12;
+    optional string manufacturer = 13;
+    optional string brand = 14;
+    optional string board = 15;
+    optional string radio_version = 16;
+    optional string fingerprint = 17;
+    optional int32 gms_core_version_code = 19;
+    optional .com.google.android.gmscore.proto.GmsCoreBuildVariant gmscore_variant = 32;
+    optional .com.google.android.gmscore.proto.GmsCoreDeviceInfo gmscore_device_info = 37;
+    optional bool is_sidewinder_device = 20 [deprecated = true];
+    optional bool using_log_source_int = 22 [deprecated = true];
+    optional DeviceRestriction.Id device_restriction = 23;
+    optional AndroidDeviceType android_device_type = 24;
+    optional AccessibilityState accessibility_state = 25;
+    optional string type = 26;
+    optional string ro_oem_key1 = 27;
+    optional string device_data_version_info = 28;
+    repeated string native_platform = 31;
+    optional int32 sim_carrier_id = 33;
+    optional WebViewVersionInfo webview_version_info = 35;
+    optional uint64 user_consent_state = 36;
+    
+    extensions 21;
+}
+
+message BrowserInfo {
+    optional string locale = 1;
+    optional string browser = 2;
+    optional string browser_version = 3;
+    optional string flash_version = 4;
+}
+
+message DesktopClientInfo {
+    optional string client_id = 1 [deprecated = true];
+    optional string logging_id = 2 [deprecated = true];
+    optional string os = 3;
+    optional string os_major_version = 4;
+    optional string os_full_version = 5;
+    optional string application_build = 6;
+    optional string country = 7;
+    optional int64 application_build_cl = 8;
+    optional int32 clearcut_version = 9;
+}
+
+message MacClientInfo {
+    optional string os_major_version = 1;
+    optional string os_full_version = 2;
+    optional string application_build = 3;
+    optional string country = 4;
+    optional int64 application_build_cl = 5;
+    optional int32 clearcut_version = 6;
+    optional string application_bundle_id = 7;
+}
+
+message IosClientInfo {
+    optional string client_id = 1 [deprecated = true];
+    optional string logging_id = 2 [deprecated = true];
+    optional string os_major_version = 3;
+    optional string os_full_version = 4;
+    optional string application_build = 5;
+    optional string application_version = 12;
+    optional string country = 6;
+    optional string model = 7;
+    optional string language_code = 8;
+    optional int64 application_build_cl = 9;
+    optional int32 clearcut_version = 10;
+    optional string application_bundle_id = 11;
+    optional wireless_android_play_playlog.accessibility.IosAccessibilityState accessibility_state = 13;
+    optional .google.protobuf.Timestamp application_build_timestamp = 14;
+}
+
+message KaiosClientInfo {
+    optional string app_version = 1;
+    optional string core_app_version = 3;
+    optional string device_model = 2;
+    optional string mcc_mnc = 4;
+    optional string locale = 5;
+}
+
+message PancettaClientInfo {
+    optional string device_id = 1;
+    
+    optional OsType os = 2;
+    enum OsType {
+        OS_TYPE_UNKNOWN = 0;
+        OS_TYPE_MAC = 1;
+        OS_TYPE_WINDOWS = 2;
+        OS_TYPE_ANDROID = 3;
+        OS_TYPE_CROS = 4;
+        OS_TYPE_LINUX = 5;
+        OS_TYPE_OPENBSD = 6;
+    }
+    
+    optional string app_id = 3;
+    optional string app_version = 4;
+    optional string mcc_mnc = 5;
+}
+
+message PlayCeClientInfo {
+    optional string client_id = 1;
+    optional string logging_id = 7;
+    optional string make = 3;
+    optional string model = 4;
+    optional string application_build = 5;
+    optional string platform_version = 6;
+    optional string country = 8;
+}
+
+message VrClientInfo {
+    optional VrClientType vr_client_type = 1;
+    enum VrClientType {
+        UNKNOWN = 0;
+        ANDROID_CARDBOARD_SDK = 1;
+        IOS_CARDBOARD_SDK = 2;
+        ANDROID_UNITY_SDK = 3;
+        IOS_UNITY_SDK = 4;
+        WINDOWS = 5;
+    }
+    
+    optional string sdk_version = 2;
+    optional string fingerprint = 3;
+    optional string gvr_version = 4;
+    optional string manufacturer = 5;
+    optional string model = 6;
+    optional string language = 7;
+    optional string country = 8;
+    optional string unity_version = 9;
+    optional string unity_sdk_version = 10;
+}
+
+message JsClientInfo {
+    optional string os = 1 [deprecated = true];
+    optional string os_version = 2;
+    
+    optional DeviceType device_type = 3;
+    enum DeviceType {
+        UNKNOWN = 0;
+        MOBILE = 1;
+        TABLET = 2;
+        DESKTOP = 3;
+        GOOGLE_HOME = 4;
+    }
+    
+    optional string country = 4;
+    optional string locale = 5;
+    
+    optional OsType os_type = 6;
+    enum OsType {
+        OS_UNKNOWN = 0;
+        MAC = 1;
+        WINDOWS = 2;
+        ANDROID = 3;
+        LINUX = 4;
+        CHROME_OS = 5;
+        IPAD = 6;
+        IPHONE = 7;
+        IPOD = 8;
+        CHROMECAST = 9;
+    }
+    
+    optional string build_label = 7;
+    optional string continent = 8;
+    
+    optional UserAgentClientHints client_hints = 9;
+    message UserAgentClientHints {
+        repeated BrandAndVersion ua_list = 1;
+        message BrandAndVersion {
+            optional string brand = 1;
+            optional string version = 2;
+        }
+        
+        optional bool mobile = 2;
+        optional string platform = 3;
+        optional string platform_version = 4;
+        optional string architecture = 5;
+        optional string model = 6;
+        optional string ua_full_version = 7;
+        optional string bitness = 8;
+    }
+    
+    optional FlushInfo flush_info = 10;
+    message FlushInfo {
+        optional TransmissionType transmission_type = 1;
+        enum TransmissionType {
+            TRANSMISSION_TYPE_UNKNOWN = 0;
+            XHR_POST = 1;
+            IMAGE_GET = 2;
+            SEND_BEACON = 3;
+            FETCH = 4;
+        }
+        
+        optional bool is_final = 2;
+        optional int32 retry_count = 3;
+        optional int32 persisted_log_recovered_count = 4;
+        optional int32 persisted_log_expired_count = 5;
+    }
+}
+
+message BirdsongClientInfo {
+    optional ClientType client_type = 1;
+    enum ClientType {
+        CLIENT_UNKNOWN = 0;
+        CHIRP = 1;
+        WAYMO = 2;
+        GV_ANDROID = 3;
+        GV_IOS = 4;
+    }
+    
+    optional string build_label = 2;
+    optional string birdsong_build_label = 3;
+}
+
+message SparklightClientInfo {
+    optional MachineClass machine_class = 1;
+    enum MachineClass {
+        MACHINE_CLASS_UNKNOWN = 0;
+        TEAMFOOD = 1;
+    }
+}
+
+message YetiClientInfo {
+    optional string build_label = 1;
+    optional string deployment_type = 2;
+    optional string environment = 3;
+    optional string location = 4;
+    optional string machine = 5;
+    optional string gamelet_id = 6;
+    optional string machine_shape = 7;
+    optional string metro = 8;
+    optional string vm_purpose = 9;
+    optional string release_stage = 10;
+}
+
+message GoogleHomeClientInfo {
+    optional string device_id = 9;
+    optional string device_model = 1;
+    optional string app_version = 2;
+    optional string acp_version = 16;
+    optional string opal_version = 18;
+    optional string virtual_release_channel = 17;
+    optional string manufacturer = 3;
+    optional string product_name = 4;
+    optional string factory_country = 5;
+    optional string build_type = 6;
+    optional string system_build = 7;
+    
+    optional BackendType backend_type = 8;
+    enum BackendType {
+        BACKEND_TYPE_UNKNOWN = 0;
+        BACKEND_TYPE_PRODUCTION = 1;
+        BACKEND_TYPE_ENG = 2;
+        BACKEND_TYPE_TEAMFOOD = 3;
+        BACKEND_TYPE_DOGFOOD = 4;
+    }
+    
+    optional string locale = 11;
+    optional bool on_device_assistant_enabled = 12;
+    optional assistant.api.core_types.SurfaceType.Type surface_type = 13;
+    optional smart_home_mesh.platform.OsType os_type = 14;
+    optional bool opted_in_metrics_logging = 15;
+    optional assistant.api.core_types.Surface.Type ontological_surface_type = 19;
+    optional string device_product_name = 20 [deprecated = true];
+    optional smart_home_mesh.platform.OsType os_type_replicated = 21;
+    
+    reserved 10;
+}
+
+message BattlestarClientInfo {
+    optional string build_version = 1;
+    optional string build_type = 4;
+    optional string omaha_channel = 5;
+    
+    optional BattlestarClientType battlestar_client_type = 2;
+    enum BattlestarClientType {
+        CLIENT_UNKNOWN = 0;
+        EMULATOR = 1;
+        PHENOTYPE = 2;
+        SERVICE = 3;
+        CLIENT = 4;
+        INSTALLER = 5;
+        HYPERVISOR = 6;
+    }
+    
+    optional BattlestarMachineTier battlestar_machine_tier = 6;
+    enum BattlestarMachineTier {
+        TIER_UNKNOWN = 0;
+        UNSUPPORTED = 1;
+        SILVER = 2;
+        GOLD = 3;
+        DIAMOND = 4;
+    }
+    
+    optional CpuManufacturer cpu_manufacturer = 8;
+    enum CpuManufacturer {
+        MANUFACTURER_UNKNOWN = 0;
+        MANUFACTURER_INTEL = 1;
+        MANUFACTURER_AMD = 2;
+    }
+    
+    optional ForcedExperimentInfo forced_experiment_info = 9;
+    message ForcedExperimentInfo {
+        repeated string forced_experiment_tags = 1;
+    }
+    
+    reserved 3, 7;
+}
+
+message DriveDesktopClientInfo {
+    optional string build_version = 1;
+    
+    optional DriveDesktopClientType drive_desktop_client_type = 2;
+    enum DriveDesktopClientType {
+        CLIENT_UNKNOWN = 0;
+        PHENOTYPE = 1;
+    }
+}
+
+message G1DesktopClientInfo {
+    optional string build_version = 1;
+    
+    optional G1DesktopClientType g1_desktop_client_type = 2;
+    enum G1DesktopClientType {
+        CLIENT_UNKNOWN = 0;
+        PHENOTYPE = 1;
+    }
+}
+
+message PortablePhenotypeLibraryClientInfo {
+    oneof client_info {
+        BattlestarClientInfo battlestar_client_info = 1;
+        DriveDesktopClientInfo drive_desktop_client_info = 2;
+        G1DesktopClientInfo g1_desktop_client_info = 3;
+        NearbyClientInfo nearby_client_info = 4;
+        WindowsClientInfo windows_client_info = 5;
+        DesktopServicesClientInfo desktop_services_client_info = 6;
+    }
+}
+
+message NearbyClientInfo {
+    optional UsageType usage_type = 1;
+    enum UsageType {
+        USAGE_UNKNOWN = 0;
+        PHENOTYPE = 1;
+    }
+}
+
+message NearbyDesktopClientInfo {
+    optional WindowsDeviceInfo windows_device_info = 1;
+    message WindowsDeviceInfo {
+        optional DeviceType device_type = 1;
+        optional string device_manufacturer = 2;
+        optional string device_model = 3;
+        optional int64 physical_memory = 4;
+        optional int32 processor_count = 5;
+        optional int32 logical_processor_count = 6;
+        optional string os_name = 7;
+        optional string os_version = 8;
+        optional string os_architecture = 9;
+        optional string cpu_manufacturer = 10;
+        optional string cpu_name = 11;
+        repeated NearbyDesktopDriverInfo bluetooth_driver_infos = 12;
+        repeated NearbyDesktopDriverInfo network_driver_infos = 13;
+        optional NearbyDesktopBluetoothInfo bluetooth_info = 15;
+    }
+    
+    optional MacOSDeviceInfo mac_os_device_info = 2;
+    message MacOSDeviceInfo {
+        optional DeviceType device_type = 1;
+        optional string device_manufacturer = 2;
+        optional string device_model = 3;
+        optional int64 physical_memory = 4;
+        optional int32 processor_count = 5;
+        optional int32 logical_processor_count = 6;
+        optional string os_name = 7;
+        optional string os_version = 8;
+        optional string os_architecture = 9;
+        optional string cpu_manufacturer = 10;
+        optional string cpu_name = 11;
+        optional NearbyDesktopBluetoothInfo bluetooth_info = 12;
+    }
+    
+    reserved 3 to 10;
+    
+    message NearbyDesktopDriverInfo {
+        optional string manufacturer = 1;
+        optional string device_name = 2;
+        optional string driver_provider_name = 3;
+        optional string driver_version = 4;
+        optional string driver_date = 5;
+    }
+    
+    message NearbyDesktopBluetoothInfo {
+        optional bool is_extended_advertising_supported = 1;
+        optional bool is_peripheral_role_supported = 2;
+        optional bool is_low_energy_supported = 3;
+        optional bool is_advertisement_offload_supported = 4;
+    }
+    
+    enum DeviceType {
+        UNKNOWN_DEVICE_TYPE = 0;
+        LAPTOP = 1;
+        TABLET = 2;
+    }
+}
+
+message WindowsClientInfo {
+    optional DeviceType device_type = 1;
+    enum DeviceType {
+        UNKNOWN_DEVICE_TYPE = 0;
+        PHONE = 1;
+        TABLET = 2;
+        LAPTOP = 3;
+    }
+    
+    optional string device_manufacturer = 2;
+    optional string device_model = 3;
+    optional int64 physical_memory = 4;
+    optional int32 processor_count = 5;
+    optional int32 logical_processor_count = 6;
+    optional string os_name = 7;
+    optional string os_version = 8;
+    optional string os_architecture = 9;
+    optional string os_language_code = 10;
+    optional string cpu_manufacturer = 11;
+    optional string cpu_name = 12;
+    
+    repeated DriverInfo bluetooth_driver_infos = 13;
+    message DriverInfo {
+        optional string manufacturer = 1;
+        optional string device_name = 2;
+        optional string driver_provider_name = 3;
+        optional string driver_version = 4;
+        optional string driver_date = 5;
+    }
+    
+    repeated DriverInfo network_driver_infos = 14;
+    optional bool ble_extd_adv_supported = 15 [deprecated = true];
+    
+    optional BluetoothInfo bluetooth_info = 16;
+    message BluetoothInfo {
+        optional bool is_extended_advertising_supported = 1;
+        optional bool is_peripheral_role_supported = 2;
+        optional bool is_low_energy_supported = 3;
+        optional bool is_advertisement_offload_supported = 4;
+    }
+    
+    optional UsageType usage_type = 17;
+    enum UsageType {
+        UNKNOWN_USAGE_TYPE = 0;
+        USAGE_TYPE_PHENOTYPE = 1;
+    }
+}
+
+message DesktopServicesClientInfo {
+    optional DesktopServicesClientType client_type = 1;
+    enum DesktopServicesClientType {
+        DESKTOP_SERVICES_CLIENT_TYPE_UNSPECIFIED = 0;
+        DAEMON = 1;
+        INSTALLER = 2;
+        UNINSTALLER = 3;
+    }
+    
+    optional string build_version = 2;
+    optional string build_type = 3;
+    optional string omaha_channel = 4;
+}
+
+message ClientInfo {
+    optional ClientType client_type = 1;
+    enum ClientType {
+        UNKNOWN = 0;
+        JS = 1;
+        DESKTOP = 2;
+        IOS = 3;
+        IOS_V2 = 10;
+        ANDROID = 4;
+        PLAY_CE = 5;
+        PYTHON = 6;
+        VR = 7;
+        PANCETTA = 8;
+        DRIVE_FS = 9;
+        YETI = 11;
+        MAC = 12;
+        GOOGLE_HOME = 13;
+        BIRDSONG = 14;
+        IOS_FIREBASE = 15;
+        GO = 16;
+        FUCHSIA = 17;
+        SPARKLIGHT = 18;
+        CPLUSPLUS = 19;
+        KAIOS = 20;
+        MUSK = 21;
+        COMPUTE_IMAGE_TOOLS = 22;
+        ANDROID_FIREBASE = 23;
+        LOONIX = 24 [deprecated = true];
+        C9 = 25;
+        BATTLESTAR = 26;
+        PORTABLE_PHENOTYPE_LIBRARY = 27;
+        WINDOWS = 28;
+        CLOUD_WORKSTATIONS_CONNECTOR = 29;
+        FITBIT_DARKHORSE = 30 [deprecated = true];
+        FITBIT_PYTHON = 31;
+        NEARBY = 32;
+        CHROMEOS_BUILD_PYTHON = 33;
+        DOVETAIL_LOGWRITER = 34;
+        NEARBY_CPP = 35;
+        CELLO = 36;
+        NESTCAM_PHOTON = 37;
+        DESKTOP_SERVICES = 38;
+        CHROME_ENTERPRISE_COMPANION = 39;
+        APPSHEET_CLIENT = 40;
+        STARGATE = 41;
+    }
+    
+    optional string remote_host = 6;
+    optional string remote_host6 = 7;
+    optional AndroidClientInfo android_client_info = 2;
+    optional BattlestarClientInfo battlestar_client_info = 22;
+    optional BirdsongClientInfo birdsong_client_info = 14;
+    optional DesktopClientInfo desktop_client_info = 3;
+    optional DesktopServicesClientInfo desktop_services_client_info = 28;
+    optional DriveDesktopClientInfo drive_desktop_client_info = 24;
+    optional G1DesktopClientInfo g1_desktop_client_info = 25;
+    optional GoogleHomeClientInfo google_home_client_info = 16;
+    optional IosClientInfo ios_client_info = 4;
+    optional JsClientInfo js_client_info = 11;
+    optional KaiosClientInfo kaios_client_info = 20;
+    optional MacClientInfo mac_client_info = 13;
+    optional NearbyDesktopClientInfo nearby_desktop_client_info = 27;
+    optional NestcamPhotonClientInfo nestcam_photon_client_info = 34;
+    optional PancettaClientInfo pancetta_client_info = 10;
+    optional PlayCeClientInfo play_ce_client_info = 5;
+    optional PortablePhenotypeLibraryClientInfo portable_phenotype_library_client_info = 23;
+    optional SparklightClientInfo sparklight_client_info = 18;
+    optional VrClientInfo vr_client_info = 8;
+    optional WindowsClientInfo windows_client_info = 26;
+    optional YetiClientInfo yeti_client_info = 15;
+    optional BrowserInfo browser_info = 9;
+    optional int64 heterodyne_config_version = 12;
+    
+    reserved 21;
+    
+    extend .proto2.bridge.MessageSet {
+        optional ClientInfo message_set_extension = 66321687;
+    }
+}
+
+message ExperimentIdList {
+    repeated string id = 1;
+}
+
+message AppUsage1pLogEvent {
+    optional int32 app_type = 1;
+    optional string android_package_name = 2;
+    optional string version = 3;
+}
+
+message BatchedLogRequest {
+    repeated LogRequest log_request = 1;
+    optional bool enable_per_request_status = 3;
+    optional bool in_direct_boot_mode = 4;
+    optional int64 last_zwieback_reset_wall_time_ms = 5 [deprecated = true];
+    repeated ProductIdZwiebackToken product_id_zwieback_tokens = 6 [deprecated = true];
+    repeated SessionZwieback session_zwiebacks = 7;
+    
+    reserved 2;
+}
+
+message RetainImports {
+    optional LogSourceEnum.LogSource log_source = 1;
+}
+
+message LogRequest {
+    optional int64 request_time_ms = 4;
+    optional int64 request_uptime_ms = 8;
+    optional ClientInfo client_info = 1;
+    optional LogSourceEnum.LogSource log_source = 2 [default = UNKNOWN];
+    optional string log_source_name = 6;
+    optional string zwieback_cookie = 7;
+    repeated LogEvent log_event = 3;
+    repeated bytes serialized_log_events = 5;
+    optional int64 log_event_dropped_count = 14;
+    optional QosTierConfiguration.QosTier qos_tier = 9 [default = DEFAULT];
+    
+    optional SchedulerType scheduler = 10;
+    enum SchedulerType {
+        UNKNOWN_SCHEDULER = 0;
+        ASAP = 1;
+        DEFAULT_PERIODIC = 2;
+        QOS_FAST_ONEOFF = 3;
+        QOS_DEFAULT_PERIODIC = 4;
+        QOS_UNMETERED_PERIODIC = 5;
+        BACKSTOP_PERIODIC = 6;
+    }
+    
+    optional DeviceStatus device_status = 11;
+    optional ExternalTimestamp external_timestamp = 12;
+    optional CollectForDebug collect_for_debug = 13;
+    optional uint32 app_mobilespec_id = 16;
+    optional ComplianceData compliance_data = 18;
+    
+    extensions 17, 1000 to max;
+    
+    reserved 15;
+}
+
+message DeviceStatus {
+    optional bool is_unmetered = 1;
+    optional bool is_charging = 2;
+    
+    optional AutomaticTime auto_time_status = 3;
+    enum AutomaticTime {
+        UNKNOWN = 0;
+        AUTO_TIME_OFF = 1;
+        AUTO_TIME_ON = 2;
+    }
+    
+    optional bool is_googler_device = 4;
+}
+
+message ExternalTimestamp {
+    optional int64 time_ms = 1;
+    optional int64 uptime_ms = 2;
+    optional string source = 3;
+}
+
+message CollectForDebug {
+    optional int64 collect_start_ms = 3;
+    optional int64 collect_until_ms = 1;
+    optional bool skip_persistent_log_storage = 2;
+}
+
+message QosTierConfiguration {
+    optional string log_source_name = 1;
+    
+    optional QosTier qos_tier = 2;
+    enum QosTier {
+        DEFAULT = 0;
+        UNMETERED_ONLY = 1;
+        UNMETERED_OR_DAILY = 2;
+        FAST_IF_RADIO_AWAKE = 3;
+        NEVER = 4;
+    }
+    
+    optional LogSourceEnum.LogSource log_source = 3 [default = UNKNOWN];
+}
+
+message ProductIdZwiebackToken {
+    option deprecated = true;
+    optional int32 product_id = 1;
+    optional string zwieback_token = 2;
+}
+
+message SessionZwieback {
+    optional string log_source_name = 1 [default = "UNKNOWN"];
+    optional string zwieback_token = 2;
+}
+
+message QosTiersOverride {
+    repeated QosTierConfiguration qos_tier_configuration = 1;
+    optional int64 qos_tier_fingerprint = 2;
+}
+
+message LogSourceBatchingDenylist {
+    repeated string log_source_name = 1;
+}
+
+message LogResponseDetails {
+    optional int32 log_request_index = 1;
+    
+    optional ResponseAction response_action = 2;
+    enum ResponseAction {
+        RESPONSE_ACTION_UNKNOWN = 0;
+        RETRY_REQUEST_LATER = 1;
+        DELETE_REQUEST = 2;
+    }
+}
+
+message LogResponse {
+    optional int64 next_request_wait_millis = 1 [default = -1];
+    optional ExperimentIdList experiments = 2;
+    optional QosTiersOverride qos_tier = 3;
+    optional LogSourceBatchingDenylist log_source_batching_denylist = 4;
+    repeated LogResponseDetails log_response_details = 5;
+    repeated ProductIdZwiebackToken product_id_zwieback_tokens = 6 [deprecated = true];
+    repeated SessionZwieback session_zwiebacks = 7;
+    
+    extensions 1000 to max;
+}
+
+message NestcamPhotonClientInfo {
+    optional string device_id = 1;
+    
+    optional DeviceType device_type = 2;
+    enum DeviceType {
+        DEVICE_TYPE_UNKNOWN = 0;
+        DEVICE_TYPE_QV1 = 1;
+        DEVICE_TYPE_SQ = 2;
+        DEVICE_TYPE_RQ = 3;
+    }
+    
+    optional string software_version = 3;
+}

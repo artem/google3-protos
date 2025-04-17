@@ -3,7 +3,6 @@ syntax = "editions";
 package bns;
 
 import "chubby/lib/proto/bnsresolver.proto";
-import "net/base/addressresolver.proto";
 
 option java_multiple_files = true;
 option java_package = "com.google.net.bns";
@@ -17,8 +16,9 @@ message BNSAliasConfig {
         
         oneof address {
             string bns = 1;
-            ResolvedAddr ip = 2;
         }
+        
+        reserved 2;
     }
     
     optional TaskResolutionMode task_resolution_mode = 2;
@@ -40,6 +40,7 @@ message BNSAliasAddrsConfig {
         repeated int32 indices = 1;
         optional string target_job_bns = 2;
         repeated int32 target_task_indices = 3;
+        repeated string target_ports_for_unnamed_port = 4;
     }
     
     extend BNSAddrs {

@@ -6,7 +6,7 @@ import "file/colossus/proto/curator_signed_capability.proto";
 import "google/protobuf/timestamp.proto";
 import "storage/d/proto/capability.proto";
 import "storage/k3/net/socket_address.proto";
-import "storage/l4/common/d_user_isolation_class.proto";
+import "storage/l4/common/cache_block_digest.proto";
 import "storage/l4/common/encryption_type.proto";
 import "storage/l4/common/entry_location.proto";
 import "storage/l4/common/entry_location_and_capability.proto";
@@ -16,6 +16,7 @@ import "storage/l4/common/l4_admission_reason.proto";
 import "storage/l4/common/l4r_policy.proto";
 import "storage/l4/common/lookup_flavor.proto";
 import "storage/l4/common/resource_settings.proto";
+import "storage/l4/common/resource_user.proto";
 import "storage/l4/common/value_range.proto";
 import "storage/l4/common/write_file.proto";
 import "storage/l4/core/version.proto";
@@ -33,7 +34,7 @@ service IndexService {
 message RequestHeader {
     optional Version version = 4;
     optional ResourceSettingsProto d_resource_settings = 20;
-    optional DUserIsolationClassProto l4_resource_user = 21;
+    optional ResourceUserProto l4_resource_user = 21;
     
     reserved 1 to 3, 5 to 19;
 }
@@ -76,6 +77,7 @@ message LookUpEntryResponse {
 message InsertRequest {
     optional RequestHeader header = 1;
     optional KeyProto key = 13;
+    optional CacheBlockDigest cache_block_digest = 31;
     optional EntryLocationProto location = 25;
     optional Encryption.Type encryption_type = 22;
     optional FileDescriptorInfoProto fd_info = 30;
@@ -152,6 +154,7 @@ message GetWriteFileRequest {
     optional RequestHeader header = 1;
     optional KeyProto key = 29;
     optional FileDescriptorInfoProto fd_info = 31;
+    optional uint64 cache_entry_size_hint = 32;
     
     reserved 2 to 28, 30;
 }

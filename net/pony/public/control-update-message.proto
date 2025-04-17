@@ -13,6 +13,8 @@ message ControlUpdateMessage {
         END_HITLESS_RESTART = 2;
         UPDATES_DISABLED = 3;
         EVICTION_NOTICE = 4;
+        CONTROL_SERVER_DOWN = 5;
+        CONTROL_SERVER_UP = 6;
     }
     
     extensions 1000 to 524999999, 525000000 to max;

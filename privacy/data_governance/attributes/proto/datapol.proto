@@ -13,5 +13,6 @@ message DatapolAnnotations {
     optional .datapol.Qualifier qualifier = 2;
     optional .datapol.LocationQualifier location_qualifier = 3;
     repeated apps_annotations.SemanticType apps_semantic_types = 4 [packed = true];
-    optional apps_annotations.AppsQualifier apps_qualifier = 5;
+    
+    reserved 5;
 }

@@ -4,7 +4,6 @@ package net_dns;
 
 import "storage/datapol/annotations/proto/semantic_annotations.proto";
 
-option cc_enable_arenas = true;
 option java_outer_classname = "Protocol";
 option java_package = "com.google.net.dns";
 

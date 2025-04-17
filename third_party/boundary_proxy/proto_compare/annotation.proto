@@ -23,6 +23,8 @@ message ComparisonOptions {
         DP_NUMERIC_APPROXIMATE = 3;
     }
     
+    optional bool ignore_field_if_missing_in_comparison = 6;
+    
     oneof numeric_uncertainty {
         uint64 int_uncertainty = 3;
         double float_uncertainty = 4;
@@ -102,4 +104,5 @@ extend .proto2.FileOptions {
 extend .proto2.MethodOptions {
     optional TpcType tpc_type = 520991498;
     optional string method_comment = 522360157;
+    optional bool future_exemplar = 525000015;
 }

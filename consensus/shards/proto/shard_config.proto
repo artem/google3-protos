@@ -20,6 +20,7 @@ message ShardConfig {
         IN_EARLY_TURNUP = 2;
         IN_TURNUP = 3;
         IN_TURNDOWN = 4;
+        TURNDOWN_COMPLETE = 6;
         TESTONLY = 5;
     }
     

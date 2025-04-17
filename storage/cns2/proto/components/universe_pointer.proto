@@ -1,0 +1,24 @@
+syntax = "editions";
+
+package cns2.proto;
+
+import "storage/cns2/proto/components/store_cell_pointer.proto";
+
+message UniversePointer {
+    repeated StoreCellPointer local_store_cells = 5;
+    
+    repeated RouterTarget router_targets = 7;
+    message RouterTarget {
+        optional string target = 1;
+    }
+    
+    optional string admin_user = 3;
+    optional string default_encryption_master_key_name_override = 6;
+    
+    optional UndeleterPointer undeleter_pointer = 8;
+    message UndeleterPointer {
+        optional string target = 1;
+    }
+    
+    reserved 1, 2, 4;
+}

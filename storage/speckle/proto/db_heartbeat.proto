@@ -1,0 +1,22 @@
+syntax = "editions";
+
+package speckle;
+
+import "google/protobuf/timestamp.proto";
+import "storage/datapol/annotations/proto/semantic_annotations.proto";
+
+option java_multiple_files = true;
+option java_outer_classname = "DbHeartbeatProto";
+
+message DbHeartbeat {
+    optional int32 pid = 1;
+    optional int32 tid = 10;
+    optional google.protobuf.Timestamp generation_time = 2;
+    optional google.protobuf.Timestamp healthcheck_time = 3;
+    optional int64 query_start_count = 4;
+    optional int64 query_end_count = 5;
+    optional int64 connect_count = 6;
+    optional int64 disconnect_count = 7;
+    optional int64 startup_count = 8;
+    optional int64 shutdown_count = 9;
+}

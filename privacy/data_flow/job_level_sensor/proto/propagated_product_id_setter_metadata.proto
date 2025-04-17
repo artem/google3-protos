@@ -1,0 +1,19 @@
+syntax = "editions";
+
+package privacy.data_flow.job_level_sensor.proto;
+
+import "privacy/data_flow/job_level_sensor/proto/jls_report.proto";
+
+option java_multiple_files = true;
+
+message PropagatedProductIdSetterMetadata {
+    oneof guri {
+        string gfe_service_name = 1;
+        string borgjob = 2;
+        string pipeline = 3;
+    }
+    
+    extend JlsRecord {
+        optional PropagatedProductIdSetterMetadata propagated_setter_metadata = 105;
+    }
+}

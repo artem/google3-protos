@@ -2,6 +2,7 @@ syntax = "proto3";
 
 package google.api.servicecontrol.v1;
 
+import "google/api/inclusion.proto";
 import "google/protobuf/timestamp.proto";
 import "google/protobuf/wrappers.proto";
 import "google/rpc/status.proto";

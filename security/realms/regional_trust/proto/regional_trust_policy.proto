@@ -3,11 +3,13 @@ syntax = "editions";
 package security_realms;
 
 import "google/protobuf/empty.proto";
+import "security/realms/regional_trust/proto/regional_trust_exemption.proto";
 
 message RegionalTrustPolicy {
     optional PolicyInstance live_policy = 4;
     message PolicyInstance {
         repeated TrustBinding trust_bindings = 1;
+        repeated RegionalTrustExemptions.ExemptionScope exemption_scopes = 2;
     }
     
     optional PolicyInstance darklaunch_policy = 3;

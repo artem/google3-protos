@@ -18,7 +18,7 @@ enum LocalityType {
     CLOUD_ZONE_STAGING = 8;
     CLOUD_REGION_STAGING = 9;
     FABRIC = 10;
-    CLOUD_ZONE_TPC_LITE = 11;
-    CLOUD_REGION_TPC_LITE = 12;
-    CHUBBY = 14;
+    CLOUD_ZONE_TPC_LITE = 11 [deprecated = true];
+    CLOUD_REGION_TPC_LITE = 12 [deprecated = true];
+    BORG_DOMAIN = 15;
 }

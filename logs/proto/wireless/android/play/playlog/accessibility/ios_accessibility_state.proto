@@ -1,0 +1,47 @@
+syntax = "proto2";
+
+package wireless_android_play_playlog.accessibility;
+
+import "storage/datapol/annotations/proto/semantic_annotations.proto";
+
+option objc_class_prefix = "WAPPA";
+option java_outer_classname = "IosAccessibilityStateProto";
+option java_package = "com.google.common.logging";
+
+message IosAccessibilityState {
+    optional bool assistive_touch_running = 1;
+    optional bool voice_over_running = 2;
+    optional bool switch_control_running = 3;
+    optional bool shake_to_undo_enabled = 4;
+    optional bool closed_captioning_enabled = 5;
+    optional bool bold_text_enabled = 6;
+    optional bool darker_system_colors_enabled = 7;
+    optional bool grayscale_enabled = 8;
+    optional bool guided_access_enabled = 9;
+    optional bool invert_colors_enabled = 10;
+    optional bool mono_audio_enabled = 11;
+    optional bool reduce_motion_enabled = 12;
+    optional bool reduce_transparency_enabled = 13;
+    optional bool speak_screen_enabled = 14;
+    optional bool speak_selection_enabled = 15;
+    optional bool on_off_switch_labels_enabled = 16;
+    optional bool video_autoplay_enabled = 17;
+    optional bool differentiate_without_color_enabled = 18;
+    
+    optional ContentSizeCategory content_size_category = 19;
+    enum ContentSizeCategory {
+        UNSPECIFIED = 0;
+        EXTRA_SMALL = 1;
+        SMALL = 2;
+        MEDIUM = 3;
+        LARGE = 4;
+        EXTRA_LARGE = 5;
+        EXTRA_EXTRA_LARGE = 6;
+        EXTRA_EXTRA_EXTRA_LARGE = 7;
+        ACCESSIBILITY_MEDIUM = 8;
+        ACCESSIBILITY_LARGE = 9;
+        ACCESSIBILITY_EXTRA_LARGE = 10;
+        ACCESSIBILITY_EXTRA_EXTRA_LARGE = 11;
+        ACCESSIBILITY_EXTRA_EXTRA_EXTRA_LARGE = 12;
+    }
+}

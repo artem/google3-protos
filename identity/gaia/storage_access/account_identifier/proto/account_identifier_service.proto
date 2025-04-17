@@ -109,6 +109,7 @@ message CheckCanonicalEmailFailureExtension {
 
 message LookupByRecoveryEmailRequest {
     optional string recovery_email = 1;
+    optional bool include_user_info = 2 [default = true];
     optional identity_backend.legacy.RecordedRpcSequence recorded_rpc_sequence = 102;
     
     extensions 420896701;
@@ -118,6 +119,7 @@ message LookupByRecoveryEmailRequest {
 
 message LookupByRecoveryEmailResponse {
     repeated ClientUserInfo user_info = 2;
+    optional int32 gaia_id_count = 3;
     
     reserved 1, 99;
 }
@@ -290,6 +292,7 @@ message SelectPrimaryEmailRequest {
     optional bool federated_login_enabled = 13;
     repeated gaia_data.GaiaEmailAnnotation email_annotations_to_add = 14 [packed = true];
     repeated gaia_data.GaiaEmailAnnotation email_annotations_to_remove = 15 [packed = true];
+    optional ChangeNotificationOptions change_notification_options = 16;
     optional identity_backend.legacy.RecordedRpcSequence recorded_rpc_sequence = 102;
     
     extensions 500771103;

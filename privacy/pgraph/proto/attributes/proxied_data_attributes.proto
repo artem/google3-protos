@@ -1,4 +1,4 @@
-syntax = "proto3";
+syntax = "editions";
 
 package pgraph.attributes;
 
@@ -12,7 +12,5 @@ message Purposes {
 }
 
 message Dma52MlModelAccessStatus {
-    oneof _value {
-        privacy.data_governance.attributes.MlModel.Data.ModelAccessStatus value = 1;
-    }
+    optional privacy.data_governance.attributes.MlModel.Data.ModelAccessStatus value = 1;
 }

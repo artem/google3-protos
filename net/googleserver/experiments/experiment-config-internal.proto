@@ -1,0 +1,45 @@
+syntax = "editions";
+
+package experiments;
+
+import "experiments/mendel/compiler/proto/custom_all_on_mode.proto";
+import "experiments/mendel/compiler/proto/risk_tolerance.proto";
+import "google/protobuf/timestamp.proto";
+import "net/googleserver/experiments/experiment-config.proto";
+
+option java_package = "com.google.net.googleserver.experiments";
+
+message DomainEffectiveTrafficFraction {
+    optional int64 numerator = 1;
+    optional int64 denominator = 2;
+}
+
+message InternalExperimentMessage {
+    optional DomainEffectiveTrafficFraction domain_effective_traffic_fraction = 1;
+    optional CustomAllOnMode custom_all_on_mode = 2;
+    optional bool force_in_all_on_mode = 3;
+    optional bool is_expired = 4 [default = false];
+    optional int32 num_mods = 5;
+    optional bool diversion_criteria_differs_from_control = 6;
+    optional bool only_if_triggered = 7;
+    optional bool is_client_exp = 8;
+    optional int64 team_graph_id = 9;
+    optional RiskTolerance risk_tolerance = 10;
+    optional google.protobuf.Timestamp assignment_timestamp = 11;
+    optional int64 min_binary_baseline_cl = 12;
+    optional bool is_pce = 14;
+    
+    reserved 13;
+}
+
+message InternalExperimentLayerDefinition {
+    repeated string diversion_labels = 1;
+}
+
+extend ExperimentMessage {
+    optional InternalExperimentMessage internal_experiment_message = 416626076;
+}
+
+extend ExperimentLayerDefinition {
+    optional InternalExperimentLayerDefinition internal_experiment_layer_definition = 14;
+}

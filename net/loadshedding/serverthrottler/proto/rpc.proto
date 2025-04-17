@@ -3,6 +3,7 @@ syntax = "editions";
 package net.loadshedding.serverthrottler;
 
 import "net/proto2/bridge/proto/message_set.proto";
+import "third_party/boundary_proxy/proto_compare/annotation.proto";
 
 option java_outer_classname = "ThrottlingRpc";
 option java_package = "com.google.net.loadshedding.serverthrottler.proto";

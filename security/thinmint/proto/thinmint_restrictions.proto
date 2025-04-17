@@ -1,9 +1,10 @@
-syntax = "proto2";
+syntax = "editions";
 
 package thinmint;
 
 import "net/proto2/bridge/proto/message_set.proto";
 import "security/credentials/proto/principal.proto";
+import "third_party/boundary_proxy/proto_compare/annotation.proto";
 
 option java_package = "com.google.protos.thinmint";
 

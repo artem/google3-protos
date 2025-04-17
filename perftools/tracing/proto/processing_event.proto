@@ -13,6 +13,9 @@ message ProcessingEvent {
     optional fixed64 cooperative_id = 3;
     optional int32 sequence_number = 8 [default = -1];
     optional FlowType flow_type = 9 [default = FLOW_UNDEFINED];
+    optional Endpoint endpoint = 10 [default = ENDPOINT_UNDEFINED];
+    optional MsgOrigin msg_origin = 11 [default = MSG_ORIGIN_UNDEFINED];
+    optional MsgFlags msg_flags = 12 [default = MSG_FLAG_NONE];
     optional Instrumentation instrumentation = 5;
     
     oneof id_or_string {
@@ -38,6 +41,8 @@ enum ProcessingEventType {
     PROCESSING_EVENT_TYPE_FLOW = 9;
     PROCESSING_EVENT_TYPE_MARK = 10;
     PROCESSING_EVENT_TYPE_SPAN_CREATED = 11;
+    PROCESSING_EVENT_TYPE_SESSION_START = 12;
+    PROCESSING_EVENT_TYPE_SESSION_END = 13;
 }
 
 enum Instrumentation {
@@ -47,6 +52,24 @@ enum Instrumentation {
     INSTRUMENTATION_TEMPUS = 3;
     INSTRUMENTATION_DAPPER = 4;
     INSTRUMENTATION_SEARCH = 5;
+}
+
+enum MsgOrigin {
+    MSG_ORIGIN_UNDEFINED = 0;
+    MSG_ORIGIN_CLIENT = 1;
+    MSG_ORIGIN_SERVER = 2;
+}
+
+enum MsgFlags {
+    MSG_FLAG_NONE = 0;
+    MSG_FLAG_HALF_CLOSE = 1;
+    MSG_FLAG_CONTROL = 2;
+}
+
+enum Endpoint {
+    ENDPOINT_UNDEFINED = 0;
+    ENDPOINT_STREAMING_CLIENT = 1;
+    ENDPOINT_STREAMING_SERVER = 2;
 }
 
 enum FlowType {

@@ -1,0 +1,12 @@
+syntax = "editions";
+
+package security.data_access;
+
+import "storage/datapol/annotations/proto/semantic_annotations.proto";
+
+option java_multiple_files = true;
+option java_package = "com.google.logs.proto.data_access";
+
+message TenantId {
+    optional string guri = 1;
+}

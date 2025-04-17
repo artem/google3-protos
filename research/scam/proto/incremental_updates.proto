@@ -7,6 +7,7 @@ import "google/protobuf/timestamp.proto";
 
 message IncrementalUpdateConfig {
     optional bool enabled = 1 [default = false];
+    optional MutationIntention mutation_intention = 10;
     optional uint64 num_datapoints_to_reserve = 5 [default = 0];
     optional google.protobuf.Duration last_update_timestamp_lifetime = 2;
     optional bool enable_expiration_timestamps = 4 [default = false];
@@ -47,4 +48,26 @@ message IncrementalUpdateMetadata {
     optional google.protobuf.Timestamp epoch_timestamp = 1;
     optional google.protobuf.Duration max_epoch_age = 3;
     optional string version = 2;
+}
+
+message MutationIntention {
+    optional Mask mask = 1 [default = ALL];
+    enum Mask {
+        UNSPECIFIED_OR_NONE = 0;
+        VALUE_VECTOR = 1;
+        RESTRICTS = 2;
+        CROWDING = 4;
+        METADATA = 8;
+        ALL = 15;
+        VALUE_VECTOR_RESTRICTS = 3;
+        VALUE_VECTOR_CROWDING = 5;
+        RESTRICTS_CROWDING = 6;
+        VALUE_VECTOR_RESTRICTS_CROWDING = 7;
+        VALUE_VECTOR_METADATA = 9;
+        RESTRICTS_METADATA = 10;
+        VALUE_VECTOR_RESTRICTS_METADATA = 11;
+        CROWDING_METADATA = 12;
+        VALUE_VECTOR_CROWDING_METADATA = 13;
+        RESTRICTS_CROWDING_METADATA = 14;
+    }
 }

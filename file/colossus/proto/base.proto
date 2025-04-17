@@ -78,9 +78,9 @@ message ArgHeader {
     
     enum Version {
         option allow_alias = true;
-        MIN_SUPPORTED_VERSION = 69;
-        NAMESPACE_MIN_SUPPORTED_VERSION = 69;
-        REQUIRED_SERVER_VERSION = 69;
+        MIN_SUPPORTED_VERSION = 83;
+        NAMESPACE_MIN_SUPPORTED_VERSION = 83;
+        REQUIRED_SERVER_VERSION = 83;
         NONE = 0;
         BASE = 1;
         OBSOLETE_PARALLEL_WRITE = 2;
@@ -154,17 +154,17 @@ message ArgHeader {
         DEPRECATED_2_REWRAP_ENCRYPTION_KEY_ON_OPEN_STRIPE = 70;
         OBSOLETE_REWRAP_ENCRYPTION_KEY_ON_OPEN_STRIPE = 71;
         DEPRECATED_2_REWRAP_ENCRYPTION_KEY_ON_SET_ATTR = 72;
-        REALM_RESTRICTED_CFS_CAPABILITIES = 73;
-        REWRAP_ENCRYPTION_KEY_ON_SET_ATTR = 74;
-        UNIFIED_PLACEMENT = 75;
-        KEYSTORE_AFFINITY = 76;
-        SSD_SPILLOVER = 77;
-        SSD_SPILLOVER_DEFAULT = 78;
-        SSD_SPILLOVER_OPTIONS = 79;
-        CHECKSUM_CLEARED_ON_REWRAP_ON_SET_ATTR = 80;
-        REALM_SET_FOR_DEFAULT_POLICY = 80;
-        REALM_SET_FOR_DEFAULT_POLICY_NEW_VERSION = 81;
-        CNS_ON_BLOBSTORE = 82;
+        OBSOLETE_REALM_RESTRICTED_CFS_CAPABILITIES = 73;
+        OBSOLETE_REWRAP_ENCRYPTION_KEY_ON_SET_ATTR = 74;
+        OBSOLETE_UNIFIED_PLACEMENT = 75;
+        OBSOLETE_KEYSTORE_AFFINITY = 76;
+        OBSOLETE_SSD_SPILLOVER = 77;
+        OBSOLETE_SSD_SPILLOVER_DEFAULT = 78;
+        OBSOLETE_SSD_SPILLOVER_OPTIONS = 79;
+        OBSOLETE_CHECKSUM_CLEARED_ON_REWRAP_ON_SET_ATTR = 80;
+        OBSOLETE_REALM_SET_FOR_DEFAULT_POLICY = 80;
+        OBSOLETE_REALM_SET_FOR_DEFAULT_POLICY_NEW_VERSION = 81;
+        OBSOLETE_CNS_ON_BLOBSTORE = 82;
         ENCRYPT_D_METADATA = 83;
         E2E_WRAPPED_KEY_CHECKSUM = 84;
     }
@@ -302,7 +302,7 @@ message CFS2ArgHeader {
     optional bool internal_op = 3;
     optional bool loopback_op = 4;
     optional .colossus.cfs2.FolderRole expected_folder_role = 9;
-    optional int32 DEPRECATED_num_retries = 10 [deprecated = true];
+    optional int32 num_folder_retries = 10;
     optional string original_request_rpc_user = 11;
     optional bool curator_remote_btree_op = 12;
     

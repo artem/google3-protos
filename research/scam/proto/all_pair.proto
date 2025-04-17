@@ -2,8 +2,6 @@ syntax = "proto2";
 
 package research_scam;
 
-import "research/scam/proto/hash.proto";
-
 message NeighborExpansionConfig {
     optional float neighbor_sampling_fraction = 1 [default = 1];
     
@@ -46,8 +44,8 @@ message NeighborExpansionConfig {
     optional uint32 num_sstable_leaf_servers = 23 [default = 1000];
     optional float min_update_fraction = 2 [default = 1e-05];
     optional int32 num_bits = 4;
-    optional HashConfig hash = 6;
-    optional bool use_exact_distance_pass = 7 [default = false];
+    
+    reserved 6, 7;
 }
 
 message AllPairInvertedIndexConfig {

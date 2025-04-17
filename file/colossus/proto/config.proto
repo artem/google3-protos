@@ -70,15 +70,12 @@ message CellConfig {
     optional string d_cell_name = 12;
     optional bool store_d_chunk_server_info_per_colossus_cell = 31 [default = false];
     optional int32 max_supported_protocol_version = 14 [default = 1];
-    optional int32 min_supported_protocol_version = 15 [default = 69];
+    optional int32 min_supported_protocol_version = 15 [default = 83];
     optional bool proxy_enabled = 16 [default = false];
     optional bool metadata_cache_enabled = 17 [default = true];
     optional bool is_cfs2 = 22 [default = false];
     optional int64 cfs2_master_folder_creation_sequence = 27;
     optional int32 max_risk_diversity_level = 20;
-    optional bool enable_cfs2_folder_affinity = 26 [default = true, deprecated = true];
-    optional double cfs2_folder_affinity_time_window_size_ms = 24;
-    optional int32 cfs2_folder_affinity_shard_size = 25;
     optional string default_keystore_address = 29;
     repeated string DEPRECATED_allowed_chunkserver_versions = 5;
     optional int32 DEPRECATED_curator_mode = 8 [default = 1];
@@ -88,19 +85,21 @@ message CellConfig {
     optional string d_server_user = 32;
     optional string fake_cfs1_curator_address = 33;
     
-    reserved 23, 35;
+    reserved 23 to 26, 35;
 }
 
 message DiskInfo {
     optional int64 id = 1;
-    optional fixed64 label = 2;
     optional storage_d.Health.Status d_state = 8;
     optional bool removable = 6 [default = false];
+    optional int64 removable_time = 14;
     optional int64 d_health_version = 5;
     optional int64 removal_start_time = 11;
     optional int64 vote_time = 13;
+    optional google.protobuf.Timestamp dead_start_time = 15;
+    optional google.protobuf.Timestamp recovery_start_time = 16;
     
-    reserved 3, 4, 7, 9, 10, 12;
+    reserved 2, 3, 4, 7, 9, 10, 12;
 }
 
 message ChunkserverInfo {
@@ -110,8 +109,11 @@ message ChunkserverInfo {
     optional int32 d_drain_priority = 11;
     optional int64 d_health_version = 6;
     optional bool removable = 4;
+    optional int64 removable_time = 14;
     optional int64 removal_start_time = 8;
     optional int64 vote_time = 13;
+    optional google.protobuf.Timestamp dead_start_time = 15;
+    optional google.protobuf.Timestamp recovery_start_time = 16;
     repeated DiskInfo disks = 5;
     
     reserved 2, 9, 10, 12;
@@ -124,6 +126,13 @@ message ChunkserverInfoIdxRecord {
     optional google.protobuf.Timestamp timestamp = 2;
     optional .idx.time_series.ingestion.proto.IDXTimeSeriesMetadata idx_internal_metadata = 3;
     optional string colossus_cell_name = 4;
+    
+    optional Provenance provenance = 5;
+    enum Provenance {
+        UNKNOWN = 0;
+        BACK_FILL = 1;
+        LIVE = 2;
+    }
 }
 
 message ChunkserversConfig {
@@ -295,14 +304,6 @@ message NamespaceConfig {
     }
     
     reserved 2;
-}
-
-message ProxyIsolationConfig {
-    repeated User users = 1;
-    message User {
-        optional string username = 1;
-        repeated int32 task_ids = 2;
-    }
 }
 
 message ClientConfig {

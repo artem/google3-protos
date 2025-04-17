@@ -6,8 +6,6 @@ import "monitoring/streamz/api/data_model.proto";
 import "monitoring/streamz/api/geographic_restriction.proto";
 import "monitoring/streamz/api/hierarchical_isolation.proto";
 
-option cc_enable_arenas = true;
-
 service StreamzCollection {
     rpc DefineMetrics(DefineMetricsRequest) returns (DefineMetricsResponse);
     rpc Write(WriteRequest) returns (WriteResponse);

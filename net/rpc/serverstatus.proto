@@ -1,4 +1,4 @@
-syntax = "proto2";
+syntax = "editions";
 
 package rpc;
 
@@ -8,6 +8,7 @@ import "net/rpc/empty-message.proto";
 import "net/rpc/servicedescriptor.proto";
 import "stats/io/proto/expvar.proto";
 import "stats/request/statsrequest.proto";
+import "third_party/boundary_proxy/proto_compare/annotation.proto";
 
 option java_package = "com.google.net.rpc.proto";
 
@@ -33,10 +34,11 @@ service ServerStatus {
 message ServiceList {
     option no_standard_descriptor_accessor = true;
     
-    repeated group Service = 1 {
+    repeated Service service = 1;
+    message Service {
         option no_standard_descriptor_accessor = true;
-        required string name = 2;
-        required RPC_ServiceDescriptor descriptor = 3;
+        optional string name = 2;
+        optional RPC_ServiceDescriptor descriptor = 3;
     }
 }
 

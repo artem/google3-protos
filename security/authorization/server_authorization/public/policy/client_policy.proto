@@ -4,6 +4,7 @@ package server_authz;
 
 import "google/protobuf/wrappers.proto";
 import "security/authorization/server_authorization/public/policy/target.proto";
+import "security/authorization/server_authorization/public/relax/client_policy_overrides.proto";
 import "security/credentials/proto/principal.proto";
 import "storage/datapol/annotations/proto/semantic_annotations.proto";
 
@@ -16,6 +17,7 @@ message UnrestrictedClientPolicy {
     RealmConstraint realm_constraint = 3;
     HostnameConstraint hostname_constraint = 4;
     TighteningOverrides tightening_overrides = 5;
+    RelaxingOverrides relaxing_overrides = 6;
 }
 
 message ServiceCheckOptions {

@@ -1,0 +1,9 @@
+syntax = "proto2";
+
+package research_scam;
+
+message MultiStrings {
+    optional uint32 fixed_len_size = 1;
+    repeated fixed32 var_len_offsets = 2 [packed = true];
+    optional bytes concatenated_strs = 3;
+}

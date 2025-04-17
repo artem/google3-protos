@@ -1,0 +1,87 @@
+syntax = "editions";
+
+package experiments;
+
+import "experiments/proto/property.proto";
+
+option java_outer_classname = "ConditionsProto";
+option java_package = "com.google.protos.experiments.proto1api";
+
+message ConditionTable {
+    repeated string strings = 1;
+    repeated InternedProperty properties = 6;
+    repeated InternedAtomicCondition atoms = 3;
+    repeated InternedCondition conditions = 4;
+    repeated Symbol symbols = 5;
+    repeated Rollout rollouts = 7;
+    repeated PropertyDefinition property_definitions = 9;
+    
+    reserved 8;
+}
+
+message InternedProperty {
+    optional int32 name = 1;
+    repeated int32 args = 2;
+    optional int32 registry_id = 3;
+}
+
+message Rollout {
+    optional string name = 1;
+    optional int32 property_index = 2;
+    optional bool value = 3;
+    optional int32 location = 6;
+    repeated RolloutOverride overrides = 4;
+}
+
+message RolloutOverride {
+    optional int32 experiment_id = 1;
+    optional bool value = 2;
+}
+
+message InternedCondition {
+    optional Op op = 1;
+    enum Op {
+        OP_ATOM = 0;
+        OP_NOT = 1;
+        OP_AND = 2;
+        OP_OR = 3;
+    }
+    
+    repeated int32 args = 2;
+}
+
+message InternedAtomicCondition {
+    optional Op op = 1;
+    enum Op {
+        OP_TRUE = 0;
+        OP_FALSE = 1;
+        OP_PROPOSITION = 2;
+        OP_HAS_VALUE = 19;
+        OP_STR_EQ = 3;
+        OP_STR_PREF = 4;
+        OP_STR_SUFF = 5;
+        OP_STR_SUB = 6;
+        OP_STR_MATCH = 7;
+        OP_INT64_EQ = 8;
+        OP_INT64_LT = 9;
+        OP_INT64_GT = 10;
+        OP_FLOAT64_EQ = 11;
+        OP_FLOAT64_LT = 12;
+        OP_FLOAT64_GT = 13;
+        OP_VER_EQ = 14;
+        OP_VER_LT = 15;
+        OP_VER_GT = 16;
+        OP_STR_SET_HAS = 17;
+        OP_INT64_SET_HAS = 20;
+        OP_IN_STR_SET = 21;
+        OP_IN_INT64_SET = 22;
+    }
+    
+    repeated int32 args = 2;
+}
+
+message Symbol {
+    optional string name = 1;
+    optional int32 condition_index = 2 [default = -1];
+    optional int32 location = 3;
+}

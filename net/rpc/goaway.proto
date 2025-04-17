@@ -1,0 +1,24 @@
+syntax = "editions";
+
+package rpc;
+
+import "google/protobuf/duration.proto";
+import "util/task/status.proto";
+
+option java_multiple_files = true;
+option java_package = "com.google.net.rpc.goaway.impl.proto";
+
+message ConnectionFailureStatus {
+    optional int32 type = 1 [default = 0];
+    optional util.StatusProto reason = 2;
+    optional google.protobuf.Duration backoff = 3;
+    
+    enum Type {
+        UNKNOWN = 0;
+        SERVER_CONNECTION_LIMIT_REACHED = 1;
+        CONNECTION_LIMIT_PER_USER_REACHED = 2;
+        TRANSIENT_PSP_ERROR = 3;
+        EARLY_CONNECTION_LIMIT_PER_USER_REACHED = 4;
+        FLOW_CONTROL = 5;
+    }
+}

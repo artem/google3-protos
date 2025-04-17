@@ -1,0 +1,2700 @@
+syntax = "proto3";
+
+package speckle.dataplane;
+
+import "google/internal/cloud/sqlagent/v1/enums.proto";
+import "google/longrunning/operations.proto";
+import "google/protobuf/any.proto";
+import "google/protobuf/duration.proto";
+import "google/protobuf/struct.proto";
+import "google/protobuf/timestamp.proto";
+import "google/protobuf/wrappers.proto";
+import "storage/datapol/annotations/proto/semantic_annotations.proto";
+import "storage/speckle/probes/connectivity/worker/errors/connprobeerror.proto";
+import "storage/speckle/proto/agent_type.proto";
+import "storage/speckle/proto/dataplane/dp_patcher_config.proto";
+import "storage/speckle/proto/dataplane_tasks/mysql.proto";
+import "storage/speckle/proto/dataplane_tasks/oracle.proto";
+import "storage/speckle/proto/dataplane_tasks/postgres.proto";
+import "storage/speckle/proto/dataplane_tasks/sqlserver.proto";
+import "storage/speckle/proto/secrets.proto";
+import "storage/speckle/proto/ssa_agents_uri.proto";
+import "storage/speckle/proto/vm_parameters.proto";
+
+option java_outer_classname = "Tasks";
+
+service DataPlaneOperations {
+    rpc GetOperation(google.longrunning.GetOperationRequest) returns (google.longrunning.Operation);
+    rpc CreateUser(CreateUserRequest) returns (google.longrunning.Operation);
+    rpc UpdateUser(UpdateUserRequest) returns (google.longrunning.Operation);
+    rpc ListUsers(ListUsersRequest) returns (google.longrunning.Operation);
+    rpc DeleteUser(DeleteUserRequest) returns (google.longrunning.Operation);
+    rpc CheckDatabaseServer(CheckDatabaseServerRequest) returns (google.longrunning.Operation);
+    rpc CheckProxy(CheckProxyRequest) returns (google.longrunning.Operation);
+    rpc CheckEnvironment(CheckEnvironmentRequest) returns (google.longrunning.Operation);
+    rpc CheckDatabaseNeverStarted(CheckDatabaseNeverStartedRequest) returns (google.longrunning.Operation);
+    rpc CheckDataDisk(CheckDataDiskRequest) returns (google.longrunning.Operation);
+    rpc ProvisionInstance(ProvisionInstanceRequest) returns (google.longrunning.Operation);
+    rpc StopDatabase(StopDatabaseRequest) returns (google.longrunning.Operation);
+    rpc CheckServiceAgents(CheckServiceAgentsRequest) returns (google.longrunning.Operation);
+    rpc CheckReplication(CheckReplicationRequest) returns (google.longrunning.Operation);
+    rpc CheckMajorVersionUpgradeViolation(CheckMajorVersionUpgradeViolationRequest) returns (google.longrunning.Operation);
+    rpc WaitForFile(WaitForFileRequest) returns (google.longrunning.Operation);
+    rpc ImportBak(ImportBakRequest) returns (google.longrunning.Operation);
+    rpc ImportCsv(ImportCsvRequest) returns (google.longrunning.Operation);
+    rpc ImportDmp(ImportDmpRequest) returns (google.longrunning.Operation);
+    rpc ImportSql(ImportSqlRequest) returns (google.longrunning.Operation);
+    rpc ImportShell(ImportShellRequest) returns (google.longrunning.Operation);
+    rpc ImportDirectory(ImportDirectoryRequest) returns (google.longrunning.Operation);
+    rpc ImportTde(ImportTdeRequest) returns (google.longrunning.Operation);
+    rpc ExportTde(ExportTdeRequest) returns (google.longrunning.Operation);
+    rpc ExportBak(ExportBakRequest) returns (google.longrunning.Operation);
+    rpc ExportDmp(ExportDmpRequest) returns (google.longrunning.Operation);
+    rpc ExportAvro(ExportAvroRequest) returns (google.longrunning.Operation);
+    rpc ExportSql(ExportSqlRequest) returns (google.longrunning.Operation);
+    rpc ExportShell(ExportShellRequest) returns (google.longrunning.Operation);
+    rpc ExportCsv(ExportCsvRequest) returns (google.longrunning.Operation);
+    rpc ExportTextLines(ExportTextLinesRequest) returns (google.longrunning.Operation);
+    rpc ExportDirectory(ExportDirectoryRequest) returns (google.longrunning.Operation);
+    rpc RestartDatabase(RestartDatabaseRequest) returns (google.longrunning.Operation);
+    rpc ResizeFilesystem(ResizeFilesystemRequest) returns (google.longrunning.Operation);
+    rpc CreateDatabase(CreateDatabaseRequest) returns (google.longrunning.Operation);
+    rpc ListDatabases(ListDatabasesRequest) returns (google.longrunning.Operation);
+    rpc RecoverDatabases(RecoverDatabasesRequest) returns (google.longrunning.Operation);
+    rpc ListExternalSourceObjects(ListExternalSourceObjectsRequest) returns (google.longrunning.Operation);
+    rpc UpdateDatabase(UpdateDatabaseRequest) returns (google.longrunning.Operation);
+    rpc GetDatabase(GetDatabaseRequest) returns (google.longrunning.Operation);
+    rpc DeleteDatabase(DeleteDatabaseRequest) returns (google.longrunning.Operation);
+    rpc UpdateDatabaseFlags(UpdateDatabaseFlagsRequest) returns (google.longrunning.Operation);
+    rpc OSSync(OSSyncRequest) returns (google.longrunning.Operation);
+    rpc SetReplica(SetReplicaRequest) returns (google.longrunning.Operation);
+    rpc PhysicalBackup(PhysicalBackupRequest) returns (google.longrunning.Operation);
+    rpc PhysicalRestore(PhysicalRestoreRequest) returns (google.longrunning.Operation);
+    rpc StartBackup(StartBackupRequest) returns (google.longrunning.Operation);
+    rpc StopBackup(StopBackupRequest) returns (google.longrunning.Operation);
+    rpc BootstrapSsl(BootstrapSslRequest) returns (google.longrunning.Operation);
+    rpc VerifyBackup(VerifyBackupRequest) returns (google.longrunning.Operation);
+    rpc VerifyConsistency(VerifyConsistencyRequest) returns (google.longrunning.Operation);
+    rpc UpdateEnforceSSLPreference(UpdateEnforceSSLPreferenceRequest) returns (google.longrunning.Operation);
+    rpc PromoteReplica(PromoteReplicaRequest) returns (google.longrunning.Operation);
+    rpc StartReplica(StartReplicaRequest) returns (google.longrunning.Operation);
+    rpc StopReplica(StopReplicaRequest) returns (google.longrunning.Operation);
+    rpc DeleteFile(DeleteFileRequest) returns (google.longrunning.Operation);
+    rpc UnitCtl(UnitCtlRequest) returns (google.longrunning.Operation);
+    rpc ShrinkDisk(ShrinkDiskRequest) returns (google.longrunning.Operation);
+    rpc QueryVmState(QueryVmStateRequest) returns (google.longrunning.Operation);
+    rpc PureOSSync(PureOSSyncRequest) returns (google.longrunning.Operation);
+    rpc TruncateLogTables(TruncateLogTablesRequest) returns (google.longrunning.Operation);
+    rpc ExternalMasterImport(ExternalMasterImportRequest) returns (google.longrunning.Operation);
+    rpc ExternalServerParallelImport(ExternalMasterImportRequest) returns (google.longrunning.Operation);
+    rpc ExternalServerPhysicalMigration(ExternalMasterImportRequest) returns (google.longrunning.Operation);
+    rpc VerifyMigrationSettings(VerifyMigrationSettingsRequest) returns (google.longrunning.Operation);
+    rpc Debug(DebugInstanceRequest) returns (google.longrunning.Operation);
+    rpc ExecuteSql(ExecuteSqlRequest) returns (google.longrunning.Operation);
+    rpc PrepareRollout(PrepareRolloutRequest) returns (google.longrunning.Operation);
+    rpc UpgradeCatalog(UpgradeCatalogRequest) returns (google.longrunning.Operation);
+    rpc SetupReplicaLogicalReplication(SetupReplicaLogicalReplicationRequest) returns (google.longrunning.Operation);
+    rpc EnableActiveDirectory(EnableActiveDirectoryRequest) returns (google.longrunning.Operation);
+    rpc QuerySupportedExtensions(QuerySupportedExtensionsRequest) returns (google.longrunning.Operation);
+    rpc DisableActiveDirectory(DisableActiveDirectoryRequest) returns (google.longrunning.Operation);
+    rpc PurgeActiveDirectoryArtifacts(PurgeActiveDirectoryArtifactsRequest) returns (google.longrunning.Operation);
+    rpc UpdateActiveDirectoryAccountPassword(UpdateActiveDirectoryAccountPasswordRequest) returns (google.longrunning.Operation);
+    rpc UpdateActiveDirectory(UpdateActiveDirectoryRequest) returns (google.longrunning.Operation);
+    rpc CreateActiveDirectoryLogin(CreateActiveDirectoryLoginRequest) returns (google.longrunning.Operation);
+    rpc RepairActiveDirectory(RepairActiveDirectoryRequest) returns (google.longrunning.Operation);
+    rpc CreateAvailabilityGroup(CreateAvailabilityGroupRequest) returns (google.longrunning.Operation);
+    rpc DropAvailabilityGroup(DropAvailabilityGroupRequest) returns (google.longrunning.Operation);
+    rpc DropAllAvailabilityGroups(DropAllAvailabilityGroupsRequest) returns (google.longrunning.Operation);
+    rpc CreateSecondaryAvailabilityGroup(CreateSecondaryAvailabilityGroupRequest) returns (google.longrunning.Operation);
+    rpc AddAvailabilityGroupListener(AddAvailabilityGroupListenerRequest) returns (google.longrunning.Operation);
+    rpc CreateDistributedAvailabilityGroup(CreateDistributedAvailabilityGroupRequest) returns (google.longrunning.Operation);
+    rpc JoinDistributedAvailabilityGroup(JoinDistributedAvailabilityGroupRequest) returns (google.longrunning.Operation);
+    rpc RemoveReplicaOnPrimary(RemoveReplicaOnPrimaryRequest) returns (google.longrunning.Operation);
+    rpc RemoveReplicaOnForwarder(RemoveReplicaOnForwarderRequest) returns (google.longrunning.Operation);
+    rpc RemoveForwarder(RemoveForwarderRequest) returns (google.longrunning.Operation);
+    rpc TurnOffHadrInForwarder(TurnOffHadrInForwarderRequest) returns (google.longrunning.Operation);
+    rpc MajorVersionUpgrade(MajorVersionUpgradeRequest) returns (google.longrunning.Operation);
+    rpc MajorVersionUpgradeImageDownload(MajorVersionUpgradeImageDownloadRequest) returns (google.longrunning.Operation);
+    rpc ConnectivityProbe(ConnProbeRequest) returns (ConnProbeResponse);
+    rpc RemoveReplicatedDatabase(RemoveReplicatedDatabaseRequest) returns (google.longrunning.Operation);
+    rpc RecoverAndDeleteDatabase(RecoverAndDeleteDatabaseRequest) returns (google.longrunning.Operation);
+    rpc SetupReplicaCert(SetupReplicaCertRequest) returns (google.longrunning.Operation);
+    rpc EnableAudit(EnableAuditRequest) returns (google.longrunning.Operation);
+    rpc PostSwitchoverPrepInstanceCleanup(PostSwitchoverPrepInstanceCleanupRequest) returns (google.longrunning.Operation);
+    rpc ChangeTimezone(ChangeTimezoneRequest) returns (google.longrunning.Operation);
+    rpc FlushOldDiskLogs(FlushOldDiskLogsRequest) returns (google.longrunning.Operation);
+    rpc PerformPitrRestore(PerformPitrRestoreRequest) returns (google.longrunning.Operation);
+    rpc StartTransactionLogBackup(StartTransactionLogBackupRequest) returns (google.longrunning.Operation);
+    rpc StopTransactionLogBackup(StopTransactionLogBackupRequest) returns (google.longrunning.Operation);
+    rpc PurgeTransactionLogBackup(PurgeTransactionLogBackupRequest) returns (google.longrunning.Operation);
+    rpc PrepareDatabaseSnapshotBackup(PrepareDatabaseSnapshotBackupRequest) returns (google.longrunning.Operation);
+    rpc NotifyDatadiskSnapshotCompletion(NotifyDatadiskSnapshotCompletionRequest) returns (google.longrunning.Operation);
+    rpc GetGCSObjectSize(GetGCSObjectSizeRequest) returns (google.longrunning.Operation);
+    rpc GetGCSObjectsWithPrefix(GetGCSObjectsWithPrefixRequest) returns (google.longrunning.Operation);
+    rpc TakeDatabaseOfflineForPitr(TakeDatabaseOfflineForPitrRequest) returns (google.longrunning.Operation);
+    rpc SetupPitrDatabaseFiles(SetupPitrDatabaseFilesRequest) returns (google.longrunning.Operation);
+    rpc UpdatePitrDatabaseFilesPermission(UpdatePitrDatabaseFilesPermissionRequest) returns (google.longrunning.Operation);
+    rpc UpdateTransactionLogRetention(UpdateTransactionLogRetentionRequest) returns (google.longrunning.Operation);
+    rpc UpdatePitrConfig(UpdatePitrConfigRequest) returns (google.longrunning.Operation);
+    rpc UpgradeReplica(UpgradeReplicaRequest) returns (google.longrunning.Operation);
+    rpc UpdatePitrDatabaseConfig(UpdatePitrDatabaseConfigRequest) returns (google.longrunning.Operation);
+    rpc InstallPitrDatabaseStateUpdatesExtendedEvent(InstallPitrDatabaseStateUpdatesExtendedEventRequest) returns (google.longrunning.Operation);
+    rpc UninstallPitrDatabaseStateUpdatesExtendedEvent(UninstallPitrDatabaseStateUpdatesExtendedEventRequest) returns (google.longrunning.Operation);
+    rpc VerifyBackupLogicalCheck(VerifyBackupLogicalCheckRequest) returns (google.longrunning.Operation);
+    rpc VerifyBackupUndoLogPurge(VerifyBackupUndoLogPurgeRequest) returns (google.longrunning.Operation);
+    rpc ValidateDatabasesForFailover(ValidateDatabasesForFailoverRequest) returns (google.longrunning.Operation);
+    rpc AlterAvailabilityMode(AlterAvailabilityModeRequest) returns (google.longrunning.Operation);
+    rpc ChangeReplicaRole(ChangeReplicaRoleRequest) returns (google.longrunning.Operation);
+    rpc FailoverToReplica(FailoverToReplicaRequest) returns (google.longrunning.Operation);
+    rpc StartFailoverCronJob(StartFailoverCronJobRequest) returns (google.longrunning.Operation);
+    rpc StopFailoverCronJob(StopFailoverCronJobRequest) returns (google.longrunning.Operation);
+    rpc HandleDBCache(HandleDBCacheRequest) returns (google.longrunning.Operation);
+    rpc UpdateReadMode(UpdateReadModeRequest) returns (google.longrunning.Operation);
+    rpc WaitForReplicaToCatchUpWithPrimary(WaitForReplicaToCatchUpWithPrimaryRequest) returns (google.longrunning.Operation);
+    rpc SetHotStandbyMode(SetHotStandbyModeRequest) returns (google.longrunning.Operation);
+    rpc RevertHotStandbyMode(RevertHotStandbyModeRequest) returns (google.longrunning.Operation);
+    rpc ImportUserFiles(ImportUserFilesRequest) returns (google.longrunning.Operation);
+    rpc ExportUserFiles(ExportUserFilesRequest) returns (google.longrunning.Operation);
+    rpc ListUserFiles(ListUserFilesRequest) returns (google.longrunning.Operation);
+    rpc DeleteUserFiles(DeleteUserFilesRequest) returns (google.longrunning.Operation);
+    rpc CompareFileChecksums(CompareFileChecksumsRequest) returns (google.longrunning.Operation);
+    rpc SetupHealthcheckGrpcFirewall(SetupHealthcheckGrpcFirewallRequest) returns (google.longrunning.Operation);
+    rpc VerifyAfterSwitchover(VerifyAfterSwitchoverRequest) returns (google.longrunning.Operation);
+    rpc PrepareDisk(PrepareDiskRequest) returns (google.longrunning.Operation);
+    rpc UpdatePasswordEncryptionConfig(UpdatePasswordEncryptionConfigRequest) returns (google.longrunning.Operation);
+    rpc SwitchoverToShadowVm(SwitchoverToShadowVmRequest) returns (google.longrunning.Operation);
+    rpc ResetVmOnFailure(ResetVmOnFailureRequest) returns (google.longrunning.Operation);
+    rpc CheckMarkerFile(CheckMarkerFileRequest) returns (google.longrunning.Operation);
+    rpc PreparePitrLogs(PreparePitrLogsRequest) returns (google.longrunning.Operation);
+    rpc RejectDbTraffic(RejectDbTrafficRequest) returns (google.longrunning.Operation);
+    rpc UnmountGcsDownloadDisk(UnmountGcsDownloadDiskRequest) returns (google.longrunning.Operation);
+    rpc OverrideHealthcheck(OverrideHealthcheckRequest) returns (google.longrunning.Operation);
+    rpc CleanUpPitrFiles(CleanUpPitrFilesRequest) returns (google.longrunning.Operation);
+    rpc CleanupTunnelResources(CleanupTunnelResourcesRequest) returns (google.longrunning.Operation);
+    rpc DownloadLogsFromGCS(DownloadLogsFromGCSRequest) returns (google.longrunning.Operation);
+    rpc AcquireSsrsLease(AcquireSsrsLeaseRequest) returns (google.longrunning.Operation);
+    rpc ReleaseSsrsLease(ReleaseSsrsLeaseRequest) returns (google.longrunning.Operation);
+    rpc RestoreDatabase(RestoreDatabaseRequest) returns (google.longrunning.Operation);
+    rpc MountBinlogDisk(MountBinlogDiskRequest) returns (google.longrunning.Operation);
+    rpc UnmountBinlogDisk(UnmountBinlogDiskRequest) returns (google.longrunning.Operation);
+    rpc ScanAndArchiveBinlog(ScanAndArchiveBinlogRequest) returns (google.longrunning.Operation);
+    rpc SetRecoveryMode(SetRecoveryModeRequest) returns (google.longrunning.Operation);
+    rpc UpdateReplicationPortBlock(UpdateReplicationPortBlockRequest) returns (google.longrunning.Operation);
+    rpc WaitForPostgresPitrStatus(WaitForPostgresPitrStatusRequest) returns (google.longrunning.Operation);
+    rpc ManageDataDiskReservation(ManageDataDiskReservationRequest) returns (google.longrunning.Operation);
+    rpc FlushBinlogAndWaitPitr(FlushBinlogAndWaitPitrRequest) returns (google.longrunning.Operation);
+    rpc ForceCheckpoint(ForceCheckpointRequest) returns (google.longrunning.Operation);
+    rpc SwitchWalFile(SwitchWalFileRequest) returns (google.longrunning.Operation);
+    rpc UpdateInsightsConfig(UpdateInsightsConfigRequest) returns (google.longrunning.Operation);
+    rpc UpdatePgBouncerConfig(UpdatePgBouncerConfigRequest) returns (google.longrunning.Operation);
+    rpc CheckPgBouncer(CheckPgBouncerRequest) returns (google.longrunning.Operation);
+    rpc UnblockDbTraffic(UnblockDbTrafficRequest) returns (google.longrunning.Operation);
+    rpc WaitWalFileArchivalToGcs(WaitWalFileArchivalToGcsRequest) returns (google.longrunning.Operation);
+    rpc TakeLogBackup(TakeLogBackupRequest) returns (google.longrunning.Operation);
+    rpc CheckZdtEligibility(CheckZdtEligibilityRequest) returns (google.longrunning.Operation);
+    rpc ManageInstancePermissions(ManageInstancePermissionsRequest) returns (google.longrunning.Operation);
+    rpc VerifyReplicationStatus(VerifyReplicationStatusRequest) returns (google.longrunning.Operation);
+}
+
+message CreateUserRequest {
+    UserProto user = 1;
+    string task_id = 2;
+    google.protobuf.Timestamp timestamp = 3;
+    bool include_password_policy = 4;
+}
+
+message UpdateUserRequest {
+    string username = 1;
+    string password = 2;
+    storage.speckle.proto.EncryptedSecret encrypted_password = 3;
+    string task_id = 4;
+    UserProto user = 5;
+    google.protobuf.Timestamp timestamp = 6;
+    bool include_password_policy = 7;
+}
+
+message ListUsersRequest {
+    string task_id = 1;
+    UserProto user = 2;
+    bool include_password_policy = 3;
+}
+
+message DeleteUserRequest {
+    string task_id = 1;
+    UserProto user = 2;
+}
+
+message CheckDatabaseServerRequest {
+    google.protobuf.Duration timeout = 1;
+    bool inaccessible_check = 2;
+    google.protobuf.Duration retry_wait = 3;
+    
+    oneof check_database_details {
+        mysql.MysqlCheckDatabaseServerRequest mysql_check_database_request = 4;
+    }
+}
+
+message CheckProxyRequest {
+    string proxy_address = 1;
+    string proxy_net = 2;
+    google.protobuf.Duration timeout = 3;
+    google.protobuf.Duration retry_wait = 4;
+}
+
+message CheckPgBouncerRequest {
+    string pgbouncer_address = 1;
+    string pgbouncer_net = 2;
+    google.protobuf.Duration timeout = 3;
+    google.protobuf.Duration retry_wait = 4;
+    bool check_proxy_server_path = 5;
+}
+
+message CheckEnvironmentRequest {
+    
+}
+
+message CheckDatabaseNeverStartedRequest {
+    
+}
+
+message CheckDataDiskRequest {
+    google.protobuf.Duration timeout = 1;
+    google.protobuf.Duration retry_wait = 3;
+}
+
+message CheckMajorVersionUpgradeViolationRequest {
+    string current_version = 1;
+    string upgrade_version = 2;
+    bool enable_postgis_check = 3;
+    bool enable_search_path_check = 4;
+    bool enable_event_trigger_check = 5;
+    bool enable_prepared_statement_check = 6;
+    bool enable_unlogged_table_check = 7;
+    bool enable_postgis_deprecated_function_check = 8;
+}
+
+message CheckMajorVersionUpgradeViolationResult {
+    repeated ViolationCheckResult errors = 1;
+    message ViolationCheckResult {
+        Type type = 1;
+        enum Type {
+            UNKNOWN = 0;
+            DEPRECATED_EXTENSION = 1;
+            INVALID_EXTENSION_VERSION = 2;
+            DEPRECATED_FLAG = 3;
+            UNSUPPORTED_EXTENSION = 4;
+        }
+        
+        string detail = 2;
+    }
+}
+
+message ProvisionInstanceRequest {
+    string instance_name = 1;
+}
+
+message StopDatabaseRequest {
+    bool ignore_prep_shutdown = 1 [deprecated = true];
+    string database_type = 2;
+    bool unmount_data_disk = 3;
+    repeated string stop_additional_agents = 4;
+    google.protobuf.Duration timeout = 5;
+    bool check_graceful_shutdown_completed = 6;
+    bool retry_stop_error = 7;
+}
+
+message CheckServiceAgentsRequest {
+    string critical_service_agents_uri = 1;
+    string non_critical_service_agents_uri = 2;
+    string os_image_name = 3;
+    string database_type = 4 [deprecated = true];
+    SsaAgentsUri ssa_agents_uri = 5;
+    string docker_socket = 6;
+    google.protobuf.Duration agent_min_uptime = 7;
+    google.protobuf.Duration health_check_timeout = 8;
+    google.protobuf.Duration check_agent_health_interval = 9;
+}
+
+message CheckServiceAgentsResult {
+    repeated string error = 1;
+}
+
+message DeleteFileRequest {
+    string filepath = 1;
+    repeated string filepaths = 2;
+}
+
+message GetGCSObjectSizeRequest {
+    string gcs_path = 1;
+    string task_id = 2;
+}
+
+message GetGCSObjectSizeResult {
+    int64 size_in_bytes = 1;
+}
+
+message GetGCSObjectsWithPrefixRequest {
+    string gcs_path = 1;
+    string task_id = 2;
+}
+
+message GetGCSObjectsWithPrefixResult {
+    repeated string objects = 1;
+}
+
+message ImportBakResult {
+    int64 bytes_downloaded = 1;
+    float compression_ratio = 2;
+}
+
+message ImportBakRequest {
+    string database_name = 1;
+    string gcs_path = 2;
+    string task_id = 3;
+    
+    EncryptedImportBakOptions encrypted_import_bak_options = 4;
+    message EncryptedImportBakOptions {
+        string cert_path = 1;
+        string pvk_path = 2;
+        string pvk_password = 3;
+        bool keep_encrypted = 4;
+    }
+    
+    string database_container_name = 5;
+    bool striped = 7;
+    bool disable_vdi = 8;
+    bool no_recovery = 9;
+    bool recovery_only = 10;
+    
+    BakType bak_type = 11;
+    enum BakType {
+        UNKNOWN_BAK_TYPE = 0;
+        FULL = 1;
+        DIFF = 2;
+        TLOG = 3;
+    }
+    
+    google.protobuf.Timestamp stop_at = 12;
+    string stop_at_mark = 13;
+    
+    reserved 6;
+}
+
+message ImportTdeRequest {
+    string certificate_path = 1;
+    string private_key_path = 2;
+    string private_key_password = 3;
+    string name = 4;
+}
+
+message ImportTdeResult {
+    int64 bytes_downloaded = 1;
+}
+
+message ExportTdeRequest {
+    string certificate_path = 1;
+    string private_key_path = 2;
+    string private_key_password = 3;
+    string name = 4;
+}
+
+message ExportTdeResult {
+    int64 bytes_downloaded = 1;
+}
+
+message ChangeTimezoneRequest {
+    string timezone = 1;
+}
+
+message WaitForFileRequest {
+    string filepath = 1;
+    google.protobuf.Duration timeout = 2;
+    google.protobuf.Duration retry_wait = 3;
+    
+    WaitType wait_type = 4;
+    enum WaitType {
+        UNKNOWN = 0;
+        CREATION = 1;
+        DELETION = 2;
+    }
+}
+
+message ImportCsvResult {
+    int64 bytes_downloaded = 1;
+}
+
+message ImportCsvRequest {
+    string gcs_path = 1;
+    string database_name = 2;
+    string table = 3;
+    repeated string columns = 4;
+    string import_user = 5;
+    bool empty_string_quoted = 6;
+}
+
+message ImportDmpRequest {
+    string gcs_path = 1;
+    string database_name = 2;
+}
+
+message ImportSqlRequest {
+    string database_name = 1;
+    string gcs_path = 2;
+    string task_id = 3;
+    repeated string flags = 4;
+    string gcs_output_path = 5;
+    
+    ImportSqlOptions import_sql_options = 6;
+    message ImportSqlOptions {
+        bool abort_on_error = 1;
+    }
+}
+
+message ImportSqlResult {
+    int64 bytes_downloaded = 1;
+}
+
+message ImportShellRequest {
+    string gcs_path = 1;
+    int32 thread_number = 2;
+    string database_name = 3;
+    bool set_net_timeout = 8;
+}
+
+message ImportShellResult {
+    int64 bytes_downloaded = 1;
+}
+
+message ImportDirectoryRequest {
+    string gcs_path = 1;
+    int32 jobs = 2;
+    string database_name = 3;
+    string import_user = 4;
+    
+    oneof _pg_sql_clean {
+        bool pg_sql_clean = 5;
+    }
+    
+    oneof _pg_sql_if_exists {
+        bool pg_sql_if_exists = 6;
+    }
+}
+
+message ImportDirectoryResult {
+    int64 bytes_downloaded = 1;
+}
+
+message ExportBakResult {
+    int64 bytes_uploaded = 1;
+    float compression_ratio = 2;
+}
+
+message ExportBakRequest {
+    string database_name = 1;
+    string gcs_path = 2;
+    string task_id = 3;
+    bool striped = 5;
+    int32 stripe_count = 6;
+    bool disable_vdi = 8;
+    string database_container_name = 9;
+    
+    BakType bak_type = 10;
+    enum BakType {
+        UNKNOWN_BAK_TYPE = 0;
+        FULL = 1;
+        DIFF = 2;
+    }
+    
+    bool copy_only = 11;
+    
+    reserved 4;
+}
+
+message ExportAvroRequest {
+    string database_name = 1;
+    string gcs_path = 2;
+    string table = 3;
+}
+
+message ExportShellRequest {
+    string gcs_path = 1;
+    int32 thread_number = 2;
+    repeated string databases = 3;
+    repeated string tables = 4;
+    bool schema_only = 5;
+    bool upload_files_during_dump = 6;
+    google.protobuf.BoolValue reduce_lock_time = 7;
+}
+
+message ExportShellResult {
+    int64 bytes_uploaded = 1;
+}
+
+message ExportDirectoryRequest {
+    string gcs_path = 1;
+    int32 jobs = 2;
+    string database_name = 3;
+    string table_pattern = 4;
+    bool schema_only = 5;
+    bool large_objects_as_table = 7;
+    bool upload_files_during_dump = 6;
+}
+
+message ExportDirectoryResult {
+    int64 bytes_uploaded = 1;
+}
+
+message ExportCsvRequest {
+    string gcs_path = 1;
+    string select_query = 2;
+    string database = 3;
+    bool export_offload_enabled = 4;
+}
+
+message ExportCsvResult {
+    int64 bytes_uploaded = 1;
+}
+
+message ExportTextLinesRequest {
+    string gcs_path = 1;
+    string select_query = 2;
+    string database = 3;
+}
+
+message ExportTextLinesResult {
+    int64 bytes_uploaded = 1;
+}
+
+message ExportSqlRequest {
+    string gcs_path = 1;
+    repeated string flags = 2;
+    int32 seek_buffer_size = 3;
+}
+
+message ExportSqlResult {
+    int64 bytes_uploaded = 1;
+}
+
+message ExportDmpRequest {
+    string database_name = 1;
+    string gcs_path = 2;
+    repeated string schemas = 3;
+    repeated string tables = 4;
+}
+
+message RecoverDatabasesRequest {
+    repeated string databases = 1;
+}
+
+message RecoverDatabasesResult {
+    int64 bytes_recovered = 11;
+    
+    repeated RecoverDatabaseResult result = 2;
+    message RecoverDatabaseResult {
+        string database = 1;
+        bool succeed = 2;
+        
+        oneof _error_message {
+            string error_message = 3;
+        }
+    }
+}
+
+message DebugInstanceRequest {
+    Action action = 1;
+    enum Action {
+        UNKNOWN_ACTION = 0;
+        SHOW_SLAVE_STATUS = 1;
+        SHOW_MASTER_STATUS = 2;
+        SHOW_GLOBAL_VARIABLES = 3;
+        DOCKER_STATUS = 4;
+        SHELL_COMMAND = 5;
+        DB_QUERY = 6;
+        SHOW_COS_VERSION = 7;
+        SHOW_VM_PARAMETERS = 8;
+        SHOW_GCE_METADATA = 9;
+        DB_CONTAINER_COMMAND = 10;
+        UNITCTL_COMMAND = 11;
+        DB_SHELL_COMMAND = 12;
+        MENDEL_FLAG_VALUE = 13;
+        DP_PATCHER_CONFIG = 14;
+        DISABLE_DP_PATCH = 15;
+        ENABLE_DP_PATCH = 16;
+        DP_PATCHER_FILE = 17;
+        DP_EXPERIMENT_SNAPSHOT_DATA = 18;
+    }
+    
+    repeated string command = 2;
+    bool ignore_command_error = 3;
+    string docker_host = 4;
+    string database_type = 5;
+    string gce_metadata_path = 6;
+    bool show_docker_stats = 7;
+    UnitCtlRequest unit_command = 8;
+    string db_login = 9;
+    repeated MendelFlagEvalRequest mendel_flag_eval = 10;
+    string patch_name = 11;
+    int32 patch_version = 12;
+}
+
+message MendelFlagEvalRequest {
+    string mendel_flag = 1;
+    MendelFlagType flag_type = 2;
+}
+
+message MendelFlagEvalResponse {
+    string mendel_flag = 1;
+    MendelFlagType flag_type = 2;
+    
+    oneof _error {
+        string error = 3;
+    }
+    
+    oneof _value {
+        string value = 4;
+    }
+}
+
+message DPPatcherResponse {
+    repeated storage.speckle.dataplane.dppatcher.ActionRecord action_records = 2;
+    
+    oneof _action_state_config {
+        storage.speckle.dataplane.dppatcher.ActionStateConfig action_state_config = 1;
+    }
+    
+    oneof _patch_action_response {
+        string patch_action_response = 3;
+    }
+}
+
+message DPExperimentSnapshotDataResponse {
+    oneof _mendel_push {
+        bytes mendel_push = 1;
+    }
+}
+
+message ExecuteSqlRequest {
+    string task_id = 1;
+    string database_name = 2;
+    string sql_statement = 3;
+    string user = 4;
+    google.protobuf.Timestamp timestamp = 9;
+    
+    oneof _encrypted_password {
+        storage.speckle.proto.EncryptedSecret encrypted_password = 5;
+    }
+    
+    oneof _encrypted_access_token {
+        storage.speckle.proto.EncryptedSecret encrypted_access_token = 6;
+    }
+    
+    oneof _encrypted_euc {
+        storage.speckle.proto.EncryptedSecret encrypted_euc = 12;
+    }
+    
+    oneof _output_format {
+        OutputFormat output_format = 7;
+    }
+    
+    oneof _row_limit {
+        int64 row_limit = 8;
+    }
+    
+    oneof _timeout {
+        google.protobuf.Duration timeout = 10;
+    }
+    
+    oneof _max_response_size_bytes {
+        int64 max_response_size_bytes = 11;
+    }
+    
+    enum OutputFormat {
+        OUTPUT_FORMAT_UNSPECIFIED = 0;
+        JSON = 1;
+    }
+}
+
+message ExecuteSqlResult {
+    repeated Column columns = 1;
+    repeated Row rows = 2;
+    repeated QueryResult results = 7;
+    
+    oneof _message {
+        string message = 3;
+    }
+    
+    oneof _partial_result {
+        bool partial_result = 4;
+    }
+    
+    oneof _formatted_rows {
+        string formatted_rows = 5;
+    }
+    
+    oneof _metadata {
+        Metadata metadata = 6;
+    }
+    
+    oneof _response_size_bytes {
+        int64 response_size_bytes = 8;
+    }
+}
+
+message QueryResult {
+    repeated Column columns = 1;
+    repeated Row rows = 2;
+    
+    oneof _message {
+        string message = 3;
+    }
+    
+    oneof _partial_result {
+        bool partial_result = 4;
+    }
+}
+
+message Column {
+    string name = 1;
+    string type = 2;
+}
+
+message Row {
+    repeated Value values = 1;
+}
+
+message Value {
+    oneof _value {
+        string value = 1;
+    }
+    
+    oneof _null_value {
+        bool null_value = 2;
+    }
+}
+
+message Metadata {
+    oneof _sql_statement_execution_time {
+        google.protobuf.Duration sql_statement_execution_time = 1;
+    }
+}
+
+message DebugInstanceResult {
+    repeated ContainerInfo container_info = 3;
+    message ContainerInfo {
+        string name = 1;
+        repeated string cmd = 2;
+        string image = 3;
+        map<string, string> labels = 4;
+        int64 cpu_usage = 5;
+        int64 memory_usage = 6;
+        int64 memory_limit = 7;
+        int64 swap_usage = 10;
+        string started_at = 12;
+        
+        reserved 8, 9, 11;
+    }
+    
+    repeated ShellCommandResult shell_command_result = 6;
+    message ShellCommandResult {
+        string stdout = 1;
+        string stderr = 2;
+        int32 exit_code = 3;
+    }
+    
+    repeated DbQueryResult db_query_result = 7;
+    message DbQueryResult {
+        repeated google.protobuf.Struct rows = 1;
+        string error = 2;
+    }
+    
+    CosVersionResult cos_version_result = 8;
+    message CosVersionResult {
+        string cos_version = 1;
+    }
+    
+    VmParametersResult vm_parameters_result = 9;
+    message VmParametersResult {
+        VmParametersProto vm_parameters = 1;
+    }
+    
+    GceMetadataResult gce_metadata_result = 10;
+    message GceMetadataResult {
+        string value = 1;
+    }
+    
+    repeated MendelFlagEvalResponse mendel_flag_eval_response = 11;
+    DPPatcherResponse dp_patcher_response = 12;
+    DPExperimentSnapshotDataResponse dp_experiment_snapshot_data_response = 13;
+    
+    reserved 1, 2, 4, 5;
+}
+
+message RestartDatabaseRequest {
+    bool drain_connections = 1;
+    google.protobuf.Duration timeout = 2;
+}
+
+message UpdateEnforceSSLPreferenceRequest {
+    bool enforce_ssl_preference = 1;
+    string base_dir = 2;
+    SslMode ssl_mode = 3;
+}
+
+message ResizeFilesystemRequest {
+    
+}
+
+message PasswordValidationUserPolicy {
+    oneof _allowed_failed_attempts {
+        int32 allowed_failed_attempts = 1;
+    }
+    
+    oneof _password_expiration_duration {
+        google.protobuf.Duration password_expiration_duration = 2;
+    }
+    
+    oneof _enable_failed_attempts_check {
+        bool enable_failed_attempts_check = 3;
+    }
+    
+    oneof _status {
+        PasswordStatus status = 4;
+    }
+    
+    oneof _enable_password_verification {
+        bool enable_password_verification = 5;
+    }
+    
+    reserved 6;
+}
+
+message PasswordStatus {
+    oneof _locked {
+        bool locked = 1;
+    }
+    
+    oneof _password_expiration_time {
+        google.protobuf.Timestamp password_expiration_time = 2;
+    }
+}
+
+message UserProto {
+    string name = 1;
+    string host = 2;
+    string password = 3;
+    storage.speckle.proto.EncryptedSecret encrypted_password = 4;
+    
+    Type type = 7;
+    enum Type {
+        DEFAULT = 0;
+        CLOUD_IAM_USER = 1;
+        CLOUD_IAM_SERVICE_ACCOUNT = 2;
+        CLOUD_IAM_GROUP = 3;
+        CLOUD_IAM_GROUP_USER = 4;
+        CLOUD_IAM_GROUP_SERVICE_ACCOUNT = 5;
+    }
+    
+    string asstring = 8;
+    PasswordValidationUserPolicy password_policy = 9;
+    
+    oneof user_details {
+        mysql.MysqlUserProto mysql_user_proto = 5;
+        sqlserver.SqlServerUserProto sqlserver_user_proto = 6;
+    }
+    
+    oneof _dual_password_type {
+        DualPasswordType dual_password_type = 10;
+    }
+    
+    enum DualPasswordType {
+        DUAL_PASSWORD_TYPE_UNSPECIFIED = 0;
+        NO_MODIFY_DUAL_PASSWORD = 1;
+        NO_DUAL_PASSWORD = 2;
+        DUAL_PASSWORD = 3;
+    }
+}
+
+message ListUsersResult {
+    repeated UserProto users = 1;
+}
+
+message DatabaseProto {
+    string name = 1;
+    string charset = 2;
+    string collation = 3;
+    
+    oneof database_details {
+        sqlserver.SqlServerDatabaseProto sqlserver_database_proto = 4;
+    }
+}
+
+message ListDatabasesRequest {
+    string task_id = 1;
+}
+
+message ListDatabasesResult {
+    repeated DatabaseProto databases = 1;
+}
+
+message ListExternalSourceObjectsRequest {
+    ObjectType object_type = 1;
+    enum ObjectType {
+        UNKNOWN = 0;
+        DATABASE = 1;
+    }
+    
+    string external_source_user = 2;
+    string external_source_password = 3;
+    string external_source_host = 4;
+    int32 external_source_port = 5;
+    bool ssl = 6;
+    bool ssl_client_auth = 7;
+    bool ssl_mode_fallback_enabled = 8;
+    SslOption ssl_option = 9;
+}
+
+message DatabaseObjects {
+    string database = 1;
+    repeated string tables = 3;
+    
+    oneof _schema {
+        string schema = 2;
+    }
+}
+
+message ListExternalSourceObjectsResult {
+    repeated DatabaseObjects objects = 1;
+}
+
+message UpdateDatabaseRequest {
+    DatabaseProto database = 1;
+}
+
+message GetDatabaseRequest {
+    DatabaseProto database = 1;
+}
+
+message GetDatabaseResult {
+    DatabaseProto database = 1;
+}
+
+message CreateDatabaseRequest {
+    DatabaseProto database = 1;
+    string task_id = 2;
+}
+
+message DeleteDatabaseRequest {
+    string task_id = 1;
+    DatabaseProto database = 2;
+}
+
+message AuditRuleProto {
+    string id = 1;
+    string username = 2;
+    string db = 3;
+    string object = 4;
+    string operation = 5;
+    string op_result = 6;
+}
+
+message UpdateDatabaseFlagsRequest {
+    string dynamic_flags = 1;
+    string removed_dynamic_flags = 2;
+    string removed_flags = 3;
+    string flags = 4;
+    bool enforce_safety_checks = 6;
+    string dir = 5 [deprecated = true];
+    bool skip_dynamic_flags = 7;
+    bool skip_derived_flags_validation = 8;
+    int32 skip_dynamic_flags_retries = 9;
+    repeated string dynamic_flags_v2 = 10;
+    repeated string removed_dynamic_flags_v2 = 11;
+    repeated string removed_flags_v2 = 12;
+    map<string, google.protobuf.ListValue> flags_v2 = 13;
+}
+
+message OSSyncRequest {
+    
+}
+
+message PureOSSyncRequest {
+    
+}
+
+message SetReplicaRequest {
+    string master_ip = 1 [deprecated = true];
+    int32 master_port = 2;
+    string master_user = 3;
+    string master_host = 6;
+    string master_password = 7;
+    storage.speckle.proto.EncryptedSecret encrypted_password = 8;
+    bool master_on_premises = 9;
+    bool ssl = 10;
+    bool ssl_client_auth = 11;
+    bool prepare_only = 12;
+    bool wait_master = 13;
+    google.protobuf.Duration wait_master_timeout = 14;
+    
+    Action action = 16;
+    enum Action {
+        UNKNOWN = 0;
+        SETUP_ALL = 1;
+        SETUP_CONF_ONLY = 2;
+        SETUP_MASTER_PARAMS_ONLY = 3;
+    }
+    
+    string primary_dns_name = 17;
+    SSLSetting ssl_mode = 18 [deprecated = true];
+    SslOption ssl_option = 19;
+    
+    oneof set_replica_details {
+        mysql.MysqlSetReplicaRequest mysql_set_replica_request = 4;
+        postgres.PostgresSetReplicaRequest postgres_set_replica_request = 5;
+        sqlserver.SqlServerSetReplicaRequest sqlserver_set_replica_request = 15;
+    }
+}
+
+message PhysicalBackupRequest {
+    string gcs_path = 1;
+}
+
+message PhysicalRestoreRequest {
+    string gcs_path = 1;
+}
+
+message SetupReplicaLogicalReplicationRequest {
+    string master_user = 1;
+    string master_password = 2;
+    storage.speckle.proto.EncryptedSecret encrypted_master_password = 9;
+    string master_host = 3;
+    int32 master_port = 4;
+    bool ssl = 5;
+    bool ssl_client_auth = 6;
+    
+    Action action = 7;
+    enum Action {
+        UNKNOWN = 0;
+        SETUP = 1;
+        DELETE = 2;
+        ALTER = 3;
+        RESTART = 4;
+        MODIFY = 5;
+    }
+    
+    string replica_host = 10;
+    int32 replica_port = 11;
+    string replica_user = 12;
+    string replica_password = 13;
+    storage.speckle.proto.EncryptedSecret encrypted_replica_password = 14;
+    google.protobuf.Timestamp timestamp = 15;
+    bool enable_nonpk_migration = 16;
+    bool initial_sync_defer_constaints_minimum_wal = 17;
+    bool lro_wait_for_initial_sync_complete = 18;
+    bool skip_unsupported_extensions = 19;
+    bool enable_multiple_subscriptions = 20;
+    string subscription_parallel_level = 21;
+    bool support_edb_migration = 22;
+    bool support_all_postgis_extensions = 23;
+    int32 max_subscription_count = 24;
+    bool disallow_replica_existing_data = 25 [deprecated = true];
+    bool enable_jobs_parameter_for_pg_restore = 26;
+    bool skip_pgcron_extension = 27;
+    bool enable_local_sync_status_check = 28;
+    bool enable_drop_database_with_force = 29;
+    SSLSetting ssl_mode = 30 [deprecated = true];
+    repeated SelectedObject selected_objects = 31;
+    bool enable_selective_db_migration = 32;
+    SslOption ssl_option = 33;
+    bool existing_data_ownership_check = 34;
+    bool enable_update_subscriber_node_dsn = 35;
+}
+
+message SetupReplicaLogicalReplicationResult {
+    ExternalServerMetricData metrics = 1;
+}
+
+message ExternalServerMetricData {
+    map<string, google.protobuf.Duration> syncphase_time = 2;
+    repeated DbInfo largest_databases = 6;
+    
+    oneof _all_db_size_bytes {
+        int64 all_db_size_bytes = 1;
+    }
+    
+    oneof _table_count {
+        int32 table_count = 3;
+    }
+    
+    oneof _used_temp_disk_size_bytes {
+        int64 used_temp_disk_size_bytes = 4;
+    }
+    
+    oneof _database_count {
+        int32 database_count = 5;
+    }
+    
+    oneof _largest_database_size {
+        int64 largest_database_size = 7;
+    }
+    
+    oneof _subscription_parallel_level {
+        string subscription_parallel_level = 8;
+    }
+    
+    oneof _largest_subscription_size {
+        int64 largest_subscription_size = 9;
+    }
+    
+    oneof _total_subscriptions_used {
+        int32 total_subscriptions_used = 10;
+    }
+    
+    oneof _migration_type {
+        string migration_type = 11;
+    }
+    
+    oneof _gcs_downloaded_bytes {
+        int64 gcs_downloaded_bytes = 12;
+    }
+    
+    oneof _unsupported_extensions_skipped {
+        bool unsupported_extensions_skipped = 13;
+    }
+}
+
+message DbInfo {
+    string database_name = 1;
+    int64 database_size = 2;
+}
+
+message StartBackupRequest {
+    
+}
+
+message StopBackupRequest {
+    bool do_not_wait_for_archive = 1;
+}
+
+message BootstrapSslRequest {
+    string server_cert_base64 = 1;
+    string server_pkey_base64 = 2;
+    string signing_sa_cert_base64 = 3;
+    string server_ca_base64 = 4;
+    string replica_cert_base64 = 7;
+    string replica_pkey_base64 = 8;
+    string master_server_ca_base64 = 9;
+    
+    SSLMethod ssl_method = 10;
+    enum SSLMethod {
+        DEFAULT_PROXY = 0;
+        WALLET = 1;
+    }
+    
+    bool should_reload_conf = 11;
+    bool force_require_x509 = 12;
+    CaMode server_ca_mode = 35;
+    
+    reserved 5, 6;
+}
+
+message VerifyBackupRequest {
+    string instance_name = 1;
+    string backup_id = 2;
+    bool pg_verifychecksum_parallel = 3;
+    bool mysql_verifychecksum_handle_space_in_tablename = 4;
+    bool mysql_verifychecksum_parallel = 5;
+}
+
+message VerifyBackupResult {
+    int64 status_code = 1;
+    bool is_db_running = 2;
+}
+
+message VerifyBackupLogicalCheckRequest {
+    string instance_name = 1;
+    string backup_id = 2;
+    bool should_check_unique_key = 3;
+    bool should_do_amcheck = 4;
+    bool should_check_foreign_key = 5;
+}
+
+message HandleDBCacheRequest {
+    string task_id = 1;
+    
+    Action action = 2;
+    enum Action {
+        UNKNOWN = 0;
+        PRE_BACKUP = 1;
+        POST_BACKUP = 2;
+        PRE_RESTORE = 3;
+        POST_RESTORE = 4;
+        CLONE = 5;
+    }
+}
+
+message VerifyBackupLogicalCheckResult {
+    int64 status_code = 1;
+    int32 num_cores = 13;
+    
+    AmCheckResult amcheck_result = 14;
+    message AmCheckResult {
+        oneof _done {
+            bool done = 1 [deprecated = true];
+        }
+        
+        oneof _status_code {
+            int64 status_code = 2;
+        }
+        
+        oneof _error_msg {
+            string error_msg = 3;
+        }
+        
+        oneof _command {
+            string command = 4;
+        }
+        
+        oneof _resource_usage {
+            LogicalCheckResourceUsage resource_usage = 5;
+        }
+        
+        oneof _enabled {
+            bool enabled = 6;
+        }
+    }
+    
+    UniqueKeyCheckResult unique_key_check_result = 15;
+    message UniqueKeyCheckResult {
+        oneof _done {
+            bool done = 1 [deprecated = true];
+        }
+        
+        oneof _status_code {
+            int64 status_code = 2;
+        }
+        
+        oneof _error_msg {
+            string error_msg = 3;
+        }
+        
+        oneof _resource_usage {
+            LogicalCheckResourceUsage resource_usage = 4;
+        }
+        
+        oneof _enabled {
+            bool enabled = 5;
+        }
+    }
+    
+    repeated LogicalCheckResult logical_check_results = 16;
+    message LogicalCheckResult {
+        string name = 1;
+        
+        CheckStatus status = 2;
+        enum CheckStatus {
+            NOT_RUN = 0;
+            PASSED = 1;
+            FAILED = 2;
+            ABORTED = 3;
+        }
+        
+        bool is_dry_run = 3;
+        
+        oneof _error_msg {
+            string error_msg = 4;
+        }
+        
+        oneof _command {
+            string command = 5;
+        }
+        
+        oneof _version {
+            string version = 6;
+        }
+        
+        oneof _resource_usage {
+            LogicalCheckResourceUsage resource_usage = 7;
+        }
+        
+        oneof _detailed_report {
+            google.protobuf.Any detailed_report = 8;
+        }
+        
+        oneof _duration_ms {
+            int64 duration_ms = 9;
+        }
+        
+        oneof _start_time_ms {
+            int64 start_time_ms = 10;
+        }
+    }
+    
+    CheckSummary check_summary = 17;
+    message CheckSummary {
+        CheckStatus status = 1;
+        enum CheckStatus {
+            UNKNOWN = 0;
+            PASSED = 1;
+            FAILED = 2;
+            ABORTED = 3;
+            PASSED_WITH_NON_CRITICAL_CHECK_FAILURES = 4;
+            PASSED_WITH_NON_CRITICAL_CHECK_UNFINISHED = 5;
+        }
+        
+        oneof _failure_detail {
+            string failure_detail = 2;
+        }
+    }
+    
+    reserved 2 to 12;
+    
+    message LogicalCheckResourceUsage {
+        int64 sys_cpu_usage = 1;
+        int64 user_cpu_usage = 2;
+        int64 mem_usage = 3;
+        int64 mem_limit = 4;
+        int64 disk_read_io = 5;
+        int64 disk_write_io = 6;
+        int64 disk_read_bytes = 7;
+        int64 disk_write_bytes = 8;
+        int64 disk_usage_bytes = 9;
+        int64 largest_table_size_bytes = 10;
+    }
+}
+
+message VerifyBackupUndoLogPurgeRequest {
+    string instance_name = 1;
+    string backup_id = 2;
+}
+
+message VerifyBackupUndoLogPurgeResult {
+    oneof _status {
+        UndoLogPurgeStatus status = 1;
+    }
+    
+    oneof _error_msg {
+        string error_msg = 2;
+    }
+    
+    enum UndoLogPurgeStatus {
+        UNKNOWN = 0;
+        SUCCESS = 1;
+        CORRUPTION = 2;
+        FAILURE = 3;
+        TIMEOUT = 4;
+    }
+}
+
+message VerifyConsistencyRequest {
+    repeated string metadata_acls = 1;
+    repeated string database_flags = 2;
+    string database_type = 3;
+    string bin_path = 4 [deprecated = true];
+    string client_ca_cert = 5;
+    string replica_ca_cert = 6;
+    string force_require_x_509 = 7;
+    SslMode ssl_mode = 16;
+    string base_dir = 8;
+    repeated string slot_names = 9;
+    string master_server_ca_slave_copy = 10;
+    string replica_cert_slave_copy = 11;
+    string bucket_name = 12;
+    google.protobuf.Duration retention_interval = 13;
+    google.protobuf.Duration upload_interval = 14;
+    string timezone = 15;
+    int32 threads_per_core = 17;
+}
+
+message VerificationResult {
+    Action action = 1;
+    enum Action {
+        UNKNOWN_ACTION = 0;
+        IPTABLES_COMMAND = 1;
+        IPTABLES_FILE = 2;
+        DATABASE_FLAGS = 3;
+        CLIENT_CA_CERT = 4;
+        FORCE_X_509 = 5;
+        REPLICATION_SLOT = 6;
+        MASTER_SERVER_CA_SLAVE_COPY = 7;
+        REPLICA_CERT_SLAVE_COPY = 8;
+        SQLSERVER_AUDIT_CONFIG = 9;
+        TIMEZONE = 10;
+        SMT = 11;
+        INSTANCE_BASELINE_STATE = 12;
+        SQLSERVER_XEVENTS_CONFIG = 13;
+    }
+    
+    string diff = 2;
+    bool inconsistency = 3;
+}
+
+message VerifyConsistencyResult {
+    repeated VerificationResult result = 1;
+}
+
+message CompareFileChecksumsRequest {
+    string source_directory = 1;
+    string target_directory = 2;
+    repeated string ignore_paths = 3;
+    string checksum_dump_path = 4;
+}
+
+message CompareFileChecksumsResult {
+    bool checksums_match = 1;
+}
+
+message VerifyAfterSwitchoverRequest {
+    string last_change_id = 1;
+    string last_file_name = 2;
+}
+
+message SetupHealthcheckGrpcFirewallRequest {
+    string task_id = 1;
+    
+    Action action = 2;
+    enum Action {
+        ACTION_UNSPECIFIED = 0;
+        ENABLE = 1;
+        DISABLE = 2;
+    }
+    
+    string other_vm_ip = 3;
+}
+
+message StartReplicaRequest {
+    oneof start_replica_details {
+        mysql.MysqlStartReplicaRequest mysql_start_replica_request = 1;
+        postgres.PostgresStartReplicaRequest postgres_start_replica_request = 2;
+        sqlserver.SQLServerStartReplicaRequest sqlserver_start_replica_request = 3;
+    }
+}
+
+message StopReplicaRequest {
+    oneof stop_replica_details {
+        mysql.MysqlStopReplicaRequest mysql_stop_replica_request = 1;
+        postgres.PostgresStopReplicaRequest postgres_stop_replica_request = 2;
+        sqlserver.SQLServerStopReplicaRequest sqlserver_stop_replica_request = 3;
+    }
+}
+
+message ReplicaCtlResult {
+    repeated ExternalMasterInfo errors = 1;
+    repeated ExternalMasterInfo infos = 2;
+}
+
+message PromoteReplicaRequest {
+    oneof promote_replica_details {
+        mysql.MysqlPromoteReplicaRequest mysql_promote_replica_request = 1;
+        postgres.PostgresPromoteReplicaRequest postgres_promote_replica_request = 2;
+        oracle.OraclePromoteReplicaRequest oracle_promote_replica_request = 3;
+        sqlserver.SqlServerPromoteReplicaRequest sqlserver_promote_replica_request = 4;
+    }
+}
+
+message UpgradeReplicaRequest {
+    oneof upgrade_replica_details {
+        mysql.MysqlUpgradeReplicaRequest mysql_upgrade_replica_request = 1;
+    }
+}
+
+message UnitCtlRequest {
+    UnitCtlCmd command = 1;
+    enum UnitCtlCmd {
+        UNKNOWN_CMD = 0;
+        TRY_RESTART = 1;
+        RESTART = 2;
+        START = 3;
+        STOP = 4;
+        PAUSE = 5;
+        UNPAUSE = 6;
+    }
+    
+    string unit = 2;
+    bool ignore_error = 3;
+    int32 docker_cmd_timeout_secs = 4;
+}
+
+message ShrinkDiskRequest {
+    string dest_device = 1;
+    string dest_mount = 2;
+    string docker_sock = 3;
+}
+
+message QueryVmStateRequest {
+    string query = 1;
+}
+
+message DiskUsageQueryResult {
+    int64 block_size_gb = 1;
+    int64 total_bytes = 2;
+    int64 free_bytes = 3;
+    int64 available_bytes = 4;
+}
+
+message FilesystemQueryResult {
+    map<string, bool> filesystem_features = 1;
+    int64 block_size = 2;
+    int64 cluster_size = 3;
+}
+
+message OperatingSystemQueryResult {
+    string image_name = 1;
+}
+
+message FileCountResult {
+    int64 database_file_count = 1;
+}
+
+message QueryVmStateResult {
+    DiskUsageQueryResult disk_usage = 1;
+    FilesystemQueryResult filesystem_metadata = 2;
+    OperatingSystemQueryResult operating_system_metadata = 3;
+    FileCountResult file_count_result = 4;
+}
+
+message StorageShrinkConfig {
+    int64 min_target_size = 1;
+    int64 estimate_downtime_min = 2;
+    int64 estimate_downtime_upperbound_min = 3;
+}
+
+message DBErrorCode {
+    oneof error_code {
+        uint32 mysql_error_code = 1;
+        string postgres_error_code = 2;
+    }
+}
+
+message TruncateLogTablesRequest {
+    LogType log_type = 1;
+    enum LogType {
+        UNKNOWN_TABLE = 0;
+        SLOW_LOG = 1;
+        GENERAL_LOG = 2;
+    }
+}
+
+message StartBackupResult {
+    oneof start_backup_details {
+        postgres.PostgresStartBackupResult postgres_start_backup_result = 1;
+    }
+}
+
+message StopBackupResult {
+    oneof stop_backup_details {
+        postgres.PostgresStopBackupResult postgres_stop_backup_result = 1;
+    }
+}
+
+message RestoreDatabaseRequest {
+    
+}
+
+message ExternalMasterImportRequest {
+    string gcs_path = 1;
+    repeated string flags = 2;
+    string master_host = 3;
+    int32 master_port = 4;
+    string master_user = 5;
+    string master_password = 6;
+    bool ssl = 7;
+    bool ssl_client_auth = 8;
+    string migration_mode = 9;
+    google.protobuf.Duration timeout = 10;
+    string master_database = 11;
+    storage.speckle.proto.EncryptedSecret encrypted_master_password = 12;
+    google.protobuf.Timestamp timestamp = 13;
+    repeated string dump_flags = 14;
+    string sync_parallel_level = 15;
+    bool enable_temporary_disk = 17;
+    bool password_in_command_line = 19;
+    bool reduce_dump_retry_times = 21;
+    bool disallow_replica_existing_data = 22 [deprecated = true];
+    bool parallel_sync_set_net_timeout = 23;
+    bool parallel_load_skip_defer_table_indexes = 24;
+    bool parallel_load_skip_load_indexes = 25;
+    int32 parallel_load_threads = 26;
+    int32 parallel_dump_threads = 27;
+    bool sync_without_retry = 28;
+    bool connect_using_mysql_protocol = 29;
+    string default_character_set = 30;
+    bool reduce_lock_time = 31;
+    bool disable_redo_log = 32;
+    SSLSetting ssl_mode = 33 [deprecated = true];
+    SslOption ssl_option = 34;
+    bool reset_master_for_retry = 35;
+    
+    oneof _lock_wait_time {
+        google.protobuf.Duration lock_wait_time = 16;
+    }
+    
+    oneof _dump_wait_time {
+        google.protobuf.Duration dump_wait_time = 18;
+    }
+    
+    oneof _migration_type {
+        string migration_type = 20;
+    }
+}
+
+message ExternalServerImportResult {
+    ExternalServerMetricData metrics = 1;
+    
+    oneof _migration_method {
+        MigrationMethod migration_method = 2;
+    }
+    
+    oneof _parallel_import_error {
+        string parallel_import_error = 3;
+    }
+    
+    oneof _parallel_import_attempts {
+        uint32 parallel_import_attempts = 4;
+    }
+    
+    oneof _mysqldump_import_attempts {
+        uint32 mysqldump_import_attempts = 5;
+    }
+    
+    enum MigrationMethod {
+        MIGRATION_METHOD_UNSPECIFIED = 0;
+        MYSQLDUMP = 1;
+        MYSQLSHELL = 2;
+    }
+}
+
+message ExternalMasterInfo {
+    Type type = 1;
+    enum Type {
+        UNKNOWN = 0;
+        CONNECTION_FAILURE = 1;
+        BINLOG_NOT_ENABLED = 2;
+        INCOMPATIBLE_DATABASE_VERSION = 3;
+        REPLICA_ALREADY_SETUP = 4;
+        INSUFFICIENT_PRIVILEGE = 5;
+        UNSUPPORTED_MIGRATION_TYPE = 6;
+        NO_PGLOGICAL_INSTALLED = 7;
+        PGLOGICAL_NODE_ALREADY_EXISTS = 8;
+        INVALID_WAL_LEVEL = 9;
+        INVALID_SHARED_PRELOAD_LIBRARY = 10;
+        INSUFFICIENT_MAX_REPLICATION_SLOTS = 11;
+        INSUFFICIENT_MAX_WAL_SENDERS = 12;
+        INSUFFICIENT_MAX_WORKER_PROCESSES = 13;
+        UNSUPPORTED_EXTENSIONS = 14;
+        INVALID_RDS_LOGICAL_REPLICATION = 15;
+        UNSUPPORTED_TABLE_DEFINITION = 19;
+        UNSUPPORTED_DEFINER = 20;
+        INCOMPLETE_INITIAL_SYNC = 30;
+        UNSUPPORTED_DATABASE_STATE = 35;
+        INVALID_LOGGING_SETUP = 16;
+        INVALID_DB_PARAM = 17;
+        UNSUPPORTED_GTID_MODE = 18;
+        MASTER_DATABASE_TYPE = 22;
+        GTID_MODE = 23;
+        MAX_REPLICATION_SLOTS = 24;
+        MAX_WAL_SENDERS = 25;
+        MAX_WORKER_PROCESSES = 26;
+        MASTER_DB_COUNT_TO_REPLICATE = 27;
+        SQLSERVER_AGENT_NOT_RUNNING = 28;
+        METRIC_REPORTING_NOT_SUPPORTED = 29;
+        SQLSERVER_SERVERNAME_MISMATCH = 31;
+        PRIMARY_ALREADY_SETUP = 32;
+        UNSUPPORTED_BINLOG_FORMAT = 33;
+        BINLOG_RETENTION_SETTING = 34;
+        UNSUPPORTED_STORAGE_ENGINE = 36;
+        SOURCE_DATABASE_VENDOR = 37;
+        LIMITED_SUPPORT_TABLES = 38;
+        EXISTING_REPLICATION_DETECTED = 39;
+        EMPTY_SOURCE = 40;
+        EXISTING_DATA_IN_REPLICA = 41;
+        SOURCE_TOTAL_DB_SIZE_BYTES = 42;
+        UNSUPPORTED_DATABASE_LOCALE = 43;
+        UNSUPPORTED_DATABASE_FDW_CONFIGURATION = 44;
+        SOURCE_IS_REPLICA = 45;
+        MYSQL_PARALLEL_IMPORT_INSUFFICIENT_PRIVILEGE = 46;
+        MISSING_OPTIONAL_PRIVILEGES = 47;
+        RISKY_BACKUP_ADMIN_PRIVILEGE = 48;
+        INSUFFICIENT_GCS_PERMISSIONS = 49;
+        INVALID_FILE_INFO = 50;
+        UNSUPPORTED_DATABASE_SETTINGS = 51;
+        EXISTING_CONFLICTING_DATABASES_IN_REPLICA = 52;
+        LOCAL_INFILE_OFF = 53;
+        TURN_ON_PITR_AFTER_PROMOTE = 54;
+        INCOMPATIBLE_DATABASE_MINOR_VERSION = 55;
+        SOURCE_MAX_SUBSCRIPTIONS = 56;
+        UNABLE_TO_VERIFY_DEFINERS = 57;
+        SUBSCRIPTION_CALCULATION_STATUS = 58;
+        PG_SUBSCRIPTION_COUNT = 59;
+        PG_SYNC_PARALLEL_LEVEL = 60;
+        INSUFFICIENT_DISK_SIZE = 61;
+        INSUFFICIENT_MACHINE_TIER = 62;
+        UNSUPPORTED_EXTENSIONS_NOT_MIGRATED = 63;
+        EXTENSIONS_NOT_MIGRATED = 64;
+        PG_CRON_FLAG_ENABLED_IN_REPLICA = 65;
+        EXTENSIONS_NOT_ENABLED_IN_REPLICA = 66;
+        INVALID_SCHEMA_DEFINITION = 67;
+        UNSUPPORTED_COLUMNS = 68;
+        USERS_NOT_CREATED_IN_REPLICA = 69;
+        UNSUPPORTED_TABLES_WITH_REPLICA_IDENTITY = 70;
+        UNSUPPORTED_SYSTEM_OBJECTS = 71;
+        SELECTED_OBJECTS_NOT_EXIST_ON_SOURCE = 72;
+    }
+    
+    string detail = 2;
+    bool externally_reportable = 3;
+}
+
+message VerifyMigrationSettingsRequest {
+    string master_host = 1;
+    int32 master_port = 2;
+    string master_user = 3;
+    string master_password = 4;
+    bool enable_ssl = 5;
+    bool enable_ssl_client_auth = 6;
+    bool has_gcs_dump = 7;
+    
+    Type migration_type = 8;
+    enum Type {
+        UNKNOWN = 0;
+        ONLINE = 1;
+        OFFLINE = 2;
+    }
+    
+    bool verify_connectivity_only = 9;
+    repeated string master_databases = 10;
+    storage.speckle.proto.EncryptedSecret encrypted_master_password = 11;
+    google.protobuf.Timestamp timestamp = 12;
+    string gcs_path = 13;
+    string replica_host = 14;
+    int32 replica_port = 15;
+    bool verify_replication_only = 16;
+    
+    SupportedExtensionsParam supported_ext_param = 17;
+    enum SupportedExtensionsParam {
+        UNKNOWN_PARAM = 0;
+        CLOUDSQL = 1;
+        ALLOYDB = 2;
+    }
+    
+    bool use_parallel_import = 18;
+    bool enable_primary_stats = 19;
+    bool verify_locale = 20;
+    bool verify_fdw_configuration = 21;
+    string migration_category = 22;
+    bool verify_conflicting_databases = 23;
+    bool enable_multiple_subscriptions = 24;
+    int32 max_subscription_count = 25;
+    string subscription_parallel_level = 26;
+    bool verify_replica_existing_data = 27;
+    bool report_incompatible_minor_version_warning = 28;
+    bool skip_unsupported_extensions = 29;
+    bool ssl_mode_fallback_enabled = 30;
+    bool skip_pgcron_extension = 31;
+    repeated SelectedObject selected_objects = 32;
+    SSLSetting ssl_mode = 33 [deprecated = true];
+    bool check_for_user_mappings = 34;
+    bool check_for_replica_identity = 35;
+    bool existing_data_ownership_check = 36;
+    SslOption ssl_option = 37;
+}
+
+message SelectedObject {
+    string database = 1;
+    repeated string tables = 3;
+    
+    oneof _schema {
+        string schema = 2;
+    }
+}
+
+message VerifyMigrationSettingsResult {
+    repeated ExternalMasterInfo errors = 1;
+    repeated ExternalMasterInfo infos = 2;
+    repeated ExternalMasterInfo warnings = 3;
+}
+
+message PrepareRolloutRequest {
+    string task_id = 1;
+}
+
+message UpgradeCatalogRequest {
+    
+}
+
+message EnableActiveDirectoryRequest {
+    string task_id = 1;
+    string domain_name = 2;
+    string forwarding_rule_ip = 3;
+    string private_forwarding_rule_ip = 4;
+    string admin_account_name = 6;
+    string admin_account_password = 7;
+    string organizational_unit = 8;
+    storage.speckle.proto.EncryptedSecret encrypted_admin_account_password = 9;
+    google.protobuf.Timestamp timestamp = 10;
+    string dns_suffix = 11;
+    storage.speckle.proto.EncryptedSecret service_account_secret = 12;
+    bool is_restore = 13;
+    string global_primary_dns_name = 14;
+    
+    reserved 5;
+}
+
+message DisableActiveDirectoryRequest {
+    string task_id = 1;
+    string domain_name = 2;
+    string forwarding_rule_ip = 3;
+    string private_forwarding_rule_ip = 4;
+    string admin_account_name = 7;
+    string admin_account_password = 8;
+    string organizational_unit = 9;
+    bool purge_admin_credentials = 10;
+    
+    reserved 5, 6;
+}
+
+message UpdateActiveDirectoryAccountPasswordRequest {
+    string task_id = 1;
+    string domain_name = 2;
+    string forwarding_rule_ip = 3;
+    string private_forwarding_rule_ip = 4;
+    string account_name = 5;
+    string account_password = 6;
+}
+
+message UpdateActiveDirectoryRequest {
+    string task_id = 1;
+    string forwarding_rule_ip = 2;
+    string global_primary_dns_name = 3;
+    bool primary_instance = 4;
+}
+
+message PurgeActiveDirectoryArtifactsRequest {
+    string task_id = 1;
+}
+
+message CreateActiveDirectoryLoginRequest {
+    string task_id = 1;
+}
+
+message RepairActiveDirectoryRequest {
+    string task_id = 1;
+    
+    oneof payload {
+        RotateActiveDirectoryServiceAccount rotate_service_account_payload = 3;
+    }
+    
+    oneof _action {
+        Action action = 2;
+    }
+    
+    enum Action {
+        ACTION_UNSPECIFIED = 0;
+        ROTATE_SERVICE_ACCOUNT_CREDENTIALS = 1;
+        ROTATE_ADMIN_ACCOUNT_CREDENTIALS = 2;
+        ROTATE_MACHINE_ACCOUNT_CREDENTIALS = 3;
+    }
+}
+
+message RotateActiveDirectoryServiceAccount {
+    oneof _encrypted_secret {
+        storage.speckle.proto.EncryptedSecret encrypted_secret = 1;
+    }
+}
+
+message CreateAvailabilityGroupRequest {
+    string ag_name = 1;
+    string primary_ip = 2;
+    bool use_second_pd = 3;
+    bool is_forwarder = 4;
+    string primary_endpoint_url = 5;
+    bool use_vdi_snapshot_backup = 6;
+    
+    oneof _primary_commit_mode {
+        sqlserver.AvailabilityCommitMode primary_commit_mode = 7;
+    }
+}
+
+message DropAvailabilityGroupRequest {
+    string availability_group_name = 1;
+    bool remove_backups = 2;
+    bool drop_when_not_empty = 3;
+    bool use_vdi_snapshot_backup = 4;
+}
+
+message DropAllAvailabilityGroupsRequest {
+    bool remove_backups = 1;
+    bool drop_when_not_empty = 2;
+}
+
+message CreateSecondaryAvailabilityGroupRequest {
+    string ag_name = 1;
+    string ip = 2;
+}
+
+message AddAvailabilityGroupListenerRequest {
+    string ag_name = 1;
+    string listener_name = 2;
+    string ip = 3;
+    string mask = 4;
+    int32 port = 5;
+}
+
+message CreateDistributedAvailabilityGroupRequest {
+    string distributed_ag_name = 1;
+    string primary_ag_name = 2;
+    string primary_ag_listener_name = 3;
+    string secondary_ag_name = 4;
+    string secondary_ag_listener_name = 5;
+}
+
+message JoinDistributedAvailabilityGroupRequest {
+    string distributed_ag_name = 1;
+    string primary_ag_name = 2;
+    string primary_ag_listener_name = 3;
+    string secondary_ag_name = 4;
+    string secondary_ag_listener_name = 5;
+}
+
+message RemoveReplicaOnPrimaryRequest {
+    string availability_group_name = 1;
+    string read_replica_host_name = 2;
+    
+    oneof _distributed_availability_group_name {
+        string distributed_availability_group_name = 3;
+    }
+}
+
+message RemoveReplicaOnForwarderRequest {
+    string availability_group_name = 1;
+    string read_replica_host_name = 2;
+}
+
+message RemoveForwarderRequest {
+    string availability_group_name = 1;
+    string forwarder_host_name = 2;
+    string distributed_availability_group_name = 3;
+}
+
+message QuerySupportedExtensionsRequest {
+    
+}
+
+message QuerySupportedExtensionsResult {
+    string supported_extensions = 1;
+    string pglogical_version = 2;
+}
+
+message CheckReplicationRequest {
+    
+}
+
+message CheckReplicationResult {
+    bool actively_replicating = 1;
+}
+
+message MajorVersionUpgradeRequest {
+    string old_csa_uri = 1;
+    string new_csa_uri = 2;
+    bool update_pg_init_privs_table = 3;
+    bool increase_docker_container_memory = 4;
+    bool enable_old_csa_image_deletion = 5;
+}
+
+message MajorVersionUpgradeImageDownloadRequest {
+    string old_csa_uri = 1;
+}
+
+message ConnProbeRequest {
+    string target_ip = 1;
+    bool probe_psc_path_from_addon_psc_bouncer = 2;
+}
+
+message ConnProbeResponse {
+    bool success = 1;
+    
+    oneof _probe_error {
+        storage.speckle.probes.connectivity.ConnProbeError probe_error = 2;
+    }
+    
+    oneof _probe_error_msg {
+        string probe_error_msg = 3;
+    }
+    
+    oneof _latency {
+        google.protobuf.Duration latency = 4;
+    }
+}
+
+message TurnOffHadrInForwarderRequest {
+    string database_name = 1;
+}
+
+message RemoveReplicatedDatabaseRequest {
+    string availability_group_name = 1;
+    string database_name = 2;
+}
+
+message RecoverAndDeleteDatabaseRequest {
+    string database_name = 1;
+}
+
+message SetupReplicaCertRequest {
+    string replica_cert_base64 = 1;
+    string replica_pkey_base64 = 2;
+}
+
+message PurgeBinLogResult {
+    int64 bytes_binlog_purged = 1;
+}
+
+message ApplyBinLogResult {
+    int64 number_of_files_applied = 1;
+}
+
+message EnableAuditRequest {
+    string task_id = 1;
+    string bucket_name = 2;
+    google.protobuf.Duration retention_interval = 3;
+    google.protobuf.Duration upload_interval = 4;
+}
+
+message PostSwitchoverPrepInstanceCleanupRequest {
+    string task_id = 1;
+}
+
+message FlushOldDiskLogsRequest {
+    google.protobuf.Duration timeout = 1;
+}
+
+message PerformPitrRestoreRequest {
+    string task_id = 1;
+    google.protobuf.Timestamp recovery_target_time = 2;
+    google.protobuf.Timestamp base_image_time = 3;
+    repeated string database_names = 4;
+    bool use_logs_from_gcs = 5;
+}
+
+message StartTransactionLogBackupRequest {
+    string task_id = 1;
+    bool keep_pitr_state = 3;
+    int32 retention = 4;
+}
+
+message StopTransactionLogBackupRequest {
+    string task_id = 1;
+    bool keep_existing_log_backup = 2;
+    bool keep_pitr_state = 3;
+    bool for_failover = 4;
+}
+
+message SetHotStandbyModeRequest {
+    string task_id = 1;
+    string replica_name = 2;
+    string trigger_file = 3;
+    int32 uid = 4;
+    bool restart_database = 5;
+    google.protobuf.Duration timeout = 6;
+}
+
+message RevertHotStandbyModeRequest {
+    string task_id = 1;
+    string replica_name = 2 [deprecated = true];
+    string trigger_file = 3;
+    int32 uid = 4;
+    string private_lb_ip = 5;
+    string public_lb_ip = 6;
+    google.protobuf.Duration timeout = 7;
+}
+
+message PurgeTransactionLogBackupRequest {
+    string task_id = 1;
+    int32 retention = 2;
+    google.protobuf.Timestamp cutoff_time = 3;
+}
+
+message PrepareDatabaseSnapshotBackupRequest {
+    string task_id = 1;
+}
+
+message NotifyDatadiskSnapshotCompletionRequest {
+    string task_id = 1;
+}
+
+message TakeDatabaseOfflineForPitrRequest {
+    string task_id = 1;
+}
+
+message SetupPitrDatabaseFilesRequest {
+    string task_id = 1;
+    repeated string database_names = 2;
+}
+
+message UpdatePitrDatabaseFilesPermissionRequest {
+    string task_id = 1;
+}
+
+message UpdateTransactionLogRetentionRequest {
+    string task_id = 1;
+    int32 retention = 2;
+}
+
+message UpdatePitrConfigRequest {
+    string task_id = 1;
+    
+    Action action = 2;
+    enum Action {
+        NOT_SET = 0;
+        UPSERT = 1;
+        DELETE = 2;
+    }
+    
+    repeated string flags = 3;
+}
+
+message UpdatePitrDatabaseConfigRequest {
+    string task_id = 1;
+}
+
+message InstallPitrDatabaseStateUpdatesExtendedEventRequest {
+    string task_id = 1;
+}
+
+message UninstallPitrDatabaseStateUpdatesExtendedEventRequest {
+    string task_id = 1;
+}
+
+message ValidateDatabasesForFailoverRequest {
+    string task_id = 1;
+}
+
+message AlterAvailabilityModeRequest {
+    AvailabilityMode availability_mode = 1;
+    enum AvailabilityMode {
+        SYNCHRONOUS_COMMIT = 0;
+        ASYNCHRONOUS_COMMIT = 1;
+    }
+    
+    string task_id = 2;
+    string distributed_ag = 3;
+    string primary_ag = 4;
+    string forwarder_ag = 5;
+}
+
+message ChangeReplicaRoleRequest {
+    string task_id = 1;
+    string distributed_ag = 2;
+}
+
+message FailoverToReplicaRequest {
+    string task_id = 1;
+    string distributed_ag = 2;
+}
+
+message StartFailoverCronJobRequest {
+    string task_id = 1;
+    string distributed_ag = 2;
+}
+
+message StopFailoverCronJobRequest {
+    string task_id = 1;
+}
+
+message UpdateReadModeRequest {
+    oneof update_read_mode_details {
+        mysql.MysqlUpdateReadModeRequest mysql_update_read_mode_request = 1;
+    }
+}
+
+message WaitForReplicaToCatchUpWithPrimaryRequest {
+    oneof wait_for_replica_to_catch_up_with_primary_details {
+        mysql.MysqlWaitForReplicaToCatchUpWithPrimaryRequest mysql_wait_for_replica_to_catch_up_with_primary_request = 1;
+        postgres.PostgresWaitForReplicaToCatchUpWithPrimaryRequest postgres_wait_for_replica_to_catch_up_with_primary_request = 2;
+    }
+}
+
+message ImportUserFilesRequest {
+    string task_id = 1;
+    
+    repeated File files = 2;
+    message File {
+        string name = 1;
+        string source_uri = 2;
+    }
+    
+    oneof _action_on_conflict {
+        ActionOnConflict action_on_conflict = 3;
+    }
+    
+    enum ActionOnConflict {
+        DEFAULT = 0;
+        FAIL = 1;
+        SKIP = 2;
+        OVERWRITE = 3;
+    }
+}
+
+message ExportUserFilesRequest {
+    string task_id = 1;
+    
+    repeated File files = 2;
+    message File {
+        string name = 1;
+        string target_uri = 2;
+    }
+    
+    oneof _action_on_conflict {
+        ActionOnConflict action_on_conflict = 3;
+    }
+    
+    enum ActionOnConflict {
+        DEFAULT = 0;
+        FAIL = 1;
+        SKIP = 2;
+    }
+}
+
+message ListUserFilesRequest {
+    string task_id = 1;
+    string directory = 2;
+    bool recurse = 3;
+    int32 max_results = 4;
+    string page_token = 5;
+}
+
+message ListUserFilesResult {
+    repeated Item items = 1;
+    message Item {
+        string name = 1;
+        string full_path = 2;
+        
+        Type type = 3;
+        enum Type {
+            UNKNOWN = 0;
+            FILE = 1;
+            DIRECTORY = 2;
+        }
+        
+        int64 size = 4;
+        google.protobuf.Timestamp create_time = 5;
+    }
+    
+    string next_page_token = 2;
+}
+
+message DeleteUserFilesRequest {
+    string task_id = 1;
+    
+    repeated Item items = 2;
+    message Item {
+        string name = 1;
+    }
+    
+    bool cleanup_storage = 3;
+}
+
+message PrepareDiskRequest {
+    string device_name = 1;
+    string mount_point = 2;
+    
+    Action action = 3;
+    enum Action {
+        UNKNOWN = 0;
+        MOUNT = 1;
+        UNMOUNT = 2;
+        MOUNT_NO_FORMAT = 3;
+    }
+    
+    repeated string options = 4;
+}
+
+message UpdatePasswordEncryptionConfigRequest {
+    storage.speckle.proto.EncryptedSecret wdek = 1;
+    google.protobuf.Timestamp timestamp = 2;
+    string instance_uid = 3;
+    bool backup_verification = 4;
+    bool reencrypt_credentials = 5;
+}
+
+message SwitchoverToShadowVmRequest {
+    string task_id = 1;
+    
+    FirewallAction firewall_action = 2;
+    enum FirewallAction {
+        FIREWALL_ACTION_UNSPECIFIED = 0;
+        DROP = 1;
+        REJECT_WITH_RESET = 2;
+    }
+    
+    string lb_ip = 3;
+    string primary_vm_ip = 4;
+    string shadow_vm_name = 5 [deprecated = true];
+    google.protobuf.Duration wait_almost_catch_up_timeout = 6;
+    string operation_id = 9;
+    bool enable_tunneling = 10;
+    google.protobuf.Duration post_ilb_signal_override_delay = 11;
+    int64 audit_log_lag_threshold_bytes = 12;
+    string private_lb_ip = 13;
+    string public_lb_ip = 14;
+    google.protobuf.Duration inter_vm_grpc_connection_timeout = 15;
+    google.protobuf.Duration wait_fully_catch_up_timeout = 16;
+    google.protobuf.Duration make_primary_db_immutable_timeout = 18;
+    
+    oneof switchover_to_shadow_vm_details {
+        mysql.MysqlSwitchoverToShadowVMRequest mysql_switchover_to_shadow_vm_request = 7;
+        postgres.PostgresSwitchoverToShadowVMRequest postgres_switchover_to_shadow_vm_request = 8;
+        sqlserver.SqlServerSwitchoverToShadowVMRequest sqlserver_switchover_to_shadow_vm_request = 17;
+    }
+}
+
+message SwitchoverToShadowVmResult {
+    string last_change_id = 1;
+    
+    Step failed_step = 2;
+    enum Step {
+        STEP_UNSPECIFIED = 0;
+        PREPARE_TUNNEL = 1;
+        OVERRIDE_REPLICATION_SPEEDUP_FLAGS = 2;
+        PREPARE_IMMUTABLE_MODE_PRE_LOW_LAG = 3;
+        WAIT_FOR_ALMOST_CATCH_UP = 4;
+        DISABLE_DB_INTERNAL_PROCESSESES = 5;
+        PREPARE_IMMUTABLE_MODE_POST_LOW_LAG = 6;
+        OVERRIDE_HEALTHCHECK_SIGNAL = 7;
+        SWITCH_CONN_REJECT_TO_PARKING = 8;
+        ENABLE_TUNNEL = 9;
+        REJECT_DB_TRAFFIC_ON_PRIMARY = 10;
+        TERMINATE_DB_CONN_ASYNC = 11;
+        PREPARE_IMMUTABLE_MODE_POST_DOWNTIME = 12;
+        MAKE_PRIMARY_DB_IMMUTABLE = 13;
+        WAIT_FULLY_CATCHUP_UP = 14;
+        RESTORE_REPLICATION_FLAGS = 15;
+        GET_LAST_CHANGE_ID = 16;
+        PROMOTE = 17;
+        WRITE_MARKER_FILES = 18;
+        UNBLOCK_TRAFFIC = 19;
+        POST_PROMOTION_CLEANUP = 20;
+        PRE_DOWNTIME_DURABILITY_CHECK = 21;
+        GET_MYSQL_EVENT_STATUS = 22;
+        WAIT_POST_HEALTHCHECK_SIGNAL_OVERRIDE = 23;
+        VERIFY_DATA = 24;
+        INITIAL_PING = 25;
+    }
+    
+    string error_message = 3;
+    
+    Status status = 4;
+    enum Status {
+        STATUS_UNSPECIFIED = 0;
+        SUCCESS = 1;
+        FAILURE = 2;
+    }
+    
+    LastChangeInfo last_change_info = 5;
+    message LastChangeInfo {
+        string change_id = 1;
+        string file_name = 2;
+    }
+    
+    google.protobuf.Duration downtime = 6;
+}
+
+message PreparePitrLogsRequest {
+    string task_id = 1;
+    google.protobuf.Timestamp start_time = 2;
+    google.protobuf.Timestamp end_time = 3;
+    repeated string database_names = 4;
+}
+
+message RejectDbTrafficRequest {
+    string task_id = 1;
+    string lb_ip = 2;
+    string private_lb_ip = 3;
+    string public_lb_ip = 4;
+}
+
+message UnblockDbTrafficRequest {
+    string task_id = 1;
+    string private_lb_ip = 2;
+    string public_lb_ip = 3;
+}
+
+message ResetVmOnFailureRequest {
+    string task_id = 1;
+    string lb_ip = 2;
+    string other_vm_ip = 3;
+    string private_lb_ip = 4;
+    string public_lb_ip = 5;
+}
+
+message ResetVmOnFailureResult {
+    bool has_critical_error = 1;
+    bool has_non_critical_error = 2;
+    string error_message = 3;
+}
+
+message CheckMarkerFileRequest {
+    string task_id = 1;
+    string operation_id = 2;
+}
+
+message CheckMarkerFileResult {
+    bool has_marker_file = 1;
+    SwitchoverToShadowVmResult switchover_result_checkpoint = 2;
+}
+
+message UnmountGcsDownloadDiskRequest {
+    string task_id = 1;
+}
+
+message OverrideHealthcheckRequest {
+    string task_id = 1;
+    
+    Action action = 2;
+    enum Action {
+        ACTION_UNSPECIFIED = 0;
+        HEALTHY = 1;
+        UNHEALTHY = 2;
+        NO_OVERRIDE = 3;
+    }
+}
+
+message CleanUpPitrFilesRequest {
+    string task_id = 1;
+}
+
+message CleanupTunnelResourcesRequest {
+    string task_id = 1;
+    string other_vm_ip = 2;
+    string lb_ip = 3;
+    string private_lb_ip = 13;
+    string public_lb_ip = 14;
+}
+
+message DownloadLogsFromGCSRequest {
+    string task_id = 1;
+}
+
+message AcquireSsrsLeaseRequest {
+    string task_id = 1;
+    
+    oneof _setup_login {
+        string setup_login = 2;
+    }
+    
+    oneof _service_login {
+        string service_login = 3;
+    }
+    
+    oneof _report_database {
+        string report_database = 4;
+    }
+    
+    oneof _duration {
+        google.protobuf.Duration duration = 5;
+    }
+}
+
+message ReleaseSsrsLeaseRequest {
+    string task_id = 1;
+}
+
+message MountBinlogDiskRequest {
+    string task_id = 1;
+}
+
+message UnmountBinlogDiskRequest {
+    string task_id = 1;
+}
+
+message ScanAndArchiveBinlogRequest {
+    oneof scan_and_archive_binlog_details {
+        mysql.MysqlScanAndArchiveBinlogRequest mysql_scan_binlog_request = 1;
+    }
+}
+
+message SetRecoveryModeRequest {
+    string task_id = 1;
+    
+    RecoveryMode recovery_mode = 2;
+    enum RecoveryMode {
+        DEFAULT = 0;
+        SIMPLE = 1;
+        FULL = 2;
+    }
+}
+
+message UpdateReplicationPortBlockRequest {
+    bool block_replication_port = 1;
+}
+
+message WaitForPostgresPitrStatusRequest {
+    string task_id = 1;
+}
+
+message ManageDataDiskReservationRequest {
+    string task_id = 1;
+    
+    Type type = 2;
+    enum Type {
+        UNKNOWN = 0;
+        RESERVE = 1;
+        PREEMPT = 2;
+        RELEASE = 3;
+        REGISTER = 4;
+        REGISTER_AND_RESERVE = 5;
+        REGISTER_AND_PREEMPT = 6;
+    }
+}
+
+message FlushBinlogAndWaitPitrRequest {
+    oneof _timeout {
+        google.protobuf.Duration timeout = 1;
+    }
+}
+
+message ForceCheckpointRequest {
+    string task_id = 1;
+}
+
+message SwitchWalFileRequest {
+    string task_id = 1;
+    bool reject_and_kill_user_connections = 2;
+    string lb_ip = 3;
+    string private_lb_ip = 4;
+    string public_lb_ip = 5;
+    
+    oneof _timeout {
+        google.protobuf.Duration timeout = 6;
+    }
+}
+
+message SwitchWalFileResponse {
+    string pre_switch_wal_file = 1;
+    int64 pre_switch_wal_timestamp_ms = 2;
+}
+
+message UpdateInsightsConfigRequest {
+    oneof update_insights_config_details {
+        sqlserver.SqlServerUpdateInsightsConfigRequest sqlserver_update_insights_config_request = 1;
+    }
+}
+
+message UpdatePgBouncerConfigRequest {
+    PoolMode pool_mode = 2;
+    enum PoolMode {
+        DEFAULT_POOL_MODE = 0;
+        TRANSACTION = 1;
+        SESSION = 2;
+    }
+    
+    SslMode ssl_mode = 3;
+    bool reload_config = 4;
+    int32 default_pool_size = 5;
+    int32 max_client_conn = 6;
+    google.protobuf.Duration client_idle_timeout = 7;
+    google.protobuf.Duration server_idle_timeout = 8;
+    google.protobuf.Duration query_wait_timeout = 9;
+    bool enable_proxy_server = 10;
+    
+    TLSProtocol client_tls_protocols = 11;
+    enum TLSProtocol {
+        TLS_PROTOCOL_UNSPECIFIED = 0;
+        SECURE = 1;
+        ALL = 2;
+        LEGACY = 3;
+        TLS_V_1_0 = 4;
+        TLS_V_1_1 = 5;
+        TLS_V_1_2 = 6;
+        TLS_V_1_3 = 7;
+    }
+    
+    int32 max_prepared_statements = 12;
+    string ignore_startup_parameters = 13;
+    string stats_users = 14;
+    google.protobuf.Duration server_lifetime = 15;
+    int32 min_pool_size = 16;
+    bool should_use_flag_based_connection_pool_config = 17;
+    map<string, string> connection_pool_flags = 18;
+    int32 num_pooler = 19;
+}
+
+message WaitWalFileArchivalToGcsRequest {
+    string gcs_path = 1;
+    string pre_switch_wal_file = 2;
+    bool check_only_pre_switch_wal_ready_file = 4;
+    
+    oneof _timeout {
+        google.protobuf.Duration timeout = 3;
+    }
+}
+
+message TakeLogBackupRequest {
+    bool use_second_pd = 1;
+    bool use_vdi_snapshot_backup = 2;
+}
+
+message CheckZdtEligibilityRequest {
+    oneof _private_ip_address {
+        string private_ip_address = 1;
+    }
+}
+
+message ManageInstancePermissionsRequest {
+    sqlserver.ManageInstancePermissionsAction read_replica_creation_deny_permissions = 1;
+}
+
+message VerifyReplicationStatusRequest {
+    
+}
+
+message VerifyReplicationStatusResponse {
+    ReplicationStatus status = 1 [deprecated = true];
+    enum ReplicationStatus {
+        REPLICATION_STATUS_UNSPECIFIED = 0;
+        REPLICATION_HEALTHY = 1;
+    }
+    
+    string error_message = 2;
+    google.internal.cloud.sqlagent.v1.ReplicationState replication_state = 3;
+    google.protobuf.Duration replication_lag = 5;
+    
+    oneof replica_status_result {
+        mysql.MysqlReplicaStatusResult mysql_replica_status_result = 4;
+        postgres.PostgresReplicaStatusResult postgres_replica_status_result = 6;
+    }
+}
+
+enum SslMode {
+    SSL_MODE_UNSPECIFIED = 0;
+    ALLOW_UNENCRYPTED_AND_ENCRYPTED = 1;
+    ENCRYPTED_ONLY = 2;
+    TRUSTED_CLIENT_CERTIFICATE_REQUIRED = 3;
+}
+
+enum CaMode {
+    CA_MODE_UNSPECIFIED = 0;
+    GOOGLE_MANAGED_INTERNAL_CA = 1;
+    GOOGLE_MANAGED_CAS_CA = 2;
+    CUSTOMER_MANAGED_CAS_CA = 3;
+}
+
+enum MendelFlagType {
+    MENDEL_FLAG_UNKNOWN_TYPE = 0;
+    MENDEL_FLAG_BOOL = 1;
+    MENDEL_FLAG_STRING = 2;
+    MENDEL_FLAG_INT = 3;
+    MENDEL_FLAG_FLOAT = 4;
+}
+
+enum SslOption {
+    SSL_OPTION_UNSPECIFIED = 0;
+    DISABLE = 1;
+    REQUIRE = 2;
+    VERIFY_CA = 3;
+}
+
+enum SSLSetting {
+    SSL_SETTING_UNKNOWN = 0;
+    SSL_SETTING_DISABLE = 1;
+    SSL_SETTING_REQUIRE = 2;
+    SSL_SETTING_VERIFY_CA = 3;
+}

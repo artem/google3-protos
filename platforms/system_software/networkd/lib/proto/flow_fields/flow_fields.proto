@@ -30,5 +30,5 @@ message FlowUser {
     optional uint64 id = 1;
     optional DelegationMetadata delegation_metadata = 3;
     
-    reserved 2;
+    reserved 2, 4;
 }

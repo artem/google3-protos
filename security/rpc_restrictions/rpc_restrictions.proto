@@ -31,3 +31,48 @@ message DirectPathAccessPolicy {
         optional DirectPathAccessPolicy message_set_extension = 525002721;
     }
 }
+
+message RequireSameMultinodeMachine {
+    extend .proto2.bridge.MessageSet {
+        optional RequireSameMultinodeMachine message_set_extension = 525003065;
+    }
+}
+
+message RequireServerSecurityRealm {
+    repeated string security_realms = 1;
+    optional bool client_security_realm_allowed = 2;
+    repeated string security_realm_groups = 3;
+    
+    extend .proto2.bridge.MessageSet {
+        optional RequireServerSecurityRealm message_set_extension = 525003525;
+    }
+}
+
+message RequireServerType {
+    optional ServerType type = 1;
+    enum ServerType {
+        UNSPECIFIED_NEVER_PASSES = 0;
+        CORP = 2;
+        PROD = 4;
+    }
+    
+    extend .proto2.bridge.MessageSet {
+        optional RequireServerType message_set_extension = 525003526;
+    }
+}
+
+message RequireServerSecurityTags {
+    repeated string security_tags = 1;
+    
+    extend .proto2.bridge.MessageSet {
+        optional RequireServerSecurityTags message_set_extension = 525003527;
+    }
+}
+
+message RequireServerJob {
+    repeated string jobs = 1;
+    
+    extend .proto2.bridge.MessageSet {
+        optional RequireServerJob message_set_extension = 525003528;
+    }
+}

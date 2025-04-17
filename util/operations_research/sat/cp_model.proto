@@ -40,6 +40,9 @@ message ElementConstraintProto {
     int32 index = 1;
     int32 target = 2;
     repeated int32 vars = 3;
+    LinearExpressionProto linear_index = 4;
+    LinearExpressionProto linear_target = 5;
+    repeated LinearExpressionProto exprs = 6;
 }
 
 message IntervalConstraintProto {
@@ -86,11 +89,17 @@ message RoutesConstraintProto {
     repeated int32 literals = 3;
     repeated int32 demands = 4;
     int64 capacity = 5;
+    
+    repeated NodeExpressions dimensions = 6;
+    message NodeExpressions {
+        repeated LinearExpressionProto exprs = 1;
+    }
 }
 
 message TableConstraintProto {
     repeated int32 vars = 1;
     repeated int64 values = 2;
+    repeated LinearExpressionProto exprs = 4;
     bool negated = 3;
 }
 
@@ -106,6 +115,7 @@ message AutomatonConstraintProto {
     repeated int64 transition_head = 5;
     repeated int64 transition_label = 6;
     repeated int32 vars = 7;
+    repeated LinearExpressionProto exprs = 8;
 }
 
 message ListOfVariablesProto {
@@ -182,6 +192,7 @@ message DecisionStrategyProto {
         SELECT_LOWER_HALF = 2;
         SELECT_UPPER_HALF = 3;
         SELECT_MEDIAN_VALUE = 4;
+        SELECT_RANDOM_HALF = 5;
     }
 }
 
@@ -234,6 +245,7 @@ message CpSolverResponse {
     int64 inner_objective_lower_bound = 29;
     int64 num_integers = 30;
     int64 num_booleans = 10;
+    int64 num_fixed_booleans = 31;
     int64 num_conflicts = 11;
     int64 num_branches = 12;
     int64 num_binary_propagations = 13;

@@ -20,6 +20,7 @@ message TraceRecord {
     optional double trace_period = 17 [default = 1024, deprecated = true];
     optional double local_sampling_probability = 42;
     optional double query_cost_sampling_probability = 48;
+    optional double relative_skeletal_sampling_probability = 57;
     optional string name = 18;
     optional string stubby_name_with_package = 45;
     optional double local_start_time = 19 [deprecated = true];

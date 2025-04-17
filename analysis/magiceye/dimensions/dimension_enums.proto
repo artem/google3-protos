@@ -136,6 +136,7 @@ message Browser {
         YANDEX_BROWSER = 14;
         SILK = 15;
         COC_COC_BROWSER = 16;
+        COBALT = 18;
     }
 }
 
@@ -170,6 +171,8 @@ message App {
         KEEP = 27;
         KEEP_EXTENSION = 218;
         TASKS = 28;
+        VIDS = 242;
+        DRAWINGS = 243;
         JAMBOARD = 29;
         YOUTUBE_MAIN = 40;
         YOUTUBE_MUSIC = 41;

@@ -1,0 +1,12 @@
+syntax = "editions";
+
+package pattributes;
+
+option java_multiple_files = true;
+option java_package = "com.google.privacy.pattributes.proto";
+
+enum GaiaSearchAndAssistantState {
+    GAIA_SEARCH_AND_ASSISTANT_STATE_UNSPECIFIED = 0;
+    GAIA_SEARCH_AND_ASSISTANT_STATE_ENABLED = 1;
+    GAIA_SEARCH_AND_ASSISTANT_STATE_DISABLED = 2;
+}

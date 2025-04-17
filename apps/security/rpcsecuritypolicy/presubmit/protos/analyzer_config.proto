@@ -2,6 +2,7 @@ syntax = "proto2";
 
 package com.google.apps.security.rpcsecuritypolicy.presubmit;
 
+import "google/api/inclusion.proto";
 import "security/context/proto/policy/rpc_security_level.proto";
 import "storage/datapol/annotations/proto/semantic_annotations.proto";
 

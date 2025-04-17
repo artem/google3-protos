@@ -1,0 +1,38 @@
+syntax = "editions";
+
+package rpcsp;
+
+import "google/protobuf/empty.proto";
+
+option java_multiple_files = true;
+
+message PolicyValues {
+    repeated Substitution substitutions = 1;
+    message Substitution {
+        optional string key = 1;
+        
+        oneof value {
+            Members members = 2;
+            SecurityRealmSet peer_security_realms = 3;
+        }
+    }
+    
+    message Members {
+        repeated string prod_users = 1;
+        repeated string prod_groups = 2;
+        repeated string prod_authority_selectors = 3;
+        optional google.protobuf.Empty all = 4;
+    }
+    
+    message SecurityRealmSet {
+        repeated string realms = 1;
+        optional google.protobuf.Empty persons_in_corp = 9;
+        optional google.protobuf.Empty local_realm = 11;
+        optional google.protobuf.Empty local_campus = 3;
+        optional google.protobuf.Empty local_metro = 4;
+        optional google.protobuf.Empty local_cloud_region = 5;
+        optional google.protobuf.Empty local_prod_region = 8;
+        optional google.protobuf.Empty default_covering_realms = 6;
+        optional google.protobuf.Empty crypto_core_covering_realms = 10;
+    }
+}

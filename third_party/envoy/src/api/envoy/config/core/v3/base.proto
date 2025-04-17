@@ -89,12 +89,18 @@ message RuntimeFeatureFlag {
 }
 
 message KeyValue {
+    string key = 1 [deprecated = true];
+    bytes value = 2 [deprecated = true];
+}
+
+message KeyValuePair {
     string key = 1;
-    bytes value = 2;
+    google.protobuf.Value value = 2;
 }
 
 message KeyValueAppend {
-    KeyValue entry = 1;
+    KeyValuePair record = 3;
+    KeyValue entry = 1 [deprecated = true];
     
     KeyValueAppendAction action = 2;
     enum KeyValueAppendAction {

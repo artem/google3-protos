@@ -10,7 +10,6 @@ import "bigtable/proto/side_ptoken_msg.proto";
 import "perftools/tracing/proto/tracecontext.proto";
 import "privacy/data_governance/attributes/proto/purpose.proto";
 
-option cc_enable_arenas = true;
 option java_package = "com.google.bigtable.protos";
 
 message BTI_DocumentState {
@@ -28,8 +27,16 @@ message BTI_DocVerState {
 }
 
 message ComplianceInfo {
-    repeated int32 origin_associated_product_id = 1;
     repeated bytes serialized_privacy_context_portability = 3;
+    
+    repeated HomunculusPTokenSignals homunculus_ptoken_signals = 5;
+    message HomunculusPTokenSignals {
+        optional int32 origin_associated_product_id = 1;
+        optional bool dma52_is_ads_dual_observation_tainted = 2 [default = false];
+    }
+    
+    repeated int32 origin_associated_product_id = 1 [deprecated = true];
+    optional int32 override_source = 4 [deprecated = true];
     repeated privacy.data_governance.attributes.ProcessingPurpose.Purpose processing_purpose = 2 [deprecated = true];
 }
 
@@ -42,6 +49,8 @@ message BTI_Mutation {
     optional int32 num_batched_writes = 38 [default = 1];
     optional bool replicate = 25 [default = true];
     optional Idempotency idempotency = 94;
+    optional int64 min_commit_timestamp = 96;
+    optional int64 max_commit_timestamp = 97;
     
     optional group TS_Replication = 49 {
         required int64 repl_cell_id = 50;
@@ -74,7 +83,7 @@ message BTI_Mutation {
             optional int32 ts_aggregate_type = 26;
             optional bytes raw_value = 17 [ctype = CORD];
             optional bytes compressed_value = 24 [ctype = CORD];
-            optional SidePtokenMsg side_ptoken = 95;
+            optional SidePTokenMsg side_ptoken = 95;
             optional fixed64 key_checksum = 84;
             optional fixed32 value_crc = 77;
             optional int64 micro_timestamp = 40;
@@ -132,7 +141,6 @@ message BTI_Mutation {
         }
     }
     
-    optional bool enforce_quota = 54 [default = true];
     repeated bytes secondary = 27 [ctype = CORD];
     optional fixed64 ts_secondary_client_id = 28;
     optional int64 ts_secondary_clock_start = 30;
@@ -140,9 +148,9 @@ message BTI_Mutation {
     optional perftools.tracing.TraceContextProto trace_context = 86;
     optional bytes proxy_source_id = 87;
     optional int64 ts_max_sequencer_backwards_skew_seconds = 88;
-    optional ComplianceInfo compliance_info = 90;
+    optional ComplianceInfo compliance_info = 90 [deprecated = true];
     
-    reserved 4, 18, 21, 22, 71, 74, 82;
+    reserved 4, 18, 21, 22, 54, 71, 74, 82;
 }
 
 message ModAnnotation {

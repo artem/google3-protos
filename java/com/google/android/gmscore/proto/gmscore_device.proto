@@ -1,0 +1,24 @@
+syntax = "proto2";
+
+package com.google.android.gmscore.proto;
+
+import "google/api/inclusion.proto";
+import "logs/proto/logs_annotations/logs_annotations.proto";
+
+option java_package = "com.google.android.gmscore.proto";
+
+message GmsCoreDeviceInfo {
+    optional GmsCoreDeviceType device_type = 1;
+    enum GmsCoreDeviceType {
+        DEVICE_TYPE_UNKNOWN = 0;
+        DEVICE_TYPE_PHONE = 1;
+        DEVICE_TYPE_PHONE_GO = 2;
+        DEVICE_TYPE_TV = 3;
+        DEVICE_TYPE_WEARABLE = 4;
+        DEVICE_TYPE_AUTOMOTIVE = 5;
+        DEVICE_TYPE_BATTLESTAR = 6;
+        DEVICE_TYPE_CHROME_OS = 7;
+        DEVICE_TYPE_XR = 8;
+        DEVICE_TYPE_DESKTOP = 9;
+    }
+}

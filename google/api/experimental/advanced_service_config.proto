@@ -92,6 +92,7 @@ message BatchConfig {
 message ChemistConfig {
     optional string address = 1;
     optional string report_address = 2;
+    optional string policy_proxy_grpc_address = 3;
 }
 
 message UbermintConfig {
@@ -109,8 +110,9 @@ message QuotaConfig {
     repeated string custom_enforcement_metrics = 2;
     repeated string org_quota_metrics = 3;
     repeated string force_regionalized_enforcement_metrics = 4;
-    repeated string ignore_project_default_metrics = 5;
     repeated SkipQuotaRule esf_quota_skip_rules = 6;
+    
+    reserved 5;
 }
 
 message SkipQuotaRule {

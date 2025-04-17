@@ -1,0 +1,39 @@
+syntax = "editions";
+
+package chubby;
+
+import "storage/datapol/annotations/proto/semantic_annotations.proto";
+
+option java_multiple_files = true;
+option java_package = "com.google.chubby.svelte.protocol";
+
+message UserNameFilter {
+    repeated string user_names = 1;
+}
+
+message UserRatioFilter {
+    optional double user_ratio = 1;
+}
+
+message SubsettingConfigFilter {
+    repeated string server_regexes = 3;
+    repeated string borg_cell_filter = 4;
+    
+    oneof user_filter {
+        UserNameFilter user_name_filter = 1;
+        UserRatioFilter user_ratio_filter = 2;
+    }
+}
+
+message InitialSubsettingConfig {
+    optional SubsettingConfigFilter filter = 1;
+    
+    oneof behavior {
+        int32 subset_size = 2;
+        bool no_subsetting = 3;
+    }
+}
+
+message InitialSubsettingConfigSet {
+    repeated InitialSubsettingConfig subsetting_configs = 1;
+}

@@ -1,0 +1,19 @@
+syntax = "proto2";
+
+package frameworks.debug.settings.proto;
+
+import "frameworks/debug/settings/proto/debug_settings.proto";
+import "net/proto2/bridge/proto/message_set.proto";
+import "security/loas/l2/internal/securewrapper/multihop_clients/boundary_proxy.proto";
+
+option java_outer_classname = "ExtensionProto";
+option java_package = "com.google.frameworks.debug.settings.protos";
+
+message DebugSettingsExtension {
+    optional bytes token = 1 [deprecated = true];
+    optional SignedDebugSettings signed_settings = 2;
+    
+    extend .proto2.bridge.MessageSet {
+        optional DebugSettingsExtension message_set_extension = 157792538;
+    }
+}

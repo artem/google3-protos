@@ -2,11 +2,15 @@ syntax = "editions";
 
 package stats_census;
 
+import "stats/census/proto/census.proto";
+import "stats/census/proto/key_id.proto";
+
 option java_outer_classname = "CensusView";
 option java_package = "com.google.monitoring.census";
 
 message TagSelectorProto {
-    optional string tag_key = 1;
+    optional key_id_internal.KeyId key_id = 4;
+    optional string tag_key = 1 [deprecated = true];
     optional string matches = 2;
     optional string does_not_match = 3;
 }
@@ -16,7 +20,8 @@ message StreamzTargetSchemaProto {
     
     repeated LabelMapping label_mappings = 2;
     message LabelMapping {
-        optional string tag_key = 1;
+        optional key_id_internal.KeyId key_id = 3;
+        optional string tag_key = 1 [deprecated = true];
         optional string streamz_root_label = 2;
     }
     
@@ -38,7 +43,8 @@ message TrustedPartnerCloudConfig {
 
 message ViewProto {
     optional string name = 1;
-    optional string resource = 2;
+    optional ResourceId resource_id = 16;
+    optional string resource = 2 [deprecated = true];
     optional string measure = 3;
     optional bool varz = 4;
     optional bool streamz = 5;

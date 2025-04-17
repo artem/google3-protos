@@ -2,6 +2,7 @@ syntax = "editions";
 
 package storage_l4;
 
+import "storage/datapol/annotations/proto/semantic_annotations.proto";
 import "storage/l4/core/application_feature_tag.proto";
 
 message ApplicationFeature {

@@ -1,0 +1,196 @@
+syntax = "editions";
+
+package dbinsights.platform;
+
+import "storage/datapol/annotations/proto/semantic_annotations.proto";
+
+message QueryTextProto {
+    optional uint64 query_id = 1;
+    repeated string query = 2;
+}
+
+message QueryTextProtos {
+    repeated QueryTextProto query_texts = 1;
+}
+
+message TagProto {
+    optional int64 tag_id = 1;
+    optional string tag_string = 2;
+    optional string action = 3;
+    optional string application = 4;
+    optional string controller = 5;
+    optional string db_driver = 6;
+    optional string framework = 7;
+    optional string route = 8;
+    optional string traceparent = 9;
+}
+
+message TagProtos {
+    repeated TagProto tags = 1;
+}
+
+message TraceInfoProto {
+    optional string trace_id = 1;
+    optional string span_id = 2;
+    optional string parent_span_id = 3;
+    optional uint64 query_latency = 4;
+    optional uint64 capture_time = 5;
+}
+
+message WaitStatProto {
+    optional int64 id = 1;
+    optional uint64 count = 2;
+    optional uint64 elapsed_time_us = 3;
+}
+
+message ClientAddressProto {
+    optional string client_address = 1;
+    optional uint64 count = 2;
+    optional uint64 elapsed_time_us = 3;
+}
+
+message QueryStatProto {
+    optional double recorded_on = 1;
+    optional int64 conn_meta_id = 2;
+    optional int64 tag_id = 3;
+    optional int64 query_id = 4;
+    optional int64 count = 5;
+    repeated int64 latency_histogram = 6;
+    optional int64 total_execution_time_us = 7;
+    optional int64 total_read_time_us = 8;
+    optional int64 total_write_time_us = 9;
+    optional int64 total_shared_blocks_hit = 10;
+    optional int64 total_shared_blocks_read = 11;
+    optional int64 total_rows = 12;
+    optional int64 total_wait_time_us = 13;
+    repeated TraceInfoProto trace_infos = 14;
+    repeated WaitStatProto wait_events = 15;
+    repeated WaitStatProto wait_classes = 16;
+    repeated ClientAddressProto client_addresses = 17;
+}
+
+message QueryStatProtos {
+    repeated QueryStatProto query_stats = 1;
+    optional int64 stable_drained_time_sec = 2;
+    optional string instance_id = 3;
+    optional string node_id = 4;
+}
+
+message ConnMetaProto {
+    optional int64 conn_meta_id = 1;
+    optional string instance_type = 2;
+    optional string node_id = 3;
+    optional string database = 4;
+    optional string username = 5;
+}
+
+message ConnMetaProtos {
+    repeated ConnMetaProto conn_metas = 1;
+}
+
+message StatsProto {
+    optional uint64 count = 1;
+    optional uint64 elapsed_time_us = 2;
+}
+
+message WaitEventTableQueryStatsProto {
+    optional int64 query_id = 1;
+    optional StatsProto stats = 2;
+}
+
+message WaitEventTableConnectionTagStatsListProto {
+    optional int64 connection_id = 1;
+    optional int64 tag_id = 2;
+    optional StatsProto stats = 3;
+    repeated WaitEventTableQueryStatsProto query_stats = 4;
+}
+
+message WaitEventStatMapProto {
+    optional int64 wait_event_id = 1;
+    optional StatsProto stats = 2;
+    repeated WaitEventTableConnectionTagStatsListProto connection_list = 3;
+}
+
+message WaitEventStatTableProto {
+    optional double recorded_on = 1;
+    repeated WaitEventStatMapProto wait_event_stat_values = 2;
+    optional string instance_id = 3;
+    optional string node_id = 4;
+    optional int64 stable_drained_time_sec = 5;
+}
+
+message WaitEventProto {
+    optional int64 id = 1;
+    optional string wait_class = 2;
+    optional string wait_event = 3;
+}
+
+message WaitEventProtos {
+    repeated WaitEventProto wait_events = 1;
+}
+
+message WaitClassProto {
+    optional int64 id = 1;
+    optional string wait_class = 2;
+}
+
+message WaitClassProtos {
+    repeated WaitClassProto wait_classes = 1;
+}
+
+message DbLoadStatsProto {
+    optional int64 total_execution_time_us = 1;
+    optional int64 total_wait_time_us = 2;
+    optional int64 count = 3;
+}
+
+message ConnMetaTagStatProto {
+    optional int64 conn_meta_id = 1;
+    optional int64 tag_id = 2;
+    optional DbLoadStatsProto stats = 3;
+}
+
+message DbLoadTableProto {
+    optional string instance_id = 1;
+    optional double recorded_on = 2;
+    optional DbLoadStatsProto aggregate_stats = 3;
+    repeated ConnMetaTagStatProto conn_meta_tag_stats = 4;
+    optional string node_id = 5;
+    optional int64 stable_drained_time_sec = 6;
+}
+
+message ClientAddressQueryStatsListProto {
+    optional int64 query_id = 1;
+    optional int64 count = 2;
+    optional int64 elapsed_time_us = 3;
+}
+
+message ClientAddressStatMapProto {
+    optional string client_address = 1;
+    optional int64 conn_meta_id = 2;
+    optional int64 total_execution_time_us = 3;
+    optional int64 count = 4;
+    repeated ClientAddressQueryStatsListProto stats = 5;
+}
+
+message ClientAddressStatTableProto {
+    optional string instance_id = 1;
+    optional double recorded_on = 2;
+    optional string node_id = 3;
+    optional int64 stable_drained_time_sec = 4;
+    repeated ClientAddressStatMapProto client_addresses_stat_values = 5;
+}
+
+message TelemetryPayload {
+    oneof payload {
+        TagProtos tags = 1;
+        QueryTextProtos queries = 2;
+        QueryStatProtos query_stats = 3;
+        ConnMetaProtos conn_metas = 4;
+        WaitEventStatTableProto wait_event_stats = 5;
+        WaitEventProtos wait_events = 6;
+        WaitClassProtos wait_classes = 7;
+        DbLoadTableProto db_load_table = 8;
+        ClientAddressStatTableProto client_address_stats = 9;
+    }
+}

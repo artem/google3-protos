@@ -35,7 +35,6 @@ message DiskLayer_DiskStats {
 
 message DiskLayer_DiskStatus {
     required int64 id = 1;
-    optional int64 label = 2;
     optional string disk_name = 3;
     optional storage_d.Health.Status d_state = 11;
     optional int64 d_health_version = 9;
@@ -43,7 +42,7 @@ message DiskLayer_DiskStatus {
     optional DiskLayer_DiskStats stats = 6;
     optional uint64 unhealthy_bits = 14;
     
-    reserved 4, 7 to 8, 10, 12, 13;
+    reserved 2, 4, 7 to 8, 10, 12, 13;
 }
 
 message DiskLayer_ServerStatus {
@@ -80,6 +79,13 @@ message DiskLayer_ServerStatusIdxRecord {
     optional google.protobuf.Timestamp timestamp = 2;
     optional .idx.time_series.ingestion.proto.IDXTimeSeriesMetadata idx_internal_metadata = 3;
     optional string colossus_cell_name = 4;
+    
+    optional Provenance provenance = 5;
+    enum Provenance {
+        UNKNOWN = 0;
+        BACK_FILL = 1;
+        LIVE = 2;
+    }
 }
 
 message DiskLayer_DiskProblem {

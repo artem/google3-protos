@@ -12,6 +12,7 @@ enum JsType {
     INT52 = 0;
     NUMBER = 1;
     STRING = 2;
+    GBIGINT = 3;
 }
 
 extend .proto2.FieldOptions {

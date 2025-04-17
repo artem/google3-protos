@@ -2,6 +2,7 @@ syntax = "editions";
 
 package colossus.cfs2;
 
+import "file/colossus/cfs2/proto/folder.proto";
 import "file/colossus/cfs2/proto/folder_role.proto";
 import "file/colossus/proto/base.proto";
 import "net/proto2/bridge/proto/message_set.proto";
@@ -28,6 +29,7 @@ message RPCResultMetadata {
     optional bool incorrect_partition = 3;
     optional FolderImplMetadata folder_impl_metadata = 2;
     optional FlatNamespaceMetadata flat_namespace_metadata = 4;
+    repeated FolderRangeKeyProto folder_resolution_update = 5;
     
     extend .proto2.bridge.MessageSet {
         optional RPCResultMetadata message_set_extension = 100386487;

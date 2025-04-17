@@ -56,7 +56,6 @@ message AuthenticationInfo {
 message AuthorizationInfo {
     string resource = 1;
     string permission = 2;
-    bool granted = 3;
     AuthorizationLoggingOptions authorization_logging_options = 4;
     rpc.context.AttributeContext.Resource resource_attributes = 5;
     bytes admin_access_control_authorization_info = 6;
@@ -68,6 +67,10 @@ message AuthorizationInfo {
         ADMIN_WRITE = 2;
         DATA_READ = 3;
         DATA_WRITE = 4;
+    }
+    
+    oneof _granted {
+        bool granted = 3;
     }
     
     oneof _direct_auth {

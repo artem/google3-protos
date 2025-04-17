@@ -46,6 +46,8 @@ message ProcessingPurpose {
         COMPLIANCE_LEGAL_SUPPORT_TAKEOUT_LEGAL = 27;
         COMPLIANCE_LEGAL_SUPPORT_TAKEOUT_CONSUMER = 28;
         COMPLIANCE_LEGAL_SUPPORT_ELI = 29;
+        EXP_MODEL_TRAINING_FOR_PRODUCTION = 31;
+        MODEL_GROUNDING = 32;
     }
     
     repeated ads.user_data_enforcement.DataUsage ads_processing_purpose = 3;

@@ -4,8 +4,6 @@ package research_scam;
 
 import "google/api/inclusion.proto";
 
-option cc_enable_arenas = true;
-
 message NeighborSelectionOverride {
     optional int32 num_neighbors = 2 [default = 0x7fffffff];
     optional float epsilon_distance = 3 [default = inf];
@@ -26,4 +24,6 @@ message QueryMetadata {
 
 message ScoringExtensionMetadata {
     optional int32 post_scoring_extension_num_neighbors = 1;
+    
+    extensions 500000000;
 }

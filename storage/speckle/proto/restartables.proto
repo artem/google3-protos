@@ -1,0 +1,17 @@
+syntax = "proto2";
+
+package speckle;
+
+import "net/proto2/proto/descriptor.proto";
+import "storage/datapol/annotations/proto/semantic_annotations.proto";
+
+enum Restartable {
+    RESTARTABLE_UNKNOWN = 0;
+    RESTARTABLE_NOTHING = 1;
+    RESTARTABLE_NON_CRITICAL_SERVICE_AGENTS = 2;
+    RESTARTABLE_CRITICAL_SERVICE_AGENTS = 3;
+}
+
+extend .proto2.FieldOptions {
+    optional Restartable trigger_restart = 221445889;
+}

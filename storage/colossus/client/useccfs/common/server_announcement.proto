@@ -5,6 +5,9 @@ package storage_useccfs;
 message ServerAnnouncement {
     optional DescriptorSupport descriptor_support = 1;
     optional int32 max_known_message_type = 2;
+    optional bool ready_to_receive_writes_in_dformat = 3;
+    optional int32 d_block_size = 4;
+    optional bool no_padding_for_d_checksum = 5;
 }
 
 enum DescriptorSupport {

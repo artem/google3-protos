@@ -9,6 +9,7 @@ message MemoryConsumptionEstimateConfig {
 }
 
 message MemoryConsumptionEstimate {
+    optional int64 num_gfvs = 15;
     optional int64 total = 1;
     optional int64 original_vectors = 2;
     optional int64 docids = 3;

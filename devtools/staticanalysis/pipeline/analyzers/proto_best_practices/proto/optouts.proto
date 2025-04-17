@@ -54,6 +54,9 @@ message Category {
         JSPB_MESSAGE_ID_CHANGE = 41;
         REQUIRE_DROIDGUARD_CLIENT_RESPONSE_ANNOTATION = 42;
         SERVICE_DEADLINE = 43;
+        IMPORT_PUBLIC = 44;
+        ONEOF_AVOID = 45;
+        INT32_AVOID = 46;
     }
 }
 

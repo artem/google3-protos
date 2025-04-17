@@ -2,10 +2,10 @@ syntax = "editions";
 
 package security_loas_l2;
 
-import "borg/common/internal_confidential_mode_config.proto";
 import "net/proto2/bridge/proto/message_set.proto";
 import "security/credentials/proto/principal.proto";
 import "security/loas/l2/proto/common.proto";
+import "security/loas/l2/proto/confidential_security_level.proto";
 import "security/loas/l2/proto/credstype.proto";
 import "security/loas/l2/proto/identity_types.proto";
 import "security/loas/l2/proto/instance.proto";
@@ -95,7 +95,7 @@ message BorgTaskCertificate {
     optional InstanceInfo instance_info = 6;
     optional bool resumable_instance_info = 9;
     optional string virtual_cell = 10;
-    optional borg.InternalConfidentialModeConfig.SecurityLevel confidential_security_level = 11;
+    optional ConfidentialSecurityLevel confidential_security_level = 11;
     
     reserved 7, 8;
     

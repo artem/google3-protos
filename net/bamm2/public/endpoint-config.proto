@@ -41,13 +41,19 @@ message PonyExpressOptions {
     optional string borg_container_name = 38;
     optional int32 transport_allocator_num_shards = 39 [default = 1];
     optional bool use_unchecked_region_translation = 41;
+    optional bool enable_deferred_commands = 42;
+    optional bool enable_steering = 43;
+    optional bool enable_per_cq_stream_caching = 44;
     
     reserved 13, 14, 17, 24, 30;
 }
 
 message VerbsOptions {
     optional string device_name = 1;
+    optional string network_interface = 5;
     optional bool request_complete_in_error = 2 [default = false];
+    optional bool use_region_rma = 3 [default = false];
+    optional bool force_split_write_with_immediate = 4 [default = false];
 }
 
 message EndpointConfig {

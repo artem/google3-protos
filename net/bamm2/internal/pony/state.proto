@@ -6,6 +6,7 @@ import "net/bamm2/connector/connect.proto";
 import "net/base/qos.proto";
 import "net/pony/internal/pony-control.proto";
 import "net/pony/public/endpoint-state.proto";
+import "net/pony/public/metric.proto";
 import "net/pony/public/pony-flash.proto";
 import "perftools/tracing/proto/tracecontext.proto";
 import "util/task/codes.proto";
@@ -82,6 +83,7 @@ message StreamTable {
 message PonyStreamCache {
     optional int32 max_free_streams = 1;
     optional int32 max_streams_per_cmdq_list = 2;
+    optional bool use_per_cmdq_list = 5;
     repeated uint32 clean_streams = 3;
     
     repeated PerEngineStreams per_engine_streams = 4;
@@ -139,6 +141,7 @@ message TraceState {
     optional bool max_cwnd_updated_last = 10;
     optional DelayMetrics local_delays = 11;
     optional DelayMetrics remote_delays = 12;
+    optional net_pony.PonyMetric.CsigInformation csig_info = 13;
 }
 
 message OpInfo {

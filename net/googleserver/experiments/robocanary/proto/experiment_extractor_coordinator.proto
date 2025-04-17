@@ -1,0 +1,85 @@
+syntax = "editions";
+
+package net.googleserver.experiments.robocanary;
+
+import "net/googleserver/experiments/proto/host-selector.proto";
+import "net/googleserver/experiments/robocanary/proto/region_specification.proto";
+
+message ClInfo {
+    optional int32 config_version = 4;
+    optional int32 eccf_version = 5;
+    optional bool ignore_version = 3 [default = false];
+    optional string time = 2;
+    repeated HostSelector host_selectors = 7;
+    optional bool host_selectors_negated = 8 [default = false];
+    optional string experiment_snapshot_group = 9;
+    optional int32 version = 1 [deprecated = true];
+}
+
+message ClList {
+    repeated int32 cls = 1;
+}
+
+message ConfigVersions {
+    optional ClInfo serving_cl = 1;
+    optional ClInfo canary_cl = 2;
+    optional ClList canary_candidate_cls = 5;
+    optional ClList appr_cls = 3;
+    optional ClList bad_cls = 4;
+    repeated ClInfo version_assignments = 8;
+}
+
+message CanaryDatacenter {
+    optional string dc = 1;
+    optional string time = 2;
+    repeated string labels = 3;
+}
+
+message CanaryDatacenterCandidates {
+    repeated string dcs = 1;
+    optional string time = 2;
+}
+
+message RegionCanaryDatacenter {
+    optional .experiments.RegionSpecification.Region region = 1;
+    optional string dc = 2;
+    optional string time = 3;
+    repeated string labels = 4;
+}
+
+message RegionCanaryDatacenterCandidates {
+    repeated RegionCanaryDatacenter dc_entries = 1;
+}
+
+message CanaryCellTrafficFailure {
+    optional string dc = 1;
+    optional string initial_failure_detection_time = 2;
+}
+
+message Datacenters {
+    repeated CanaryDatacenter canary_dcs = 3;
+    optional CanaryDatacenterCandidates canary_dc_candidates = 2;
+    repeated RegionCanaryDatacenter region_canary_dcs = 4;
+    optional RegionCanaryDatacenterCandidates region_canary_dc_candidates = 5;
+    optional CanaryCellTrafficFailure traffic_failure_status = 6;
+    optional CanaryDatacenter canary_dc = 1 [deprecated = true];
+}
+
+message EecSignature {
+    optional RunMode run_mode = 4;
+    enum RunMode {
+        MANUAL_ONLY = 0;
+        AUTO = 1;
+    }
+    
+    optional bool auto_canary_enabled = 5 [default = false];
+    optional string dc = 1;
+    optional string time = 2;
+    optional string timezone = 3;
+}
+
+message ExperimentExtractorCoordination {
+    optional ConfigVersions config_versions = 1;
+    optional Datacenters datacenters = 2;
+    optional EecSignature eec_signature = 3;
+}

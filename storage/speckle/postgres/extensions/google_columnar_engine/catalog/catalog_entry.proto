@@ -69,6 +69,8 @@ message ColumnarOperation {
     optional uint32 rel_oid = 4;
     optional int64 topic_id = 5;
     optional ColumnarOperationType op_type = 6;
+    optional string schemaname = 7;
+    optional string relname = 8;
 }
 
 enum ColumnarOperationType {

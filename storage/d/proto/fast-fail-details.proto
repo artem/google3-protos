@@ -1,0 +1,11 @@
+syntax = "editions";
+
+package storage_d;
+
+import "net/proto2/bridge/proto/message_set.proto";
+
+message FastFailDetails {
+    extend .proto2.bridge.MessageSet {
+        optional FastFailDetails message_set_extension = 525001857;
+    }
+}

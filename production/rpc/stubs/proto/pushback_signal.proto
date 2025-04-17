@@ -1,0 +1,12 @@
+syntax = "proto2";
+
+package production.rpc.stubs.proto;
+
+import "net/proto2/contrib/validator/annotations.proto";
+
+option java_multiple_files = true;
+option java_package = "com.google.prod.rpc.stubs.proto";
+
+message PushbackSignalConfiguration {
+    optional int64 suspensions_count_threshold = 1 [default = 10000];
+}

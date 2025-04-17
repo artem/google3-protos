@@ -6,7 +6,6 @@ import "frameworks/testing/rpcreplay/processors/rpc_replay_field_option.proto";
 import "google/protobuf/timestamp.proto";
 import "storage/datapol/annotations/proto/semantic_annotations.proto";
 
-option cc_enable_arenas = true;
 option java_package = "com.google.gaia.data.proto.proto1api";
 
 message SmartReauthOtaBehavior {

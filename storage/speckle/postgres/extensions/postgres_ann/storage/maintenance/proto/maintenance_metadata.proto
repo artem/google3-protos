@@ -1,0 +1,20 @@
+syntax = "editions";
+
+package postgres.extensions.postgres_ann;
+
+import "storage/datapol/annotations/proto/semantic_annotations.proto";
+
+message TupleId {
+    optional uint32 page_id = 1;
+    optional uint32 pos = 2;
+}
+
+message SplitPartitionMetadata {
+    optional TupleId parent_partition = 1;
+    optional TupleId split_partition = 2;
+    optional TupleId new_partition = 3;
+}
+
+message IndexBuildMetadata {
+    optional uint64 avg_rows_per_partition = 1;
+}

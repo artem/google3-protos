@@ -13,6 +13,8 @@ message CpuUpscalingData {
     optional int64 current_spare_cpu_shares = 5;
     optional int64 spare_millicpus = 8;
     optional int64 current_spare_millicpus = 9;
+    repeated int64 numa_spare_millicpus = 10;
+    repeated int64 numa_ids = 11;
     
     reserved 6, 7;
 }

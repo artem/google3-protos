@@ -62,6 +62,7 @@ message CuratorIssuesSummary {
     optional string temporary_removals_disabled = 13;
     optional int64 num_live_chunks_on_removed_devices = 15;
     optional int64 num_duplicate_files = 16;
+    optional google.protobuf.Timestamp oldest_complete_scan_start_time = 17;
 }
 
 message DiskServerIssuesSummary {
@@ -116,7 +117,7 @@ message DiskStatsRequest {
         SERVER_LAYERED_STATE = 9;
     }
     
-    optional bool want_aggregate_record = 3;
+    reserved 3;
 }
 
 message DiskStatRecord {
@@ -140,7 +141,8 @@ message DiskStatRecord {
 
 message DiskStatsResult {
     repeated DiskStatRecord records = 1;
-    optional DiskStatRecord aggregate = 2;
+    
+    reserved 2;
 }
 
 message RiskDescription {
@@ -375,6 +377,7 @@ message LabeledChunkStateStats {
     optional int32 layer = 2;
     optional string d_partition = 3;
     optional FileEncoding encoding = 4;
+    optional string enclosure_group = 8;
     optional int64 count = 5;
     optional storage_util.Int128 total_bytes_128 = 7;
     
@@ -387,7 +390,14 @@ message LabeledStripeRecoveryStateStats {
     optional int64 num_missing_stripes = 3;
     optional int64 num_unavailable_stripes = 4;
     optional int64 num_watch_stripes = 5;
-    optional int64 num_recoverable_chunks = 6;
+    optional int64 num_recoverable_chunks = 6 [deprecated = true];
+}
+
+message LabeledChunkRecoveryStatusStats {
+    optional string d_partition = 1;
+    optional string encoding = 2;
+    optional string enclosure_group = 4;
+    optional int64 num_recoverable_chunks = 3;
 }
 
 message EncryptionMetadataClass {
@@ -549,7 +559,7 @@ message GetRemovalSummaryRequest {
 message StripeSample {
     optional string filename = 1;
     optional int64 file_id = 2;
-    optional int32 logical_stripe_index = 3;
+    optional int32 physical_stripe_index = 3;
 }
 
 message ServerRemovalSummary {
@@ -575,6 +585,18 @@ message LddStatsSummary {
     optional int64 total_chunks = 4;
     optional int64 num_chunks_on_ldd = 5;
     optional int64 num_chunks_on_nonallocatable = 6;
+}
+
+message HaaStatsSummary {
+    optional int64 num_full_fast_haa_stripes = 1;
+    optional int64 num_full_slow_haa_stripes = 2;
+    optional int64 num_partial_fast_haa_stripes = 3;
+    optional int64 num_haa_chunks_on_fast = 4;
+    optional int64 num_haa_chunks_on_slow = 5;
+    optional int64 num_non_haa_chunks_on_fast = 6;
+    optional int64 haa_bytes_on_fast = 7;
+    optional int64 haa_bytes_on_slow = 8;
+    optional int64 non_haa_bytes_on_fast = 9;
 }
 
 enum FailureDomainServerState {

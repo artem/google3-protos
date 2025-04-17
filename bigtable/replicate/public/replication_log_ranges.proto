@@ -5,7 +5,7 @@ package bigtable;
 import "bigtable/proto/bigtable.proto";
 import "bigtable/proto/bigtable_internal.proto";
 import "bigtable/proto/bti_request.proto";
-import "bigtable/replicate/public/replicated_table.proto";
+import "bigtable/proto/movereplica_internal.proto";
 
 option java_package = "com.google.bigtable.protos";
 
@@ -61,7 +61,8 @@ message BTIR_LogManager {
         optional BTIR_LogRangeSet range_set = 2;
     }
     
-    repeated BTIR_ReplicatedTableMetadata.Move moved_replicas = 8;
+    repeated movereplica.Move moved_replicas = 8;
+    repeated movereplica.Move moved_replica_map = 9;
     
     reserved 6;
 }

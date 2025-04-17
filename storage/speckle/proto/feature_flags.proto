@@ -1,0 +1,16 @@
+syntax = "proto2";
+
+package speckle;
+
+import "storage/datapol/annotations/proto/semantic_annotations.proto";
+import "storage/speckle/proto/restartables.proto";
+
+message FeatureFlagsProto {
+    optional bool test_feature = 1;
+    optional bool deleted_2 = 2 [deprecated = true];
+    optional bool deleted_3 = 3 [deprecated = true];
+    optional bool deleted_5 = 5 [deprecated = true];
+    optional bool deleted_12 = 12 [deprecated = true];
+    
+    reserved 4, 6, 7, 8, 9, 10, 11;
+}

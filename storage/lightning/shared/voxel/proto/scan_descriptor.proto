@@ -36,6 +36,7 @@ message LogsPseudocolumnSourceProto {
         PSEUDOCOLUMN_LOG_DIFF_LOG_KEY = 8;
         PSEUDOCOLUMN_LOG_DIFF_LOG_TIMESTAMP = 9;
         PSEUDOCOLUMN_LOG_LOOKUP_TOKEN = 10;
+        PSEUDOCOLUMN_LOG_DEDUP_TOKEN = 11;
     }
 }
 

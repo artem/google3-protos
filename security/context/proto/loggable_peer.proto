@@ -4,7 +4,6 @@ package security.context;
 
 import "storage/datapol/annotations/proto/semantic_annotations.proto";
 
-option cc_enable_arenas = true;
 option java_multiple_files = true;
 option java_outer_classname = "LoggablePeerProtoFile";
 option java_package = "com.google.security.context";

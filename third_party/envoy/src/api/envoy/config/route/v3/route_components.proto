@@ -15,7 +15,6 @@ import "third_party/envoy/src/api/envoy/type/v3/range.proto";
 import "google/protobuf/any.proto";
 import "google/protobuf/duration.proto";
 import "google/protobuf/wrappers.proto";
-import "third_party/udpa/xds/annotations/v3/status.proto";
 import "third_party/udpa/xds/type/matcher/v3/matcher.proto";
 import "third_party/envoy/src/api/envoy/annotations/deprecation.proto";
 import "third_party/udpa/udpa/annotations/migrate.proto";
@@ -459,6 +458,7 @@ message RateLimit {
             SourceCluster source_cluster = 1;
             DestinationCluster destination_cluster = 2;
             RequestHeaders request_headers = 3;
+            QueryParameters query_parameters = 12;
             RemoteAddress remote_address = 4;
             GenericKey generic_key = 5;
             HeaderValueMatch header_value_match = 6;
@@ -479,6 +479,12 @@ message RateLimit {
         
         message RequestHeaders {
             string header_name = 1;
+            string descriptor_key = 2;
+            bool skip_if_absent = 3;
+        }
+        
+        message QueryParameters {
+            string query_parameter_name = 1;
             string descriptor_key = 2;
             bool skip_if_absent = 3;
         }
@@ -542,6 +548,14 @@ message RateLimit {
             .envoy.type.metadata.v3.MetadataKey metadata_key = 1;
         }
     }
+    
+    HitsAddend hits_addend = 5;
+    message HitsAddend {
+        google.protobuf.UInt64Value number = 1;
+        string format = 2;
+    }
+    
+    bool apply_on_stream_done = 6;
 }
 
 message HeaderMatcher {

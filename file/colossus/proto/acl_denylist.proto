@@ -1,0 +1,14 @@
+syntax = "editions";
+
+package file_colossus_proto;
+
+option java_multiple_files = true;
+
+message ACLDenylistEntry {
+    optional string acl = 1;
+    optional string principal = 2;
+}
+
+message ACLDenylist {
+    repeated ACLDenylistEntry entries = 1;
+}

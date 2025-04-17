@@ -1,0 +1,48 @@
+syntax = "proto2";
+
+package frameworks.protobuf.protoui;
+
+import "net/proto2/proto/descriptor.proto";
+import "storage/datapol/annotations/proto/semantic_annotations.proto";
+
+option java_multiple_files = true;
+option java_package = "com.google.frameworks.protobuf.protoui";
+
+message ReplaceText {
+    optional string match = 1;
+    
+    optional ReplacementValue replace_with = 2;
+    enum ReplacementValue {
+        UNDEFINED = 0;
+        SSO_USER = 1;
+    }
+}
+
+message FieldUiOptions {
+    optional string displayed_name = 1;
+    optional string short_description = 2;
+    optional string long_description = 3;
+    optional ReplaceText replace = 4;
+}
+
+message OneOfGroupUiOptions {
+    optional string displayed_name = 1;
+    optional bool initially_expanded = 2 [default = true];
+    optional string short_description = 3;
+}
+
+message EnumValueUiOptions {
+    optional string displayed_name = 1;
+}
+
+extend .proto2.FieldOptions {
+    optional FieldUiOptions field_ui = 325921004;
+}
+
+extend .proto2.OneofOptions {
+    optional OneOfGroupUiOptions oneof_ui = 325921004;
+}
+
+extend .proto2.EnumValueOptions {
+    optional EnumValueUiOptions enum_value_ui = 388265573;
+}

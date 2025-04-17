@@ -1,0 +1,75 @@
+syntax = "proto3";
+
+package grpc.lb.v1;
+
+import "google/protobuf/duration.proto";
+import "google/protobuf/timestamp.proto";
+
+option go_package = "google.golang.org/grpc/balancer/grpclb/grpc_lb_v1";
+option java_multiple_files = true;
+option java_outer_classname = "LoadBalancerProto";
+option java_package = "io.grpc.lb.v1";
+
+service LoadBalancer {
+    rpc BalanceLoad(stream LoadBalanceRequest) returns (stream LoadBalanceResponse);
+}
+
+message LoadBalanceRequest {
+    oneof load_balance_request_type {
+        InitialLoadBalanceRequest initial_request = 1;
+        ClientStats client_stats = 2;
+    }
+}
+
+message InitialLoadBalanceRequest {
+    string name = 1;
+}
+
+message ClientStatsPerToken {
+    string load_balance_token = 1;
+    int64 num_calls = 2;
+}
+
+message ClientStats {
+    google.protobuf.Timestamp timestamp = 1;
+    int64 num_calls_started = 2;
+    int64 num_calls_finished = 3;
+    int64 num_calls_finished_with_client_failed_to_send = 6;
+    int64 num_calls_finished_known_received = 7;
+    repeated ClientStatsPerToken calls_finished_with_drop = 8;
+    
+    reserved 4, 5;
+}
+
+message LoadBalanceResponse {
+    oneof load_balance_response_type {
+        InitialLoadBalanceResponse initial_response = 1;
+        ServerList server_list = 2;
+        FallbackResponse fallback_response = 3;
+    }
+}
+
+message FallbackResponse {
+    
+}
+
+message InitialLoadBalanceResponse {
+    google.protobuf.Duration client_stats_report_interval = 2;
+    
+    reserved 1;
+}
+
+message ServerList {
+    repeated Server servers = 1;
+    
+    reserved 3;
+}
+
+message Server {
+    bytes ip_address = 1;
+    int32 port = 2;
+    string load_balance_token = 3;
+    bool drop = 4;
+    
+    reserved 5;
+}

@@ -22,6 +22,7 @@ message CommonRequestPTokenForMinting {
                 optional int32 origin_associated_product_id = 371;
                 optional bool vertex_traffic_for_grounding = 571;
                 optional bool gemini_traffic_for_grounding = 614;
+                optional bool has_gemini_logging_restrictions = 805;
             }
         }
     }

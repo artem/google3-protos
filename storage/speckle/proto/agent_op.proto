@@ -1,0 +1,56 @@
+syntax = "editions";
+
+package speckle;
+
+import "google/api/policy.proto";
+import "storage/datapol/annotations/proto/semantic_annotations.proto";
+
+option java_outer_classname = "AgentOp";
+
+message OperationRequestKey {
+    optional string operation_token = 1;
+    optional string agent_operation_id = 2;
+    optional string instance_name = 3;
+    optional string instance_uid = 4;
+}
+
+message OperationRequest {
+    optional HttpMethod http_method = 2;
+    optional string endpoint = 3;
+    optional string payload = 4;
+    optional OperationRequestKey operation_request_key = 5;
+    
+    reserved 1;
+}
+
+message OperationResponse {
+    optional int32 http_status = 2;
+    optional string payload = 3;
+    optional bytes obsolete_stdout = 4 [deprecated = true];
+    optional bytes obsolete_stderr = 5 [deprecated = true];
+    optional OperationRequestKey operation_request_key = 6;
+    
+    reserved 1;
+}
+
+message AgentHeartbeat {
+    
+}
+
+message AgentResponse {
+    optional string instance_name = 3;
+    optional string sync_operation_id = 4;
+    
+    oneof message {
+        OperationResponse operation_response = 1;
+        AgentHeartbeat agent_heartbeat = 2;
+    }
+}
+
+enum HttpMethod {
+    UNKNOWN_HTTP_METHOD = 0;
+    GET = 1;
+    POST = 2;
+    PUT = 3;
+    DELETE = 4;
+}

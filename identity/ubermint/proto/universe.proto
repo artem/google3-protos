@@ -2,6 +2,7 @@ syntax = "proto3";
 
 package ubermint;
 
+import "google/api/inclusion.proto";
 import "identity/ubermint/proto/platform_options.proto";
 import "storage/datapol/annotations/proto/semantic_annotations.proto";
 

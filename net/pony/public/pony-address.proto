@@ -46,7 +46,9 @@ message Address {
     optional bool fips_compliant = 15 [default = false];
     optional int32 stripes_supported = 16 [default = 0];
     optional bool supports_zero_copy_rx_messaging = 17 [default = false];
-    optional bool psp_v1_supported = 18 [default = false];
+    optional bool regional_pony_appaloosa = 19 [default = false];
+    optional bool regional_pony_appaloosa_normal_sharding = 21 [default = false];
+    optional bool csig_supported = 20 [default = false];
     
-    reserved 1, 3, 5, 8, 9;
+    reserved 1, 3, 5, 8, 9, 18;
 }

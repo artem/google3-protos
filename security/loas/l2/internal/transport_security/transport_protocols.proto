@@ -1,0 +1,11 @@
+syntax = "editions";
+
+package security_loas_l2;
+
+import "security/loas/l2/internal/transport_security/transport_security_common.proto";
+import "security/loas/l2/proto/common.proto";
+
+extend AuthenticatedOptions {
+    optional .transport_security.TransportProtocolPreferences transport_protocol_preferences = 1016;
+    optional .transport_security.NegotiatedTransportProtocol transport_protocol = 1017;
+}

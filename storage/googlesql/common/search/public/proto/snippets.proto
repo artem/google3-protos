@@ -1,0 +1,16 @@
+syntax = "proto2";
+
+package googlesql.search;
+
+message Snippets {
+    repeated Snippet snippets = 1;
+    message Snippet {
+        optional string snippet = 1;
+        
+        repeated Highlight highlights = 2;
+        message Highlight {
+            optional int64 begin = 1;
+            optional int64 end = 2;
+        }
+    }
+}

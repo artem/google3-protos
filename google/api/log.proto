@@ -3,6 +3,7 @@ syntax = "proto3";
 package google.api;
 
 import "google/api/label.proto";
+import "google/api/policy.proto";
 
 option objc_class_prefix = "GAPI";
 option go_package = "google.golang.org/genproto/googleapis/api/serviceconfig;serviceconfig";

@@ -26,12 +26,6 @@ service MaintenanceInterface {
     rpc GetFolderLoad(GetFolderLoadArg) returns (GetFolderLoadResult);
 }
 
-message MetadataState {
-    optional int64 paxos_generation = 2;
-    
-    reserved 1;
-}
-
 message ReadFolderMetadataResult {
     optional FolderSnapshot snapshot = 2;
     
@@ -64,28 +58,24 @@ message MaintainStripeArg {
     optional int32 physical_stripe_index = 3;
     optional Stripe new_stripe = 4;
     optional Stripe prior_stripe = 5;
-    optional MetadataState metadata_state = 6;
+    
+    reserved 6;
 }
 
 message MaintainStripeResult {
-    optional FolderSnapshot snapshot = 2;
-    
-    reserved 1;
+    reserved 1, 2;
 }
 
 message ExpungeLayerArg {
     optional ArgHeader header = 1;
     optional string folder_name = 2;
     optional MetadataLayer layer = 5;
-    optional MetadataState metadata_state = 4;
     
-    reserved 3;
+    reserved 3, 4;
 }
 
 message ExpungeLayerResult {
-    optional FolderSnapshot snapshot = 2;
-    
-    reserved 1;
+    reserved 1, 2;
 }
 
 message ExpungeStripesArg {
@@ -93,13 +83,12 @@ message ExpungeStripesArg {
     optional MaintenanceFileKey file = 2;
     optional int32 physical_stripe_offset = 3;
     repeated Stripe prior_stripes = 4;
-    optional MetadataState metadata_state = 5;
+    
+    reserved 5;
 }
 
 message ExpungeStripesResult {
-    optional FolderSnapshot snapshot = 2;
-    
-    reserved 1;
+    reserved 1, 2;
 }
 
 message MaintainFileArg {
@@ -107,26 +96,24 @@ message MaintainFileArg {
     optional MaintenanceFileKey file = 2;
     optional FileDescriptor new_header = 3;
     optional FileDescriptor prior_header = 4;
-    optional MetadataState metadata_state = 5;
+    
+    reserved 5;
 }
 
 message MaintainFileResult {
-    optional FolderSnapshot snapshot = 2;
-    
-    reserved 1;
+    reserved 1, 2;
 }
 
 message ExpungeFileArg {
     optional ArgHeader header = 1;
     optional MaintenanceFileKey file = 2;
     optional FileDescriptor prior_header = 3;
-    optional MetadataState metadata_state = 4;
+    
+    reserved 4;
 }
 
 message ExpungeFileResult {
-    optional FolderSnapshot snapshot = 2;
-    
-    reserved 1;
+    reserved 1, 2;
 }
 
 message RollPaxosLogsArg {
@@ -150,16 +137,15 @@ message RollBTreeLogsArg {
 }
 
 message RollBTreeLogsResult {
-    optional FolderSnapshot pre_roll_snapshot = 2;
-    
-    reserved 1;
+    reserved 1, 2;
 }
 
 message ForceCloseStripeArg {
     optional ArgHeader header = 1;
     optional MaintenanceFileKey file = 2;
     optional Curator_CloseStripeArg close_stripe_info = 3;
-    optional MetadataState metadata_state = 4;
+    
+    reserved 4;
 }
 
 message ForceCloseStripeResult {

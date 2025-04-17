@@ -14,4 +14,10 @@ message InternalConfidentialModeConfig {
         SECURITY_LEVEL_2 = 3;
         SECURITY_LEVEL_3 = 4;
     }
+    
+    optional BestAvailableMode best_available = 2;
+    enum BestAvailableMode {
+        BEST_AVAILABLE_MODE_UNSPECIFIED = 0;
+        BEST_AVAILABLE_MODE_ENABLED = 1;
+    }
 }

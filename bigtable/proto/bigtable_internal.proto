@@ -8,6 +8,7 @@ import public "bigtable/proto/compaction_stats.proto";
 import "bigtable/proto/bigtable.proto";
 import "bigtable/proto/dma_rollout.proto";
 import "bigtable/proto/materialized_views_config_internal.proto";
+import "bigtable/proto/movereplica_internal.proto";
 import "bigtable/proto/schema_validator_spec.proto";
 import "bigtable/proto/snapshot_internal.proto";
 import "bigtable/util/state_manager/state_manager.proto";
@@ -90,16 +91,27 @@ message TabletAndLocationCache {
     map<string, BTI_TabletLocationList> tablet_locations_per_cell = 1;
 }
 
-message MoveReplicaDestinationTableInfo {
-    optional string cell = 1;
-    optional string table_name = 2;
-    optional string original_name = 3;
-    optional uint64 table_version = 4;
+message MoveReplicaPeerTableInfo {
+    optional string my_cell = 7;
+    optional uint64 my_table_version = 8;
+    optional string peer_cell = 1;
+    optional string peer_table_name = 2;
+    optional string peer_original_name = 3;
+    optional uint64 peer_table_version = 4;
     optional bytes start_row = 5;
     optional bytes limit_row = 6;
+    optional bool peer_is_destination = 10;
     
     extend .proto2.bridge.MessageSet {
-        optional MoveReplicaDestinationTableInfo message_set_extension = 525001835;
+        optional MoveReplicaPeerTableInfo message_set_extension = 525001835;
+    }
+}
+
+message MoveReplicaPoisonRedirect {
+    optional uint64 dst_table_version = 1;
+    
+    extend .proto2.bridge.MessageSet {
+        optional MoveReplicaPoisonRedirect message_set_extension = 525003388;
     }
 }
 
@@ -292,6 +304,7 @@ message SpannerProxyConfig {
     optional string spanner_table = 2;
     optional string proxy_source_id = 3;
     optional string spanner_source_id = 4;
+    optional bool replicate_spanner_commit_timestamp = 5;
 }
 
 message SpannerMigrationConfig {
@@ -324,8 +337,6 @@ message BTI_TableMetadata {
     required fixed64 client_id = 6;
     required fixed64 local_id = 7;
     optional int64 system_schema_version = 37;
-    optional int64 schema_info_generation = 102 [default = -1];
-    optional string schema_backup_path = 106;
     repeated LocalityGroup locality_group = 9;
     repeated AclGroup acl_group = 65;
     optional security.context.AuditRequirements audit_requirements = 70;
@@ -345,6 +356,8 @@ message BTI_TableMetadata {
             required bytes start_row = 83;
             required bytes limit_row = 84;
         }
+        
+        optional string pending_global_config_update = 132;
     }
     
     optional float tablet_split_size = 25 [default = 1.0737418e+09];
@@ -356,8 +369,8 @@ message BTI_TableMetadata {
     optional uint64 incarnation = 13 [default = 1];
     optional float major_compaction_cycle_days = 26;
     optional double major_compaction_cycle_updated_timestamp = 89;
-    optional SnapshotPolicy snapshot_policy = 41 [deprecated = true];
     optional string backup_policy = 72;
+    optional int64 last_policy_snapshot_time_microsecs = 130;
     optional string previous_backup_policy = 107;
     
     optional group SnapshotSource = 42 {
@@ -412,7 +425,6 @@ message BTI_TableMetadata {
     optional string cloud_kms_key_version = 99;
     optional string wrapped_resource_key_filepath = 105;
     optional bool encrypt_table = 67;
-    optional int64 encryption_key_rotation_interval_sec = 75;
     optional bool family_ids_in_pull_request = 66 [default = false];
     optional ChubbyCompressed chubby_compressed = 2;
     optional bool load_based_splitting = 71 [default = true];
@@ -432,6 +444,7 @@ message BTI_TableMetadata {
         optional bool source = 1;
         optional bool puller = 2;
         optional FamilyIDMigration.State family_id_migration_state = 3 [default = DEFAULT_NOT_MIGRATING];
+        optional string effingo_resource_mdb = 4;
         
         message FamilyIDMigration {
             enum State {
@@ -475,6 +488,7 @@ message BTI_TableMetadata {
             optional GcControl gc_control = 1;
         }
         
+        repeated movereplica.Move in_progress_move_update = 9;
         optional google.protobuf.Timestamp create_time = 4;
         optional google.protobuf.Timestamp update_time = 5;
     }
@@ -499,6 +513,7 @@ message BTI_TableMetadata {
     }
     
     optional BTI_MaterializedViewsConfig materialized_views_config = 128;
+    optional int64 creation_time_microsecs = 131;
     
     oneof crn_oneof {
         string cloud_resource_name = 94;
@@ -510,7 +525,7 @@ message BTI_TableMetadata {
         SpannerMigrationConfig spanner_migration_config = 103;
     }
     
-    reserved 11, 24, 27, 36, 51, 56, 64, 68, 97, 119;
+    reserved 11, 24, 27, 36, 41, 51, 56, 64, 68, 75, 97, 102, 106, 119;
 }
 
 message BTI_RecentTableEventRecord {
@@ -648,4 +663,5 @@ enum SplitReason {
     QUEUE_SPLIT = 9;
     DELETED_BOUNDARY_SPLIT = 10;
     SSD_SPLIT = 11;
+    REPLICATION_ROWRANGE_SPLIT = 12;
 }

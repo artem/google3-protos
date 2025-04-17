@@ -102,6 +102,7 @@ message ShardMetadata {
     optional int32 volume_settings_version = 4;
     optional int64 latest_canonical_checksum_lsn = 5 [default = 0x7fffffffffffffff];
     optional bool use_shard_snapshots = 6 [default = false];
+    optional ReplicaReadOnlySettings read_only_settings = 7;
 }
 
 message ShardSize {
@@ -129,6 +130,12 @@ message WalMetadata {
     optional int32 replica_id = 6;
     
     reserved 5;
+}
+
+message ReplicaReadOnlySettings {
+    optional bool read_only = 1;
+    optional google.protobuf.Timestamp last_update_timestamp = 2;
+    optional int64 version = 3;
 }
 
 enum ShardState {

@@ -1,0 +1,19 @@
+syntax = "editions";
+
+package cloud.experiments.dataplane.proto;
+
+import "cloud/experiments/pusher/proto/push_data.proto";
+
+option java_multiple_files = true;
+
+service WatchService {
+    rpc Watch(WatchRequest) returns (stream WatchResponse);
+}
+
+message WatchRequest {
+    
+}
+
+message WatchResponse {
+    optional pusher.proto.MendelPush push = 1;
+}

@@ -2,6 +2,7 @@ syntax = "proto3";
 
 package envoy.type.matcher.v3;
 
+import "third_party/envoy/src/api/envoy/type/matcher/v3/address.proto";
 import "third_party/envoy/src/api/envoy/type/matcher/v3/string.proto";
 import "third_party/udpa/udpa/annotations/status.proto";
 import "third_party/protoc_gen_validate/validate/validate.proto";
@@ -16,5 +17,6 @@ message FilterStateMatcher {
     
     oneof matcher {
         StringMatcher string_match = 2;
+        AddressMatcher address_match = 3;
     }
 }

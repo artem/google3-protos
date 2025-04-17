@@ -64,14 +64,9 @@ message FilterChain {
     google.protobuf.Duration transport_socket_connect_timeout = 9;
     string name = 7;
     
-    OnDemandConfiguration on_demand_configuration = 8;
-    message OnDemandConfiguration {
-        google.protobuf.Duration rebuild_timeout = 1;
-    }
+    reserved 2, 8;
     
-    reserved 2;
-    
-    reserved "tls_context";
+    reserved "tls_context", "on_demand_configuration";
 }
 
 message ListenerFilterChainMatchPredicate {

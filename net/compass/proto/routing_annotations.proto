@@ -12,4 +12,5 @@ extend .proto2.FieldOptions {
     optional int32 routing_info_extension = 121686601;
     repeated .proto2.FieldDescriptorProto.Type allowed_field_type = 127371464;
     optional bool contains_routing_info = 342869202;
+    optional bool retrieve_multiple_fields = 535801377;
 }

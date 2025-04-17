@@ -14,6 +14,7 @@ message TypeProto {
         StructTypeProto struct_type = 4;
         ProtoTypeProto proto_type = 5;
         EnumTypeProto enum_type = 6;
+        MapTypeProto map_type = 7;
     }
 }
 
@@ -40,4 +41,9 @@ message StructTypeProto {
 message EnumTypeProto {
     optional int64 descriptor_pool_index = 1;
     optional string enum_name = 2;
+}
+
+message MapTypeProto {
+    optional TypeProto key_type = 1;
+    optional TypeProto value_type = 2;
 }

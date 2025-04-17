@@ -1,0 +1,206 @@
+syntax = "editions";
+
+package experiments.heterodyne;
+
+import "experiments/framework/extensions/heterodyne/proto/application_properties.proto";
+import "experiments/framework/extensions/heterodyne/proto/enums.proto";
+import "java/com/google/apps/jspb/jspb_generate_object_format.proto";
+import "logs/proto/logs_annotations/logs_annotations.proto";
+import "storage/datapol/annotations/proto/semantic_annotations.proto";
+import "wireless/android/play/playlog/proto/clientanalytics.proto";
+import "wireless/android/privacy/annotations/proto/collection_basis_annotations.proto";
+
+option objc_class_prefix = "EXH";
+option java_outer_classname = "ExperimentsProto";
+option java_package = "com.google.experiments.heterodyne";
+
+message Param {
+    optional string name = 1;
+    optional int64 int_value = 2;
+    optional bool bool_value = 3;
+    optional double float64_value = 4;
+    optional string string_value = 5;
+    
+    optional ExtensionValue extension_value = 6;
+    message ExtensionValue {
+        optional bytes serialized_value = 1;
+    }
+    
+    optional ParamValueType value_type = 9;
+    enum ParamValueType {
+        UNKNOWN = 0;
+        INT_VALUE = 1;
+        BOOL_VALUE = 2;
+        FLOAT64_VALUE = 3;
+        STRING_VALUE = 4;
+        EXTENSION_VALUE = 5;
+    }
+    
+    optional bool is_forced = 10;
+    
+    reserved 7, 8;
+}
+
+message DeviceAccount {
+    optional int32 auth_token_index = 1;
+}
+
+message Scope {
+    optional string config_package = 1;
+    optional int64 version_code = 2;
+    optional DeviceAccount device_account = 3;
+    optional sfixed64 baseline_cl = 4;
+    optional string host_application_identifier = 5;
+}
+
+message ParamPartition {
+    optional ParamPartitionTag param_partition_tag = 1;
+    repeated Param param = 2;
+    
+    optional UpdateType update_type = 3;
+    enum UpdateType {
+        REPLACE = 0;
+        DELETE = 2;
+    }
+}
+
+message CrossAppDescriptor {
+    optional Scope from_scope = 1;
+    optional bytes experiment_token = 2;
+    
+    optional DiversionProvenance provenance = 3;
+    enum DiversionProvenance {
+        UNKNOWN = 0;
+        GAIA = 1;
+        PSEUDONYMOUS = 2;
+        ALWAYS_CROSS = 3;
+        OTHER = 4;
+    }
+}
+
+message ToLogDescriptor {
+    optional string log_source = 1;
+    optional bool cross_app_boundary = 2;
+    optional bytes experiment_token = 3;
+}
+
+message ConfigurationTier {
+    optional Tier tier = 1;
+    enum Tier {
+        UNKNOWN = 0;
+        USER = 1;
+        DEVICE = 2;
+    }
+}
+
+message ApplicationResponse {
+    optional Scope scope = 1;
+    repeated ParamPartition param_partition = 2;
+    optional bytes experiment_token = 3;
+    optional string server_trigger_token = 4;
+    repeated int32 client_experiment_id = 5 [deprecated = true];
+    repeated CrossAppDescriptor cross_app_descriptor = 6;
+    optional bytes tokens_tag = 7;
+    repeated ToLogDescriptor log_descriptor = 8;
+    optional ConfigurationTier config_tier = 9 [deprecated = true];
+    optional ConfigurationTier configuration_tier = 10;
+}
+
+message SignedIdentityToken {
+    optional bytes signed_android_identity_token = 1;
+}
+
+message ClientProperties {
+    optional bool authenticated = 1;
+    optional int64 user_id = 2;
+    optional int64 pseudonymous_id = 3;
+    optional wireless_android_play_playlog.ClientInfo client_info = 4;
+    optional string pseudonymous_cookie = 5;
+    optional bytes dogfood_token = 6;
+    optional bool is_maybe_googler_gmscore = 7;
+    optional SignedIdentityToken signed_identity_token_for_debug = 8;
+}
+
+message ParamPartitionTag {
+    optional int64 id = 1;
+    optional bytes tag = 2;
+}
+
+message ApplicationRequest {
+    optional Scope scope = 1;
+    optional bytes application_properties = 2;
+    optional bytes runtime_properties = 8;
+    repeated ParamPartitionTag param_partition_tag = 3;
+    optional bytes tokens_tag = 4;
+    optional bool silence_response = 5 [deprecated = true];
+    optional bytes registration_info = 6;
+    optional bool can_process_configuration_tier = 7 [deprecated = true];
+}
+
+message UpstreamRequestProperties {
+    optional uint64 override_zwieback_uid = 1;
+    optional string original_sender = 2;
+    optional int32 connection_rtt = 3;
+    optional bytes event_id = 4;
+}
+
+message TransportProperties {
+    reserved 1;
+}
+
+message AppWideProperties {
+    optional bytes signed_out_consent_info = 1;
+}
+
+message ExperimentsAndConfigsRequest {
+    optional ClientProperties client_properties = 1;
+    repeated ApplicationRequest application_request = 2;
+    optional bytes request_config_tag = 3;
+    optional FetchReason.Type fetch_reason = 4;
+    optional string fetch_config_package = 7;
+    optional string fetch_application_identifier = 10;
+    optional int32 client_type = 5;
+    optional UpstreamRequestProperties upstream_request_properties = 8;
+    map<string, AppWideProperties> app_wide_properties = 11;
+    
+    reserved 6, 9;
+    
+    enum ClientType {
+        UNKNOWN = 0;
+        GMSCORE_PHENOTYPE = 1;
+        GMSCORE_SAFEBOOT_PHENOTYPE = 2;
+        IOS_PHENOTYPE = 64;
+        IOS_FLAT_FILE_PHENOTYPE = 65;
+        IOS_INTERNAL_PHENOTYPE = 66;
+        PHONESKY_LIBRARY_PHENOTYPE = 128;
+        LONGFEI_LIBRARY_PHENOTYPE = 256;
+        AGSA_UNLAUNCHED = 1024;
+        AGSA = 1025;
+        JS_PHENOTYPE = 2048;
+        LIBASSISSTANT = 3000;
+        CLOUDDPC = 3100;
+        LOONIX = 3200;
+        AARECEIVER = 3300;
+        CMDD = 3400;
+        HPE = 3500;
+        MAPS = 3600;
+        DRIVE_FS = 3700;
+        GOOGLE_ONE = 3800;
+        GSTORE_POS = 3900;
+        NEARBY = 4000;
+        CONFIDENTIAL_SPACE = 4100;
+        GHP = 4200;
+        DESKTOP_SERVICES = 4300;
+        GOOGLE_MAPS_PERCEPTION = 4400;
+        STARGATE = 4500;
+    }
+}
+
+message ExperimentsAndConfigsResponse {
+    repeated ApplicationResponse application_response = 1;
+    optional bytes request_config_tag = 2;
+    optional string pseudonymous_cookie = 3;
+    optional int64 server_configuration_version = 4;
+    optional int64 server_build_version = 5;
+    repeated int32 invalid_auth_token_index = 6;
+}

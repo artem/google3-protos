@@ -2,6 +2,7 @@ syntax = "editions";
 
 package security.ganpati.sharded_client;
 
+import "google/rpc/code.proto";
 import "production/resources/dataplatform/idx/time_series/public/proto/idx_time_series_record.proto";
 import "security/dataprotection/collection/public/collection_service.proto";
 import "storage/datapol/annotations/proto/semantic_annotations.proto";
@@ -28,6 +29,7 @@ message PerAclReport {
     optional string acl_name = 1;
     optional AclChecksReport.Namespace ns = 3 [default = GANPATI_PROD];
     repeated PerPrincipalReport per_principal_report = 2;
+    optional string namespace_name = 4;
 }
 
 message PerPrincipalReport {
@@ -36,4 +38,10 @@ message PerPrincipalReport {
     optional bool is_aod_eligible = 2;
     optional int32 outcome = 3;
     optional int32 count = 4;
+    
+    repeated PrincipalResult principal_results = 6;
+    message PrincipalResult {
+        optional google.rpc.Code result = 1;
+        optional int32 count = 2;
+    }
 }

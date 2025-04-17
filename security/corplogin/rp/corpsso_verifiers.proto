@@ -1,0 +1,21 @@
+syntax = "editions";
+
+package com.google.security.corplogin.rp;
+
+option java_outer_classname = "VerifiersPb";
+option java_package = "com.google.security.corplogin.rp";
+
+message CertChain {
+    repeated bytes cert = 1;
+    optional string key_id = 2;
+}
+
+message Verifiers {
+    repeated CertChain verifier = 1;
+    optional int64 timestamp_ms = 2 [default = 0];
+}
+
+message SignedVerifiers {
+    optional bytes verifiers = 1;
+    optional bytes sha1 = 2;
+}

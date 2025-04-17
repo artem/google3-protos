@@ -1,0 +1,12 @@
+syntax = "proto2";
+
+package compliance_controls;
+
+import "privacy/compliance_controls/proto/age_inference_eligibility.proto";
+
+option java_multiple_files = true;
+option java_package = "com.google.privacy.compliancecontrols";
+
+message AgeInferenceEligibilityControls {
+    optional AgeInferenceEligibility.Eligibility age_inference_eligibility = 1;
+}

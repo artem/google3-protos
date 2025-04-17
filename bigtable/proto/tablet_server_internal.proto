@@ -8,7 +8,9 @@ import "bigtable/proto/bti_request.proto";
 import "bigtable/proto/change_data_capture_internal.proto";
 import "bigtable/proto/encryption.proto";
 import "bigtable/proto/invertible_bloom_filter.proto";
+import "bigtable/proto/movereplica_internal.proto";
 import "bigtable/proto/mutation_internal.proto";
+import "bigtable/proto/progress.proto";
 import "bigtable/proto/ptoken_filter_policy.proto";
 import "bigtable/proto/range_status.proto";
 import "bigtable/proto/rowset.proto";
@@ -17,10 +19,10 @@ import "bigtable/proto/size_profile.proto";
 import "bigtable/proto/snapshot_compact.proto";
 import "bigtable/proto/stats.proto";
 import "bigtable/proto/tablet_internal.proto";
-import "bigtable/replicate/public/replicated_table.proto";
 import "bigtable/replicate/public/replication_log_ranges.proto";
 import "net/proto/typed_message.proto";
 import "net/proto2/bridge/proto/message_set.proto";
+import "net/proto2/contrib/custom_printer/proto/custom_printer.proto";
 import "net/rpc/empty-message.proto";
 import "storage/cmek_library/proto/unwrapped_resource_key.proto";
 import "util/existencefilter/proto/existence_filter.proto";
@@ -29,7 +31,7 @@ option java_package = "com.google.bigtable.protos";
 
 service BTI_TabletServer {
     rpc Apply(BTI_Mutation) returns (BTI_ApplyResult);
-    rpc StreamingScanner(BTI_ScannerArg) returns (stream BTI_StreamingScannerMessage);
+    rpc StreamingScanner(BTI_ScannerArg) returns (stream BTI_StreamingScannerMixedResult);
     rpc WaitForSecondary(BTI_SecondaryWaitForArg) returns (EmptyMessage);
     rpc CommitTransaction(BTI_Transaction) returns (BTI_ApplyResult);
     rpc AbortTransaction(BTI_Transaction) returns (EmptyMessage);
@@ -107,7 +109,7 @@ message BTI_StreamingScannerMessage {
         optional bytes column_delta = 6;
         optional int64 timestamp = 7;
         optional bytes value = 13;
-        optional SidePtokenMsg side_ptoken = 37;
+        optional SidePTokenMsg side_ptoken = 37;
         optional fixed32 crc = 8;
         optional fixed64 key_checksum = 9;
         repeated int64 dropped = 14;
@@ -128,6 +130,11 @@ message BTI_StreamingScannerMessage {
     optional BTIR_WaterMarks low_water_marks = 35;
     
     reserved 16;
+}
+
+message BTI_StreamingScannerMixedResult {
+    optional BTI_StreamingScannerMessage stream_message = 1;
+    optional BTI_StreamingScannerMessage result_message = 2;
 }
 
 message BTI_ReaderVersion {
@@ -222,7 +229,7 @@ message BTI_ReaderResultItem {
     optional int64 timestamp = 3;
     optional int64 tag = 5;
     optional bytes value = 4 [ctype = CORD];
-    optional SidePtokenMsg side_ptoken = 10;
+    optional SidePTokenMsg side_ptoken = 10;
     optional fixed64 value_checksum = 7;
     optional fixed64 key_checksum = 8;
     optional bytes streams_bitmask = 9;
@@ -278,6 +285,7 @@ message BTI_CPArg {
     optional bool sequential_invocation = 18;
     optional int64 suggested_result_size = 19;
     optional bool request_server_stats = 20;
+    optional bytes restart_token = 21 [ctype = CORD];
     
     reserved 10;
 }
@@ -288,6 +296,8 @@ message BTI_CPResult {
         optional int32 tablet_id = 5;
         optional .proto.TypedMessage typed_result = 6;
         optional RangeStatusProto processed = 3;
+        optional ProgressProto progress = 8;
+        optional bool early_exit = 9;
         
         reserved 2, 4;
     }
@@ -375,7 +385,7 @@ message BTI_CP_GetMoveReplicaStatusResult {
 
 message BTI_CP_UpdateMoveReplicaStatusArgs {
     optional TabletMetaData.MoveReplicaStatus.MoveStatus new_status = 1;
-    optional BTIR_ReplicatedTableMetadata.Move move = 2;
+    optional movereplica.Move move = 2;
     optional BTIR_LogManager target_replication_log_position = 3;
     optional int64 downtime_start_logical_clock = 4;
 }
@@ -389,7 +399,7 @@ message BTI_CP_UpdateMoveReplicaStatusResult {
 
 message UpdateMoveReplicaStatusError {
     optional TabletMetaData.MoveReplicaStatus.MoveStatus move_status = 1;
-    optional BTIR_ReplicatedTableMetadata.Move latest_move = 3;
+    optional movereplica.Move latest_move = 3;
     optional bool permanent = 4 [default = false];
     optional bytes tablet_start_key = 5;
     optional bytes tablet_end_key = 6;
@@ -397,6 +407,23 @@ message UpdateMoveReplicaStatusError {
     extend .proto2.bridge.MessageSet {
         optional UpdateMoveReplicaStatusError message_set_extension = 525002367;
     }
+}
+
+message BTI_CP_VerifyMoveReplicaArgs {
+    optional movereplica.Move move = 1;
+}
+
+message BTI_CP_VerifyMoveReplicaResult {
+    optional MoveStatus move_status = 1;
+    enum MoveStatus {
+        MOVE_STATUS_UNKNOWN = 0;
+        MOVE_STATUS_NOT_FOUND = 1;
+        MOVE_STATUS_VERIFIED = 2;
+        MOVE_STATUS_PENDING_COMPACTION = 3;
+    }
+    
+    optional bytes tablet_start_key = 2;
+    optional bytes tablet_end_key = 3;
 }
 
 message BTI_SamplePrecedingRowKeysRequest {
@@ -539,6 +566,10 @@ message BTI_Load {
         UNLOADING_ACTIVE_OPS = 48;
         MOVEMENT_CPU = 49;
         TRANSIENT_CPU = 50;
+        UPDATE_EPOCH = 61;
+        SMOOTHED_MEMORY = 62;
+        SMOOTHED_CPU_MILLIGCU = 63;
+        SMOOTHED_ACTIVE_OPS = 64;
         MEMORY_LIMIT = 51;
         CPU_LIMIT_OVERRIDE = 60;
     }

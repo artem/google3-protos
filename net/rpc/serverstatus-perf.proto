@@ -1,4 +1,4 @@
-syntax = "proto2";
+syntax = "editions";
 
 package rpc;
 
@@ -17,20 +17,20 @@ message PerfRequest {
 }
 
 message PerfResponseErrorCount {
-    required int32 status = 1;
-    required int64 count = 2;
+    optional int32 status = 1;
+    optional int64 count = 2;
 }
 
 message PerfResponseStats {
-    required int64 count = 2;
-    required int32 latency = 3;
-    required int32 max_latency = 4;
-    required float rate = 5;
-    required float arg_bytes_rate = 6;
-    required float result_bytes_rate = 7;
-    required float uncompressed_result_bytes_rate = 8;
-    required int64 rpc_errors = 9;
-    required int64 app_errors = 10;
+    optional int64 count = 2;
+    optional int32 latency = 3;
+    optional int32 max_latency = 4;
+    optional float rate = 5;
+    optional float arg_bytes_rate = 6;
+    optional float result_bytes_rate = 7;
+    optional float uncompressed_result_bytes_rate = 8;
+    optional int64 rpc_errors = 9;
+    optional int64 app_errors = 10;
     optional float server_elapsed_deprecated = 11;
     optional int64 retransmissions = 12;
     optional int64 duplicates = 13;
@@ -50,15 +50,15 @@ message PerfResponseStats {
 }
 
 message PerfResponseGroupRow {
-    required string name = 1;
-    required PerfResponseStats minute = 2;
-    required PerfResponseStats hour = 3;
-    required PerfResponseStats total = 4;
+    optional string name = 1;
+    optional PerfResponseStats minute = 2;
+    optional PerfResponseStats hour = 3;
+    optional PerfResponseStats total = 4;
 }
 
 message PerfResponseGroup {
-    required string name = 1;
-    required PerfResponseGroupRow total = 2;
+    optional string name = 1;
+    optional PerfResponseGroupRow total = 2;
     repeated PerfResponseGroupRow row = 3;
 }
 

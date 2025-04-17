@@ -8,11 +8,11 @@ option java_multiple_files = true;
 option java_outer_classname = "DCMBatchProto";
 option java_package = "com.google.storage.integrity.reporting";
 
-message BorgTaskIdentifier {
+message ProcessIdentifier {
     optional string cluster = 1;
     optional string machine = 2;
     optional string user = 3;
-    optional string job = 4;
+    optional string binary = 4;
     optional int64 task = 5;
     optional int64 cpu = 6;
     optional string build_changelist = 7;
@@ -26,8 +26,8 @@ message OptionalAttributes {
 }
 
 message DcmReportBatch {
-    optional BorgTaskIdentifier reporter = 1;
-    optional BorgTaskIdentifier accused = 2;
+    optional ProcessIdentifier reporter = 1;
+    optional ProcessIdentifier accused = 2;
     optional string reporting_system = 3;
     optional string error_type = 4;
     optional int64 count = 5;

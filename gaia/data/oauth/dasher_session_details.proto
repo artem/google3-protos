@@ -5,7 +5,6 @@ package gaia_data;
 import "storage/datapol/annotations/proto/semantic_annotations.proto";
 
 option objc_class_prefix = "GAIA";
-option cc_enable_arenas = true;
 option java_package = "com.google.gaia.client.proto";
 
 message DasherSessionDetails {
@@ -15,7 +14,10 @@ message DasherSessionDetails {
     }
     
     message DwdInfo {
-        optional int64 service_account_id = 1;
+        oneof impersonator {
+            int64 service_account_id = 1;
+            string loas_role = 2;
+        }
     }
     
     message PreapprovalInfo {

@@ -1,0 +1,17 @@
+syntax = "proto3";
+
+package privacy.data_governance.attributes;
+
+import "privacy/data_governance/attributes/proto/classification.proto";
+
+option java_package = "com.google.privacy.datagovernance.attributes";
+
+message Cloud {
+    message Data {
+        repeated Commitment commitments = 1;
+        enum Commitment {
+            COMMITMENT_UNSPECIFIED = 0;
+            SECRET = 1;
+        }
+    }
+}

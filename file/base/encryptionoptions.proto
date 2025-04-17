@@ -10,6 +10,7 @@ message EncryptionOptions {
     repeated string owner = 3;
     optional string document_id = 4;
     optional int64 expiry = 6;
+    optional tech.file.EncryptionMode encryption_mode = 11;
     
     optional EncryptionAccess encryption_access = 7;
     enum EncryptionAccess {

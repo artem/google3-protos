@@ -58,6 +58,11 @@ message Policy {
     google.api.expr.CheckedExpr checked_condition = 4;
 }
 
+message SourcedMetadata {
+    .envoy.type.matcher.v3.MetadataMatcher metadata_matcher = 1;
+    MetadataSource metadata_source = 2;
+}
+
 message Permission {
     oneof rule {
         Set and_rules = 1;
@@ -68,11 +73,12 @@ message Permission {
         .envoy.config.core.v3.CidrRange destination_ip = 5;
         uint32 destination_port = 6;
         .envoy.type.v3.Int32Range destination_port_range = 11;
-        .envoy.type.matcher.v3.MetadataMatcher metadata = 7;
+        .envoy.type.matcher.v3.MetadataMatcher metadata = 7 [deprecated = true];
         Permission not_rule = 8;
         .envoy.type.matcher.v3.StringMatcher requested_server_name = 9;
         .envoy.config.core.v3.TypedExtensionConfig matcher = 12;
         .envoy.config.core.v3.TypedExtensionConfig uri_template = 13;
+        SourcedMetadata sourced_metadata = 14;
     }
     
     message Set {
@@ -91,9 +97,10 @@ message Principal {
         .envoy.config.core.v3.CidrRange remote_ip = 11;
         .envoy.config.route.v3.HeaderMatcher header = 6;
         .envoy.type.matcher.v3.PathMatcher url_path = 9;
-        .envoy.type.matcher.v3.MetadataMatcher metadata = 7;
+        .envoy.type.matcher.v3.MetadataMatcher metadata = 7 [deprecated = true];
         .envoy.type.matcher.v3.FilterStateMatcher filter_state = 12;
         Principal not_id = 8;
+        SourcedMetadata sourced_metadata = 13;
     }
     
     message Set {
@@ -110,4 +117,9 @@ message Principal {
 message Action {
     string name = 1;
     RBAC.Action action = 2;
+}
+
+enum MetadataSource {
+    DYNAMIC = 0;
+    ROUTE = 1;
 }

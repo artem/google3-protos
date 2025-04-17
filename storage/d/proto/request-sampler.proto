@@ -8,8 +8,6 @@ import "storage/d/proto/header.proto";
 import "storage/d/proto/ssd-ops-dimension.proto";
 import "storage/d/proto/storage-partition.proto";
 
-option cc_enable_arenas = true;
-
 message CollectSamplesRequest {
     optional RequestHeader header = 1;
     optional bool read_only = 2 [default = false];

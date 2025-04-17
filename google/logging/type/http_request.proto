@@ -4,6 +4,7 @@ package google.logging.type;
 
 import "google/logging/data_governance.proto";
 import "google/protobuf/duration.proto";
+import "storage/datapol/annotations/proto/semantic_annotations.proto";
 
 option ruby_package = "Google::Cloud::Logging::Type";
 option php_namespace = "Google\\Cloud\\Logging\\Type";

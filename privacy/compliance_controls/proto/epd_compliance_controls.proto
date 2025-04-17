@@ -1,0 +1,12 @@
+syntax = "proto2";
+
+package compliance_controls;
+
+import "privacy/compliance_controls/proto/epd_consent_state.proto";
+
+option java_multiple_files = true;
+option java_package = "com.google.privacy.compliancecontrols";
+
+message EpdComplianceControls {
+    optional EpdConsentState.State epd_consent_state = 1;
+}

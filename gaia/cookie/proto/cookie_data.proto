@@ -28,6 +28,7 @@ message EmailInfo {
 message Memberships {
     optional int64 group_id = 1;
     optional int64 add_time_ms = 2;
+    optional string tag = 3;
 }
 
 message ExperimentGroupInfo {
@@ -77,6 +78,7 @@ message SessionDeviceBindingKeyInfo {
 message DeviceBoundSessionMetadata {
     repeated SessionDeviceBindingKeyInfo binding_key_info = 1;
     optional int32 enforcement_state = 2;
+    optional int32 session_origin = 3;
     
     enum BoundSessionEnforcementState {
         ENFORCEMENT_STATE_UNSPECIFIED = 0;
@@ -84,6 +86,13 @@ message DeviceBoundSessionMetadata {
         DARKLAUNCH = 2;
         ENABLED_SHORTLIVED_SIDTS = 99;
         ENABLED_LONGLIVED_SIDTS = 100;
+        ELIGIBLE_FOR_FULL_ENFORCEMENT = 101;
+    }
+    
+    enum SessionOrigin {
+        UNSPECIFIED = 0;
+        INTERACTIVE_LOGIN = 1;
+        OAML_TOKEN_EXCHANGED = 2;
     }
 }
 
@@ -133,6 +142,7 @@ message UserSession {
     optional int32 custom_session_lifetime_sec = 10;
     repeated int32 invalid_reason = 7;
     optional int64 expiration_time_micros = 16;
+    repeated int64 restricted_session_policy_id = 18;
     
     reserved 6, 8;
     

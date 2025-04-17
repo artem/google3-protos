@@ -1,0 +1,39 @@
+syntax = "editions";
+
+package logs.proto.cloudsql.dataplane;
+
+import "logs/eventid/eventid.proto";
+import "privacy/ptoken/public/core/ptoken.proto";
+import "storage/datapol/annotations/proto/semantic_annotations.proto";
+
+message EventLogProto {
+    optional Instance instance = 1;
+    optional EventType event_type = 2;
+    optional int64 timestamp_usec = 3;
+    optional string event_reason = 1001;
+    optional int64 duration_usec = 1002;
+    optional ResultType result_type = 1003;
+    optional string result_reason = 1004;
+    optional EventIdMessage event_id = 1005;
+    optional .ptoken.PToken ptoken = 9099;
+}
+
+message Instance {
+    optional string uid = 1;
+}
+
+enum EventType {
+    UNKNOWN_EVENT = 0;
+    SYSTEM_FAILURE_CGROUP_OUT_OF_MEMORY = 2201;
+    SYSTEM_FAILURE_OUT_OF_MEMORY = 2202;
+    AGENT_STEWARD_OPERATION = 3201;
+    AGENT_MONITORING_RESIZE = 3301;
+    AGENT_OPERATION_AGENT_TASK = 3401;
+}
+
+enum ResultType {
+    UNKNOWN_RESULT = 0;
+    SUCCESS = 1;
+    SERVER_ERROR = 2;
+    CLIENT_ERROR = 3;
+}

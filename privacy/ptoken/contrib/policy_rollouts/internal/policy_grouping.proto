@@ -1,0 +1,15 @@
+syntax = "editions";
+
+package ptoken.policy_rollouts;
+
+option java_multiple_files = true;
+option java_package = "com.google.privacy.ptoken.policyrollouts";
+
+message PolicyGrouping {
+    enum Enum {
+        UNSPECIFIED = 0;
+        WAVE_1_AND_2_DMA52 = 1;
+        WAVE_3_DMA52 = 2;
+        WAVE1_OPT_IN_PURPOSE_CONSENT = 3;
+    }
+}

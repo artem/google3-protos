@@ -85,6 +85,7 @@ message GraphElementTypeProto {
     }
     
     repeated string graph_reference = 4;
+    optional bool is_dynamic = 5;
     
     reserved 3;
 }
@@ -112,6 +113,7 @@ enum TypeKind {
     TYPE_BYTES = 9;
     TYPE_DATE = 10;
     TYPE_TIMESTAMP = 19;
+    TYPE_TIMESTAMP_PICOS = 35;
     TYPE_ENUM = 15;
     TYPE_ARRAY = 16;
     TYPE_STRUCT = 17;

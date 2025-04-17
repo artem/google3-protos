@@ -19,6 +19,13 @@ message PopulationStats {
     optional int64 num_auto_population_known_errors = 6;
     optional int64 num_manual_refresh_known_errors = 7;
     optional int64 num_auto_refresh_known_errors = 8;
+    optional int64 num_manual_populations = 9;
+    optional int64 num_manual_index_populations = 10;
+    optional int64 num_index_auto_population_errors = 11;
+    optional int64 num_index_manual_population_errors = 12;
+    optional int64 num_index_auto_refresh_errors = 13;
+    optional int64 num_index_manual_refresh_errors = 14;
+    optional int64 num_cached_indexes = 15;
 }
 
 message AutoColumnarization {
@@ -50,6 +57,12 @@ message ColumnarEngineContent {
     optional int64 local_storage_configured_size = 7;
     optional int64 local_storage_used_size = 8;
     optional float refresh_threshold_percentage = 9;
+    optional int64 total_index_invalid_block_count = 10;
+}
+
+message VectorIndexScanStats {
+    optional int64 num_vector_index_scans = 1;
+    optional int64 num_vector_index_scans_ce = 2;
 }
 
 message ColumnTypeStat {
@@ -62,6 +75,8 @@ message ColumnarProcessingStats {
     optional int64 swap_out_jobs_count = 2;
     optional int64 read_bytes_cached_count = 3;
     optional int64 read_bytes_swapped_in_count = 4;
+    optional int64 index_read_bytes_cached_count = 5;
+    optional int64 index_read_bytes_swapped_in_count = 6;
 }
 
 message JobSchedulerStats {
@@ -75,4 +90,5 @@ message ColumnarEngineStats {
     optional ColumnarEngineContent columnar_engine_content = 3;
     optional ColumnarProcessingStats columnar_processing_stats = 4;
     optional JobSchedulerStats job_scheduler_stats = 5;
+    optional VectorIndexScanStats vector_index_scan_stats = 6;
 }

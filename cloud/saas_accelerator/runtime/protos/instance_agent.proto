@@ -1,0 +1,447 @@
+syntax = "proto3";
+
+package cloud.saasaccelerator.runtime.protos.instanceagent;
+
+import "cloud/hosted/common/healthmonitor/v1/health.proto";
+import "cloud/saas_accelerator/agent/protos/common.proto";
+import "google/api/inclusion.proto";
+import "google/protobuf/duration.proto";
+import "google/protobuf/timestamp.proto";
+import "google/protobuf/wrappers.proto";
+import "google/rpc/code.proto";
+
+option java_multiple_files = true;
+option java_outer_classname = "InstanceAgentProto";
+option java_package = "com.google.cloud.saasaccelerator.runtime.protos.instanceagent";
+
+message InstanceConfiguration {
+    int64 sequence_number = 1;
+    ContainerConfig container_config = 2;
+    repeated CustomConfig custom_configs = 3;
+    repeated HealthCheckConfig health_configs = 4;
+    string software_deployment_version = 5 [deprecated = true];
+    repeated SoftwareDeploymentVersion software_deployment_versions = 9;
+    RepairConfig repair_config = 6;
+    NativeAgentConfig native_agent_config = 7;
+    IAConfig ia_config = 8;
+}
+
+message SoftwareDeploymentVersion {
+    string name = 1;
+    string version = 2;
+}
+
+message SetConfigResponse {
+    SetConfigResult result = 1;
+    InstanceState state = 2;
+}
+
+message CustomConfig {
+    saasaccelerator.protos.agent.ConfigGroup config = 1;
+    Endpoint endpoint = 2;
+}
+
+message HealthCheckConfig {
+    string name = 1;
+    Endpoint endpoint = 2;
+    repeated string scopes = 3;
+    bool treat_timeout_as_missing = 4;
+}
+
+message Endpoint {
+    Protocol protocol = 1;
+    enum Protocol {
+        PROTOCOL_UNSPECIFIED = 0;
+        GRPC = 1;
+    }
+    
+    string address = 2;
+}
+
+message ContainerConfig {
+    repeated Container containers = 1;
+    repeated RepositoryCred credentials = 2;
+}
+
+message Container {
+    string name = 1;
+    int64 version = 2;
+    string image = 3;
+    repeated string cmds = 4;
+    repeated Volume volumes = 5;
+    map<string, string> environment_variables = 6;
+    RestartConfig restart_policy = 7;
+    NetworkModeConfig network_mode = 8;
+    PidModeConfig pid_mode = 9;
+    bool privileged = 10;
+    LogConfig log_config = 11;
+    string hostname = 12;
+    ResourceLimits resource_limits = 13;
+    string copy_to_scope = 14;
+    string user_id = 15;
+    int32 oom_score_adj = 16;
+    PreStopHook pre_stop_hook = 17;
+    repeated DeviceMapping device_mappings = 18;
+    Capabilities capabilities = 19;
+    string cgroup_parent = 20;
+    repeated PortMapping port_mappings = 21;
+    bool use_default_entrypoint = 22;
+    IpcModeConfig ipc_mode_config = 23;
+    LifecyclePolicy lifecycle_policy = 24;
+    string app_armor_profile = 25;
+}
+
+message IpcModeConfig {
+    IpcMode ipc_mode = 1;
+    string container_mode_id = 2;
+}
+
+message PreStopHook {
+    repeated string cmds = 1;
+    google.protobuf.Duration timeout = 2;
+    HookRetryPolicy retry_policy = 3;
+}
+
+message HookRetryPolicy {
+    int32 retry_count = 1;
+    google.protobuf.Duration retry_timeout = 2;
+}
+
+message ResourceLimits {
+    float cpus = 1;
+    int64 max_memory_bytes = 2;
+    SwapMemoryConfig swap_memory_config = 3;
+    repeated DeviceReadBpsConfig device_read_bps_config = 4;
+    repeated Ulimit ulimits = 5;
+    string cpuset_cpus = 6;
+    int64 cpu_shares = 7;
+}
+
+message SwapMemoryConfig {
+    int64 max_swap_memory_bytes = 1;
+    bool custom_swappiness = 2;
+    int64 swappiness = 3;
+}
+
+message DeviceReadBpsConfig {
+    string path = 1;
+    int64 bps = 2;
+}
+
+message Ulimit {
+    string name = 1;
+    int64 hard_limit = 2;
+    int64 soft_limit = 3;
+}
+
+message Volume {
+    string host_path = 1;
+    string mount_path = 2;
+    bool read_only = 3;
+    
+    oneof _wait_for_host_path_ready {
+        bool wait_for_host_path_ready = 4;
+    }
+    
+    oneof _wait_timeout {
+        google.protobuf.Duration wait_timeout = 5;
+    }
+}
+
+message DeviceMapping {
+    string host_path = 1;
+    string container_path = 2;
+    string permissions = 3;
+}
+
+message Capabilities {
+    repeated string capabilities_to_add = 1;
+    repeated string capabilities_to_drop = 2;
+}
+
+message PortMapping {
+    int32 container_port = 1;
+    TransportProtocol protocol = 2;
+    int32 host_port = 3;
+}
+
+message RestartConfig {
+    Policy policy = 1;
+    enum Policy {
+        POLICY_UNSPECIFIED = 0;
+        ALWAYS_RUNNING = 1;
+        DO_NOT_RESTART = 2;
+        ONETIME = 3;
+    }
+}
+
+message NetworkModeConfig {
+    Mode mode = 1;
+    enum Mode {
+        MODE_UNSPECIFIED = 0;
+        BRIDGE = 1;
+        HOST = 2;
+        NONE = 3;
+        CONTAINER = 4;
+        CUSTOM = 5;
+    }
+    
+    string identifier = 2;
+}
+
+message PidModeConfig {
+    Mode mode = 1;
+    enum Mode {
+        MODE_UNSPECIFIED = 0;
+        HOST = 1;
+        CONTAINER = 2;
+    }
+    
+    string container_name = 2;
+}
+
+message RepositoryCred {
+    string url_prefix = 1;
+    
+    oneof cred {
+        MetadataServerCreds metadata_server = 10;
+    }
+}
+
+message MetadataServerCreds {
+    string account_name = 1;
+}
+
+message LogConfig {
+    Driver driver = 1;
+    enum Driver {
+        DRIVER_UNSPECIFIED = 0;
+        DRIVER_JOURNALD = 1;
+        GCP_LOGS = 2;
+        JSON_FILE = 3;
+        FLUENTD = 4;
+        ETW_LOGS = 5;
+        LOCAL = 6;
+        SYSLOG = 7;
+    }
+    
+    map<string, string> configs = 2;
+}
+
+message ClusterState {
+    string id = 1;
+    
+    repeated Instance instances = 2;
+    message Instance {
+        string id = 1;
+        InstanceState instance_state = 2;
+    }
+}
+
+message InstanceState {
+    int64 last_accepted_sequence = 1;
+    HealthState health_state = 3;
+    repeated saasaccelerator.protos.agent.ConfigState custom_config_states = 4;
+    repeated saasaccelerator.protos.agent.ConfigState container_config_states = 5;
+    google.protobuf.Timestamp report_time = 8;
+    hosted.common.healthmonitor.v1.ResourceId resource_id = 6 [deprecated = true];
+    google.rpc.Code canonical_code = 7 [deprecated = true];
+}
+
+message HealthState {
+    repeated saasaccelerator.protos.agent.HealthMetric health_metrics = 1;
+    saasaccelerator.protos.agent.HealthStatus status = 2;
+}
+
+message RepairConfig {
+    repeated RepairPolicy repair_policies = 1;
+}
+
+message RepairPolicy {
+    string scope = 1;
+    string name = 2;
+    uint32 unhealthy_threshold = 3 [deprecated = true];
+    uint32 mitigation_threshold = 4;
+    
+    ContainerStatusType container_status_type = 12;
+    enum ContainerStatusType {
+        STATUS_UNSPECIFIED = 0;
+        STATUS_UNHEALTHY = 1;
+        STATUS_MISSING = 2;
+    }
+    
+    Mode mode = 11;
+    enum Mode {
+        UNSPECIFIED = 0;
+        ENABLED = 1;
+        DISABLED = 2;
+    }
+    
+    oneof mitigation {
+        RebootContainerMitigation reboot_container = 10;
+    }
+}
+
+message RebootContainerMitigation {
+    string container_name = 1;
+    google.protobuf.Duration cooldown = 2;
+}
+
+message AgentUpdateConfig {
+    int64 config_version = 1;
+    string stable_image = 2;
+    string target_image = 3;
+    google.protobuf.Duration monitor_interval = 4;
+    google.protobuf.Duration read_metadata_retry_timeout = 5;
+    google.protobuf.Duration pull_image_retry_timeout = 6;
+}
+
+message NativeAgentConfig {
+    repeated NativeAgent agents = 1;
+}
+
+message NativeAgent {
+    string name = 1;
+    int64 version = 2;
+    PackageConfig package_config = 3;
+    string path_to_binary = 4;
+    repeated string flags = 5;
+    ResourceLimits resource_limits = 6;
+    string copy_to_scope = 7;
+    RestartConfig restart_policy = 8;
+    LifecyclePolicy lifecycle_policy = 24;
+}
+
+message PackageConfig {
+    PackageProvider package_provider = 1;
+    string name = 2;
+    string version = 3;
+    string arch = 4;
+}
+
+message PackageProvider {
+    ClientType client_type = 1;
+    enum ClientType {
+        CLIENT_UNSPECIFIED = 0;
+        GOOGET = 1;
+    }
+    
+    RepositoryType repository_type = 2;
+    enum RepositoryType {
+        REPOSITORY_UNSPECIFIED = 0;
+        GCS = 1;
+    }
+    
+    string repository_url = 3;
+}
+
+message IAConfig {
+    IARuntimeConfig ia_runtime_config = 1;
+}
+
+message IARuntimeConfig {
+    ImageCleanerConfig image_cleaner_config = 1;
+    GrpcConfig grpc_config = 2;
+    MetricsConfig metrics_config = 3;
+    LogsConfig logs_config = 4;
+    HealthReportingConfig health_reporting_config = 5;
+    DockerConfig docker_config = 6;
+    ExperimentConfig experiment_config = 7;
+    ServiceControlConfig service_control_config = 8;
+}
+
+message ImageCleanerConfig {
+    google.protobuf.Duration interval = 1;
+    google.protobuf.Duration timeout = 2;
+    google.protobuf.Int64Value cache_size_buffer = 3;
+    repeated string exemption_pattern = 4;
+}
+
+message GrpcConfig {
+    google.protobuf.Duration timeout = 1;
+}
+
+message DockerConfig {
+    google.protobuf.BoolValue push_config_by_start_event = 1;
+    google.protobuf.Int64Value container_stop_timeout_seconds = 2;
+    google.protobuf.BoolValue enforce_regionalization = 3;
+    google.protobuf.Duration image_pull_timeout = 4;
+}
+
+message ExperimentConfig {
+    google.protobuf.Int64Value port = 1;
+    google.protobuf.Duration polling_interval = 2;
+    string snapshot_config_path = 4 [deprecated = true];
+    google.protobuf.Duration snapshot_config_polling_interval = 5;
+    string emergency_disabled_ids_path = 6 [deprecated = true];
+    repeated string snapshot_fallback_read = 7;
+    repeated string snapshot_fallback_sync = 8;
+    google.protobuf.Duration fallback_delay = 9;
+    string gcs_bucket_name = 10;
+    
+    reserved 3;
+}
+
+message MetricsConfig {
+    google.protobuf.Duration interval = 1;
+}
+
+message LogsConfig {
+    google.protobuf.Duration structured_log_interval = 1;
+    google.protobuf.Int64Value structured_log_batch_size = 2;
+}
+
+message ServiceControlConfig {
+    string chemist_config_version = 1;
+}
+
+message HealthReportingConfig {
+    Mode reporting_mode = 2;
+    enum Mode {
+        UNSPECIFIED = 0;
+        PUBSUB = 1;
+        METADATA = 2;
+        PUBSUB_AND_METADATA = 3;
+        NONE = 4;
+    }
+    
+    google.protobuf.Duration reporting_interval_pubsub = 3;
+    google.protobuf.Duration reporting_interval_metadata = 4;
+    
+    reserved 1;
+}
+
+enum LifecyclePolicy {
+    LIFECYCLE_POLICY_UNSPECIFIED = 0;
+    CREATE_UPDATE_DELETE = 1;
+    CREATE_ONLY = 2;
+}
+
+enum IpcMode {
+    IPC_MODE_UNSPECIFIED = 0;
+    NONE = 1;
+    PRIVATE = 2;
+    CONTAINER = 3;
+    SHAREABLE = 4;
+    HOST = 5;
+}
+
+enum TransportProtocol {
+    UNSPECIFIED = 0;
+    TCP = 1;
+    UDP = 2;
+}
+
+enum ContainerRuntime {
+    RUNTIME_UNSPECIFIED = 0;
+    DOCKER = 1;
+    CONTAINERD = 2;
+}
+
+enum SetConfigResult {
+    RESULT_UNSPECIFIED = 0;
+    ACCEPTED = 1;
+    SUPERSEDED = 2;
+    TIMEOUT = 3;
+    INVALID_TOKEN = 4;
+}

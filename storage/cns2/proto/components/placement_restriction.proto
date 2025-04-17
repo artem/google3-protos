@@ -1,0 +1,15 @@
+syntax = "editions";
+
+package cns2.proto;
+
+import "net/proto2/bridge/proto/message_set.proto";
+
+message PlacementRestrictionExtendedOption {
+    optional string store_cell_name = 1;
+}
+
+message PlacementRestrictionErrorPayload {
+    extend .proto2.bridge.MessageSet {
+        optional PlacementRestrictionErrorPayload message_set_extension = 525000372;
+    }
+}

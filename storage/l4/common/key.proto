@@ -1,40 +1,52 @@
-syntax = "proto3";
+syntax = "editions";
 
 package storage_l4;
 
+import "storage/datapol/annotations/proto/semantic_annotations.proto";
+import "storage/k3/net/socket_address.proto";
+
 message StringKeyProto {
-    bytes key = 1;
-    string owner = 3;
+    optional bytes key = 1;
+    optional string owner = 3;
     
     reserved 2;
 }
 
 message DFileKeyProto {
-    string colossus_cell = 6;
-    int64 volume_id = 7;
-    uint64 chunk_id = 8;
-    bool colossus_cell_is_cfs2 = 10;
-    bool is_timelock = 13;
-    string d_server_location = 11;
-    int64 value_offset = 2;
-    int64 nominal_value_length = 3;
-    int64 cfs_file_id = 4;
-    int64 colossus_stripe_index = 5;
-    string colossus_filename = 9;
-    int64 cfs_base_file_id = 14;
+    optional string colossus_cell = 6;
+    optional int64 volume_id = 7;
+    optional uint64 chunk_id = 8;
+    optional bool colossus_cell_is_cfs2 = 10;
+    optional bool is_timelock = 13;
+    optional string d_server_location = 11;
+    optional int64 value_offset = 2;
+    optional int64 nominal_value_length = 3;
+    optional int64 cfs_file_id = 4;
+    optional int64 colossus_stripe_index = 5;
+    optional string colossus_filename = 9;
+    optional int64 cfs_base_file_id = 14;
     
     reserved 1, 12;
 }
 
 message ColossusStripeKeyProto {
-    string cfs_cell = 1;
-    bool is_cfs2 = 2;
-    int64 cfs_file_id = 3;
-    int64 stripe_index = 4;
-    int64 value_offset = 5;
-    int64 nominal_value_length = 6;
-    string owner = 7;
-    int64 cfs_base_file_id = 8;
+    optional string cfs_cell = 1;
+    optional bool is_cfs2 = 2;
+    optional int64 cfs_file_id = 3;
+    optional int64 stripe_index = 4;
+    optional int64 value_offset = 5;
+    optional int64 nominal_value_length = 6;
+    optional string owner = 7;
+    optional int64 cfs_base_file_id = 8;
+    optional string filename = 9;
+    
+    repeated ChunkId chunks = 10;
+    message ChunkId {
+        optional int32 chunk_index = 1;
+        optional int64 volume_id = 2;
+        optional uint64 chunk_handle = 3;
+        optional .k3.SocketAddressProto d_server_address = 4;
+    }
 }
 
 message KeyProto {

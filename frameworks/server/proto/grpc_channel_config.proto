@@ -49,6 +49,13 @@ message GrpcChannelConfig {
         string custom_roots_certs_file = 5;
         GrpcSocketOptions socket_options = 7;
         
+        AuthenticationType authentication_type = 8;
+        enum AuthenticationType {
+            AUTHENITCATION_TYPE_UNSPECIFIED = 0;
+            AUTHENTICATION_TYPE_LOAS3_FOR_TPC = 1;
+            AUTHENTICATION_TYPE_SSL = 2;
+        }
+        
         reserved 1, 6;
     }
     

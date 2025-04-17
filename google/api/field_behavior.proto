@@ -23,6 +23,7 @@ enum FieldBehavior {
     IDENTIFIER = 8;
     MUTABLE_RESOURCE_CONTAINER = 9;
     MUTABLE_RESOURCE_NAME = 10;
+    LEGACY_RESOURCE_IDENTIFIER = 11;
 }
 
 extend .proto2.FieldOptions {

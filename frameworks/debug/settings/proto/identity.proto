@@ -1,0 +1,36 @@
+syntax = "proto2";
+
+package frameworks.debug.settings.proto;
+
+import "google/api/auditing.proto";
+import "google/api/resource.proto";
+import "java/com/google/apps/jspb/jspb.proto";
+import "storage/datapol/annotations/proto/semantic_annotations.proto";
+
+option objc_class_prefix = "DBGS";
+option java_outer_classname = "IdentityProto";
+option java_package = "com.google.frameworks.debug.settings.protos";
+
+message Identity {
+    optional int64 opted_in_by_gaia_id = 6;
+    optional bool is_cloud_service_account = 11 [default = false];
+    
+    oneof type {
+        int64 gaia_id = 1;
+        uint64 zwieback_id = 2 [jstype = JS_STRING];
+        int64 android_id = 3;
+        string mdb_user = 7;
+        string youtube_visitor_id = 8;
+        string nest_cast_device_id = 9;
+        string test_instance_id = 12;
+        AnonymousIdentity anonymous_id = 4 [deprecated = true];
+    }
+    
+    reserved 5;
+}
+
+message AnonymousIdentity {
+    option deprecated = true;
+    optional string id = 1;
+    optional string profile = 2;
+}

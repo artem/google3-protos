@@ -125,6 +125,7 @@ message DynamicInvertedIndexConfig {
         MEMORY_FOOTPRINT_OPTIMIZED = 2;
     }
     
+    optional bool enable_partial_updates = 13 [default = false];
     repeated uint64 intercept_dimension = 5;
     optional bool return_intercept_only_neighbors = 6 [default = true];
     repeated uint64 dimensions_most_to_least_active = 7;

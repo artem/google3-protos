@@ -1,0 +1,22 @@
+syntax = "proto2";
+
+package proto2.contrib.custom_printer;
+
+import "net/proto2/proto/descriptor.proto";
+
+message AddExtensionProto {
+    required string name = 1;
+    required string extendee = 2;
+    required int32 number = 3;
+    optional bool is_repeated = 4 [default = true];
+}
+
+extend FieldOptions {
+    optional AddExtensionProto add_extension = 19036943;
+    optional string message_type = 19322600;
+    optional string decoder = 27594834;
+}
+
+extend MessageOptions {
+    optional string message_decoder = 27594834;
+}

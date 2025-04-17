@@ -1,0 +1,28 @@
+syntax = "editions";
+
+package privacy.context.go;
+
+import "privacy/context/proto/evaluation_result.proto";
+import "privacy/data_governance/attributes/proto/purpose.proto";
+import "privacy/pattributes/public/proto/semantic_purpose.proto";
+import "privacy/ptoken/public/core/logical_policy.proto";
+import "storage/datapol/annotations/proto/semantic_annotations.proto";
+
+option java_multiple_files = true;
+
+message MonitoringData {
+    optional bool has_ddt = 1;
+    optional bool has_prc = 2;
+    optional int32 origin_product_id = 3;
+    optional bool has_privacy_context_id = 4;
+    optional bool no_pc_wrapper = 5;
+    optional string protocol_type = 6;
+    optional bool has_sot = 7;
+    optional PolicyEvaluationResults policy_evaluation_results = 9;
+    repeated data_governance.attributes.ProcessingPurpose.Purpose processing_purpose = 10;
+    repeated .ptoken.LogicalPolicy.Enum poe_enforced_return_policies = 11;
+    optional bool default_origin_product_id_sent = 12;
+    optional .pattributes.SemanticPurpose semantic_purpose = 13;
+    
+    reserved 8;
+}

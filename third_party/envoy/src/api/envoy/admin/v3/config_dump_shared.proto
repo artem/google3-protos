@@ -136,4 +136,6 @@ enum ClientResourceStatus {
     DOES_NOT_EXIST = 2;
     ACKED = 3;
     NACKED = 4;
+    RECEIVED_ERROR = 5;
+    TIMEOUT = 6;
 }

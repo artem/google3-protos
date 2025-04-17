@@ -87,6 +87,7 @@ message FamilyDescription {
     optional int32 gclimit = 9 [default = -1];
     optional int64 gclife_micros = 10 [default = -1];
     optional string gcexpr = 18;
+    optional bool explicit_delete_cells = 26 [default = true];
     optional int64 gcoffset_micros = 20;
     optional string owner = 17;
     optional PropertyMap userdata = 19;
@@ -255,17 +256,6 @@ message FsReroot {
 
 message FsReroots {
     repeated FsReroot reroot = 1;
-}
-
-message SnapshotPolicy {
-    repeated group Schedule = 1 {
-        required string name = 2;
-        required float period_hours = 3;
-        required int32 max_snapshots_kept = 4;
-        optional FsReroots fs_reroots = 6;
-    }
-    
-    optional float max_quota_fraction = 5;
 }
 
 message RowPrefixList {
@@ -508,6 +498,7 @@ message PartitionMetadata {
     }
     
     optional bool cloud_kms_encryption_enabled = 49 [default = false];
+    optional bool cmek_encryption_enabled = 60 [default = false];
     optional string cloud_service_name = 51;
     optional string cloud_resource_type = 52;
     optional ServerResources assigner_unit_shape = 53;
@@ -585,8 +576,8 @@ message TableMetadata {
     optional int32 snapshot_load_priority = 32 [default = 2];
     optional bool auto_merge = 2;
     optional float major_compaction_cycle_days = 10;
-    optional SnapshotPolicy snapshot_policy = 22 [deprecated = true];
     optional string backup_policy = 41;
+    optional int64 last_policy_snapshot_time_microsecs = 66;
     repeated CoprocessorSpec coprocessor = 12;
     repeated string remote_coprocessor_starter = 56;
     optional PropertyMap userdata = 13;
@@ -604,7 +595,6 @@ message TableMetadata {
     optional TableEncryptionSettings table_encryption_settings = 52;
     optional bool encrypt_table = 36;
     optional bool do_not_encrypt_sharedlogs = 34 [default = false, deprecated = true];
-    optional int64 encryption_key_rotation_interval_sec = 42;
     optional bool load_based_splitting = 40 [default = true];
     
     optional AllowRebalancePolicy allow_rebalance = 43 [default = ALWAYS];
@@ -643,7 +633,7 @@ message TableMetadata {
         uint64 cloud_resource_name_fingerprint = 60;
     }
     
-    reserved 11, 25, 37, 61;
+    reserved 11, 22, 25, 37, 42, 61;
 }
 
 message Quota {
@@ -738,13 +728,6 @@ message CellMetadata {
     optional Quota disk_quota = 7 [deprecated = true];
     optional Quota file_quota = 18 [deprecated = true];
     optional Quota ticket_quota = 33;
-    optional SnapshotPolicy default_snapshot_policy = 26 [deprecated = true];
-    
-    repeated group Snapshot = 27 {
-        required string owner = 28;
-        required SnapshotPolicy policy = 29 [deprecated = true];
-    }
-    
     optional BackupPolicies backup_policies = 56;
     
     repeated group PartitionForOwner = 34 {
@@ -852,7 +835,7 @@ message CellMetadata {
     
     optional CellLocationProxyConfig location_proxy_config = 65;
     
-    reserved 4, 5, 8 to 14, 32, 61, 63;
+    reserved 4, 5, 8 to 14, 26, 27, 32, 61, 63;
     
     enum Version {
         BASE = 0;
@@ -935,7 +918,8 @@ message EncryptionSettings {
     optional EncryptionMasterKey master_key = 1;
     optional EncryptionType encryption_type = 2 [default = ENCRYPTEDFILE];
     optional EncryptionType sharedlog_encryption_type = 4 [default = ENCRYPTEDFILE];
-    optional int64 max_encryption_key_rotation_interval_sec = 3 [default = 0x278d00];
+    
+    reserved 3;
 }
 
 message AclGroup {

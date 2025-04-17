@@ -1,0 +1,91 @@
+syntax = "proto3";
+
+package speckle.dataplane.sqlserver;
+
+import "storage/datapol/annotations/proto/semantic_annotations.proto";
+
+message SqlServerDatabaseProto {
+    uint32 compatibility_level = 1;
+    string recovery_model = 2;
+    string state = 3;
+}
+
+message SqlServerUserProto {
+    bool disabled = 1;
+    repeated string server_roles = 2;
+}
+
+message SqlServerSetReplicaRequest {
+    bool primary_request = 1;
+    string read_replica_host_name = 2;
+    string read_replica_ip = 3;
+    string availability_group_name = 4;
+    bool use_second_pd = 5;
+    bool primary_is_forwarder = 6;
+    string read_replica_endpoint_url = 7;
+    bool use_vdi_snapshot_backup = 8;
+    bool primary_is_pitr_enabled = 9;
+    
+    oneof _commit_mode {
+        AvailabilityCommitMode commit_mode = 10;
+    }
+    
+    oneof _extra_firewall_rules {
+        string extra_firewall_rules = 11;
+    }
+}
+
+message SQLServerStartReplicaRequest {
+    SQLServerExternalServerConfig external_server_config = 1;
+}
+
+message SQLServerExternalServerConfig {
+    string master_user = 1;
+    string master_password = 2;
+    string master_host = 3;
+    int32 master_port = 4;
+    string replica_host = 5;
+    int32 replica_port = 6;
+}
+
+message SQLServerStopReplicaRequest {
+    SQLServerExternalServerConfig external_server_config = 1;
+}
+
+message SqlServerSwitchoverToShadowVMRequest {
+    int64 wait_almost_catch_up_low_lag_threshold_seconds = 1;
+    int64 wait_almost_catch_up_high_lag_threshold_seconds = 2;
+    string availability_group_name = 3;
+}
+
+message SqlServerPromoteReplicaRequest {
+    string availability_group_name = 1;
+    SQLServerExternalServerConfig external_server_config = 2;
+    
+    oneof _distributed_availability_group_name {
+        string distributed_availability_group_name = 3;
+    }
+}
+
+message SqlServerUpdateInsightsConfigRequest {
+    bool enable_query_insights = 1;
+    bool enable_active_query = 2;
+    bool enable_index_advisor = 3;
+    bool enable_terminate_active_query = 4;
+    int32 query_string_length = 5;
+    int32 query_plans_per_minute = 6;
+    int32 retention_period_in_days = 7;
+}
+
+enum AvailabilityCommitMode {
+    COMMIT_MODE_UNSPECIFIED = 0;
+    COMMIT_MODE_ASYNC = 1;
+    COMMIT_MODE_SYNC = 2;
+    COMMIT_MODE_CONFIGURATION = 3;
+}
+
+enum ManageInstancePermissionsAction {
+    PERMISSION_ACTION_UNSPECIFIED = 0;
+    PERMISSION_ACTION_ADD = 1;
+    PERMISSION_ACTION_REMOVE = 2;
+}

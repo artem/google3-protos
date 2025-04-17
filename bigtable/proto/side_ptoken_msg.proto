@@ -2,7 +2,9 @@ syntax = "proto2";
 
 package bigtable;
 
-message SidePtokenMsg {
+option java_package = "com.google.bigtable.protos";
+
+message SidePTokenMsg {
     optional bytes serialized = 1 [ctype = STRING_PIECE];
     optional fixed64 checksum = 2;
 }

@@ -1,0 +1,91 @@
+syntax = "proto3";
+
+package grpc.binarylog.v1;
+
+import "google/protobuf/duration.proto";
+import "google/protobuf/timestamp.proto";
+
+option go_package = "google.golang.org/grpc/binarylog/grpc_binarylog_v1";
+option java_multiple_files = true;
+option java_outer_classname = "BinaryLogProto";
+option java_package = "io.grpc.binarylog.v1";
+
+message GrpcLogEntry {
+    google.protobuf.Timestamp timestamp = 1;
+    uint64 call_id = 2;
+    uint64 sequence_id_within_call = 3;
+    
+    EventType type = 4;
+    enum EventType {
+        EVENT_TYPE_UNKNOWN = 0;
+        EVENT_TYPE_CLIENT_HEADER = 1;
+        EVENT_TYPE_SERVER_HEADER = 2;
+        EVENT_TYPE_CLIENT_MESSAGE = 3;
+        EVENT_TYPE_SERVER_MESSAGE = 4;
+        EVENT_TYPE_CLIENT_HALF_CLOSE = 5;
+        EVENT_TYPE_SERVER_TRAILER = 6;
+        EVENT_TYPE_CANCEL = 7;
+    }
+    
+    Logger logger = 5;
+    enum Logger {
+        LOGGER_UNKNOWN = 0;
+        LOGGER_CLIENT = 1;
+        LOGGER_SERVER = 2;
+    }
+    
+    bool payload_truncated = 10;
+    Address peer = 11;
+    
+    oneof payload {
+        ClientHeader client_header = 6;
+        ServerHeader server_header = 7;
+        Message message = 8;
+        Trailer trailer = 9;
+    }
+}
+
+message ClientHeader {
+    Metadata metadata = 1;
+    string method_name = 2;
+    string authority = 3;
+    google.protobuf.Duration timeout = 4;
+}
+
+message ServerHeader {
+    Metadata metadata = 1;
+}
+
+message Trailer {
+    Metadata metadata = 1;
+    uint32 status_code = 2;
+    string status_message = 3;
+    bytes status_details = 4;
+}
+
+message Message {
+    uint32 length = 1;
+    bytes data = 2;
+}
+
+message Metadata {
+    repeated MetadataEntry entry = 1;
+}
+
+message MetadataEntry {
+    string key = 1;
+    bytes value = 2;
+}
+
+message Address {
+    Type type = 1;
+    enum Type {
+        TYPE_UNKNOWN = 0;
+        TYPE_IPV4 = 1;
+        TYPE_IPV6 = 2;
+        TYPE_UNIX = 3;
+    }
+    
+    string address = 2;
+    uint32 ip_port = 3;
+}

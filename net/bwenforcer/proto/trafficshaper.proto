@@ -20,7 +20,6 @@ import "net/bwenforcer/proto/serverinfo.proto";
 import "stats/histogram/proto/histogram.proto";
 import "storage/datapol/annotations/proto/semantic_annotations.proto";
 
-option cc_enable_arenas = true;
 option cc_generic_services = true;
 option java_multiple_files = true;
 option java_package = "com.google.net.bwenforcer.proto";
@@ -75,6 +74,7 @@ message FlowIdentity {
     optional net_base.qos.TrafficClass qos = 29;
     optional int32 intended_dscp = 17;
     optional int32 requested_dscp = 13;
+    optional net_base.qos.TrafficClass requested_qos = 30;
     optional net_base.TZBits tz_bits = 28;
     optional FlowDirection direction = 6 [deprecated = true];
     optional PathType path_type = 10;
@@ -179,13 +179,6 @@ message BwStat {
     optional double report_interval = 15;
     optional double task_report_interval = 20;
     optional int64 avg_usage = 2;
-    
-    repeated DatapathStat datapath_stats = 61;
-    message DatapathStat {
-        optional FlowIdentity.DatapathType datapath_type = 1;
-        optional int64 avg_usage = 2;
-    }
-    
     optional int64 total_bytes = 17;
     optional int64 avg_limit = 3;
     optional int64 burst_microseconds = 14 [deprecated = true];
@@ -219,6 +212,8 @@ message BwStat {
         DEFAULT = 4;
         ALPHA_BROKER = 8;
         FABRIC_ENFORCER = 9;
+        CORE_SHARD_ALPHA_BROKER = 10;
+        SLO_TRACKER = 11;
     }
     
     optional bool num_tasks_usage_close_to_limit_computed = 44 [default = false];
@@ -238,9 +233,9 @@ message BwStat {
     optional bool should_clear_host_qos_allocation = 59;
     optional MultimodalLimitDistributionData multimodal_limit_distribution_data = 60;
     
-    reserved 7, 8, 9, 10, 12, 22, 24, 25, 26, 28, 29, 30, 31, 33, 35, 36, 38, 41, 49, 50, 51, 52;
+    reserved 7, 8, 9, 10, 12, 22, 24, 25, 26, 28, 29, 30, 31, 33, 35, 36, 38, 41, 49, 50, 51, 52, 61;
     
-    reserved "avg_tcp_pps", "avg_dropped_bps", "avg_overlimit_pps", "avg_tcp_retransmit_pps", "intended_dscp", "tcp_supersonic_stats", "tcp_bbr_stats", "tcp_socket_control_info", "tcp_stats", "num_tasks_high_usage", "event_id", "num_tasks_overlimit", "num_tasks_high_scheduler_busy_bytes", "num_tasks_high_parent_scheduler_busy_bytes", "num_tasks_high_self_or_parent_scheduler_busy_bytes", "num_tasks_usage_near_limit_and_busy_parent_scheduler_bytes", "num_tasks_usage_near_limit_and_busy_scheduler_bytes", "rewritten_dscp", "should_enforce_limit", "overflow_rewrite";
+    reserved "avg_tcp_pps", "avg_dropped_bps", "avg_overlimit_pps", "avg_tcp_retransmit_pps", "datapath_stats", "intended_dscp", "tcp_supersonic_stats", "tcp_bbr_stats", "tcp_socket_control_info", "tcp_stats", "num_tasks_high_usage", "event_id", "num_tasks_overlimit", "num_tasks_high_scheduler_busy_bytes", "num_tasks_high_parent_scheduler_busy_bytes", "num_tasks_high_self_or_parent_scheduler_busy_bytes", "num_tasks_usage_near_limit_and_busy_parent_scheduler_bytes", "num_tasks_usage_near_limit_and_busy_scheduler_bytes", "rewritten_dscp", "should_enforce_limit", "overflow_rewrite";
 }
 
 message FlowStat {

@@ -1,0 +1,30 @@
+syntax = "editions";
+
+package security_realms;
+
+message RegionalTrustExemptions {
+    repeated ExemptionSet exemption_sets = 1;
+    message ExemptionSet {
+        optional ExemptionScope scope = 1;
+        repeated Exemption exemptions = 2;
+    }
+    
+    reserved 2;
+    
+    message Exemption {
+        optional string peer_role = 1;
+        optional string justification = 2;
+    }
+    
+    enum ExemptionScope {
+        EXEMPTION_SCOPE_UNSPECIFIED = 0;
+        GLOBAL_SERVICES = 1;
+        CELL_JK_EXPERIMENT = 2;
+        CROSS_REGIONAL_CHANGE_MANAGEMENT = 5;
+        CROSS_REGIONAL_DATA_AND_ANALYTICS = 6;
+        CROSS_REGIONAL_INFRASTRUCTURE_MANAGEMENT = 7;
+        CROSS_REGIONAL_MONITORING = 3;
+        CROSS_REGIONAL_NETWORKING = 4;
+        CROSS_REGIONAL_STORAGE = 8;
+    }
+}

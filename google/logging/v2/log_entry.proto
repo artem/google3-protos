@@ -16,6 +16,7 @@ import "google/logging/v2/internal_metadata.proto";
 import "google/protobuf/any.proto";
 import "google/protobuf/struct.proto";
 import "google/protobuf/timestamp.proto";
+import "storage/datapol/annotations/proto/semantic_annotations.proto";
 
 option ruby_package = "Google::Cloud::Logging::V2";
 option php_namespace = "Google\\Cloud\\Logging\\V2";
@@ -26,7 +27,7 @@ option java_outer_classname = "LogEntryProto";
 option java_package = "com.google.logging.v2";
 
 message AppHubApplication {
-    string host_project_id = 1;
+    string container = 1;
     string location = 2;
     string id = 3;
 }
@@ -45,8 +46,11 @@ message AppHubWorkload {
 
 message AppHub {
     AppHubApplication application = 1;
-    AppHubService service = 2;
-    AppHubWorkload workload = 3;
+    
+    oneof AppHubResource {
+        AppHubService service = 2;
+        AppHubWorkload workload = 3;
+    }
 }
 
 message LogEntry {

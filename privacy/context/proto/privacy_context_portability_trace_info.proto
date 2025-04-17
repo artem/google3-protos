@@ -1,0 +1,32 @@
+syntax = "proto2";
+
+package privacy.context;
+
+import "net/proto2/bridge/proto/message_set.proto";
+import "privacy/context/proto/privacy_context_portability.proto";
+
+option java_multiple_files = true;
+
+message PrivacyContextPortabilityTraceInfo {
+    optional PrivacyContextPortability portability = 1;
+    
+    optional Language language = 2;
+    enum Language {
+        LANGUAGE_UNKNOWN = 0;
+        CPP = 1;
+        JAVA = 2;
+        GOLANG = 3;
+        JNI = 4;
+    }
+    
+    optional Action action = 3;
+    enum Action {
+        ACTION_UNKNOWN = 0;
+        BUILD = 1;
+        MERGE = 2;
+    }
+    
+    extend .proto2.bridge.MessageSet {
+        optional PrivacyContextPortabilityTraceInfo message_set_extension = 525000669;
+    }
+}

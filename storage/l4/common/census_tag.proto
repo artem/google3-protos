@@ -1,11 +1,11 @@
-syntax = "proto3";
+syntax = "editions";
 
 package storage_l4;
 
 import "logs/proto/logs_annotations/logs_annotations.proto";
 
 message CensusTag {
-    Key key = 1;
+    optional Key key = 1;
     enum Key {
         CENSUS_TAG_KEY_UNKNOWN = 0;
         CENSUS_TAG_KEY_ORIGINATOR = 1;
@@ -14,7 +14,8 @@ message CensusTag {
         CENSUS_TAG_KEY_F1_ACCOUNTING_GROUP = 4;
         CENSUS_TAG_KEY_RESSI_BLOCK_KIND = 5;
         CENSUS_TAG_KEY_SPANNER_FILE_PROVENANCE = 6;
+        CENSUS_TAG_KEY_SAWMILL_ACCOUNTING_GROUP = 7;
     }
     
-    string value = 2;
+    optional string value = 2;
 }

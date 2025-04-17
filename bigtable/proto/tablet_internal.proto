@@ -17,7 +17,6 @@ import "security/credentials/proto/authenticator.proto";
 import "security/thinmint/proto/core/thinmint_core.proto";
 import "stats/histogram/proto/histogram.proto";
 
-option cc_enable_arenas = true;
 option java_package = "com.google.bigtable.protos";
 
 message TabletSpec {
@@ -34,10 +33,10 @@ message SSTableMetaData {
     reserved 1 to 7, 9 to 10, 17 to 21, 23, 24, 26 to 28;
     
     enum Version {
-        option allow_alias = true;
         UNSET = 0;
-        MIN_SUPPORTED_VERSION = 36;
+        MIN_SUPPORTED_VERSION = 30;
         LATEST_VERSION = 36;
+        DROPPED_SEQUENCER_UPPER_BOUND = 34;
     }
 }
 
@@ -135,6 +134,7 @@ message TabletMetaData {
             optional BTI_RowSetProto keep_ranges = 112;
             repeated int64 keep_families = 144;
             optional uint64 import_replay_id = 71;
+            optional GlobalSequencerProto bi_global_sequencer = 177;
             optional float used_fraction = 40 [default = 1];
             optional UpdateBounds bounds = 46;
             optional BTIR_LogBounds repl_log_bounds = 47;
@@ -261,14 +261,13 @@ message TabletMetaData {
     optional fixed32 _crc_checksum = 168;
     optional GlobalSequencerProto dropped_sequencer_upper_bound = 146;
     optional bytes index_gc_resume_from_row = 147;
-    optional double last_corruption_check_time = 148;
     optional int64 deleted_boundary_timestamp = 149;
     optional int64 deleted_boundary_merge_timestamp = 152;
     map<int64, int64> migrated_family_id_map = 155;
     optional google.protobuf.Duration major_compaction_cycle = 159;
     optional int64 split_size_bytes = 160;
     optional int64 ssd_split_size_bytes = 169;
-    optional bool use_new_offset_calculation = 175;
+    optional bool use_new_offset_calculation = 175 [default = true, deprecated = true];
     
     optional MigrationState migration_state = 161 [default = NONE, deprecated = true];
     enum MigrationState {
@@ -300,7 +299,7 @@ message TabletMetaData {
     optional int64 aged_out_bytes = 172;
     optional int64 last_minor_compaction_start_time_micros = 173;
     
-    reserved 9, 35, 48, 49, 50, 53, 132, 141;
+    reserved 9, 35, 48, 49, 50, 53, 132, 141, 148, 176;
 }
 
 message MetadataBootstrap {

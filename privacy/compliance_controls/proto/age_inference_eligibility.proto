@@ -1,0 +1,16 @@
+syntax = "proto2";
+
+package compliance_controls;
+
+import "logs/proto/logs_annotations/logs_annotations.proto";
+
+option java_multiple_files = true;
+option java_package = "com.google.privacy.compliancecontrols";
+
+message AgeInferenceEligibility {
+    enum Eligibility {
+        ELIGIBILITY_UNSPECIFIED = 0;
+        ELIGIBILITY_INELIGIBLE = 1;
+        ELIGIBILITY_ELIGIBLE = 2;
+    }
+}

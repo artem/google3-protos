@@ -3,6 +3,7 @@ syntax = "proto2";
 package rpc;
 
 import "privacy/context/proto/privacy_context.proto";
+import "security/loas/l2/internal/securewrapper/multihop_clients/boundary_proxy.proto";
 import "third_party/boundary_proxy/proto_compare/annotation.proto";
 import "util/task/status.proto";
 

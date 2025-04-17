@@ -62,7 +62,7 @@ enum FieldID {
     CRASH_ID = 49;
     AUGMENTED_DATA_FORMAT = 50;
     ASSEMBLY_TOO_LARGE = 51 [deprecated = true];
-    LOGS_READ_ACCESS_ROLES = 52;
+    LOGS_READ_ACCESS_ROLES = 52 [deprecated = true];
     ROOT_DIRECTORY = 53 [deprecated = true];
     BUILD_LABEL = 54;
     CRASH_STACK_FILENAME = 55;

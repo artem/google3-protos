@@ -1,0 +1,342 @@
+syntax = "editions";
+
+package cloud.hosted.redis.agent;
+
+import "cloud/hosted/common/healthmonitor/v1/health.proto";
+import "cloud/saas_accelerator/runtime/protos/instance_agent.proto";
+import "google/protobuf/any.proto";
+import "google/protobuf/duration.proto";
+import "google/protobuf/timestamp.proto";
+import "storage/datapol/annotations/proto/semantic_annotations.proto";
+
+option java_multiple_files = true;
+option java_outer_classname = "AgentProto";
+option java_package = "com.google.cloud.redis.agent";
+
+message RestartConfig {
+    optional RestartPolicyType policy = 1;
+    optional uint32 maximum_retry_count = 2;
+}
+
+message VolumeBinding {
+    optional string host_path_or_volume_name = 1;
+    optional string container_path = 2;
+    optional bool read_only = 3;
+    optional bool wait_for_host_path_ready = 4 [deprecated = true];
+    optional google.protobuf.Duration wait_timeout = 5 [deprecated = true];
+    optional bool verify_host_path = 6;
+    optional google.protobuf.Duration verification_timeout = 7;
+}
+
+message ContainerLink {
+    optional string target_container_name = 1;
+    optional string alias = 2;
+}
+
+message ResourceLimits {
+    optional float cpus = 1;
+    optional int64 max_memory_bytes = 2;
+    optional SwapMemoryConfig swap_memory_config = 3;
+    repeated DeviceReadBpsConfig device_read_bps_config = 4;
+    repeated Ulimit ulimits = 5;
+    optional string cpuset_cpus = 6;
+    optional int64 cpu_shares = 7;
+    optional int64 shared_memory_size_bytes = 8;
+}
+
+message SwapMemoryConfig {
+    optional int64 max_swap_memory_bytes = 1;
+    optional bool custom_swappiness = 2;
+    optional int64 swappiness = 3;
+}
+
+message DeviceReadBpsConfig {
+    optional string path = 1;
+    optional int64 bps = 2;
+}
+
+message Ulimit {
+    optional string name = 1;
+    optional int64 hard_limit = 2;
+    optional int64 soft_limit = 3;
+}
+
+message NetworkModeConfig {
+    optional NetworkModeType mode = 1;
+    optional string identifier = 2;
+}
+
+message LogConfigInfo {
+    optional LogDriver driver = 1;
+    map<string, string> config = 2;
+}
+
+message PidModeConfig {
+    optional PidModeType mode = 1;
+    optional string identifier = 2;
+}
+
+message EnvConfig {
+    optional string user = 1;
+    repeated VolumeBinding volume_bindings = 2;
+    repeated ContainerLink links = 3;
+    repeated string group_names = 7;
+    optional RestartConfig restart_policy = 8;
+    optional NetworkModeConfig network_mode = 9;
+    optional PidModeConfig pid_mode = 10;
+    optional bool privileged = 11;
+    optional LogConfigInfo log_config = 12;
+    optional ResourceLimits resource_limits = 13;
+    optional int32 oom_score_adj = 14;
+    repeated saasaccelerator.runtime.protos.instanceagent.DeviceMapping device_mappings = 15;
+    optional saasaccelerator.runtime.protos.instanceagent.Capabilities capabilities = 16;
+    optional string cgroup_parent = 17;
+    repeated saasaccelerator.runtime.protos.instanceagent.PortMapping port_mappings = 18;
+    optional saasaccelerator.runtime.protos.instanceagent.IpcModeConfig ipc_mode_config = 19;
+    optional bool allow_all_devices = 20;
+    optional string app_armor_profile = 21;
+    
+    reserved 4;
+}
+
+message ImageConfig {
+    optional string image = 1;
+    map<string, string> env = 2;
+    repeated string cmd = 3;
+    optional bool use_default_entrypoint = 4;
+}
+
+message ContainerInfo {
+    optional string name = 1;
+    optional int64 created = 2;
+    optional string state = 3;
+    optional string status = 4;
+    map<string, string> labels = 5;
+    optional ContainerSpec spec = 6;
+    optional string id = 7;
+    optional string image = 8;
+    optional string image_id = 9;
+    optional google.protobuf.Timestamp created_time = 10;
+    optional ContainerState container_state = 11;
+    optional int64 exit_code = 12;
+    optional string exit_error = 13;
+    optional google.protobuf.Timestamp exit_time = 14;
+    optional google.protobuf.Timestamp started_at_time = 15;
+}
+
+message ContainerSpec {
+    optional string name = 1;
+    optional EnvConfig env_config = 2;
+    optional ImageConfig image_config = 3;
+    optional ContainerState state = 4;
+    optional string config_version = 5;
+    optional string hostname = 6;
+    optional string copy_to_scope = 7;
+    optional string user_id = 8;
+    optional saasaccelerator.runtime.protos.instanceagent.PreStopHook pre_stop_hook = 9;
+    optional saasaccelerator.runtime.protos.instanceagent.LifecyclePolicy lifecycle_policy = 10;
+}
+
+message NativeAgentSpec {
+    optional saasaccelerator.runtime.protos.instanceagent.NativeAgent agent = 1;
+    optional NativeAgentState state = 2;
+}
+
+message ExplicitCreds {
+    optional string user_name = 1;
+    optional string password = 2;
+    optional string email = 3;
+}
+
+message MetadataServerCreds {
+    optional string account_name = 1;
+}
+
+message RepositoryCreds {
+    optional string address = 1;
+    
+    oneof cred_type {
+        MetadataServerCreds metadata_server = 2;
+        ExplicitCreds explicit = 3;
+    }
+}
+
+message RpcEndpoint {
+    optional string address = 1;
+}
+
+message HealthCheckConfig {
+    optional RpcEndpoint endpoint = 1;
+    optional string output_tag = 2;
+    repeated string scopes = 3;
+    optional bool treat_timeout_as_missing = 4;
+}
+
+message CustomConfig {
+    optional string name = 1;
+    optional RpcEndpoint endpoint = 2;
+    optional google.protobuf.Any payload = 3;
+    optional int64 version = 4;
+}
+
+message ManagedContainers {
+    map<string, ContainerSpec> specs = 1;
+}
+
+message ManagedNativeAgents {
+    map<string, NativeAgentSpec> specs = 1;
+}
+
+message ConfigSnapshot {
+    optional ManagedContainers containers = 1;
+    repeated RepositoryCreds credentials = 2;
+    repeated HealthCheckConfig health_checks = 3;
+    repeated CustomConfig custom_configs = 4;
+    optional int64 sequence_number = 5;
+    optional string software_deployment_version = 6 [deprecated = true];
+    repeated saasaccelerator.runtime.protos.instanceagent.SoftwareDeploymentVersion software_deployment_versions = 10;
+    optional saasaccelerator.runtime.protos.instanceagent.RepairConfig repair_config = 7;
+    optional ManagedNativeAgents native_agents = 8;
+    optional saasaccelerator.runtime.protos.instanceagent.IAConfig ia_config = 9;
+}
+
+message MessageIdentifier {
+    optional int64 epoch = 1;
+    optional int64 sequence = 2;
+    optional string target_instance_id = 3;
+}
+
+message ControlMessage {
+    optional MessageIdentifier header = 1;
+    optional ConfigSnapshot snapshot = 2;
+    
+    optional ProtocolVersion version = 3;
+    enum ProtocolVersion {
+        VERSION_UNSPECIFIED = 0;
+        VERSION_1 = 1;
+        VERSION_2 = 2;
+    }
+}
+
+message ContainerHealthDetails {
+    optional string expected_config_version = 1;
+    optional string current_config_version = 2;
+    map<string, string> extended_stats = 3;
+    optional string error_msg = 4;
+    optional bool has_ignored_change = 5;
+}
+
+message AgentMessagingHealthDetails {
+    optional MessageIdentifier message_id = 1;
+    optional MessageIdentifier last_processed_id = 2;
+}
+
+message AgentUpdateHealthDetails {
+    optional int64 current_config_version = 1;
+    optional string current_image = 2;
+    optional int64 update_config_version = 3;
+    optional google.protobuf.Timestamp last_checked_time = 4;
+    
+    optional Status update_status = 5;
+    enum Status {
+        STATUS_UNSPECIFIED = 0;
+        PENDING = 1;
+        COMPLETED = 2;
+        ERROR = 3;
+        FALLBACK = 4;
+    }
+}
+
+message HealthMessage {
+    optional MessageIdentifier header = 1;
+    optional google.protobuf.Timestamp report_time = 2;
+    optional common.healthmonitor.v1.Health health = 3;
+    optional bool pubsub_probe = 4;
+}
+
+message PubSubConfig {
+    optional string project_id = 1;
+    optional string topic_name = 2;
+    optional bool auto_create_topic = 3;
+    optional bool use_base64 = 4;
+}
+
+message TopicConfigs {
+    optional PubSubConfig control_topic = 1;
+    optional PubSubConfig report_topic = 2;
+    optional string control_subscription_name = 3;
+}
+
+message AgentConfig {
+    optional TopicConfigs topic_config = 1;
+    optional string target_instance_id = 2;
+    optional common.healthmonitor.v1.ResourceId resource_id = 3;
+    optional string service_name = 4;
+    optional string producer_project = 5;
+    optional string consumer_project = 6;
+    optional string node_id = 7;
+    optional string location = 8;
+    optional string instance_id = 9;
+    optional int32 healthcheck_port = 10;
+}
+
+message AgentUpdateConfig {
+    optional int64 config_version = 1;
+    optional string stable_image = 2;
+    optional string target_image = 3;
+    optional google.protobuf.Duration monitor_interval = 4;
+}
+
+message NativeAgentInfo {
+    optional string name = 1;
+    optional common.healthmonitor.v1.HealthStatus health_status = 2;
+    optional google.protobuf.Any details = 3;
+}
+
+enum ContainerState {
+    CONTAINER_STATE_UNSPECIFIED = 0;
+    STOPPED = 1;
+    STARTED = 2;
+    EXIT_OK = 3;
+    FAILED = 4;
+    STARTING = 5;
+}
+
+enum RestartPolicyType {
+    RESTART_POLICY_TYPE_UNSPECIFIED = 0;
+    ALWAYS = 1;
+    UNLESS_STOPPED = 2;
+    ON_FAILURE = 3;
+}
+
+enum NetworkModeType {
+    NETWORK_MODE_TYPE_UNSET = 0;
+    BRIDGE = 1;
+    HOST = 2;
+    NONE = 3;
+    CONTAINER = 4;
+    CUSTOM = 5;
+}
+
+enum PidModeType {
+    PID_MODE_TYPE_UNSET = 0;
+    PID_HOST = 1;
+    PID_CONTAINER = 2;
+}
+
+enum LogDriver {
+    LOG_DRIVER_UNSET = 0;
+    JOURNALD = 1;
+    GCP_LOGS = 2;
+    JSON_FILE = 3;
+    FLUENTD = 4;
+    ETW_LOGS = 5;
+    LOCAL = 6;
+    SYSLOG = 7;
+}
+
+enum NativeAgentState {
+    NATIVE_AGENT_STATE_UNSPECIFIED = 0;
+    RUNNING = 1;
+    NOT_RUNNING = 2;
+}

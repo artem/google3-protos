@@ -1,0 +1,20 @@
+syntax = "editions";
+
+package bns;
+
+import "chubby/lib/proto/bnsresolver.proto";
+
+option java_multiple_files = true;
+option java_package = "com.google.net.bns";
+
+message BNSServerAuthzExtension {
+    optional AllowedUsers unsigned_payload = 1;
+    
+    extend BNSMeta {
+        optional BNSServerAuthzExtension bns_server_authz = 483000000;
+    }
+}
+
+message AllowedUsers {
+    repeated string users = 1;
+}

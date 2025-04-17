@@ -1,0 +1,130 @@
+syntax = "proto3";
+
+package google.cloud.secretmanager.v1;
+
+import "google/api/annotations.proto";
+import "google/api/auditing.proto";
+import "google/api/authz.proto";
+import "google/api/client.proto";
+import "google/api/field_behavior.proto";
+import "google/api/policy.proto";
+import "google/api/resource.proto";
+import "google/api/visibility.proto";
+import "google/cloud/secretmanager/v1/resources.proto";
+import "google/iam/v1/iam_policy.proto";
+import "google/iam/v1/policy.proto";
+import "google/protobuf/empty.proto";
+import "google/protobuf/field_mask.proto";
+import "storage/datapol/annotations/proto/semantic_annotations.proto";
+
+option ruby_package = "Google::Cloud::SecretManager::V1";
+option php_namespace = "Google\\Cloud\\SecretManager\\V1";
+option csharp_namespace = "Google.Cloud.SecretManager.V1";
+option objc_class_prefix = "GSM";
+option go_package = "google.golang.org/genproto/googleapis/cloud/secretmanager/v1;secretmanager";
+option java_multiple_files = true;
+option java_outer_classname = "ServiceProto";
+option java_package = "com.google.cloud.secretmanager.v1";
+
+service SecretManagerService {
+    rpc ListSecrets(ListSecretsRequest) returns (ListSecretsResponse);
+    rpc CreateSecret(CreateSecretRequest) returns (Secret);
+    rpc AddSecretVersion(AddSecretVersionRequest) returns (SecretVersion);
+    rpc GetSecret(GetSecretRequest) returns (Secret);
+    rpc UpdateSecret(UpdateSecretRequest) returns (Secret);
+    rpc DeleteSecret(DeleteSecretRequest) returns (protobuf.Empty);
+    rpc ListSecretVersions(ListSecretVersionsRequest) returns (ListSecretVersionsResponse);
+    rpc GetSecretVersion(GetSecretVersionRequest) returns (SecretVersion);
+    rpc AccessSecretVersion(AccessSecretVersionRequest) returns (AccessSecretVersionResponse);
+    rpc DisableSecretVersion(DisableSecretVersionRequest) returns (SecretVersion);
+    rpc EnableSecretVersion(EnableSecretVersionRequest) returns (SecretVersion);
+    rpc DestroySecretVersion(DestroySecretVersionRequest) returns (SecretVersion);
+    rpc SetIamPolicy(iam.v1.SetIamPolicyRequest) returns (iam.v1.Policy);
+    rpc GetIamPolicy(iam.v1.GetIamPolicyRequest) returns (iam.v1.Policy);
+    rpc TestIamPermissions(iam.v1.TestIamPermissionsRequest) returns (iam.v1.TestIamPermissionsResponse);
+}
+
+message ListSecretsRequest {
+    string parent = 1;
+    int32 page_size = 2;
+    string page_token = 3;
+    string filter = 4;
+    string order_by = 6;
+    
+    reserved 5;
+}
+
+message ListSecretsResponse {
+    repeated Secret secrets = 1;
+    string next_page_token = 2;
+    int32 total_size = 3;
+}
+
+message CreateSecretRequest {
+    string parent = 1;
+    string secret_id = 2;
+    Secret secret = 3;
+}
+
+message AddSecretVersionRequest {
+    string parent = 1;
+    SecretPayload payload = 2;
+}
+
+message GetSecretRequest {
+    string name = 1;
+}
+
+message ListSecretVersionsRequest {
+    string parent = 1;
+    int32 page_size = 2;
+    string page_token = 3;
+    string filter = 4;
+    string order_by = 6;
+    
+    reserved 5;
+}
+
+message ListSecretVersionsResponse {
+    repeated SecretVersion versions = 1;
+    string next_page_token = 2;
+    int32 total_size = 3;
+}
+
+message GetSecretVersionRequest {
+    string name = 1;
+}
+
+message UpdateSecretRequest {
+    Secret secret = 1;
+    protobuf.FieldMask update_mask = 2;
+}
+
+message AccessSecretVersionRequest {
+    string name = 1;
+}
+
+message AccessSecretVersionResponse {
+    string name = 1;
+    SecretPayload payload = 2;
+}
+
+message DeleteSecretRequest {
+    string name = 1;
+    string etag = 2;
+}
+
+message DisableSecretVersionRequest {
+    string name = 1;
+    string etag = 2;
+}
+
+message EnableSecretVersionRequest {
+    string name = 1;
+    string etag = 2;
+}
+
+message DestroySecretVersionRequest {
+    string name = 1;
+    string etag = 2;
+}

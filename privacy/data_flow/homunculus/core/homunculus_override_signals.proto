@@ -20,6 +20,15 @@ message HomunculusOverrideData {
     
     optional context.PrivacyContextPortability privacy_context_portability = 8;
     
+    optional OverrideSource override_source = 10;
+    enum OverrideSource {
+        UNDEFINED = 0;
+        OVERRIDE = 1;
+        PTOKEN = 2;
+    }
+    
+    optional bool dma52_is_ads_dual_observation_tainted = 11;
+    
     repeated EssentialOnlyModeState essential_only_mode_state = 4;
     message EssentialOnlyModeState {
         optional int32 essential_use_consent_state = 1;

@@ -1,8 +1,9 @@
-syntax = "proto3";
+syntax = "editions";
 
 package speckle_dogfish.dogfish_proto;
 
 import "google/api/policy.proto";
+import "google/protobuf/timestamp.proto";
 import "logs/proto/dogfish/build-info.proto";
 import "storage/datapol/annotations/proto/semantic_annotations.proto";
 import "storage/speckle/dogfish/controlplane/proto/storage.proto";
@@ -24,71 +25,71 @@ service ShardNameService {
     rpc GetVolumeDatabaseType(GetVolumeDatabaseTypeRequest) returns (GetVolumeDatabaseTypeResponse);
     rpc UpdateVolumeDatabaseType(UpdateVolumeDatabaseTypeRequest) returns (UpdateVolumeDatabaseTypeResponse);
     rpc GetVolumeSize(GetVolumeSizeRequest) returns (GetVolumeSizeResponse);
+    rpc RegisterLpsPingCounts(RegisterLpsPingCountsRequest) returns (RegisterLpsPingCountsResponse);
 }
 
 message SandboxOverrides {
-    string sns_forwarding_address = 1;
+    optional string sns_forwarding_address = 1;
 }
 
 message GetLpsDirectPathAddressRequest {
-    string volume_name = 2;
-    int32 shard_id = 3;
-    int32 replica_id = 4;
-    BuildInfo client_build_info = 5;
-    SandboxOverrides sandbox_overrides = 6;
+    optional string volume_name = 2;
+    optional int32 shard_id = 3;
+    optional int32 replica_id = 4;
+    optional BuildInfo client_build_info = 5;
+    optional SandboxOverrides sandbox_overrides = 6;
 }
 
 message GetLpsDirectPathAddressResponse {
-    bytes ipv6 = 1;
-    int32 port = 2;
-    string debug_bns = 3;
+    optional bytes ipv6 = 1;
+    optional int32 port = 2;
+    optional string bns = 3;
+    optional uint64 borg_task_uid = 4;
 }
 
 message GetLpsBorgInternalAddressRequest {
-    string volume_name = 2;
-    int32 shard_id = 3;
-    int32 replica_id = 4;
-    BuildInfo client_build_info = 5;
-    SandboxOverrides sandbox_overrides = 6;
+    optional string volume_name = 2;
+    optional int32 shard_id = 3;
+    optional int32 replica_id = 4;
+    optional BuildInfo client_build_info = 5;
+    optional SandboxOverrides sandbox_overrides = 6;
 }
 
 message GetLpsBorgInternalAddressResponse {
-    bytes ip_addr = 1;
-    int32 port = 2;
-    string debug_bns = 3;
+    optional bytes ip_addr = 1;
+    optional int32 port = 2;
+    optional string debug_bns = 3;
+    optional uint64 borg_task_uid = 4;
 }
 
 message ShardKey {
-    string volume_name = 1;
-    int32 shard_id = 2;
-    int32 replica_id = 3;
+    optional string volume_name = 1;
+    optional int32 shard_id = 2;
+    optional int32 replica_id = 3;
 }
 
 message EndpointAddress {
-    bytes ip_addr = 1;
-    int32 port = 2;
+    optional bytes ip_addr = 1;
+    optional int32 port = 2;
 }
 
 message LpsTaskInfo {
-    EndpointAddress borg_internal_address = 2;
-    EndpointAddress direct_path_address = 3;
-    string bns_name = 4;
-    string hostname = 5;
+    optional EndpointAddress borg_internal_address = 2;
+    optional EndpointAddress direct_path_address = 3;
+    optional string bns_name = 4;
+    optional string hostname = 5;
 }
 
 message ShardInfo {
-    ShardKey shard = 1;
-    LpsTaskInfo task_info = 2;
+    optional ShardKey shard = 1;
+    optional LpsTaskInfo task_info = 2;
 }
 
 message GetLpsTaskDebugInfoRequest {
     repeated ShardKey shards = 1;
-    BuildInfo client_build_info = 3;
-    SandboxOverrides sandbox_overrides = 4;
-    
-    oneof _volume_name {
-        string volume_name = 2;
-    }
+    optional string volume_name = 2;
+    optional BuildInfo client_build_info = 3;
+    optional SandboxOverrides sandbox_overrides = 4;
 }
 
 message GetLpsTaskDebugInfoResponse {
@@ -96,114 +97,106 @@ message GetLpsTaskDebugInfoResponse {
 }
 
 message LPSZoneJobMap {
-    string zone = 1;
-    string lps_bns = 2;
+    optional string zone = 1;
+    optional string lps_bns = 2;
 }
 
 message GetSnsPropertiesRequest {
-    BuildInfo build_info = 1;
-    SandboxOverrides sandbox_overrides = 2;
+    optional BuildInfo build_info = 1;
+    optional SandboxOverrides sandbox_overrides = 2;
 }
 
 message GetSnsPropertiesResponse {
-    string sns_hostname = 2;
-    string sns_bns = 3;
+    optional string sns_hostname = 2;
+    optional string sns_bns = 3;
     repeated LPSZoneJobMap lps_zone_map = 4;
 }
 
 message ShardReplicaInfo {
-    int32 replica_id = 1;
-    string zone = 5;
-    bytes ipv6 = 2;
-    int32 direct_path_port = 3;
-    string debug_bns = 4;
+    optional int32 replica_id = 1;
+    optional string zone = 5;
+    optional bytes ipv6 = 2;
+    optional int32 direct_path_port = 3;
+    optional string debug_bns = 4;
 }
 
 message GetShardReplicaInfoRequest {
-    string volume_name = 1;
-    int32 shard_id = 2;
-    bool include_direct_path_address = 3;
-    BuildInfo client_build_info = 4;
-    SandboxOverrides sandbox_overrides = 5;
+    optional string volume_name = 1;
+    optional int32 shard_id = 2;
+    optional bool include_direct_path_address = 3;
+    optional BuildInfo client_build_info = 4;
+    optional SandboxOverrides sandbox_overrides = 5;
 }
 
 message GetShardReplicaInfoResponse {
     repeated ShardReplicaInfo replica_infos = 1;
-    
-    oneof _configuration_state {
-        ShardConfigurationState configuration_state = 2;
-    }
+    optional ShardConfigurationState configuration_state = 2;
 }
 
 message VolumeShardInfo {
-    int32 shard_id = 1;
+    optional int32 shard_id = 1;
     repeated ShardReplicaInfo replica_infos = 2;
-    
-    oneof _configuration_state {
-        ShardConfigurationState configuration_state = 3;
-    }
+    optional ShardConfigurationState configuration_state = 3;
 }
 
 message GetVolumeShardInfoRequest {
-    string volume_name = 1;
-    bool include_direct_path_address = 2;
-    BuildInfo client_build_info = 3;
-    SandboxOverrides sandbox_overrides = 4;
+    optional string volume_name = 1;
+    optional bool include_direct_path_address = 2;
+    optional BuildInfo client_build_info = 3;
+    optional SandboxOverrides sandbox_overrides = 4;
 }
 
 message GetVolumeShardInfoResponse {
     repeated VolumeShardInfo shard_infos = 2;
-    dcp.storage.VolumeSettings volume_settings = 3;
-    bool readonly = 4;
+    optional dcp.storage.VolumeSettings volume_settings = 3;
+    optional bool readonly = 4;
     
     reserved 1;
 }
 
 message ReplicaSetInfo {
     repeated int32 replica_ids = 1;
-    uint64 quorum_lsn = 2;
-    ChecksummedLsn quorum_checksummed_lsn = 3;
-    int32 shard_id = 4;
+    optional uint64 quorum_lsn = 2;
+    optional ChecksummedLsn quorum_checksummed_lsn = 3;
+    optional int32 shard_id = 4;
 }
 
 message AdvanceShardConfigurationRequest {
-    string volume_name = 1;
-    int32 shard_id = 2;
+    optional string volume_name = 1;
+    optional int32 shard_id = 2;
     repeated ReplicaSetInfo replica_set_infos = 3;
-    BuildInfo client_build_info = 4;
-    SandboxOverrides sandbox_overrides = 6;
-    
-    oneof _emergency_skip_reconfiguration_finalization_delay {
-        bool emergency_skip_reconfiguration_finalization_delay = 5;
-    }
+    optional bool emergency_skip_reconfiguration_finalization_delay = 5;
+    optional ShardConfigurationState.GlobalRePDTrimChecksummedLsnSource quorum_checksummed_lsn_source = 7;
+    optional BuildInfo client_build_info = 4;
+    optional SandboxOverrides sandbox_overrides = 6;
 }
 
 message AdvanceShardConfigurationResponse {
-    ShardConfigurationState configuration_state = 3;
+    optional ShardConfigurationState configuration_state = 3;
     repeated ShardConfigurationState configuration_states = 4;
 }
 
 message FinalizeShardReconfigurationRequest {
-    string volume_name = 1;
-    int32 shard_id = 2;
-    ShardConfigurationState configuration_state = 3;
-    BuildInfo client_build_info = 4;
-    SandboxOverrides sandbox_overrides = 5;
+    optional string volume_name = 1;
+    optional int32 shard_id = 2;
+    optional ShardConfigurationState configuration_state = 3;
+    optional BuildInfo client_build_info = 4;
+    optional SandboxOverrides sandbox_overrides = 5;
 }
 
 message FinalizeShardReconfigurationResponse {
-    ShardConfigurationState configuration_state = 1;
+    optional ShardConfigurationState configuration_state = 1;
 }
 
 message UpdateVolumeGarbageCollectionInfoRequest {
-    string volume_name = 1;
-    int64 input_buffer_trim_lsn = 2 [deprecated = true];
-    int64 low_watermark_lsn = 3;
-    int64 process_lsn = 4;
-    int64 checkpoint_lsn = 7;
-    BuildInfo client_build_info = 5;
-    ShardInputBufferTrimLsns shard_input_buffer_trim_lsns = 6;
-    SandboxOverrides sandbox_overrides = 8;
+    optional string volume_name = 1;
+    optional int64 input_buffer_trim_lsn = 2 [deprecated = true];
+    optional int64 low_watermark_lsn = 3;
+    optional int64 process_lsn = 4;
+    optional int64 checkpoint_lsn = 7;
+    optional BuildInfo client_build_info = 5;
+    optional ShardInputBufferTrimLsns shard_input_buffer_trim_lsns = 6;
+    optional SandboxOverrides sandbox_overrides = 8;
 }
 
 message UpdateVolumeGarbageCollectionInfoResponse {
@@ -211,37 +204,20 @@ message UpdateVolumeGarbageCollectionInfoResponse {
 }
 
 message GetVolumeDatabaseTypeRequest {
-    SandboxOverrides sandbox_overrides = 3;
-    
-    oneof _volume_name {
-        string volume_name = 1;
-    }
-    
-    oneof _client_build_info {
-        BuildInfo client_build_info = 2;
-    }
+    optional string volume_name = 1;
+    optional BuildInfo client_build_info = 2;
+    optional SandboxOverrides sandbox_overrides = 3;
 }
 
 message GetVolumeDatabaseTypeResponse {
-    oneof _database_type {
-        DatabaseType database_type = 1;
-    }
+    optional DatabaseType database_type = 1;
 }
 
 message UpdateVolumeDatabaseTypeRequest {
-    SandboxOverrides sandbox_overrides = 4;
-    
-    oneof _volume_name {
-        string volume_name = 1;
-    }
-    
-    oneof _database_type {
-        DatabaseType database_type = 2;
-    }
-    
-    oneof _client_build_info {
-        BuildInfo client_build_info = 3;
-    }
+    optional string volume_name = 1;
+    optional DatabaseType database_type = 2;
+    optional BuildInfo client_build_info = 3;
+    optional SandboxOverrides sandbox_overrides = 4;
 }
 
 message UpdateVolumeDatabaseTypeResponse {
@@ -249,15 +225,32 @@ message UpdateVolumeDatabaseTypeResponse {
 }
 
 message GetVolumeSizeRequest {
-    SandboxOverrides sandbox_overrides = 2;
-    
-    oneof _volume_name {
-        string volume_name = 1;
-    }
+    optional string volume_name = 1;
+    optional SandboxOverrides sandbox_overrides = 2;
 }
 
 message GetVolumeSizeResponse {
-    oneof _bytes {
-        int64 bytes = 1;
-    }
+    optional int64 bytes = 1;
+}
+
+message PingCounts {
+    optional string bns = 1;
+    optional uint64 task_uid = 2;
+    optional int32 ping_count = 3;
+}
+
+message PingCountsPerLpsPerTimeBucket {
+    optional google.protobuf.Timestamp time_bucket_start = 1;
+    optional google.protobuf.Timestamp time_bucket_end = 2;
+    repeated PingCounts ping_counts = 3;
+}
+
+message RegisterLpsPingCountsRequest {
+    repeated PingCountsPerLpsPerTimeBucket ping_counts_per_lps = 1;
+    optional string ping_source_id = 2;
+    optional SandboxOverrides sandbox_overrides = 3;
+}
+
+message RegisterLpsPingCountsResponse {
+    
 }

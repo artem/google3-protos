@@ -28,6 +28,7 @@ message KMeansFlumeConfig {
     
     oneof InputParams {
         string input_pattern = 1;
+        InputOutputConfig.TableIOConfig input_tableio = 23;
         int32 num_shards = 19 [default = 10000];
     }
 }

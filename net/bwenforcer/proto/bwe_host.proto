@@ -4,8 +4,8 @@ package net_bwenforcer;
 
 import "net/base/qos.proto";
 import "net/bwenforcer/proto/network_config.proto";
+import "net/bwenforcer/proto/qos_remarking.proto";
 
-option cc_enable_arenas = true;
 option cc_generic_services = true;
 option java_multiple_files = true;
 option java_package = "com.google.net.bwenforcer.proto";
@@ -47,6 +47,8 @@ message HostQosAllocation {
         repeated HashRange matches = 1;
         optional net_base.qos.TrafficClass remarked_qos = 2;
     }
+    
+    optional BitmapQosMapperProto bitmap_hash_mapper = 3;
     
     message HashRange {
         optional fixed64 start = 1;

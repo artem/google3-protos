@@ -37,6 +37,7 @@ message EndpointConfig {
     optional uint32 control_timeout_ms = 5 [default = 1000];
     optional uint32 completion_queues = 8 [default = 1];
     optional uint32 command_queues = 32 [default = 1];
+    optional uint32 num_command_queues_per_engine = 58;
     optional int32 connection_credits = 10 [default = 50];
     optional uint32 appaloosa_command_pages = 48 [default = 512];
     
@@ -67,6 +68,8 @@ message EndpointConfig {
         optional uint32 tx_batch = 36;
         optional uint32 work_source_per_packet_limit_override = 37;
         optional uint32 flash_aio_completions_per_runloop = 38 [default = 128];
+        optional uint32 flash_max_read_size_for_caching = 46 [default = 0xffffffff];
+        optional bool flash_skip_waiting_for_pending_read_cache_entry = 47 [default = false];
         optional uint32 retransmit_timeout_override_us = 40;
         optional bool enable_bamm2_steering = 45;
         
@@ -129,6 +132,13 @@ message EndpointConfig {
     optional string client_details = 52;
     optional string borg_container_name = 54;
     optional bool enable_use_new_engines = 55 [default = false];
+    
+    optional OffloadMode offload_mode = 57 [default = OFFLOAD_MODE_NONE];
+    enum OffloadMode {
+        OFFLOAD_MODE_NONE = 0;
+        OFFLOAD_MODE_ATTEMPT = 1;
+        OFFLOAD_MODE_FORCE = 2;
+    }
     
     reserved 6, 7, 9, 11, 13, 19, 20, 21, 22, 24, 27, 28, 30, 31, 35;
 }

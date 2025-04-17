@@ -1,0 +1,63 @@
+syntax = "proto3";
+
+package operations_research;
+
+import "storage/util/int128/int128.proto";
+
+option java_multiple_files = true;
+option java_package = "com.google.operationsresearch.algorithms";
+
+message SetCoverProto {
+    repeated Subset subset = 1;
+    message Subset {
+        repeated int64 element = 2 [packed = true];
+        
+        oneof _cost {
+            double cost = 1;
+        }
+    }
+    
+    oneof _name {
+        string name = 2;
+    }
+    
+    oneof _fingerprint {
+        storage_util.Int128 fingerprint = 3;
+    }
+}
+
+message SetCoverSolutionResponse {
+    repeated int64 subset = 3 [packed = true];
+    
+    oneof _status {
+        Status status = 1;
+    }
+    
+    oneof _num_subsets {
+        int64 num_subsets = 2;
+    }
+    
+    oneof _cost {
+        double cost = 4;
+    }
+    
+    oneof _cost_lower_bound {
+        double cost_lower_bound = 5;
+    }
+    
+    oneof _fingerprint {
+        storage_util.Int128 fingerprint = 6;
+    }
+    
+    oneof _model_fingerprint {
+        storage_util.Int128 model_fingerprint = 7;
+    }
+    
+    enum Status {
+        UNDEFINED = 0;
+        OPTIMAL = 1;
+        FEASIBLE = 2;
+        INFEASIBLE = 3;
+        INVALID = 4;
+    }
+}

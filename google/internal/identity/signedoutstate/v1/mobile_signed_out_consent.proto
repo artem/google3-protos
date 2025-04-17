@@ -1,0 +1,61 @@
+syntax = "proto3";
+
+package google.internal.identity.signedoutstate.v1;
+
+import "google/protobuf/timestamp.proto";
+import "storage/datapol/annotations/proto/semantic_annotations.proto";
+
+option objc_class_prefix = "SOS";
+option java_multiple_files = true;
+option java_outer_classname = "MobileSignedOutStateProto";
+option java_package = "com.google.identity.signedoutstate.v1";
+
+message DebugOverrides {
+    oneof _debug_region {
+        DebugRegion debug_region = 1;
+    }
+    
+    enum DebugRegion {
+        DEBUG_REGION_UNSPECIFIED = 0;
+        DEBUG_REGION_DE = 1;
+        DEBUG_REGION_US = 2;
+    }
+}
+
+message MobileSignedOutConsent {
+    ConsentChoice consent_choice = 1;
+    enum ConsentChoice {
+        CONSENT_CHOICE_UNSPECIFIED = 0;
+        CONSENT_CHOICE_ESSENTIAL_ONLY = 1;
+        CONSENT_CHOICE_ACCEPT_NON_ESSENTIAL = 2;
+    }
+    
+    protobuf.Timestamp day_of_creation = 2;
+    
+    Treatment essential_only_mode_treatment = 3;
+    enum Treatment {
+        TREATMENT_UNSPECIFIED = 0;
+        TREATMENT_ESSENTIAL_ONLY = 1;
+        TREATMENT_NON_ESSENTIAL_PERMITTED = 2;
+    }
+    
+    Ui ui_to_display = 4;
+    enum Ui {
+        UI_UNSPECIFIED = 0;
+        UI_CONSENT_BUMP = 1;
+        UI_CONSENT_REBUMP = 2;
+    }
+    
+    EssentialUseConsentState essential_use_consent_state = 6;
+    enum EssentialUseConsentState {
+        ESSENTIAL_USE_CONSENT_STATE_UNSPECIFIED = 0;
+        ESSENTIAL_USE_CONSENT_STATE_REGION_OUT_OF_SCOPE = 1;
+        ESSENTIAL_USE_CONSENT_STATE_APPLICATION_OUT_OF_SCOPE = 4;
+        ESSENTIAL_USE_CONSENT_STATE_UNRESTRICTED = 2;
+        ESSENTIAL_USE_CONSENT_STATE_ESSENTIAL_ONLY = 3;
+    }
+    
+    oneof _debug_overrides {
+        DebugOverrides debug_overrides = 5;
+    }
+}

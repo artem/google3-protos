@@ -1,0 +1,29 @@
+syntax = "proto3";
+
+package rodos;
+
+message ReadReplyDetails {
+    int64 d_reads_completed = 1;
+    int64 d_buffer_cache_hits = 2;
+    int64 bytes_read_hdd = 3;
+    int64 bytes_read_ssd = 4;
+    
+    L4Stats l4_stats = 5;
+    message L4Stats {
+        int64 fully_filled_from_cache = 1;
+        int64 partially_filled_from_cache = 2;
+        int64 not_filled_from_cache = 3;
+    }
+    
+    CostStats best_effort_cost_stats = 6;
+    message CostStats {
+        double cost = 1;
+        int64 bytes_read = 2;
+        int64 num_rpcs = 3;
+    }
+    
+    CostStats best_effort_plus_cost_stats = 7;
+    CostStats throughput_cost_stats = 8;
+    CostStats low_latency_cost_stats = 9;
+    CostStats ultra_low_latency_cost_stats = 10;
+}

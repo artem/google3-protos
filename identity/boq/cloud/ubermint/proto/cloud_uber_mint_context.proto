@@ -2,6 +2,7 @@ syntax = "editions";
 
 package identity_ubermint;
 
+import "cloud/identity/common/proto/device_signal.proto";
 import "cloud/identity/common/proto/third_party_id.proto";
 import "gaia/data/accounttype/account_type.proto";
 import "google/protobuf/struct.proto";
@@ -11,6 +12,7 @@ import "identity/boq/cloud/ubermint/proto/dasher_customer_id.proto";
 import "identity/boq/cloud/ubermint/proto/dma_info.proto";
 import "identity/boq/cloud/ubermint/proto/gaia_on_byoid.proto";
 import "identity/ubermint/proto/platform/cloud/resource_info.proto";
+import "identity/ubermint/proto/platform/cloud/trust_boundary_params.proto";
 import "security/credentials/proto/request_reason.proto";
 import "storage/datapol/annotations/proto/semantic_annotations.proto";
 
@@ -26,7 +28,6 @@ message CloudUberMintContext {
     optional bool pure_first_party = 12;
     optional google.cloud.identity.ThirdPartyId third_party_id = 13;
     optional string principal_subject = 14;
-    optional string security_realm = 15;
     optional string audience = 16;
     optional string overridden_user_project = 17;
     optional string api_key = 18;
@@ -57,6 +58,8 @@ message CloudUberMintContext {
     optional DmaInfo dma_info = 46;
     optional identity_auxiliarydata.GaiaMintAuxiliaryData auxiliary_data = 47;
     optional int64 seconds_since_last_auth = 48;
+    optional TrustBoundaryParams trust_boundary_params = 49;
+    optional google.cloud.identity.DeviceSignal device_signal = 50;
     
-    reserved 7, 10, 11, 21, 28;
+    reserved 7, 10, 11, 15, 21, 28;
 }

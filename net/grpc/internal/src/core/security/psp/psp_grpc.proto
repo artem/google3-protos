@@ -1,0 +1,20 @@
+syntax = "editions";
+
+package grpc;
+
+import "security/loas/l2/internal/lib/psp/psp.proto";
+import "storage/datapol/annotations/proto/semantic_annotations.proto";
+
+message ClientData {
+    optional security_loas_l2.PspTrafficKeyProto psp_peer_tx_key = 1;
+    repeated bytes server_address = 2;
+}
+
+message ServerData {
+    optional security_loas_l2.PspTrafficKeyProto psp_peer_tx_key = 1;
+    repeated bytes server_address = 2;
+}
+
+message ClientAck {
+    optional string error = 1;
+}

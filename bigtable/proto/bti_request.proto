@@ -4,7 +4,6 @@ package bigtable;
 
 import "net/base/qos.proto";
 
-option cc_enable_arenas = true;
 option java_package = "com.google.bigtable.protos";
 
 message BTI_Request {
@@ -131,5 +130,23 @@ message BTI_Request {
         POST_RELEASE_25_9 = 2409;
         RELEASE_26_0 = 2411;
         POST_RELEASE_26_0 = 2419;
+        RELEASE_26_1 = 2421;
+        POST_RELEASE_26_1 = 2429;
+        RELEASE_26_2 = 2431;
+        POST_RELEASE_26_2 = 2439;
+        RELEASE_26_3 = 2441;
+        POST_RELEASE_26_3 = 2449;
+        RELEASE_26_4 = 2451;
+        POST_RELEASE_26_4 = 2459;
+        RELEASE_26_5 = 2461;
+        POST_RELEASE_26_5 = 2469;
+        RELEASE_26_6 = 2471;
+        POST_RELEASE_26_6 = 2479;
+        RELEASE_26_7 = 2481;
+        POST_RELEASE_26_7 = 2489;
+        RELEASE_26_8 = 2491;
+        POST_RELEASE_26_8 = 2499;
+        RELEASE_26_9 = 2501;
+        POST_RELEASE_26_9 = 2509;
     }
 }

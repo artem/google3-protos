@@ -1,0 +1,14 @@
+syntax = "editions";
+
+package production.machine_locality;
+
+import "google/protobuf/timestamp.proto";
+
+message ProdHostnameUsage {
+    optional string parsing_hostname = 1;
+    optional google.protobuf.Timestamp timestamp = 2;
+    optional string stack_trace = 3;
+    optional string build_id = 4;
+    optional string target_name = 5;
+    optional string symbolize_url = 6;
+}

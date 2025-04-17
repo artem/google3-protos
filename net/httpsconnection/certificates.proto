@@ -67,7 +67,6 @@ message CertificateConfig {
             REQUEST_AND_REQUIRE_CLIENT_CERTIFICATE_AND_VERIFY_EXTERNALLY = 5;
         }
         
-        optional bool only_request_cert_if_no_channel_id = 5 [default = false];
         optional string ciphers = 4;
         optional int32 min_version = 6;
         optional bool enable_tls13 = 8 [deprecated = true];
@@ -81,6 +80,10 @@ message CertificateConfig {
             INVALID = 0;
             CNSA_202407 = 1;
         }
+        
+        reserved 5;
+        
+        reserved "only_request_cert_if_no_channel_id";
     }
     
     repeated Host host = 8;

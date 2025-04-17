@@ -1,4 +1,4 @@
-syntax = "proto3";
+syntax = "editions";
 
 package rpc_inventory;
 
@@ -12,16 +12,15 @@ option java_outer_classname = "ServiceRegisteredEventProtoFile";
 option java_package = "com.google.security.context";
 
 message ServiceRegisteredEvent {
-    secure_collection.MessageSource message_source = 1;
+    optional secure_collection.MessageSource message_source = 1;
     repeated RPCServiceInfo service_info = 2;
     repeated HttpHandlerInfo http_handler_info = 3;
-    repeated AppsFrameworkServerInfo af_server_info = 10 [deprecated = true];
     repeated FrameworkServerInfo framework_server_info = 11;
-    int64 borg_job_uid = 4;
-    int64 borg_task_uid = 18;
-    int32 task_index = 12;
+    optional int64 borg_job_uid = 4;
+    optional int64 borg_task_uid = 18;
+    optional int32 task_index = 12;
     
-    TransportType transport_type = 7;
+    optional TransportType transport_type = 7;
     enum TransportType {
         UNKNOWN = 0;
         STUBBY2 = 1;
@@ -29,11 +28,11 @@ message ServiceRegisteredEvent {
         STUBBY_GO = 3;
     }
     
-    google.protobuf.Timestamp event_timestamp = 8;
-    HttpLabelAclConfig http_label_acl_config = 13;
-    LabelAclConfig label_acl_config = 14;
+    optional google.protobuf.Timestamp event_timestamp = 8;
+    optional HttpLabelAclConfig http_label_acl_config = 13;
+    optional LabelAclConfig label_acl_config = 14;
     
-    ProcessType process_type = 16;
+    optional ProcessType process_type = 16;
     enum ProcessType {
         UNKNOWN_OR_MAIN_PROCESS = 0;
         ENVELOPE_MAIN = 1;
@@ -41,7 +40,7 @@ message ServiceRegisteredEvent {
         LAMPREY = 3;
     }
     
-    PlatformType platform_type = 17;
+    optional PlatformType platform_type = 17;
     enum PlatformType {
         UNKNOWN_PLATFORM_TYPE = 0;
         NONE = 1;
@@ -49,15 +48,13 @@ message ServiceRegisteredEvent {
         POD = 3;
     }
     
-    oneof _idx_internal_metadata {
-        .idx.time_series.ingestion.proto.IDXTimeSeriesMetadata idx_internal_metadata = 15;
-    }
+    optional .idx.time_series.ingestion.proto.IDXTimeSeriesMetadata idx_internal_metadata = 15;
     
-    reserved 6, 9;
+    reserved 6, 9, 10;
 }
 
 message HttpHandlerInfo {
-    AuthType auth_type = 1;
+    optional AuthType auth_type = 1;
     enum AuthType {
         UNKNOWN = 0;
         ANONYMOUS = 1;
@@ -72,22 +69,22 @@ message HttpHandlerInfo {
 }
 
 message RPCServiceInfo {
-    string registered_name = 1;
-    string full_name = 2;
-    string filename = 3;
+    optional string registered_name = 1;
+    optional string full_name = 2;
+    optional string filename = 3;
     repeated RPCServiceMethod method = 4;
     repeated int32 port = 5;
-    FrameworkServerInfo.FrameworkType framework_type = 6;
+    optional FrameworkServerInfo.FrameworkType framework_type = 6;
 }
 
 message RPCServiceMethod {
-    string name = 1;
-    bool streaming = 2;
-    string request_type = 3;
-    string response_type = 4;
-    string stream_type = 5;
+    optional string name = 1;
+    optional bool streaming = 2;
+    optional string request_type = 3;
+    optional string response_type = 4;
+    optional string stream_type = 5;
     
-    SecurityLevel security_level = 6;
+    optional SecurityLevel security_level = 6;
     enum SecurityLevel {
         UNKNOWN = 0;
         OTHER = 1;
@@ -97,7 +94,7 @@ message RPCServiceMethod {
         STRONG_PRIVACY_AND_INTEGRITY = 5;
     }
     
-    SecurityLevel server_required_security_level = 7;
+    optional SecurityLevel server_required_security_level = 7;
 }
 
 message FrameworkServerInfo {
@@ -105,11 +102,11 @@ message FrameworkServerInfo {
     
     repeated PortInfo port_info = 2;
     message PortInfo {
-        string port_name = 1;
-        uint32 port_number = 2;
+        optional string port_name = 1;
+        optional uint32 port_number = 2;
     }
     
-    FrameworkType framework_type = 3;
+    optional FrameworkType framework_type = 3;
     enum FrameworkType {
         UNKNOWN = 0;
         APPS_FRAMEWORK = 1;
@@ -119,8 +116,8 @@ message FrameworkServerInfo {
     
     repeated LabelAclDebugRole label_acl_debug_role = 4;
     message LabelAclDebugRole {
-        string security_label = 1;
-        DebugRole debug_role = 2;
+        optional string security_label = 1;
+        optional DebugRole debug_role = 2;
     }
     
     enum DebugRole {
@@ -132,56 +129,37 @@ message FrameworkServerInfo {
 }
 
 message FrameworkEndpointInfo {
-    string endpoint_name = 1;
+    optional string endpoint_name = 1;
     
     repeated EndpointRequestPath endpoint_request_paths = 2;
     message EndpointRequestPath {
-        string full_stubby_service = 1;
-        string renamed_full_stubby_service_name = 6;
-        string request_path_name = 2;
-        string request_type = 3;
-        string response_type = 4;
-        string group = 5;
-        string handler_security_label = 10;
-        
-        oneof _http_handler_info {
-            HttpHandlerInfo http_handler_info = 7;
-        }
-        
-        oneof _url_security_label {
-            string url_security_label = 8;
-        }
-        
-        oneof _allow_unauthenticated {
-            bool allow_unauthenticated = 9;
-        }
+        optional string full_stubby_service = 1;
+        optional string renamed_full_stubby_service_name = 6;
+        optional string request_path_name = 2;
+        optional string request_type = 3;
+        optional string response_type = 4;
+        optional string group = 5;
+        optional HttpHandlerInfo http_handler_info = 7;
+        optional string url_security_label = 8;
+        optional bool allow_unauthenticated = 9;
+        optional string handler_security_label = 10;
     }
     
-    string endpoint_varz_name = 3;
-    FrameworkServerInfo.DebugRole endpoint_debug_role = 4;
-}
-
-message AppsFrameworkServerInfo {
-    repeated AppsFrameworkActionInfo af_action_info = 1 [deprecated = true];
-    
-    repeated PortInfo port_info = 2;
-    message PortInfo {
-        string port_name = 1;
-        uint32 port_number = 2;
-    }
+    optional string endpoint_varz_name = 3;
+    optional FrameworkServerInfo.DebugRole endpoint_debug_role = 4;
 }
 
 message AppsFrameworkActionInfo {
     option deprecated = true;
-    string action_name = 1;
+    optional string action_name = 1;
     
     repeated ActionRequestPath action_request_paths = 2;
     message ActionRequestPath {
-        string full_stubby_service = 1;
-        string request_path_name = 2;
-        string request_type = 3;
-        string response_type = 4;
-        string group = 5;
+        optional string full_stubby_service = 1;
+        optional string request_path_name = 2;
+        optional string request_type = 3;
+        optional string response_type = 4;
+        optional string group = 5;
     }
     
     reserved 3, 4, 5;
@@ -190,22 +168,22 @@ message AppsFrameworkActionInfo {
 message HttpLabelAclConfig {
     repeated UrlLabel url_labels = 1;
     message UrlLabel {
-        string url_prefix = 1;
-        string security_label = 2;
-        bool allow_unauthenticated = 3;
+        optional string url_prefix = 1;
+        optional string security_label = 2;
+        optional bool allow_unauthenticated = 3;
     }
     
-    bool http_labelacl_enforced = 2;
+    optional bool http_labelacl_enforced = 2;
 }
 
 message LabelAclConfig {
     repeated LabelAcl label_acls = 1;
     message LabelAcl {
-        string security_label = 1;
-        string acl = 2;
+        optional string security_label = 1;
+        optional string acl = 2;
     }
     
-    LabelAclPolicy default_label_acl_policy = 2;
+    optional LabelAclPolicy default_label_acl_policy = 2;
     enum LabelAclPolicy {
         UNKNOWN = 0;
         OPEN = 1;
@@ -213,6 +191,6 @@ message LabelAclConfig {
         CLOSED = 3;
     }
     
-    LabelAclPolicy label_acl_cold_start_policy = 3;
-    bool label_acl_static_config_is_set = 4;
+    optional LabelAclPolicy label_acl_cold_start_policy = 3;
+    optional bool label_acl_static_config_is_set = 4;
 }

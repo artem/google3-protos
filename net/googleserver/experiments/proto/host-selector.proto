@@ -1,0 +1,19 @@
+syntax = "editions";
+
+package net.googleserver.experiments;
+
+import "experiments/proto/range.proto";
+
+option java_outer_classname = "HostSelectorProto";
+
+message HostSelector {
+    optional string datacenter = 1;
+    optional string server_type = 2 [default = "ALL"];
+    optional string service_name = 3;
+    optional string user = 4;
+    repeated int32 shard_ids = 5;
+    repeated .experiments.Range shard_ranges = 6;
+    repeated int32 task_ids = 7;
+    repeated .experiments.Range task_ranges = 8;
+    repeated string server_roles = 9;
+}

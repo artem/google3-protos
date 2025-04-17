@@ -7,6 +7,7 @@ import "net/proto2/proto/descriptor.proto";
 message Options {
     repeated string implies = 1;
     optional string description = 2;
+    optional string default_semantic_context = 3;
 }
 
 extend .proto2.EnumValueOptions {

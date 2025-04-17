@@ -95,6 +95,7 @@ message ClientInit {
     
     repeated EphemeralParameter ephemeral_parameters = 8;
     repeated PostQuantumParameter post_quantum_parameters = 9;
+    optional bool has_only_self_signed = 10;
     
     extensions 100 to max;
 }

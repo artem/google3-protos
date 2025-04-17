@@ -1,0 +1,53 @@
+syntax = "proto2";
+
+package assistant.api.annotations;
+
+import "net/proto2/proto/descriptor.proto";
+import "storage/datapol/annotations/proto/semantic_annotations.proto";
+
+option java_outer_classname = "VersionAnnotations";
+option java_package = "com.google.assistant.api.annotations";
+
+message VersionRange {
+    optional int32 start = 1 [default = 1];
+    optional int32 stop = 2;
+}
+
+message VersionRangeList {
+    repeated VersionRange version_range = 1;
+}
+
+message TypeVersion {
+    optional string full_name = 1;
+    optional .proto2.FieldDescriptorProto.Type type = 2;
+    optional int64 version = 3;
+    repeated string dependency_path_for_debugging = 4;
+}
+
+message VersionMap {
+    optional string message_full_name = 1;
+    optional int64 annotated_max_version = 2;
+    repeated TypeVersion dependent_type_version = 3;
+}
+
+message VersionDb {
+    repeated VersionMap version_map = 1;
+}
+
+message VersionLog {
+    repeated Change change = 1;
+    message Change {
+        optional int32 version_id = 1;
+        optional string description = 2;
+    }
+}
+
+extend .proto2.FieldOptions {
+    repeated VersionRange version_range = 134096400;
+    optional VersionRangeList version_range_list = 141473177;
+}
+
+extend .proto2.MessageOptions {
+    optional int32 latest_version = 134096400;
+    optional VersionLog version_log = 185706300;
+}

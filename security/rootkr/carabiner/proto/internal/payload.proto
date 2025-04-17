@@ -1,0 +1,16 @@
+syntax = "editions";
+
+package carabiner;
+
+import "google/protobuf/empty.proto";
+import "security/realms/realmified_roles/proto/role_realm_control_policy.proto";
+import "security/rootkr/carabiner/proto/carabiner.proto";
+
+message Payload {
+    optional Lifetime lifetime = 1;
+    
+    oneof payload {
+        security_realms.RoleRealmControlPolicy rrcp = 2;
+        google.protobuf.Empty none = 3;
+    }
+}

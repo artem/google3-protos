@@ -6,6 +6,7 @@ import "google/protobuf/any.proto";
 import "production/fireaxe/proto/operation_info.proto";
 import "production/fireaxe/proto/task_condition.proto";
 import "production/fireaxe/proto/task_selection.proto";
+import "security/credentials/proto/authenticator.proto";
 import "security/thinmint/proto/core/thinmint_core.proto";
 
 option java_multiple_files = true;
@@ -20,6 +21,8 @@ message ActionConfigProto {
     optional TaskSelectionProto preview_tasks = 8;
     optional .thinmint.ThinMint action_mint = 4;
     optional bool action_mint_is_superuser = 7;
+    repeated security.credentials.DataAccessReason reason = 9;
+    optional string formatted_reason = 10;
     optional OperationInfoProto create_info = 5;
     optional OperationInfoProto modify_info = 6;
 }

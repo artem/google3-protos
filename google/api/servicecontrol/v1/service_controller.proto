@@ -4,6 +4,7 @@ package google.api.servicecontrol.v1;
 
 import "google/api/annotations.proto";
 import "google/api/authz.proto";
+import "google/api/inclusion.proto";
 import "google/api/servicecontrol/v1/check_error.proto";
 import "google/api/servicecontrol/v1/operation.proto";
 import "google/api/servicecontrol/v1/project_settings.proto";
@@ -17,8 +18,6 @@ import "third_party/boundary_proxy/proto_compare/annotation.proto";
 option ruby_package = "Google::Cloud::ServiceControl::V1";
 option php_namespace = "Google\\Cloud\\ServiceControl\\V1";
 option csharp_namespace = "Google.Cloud.ServiceControl.V1";
-option objc_class_prefix = "GASC";
-option cc_enable_arenas = true;
 option java_multiple_files = true;
 option java_outer_classname = "ServiceControllerProto";
 option java_package = "com.google.api.servicecontrol.v1";

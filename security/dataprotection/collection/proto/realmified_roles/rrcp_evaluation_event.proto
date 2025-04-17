@@ -1,0 +1,43 @@
+syntax = "editions";
+
+package security_realms;
+
+import "google/protobuf/timestamp.proto";
+import "security/credentials/proto/principal.proto";
+import "security/dataprotection/collection/public/collection_service.proto";
+import "security/realms/realmified_roles/proto/role_realm_control_policy.proto";
+
+message RrcpEvaluationEvent {
+    optional secure_collection.MessageSource message_source = 1;
+    optional google.protobuf.Timestamp event_stamp = 2;
+    
+    optional LoasPeer evaluator_role = 3;
+    message LoasPeer {
+        optional security.credentials.PrincipalProto principal = 1;
+        optional string security_realm = 2;
+    }
+    
+    optional LoasPeer presenter_role = 4;
+    optional string issuer_role = 5;
+    
+    repeated PolicyEvaluation policy_evaluations = 6;
+    message PolicyEvaluation {
+        optional CredentialControlPolicyType.Enum policy_type = 1;
+        
+        optional EnforcementMode enforcement_mode = 2;
+        enum EnforcementMode {
+            MODE_UNKNOWN = 0;
+            ENFORCED = 1;
+            DARKLAUNCH = 2;
+        }
+        
+        optional PolicyEvaluationResult policy_result = 3;
+        enum PolicyEvaluationResult {
+            RESULT_UNKNOWN = 0;
+            POLICY_OK = 1;
+            POLICY_VIOLATED = 2;
+            POLICY_MISSING_OR_INVALID = 3;
+            RRCP_MISSING_OR_INVALID = 5;
+        }
+    }
+}

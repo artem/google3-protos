@@ -127,6 +127,7 @@ message VirtualCellClientShardingParams {
     }
     
     optional bool assign_local_cell_to_direct_access = 3;
+    optional bool assign_zonal_vc_to_direct_access = 4;
 }
 
 message DomainAwareVirtualCellShardingParams {
@@ -155,4 +156,5 @@ message ClientShardingConfigFilter {
     optional string lockservice_locality_regex = 4;
     optional string exclude_lockservice_locality_regex = 5;
     optional bool shard_config_ratio_by_task_id = 6;
+    optional double config_username_ratio = 7;
 }

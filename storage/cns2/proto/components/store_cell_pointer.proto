@@ -1,0 +1,21 @@
+syntax = "editions";
+
+package cns2.proto;
+
+import "google/protobuf/timestamp.proto";
+
+message StoreCellPointer {
+    optional string bigtable_location = 1;
+    
+    optional LifecycleStage lifecycle_stage = 4;
+    enum LifecycleStage {
+        LIFECYCLE_STAGE_UNSPECIFIED = 0;
+        LIVE = 1;
+        PRE_TURNDOWN = 2;
+        PRE_TURNDOWN_RECOVERED = 3;
+    }
+    
+    optional google.protobuf.Timestamp turndown_start_time = 5;
+    optional string chubby_cell = 2 [deprecated = true];
+    optional string chubby_path = 3 [deprecated = true];
+}

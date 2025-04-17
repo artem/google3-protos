@@ -1,0 +1,31 @@
+syntax = "editions";
+
+package bigtable.movereplica;
+
+import "net/proto2/bridge/proto/message_set.proto";
+
+option java_multiple_files = true;
+option java_package = "com.google.bigtable.movereplica.protos";
+
+message Move {
+    optional string from_replica_source_id = 1;
+    optional string to_replica_source_id = 2;
+    optional uint64 from_incarnation = 3;
+    optional uint64 to_incarnation = 4;
+    
+    optional Status status = 5 [default = UNSET];
+    enum Status {
+        UNSET = 0;
+        NOT_STARTED = 1;
+        STARTED = 2;
+        COMPLETED = 3;
+    }
+    
+    optional int64 created_at = 6;
+}
+
+message ForwardMoveNotStartedTag {
+    extend .proto2.bridge.MessageSet {
+        optional ForwardMoveNotStartedTag message_set_extension = 525003193;
+    }
+}

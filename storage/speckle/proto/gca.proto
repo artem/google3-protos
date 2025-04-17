@@ -1,0 +1,34 @@
+syntax = "proto3";
+
+package speckle;
+
+import "google/protobuf/timestamp.proto";
+import "storage/datapol/annotations/proto/semantic_annotations.proto";
+
+option java_multiple_files = true;
+
+message GCAInstanceConfig {
+    bool gca_enabled = 1;
+}
+
+message GCAProjectConfig {
+    bool gca_enabled = 1;
+    google.protobuf.Timestamp event_publish_time = 2;
+}
+
+message GCAProjectConfigUpdateEvent {
+    google.protobuf.Timestamp event_publish_time = 2;
+    bool enable_gca = 3;
+    
+    oneof _project {
+        string project = 1;
+    }
+    
+    oneof _number_of_retries {
+        int32 number_of_retries = 4;
+    }
+    
+    oneof _project_id {
+        int64 project_id = 5;
+    }
+}

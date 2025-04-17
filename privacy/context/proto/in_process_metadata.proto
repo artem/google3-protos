@@ -1,0 +1,11 @@
+syntax = "editions";
+
+package privacy.context;
+
+option java_multiple_files = true;
+option java_package = "com.google.privacy.context";
+
+enum InProcessMetadata {
+    IN_PROCESS_METADATA_UNSPECIFIED = 0;
+    IN_PROCESS_METADATA_SEMANTIC_PURPOSE_SET = 1;
+}

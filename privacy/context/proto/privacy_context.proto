@@ -5,6 +5,7 @@ package privacy.context;
 import "net/proto2/bridge/proto/message_set.proto";
 import "privacy/context/proto/evaluation_result.proto";
 import "privacy/context/proto/privacy_context_id.proto";
+import "privacy/context/proto/privacy_context_internal.proto";
 import "privacy/data_governance/attributes/proto/ddt.proto";
 import "privacy/ptoken/public/core/request_context.proto";
 import "privacy/ptoken/public/core/sot_mappings.proto";
@@ -19,6 +20,7 @@ message PrivacyContext {
     optional .ptoken.SotMappings sot = 3;
     optional PrivacyContextId id = 4;
     optional PolicyEvaluationResults policy_evaluation_results = 5;
+    optional PrivacyContextInternal pc_internal = 6;
     
     enum Reason {
         OTHER_REASON = 0;
@@ -31,6 +33,8 @@ message PrivacyContext {
         GET_PREQUEST_REASON = 7;
         PTOKEN_ENFORCEMENT_REASON = 8;
         GET_POLICY_EVALUTION_RESULT_REASON = 9;
+        HOMUNCULUS_GET_WITH_REDACTED_SOT = 10;
+        GET_PC_INTERNAL_REASON = 11;
     }
 }
 
@@ -77,6 +81,8 @@ message PrivacyContextTraceInfo {
 message PrivacyContextGrpcParts {
     optional bytes low_cardinality = 1;
     optional bytes high_cardinality = 2;
+    optional bytes low_cardinality_serialized = 3;
+    optional bytes high_cardinality_serialized = 4;
 }
 
 message PrivacyContextStreamzFields {

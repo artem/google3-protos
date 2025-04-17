@@ -3,6 +3,7 @@ syntax = "proto3";
 package google.cloud.sql.authorization.v1;
 
 import "google/api/field_behavior.proto";
+import "google/api/inclusion.proto";
 import "google/api/resource.proto";
 import "google/api/visibility.proto";
 import "google/protobuf/duration.proto";
@@ -150,4 +151,21 @@ message GroupMembershipSyncInfo {
 
 message BulkCheckGroupMembershipResponse {
     repeated GroupMembershipSyncInfo group_membership_responses = 1;
+}
+
+message BulkCheckAccountExistRequest {
+    repeated string users = 2;
+    
+    oneof _instance {
+        string instance = 1;
+    }
+    
+    oneof _vm {
+        string vm = 3;
+    }
+}
+
+message BulkCheckAccountExistResponse {
+    repeated string valid_users = 1;
+    repeated string invalid_users = 2;
 }

@@ -1,0 +1,13 @@
+syntax = "editions";
+
+package google.cloud.identity;
+
+import "storage/datapol/annotations/proto/semantic_annotations.proto";
+
+option java_multiple_files = true;
+option java_package = "com.google.cloud.identity";
+
+message DeviceSignal {
+    optional bool managed_profile = 1;
+    optional string virtual_profile_id = 2;
+}

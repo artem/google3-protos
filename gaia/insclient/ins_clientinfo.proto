@@ -10,7 +10,6 @@ import "logs/proto/logs_annotations/logs_annotations.proto";
 import "net/proto2/bridge/proto/message_set.proto";
 import "storage/datapol/annotations/proto/semantic_annotations.proto";
 
-option cc_enable_arenas = true;
 option java_package = "com.google.gaia.client.proto";
 
 message GlobalTos {

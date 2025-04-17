@@ -1,0 +1,53 @@
+syntax = "editions";
+
+package speckle;
+
+import "google/protobuf/duration.proto";
+import "google/protobuf/timestamp.proto";
+import "storage/datapol/annotations/proto/semantic_annotations.proto";
+import "storage/speckle/proto/db_heartbeat.proto";
+import "storage/speckle/proto/enums.proto";
+
+option java_multiple_files = true;
+option java_outer_classname = "HealthCheckProto";
+
+message VmHealthState {
+    optional google.protobuf.Timestamp generation_time = 1;
+    optional string vm_name = 2;
+    optional string vm_instance_id = 12;
+    optional string vm_zone = 3;
+    optional google.protobuf.Timestamp last_heartbeat_time = 4;
+    optional HeartbeatMonitorStatus heartbeat_monitor_status = 5;
+    optional google.protobuf.Timestamp replication_heartbeat_time = 6 [deprecated = true];
+    optional FailoverSlaveState failover_standby_state = 7;
+    optional int64 seconds_behind_source = 15;
+    optional bool relay_log_empty = 16;
+    repeated HealthStateWithInterval health_state_with_intervals = 8;
+    optional DatabaseState database_state = 9;
+    optional bool unclean_reboot_detect = 10 [deprecated = true];
+    optional bool recreate_needed_because_of_unclean_reboot = 11 [default = false];
+    optional bool recreate_replicas_on_reduced_durability_primary_crash = 13 [default = false];
+    repeated DbHeartbeat db_heartbeats = 14;
+    optional bool is_data_disk_attached = 17;
+}
+
+message HealthCheckIntervals {
+    optional google.protobuf.Duration control_plane_heartbeat_interval = 1;
+    optional google.protobuf.Duration serving_role_lease_validity = 2;
+    optional google.protobuf.Duration db_read_interval = 3;
+    optional google.protobuf.Duration db_read_timeout = 4;
+}
+
+message HealthStateWithInterval {
+    optional HealthState health_state = 1;
+    optional google.protobuf.Timestamp start_time = 2;
+    optional google.protobuf.Timestamp end_time = 3;
+}
+
+message Checkpoint {
+    optional string agent_version = 1;
+    optional int64 agent_baseline_cl = 2;
+    optional google.protobuf.Timestamp heartbeat_time = 3;
+    optional google.protobuf.Timestamp vm_time = 4;
+    repeated HealthStateWithInterval health_state_intervals = 5;
+}

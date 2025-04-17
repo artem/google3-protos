@@ -1,0 +1,14 @@
+syntax = "editions";
+
+package monitoring.streamz.internal_status_with_fixed_message;
+
+import "net/proto2/bridge/proto/message_set.proto";
+import "storage/datapol/annotations/proto/semantic_annotations.proto";
+
+message StatusWithFixedMessagePayload {
+    optional string fixed_message = 1;
+    
+    extend .proto2.bridge.MessageSet {
+        optional StatusWithFixedMessagePayload message_set_extension = 144935710;
+    }
+}

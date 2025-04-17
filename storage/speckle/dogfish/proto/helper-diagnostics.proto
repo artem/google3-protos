@@ -275,6 +275,7 @@ message LpsStubCacheState {
         optional string location = 2;
         optional string debug_bns = 3;
         optional string state = 4;
+        optional uint64 borg_task_uid = 5;
     }
     
     repeated Stub stub = 2;

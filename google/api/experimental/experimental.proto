@@ -25,6 +25,7 @@ message Experimental {
     Provisioning provisioning = 9;
     MediationConfig mediation = 10;
     string cargo_container_prefixes = 12;
+    repeated string api_root_directories = 13;
     
     reserved 3, 4, 6, 11;
 }

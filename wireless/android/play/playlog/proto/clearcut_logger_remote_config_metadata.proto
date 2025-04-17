@@ -1,0 +1,26 @@
+syntax = "editions";
+
+package wireless_android_play_playlog;
+
+import "storage/datapol/annotations/proto/semantic_annotations.proto";
+import "wireless/android/play/playlog/proto/logger_enum.proto";
+
+option java_multiple_files = true;
+option java_package = "com.google.wireless.android.play.playlog.proto";
+
+message ClearcutLoggerRemoteConfigMetadata {
+    optional logger_enum.LoggerId logger_id = 1;
+    
+    optional PerDeviceSampling per_device_sampling = 2;
+    message PerDeviceSampling {
+        optional float sampling_rate = 1;
+        optional int32 rotation_period_days = 2;
+        optional int32 trailing_days = 3;
+        optional int32 staggering_period_days = 4;
+    }
+    
+    optional PerEventSampling per_event_sampling = 3;
+    message PerEventSampling {
+        optional float sampling_rate = 1;
+    }
+}

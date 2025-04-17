@@ -69,6 +69,7 @@ message SmartService {
         optional bool allow_direct_channels = 26 [default = true];
         optional bool is_compression_passthrough = 19;
         optional int32 response_proto_recursion_limit = 25;
+        optional bool encoder_synchronize_on_mutable_payload = 27;
         
         extensions 1000 to 524999999, 525000000 to max;
         

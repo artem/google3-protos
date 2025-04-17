@@ -1,0 +1,12 @@
+syntax = "editions";
+
+package experiments;
+
+import "storage/datapol/annotations/proto/semantic_annotations.proto";
+
+message Feature {
+    optional string name = 1;
+    optional string location = 2;
+    repeated int32 flag_indices = 3;
+    repeated string owners = 4;
+}

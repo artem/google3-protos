@@ -1,0 +1,14 @@
+syntax = "proto2";
+
+package speckle;
+
+import "storage/datapol/annotations/proto/semantic_annotations.proto";
+
+option java_outer_classname = "SsaAgentsConfig";
+
+message SsaAgentsUri {
+    optional string ssa_instance_agent_image_uri = 1;
+    optional string ssa_logging_agent_image_uri = 2;
+    
+    reserved 3, 4;
+}

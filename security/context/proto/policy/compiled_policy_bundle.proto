@@ -6,6 +6,7 @@ import "devtools/api/buildinfo/buildinfo.proto";
 import "google/protobuf/empty.proto";
 import "net/proto2/go/annotation/go_annotation.proto";
 import "security/context/proto/policy/policy_bundle_types.proto";
+import "security/context/proto/policy/policy_processing.proto";
 import "security/context/proto/policy/rpc_security_policy.proto";
 
 option java_multiple_files = true;
@@ -37,6 +38,7 @@ message Provenance {
     optional PolicyProvenance darklaunch_provenance = 5;
     optional LegacyPolicyMode legacy_policy_mode = 7;
     optional devtools.api.buildinfo.BuildInfo build_info = 8;
+    optional bool testonly = 9;
     
     reserved 1, 2, 3;
 }
@@ -61,8 +63,13 @@ message SourceLocation {
     optional int32 end_column = 4;
 }
 
+message PolicyCheckInfo {
+    repeated PolicyCheckName enabled_checks_conjunction = 1 [packed = true];
+}
+
 message PolicyProvenance {
     repeated string templates = 1;
+    optional PolicyCheckInfo policy_check_info = 7;
     
     oneof source {
         InlinePolicy inline_policy = 4;

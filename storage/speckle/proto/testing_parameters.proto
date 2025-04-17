@@ -1,0 +1,44 @@
+syntax = "proto2";
+
+package speckle;
+
+import "storage/datapol/annotations/proto/semantic_annotations.proto";
+
+message InjectedTestingParameters {
+    repeated string disabled_service = 1;
+    optional bool always_log_sql_to_gin = 2;
+    repeated string clear_disabled_service_before_creation_retry = 5;
+    optional bool use_old_ncsa_life_cycle_management = 8;
+    optional bool enable_code_coverage = 9;
+    optional string code_coverage_dir = 10;
+    optional string code_coverage_dir_docker = 11;
+    
+    optional DockerDebugMode docker_debug_mode = 12;
+    enum DockerDebugMode {
+        DOCKER_DEBUG_MODE_UNSPECIFIED = 0;
+        DOCKER_DEBUG_MODE_NO_OP = 1;
+        DOCKER_DEBUG_MODE_ON = 2;
+        DOCKER_DEBUG_MODE_OFF = 3;
+    }
+    
+    optional bool enable_fault_injection_proxy = 13;
+    optional string boot_device_id_override = 14;
+    optional string data_device_id_override = 15;
+    repeated string vm_tags = 16;
+    optional bool enable_alts_coroner = 17;
+    optional string coroner_report_collection_address = 18;
+    optional string coroner_data_collection_address = 19;
+    
+    optional NcsaRuntime ncsa_runtime = 20;
+    enum NcsaRuntime {
+        NCSA_RUNTIME_UNSPECIFIED = 0;
+        NCSA_RUNTIME_DOCKER = 1;
+        NCSA_RUNTIME_CONTAINERD = 2;
+    }
+    
+    optional bool healthcheck_fs_poller_ignore_file_write = 21;
+    optional bool enable_zdt_verify_data_after_promote = 22;
+    optional bool enable_zdt_debug_intrumentation = 23;
+    
+    reserved 3, 4, 6, 7;
+}

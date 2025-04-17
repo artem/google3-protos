@@ -7,17 +7,14 @@ import "storage/l4/common/file_descriptor_info.proto";
 
 message FileDescriptorInfoProto {
     .colossus.FileEncoding encoding = 1;
-    double ctime_unix_seconds = 2 [deprecated = true];
     
-    oneof _extended_attributes {
-        .colossus.CfsExtendedAttributes extended_attributes = 3 [deprecated = true];
-    }
-    
-    oneof _ssd_capacity_quota_user {
-        string ssd_capacity_quota_user = 4;
+    oneof _tiering_ssd_resource_user {
+        string tiering_ssd_resource_user = 4;
     }
     
     oneof _l4_fd_info {
         storage_l4.FileDescriptorInfoProto l4_fd_info = 5;
     }
+    
+    reserved 2, 3;
 }

@@ -42,6 +42,7 @@ message AttributeContext {
         string protocol = 11;
         string reason = 12;
         Auth auth = 13;
+        string origin = 14;
         
         reserved 8;
     }
@@ -87,6 +88,7 @@ message AttributeContext {
         string presenter = 3;
         protobuf.Struct claims = 4;
         repeated string access_levels = 5;
-        string credential_id = 6;
+        
+        reserved 6;
     }
 }

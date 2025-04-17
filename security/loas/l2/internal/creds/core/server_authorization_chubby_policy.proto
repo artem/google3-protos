@@ -1,0 +1,10 @@
+syntax = "editions";
+
+package security_loas_l2;
+
+import "storage/datapol/annotations/proto/semantic_annotations.proto";
+
+message ServerAuthorizationChubbyPolicy {
+    repeated string allowed_role = 1;
+    optional string cl_number = 2;
+}

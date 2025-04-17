@@ -1,0 +1,14 @@
+syntax = "proto2";
+
+package experiments.heterodyne;
+
+option objc_class_prefix = "EXH";
+option java_outer_classname = "DeviceExperimentIdsProto";
+option java_package = "com.google.experiments.heterodyne";
+
+message DeviceExperimentIds {
+    repeated int32 by_gaia = 1;
+    repeated int32 by_pseudonymous = 2;
+    repeated int32 always = 3;
+    repeated int32 by_other = 4;
+}

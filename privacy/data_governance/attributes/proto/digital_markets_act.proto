@@ -33,6 +33,14 @@ message DigitalMarketsAct {
         oneof _policy_test {
             bool policy_test = 5;
         }
+        
+        oneof _rows_may_be_exempted {
+            bool rows_may_be_exempted = 6;
+        }
+        
+        oneof _ads_tainted_dual_observation {
+            bool ads_tainted_dual_observation = 7;
+        }
     }
     
     message Process {

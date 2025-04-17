@@ -1,0 +1,18 @@
+syntax = "proto3";
+
+package error;
+
+import "google/protobuf/any.proto";
+import "google/rpc/code.proto";
+
+option go_package = "github.com/googleapis/gax-go/v2/apierror/internal/proto;jsonerror";
+
+message Error {
+    Status error = 1;
+    message Status {
+        int32 code = 1;
+        string message = 2;
+        google.rpc.Code status = 4;
+        repeated google.protobuf.Any details = 5;
+    }
+}

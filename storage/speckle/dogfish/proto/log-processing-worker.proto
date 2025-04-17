@@ -10,7 +10,7 @@ import "storage/speckle/dogfish/proto/object.proto";
 service LogProcessingWorker {
     rpc Init(InitRequest) returns (InitResponse);
     rpc ProcessLogRecord(ProcessRecordRequest) returns (stream ProcessRecordResponse);
-    rpc ControlInfo(ControlInfoRequest) returns (ControlInfoResponse);
+    rpc TestGetControlInfo(ControlInfoRequest) returns (ControlInfoResponse);
     rpc Ping(WorkerPingRequest) returns (WorkerPingResponse);
 }
 

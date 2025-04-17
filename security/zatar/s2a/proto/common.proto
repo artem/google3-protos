@@ -1,0 +1,36 @@
+syntax = "editions";
+
+package s2a.proto;
+
+option java_multiple_files = true;
+option java_outer_classname = "CommonProto";
+option java_package = "com.google.net.grpc.s2a.handshaker";
+
+message L7lbId {
+    optional uint64 project_number = 1;
+    optional fixed64 backend_service_incarnation_id = 2;
+}
+
+message Identity {
+    map<string, string> attributes = 3;
+    
+    oneof identity_oneof {
+        string spiffe_id = 1;
+        string hostname = 2;
+        string uid = 4;
+        string username = 5;
+        string gcp_id = 6;
+        L7lbId l7lb_id = 7;
+    }
+}
+
+enum Ciphersuite {
+    AES_128_GCM_SHA256 = 0;
+    AES_256_GCM_SHA384 = 1;
+    CHACHA20_POLY1305_SHA256 = 2;
+}
+
+enum TLSVersion {
+    TLS1_2 = 0;
+    TLS1_3 = 1;
+}

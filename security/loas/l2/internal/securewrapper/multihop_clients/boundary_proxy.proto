@@ -1,0 +1,19 @@
+syntax = "proto2";
+
+package boundary_proxy.proto_modifier;
+
+import "net/proto2/proto/descriptor.proto";
+
+option go_package = "proto_modifier/annotation";
+option java_multiple_files = true;
+
+message AlterationOptions {
+    optional bool remove_entirely = 1;
+    optional bool sort_census_tag_string = 2;
+    optional string remove_if_regex_not_matched = 3;
+    optional bool strip_all_except_change_id = 4;
+}
+
+extend .proto2.FieldOptions {
+    optional AlterationOptions alteration = 535801346;
+}

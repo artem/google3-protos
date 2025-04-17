@@ -44,6 +44,7 @@ service CuratorInterface {
     rpc SetCMeta(Curator_SetCMetaArg) returns (Curator_SetCMetaResult);
     rpc Split(Curator_SplitArg) returns (Curator_SplitResult);
     rpc Merge(Curator_MergeArg) returns (Curator_MergeResult);
+    rpc ResolveStripe(Curator_ResolveStripeArg) returns (Curator_ResolveStripeResult);
 }
 
 message Curator_LookupArg {
@@ -90,6 +91,7 @@ message Curator_LookupStripesArg {
     required string path = 2;
     required int64 id = 3;
     repeated int32 indices = 4;
+    optional int32 num_suffix_stripes = 19;
     optional bool want_capabilities = 5 [default = true];
     optional string additional_readonly_capability_grantee = 16;
     optional CFSCapability cfs_capability = 6;
@@ -155,7 +157,9 @@ message Curator_CreateArg {
     optional bool already_encrypted = 31;
     optional EncryptionExemption encryption_exemption = 36;
     optional bool raw_ciphertext_access = 32;
+    optional bool require_encryption_mode = 46 [default = false];
     optional bool encrypted_per_file_plaintext_crc = 42;
+    optional bool enable_ghac_encryption = 44;
     optional tech.file.QuotaAccounting quota_accounting = 33;
     optional string additional_readonly_capability_grantee = 34;
     repeated google.protobuf.Any extended_attributes = 37;
@@ -169,6 +173,7 @@ message Curator_CreateArg {
     }
     
     optional SampledFileOpenCall sampled_file_open_call = 43;
+    optional CfsConditionalOperation cfs_conditional_operation = 45;
     
     reserved 14, 18, 26, 29, 30, 35;
     
@@ -183,6 +188,7 @@ message Curator_CreateResult {
     optional Challenge request = 2;
     optional CFSCapability cfs_capability = 3;
     optional KeystoreInstance keystore_affinity = 6;
+    optional CuratorSignedCapability curator_signed_capability = 7;
     
     reserved 4, 5;
     
@@ -282,6 +288,7 @@ message Curator_SnapshotArg {
     optional tech.file.QuotaAccounting quota_accounting = 21;
     optional bool ignore_cmeta_row_limit = 22 [default = false];
     optional bool raw_ciphertext_snapshot = 25 [default = false];
+    optional bool bypass_snapshot_mutability_constraint = 26 [default = false];
     
     extend .proto2.bridge.MessageSet {
         optional Curator_SnapshotArg message_set_extension = 14746149;
@@ -311,6 +318,8 @@ message Curator_TrimArg {
     required int64 new_length = 4;
     optional bytes encryption_auth_code = 5;
     optional fixed32 plaintext_crc32c = 6;
+    optional bytes reencrypted_last_partial_segment = 7 [ctype = CORD];
+    optional fixed32 reencrypted_last_partial_segment_checksum = 8;
     
     extend .proto2.bridge.MessageSet {
         optional Curator_TrimArg message_set_extension = 21973773;
@@ -397,7 +406,6 @@ message Curator_SetAttrArg {
     optional string group = 8;
     optional int32 ttl_seconds_from_mtime = 12;
     optional tech.file.EncryptionProperties encryption_properties = 13;
-    optional tech.file.ChecksumKey checksum_key = 28;
     optional bool allow_encryption_properties_non_finalized = 26 [default = false];
     optional FileEncoding encoding = 15;
     optional PlacementPolicy placement_policy = 16;
@@ -413,7 +421,7 @@ message Curator_SetAttrArg {
     optional bool allow_non_frozen_snapshot = 30 [default = true];
     optional CfsConditionalOperation cfs_conditional_operation = 31;
     
-    reserved 14, 29;
+    reserved 14, 28, 29;
     
     extend .proto2.bridge.MessageSet {
         optional Curator_SetAttrArg message_set_extension = 14746263;
@@ -444,7 +452,7 @@ message Curator_OpenStripeArg {
     optional CFSCapability cfs_capability = 7;
     optional string isolation_class = 8;
     optional FileEncryptionInfo encryption_info = 9;
-    optional tech.file.ChecksumKey checksum_key = 16;
+    optional fixed32 beginning_plaintext_crc32c = 17;
     optional string additional_readonly_capability_grantee = 10;
     optional bool ignore_cmeta_row_limit = 12 [default = false];
     
@@ -453,10 +461,9 @@ message Curator_OpenStripeArg {
         optional google.protobuf.Timestamp expiration_time = 1;
     }
     
-    optional bool client_compress_chunk_debug_info = 14;
     optional bool intending_to_use_rodos = 15;
     
-    reserved 5, 11;
+    reserved 5, 11, 14, 16;
     
     extend .proto2.bridge.MessageSet {
         optional Curator_OpenStripeArg message_set_extension = 14746306;
@@ -621,13 +628,16 @@ message ScanStats {
     optional int64 num_unavailable_stripes = 16;
     repeated LabeledChunkStateStats labeled_chunk_state_stats = 17;
     repeated LabeledStripeRecoveryStateStats labeled_stripe_recovery_state_stats = 28;
+    repeated LabeledChunkRecoveryStatusStats labeled_chunk_recovery_status_stats = 29;
     optional int64 num_unimportant_recoveries = 18;
     optional int64 num_duplicate_files = 27;
+    optional int64 num_partially_created_files = 30;
     repeated int64 min_open_file_create_time = 22;
     repeated StatsByEncodingWide encoding_stats_wide = 19;
     optional UsageStatsWide usage_stats_wide = 20;
     optional UsageEntryWide overcharged_usage_wide = 21;
     map<int32, LddStatsSummary> ldd_stats_summary_by_entity = 26;
+    optional HaaStatsSummary haa_stats_summary = 31;
     
     reserved 1, 4, 10, 14, 23, 24, 25;
 }
@@ -703,6 +713,11 @@ message DiskRemovalSummary {
     reserved 5;
 }
 
+message ServerRemainingBytes {
+    optional string server = 1;
+    map<uint64, int64> volume_to_remaining_bytes = 2;
+}
+
 message RemovalSummary {
     required bigtable.BTI_RowSetProto ranges = 1;
     repeated ServerRemovalSummary servers = 2;
@@ -734,6 +749,7 @@ message InstanceStats {
     optional int64 acl_config_generation = 27;
     map<string, StuckStripeInfo> stuck_stripe_closes_by_owner = 28;
     optional int64 total_live_chunks_on_removed_devices = 29;
+    repeated ServerRemainingBytes removal_remaining_bytes = 30;
     
     reserved 13, 15 to 18, 21, 24 to 26;
     
@@ -949,4 +965,16 @@ message Curator_MergeResult {
     extend .proto2.bridge.MessageSet {
         optional Curator_MergeResult message_set_extension = 231775858;
     }
+}
+
+message Curator_ResolveStripeArg {
+    optional ArgHeader header = 1;
+    optional string path = 2;
+    optional int64 id = 3;
+    optional int32 logical_stripe_index = 4;
+    optional CFSCapability cfs_capability = 5;
+}
+
+message Curator_ResolveStripeResult {
+    optional Stripe stripe = 1;
 }

@@ -2,9 +2,9 @@ syntax = "editions";
 
 package security_loas_l2;
 
-import "borg/common/internal_confidential_mode_config.proto";
 import "security/credentials/proto/principal.proto";
 import "security/loas/l2/internal/handshake/handshake.proto";
+import "security/loas/l2/proto/confidential_security_level.proto";
 import "storage/datapol/annotations/proto/semantic_annotations.proto";
 
 message GoogleTicketKeyVersion1 {
@@ -26,7 +26,7 @@ message ResumptionTicketKeyIdentifier {
         optional bytes security_realm = 5;
         optional bytes acct_restrictions_hash = 7;
         optional bytes cloud_vm_info_hash = 8;
-        optional borg.InternalConfidentialModeConfig.SecurityLevel confidential_security_level = 9;
+        optional ConfidentialSecurityLevel confidential_security_level = 9;
         
         reserved 6;
     }

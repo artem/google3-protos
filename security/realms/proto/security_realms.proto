@@ -1,4 +1,4 @@
-syntax = "proto2";
+syntax = "editions";
 
 package security_realms;
 
@@ -29,7 +29,7 @@ message SecurityRealmMapping {
             EDGE = 4;
             TPC = 5;
             CORP = 6;
-            TPC_EDGE = 7;
+            TPC_EDGE = 7 [deprecated = true];
             TPC_CORP = 8;
             TPC_XUNIVERSE = 9;
             SMALL_SCATTERED = 10;
@@ -52,6 +52,7 @@ message SecurityRealmMapping {
             UNKNOWN = 0;
             CLUSTER = 1;
             BORG_CELL = 2;
+            POP = 4;
         }
     }
     

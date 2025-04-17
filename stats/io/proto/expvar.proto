@@ -1,10 +1,10 @@
-syntax = "proto2";
+syntax = "editions";
 
 option java_package = "com.google.common.stats.proto";
 
 message EV_KeyValuePair {
-    required string name = 1;
-    required string value = 2;
+    optional string name = 1;
+    optional string value = 2;
     optional string docstring = 3;
 }
 

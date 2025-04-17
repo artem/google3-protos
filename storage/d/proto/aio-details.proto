@@ -7,6 +7,7 @@ import "net/proto2/bridge/proto/message_set.proto";
 message AioDetails {
     optional int32 aio_spindle_microseconds_spent = 1;
     optional int32 aio_spindle_priority = 3;
+    optional double ssd_ops_spent = 5;
     
     reserved 2, 4;
     

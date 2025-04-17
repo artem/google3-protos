@@ -1,0 +1,16 @@
+syntax = "editions";
+
+package experiments;
+
+message PackageData {
+    optional string name = 1;
+    optional bool is_interface = 9;
+    repeated string source_files = 2;
+    repeated string exported_conditions = 4;
+    repeated string exported_properties = 5;
+    repeated string exported_rollouts = 6;
+    repeated string exported_domains = 7;
+    repeated string exported_layers = 8;
+    
+    reserved 3, 10;
+}

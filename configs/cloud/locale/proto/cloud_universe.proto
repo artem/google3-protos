@@ -1,49 +1,57 @@
-syntax = "proto3";
+syntax = "editions";
 
 package configs.cloud.universe;
 
 option java_multiple_files = true;
 
 message CloudUniverseDnsNames {
-    string high_value_cookie_domain = 1;
-    string documentation_domain = 2;
-    string user_content_domain = 3;
-    string api_domain = 4;
-    string static_content_domain = 5;
-    string pen_domain = 6;
-    string artifact_registry_domain = 7;
-    string cloud_functions_domain = 8;
-    string gkfe_clusters_domain = 9;
-    bool is_final = 10;
+    optional string high_value_cookie_domain = 1;
+    optional string documentation_domain = 2;
+    optional string user_content_domain = 3;
+    optional string api_domain = 4;
+    optional string static_content_domain = 5;
+    optional string pen_domain = 6;
+    optional string artifact_registry_domain = 7;
+    optional string cloud_functions_domain = 8;
+    optional string gkfe_clusters_domain = 9;
+    optional string cloud_run_domain = 11;
+    optional string recovery_domain = 12;
+    optional string internal_domain = 14;
+    optional bool is_final = 10;
+    
+    reserved 13;
+    
+    reserved "corp_domain";
 }
 
 message AdditionalCloudUniverseDnsNames {
-    State state = 1;
+    optional State state = 1;
     enum State {
         STATE_UNSPECIFIED = 0;
         STATE_DEPRECATED = 1;
         STATE_TO_BE_USED = 2;
+        STATE_PENDING_DELETION = 3;
     }
     
-    CloudUniverseDnsNames dns_names = 2;
+    optional CloudUniverseDnsNames dns_names = 2;
 }
 
 message CloudUniverseMetadata {
-    string prod_universe_id = 1;
-    CloudUniverseType type = 2;
-    string scope_id = 5;
-    CloudUniverseDnsNames dns_names = 4;
+    optional string prod_universe_id = 1;
+    optional CloudUniverseType type = 2;
+    optional string scope_id = 5;
+    optional CloudUniverseDnsNames dns_names = 4;
     repeated AdditionalCloudUniverseDnsNames additional_dns_names = 9;
-    string cloud_universe_short_name = 6;
-    string producer_project_prefix = 7;
-    uint64 producer_organization_id = 8;
+    optional string cloud_universe_short_name = 6;
+    optional string producer_project_prefix = 7;
+    optional uint64 producer_organization_id = 8;
     
     reserved 3;
 }
 
 message CloudUniverse {
-    string cloud_universe_id = 1;
-    CloudUniverseMetadata metadata = 2;
+    optional string cloud_universe_id = 1;
+    optional CloudUniverseMetadata metadata = 2;
 }
 
 message CloudUniverses {

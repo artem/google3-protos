@@ -1,0 +1,40 @@
+syntax = "proto3";
+
+package storage.speckle.dataplane.dppatcher;
+
+import "storage/datapol/annotations/proto/semantic_annotations.proto";
+
+message ActionState {
+    string name = 1;
+    bool roll_forward_enabled = 2;
+    bool roll_backward_enabled = 3;
+}
+
+message ActionRecord {
+    string name = 1;
+    int32 version = 2;
+    string status = 3;
+}
+
+message ActionStateConfig {
+    repeated ActionState action_state = 1;
+}
+
+enum DpPatcherActionResult {
+    ACTION_UNSPECIFIED = 0;
+    ACTION_RESULT_SUCCESS = 1;
+    ACTION_RESULT_FAILED = 2;
+    ACTION_RESULT_BLOCKED = 3;
+    ACTION_RESULT_DEPENDENCY_RULE_ERROR = 4;
+}
+
+enum DpPatcherError {
+    PATCHER_UNSPECIFIED_ERROR = 0;
+    PATCHER_BUILD_GRAPH_ERROR = 1;
+    PATCHER_ACTIVATE_NODE_ERROR = 2;
+    PATCHER_BUILD_QUEUES_ERROR = 3;
+    PATCHER_ACTION_STATE_FILE_MISSING_ERROR = 4;
+    PATCHER_DB_STATE_NOT_AVAILABLE = 5;
+    PATCHER_UPDATE_APPLIED_ACTIONS_ERROR = 6;
+    PATCHER_CREATE_BOOKKEEPING_SYSTEM_ERROR = 7;
+}

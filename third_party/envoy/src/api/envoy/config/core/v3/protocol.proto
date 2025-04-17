@@ -130,6 +130,7 @@ message Http2ProtocolOptions {
     
     KeepaliveSettings connection_keepalive = 15;
     google.protobuf.BoolValue use_oghttp2_codec = 16;
+    google.protobuf.UInt64Value max_metadata_size = 17;
 }
 
 message GrpcProtocolOptions {

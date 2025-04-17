@@ -1,0 +1,163 @@
+syntax = "editions";
+
+package experiments.proto;
+
+import "devtools/staticanalysis/pipeline/analyzers/proto_best_practices/proto/optouts.proto";
+import "experiments/proto/testing_mode.proto";
+import "google/protobuf/any.proto";
+import "java/com/google/apps/jspb/jspb.proto";
+
+option java_outer_classname = "Debugging";
+option java_package = "com.google.experiments";
+
+message MendelInternalDebugOutputHtml {
+    optional MendelInternalDebugOutput mendel_internal_debug_output = 1;
+    optional EncodedMendelInternalDebugOutput encoded_mendel_internal_debug_output = 2;
+}
+
+message EncodedMendelInternalDebugOutput {
+    optional string data = 1;
+}
+
+message MendelInternalDebugOutput {
+    repeated int32 selected_experiment_ids = 1;
+    repeated int32 selected_slice_ids = 2;
+    repeated int32 selected_aggregate_ids = 3;
+    repeated int32 selected_domain_ids = 4;
+    
+    repeated NamedCondition named_conditions = 5;
+    message NamedCondition {
+        optional string name = 1;
+        
+        optional TruthValue value = 2;
+        enum TruthValue {
+            UNKNOWN = 0;
+            TRUE = 1;
+            FALSE = 2;
+            ERROR = 3;
+            UNEVALUATED = 4;
+        }
+    }
+    
+    repeated PropertyInstance properties = 6;
+    message PropertyInstance {
+        optional string name = 1;
+        
+        optional PropertyValue value = 2;
+        message PropertyValue {
+            oneof value {
+                StateHelperValue unevaluated = 1;
+                StateHelperValue error = 2;
+                bool bool_value = 3;
+                string string_value = 4;
+                double double_value = 5;
+                int64 int_value = 6;
+                Version version_value = 7;
+                IntSet int_set_value = 8;
+                StringSet string_set_value = 9;
+                StateHelperValue none = 10;
+            }
+            
+            message IntSet {
+                map<int64, bool> values = 1;
+            }
+            
+            message StringSet {
+                map<string, bool> values = 1;
+            }
+            
+            message Version {
+                optional int64 major = 1;
+                optional int64 minor = 2;
+                optional int64 patch = 3;
+                repeated string prereleases = 4;
+            }
+        }
+        
+        repeated PropertyValue arguments = 3;
+    }
+    
+    repeated Rollout rollouts = 7;
+    message Rollout {
+        optional string name = 1;
+        optional bool default_value = 2;
+        optional bool overridden_value = 3;
+    }
+    
+    repeated ExperimentFlag flags = 8;
+    message ExperimentFlag {
+        optional string name = 1;
+        
+        oneof value {
+            StateHelperValue unevaluated = 2;
+            StateHelperValue error = 3;
+            bool bool_value = 4;
+            string string_value = 5;
+            double double_value = 6;
+            int64 int_value = 7;
+            ProtoFlag proto_value = 8;
+        }
+        
+        message ProtoFlag {
+            optional string type = 1;
+            optional .google.protobuf.Any value = 2;
+        }
+    }
+    
+    optional UpstreamTriggerInfo upstream_trigger_info = 9;
+    message UpstreamTriggerInfo {
+        repeated int64 raw_trigger_ids = 1;
+        repeated int64 effective_trigger_ids = 2;
+    }
+    
+    optional DownstreamTriggerInfo downstream_trigger_info = 10;
+    message DownstreamTriggerInfo {
+        repeated int64 trigger_ids = 1;
+    }
+    
+    optional VersionInfo version_info = 11;
+    message VersionInfo {
+        optional int64 primary_snapshot_cl_number = 1;
+        optional int64 disabled_experiments_snapshot_cl_number = 2;
+    }
+    
+    optional DebugInput debug_input = 12;
+    message DebugInput {
+        map<string, string> forced_flags = 1;
+        map<string, bool> forced_rollouts = 2;
+        repeated int32 absolutely_forced_exps = 3;
+        repeated int32 conditionally_forced_exps = 4;
+        repeated int32 disabled_exps = 5;
+        optional bool disable_organic_selection = 6;
+        optional bool disable_manual_enrollment_selection = 7;
+        optional bool disable_automatic_enrollment_selection = 8;
+        optional propagation.TestingMode testing_mode = 9;
+        repeated string diagnostics = 10;
+    }
+    
+    optional SnapshotMetadata snapshot_metadata = 13;
+    message SnapshotMetadata {
+        optional string build_target = 1;
+        optional string fingerprint = 2;
+    }
+    
+    optional HeterodyneDebugInfo heterodyne_debug_info = 14;
+    message HeterodyneDebugInfo {
+        optional string config_package = 1;
+        optional int32 auth_token_index = 2;
+    }
+    
+    optional EnrollmentInput enrollment_input = 15;
+    message EnrollmentInput {
+        repeated int32 manual_enrollment_ids = 1;
+    }
+    
+    optional OptionsInfo options_info = 16;
+    message OptionsInfo {
+        map<string, string> mendel_options = 1;
+    }
+    
+    message StateHelperValue {
+        
+    }
+}

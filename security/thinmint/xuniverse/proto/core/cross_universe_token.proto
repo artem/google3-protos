@@ -5,6 +5,7 @@ package xuniverse;
 import "net/proto2/bridge/proto/message_set.proto";
 import "security/thinmint/proto/thinmint.proto";
 import "security/thinmint/xuniverse/proto/core/notarization_wrapper.proto";
+import "third_party/boundary_proxy/proto_compare/annotation.proto";
 
 message CrossUniverseToken {
     optional NotarizationWrapper wrapped_notarization = 3;

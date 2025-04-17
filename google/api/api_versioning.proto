@@ -4,6 +4,7 @@ package google.api;
 
 import "google/api/visibility.proto";
 import "net/proto2/proto/descriptor.proto";
+import "storage/datapol/annotations/proto/semantic_annotations.proto";
 
 option objc_class_prefix = "GAPI";
 option cc_enable_arenas = true;
@@ -36,6 +37,12 @@ message ApiVersion {
     repeated ApiVersionNote notes = 6;
     Screen effective_screen = 7;
     bool default_api_version = 8;
+    ApiVersionControls controls = 9;
+}
+
+message ApiVersionControls {
+    ScreenGenerate screen_generate = 1;
+    ScreenContentType screen_content_type = 2;
 }
 
 message ApiVersionRef {
@@ -53,6 +60,7 @@ message ApiVersionConstraint {
         ApiVersionAnyOfConstraint any_true = 2;
         string visibility = 3;
         string capability = 4;
+        int64 client_project_number = 5;
     }
 }
 
@@ -111,6 +119,12 @@ message ScreenField {
     string name = 1;
     int32 number = 2;
     bool removed = 3;
+    repeated ScreenFieldReference references = 4;
+}
+
+message ScreenFieldReference {
+    string name = 1;
+    bool removed = 2;
 }
 
 message ScreenEnum {
@@ -131,10 +145,18 @@ message Bundle {
     repeated ApiVersionRef apis = 3;
     BundleType type = 4;
     repeated ApiVersionRef effective_apis = 5;
+    string service_version = 6;
 }
 
 message BundleInclude {
     string bundle = 1;
+}
+
+enum ScreenGenerate {
+    SCREEN_GENERATE_UNSPECIFIED = 0;
+    GENERATE_FROM_PROTOS = 1;
+    GENERATE_FROM_PARENTS = 2;
+    GENERATE_LOCKED = 4;
 }
 
 enum BundleType {

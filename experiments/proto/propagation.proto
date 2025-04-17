@@ -1,0 +1,38 @@
+syntax = "proto2";
+
+package experiments.propagation;
+
+import "experiments/proto/testing_mode.proto";
+import "net/proto2/bridge/proto/message_set.proto";
+import "storage/datapol/annotations/proto/semantic_annotations.proto";
+import "third_party/boundary_proxy/proto_compare/annotation.proto";
+
+option go_package = "google.golang.org/genproto/experiments/propagation";
+option java_outer_classname = "ExperimentPropagation";
+option java_package = "com.google.experiments.propagation";
+
+message MendelDebugInput {
+    map<string, NamespacedDebugInput> namespaced_debug_input = 1;
+    
+    message NamespacedDebugInput {
+        map<string, string> forced_flags = 1;
+        map<string, bool> forced_rollouts = 2;
+        repeated int32 absolutely_forced_exps = 3;
+        repeated int32 conditionally_forced_exps = 4;
+        repeated string absolutely_forced_exp_tags = 5;
+        repeated string conditionally_forced_exp_tags = 6;
+        repeated string absolutely_forced_exp_names = 7;
+        repeated string conditionally_forced_exp_names = 8;
+        optional bool disable_organic_selection = 9;
+        optional bool disable_manual_enrollment_selection = 10;
+        optional bool disable_automatic_enrollment_selection = 14;
+        repeated int32 disable_exps = 11;
+        repeated string disable_exp_names = 12;
+        repeated string disable_exp_tags = 13;
+        optional TestingMode testing_mode = 15;
+    }
+    
+    extend .proto2.bridge.MessageSet {
+        optional MendelDebugInput message_set_extension = 148664828;
+    }
+}

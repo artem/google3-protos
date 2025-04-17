@@ -15,6 +15,21 @@ message IndexScanStat {
     optional Histogram histogram = 3;
 }
 
+message VectorScanStats {
+    repeated ExecutionLatency execution_latencies = 1;
+    repeated uint64 adaptive_switches = 2;
+}
+
+message ExecutionLatency {
+    optional uint32 scan_type = 1;
+    optional uint32 limit_value_bucket = 2;
+    optional uint32 estimated_selectivity_bucket = 3;
+    optional uint32 selectivity_error_bucket = 4;
+    optional uint32 dimensionality_bucket = 5;
+    optional bool infiltering_enabled = 6;
+    optional Histogram latency_histogram = 7;
+}
+
 message ScanStats {
     optional uint64 voxel_scan_count = 1;
     optional uint64 native_scan_count = 2;
@@ -53,6 +68,7 @@ message ScanStats {
     optional uint64 unexpected_errors_voxel_agg = 35;
     optional uint64 unexpected_errors_ce = 36;
     optional uint64 ce_mv_total_scan_count = 37;
+    optional VectorScanStats vector_scan_stats = 38;
 }
 
 message JoinStats {
@@ -121,7 +137,9 @@ message ColumnarEngineStats {
     optional uint64 vectorized_join_num_rows_projected = 29;
     optional uint64 vectorized_join_runtime_ms = 30;
     optional uint64 vectorized_join_num_joins_in_tree = 31;
-    optional uint64 vectorized_join_join_tree_depth = 32;
+    optional uint64 vectorized_join_avg_join_tree_depth = 32;
+    optional uint64 invalid_externally_toasted_cu_scan_count = 33;
+    optional uint64 vectorized_join_max_join_tree_depth = 34;
 }
 
 message WorkloadStats {

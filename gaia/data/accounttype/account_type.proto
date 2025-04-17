@@ -5,7 +5,6 @@ package gaia_data;
 import "storage/datapol/annotations/proto/semantic_annotations.proto";
 
 option objc_class_prefix = "GAIA";
-option cc_enable_arenas = true;
 option java_multiple_files = true;
 option java_package = "com.google.gaia.data.accounttype.proto1api";
 
@@ -32,7 +31,6 @@ message AccountType {
     optional bool cloud_build_robot = 48;
     optional bool play_lite_robot = 54;
     optional bool oauthclient_robot = 55;
-    optional bool babel_chatbot_robot = 56;
     optional bool youtube_channels_madison_account_owner = 58;
     optional bool youtube_batch_uploader = 82;
     optional bool chatsupport_robot = 88;
@@ -61,7 +59,6 @@ message AccountType {
     optional bool plaso_robot = 71;
     optional bool rialto_connectivity_bridge_robot = 72;
     optional bool retail_demo = 77;
-    optional bool accelerator_robot = 94;
     optional bool klopfklopf_robot = 104;
     optional bool google_voice_device_line_robot = 110;
     optional bool chrome_enterprise_cbcm_robot = 115;
@@ -120,5 +117,7 @@ message AccountType {
     optional bool play_books_partner_account = 118;
     optional bool placeholder_account = 122;
     
-    reserved 29, 92, 96, 99, 108, 111;
+    extensions 124;
+    
+    reserved 29, 56, 92, 94, 96, 99, 108, 111;
 }

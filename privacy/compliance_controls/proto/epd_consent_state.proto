@@ -1,0 +1,15 @@
+syntax = "proto2";
+
+package compliance_controls;
+
+option java_multiple_files = true;
+option java_package = "com.google.privacy.compliancecontrols";
+
+message EpdConsentState {
+    enum State {
+        STATE_UNSPECIFIED = 0;
+        STATE_NO_CONSENT_CHOICE_YET = 1;
+        STATE_REJECTED = 2;
+        STATE_ACCEPTED = 3;
+    }
+}

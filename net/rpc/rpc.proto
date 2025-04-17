@@ -1,6 +1,5 @@
 syntax = "proto2";
 
-import "google/protobuf/duration.proto";
 import "net/proto2/bridge/proto/message_set.proto";
 import "net/rpc/census-context.proto";
 import "net/rpc/stream.proto";
@@ -8,9 +7,9 @@ import "perftools/tracing/proto/rpc_traced_request.proto";
 import "privacy/context/proto/privacy_context.proto";
 import "security/loas/l2/internal/lib/psp/psp.proto";
 import "security/loas/l2/internal/securewrapper/loas2_multihop_integrity.proto";
+import "security/loas/l2/internal/securewrapper/multihop_clients/boundary_proxy.proto";
 import "security/rpc_restrictions/restriction_usage_reporting.proto";
 import "third_party/boundary_proxy/proto_compare/annotation.proto";
-import "util/task/status.proto";
 
 option java_package = "com.google.net.rpc.impl.proto";
 
@@ -36,6 +35,8 @@ message RPC_EnhancedHCRequest {
 message RPC_ShmRequest {
     repeated RPC_ShmSegments client_read_segments = 10;
     repeated RPC_ShmSegments client_write_segments = 11;
+    optional string internal_files_path = 12;
+    optional bool use_mmap = 13;
 }
 
 message RPC_ShmSegments {
@@ -107,21 +108,6 @@ message RPC_ClientProtocolVersion {
 message EnvelopeForwarderHeader {
     optional bool failfast = 1 [default = false];
     optional string delegated_role = 2;
-}
-
-message RPC_ConnectionFailureStatus {
-    optional int32 type = 1 [default = 0];
-    optional util.StatusProto reason = 2;
-    optional google.protobuf.Duration backoff = 3;
-    
-    enum TYPE {
-        UNKNOWN = 0;
-        SERVER_CONNECTION_LIMIT_REACHED = 1;
-        CONNECTION_LIMIT_PER_USER_REACHED = 2;
-        TRANSIENT_PSP_ERROR = 3;
-        EARLY_CONNECTION_LIMIT_PER_USER_REACHED = 4;
-        FLOW_CONTROL = 5;
-    }
 }
 
 message RPC_E2EIntegrity_Overlay {

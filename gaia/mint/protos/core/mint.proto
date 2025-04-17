@@ -2,7 +2,6 @@ syntax = "proto2";
 
 package gaia_mint;
 
-import "gaia/mint/protos/core/signature_type.proto";
 import "net/proto2/bridge/proto/message_set.proto";
 import "storage/datapol/annotations/proto/semantic_annotations.proto";
 
@@ -21,11 +20,10 @@ message MintWrapper {
     optional string gaiamint_server = 9;
     optional string type_url = 10;
     optional bytes uber_mint_payload = 13;
-    optional SignatureType signature_for_verification = 15 [deprecated = true];
     optional string signer_realm_hint = 17;
     repeated int32 experiment_ids = 19 [packed = true];
     
-    reserved 1, 2, 8, 11, 12, 16, 20;
+    reserved 1, 2, 8, 11, 12, 15, 16, 20;
     
     enum EncodingFormat {
         KEYMASTER_RSA = 1;

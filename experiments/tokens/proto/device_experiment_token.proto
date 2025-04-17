@@ -1,0 +1,26 @@
+syntax = "editions";
+
+package experiments.tokens;
+
+option objc_class_prefix = "EXH";
+option java_multiple_files = true;
+option java_package = "com.google.experiments.tokens";
+
+message DeviceExperimentToken {
+    optional Version version = 1;
+    enum Version {
+        UNKNOWN = 0;
+        VERSION_1 = 1;
+        VERSION_2 = 2;
+        VERSION_3 = 3;
+    }
+    
+    optional bytes payload = 2;
+}
+
+message DeltaEncodedExperimentIds {
+    repeated int32 by_gaia = 1;
+    repeated int32 by_pseudonymous = 2;
+    repeated int32 always = 3;
+    repeated int32 by_other = 4;
+}

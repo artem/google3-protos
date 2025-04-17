@@ -1,0 +1,18 @@
+syntax = "proto2";
+
+package experiments.coordination;
+
+import "net/proto2/bridge/proto/message_set.proto";
+import "security/loas/l2/internal/securewrapper/multihop_clients/boundary_proxy.proto";
+import "storage/datapol/annotations/proto/semantic_annotations.proto";
+
+option java_outer_classname = "ExperimentCoordination";
+option java_package = "com.google.experiments.coordination";
+
+message MendelCoordinationProto {
+    extensions 1;
+    
+    extend .proto2.bridge.MessageSet {
+        optional MendelCoordinationProto message_set_extension = 168595818;
+    }
+}

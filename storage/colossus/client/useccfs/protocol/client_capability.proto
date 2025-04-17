@@ -1,0 +1,7 @@
+syntax = "editions";
+
+package storage_useccfs.protocol;
+
+message ClientCapability {
+    reserved 1;
+}

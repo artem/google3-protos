@@ -11,6 +11,10 @@ option java_outer_classname = "PTokenProtoFile";
 option java_package = "com.google.privacy.datagovernance.attributes";
 
 message PToken {
+    message Data {
+        optional bool contains_only_ptokens = 1;
+    }
+    
     message Storage {
         optional string extraction_spec = 1;
         repeated .ptoken.PTokenType.Enum types = 2 [packed = true];

@@ -2,6 +2,7 @@ syntax = "proto3";
 
 package google.api;
 
+import "google/api/policy.proto";
 import "google/api/rename.proto";
 import "google/api/visibility.proto";
 
@@ -32,6 +33,7 @@ message BackendRule {
     
     string protocol = 9;
     map<string, BackendRule> overrides_by_request_protocol = 10;
+    string load_balancing_policy = 11;
     
     oneof authentication {
         string jwt_audience = 7;

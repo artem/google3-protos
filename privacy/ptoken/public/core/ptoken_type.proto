@@ -30,6 +30,7 @@ message PTokenType {
         COMPOSITE_DOC = 3;
         DEVICE_ACCOUNT_DATA = 52;
         DGO_STORAGE_DATA = 82;
+        DGO_PROCESSING = 91;
         DYNAMITE_SPACE_DATA = 39;
         EDU_ADD_ON_ATTACHMENT_DATA = 73;
         EDU_COURSE_DATA = 84;
@@ -66,6 +67,8 @@ message PTokenType {
         LOGS_DATA = 51;
         GCP_SECOPS_CUSTOMER_DATA = 88;
         OOLONG_EVENT = 53;
+        PANELIST_DATA = 92;
+        PLAY_BOOKS_USER_VOLUME_DATA = 94;
         PS1_AVOCADO_DATA = 33;
         PS1_CUSTOMER_DATA = 20;
         PS1_CUSTOMER_OWNED_OBJECT = 44;
@@ -87,6 +90,7 @@ message PTokenType {
         VAULT_MATTER_DATA = 58;
         VERTEX_TRAFFIC_FOR_GROUNDING_DATA = 76;
         WEB_AND_APP_ACTIVITY = 22;
+        WEB_DATA = 93;
         WORKSPACE_INTELLIGENCE_DATA = 47;
         WORKSPACE_USER_DATA = 59;
         YOUTUBE = 1;
@@ -97,6 +101,7 @@ message PTokenType {
         YOUTUBE_VISITOR_DATA = 29;
         YOUTUBE_FILE_DATA = 70;
         YOUTUBE_IMAGE_DATA = 71;
+        ZWIEBACK_DATA = 90;
         ADS_PERSONAL_DATA = 63;
     }
 }

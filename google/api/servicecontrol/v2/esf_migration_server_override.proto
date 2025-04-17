@@ -5,8 +5,6 @@ package google.api.servicecontrol.v2;
 option ruby_package = "Google::Cloud::ServiceControl::V2";
 option php_namespace = "Google\\Cloud\\ServiceControl\\V2";
 option csharp_namespace = "Google.Cloud.ServiceControl.V2";
-option objc_class_prefix = "GASC";
-option cc_enable_arenas = true;
 option java_multiple_files = true;
 option java_outer_classname = "EsfMigrationServerOverrideProto";
 option java_package = "com.google.api.servicecontrol.v2";

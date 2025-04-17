@@ -6,6 +6,7 @@ import "privacy/ads/user_data_enforcement/data-usage.proto";
 import "privacy/context/proto/policy_breakglass.proto";
 import "privacy/data_flow/job_level_sensor/proto/jls_attributes.proto";
 import "privacy/data_governance/attributes/proto/purpose.proto";
+import "privacy/pattributes/public/proto/semantic_purpose.proto";
 import "privacy/ptoken/public/core/logical_policy.proto";
 import "privacy/ptoken/public/core/request_context_defs.proto";
 
@@ -16,7 +17,11 @@ message DataProtectionAttributes {
     repeated privacy.data_governance.attributes.ProcessingPurpose.Purpose processing_purpose = 2 [packed = true];
     optional bool dma52_cross_use_offered_together = 3;
     repeated .ptoken.LogicalPolicy.Enum request_policy_enforcement = 4 [packed = true];
+    repeated .ptoken.LogicalPolicy.Enum enforce_upcoming_policies_nonprod = 17 [packed = true];
+    optional bool enforce_all_upcoming_policies_nonprod = 18;
+    optional bool enforce_wave3_dma52_prod_early = 19;
     optional .ptoken.Dma52ProcessingType dma52_processing_type = 5;
+    optional bool is_ads_associated = 20;
     repeated privacy.ads.user_data_enforcement.DataUsage ads_processing_purpose = 6 [packed = true];
     repeated .ptoken.LogicalPolicy.Enum request_policy_global_rampup = 12 [packed = true];
     repeated .ptoken.LogicalPolicy.Enum request_policy_enforcement_optout = 7 [packed = true];
@@ -28,4 +33,7 @@ message DataProtectionAttributes {
     optional bool borg_run_uid_enabled = 14;
     optional privacy.data_flow.job_level_sensor.proto.JlsAttributes jls_attributes = 15;
     optional string data_protection_attributes_version = 16;
+    optional .pattributes.SemanticPurpose semantic_purpose = 21;
+    repeated .pattributes.SemanticPurpose deferred_semantic_purposes = 22 [packed = true];
+    optional bool enforce_wave3_dma52_prod = 23;
 }

@@ -2,6 +2,7 @@ syntax = "proto2";
 
 package research_scam;
 
+import "research/scam/data_format/features.proto";
 import "research/scam/proto/conductor.proto";
 import "research/scam/proto/incremental_updates.proto";
 import "research/vision/knn/input_handlers/input-handler-options.proto";
@@ -24,9 +25,8 @@ message InputOutputConfig {
         UINT64 = 7 [deprecated = true];
     }
     
-    optional string database_wildcard = 3;
+    optional bool parallelize_disk_reads_on_startup = 27 [default = false];
     optional bool allow_two_pass_read = 15 [default = false];
-    optional string query_wildcard = 8;
     optional string output_sstable_wildcard = 11;
     optional string preprocessed_artifacts_dir = 18;
     
@@ -81,6 +81,16 @@ message InputOutputConfig {
     optional bool saturate = 10 [default = false, deprecated = true];
     optional uint64 dimensionality = 4 [deprecated = true];
     
+    oneof DatabaseInputConfig {
+        string database_wildcard = 3;
+        TableIOConfig database_tableio = 28;
+    }
+    
+    oneof QueryInputConfig {
+        string query_wildcard = 8;
+        TableIOConfig query_tableio = 29;
+    }
+    
     oneof IncrementalUpdateMetadataOneof {
         string incremental_update_metadata_location = 19;
         IncrementalUpdateMetadata incremental_update_metadata = 22;
@@ -92,6 +102,13 @@ message InputOutputConfig {
     }
     
     reserved 13;
+    
+    message TableIOConfig {
+        optional string table_name = 1;
+        optional string embedding_column_name = 2;
+        optional GenericFeatureVector.FeatureType embedding_type = 4;
+        optional string docid_column_name = 3;
+    }
     
     message TeamsterConfig {
         optional bool enabled = 1 [default = false];

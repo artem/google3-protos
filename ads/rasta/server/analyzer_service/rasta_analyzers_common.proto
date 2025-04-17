@@ -1,0 +1,17 @@
+syntax = "proto2";
+
+package ads_rasta_server_analyzer_service_common;
+
+message AnalyzerParam {
+    optional string param_name = 1;
+    optional string analyzer_id = 5;
+    optional int32 experiment_id = 8;
+    
+    oneof param_type {
+        int64 value_int = 2;
+        string value_string = 3;
+        bool value_bool = 4;
+        float value_float = 6;
+        double value_double = 7;
+    }
+}

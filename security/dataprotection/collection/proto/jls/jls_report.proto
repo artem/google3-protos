@@ -1,0 +1,15 @@
+syntax = "editions";
+
+package security.dataprotection.collection.proto.jls;
+
+import "privacy/data_flow/job_level_sensor/proto/jls_report.proto";
+import "production/resources/dataplatform/idx/time_series/public/proto/idx_time_series_record.proto";
+import "security/dataprotection/collection/public/collection_service.proto";
+
+option java_multiple_files = true;
+
+message JlsReport {
+    optional secure_collection.MessageSource message_source = 1;
+    optional .idx.time_series.ingestion.proto.IDXTimeSeriesMetadata idx_internal_metadata = 2;
+    optional privacy.data_flow.job_level_sensor.proto.JlsReport report = 3;
+}

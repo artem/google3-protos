@@ -1,0 +1,14 @@
+syntax = "editions";
+
+package security_loas_l2;
+
+option java_outer_classname = "ConfidentialSecurityLevelProto";
+option java_package = "com.google.net.loas.l2";
+
+enum ConfidentialSecurityLevel {
+    SECURITY_LEVEL_UNSPECIFIED = 0;
+    SECURITY_LEVEL_0 = 25;
+    SECURITY_LEVEL_1 = 50;
+    SECURITY_LEVEL_2 = 75;
+    SECURITY_LEVEL_3 = 100;
+}

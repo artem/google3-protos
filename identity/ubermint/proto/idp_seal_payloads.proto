@@ -1,0 +1,20 @@
+syntax = "editions";
+
+package identity_ubermint;
+
+import "identity/ubermint/proto/platform/cloud/trust_boundary_params.proto";
+import "storage/datapol/annotations/proto/semantic_annotations.proto";
+
+option java_multiple_files = true;
+option java_outer_classname = "IdpSealPayloadsProto";
+option java_package = "com.google.identity.ubermint.proto";
+
+message MinimalGaiaMint {
+    repeated int64 user_id = 21;
+    optional TrustBoundaryParams trust_boundary_params = 24;
+}
+
+message MinimalCloudUberMintPayload {
+    optional int64 primary_gaia_id = 1;
+    optional TrustBoundaryParams trust_boundary_params = 49;
+}

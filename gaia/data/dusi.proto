@@ -8,7 +8,6 @@ import "logs/proto/gaia/dusi.proto";
 import "storage/datapol/annotations/proto/semantic_annotations.proto";
 
 option objc_class_prefix = "GAIA";
-option cc_enable_arenas = true;
 option java_package = "com.google.gaia.data.proto";
 
 message DeviceUserSession {

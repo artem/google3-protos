@@ -2,9 +2,77 @@ syntax = "editions";
 
 package bigtable;
 
+import "bigtable/proto/materialized_views_config.proto";
+import "storage/datapol/annotations/proto/semantic_annotations.proto";
+
 option java_multiple_files = true;
 option java_package = "com.google.bigtable.protos";
 
-message BTI_MaterializedViewsConfig {
+message BTI_MaterializedViewStage {
+    optional uint64 stage_id = 1;
     
+    optional Type type = 7;
+    enum Type {
+        UNSPECIFIED = 0;
+        MAPPER = 1;
+        REDUCER = 2;
+        FINALIZER = 3;
+    }
+    
+    optional StageInfo stage_input = 2;
+    message StageInfo {
+        optional uint64 table_version = 1;
+        optional string table_name = 3;
+        optional uint64 stage_id = 4;
+        optional Type stage_type = 5;
+    }
+    
+    optional StageInfo stage_output = 3;
+    optional bytes query_plan = 4;
+    
+    optional StageStatus status = 5;
+    enum StageStatus {
+        UNDEFINED = 0;
+        NEW = 1;
+        ACTIVE = 3;
+        CHANGING = 4;
+        DELETING = 5;
+    }
+    
+    optional int64 backfill_start_time = 6;
+    optional int64 delete_prepared_time = 8;
+}
+
+message BTI_MaterializedView {
+    optional uint64 view_id = 1;
+    optional MaterializedView view_config = 2;
+    repeated uint64 stage_ids = 3;
+    optional uint64 version = 4;
+    map<int64, SourceFamilies> table_version_to_source_families = 5;
+    
+    message SourceFamilies {
+        repeated int64 column_families = 1;
+    }
+}
+
+message BTI_MaterializedViewTableState {
+    optional uint64 view_id = 1;
+    
+    repeated Stage stages = 2;
+    message Stage {
+        optional uint64 stage_id = 1;
+        optional BTI_MaterializedViewStage.Type type = 2;
+    }
+    
+    optional TableViewStatus status = 3;
+    enum TableViewStatus {
+        UNDEFINED = 0;
+        PENDING = 1;
+        ACTIVE = 2;
+        DELETING = 3;
+    }
+}
+
+message BTI_MaterializedViewsConfig {
+    repeated BTI_MaterializedViewTableState view_configs = 1;
 }

@@ -8,6 +8,7 @@ message RequestContextInternal {
     optional bytes cpe_context = 3;
     optional int64 stream_id = 4;
     optional bytes chemist_context = 5;
+    optional string primary_peer_security_realm = 6;
     
     reserved 1, 2;
 }

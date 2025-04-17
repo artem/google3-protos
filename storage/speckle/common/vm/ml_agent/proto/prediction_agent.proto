@@ -1,0 +1,71 @@
+syntax = "editions";
+
+package storage.speckle.common.vm.ml_agent.proto;
+
+import "google/protobuf/duration.proto";
+import "storage/datapol/annotations/proto/semantic_annotations.proto";
+
+service PredictionAgent {
+    rpc GetMLPrediction(PredictionRequest) returns (PredictionResponse);
+}
+
+message PredictionRequest {
+    optional string endpoint_id = 1;
+    optional string body = 2;
+    optional PredictionRequestMeta meta = 3;
+    optional string deployed_model_id = 4;
+    optional Model model = 5;
+}
+
+message Model {
+    optional string qualified_name = 1;
+    optional ModelType type = 2;
+    optional Provider provider = 3;
+    optional string endpoint_url = 4;
+    optional string headers = 5;
+    optional AuthInfo auth_info = 6;
+    repeated HttpHeader http_headers = 7;
+}
+
+message AuthInfo {
+    optional AuthType auth_type = 1;
+    
+    oneof auth_details {
+        string secret_manager_path = 2;
+    }
+}
+
+message HttpHeader {
+    optional string name = 1;
+    optional string value = 2;
+}
+
+message PredictionRequestMeta {
+    optional google.protobuf.Duration timeout = 1;
+}
+
+message PredictionResponse {
+    optional string prediction = 1;
+}
+
+enum Provider {
+    PROVIDER_UNSPECIFIED = 0;
+    PROVIDER_GOOGLE = 1;
+    PROVIDER_OPEN_AI = 2;
+    PROVIDER_CUSTOM = 3;
+    PROVIDER_ANTHROPIC = 4;
+    PROVIDER_HUGGING_FACE = 5;
+}
+
+enum ModelType {
+    MODEL_TYPE_UNSPECIFIED = 0;
+    MODEL_TYPE_TEXT_EMBEDDING = 1;
+    MODEL_TYPE_GENERIC = 2;
+}
+
+enum AuthType {
+    AUTH_TYPE_UNSPECIFIED = 0;
+    AUTH_TYPE_ALLOYDB_SERVICE_AGENT_IAM = 1;
+    AUTH_TYPE_SECRET_MANAGER = 2;
+    AUTH_TYPE_CLOUDSQL_SERVICE_AGENT_IAM = 3;
+}

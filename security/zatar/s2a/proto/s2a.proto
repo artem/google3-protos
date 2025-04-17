@@ -1,0 +1,98 @@
+syntax = "editions";
+
+package s2a.proto;
+
+import "security/zatar/s2a/proto/common.proto";
+
+option java_multiple_files = true;
+option java_outer_classname = "S2AProto";
+option java_package = "com.google.net.grpc.s2a.handshaker";
+
+service S2AService {
+    rpc SetUpSession(stream SessionReq) returns (stream SessionResp);
+}
+
+message AuthenticationMechanism {
+    optional Identity identity = 1;
+    
+    oneof mechanism_oneof {
+        string token = 2;
+    }
+}
+
+message ClientSessionStartReq {
+    repeated string application_protocols = 1;
+    optional TLSVersion min_tls_version = 2;
+    optional TLSVersion max_tls_version = 3;
+    repeated Ciphersuite tls_ciphersuites = 4;
+    repeated Identity target_identities = 5;
+    optional Identity local_identity = 6;
+    optional string target_name = 7;
+    optional uint32 record_protocol_version = 8;
+}
+
+message ServerSessionStartReq {
+    repeated string application_protocols = 1;
+    optional TLSVersion min_tls_version = 2;
+    optional TLSVersion max_tls_version = 3;
+    repeated Ciphersuite tls_ciphersuites = 4;
+    repeated Identity local_identities = 5;
+    optional bytes in_bytes = 6;
+    optional uint32 record_protocol_version = 7;
+}
+
+message SessionNextReq {
+    optional bytes in_bytes = 1;
+}
+
+message ResumptionTicketReq {
+    repeated bytes in_bytes = 1;
+    optional uint64 connection_id = 2;
+    optional Identity local_identity = 3;
+}
+
+message SessionReq {
+    repeated AuthenticationMechanism auth_mechanisms = 5;
+    
+    oneof req_oneof {
+        ClientSessionStartReq client_start = 1;
+        ServerSessionStartReq server_start = 2;
+        SessionNextReq next = 3;
+        ResumptionTicketReq resumption_ticket = 4;
+    }
+}
+
+message SessionState {
+    optional TLSVersion tls_version = 1;
+    optional Ciphersuite tls_ciphersuite = 2;
+    optional uint64 in_sequence = 3;
+    optional uint64 out_sequence = 4;
+    optional bytes in_key = 5;
+    optional bytes out_key = 6;
+    optional bytes in_fixed_nonce = 7;
+    optional bytes out_fixed_nonce = 8;
+    optional uint64 connection_id = 9;
+    optional bool is_handshake_resumed = 10;
+}
+
+message SessionResult {
+    optional string application_protocol = 1;
+    optional SessionState state = 2;
+    optional Identity peer_identity = 4;
+    optional Identity local_identity = 5;
+    optional bytes local_cert_fingerprint = 6;
+    optional bytes peer_cert_fingerprint = 7;
+}
+
+message SessionStatus {
+    optional uint32 code = 1;
+    optional string details = 2;
+}
+
+message SessionResp {
+    optional Identity local_identity = 1;
+    optional bytes out_frames = 2;
+    optional uint32 bytes_consumed = 3;
+    optional SessionResult result = 4;
+    optional SessionStatus status = 5;
+}

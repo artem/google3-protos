@@ -1,0 +1,87 @@
+syntax = "editions";
+
+package cns2.proto;
+
+import "net/proto2/bridge/proto/message_set.proto";
+
+service Cns2Router {
+    rpc QueryPlacement(QueryPlacementRequest) returns (QueryPlacementResponse);
+    rpc QuerySubtreePlacement(QuerySubtreePlacementRequest) returns (QuerySubtreePlacementResponse);
+}
+
+message AnchorPointPlacement {
+    optional string anchor_point_path = 1;
+    repeated AnchorPointTarget target = 3;
+    
+    reserved 2;
+}
+
+message AnchorPointTarget {
+    optional string store_cell_name = 1;
+    optional string nmeta_table = 2;
+}
+
+message RouterRequestHeader {
+    optional string universe_name = 1;
+    
+    reserved 2;
+}
+
+message QueryPlacementRequestMonitoringInfo {
+    optional RequestReason request_reason = 2;
+    enum RequestReason {
+        UNSPECIFIED = 0;
+        ROUTING_STEP_COMPLETED = 1;
+        EXCEEDED_CLIENT_PARALLELISM_THRESHOLD = 2;
+        RETRY = 3;
+    }
+    
+    optional bool is_request_sent_by_client_with_parallelism_enabled = 3;
+    optional int64 client_changelist_number = 4;
+    optional string curator_operation_name = 5;
+    
+    reserved 1;
+    
+    extend .proto2.bridge.MessageSet {
+        optional QueryPlacementRequestMonitoringInfo message_set_extension = 525002457;
+    }
+}
+
+message QueryPlacementRequest {
+    optional RouterRequestHeader router_request_header = 4;
+    optional string path = 2;
+    
+    reserved 1, 3, 5;
+}
+
+message ClientParallelismConfiguration {
+    optional bool enable_client_parallelism = 1;
+    optional bool enable_match_client_parallelism = 2;
+    
+    extend .proto2.bridge.MessageSet {
+        optional ClientParallelismConfiguration message_set_extension = 525002813;
+    }
+}
+
+message RedirectToRouter {
+    optional string target = 1;
+}
+
+message QueryPlacementResponse {
+    repeated AnchorPointPlacement placement = 1;
+    optional RedirectToRouter redirect_to_router = 2;
+}
+
+message QuerySubtreePlacementRequest {
+    optional RouterRequestHeader router_request_header = 1;
+    optional string subtree_root = 2;
+}
+
+message AnchorPointTargets {
+    repeated AnchorPointTarget target = 1;
+}
+
+message QuerySubtreePlacementResponse {
+    optional AnchorPointTargets targets = 1;
+    optional RedirectToRouter redirect_to_router = 2;
+}

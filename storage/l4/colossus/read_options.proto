@@ -1,12 +1,12 @@
-syntax = "proto3";
+syntax = "editions";
 
 package storage_l4;
 
-import "storage/datapol/annotations/proto/semantic_annotations.proto";
 import "storage/l4/common/lookup_flavor.proto";
+import "storage/l4/common/upstream_cache.proto";
 
 message ReadOptionsProto {
-    IntegrityMode integrity_mode = 1;
+    optional IntegrityMode integrity_mode = 1;
     enum IntegrityMode {
         INTEGRITY_MODE_UNSET = 0;
         INTEGRITY_MODE_RELAXED = 1;
@@ -14,7 +14,8 @@ message ReadOptionsProto {
         INTEGRITY_MODE_SKIP_AND_PURGE_L4 = 3;
     }
     
-    bool final_read = 2;
-    LookupFlavor lookup_flavor = 4;
-    string l4_resource_user = 3;
+    optional LookupFlavor lookup_flavor = 4;
+    optional UpstreamCache upstream_cache = 5;
+    
+    reserved 2, 3;
 }

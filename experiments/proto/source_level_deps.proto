@@ -1,0 +1,39 @@
+syntax = "editions";
+
+package experiments;
+
+message ExpDeps {
+    optional int32 id = 1;
+    repeated int32 named_conditions = 2;
+    repeated int32 rollouts = 3;
+    repeated int32 properties = 4;
+}
+
+message FlagDeps {
+    optional int32 name = 1;
+    repeated int32 named_conditions = 2;
+    repeated int32 rollouts = 3;
+    repeated int32 properties = 4;
+}
+
+message ModifierDeps {
+    optional int32 modifier_index = 1;
+    repeated int32 named_conditions = 2;
+    repeated int32 rollouts = 3;
+    repeated int32 properties = 4;
+}
+
+message NamedConditionDeps {
+    optional int32 name = 1;
+    repeated int32 named_conditions = 2;
+    repeated int32 rollouts = 3;
+    repeated int32 properties = 4;
+}
+
+message SourceLevelDeps {
+    repeated string strings = 1;
+    repeated ExpDeps exp_deps = 2;
+    repeated FlagDeps flag_deps = 3;
+    repeated ModifierDeps modifier_deps = 4;
+    repeated NamedConditionDeps named_condition_deps = 5;
+}

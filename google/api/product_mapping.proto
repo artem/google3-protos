@@ -1,0 +1,20 @@
+syntax = "proto3";
+
+package google.api;
+
+option objc_class_prefix = "GAPI";
+option cc_enable_arenas = true;
+option go_package = "google.golang.org/genproto/googleapis/api/productmapping;productmapping";
+option java_multiple_files = true;
+option java_outer_classname = "ProductMappingProto";
+option java_package = "com.google.api";
+
+message ProductMapping {
+    repeated ProductMappingRule rules = 1;
+}
+
+message ProductMappingRule {
+    string expression = 1;
+    string product_id = 2;
+    string type = 3;
+}

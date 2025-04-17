@@ -1,0 +1,15 @@
+syntax = "editions";
+
+package experiments.tpc;
+
+import "experiments/proto/metadata.proto";
+
+option java_multiple_files = true;
+
+message TpcValidationCertificate {
+    optional string tpc_scope = 1;
+}
+
+extend Metadata {
+    optional TpcValidationCertificate tpc_certificate = 12;
+}

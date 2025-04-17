@@ -148,6 +148,7 @@ message BindingCondition {
         ImpersonationTargetCondition impersonation_target = 11;
         PeerDelegationTargetCondition peer_delegation_target = 14;
         CredsCondition creds = 13;
+        SecurityRealmCondition security_realm = 18;
     }
     
     extensions 1111, 1112, 1001, 1002;
@@ -166,9 +167,25 @@ message PeerUserCondition {
 message ExcludePeerUserCondition {
     repeated string prod_users = 1;
     repeated string prod_groups = 2;
+    repeated string includes = 3;
 }
 
 message PeerSecurityRealmCondition {
+    repeated string includes = 7;
+    repeated string realms = 2;
+    optional google.protobuf.Empty persons_in_corp = 9;
+    optional google.protobuf.Empty local_realm = 11;
+    optional google.protobuf.Empty local_campus = 3;
+    optional google.protobuf.Empty local_metro = 4;
+    optional google.protobuf.Empty local_cloud_region = 5;
+    optional google.protobuf.Empty local_prod_region = 8;
+    optional google.protobuf.Empty default_covering_realms = 6;
+    optional google.protobuf.Empty crypto_core_covering_realms = 10;
+    
+    reserved 1;
+}
+
+message SecurityRealmCondition {
     repeated string includes = 7;
     repeated string realms = 2;
     optional google.protobuf.Empty persons_in_corp = 9;
@@ -215,6 +232,13 @@ message AuthenticationConfig {
     repeated .ubermint.UberMintPlatform additional_ubermint_platforms = 1 [packed = true];
     optional bool default_anonymous_mode = 4 [default = false];
     optional ThinMintControl.Values thinmint_control = 5;
+    
+    optional AllowedAuthenticationMethods allowed_authentication_methods = 6;
+    enum AllowedAuthenticationMethods {
+        UNSPECIFIED = 0;
+        LOAS_AND_DEFAULT_EUC = 1;
+        LOAS_ONLY = 2;
+    }
 }
 
 message ThinMintControl {
@@ -246,6 +270,7 @@ message EndpointPolicyCondition {
         PeerSecurityRealmCondition peer_security_realm = 3;
         CrossProductSharingCondition cross_product_sharing = 4;
         CredsCondition creds = 5;
+        SecurityRealmCondition security_realm = 6;
     }
 }
 

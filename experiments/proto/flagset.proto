@@ -1,0 +1,22 @@
+syntax = "editions";
+
+package experiments;
+
+message FlagSet {
+    optional string name = 1;
+    optional string location = 7;
+    
+    optional Kind kind = 4;
+    enum Kind {
+        UNKNOWN = 0;
+        STATIC = 1;
+        DYNAMIC = 2;
+    }
+    
+    optional string type = 5;
+    optional string proto_message = 6;
+    optional string java_proto_class_name = 10;
+    optional string proto_path = 9;
+    optional bool deprecated = 11 [default = false];
+    repeated int32 flags = 8;
+}

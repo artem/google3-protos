@@ -3,6 +3,7 @@ syntax = "editions";
 package xuniverse;
 
 import "security/thinmint/xuniverse/proto/core/cross_universe_digest_type.proto";
+import "third_party/boundary_proxy/proto_compare/annotation.proto";
 
 message CrossUniverseSigningDigest {
     optional CrossUniverseSigningDigestType digest_type = 1;

@@ -14,7 +14,6 @@ import "net/proto2/go/annotation/go_annotation.proto";
 import "storage/datapol/annotations/proto/semantic_annotations.proto";
 import "third_party/boundary_proxy/proto_compare/annotation.proto";
 
-option cc_enable_arenas = true;
 option java_multiple_files = true;
 option java_package = "com.google.monitoring.monarch.proto";
 

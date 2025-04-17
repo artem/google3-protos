@@ -81,6 +81,8 @@ message CuratorPaxosPayload {
         optional FolderKeyProto left_parent_key = 6;
         optional string left_parent_start_filename = 7;
         optional google.protobuf.Timestamp earliest_merge_timestamp = 9;
+        optional int64 minimum_base_log_end_epoch_md1 = 13 [default = -1];
+        optional int64 minimum_base_log_end_epoch_md0 = 14 [default = -1];
         
         reserved 4;
     }

@@ -27,6 +27,8 @@ message SampledFileOpenCall {
     message BuildInfo {
         optional StackTraceProto open_stack_trace = 1;
         optional int64 rollup_cl = 2;
+        optional bool is_verifiable = 3;
+        optional bool is_mint = 4;
     }
     
     optional BorgTask borg_task = 5;

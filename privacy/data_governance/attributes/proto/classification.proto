@@ -130,7 +130,7 @@ enum Source {
 
 enum SemanticContext {
     CONTEXT_UNDEFINED = 0;
-    CONTEXT_OTHER = 1;
+    CONTEXT_OTHER = 1 [deprecated = true];
     CONTEXT_METADATA = 2;
     CONTEXT_CONTENT = 3;
     CONTEXT_CORE_CONTENT = 4;

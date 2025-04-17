@@ -1,4 +1,4 @@
-syntax = "proto3";
+syntax = "editions";
 
 package pgraph.attributes;
 
@@ -8,7 +8,7 @@ import "privacy/data_governance/attributes/proto/purpose.proto";
 option java_multiple_files = true;
 
 message PrimaryDataStore {
-    IsPrimaryDataStore is_primary_data_store = 1;
+    optional IsPrimaryDataStore is_primary_data_store = 1;
     enum IsPrimaryDataStore {
         PRIMARY_DATA_STORE_UNDEFINED = 0;
         YES = 1;
@@ -17,7 +17,7 @@ message PrimaryDataStore {
 }
 
 message TakeoutIntegrated {
-    IsTakeoutIntegrated is_takeout_integrated = 1;
+    optional IsTakeoutIntegrated is_takeout_integrated = 1;
     enum IsTakeoutIntegrated {
         TAKEOUT_INTEGRATED_UNDEFINED = 0;
         YES = 1;
@@ -28,25 +28,23 @@ message TakeoutIntegrated {
     
     repeated ProductIntegration product_integrations = 3;
     message ProductIntegration {
-        int32 product_id = 1;
-        privacy.data_governance.attributes.ProcessingPurpose.Purpose purpose = 2;
+        optional int32 product_id = 1;
+        optional privacy.data_governance.attributes.ProcessingPurpose.Purpose purpose = 2;
     }
     
-    bool in_scope = 4;
+    optional bool in_scope = 4;
 }
 
 message StorageDefaultProductAssociation {
-    oneof _product_id {
-        int32 product_id = 1;
-    }
+    optional int32 product_id = 1;
 }
 
 message StorageMonitoring {
-    google.protobuf.Timestamp last_observed_write_without_product_id = 1;
+    optional google.protobuf.Timestamp last_observed_write_without_product_id = 1;
 }
 
 message StorageSchema {
-    bool array = 4;
+    optional bool array = 4;
     
     oneof schema {
         string fully_qualified_proto_name = 2;
@@ -83,12 +81,19 @@ message ConfiguredLocation {
 }
 
 message MlLineageObservation {
-    bool is_ml_lineage = 1;
+    optional bool is_ml_lineage = 1;
 }
 
 message StorageAccessRequestInfo {
-    string access_contact = 1;
-    string access_notes = 2;
-    string access_request_system_type = 3;
-    string access_request_url = 4;
+    optional string access_contact = 1;
+    optional string access_notes = 2;
+    optional string access_request_system_type = 3;
+    optional string access_request_url = 4;
+}
+
+message StorageUnderlyingComponents {
+    repeated UnderlyingStorage storage_components = 1;
+    message UnderlyingStorage {
+        optional string guri = 1;
+    }
 }

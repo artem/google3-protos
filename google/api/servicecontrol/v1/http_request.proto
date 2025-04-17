@@ -2,6 +2,7 @@ syntax = "proto3";
 
 package google.api.servicecontrol.v1;
 
+import "google/api/inclusion.proto";
 import "google/protobuf/duration.proto";
 
 option ruby_package = "Google::Cloud::ServiceControl::V1";

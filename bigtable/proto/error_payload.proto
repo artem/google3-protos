@@ -3,6 +3,7 @@ syntax = "editions";
 package bigtable;
 
 import "net/proto2/bridge/proto/message_set.proto";
+import "storage/datapol/annotations/proto/semantic_annotations.proto";
 import "util/task/status.proto";
 
 message ResourceKeyCreationFailure {
@@ -34,6 +35,19 @@ message SkippedTabletOpStats {
     optional string op_or_status = 2;
 }
 
+message FamilyDoesNotExistInfo {
+    optional FamilyDoesNotExistReason reason = 1;
+    enum FamilyDoesNotExistReason {
+        UNSPECIFIED = 0;
+        NO_FAMILIES_IN_SCHEMA = 1;
+        FAMILY_NAME_NOT_FOUND = 2;
+        FAMILY_ID_NOT_FOUND = 3;
+    }
+    
+    optional string family_name = 2;
+    optional int64 family_id = 3;
+}
+
 message BigtableErrorPayload {
     optional PayloadType payload_type = 1;
     enum PayloadType {
@@ -43,12 +57,14 @@ message BigtableErrorPayload {
         ROW_SIZE_EXCEEDED = 3;
         TABLET_OP_SKIPPED = 4;
         PERMISSION_DENIED_WITH_UNKNOWN_ACLREP_OUTCOME = 5;
+        FAMILY_DOES_NOT_EXIST = 6;
     }
     
     optional ResourceKeyCreationFailure resource_key_creation_failure = 2;
     optional TableUnloadedInfo table_unloaded = 3;
     optional bytes row_key = 4 [ctype = CORD];
     optional SkippedTabletOpStats skipped_tablet_op_stats = 5;
+    optional FamilyDoesNotExistInfo family_does_not_exist = 6;
     
     extend .proto2.bridge.MessageSet {
         optional BigtableErrorPayload message_set_extension = 307483134;

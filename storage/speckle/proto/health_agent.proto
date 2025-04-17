@@ -1,0 +1,16 @@
+syntax = "proto2";
+
+package speckle;
+
+import "storage/datapol/annotations/proto/semantic_annotations.proto";
+import "storage/speckle/proto/enums.proto";
+
+message VmHealthAgentConfig {
+    optional bool kill_switch_enabled = 1 [default = false];
+    optional EnablementState cgroup_killer_mode = 2 [default = ENABLEMENT_STATE_DRY_RUN];
+    optional int32 cgroup_killer_post_action_delay_seconds = 3 [default = 60];
+    optional int32 memory_pressure_detector_monitor_window_seconds = 4 [default = 30];
+    optional double memory_pressure_detector_threshold_value = 7 [default = 60];
+    optional EnablementState pg_session_cancel_mode = 5 [default = ENABLEMENT_STATE_DRY_RUN];
+    optional EnablementState pg_dynamic_swap_mode = 6 [default = ENABLEMENT_STATE_DRY_RUN];
+}

@@ -1,0 +1,22 @@
+syntax = "editions";
+
+package java.com.google.cloud.boq.clientapi.flows.api;
+
+import "net/proto2/proto/descriptor.proto";
+import "privacy/data_governance/attributes/proto/classification.proto";
+
+option java_outer_classname = "FlowsDataGovernance";
+option java_package = "com.google.cloud.boq.clientapi.flows.api";
+
+message FlowsDataClassification {
+    optional privacy.data_governance.attributes.classification.SemanticContext semantic_context = 1;
+}
+
+extend .proto2.FieldOptions {
+    optional FlowsDataClassification flows_data_classification_field = 469319926;
+}
+
+extend .proto2.MessageOptions {
+    optional FlowsDataClassification flows_data_classification_message = 469319927;
+    optional bool is_flows_dg_annotation = 469319928;
+}

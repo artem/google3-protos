@@ -1,0 +1,44 @@
+syntax = "editions";
+
+package experiments.proto;
+
+import "google/protobuf/any.proto";
+import "storage/datapol/annotations/proto/semantic_annotations.proto";
+
+option java_outer_classname = "ClientExperimentStateProto";
+option java_package = "com.google.experiments";
+
+message ClientExperimentState {
+    optional Identifier identifier = 1;
+    repeated ClientFlag flags = 2;
+    optional bytes experiment_token = 3;
+    optional bytes server_token = 4;
+}
+
+message Identifier {
+    optional string build_target_hash = 1;
+}
+
+message ClientFlag {
+    optional int64 flag_id = 1;
+    optional string xid_name_for_migration = 7;
+    
+    oneof value {
+        int64 long_value = 2;
+        bool boolean_value = 3;
+        double double_value = 4;
+        string string_value = 5;
+        google.protobuf.Any proto_value = 6 [deprecated = true];
+        SerializedProtoValue serialized_proto_value = 8;
+    }
+    
+    message SerializedProtoValue {
+        oneof value {
+            string jspb_proto_value = 1;
+        }
+    }
+}
+
+message ClientExperimentPayload {
+    repeated ClientExperimentState experiment_states = 1;
+}

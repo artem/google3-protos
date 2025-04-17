@@ -7,6 +7,7 @@ import "google/api/field_behavior.proto";
 import "google/api/servicecontrol/v2/esf_migration_server_override.proto";
 import "google/api/visibility.proto";
 import "google/protobuf/any.proto";
+import "google/protobuf/struct.proto";
 import "google/rpc/context/attribute_context.proto";
 import "google/rpc/status.proto";
 import "third_party/boundary_proxy/proto_compare/annotation.proto";
@@ -14,7 +15,6 @@ import "third_party/boundary_proxy/proto_compare/annotation.proto";
 option ruby_package = "Google::Cloud::ServiceControl::V2";
 option php_namespace = "Google\\Cloud\\ServiceControl\\V2";
 option csharp_namespace = "Google.Cloud.ServiceControl.V2";
-option objc_class_prefix = "GASC";
 option java_multiple_files = true;
 option java_outer_classname = "ServiceControllerProto";
 option java_package = "com.google.api.servicecontrol.v2";
@@ -50,6 +50,7 @@ message CheckResponse {
     rpc.Status status = 1;
     map<string, string> headers = 2;
     EsfMigrationServerOverride esf_migration_server_override = 3;
+    protobuf.Struct dynamic_metadata = 4;
 }
 
 message ReportRequest {

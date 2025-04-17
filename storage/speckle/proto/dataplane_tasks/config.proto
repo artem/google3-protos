@@ -1,0 +1,169 @@
+syntax = "proto3";
+
+package speckle.dataplane;
+
+import "google/protobuf/any.proto";
+import "google/protobuf/timestamp.proto";
+import "net/proto2/proto/descriptor.proto";
+import "storage/datapol/annotations/proto/semantic_annotations.proto";
+import "storage/speckle/proto/secrets.proto";
+
+message FirewallConfig {
+    repeated string remote_addresses = 1;
+}
+
+message PasswordEncryptionConfig {
+    storage.speckle.proto.EncryptedSecret wdek = 1;
+    google.protobuf.Timestamp timestamp = 2;
+    string instance_uid = 3;
+    bool backup_verification = 4;
+    bool reencrypt_credentials = 5;
+}
+
+message DatabaseFlags {
+    repeated FlagFragment fragments = 1;
+    message FlagFragment {
+        repeated Flag flags = 2;
+        
+        Type type = 3;
+        enum Type {
+            UNKNOWN = 0;
+            USER = 1;
+            INTERNAL = 2;
+            DERIVED = 3;
+            STARTUP_REPLICA = 4;
+            TIER = 5;
+        }
+        
+        uint32 priority = 4;
+        
+        reserved 1;
+    }
+    
+    bool force_apply = 2;
+    
+    message Flag {
+        string name = 1;
+        string value = 2;
+    }
+}
+
+message SslPreferenceConfig {
+    bool enforce_ssl_preference = 1;
+}
+
+message SslConfig {
+    string server_cert_base64 = 1;
+    string server_pkey_base64 = 2;
+    string signing_sa_cert_base64 = 3;
+    string server_ca_base64 = 4;
+    string replica_cert_base64 = 5;
+    string replica_pkey_base64 = 6;
+    string master_server_ca_base64 = 7;
+    repeated string client_ca_certs_base64 = 8;
+    
+    reserved 9;
+}
+
+message RecoveryModelConfig {
+    RecoveryModel recovery_model = 1;
+    enum RecoveryModel {
+        DEFAULT = 0;
+        SIMPLE = 1;
+        FULL = 2;
+        BULK_LOGGED = 3;
+    }
+}
+
+message VMPubSubConfig {
+    bool should_start_pubsub = 1;
+}
+
+message DatabaseConfig {
+    string service_type = 1;
+    string database_type = 2;
+    string database_major_version = 3;
+    string wave = 5;
+}
+
+message ExternalMasterConfig {
+    string master_username = 1;
+    string master_password = 2;
+    string replica_username = 3;
+    string replica_password = 4;
+    string master_host = 5;
+    int32 master_port = 6;
+    repeated ExternalMasterMigrationJob migration_jobs = 8;
+    string replica_host = 9;
+    int32 replica_port = 10;
+    storage.speckle.proto.EncryptedSecret encrypted_master_password = 12;
+    storage.speckle.proto.EncryptedSecret encrypted_replica_password = 15;
+    google.protobuf.Timestamp timestamp = 13;
+    
+    Action action = 14;
+    enum Action {
+        UNKNOWN = 0;
+        SETUP = 1;
+        DELETE = 2;
+        PROMOTE = 3;
+        ALTER = 4;
+    }
+    
+    State state = 16;
+    enum State {
+        STATE_UNSPECIFIED = 0;
+        NOT_STARTED = 1;
+        STARTED = 2;
+        PAUSED = 3;
+        COMPLETED = 4;
+    }
+    
+    oneof database_config {
+        SqlServerExternalMasterConfig sql_server_config = 11;
+    }
+    
+    reserved 7;
+}
+
+message SqlServerExternalMasterConfig {
+    string snapshot_directory = 1;
+}
+
+message ExternalMasterMigrationJob {
+    string migration_id = 1;
+    string source_database = 2;
+    string snapshot_directory = 3;
+    string publication_name = 4;
+    string subscriber_name = 5;
+    string snapshot_job_name = 6;
+    string distribute_job_name = 7;
+}
+
+message ExternalServerMonitoringConfig {
+    string primary_username = 1;
+    string primary_password = 2;
+    storage.speckle.proto.EncryptedSecret encrypted_primary_password = 3;
+    string primary_host = 4;
+    int32 primary_port = 5;
+    string replica_host = 8;
+    int32 replica_port = 9;
+    google.protobuf.Timestamp timestamp = 13;
+    
+    State state = 14;
+    enum State {
+        STATE_UNSPECIFIED = 0;
+        NOT_STARTED = 1;
+        STARTED = 2;
+    }
+    
+    reserved 6 to 7, 10 to 12;
+}
+
+message TaskParams {
+    string task_name = 1;
+    google.protobuf.Any params_payload = 2;
+}
+
+extend .proto2.MessageOptions {
+    string config_group_name = 231065073;
+}

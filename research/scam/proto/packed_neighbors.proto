@@ -1,0 +1,14 @@
+syntax = "proto2";
+
+package research_scam;
+
+import "research/scam/data_format/features.proto";
+import "research/scam/proto/multi_strings.proto";
+
+message PackedNeighbors {
+    optional MultiStrings docids = 1;
+    repeated float distances = 2 [packed = true];
+    optional MultiStrings metadatas = 3;
+    repeated sfixed64 crowding_attributes = 4 [packed = true];
+    repeated GenericFeatureVector gfvs = 5;
+}

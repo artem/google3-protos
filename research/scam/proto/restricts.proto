@@ -4,7 +4,6 @@ package research_scam;
 
 import "google/api/inclusion.proto";
 
-option cc_enable_arenas = true;
 option java_package = "com.google.research.scam";
 
 message V3Restrict {
@@ -58,6 +57,17 @@ message RestrictsConfig {
 }
 
 message V3RestrictsConfig {
+    optional RestrictTreeConfig restrict_tree = 7;
+    message RestrictTreeConfig {
+        optional bool enabled = 1;
+        optional string optimal_namespaces_filename = 2;
+        
+        message AutotunerResult {
+            optional uint64 partition_idx = 1;
+            repeated string namespaces_per_partition = 2;
+        }
+    }
+    
     optional EmptyNamespaceMatchingMode empty_namespace_matching_mode = 1 [default = UNSPECIFIED];
     enum EmptyNamespaceMatchingMode {
         UNSPECIFIED = 0;
@@ -68,6 +78,14 @@ message V3RestrictsConfig {
     }
     
     repeated CustomRestrictNamespaceConfig custom_restrict_namespace_configs = 6;
+    
+    optional ExperimentalV2DynamicRestrictType experimental_v2_dynamic_restrict_type = 8 [default = LEGACY];
+    enum ExperimentalV2DynamicRestrictType {
+        LEGACY = 0;
+        DENSE_OPTIMIZED = 1;
+        SPARSE_OPTIMIZED = 2;
+        AUTO = 3;
+    }
 }
 
 message RestrictEvaluationInfo {

@@ -21,5 +21,6 @@ message SecurityPolicyRequirement {
     oneof kind {
         google.protobuf.Empty use_rpcsp = 1;
         google.protobuf.Empty use_central_repo_rpcsp = 2;
+        google.protobuf.Empty use_corp_web_mandatory_control_rpcsp = 3;
     }
 }

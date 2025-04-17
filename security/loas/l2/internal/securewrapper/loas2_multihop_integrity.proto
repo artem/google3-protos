@@ -5,6 +5,7 @@ package security_loas_l2;
 import "gfe/membrane/thinmint_attestation/boundary_proxy_attestation_signature.proto";
 import "net/proto2/bridge/proto/message_set.proto";
 import "security/thinmint/xuniverse/proto/core/notarization_wrapper.proto";
+import "third_party/boundary_proxy/proto_compare/annotation.proto";
 import public "google/protobuf/timestamp.proto";
 
 message LOAS2E2EIntegritySignature {
@@ -18,4 +19,43 @@ message LOAS2MultihopEncryptedExtensions {
     extend .proto2.bridge.MessageSet {
         optional LOAS2MultihopEncryptedExtensions message_set_extension = 525002207;
     }
+}
+
+enum MultihopIntegrityResult {
+    UNSPECIFIED_RESULT = 0;
+    SUCCEEDED = 1;
+    FAILED = 2;
+    SKIPPED = 3;
+}
+
+enum MultihopIntegrityAction {
+    UNSPECIFIED_ACTION = 0;
+    LOAS_WRAP = 1;
+    LOAS_UNWRAP = 2;
+}
+
+enum MultihopIntegrityRpcType {
+    UNSPECIFIED_RPC_TYPE = 0;
+    RPC_REQUEST = 1;
+    RPC_RESPONSE = 2;
+}
+
+enum MultihopIntegrityFailedReason {
+    UNSPECIFIED_FAILED_REASON = 0;
+    FAILED_TO_UNWRAP = 1;
+    FAILED_TO_PARSE_STUBBY_PAYLOAD = 2;
+    FAILED_TO_PROCESS_STUBBY_HEADER = 3;
+    FAILED_BECAUSE_SIGNATURE_ERROR = 4;
+    FAILED_BECAUSE_DELEGATION_TOKEN_FOUND = 5;
+    FAILED_BECAUSE_MISSING_TPC_UNIVERSE = 6;
+    FAILED_BECAUSE_PEER_MISMATCH = 7;
+    FAILED_TO_FORMAT_STUBBY_PAYLOAD = 8;
+}
+
+enum MultihopIntegritySkippedReason {
+    UNSPECIFIED_SKIPPED_REASON = 0;
+    SKIPPED_BECAUSE_PASSTHROUGH_ENABLED = 1;
+    SKIPPED_BECAUSE_MISSING_CROSS_UNIVERSE_SIGNING_CLIENT = 2;
+    SKIPPED_BECAUSE_NO_SIGNATURE_FOUND = 3;
+    SKIPPED_BECAUSE_BOUNDARY_PROXY_MESSAGE = 4;
 }

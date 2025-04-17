@@ -12,13 +12,13 @@ import "storage/datapol/annotations/proto/semantic_annotations.proto";
 option java_package = "com.google.gaia.data.proto.proto1api";
 
 message ChallengeData {
-    optional RescueCodeData rescue_code = 1;
+    optional RescueCodeData rescue_code = 1 [deprecated = true];
     optional UserSignInDigest user_sign_in_digest = 2;
-    optional LockdownState lockdown_state = 3;
+    optional LockdownState lockdown_state = 3 [deprecated = true];
     optional DeviceCentricAuthConfig device_centric_auth_config = 4;
     repeated ChallengeExperimentData challenge_experiment_data = 5;
     optional DevicePolicyConfig device_policy_config = 6;
-    repeated RecoveryContact recovery_contacts = 7;
+    repeated RecoveryContact recovery_contacts = 7 [deprecated = true];
     optional ChallengeConfigSettings challenge_config_settings = 8;
     repeated ShortLivedOtp short_lived_otp = 9;
     optional EmailVerificationData recovery_email_verification_data = 10;
@@ -84,7 +84,7 @@ message DeviceCentricAuthConfig {
 }
 
 message DevicePolicyConfig {
-    optional bool auto_select_devices = 1;
+    optional bool auto_select_devices = 1 [deprecated = true];
     
     optional PasswordOptionalState password_optional_state = 2;
     enum PasswordOptionalState {

@@ -2,6 +2,8 @@ syntax = "proto2";
 
 package thinmint;
 
+import "third_party/boundary_proxy/proto_compare/annotation.proto";
+
 option java_package = "com.google.protos.thinmint";
 
 message ThinMint {

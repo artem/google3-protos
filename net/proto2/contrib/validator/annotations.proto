@@ -7,6 +7,11 @@ import "net/proto2/proto/descriptor.proto";
 option objc_class_prefix = "PBV";
 option cc_enable_arenas = true;
 
+message Definitions {
+    repeated string feature = 1;
+    repeated OneOfGroup one_of_group = 2;
+}
+
 message FieldValidationRule {
     repeated string predicate = 2;
     repeated string element_predicate = 3;
@@ -20,11 +25,6 @@ message FieldValidationRule {
     }
 }
 
-message Definitions {
-    repeated string feature = 1;
-    repeated OneOfGroup one_of_group = 2;
-}
-
 message OneOfGroup {
     optional string name = 1;
     optional string is_required = 2;
@@ -34,12 +34,12 @@ message OneOfValidationRule {
     optional string is_required = 1;
 }
 
-extend .proto2.FieldOptions {
-    optional FieldValidationRule rule = 127878962;
-}
-
 extend .proto2.MessageOptions {
     optional Definitions defs = 127878962;
+}
+
+extend .proto2.FieldOptions {
+    optional FieldValidationRule rule = 127878962;
 }
 
 extend .proto2.OneofOptions {

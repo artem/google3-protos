@@ -4,6 +4,7 @@ package research_scam;
 
 import "google/api/inclusion.proto";
 import "research/scam/data_format/features.proto";
+import "research/scam/proto/packed_neighbors.proto";
 import "research/scam/proto/query_metadata.proto";
 
 message NearestNeighbors {
@@ -20,6 +21,7 @@ message NearestNeighbors {
         optional GenericFeatureVector gfv = 7;
     }
     
+    optional PackedNeighbors packed_neighbors = 8;
     optional NeighborSelectionOverride neighbor_selection_override = 5;
     optional GenericFeatureVector query = 6;
 }

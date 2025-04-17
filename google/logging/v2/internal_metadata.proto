@@ -8,8 +8,8 @@ import "google/api/visibility.proto";
 import "google/logging/data_governance.proto";
 import "google/logging/v2/grouping_metadata.proto";
 import "google/logging/v2/internal_entity_id.proto";
-
-option cc_enable_arenas = true;
+import "google/protobuf/timestamp.proto";
+import "storage/datapol/annotations/proto/semantic_annotations.proto";
 
 message InternalMetadata {
     bool matches_required_sink = 30;
@@ -19,8 +19,6 @@ message InternalMetadata {
     repeated int64 log_bucket_sinks = 6 [deprecated = true];
     repeated SinkInfo project_sink_info = 23;
     repeated LogBucketWithSinkInfo log_bucket_with_sink_info = 21;
-    bool log_bucket_default_sink = 7 [deprecated = true];
-    bool log_bucket_default_audit_sink = 8 [deprecated = true];
     bool log_bucket_resolve_all_bucket_configs = 19 [deprecated = true];
     repeated int64 log_notification_rules = 10;
     
@@ -76,8 +74,9 @@ message InternalMetadata {
     AnalyticsBackfillInfo analytics_backfill_info = 28;
     bool delayed_intentionally = 29;
     bool routed_to_non_billable_project = 31;
+    protobuf.Timestamp tp_buffer_time = 32;
     
-    reserved 1, 2, 24;
+    reserved 1, 2, 24, 7, 8;
 }
 
 message LogBucketWithSinkInfo {
@@ -119,6 +118,8 @@ message SinkInfo {
 }
 
 message AnalyticsBackfillInfo {
+    int64 backfill_watermark = 2;
+    
     oneof destination {
         string bucket_uuid = 1;
     }

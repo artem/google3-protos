@@ -34,7 +34,7 @@ message UrlMap {
     }
     
     HttpFrontendOptions http_config = 5;
-    RLSTarget rls = 6;
+    RLSTarget rls = 6 [deprecated = true];
 }
 
 message BackendOptions {

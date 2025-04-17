@@ -3,6 +3,7 @@ syntax = "proto2";
 package streamz;
 
 import "monitoring/streamz/api/data_model.proto";
+import "third_party/boundary_proxy/proto_compare/annotation.proto";
 
 service StreamzQuery {
     rpc Read(ReadRequest) returns (ReadResponse);

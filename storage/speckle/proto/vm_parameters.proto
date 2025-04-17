@@ -1,0 +1,275 @@
+syntax = "proto2";
+
+package speckle;
+
+import "google/protobuf/duration.proto";
+import "google/protobuf/timestamp.proto";
+import "storage/datapol/annotations/proto/semantic_annotations.proto";
+import "storage/speckle/proto/duet_ai.proto";
+import "storage/speckle/proto/enums.proto";
+import "storage/speckle/proto/feature_flags.proto";
+import "storage/speckle/proto/gca.proto";
+import "storage/speckle/proto/health_agent.proto";
+import "storage/speckle/proto/kernel_param.proto";
+import "storage/speckle/proto/ssl_config.proto";
+import "storage/speckle/proto/testing_parameters.proto";
+import "storage/speckle/proto/vm_environment.proto";
+
+message VmChemistParametersProto {
+    optional bool enabled = 1;
+    optional string service_name = 2;
+    optional string endpoint = 3;
+    optional string service_config_id = 4;
+}
+
+message RegionalVmParametersProto {
+    optional bool start_db_on_boot = 1;
+}
+
+message DynamicAdmissionControlProto {
+    optional bool enable = 1;
+    optional int32 mem_pr_th = 2;
+    optional string free_mem_th = 3;
+}
+
+message DataplaneMendelOverrides {
+    repeated string flag_overrides = 1;
+}
+
+message DpMendelOverrides {
+    map<string, string> flag_overrides = 1;
+}
+
+message ProxyParametersProto {
+    optional DynamicAdmissionControlProto dac = 1;
+    optional string tls_min_version = 2;
+}
+
+message VmOracleParametersProto {
+    optional string oracle_uri = 1;
+    optional string instance_agent_uri = 2;
+    optional string proxy_server_uri = 3;
+}
+
+message VmSqlServerParametersProto {
+    optional string instance_agent_uri = 1;
+    optional string sql_server_uri = 2;
+    optional string proxy_server_uri = 3;
+    optional bool block_outbound_replication_port = 4;
+    optional int32 swap_memory_usage_mb = 5 [default = 0];
+    optional int32 csa_swap_size_mb = 6 [default = 0];
+    optional string edition = 7;
+    optional string collation = 8;
+    optional string timezone = 9;
+    optional bool increase_docker_shared_mem = 10;
+    optional bool disable_t3979 = 12;
+    optional bool disable_sql_agent = 13;
+    optional bool enable_sys_ptrace = 14;
+    optional bool start_in_recovery_mode = 15;
+    optional int32 memory_limit_buffer_mb = 16;
+    optional string hostname = 17;
+    optional bool mount_tmp_directory_to_container = 18;
+    optional bool set_durability_flags = 19;
+    optional bool enable_alternatewritethrough = 20;
+}
+
+message VmServiceAgentParametersProto {
+    optional bool restore_from_backup = 1 [default = false];
+    optional string direct_path_mdb_group = 2;
+    repeated string direct_path_proxy_server_mdb_groups = 3;
+    repeated string direct_path_operation_agent_mdb_groups = 4;
+    repeated string direct_path_observability_agent_mdb_groups = 5;
+}
+
+message VmDbInsightsParametersProto {
+    optional bool enable = 1;
+}
+
+message VmSqlAgentParametersProto {
+    optional string service_name = 1;
+}
+
+message ExternalImageConfig {
+    optional string coroner_listener_uri = 1;
+}
+
+message VmComplianceSettings {
+    optional bool disable_coroner_support = 1 [default = false];
+    optional bool disable_producer_project_logging = 2 [default = false];
+    optional bool mask_user_data = 3 [default = false];
+}
+
+message VmInstanceStateCaptureConfig {
+    optional bool enable = 1;
+    optional google.protobuf.Duration probing_interval = 2;
+    optional int32 threshold_probe_count = 3;
+    optional int32 threshold_threads_running = 4;
+    optional int32 threshold_seconds_behind_source = 5;
+}
+
+message VmLocalSsdConfig {
+    optional int32 total_ssd_count = 1;
+    optional int64 total_size_gb = 2;
+    optional LocalSSDSetupMode setup_mode = 3;
+    optional bool null_encrypt_ssd = 4;
+}
+
+message PitrAgentConfig {
+    optional string action = 1;
+    optional string archive_gcs_uri = 2;
+    optional string restore_gcs_uri = 3;
+    optional int32 worker_count = 4;
+    optional int32 prestore_num = 5;
+    optional int32 prefetch_num = 6;
+    optional string mysql_pitr_mode = 7;
+}
+
+message DataplexIntegrationVMConfig {
+    optional bool is_extraction_enabled = 1 [default = true];
+    optional string extraction_schedule = 2;
+    optional google.protobuf.Duration extraction_query_timeout = 3;
+    optional DataplexEnvironment dataplex_environment = 4;
+}
+
+message VmParametersProto {
+    optional string realm = 1;
+    optional VmChemistParametersProto chemist = 2;
+    optional RegionalVmParametersProto regional = 5;
+    optional InjectedTestingParameters injected_testing_parameters = 6;
+    optional FeatureFlagsProto feature_flags = 10;
+    repeated string migration_bootcmd = 11;
+    optional ProxyParametersProto proxy = 12;
+    optional VmSqlServerParametersProto sql_server_parameters = 13;
+    optional bool report_to_gin = 14 [default = true];
+    optional VmOracleParametersProto oracle_parameters = 15;
+    optional string gcr_host = 16 [default = "gcr.io"];
+    optional VmServiceAgentParametersProto service_agent_parameters = 18;
+    optional bool install_instance_agent_at_startup = 19 [default = false];
+    optional VmDbInsightsParametersProto db_insights_parameters = 20;
+    optional VmEnvironmentProto vm_environment = 21;
+    optional VmSqlAgentParametersProto sqlagent = 22;
+    optional string project_name = 23;
+    optional string regional_instance_path = 24;
+    optional bool install_operation_agent_at_startup = 25 [default = false];
+    optional bool enable_active_directory_metrics = 26 [default = false];
+    optional bool enable_swap = 27 [default = false];
+    optional bool enable_storage_reservation = 28 [default = false];
+    optional bool enable_secure_boot = 29 [default = false];
+    optional bool deprecate_semisyncreporter = 30 [default = false];
+    optional bool enable_high_priority_agent = 31 [default = false];
+    optional bool install_coroner_listener_at_startup = 32 [default = false];
+    optional sfixed32 enable_mysql_catalog_update = 33 [default = 0];
+    optional bool enable_stored_procedure_framework = 34 [default = false];
+    optional ExternalImageConfig external_image_config = 35;
+    optional bool enable_stored_procedure_for_replication_management = 36 [default = false];
+    optional bool enable_mysql_skip_replication_error_proc = 136 [default = false];
+    optional sfixed32 enable_postgres_remote_ssl_for_replica_user = 37 [default = 0];
+    optional bool enable_mysql_audit_log_stored_procedure = 38 [default = false];
+    optional bool enable_mysql_cloudsqloneshot_service_user_usage = 41 [default = false];
+    optional bool deprecate_monitoring = 39 [default = false];
+    optional double mysql_parallel_log_uploading_memory_ratio = 40 [default = 0];
+    optional bool enable_ncsa_core_dump = 42 [default = false];
+    optional bool enable_event_log = 43 [default = false];
+    optional bool enable_disk_ownership_cp_outage = 44 [default = false];
+    optional bool enable_disk_stats_to_check_disk_servable = 45 [default = false];
+    optional VmComplianceSettings compliance_settings = 46;
+    optional bool enable_healthcheck_cached_grpc_stub = 47;
+    optional bool enable_healthcheck_db_state = 48;
+    optional bool enable_use_of_quoteid_to_quote_mysql_identifiers = 50 [default = false];
+    optional bool enable_healthcheck_replication_reporting = 51 [deprecated = true];
+    optional bool remove_non_running_hb_update = 52;
+    optional bool enable_cloud_profiler = 53;
+    optional bool enable_healthcheck_db_recovery_state = 54;
+    optional bool pass_timeout_in_check_db_server_agent_task = 55;
+    optional bool enable_healthcheck_restart_heartbeat_checkpoint = 56;
+    optional bool continue_uploading_log_file = 57;
+    optional VmInstanceStateCaptureConfig instance_state_capture_config = 58;
+    optional bool enable_read_heartbeat_for_zonal_replicas = 59;
+    optional bool containerd_managed_ncsa = 60;
+    optional bool containerd_managed_csa = 61;
+    optional sfixed32 mysql_lower_case_table_names = 62 [default = 0];
+    optional bool enable_mysql_appscan = 63 [default = false];
+    optional bool enable_separate_read_write_connections = 64;
+    optional bool remove_mysql_cap_raw = 65 [default = false];
+    optional bool remove_mysql_cap_admin = 66 [default = false];
+    optional google.protobuf.Duration patcher_period = 67;
+    optional bool enable_mysql_app_armor = 68 [default = false];
+    optional string local_ip_route = 69;
+    optional bool remove_postgres_cap_raw = 70 [default = false];
+    optional bool remove_postgres_cap_admin = 71 [default = false];
+    optional PitrAgentConfig pitr_agent_config = 72;
+    optional bool enable_postgres_app_armor = 73 [default = false];
+    optional bool enable_dppatcher = 74 [default = false];
+    optional VmLocalSsdConfig local_ssd_config = 75;
+    optional bool recreate_replicas_on_repd_failover = 76 [default = false];
+    optional bool recreate_replicas_on_primary_crash = 77 [default = false];
+    optional int64 swappiness_value = 78 [default = 60];
+    optional bool enable_metadata_extraction_for_dataplex = 79 [default = false];
+    optional DataplexIntegrationVMConfig dataplex_config = 80;
+    optional bool is_replacement_replica = 81 [default = false];
+    optional Edition edition = 82;
+    optional bool enable_healthcheck_override = 84 [default = false];
+    optional bool cmek_enabled = 85 [default = false];
+    optional int32 default_boot_disk_size_gb = 86;
+    optional google.protobuf.Duration patcher_check_ready_period = 87;
+    repeated string dppatcher_action_state_overrides = 88;
+    optional string replication_log_mysql_gcs_timeline_id = 90;
+    optional bool event_scheduler_disabled = 91 [default = false];
+    optional bool disable_mysql_event_scheduler = 92 [default = false];
+    optional bool trim_comments_in_mysql_flag_value = 93 [default = false];
+    optional string passwords_leak_check_service_endpoint = 94;
+    optional int64 max_db_log_size = 96;
+    optional bool enable_cloud_profiler_for_proxy_server = 97;
+    optional bool enable_set_innodb_buffer_pool_size = 98 [default = false];
+    optional bool report_to_journal_events = 99;
+    optional bool auto_memory_profiling = 100 [default = false];
+    optional bool enable_dp_experiments_mysql = 101;
+    optional bool enable_dp_experiments_postgres = 102;
+    optional bool chunk_large_binlog_events_for_pitr = 103 [default = false];
+    optional bool launch_observability_agent = 104;
+    optional bool enable_modern_observability_telemetry_collection_and_export = 144;
+    optional bool enable_use_source_master_status_with_gtid = 105 [default = false];
+    optional bool enable_skip_new_binlog = 106 [default = false];
+    optional bool launch_health_agent = 107;
+    optional bool enable_core_file_for_mysqld_crash = 108 [default = false];
+    optional bool enable_instance_agent_no_containers = 109 [default = false];
+    optional bool enable_ml_agent = 110 [default = false];
+    optional bool enable_db_heartbeat_plugin_consumer = 111;
+    optional google.protobuf.Timestamp creation_timestamp = 112;
+    optional bool enable_file_based_dppatcher = 113 [default = false];
+    optional bool ignore_heartbeat_table_in_replication = 114;
+    optional bool enable_large_buffer_for_pitr_gcs_writer = 115 [default = false, deprecated = true];
+    optional bool use_large_memory_limit_for_pitr_restore = 116;
+    optional bool enable_performance_schema_default_on_8018 = 117 [default = true];
+    optional bool enable_performance_schema_default_on_small_ram = 118 [default = true, deprecated = true];
+    optional int64 observability_agent_memory_limit_kb_override = 119;
+    optional bool enable_no_strict_sql_mode_for_flags_update = 120 [default = false];
+    optional bool enable_grpc_server_on_zonal_vm = 121;
+    optional DuetAIInstanceConfig duetai_instance_config = 122;
+    optional bool enable_iam_group_auth_agent = 123 [default = false];
+    optional bool start_steward_on_disk_attached = 124;
+    optional bool enable_network_config_for_addon_psc = 125 [default = false];
+    optional string postgres_wal_seg_size = 126;
+    optional bool log_live_migration_to_event_log = 127;
+    optional bool ignore_queries_in_monitoring_agent = 128;
+    optional bool enable_dp_experiments_using_live_config = 129;
+    optional string dataplane_experiments_environment = 130;
+    optional bool enable_performance_schema_default_on_12_gb_ram = 131 [default = true];
+    optional VmHealthAgentConfig health_agent_config = 132;
+    optional SslParamsProto.CaMode server_ca_mode = 133;
+    optional string primary_dns_name = 134;
+    optional string primary_ip_address_for_replica = 135;
+    optional bool restart_ia_first_during_ncsa_init = 137 [default = false];
+    optional DpMendelOverrides dp_mendel_overrides = 138 [deprecated = true];
+    optional bool enable_pgbouncer = 139 [default = false, deprecated = true];
+    optional DataplaneMendelOverrides dataplane_mendel_overrides = 140;
+    optional bool is_backup_verification_instance = 141 [default = false];
+    optional bool enable_outbound_for_psc_only = 142;
+    optional bool use_prod_helm_config = 143 [default = false];
+    optional string observability_resource_id = 145;
+    optional KernelParams kernel_param_overrides = 146;
+    optional GCAInstanceConfig gca_instance_config = 147;
+    optional int32 non_creation_critical_agents_delay_seconds = 148;
+    
+    reserved 7, 8, 9, 17, 83, 89, 95;
+}

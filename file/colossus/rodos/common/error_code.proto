@@ -6,6 +6,7 @@ import "util/task/contrib/proto_status/proto_status.proto";
 
 enum ErrorCode {
     THROTTLED_IN_CLIENT = 1;
+    CLIENT_TOO_MANY_IN_FLIGHT_RPCS = 22;
     SERVER_FORCED_FALLBACK = 3;
     SCHEDULER_BUFFER_FULL = 12;
     SCHEDULER_BEST_EFFORT_BUFFER_FULL = 19;

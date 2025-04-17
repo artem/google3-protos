@@ -74,6 +74,8 @@ message Session {
     optional DeviceId device_id = 2;
     optional string dusi = 3;
     optional bool is_collocated = 4;
+    optional google.protobuf.Timestamp homegraph_link_time = 5;
+    optional google.protobuf.Timestamp dul_link_time = 6;
 }
 
 enum State {

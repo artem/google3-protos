@@ -3,7 +3,6 @@ syntax = "editions";
 package logging.proto;
 
 import "monitoring/logging/base/proto/missing_data.proto";
-import "perftools/tracing/proto/process_info.proto";
 import "perftools/tracing/proto/tracecontext.proto";
 import "privacy/ptoken/public/core/ptoken.proto";
 import "storage/datapol/annotations/proto/semantic_annotations.proto";
@@ -21,12 +20,11 @@ message Event {
     repeated Value value = 7;
     optional RequestContext request_context = 8;
     repeated KeyValue log_context = 33;
-    optional perftools.tracing.ProcessInfo process_info = 34 [deprecated = true];
     optional remote_debug_logging.MissingData missing_data = 35;
     
     extensions 1000 to 1100, 2000 to 2100;
     
-    reserved 1;
+    reserved 1, 34;
 }
 
 message Value {
@@ -37,6 +35,8 @@ message Value {
         uint64 u64 = 3;
         TaggedMessage proto = 10;
     }
+    
+    extensions 1024 to 2047;
     
     reserved 4, 5, 8, 15;
 }

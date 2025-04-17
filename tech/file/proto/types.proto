@@ -210,8 +210,6 @@ message EncryptionProperties {
     optional bytes wrapped_key = 4;
     optional fixed32 wrapped_key_crc32c = 15;
     optional bytes encryption_key_hash = 16;
-    optional bytes wrapped_checksum_key = 17;
-    optional fixed32 wrapped_checksum_key_crc32c = 18;
     optional int64 ciphertext_length = 5 [jstype = JS_STRING];
     optional bytes authentication_code = 6;
     optional fixed32 plaintext_crc32c = 19;
@@ -221,7 +219,7 @@ message EncryptionProperties {
     optional int32 key_type = 11;
     optional fixed32 crc32c = 12;
     
-    reserved 9;
+    reserved 9, 17, 18;
 }
 
 message StatOptions {

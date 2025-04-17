@@ -1,0 +1,9 @@
+syntax = "editions";
+
+package colossus;
+
+import "google/protobuf/any.proto";
+
+message Expectation {
+    repeated google.protobuf.Any extended_attribute = 1;
+}

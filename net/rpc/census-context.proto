@@ -2,7 +2,9 @@ syntax = "proto2";
 
 package rpc;
 
-option cc_enable_arenas = true;
+import "security/loas/l2/internal/securewrapper/multihop_clients/boundary_proxy.proto";
+import "third_party/boundary_proxy/proto_compare/annotation.proto";
+
 option java_multiple_files = true;
 option java_outer_classname = "CensusContextUnused";
 option java_package = "com.google.net.rpc.proto";

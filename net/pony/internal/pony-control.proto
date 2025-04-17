@@ -23,6 +23,7 @@ message SetupClientRequest {
     optional string borg_job_name = 10;
     optional string borg_user_name = 11;
     optional int32 borg_taskid = 12 [default = 0];
+    optional int64 borg_task_uid = 66 [default = 0];
     optional string borg_container_name = 42;
     optional int32 connection_credits = 13 [default = 1000];
     optional EndpointConfig.EngineHint engine_hint = 14;
@@ -181,6 +182,7 @@ message AttachFlashRegionResponse {
 message AttachRegionRequestXL {
     optional int32 version = 1 [default = 1];
     optional uint64 size = 2 [default = 0];
+    optional uint64 offset = 3 [default = 0];
     
     extend usps.broker.rpc.BrokerMessage {
         optional AttachRegionRequestXL ext = 219501901;
@@ -251,6 +253,17 @@ message AttachPcieRegionRequest {
         optional uint32 pasid = 5;
         optional bool tph = 7;
         
+        optional LceRequester lce_requester = 8 [default = LAN_AND_OR_RDMA];
+        enum LceRequester {
+            LAN_AND_OR_RDMA = 0;
+            NVME = 1;
+            LCE = 2;
+            APERTURE_0 = 3;
+            FAST_PATH_2 = 4;
+            APERTURE_1 = 5;
+            ATE = 6;
+        }
+        
         reserved 6;
     }
     
@@ -262,6 +275,7 @@ message AttachPcieRegionRequest {
 message AttachPcieRegionResponse {
     optional int32 version = 1 [default = 1];
     optional uint32 region = 2 [default = 0xffffffff];
+    optional TrimRegion trim_region = 3;
     
     extend usps.broker.rpc.BrokerMessage {
         optional AttachPcieRegionResponse ext = 321199997;
@@ -391,6 +405,7 @@ message NumEnginesResponse {
 
 message SizeSharedAppaloosaTeamRequest {
     optional int32 version = 1 [default = 1];
+    optional bool offloaded_pony_hint = 2 [default = false];
     
     extend usps.broker.rpc.BrokerMessage {
         optional SizeSharedAppaloosaTeamRequest ext = 454907568;
@@ -408,6 +423,7 @@ message SizeSharedAppaloosaTeamResponse {
 
 message SizeExclusiveAppaloosaTeamRequest {
     optional int32 version = 1 [default = 1];
+    optional bool offloaded_pony_hint = 2 [default = false];
     
     extend usps.broker.rpc.BrokerMessage {
         optional SizeExclusiveAppaloosaTeamRequest ext = 454907570;
@@ -427,6 +443,7 @@ message UseSharedAppaloosaTeamRequest {
     optional int32 version = 1 [default = 1];
     optional EndpointConfig.ClientType client_type = 2 [default = UNKNOWN];
     optional int32 endpoint_version = 3 [default = 0];
+    optional bool offloaded_pony_hint = 4 [default = false];
     
     extend usps.broker.rpc.BrokerMessage {
         optional UseSharedAppaloosaTeamRequest ext = 506813131;
@@ -547,6 +564,7 @@ message StationExistenceRequest {
     optional string engine_id = 2;
     optional uint32 station_handle = 3;
     optional string client_details = 4;
+    optional EndpointConfig.ClientType client_type = 5;
     
     extend usps.broker.rpc.BrokerMessage {
         optional StationExistenceRequest ext = 400207028;
@@ -566,6 +584,13 @@ message EnableZeroCopyRxRequest {
     optional int32 version = 1 [default = 1];
     optional uint32 region_handle = 2;
     repeated uint64 buffer_offsets = 3;
+    
+    optional ZeroCopyRxMode zero_copy_rx_mode = 5 [default = SIZE8K];
+    enum ZeroCopyRxMode {
+        UNKNOWN = 0;
+        SIZE8K = 1;
+        SIZE4K = 2;
+    }
     
     extend usps.broker.rpc.BrokerMessage {
         optional EnableZeroCopyRxRequest ext = 525000022;
@@ -675,6 +700,8 @@ message NegotiateFlavorRequest {
     optional uint64 command_pages = 4;
     optional uint32 completion_queues = 5;
     optional uint64 completion_pages = 6;
+    optional EndpointConfig.ClientType client_type = 7;
+    optional string borg_user_name = 8;
     
     extend usps.broker.rpc.BrokerMessage {
         optional NegotiateFlavorRequest ext = 464073848;
@@ -684,9 +711,67 @@ message NegotiateFlavorRequest {
 message NegotiateFlavorResponse {
     optional int32 version = 1 [default = 1];
     repeated EndpointFlavor accepted = 2;
+    optional EndpointConfig.OffloadMode offload_mode_hint = 3;
     
     extend usps.broker.rpc.BrokerMessage {
         optional NegotiateFlavorResponse ext = 464073849;
+    }
+}
+
+message GetImmutableEndpointIdRequest {
+    optional int32 version = 1 [default = 1];
+    
+    extend usps.broker.rpc.BrokerMessage {
+        optional GetImmutableEndpointIdRequest ext = 525000053;
+    }
+}
+
+message GetImmutableEndpointIdResponse {
+    optional int32 version = 1 [default = 1];
+    optional int64 immutable_endpoint_id = 2;
+    
+    extend usps.broker.rpc.BrokerMessage {
+        optional GetImmutableEndpointIdResponse ext = 525000054;
+    }
+}
+
+message SetupImmutableEndpointRequest {
+    optional int32 version = 1 [default = 1];
+    optional int64 immutable_endpoint_id = 2;
+    
+    extend usps.broker.rpc.BrokerMessage {
+        optional SetupImmutableEndpointRequest ext = 525000055;
+    }
+}
+
+message SetupImmutableEndpointResponse {
+    optional int32 version = 1 [default = 1];
+    
+    extend usps.broker.rpc.BrokerMessage {
+        optional SetupImmutableEndpointResponse ext = 525000056;
+    }
+}
+
+message ListNetworkInterfacesRequest {
+    optional int32 version = 1 [default = 1];
+    
+    extend usps.broker.rpc.BrokerMessage {
+        optional ListNetworkInterfacesRequest ext = 525000069;
+    }
+}
+
+message ListNetworkInterfacesResponse {
+    optional int32 version = 1 [default = 1];
+    
+    repeated InterfaceInfo interfaces = 2;
+    message InterfaceInfo {
+        optional string interface_name = 1;
+        optional bool shared = 2;
+        optional bool offloadable = 3;
+    }
+    
+    extend usps.broker.rpc.BrokerMessage {
+        optional ListNetworkInterfacesResponse ext = 525000070;
     }
 }
 

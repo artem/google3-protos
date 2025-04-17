@@ -25,6 +25,14 @@ message Censusz {
         optional Stats tick_count_delta = 1;
         optional Stats rsd_tick_count_delta = 2;
         optional Stats stuck_pc_count_delta = 3;
+        
+        optional ProfileHandlerStats profile_handler_stats = 4;
+        message ProfileHandlerStats {
+            optional double profiler_period_millis = 1;
+            optional Stats dropped_ticks_delta = 2;
+            optional Stats register_thread_calls_delta = 3;
+            optional Stats register_thread_failures_delta = 4;
+        }
     }
     
     repeated UserDefinedSinkStats user_defined_sink_stats = 5;

@@ -3,6 +3,7 @@ syntax = "proto2";
 package security.context;
 
 import public "security/context/proto/loggable_peer.proto";
+import "google/api/inclusion.proto";
 import "logs/proto/logs_annotations/logs_annotations.proto";
 import "logs/proto/security/credentials/loggable_end_user_credentials.proto";
 import "security/credentials/proto/authenticator.proto";

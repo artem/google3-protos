@@ -1,4 +1,4 @@
-syntax = "proto2";
+syntax = "editions";
 
 package speckle_dogfish.dogfish_proto;
 
@@ -12,6 +12,8 @@ import "storage/speckle/dogfish/proto/client-type.proto";
 import "storage/speckle/dogfish/proto/database-type.proto";
 import "storage/speckle/dogfish/proto/dogfish-checksum.proto";
 import "storage/speckle/dogfish/proto/shard-state.proto";
+import "third_party/java/protobuf/java_features.proto";
+import "third_party/protobuf/cpp_features.proto";
 
 service Dogfish {
     rpc WriteLogRecord(WriteLogRecordRequest) returns (stream WriteLogRecordResponse);
@@ -45,7 +47,7 @@ message BlockInsertion {
 message RelationFetch {
     optional uint64 version_lsn = 1;
     optional RelFileId source_rnode = 2;
-    repeated int64 source_blocks = 3 [packed = true];
+    repeated int64 source_blocks = 3;
     optional int32 source_shard = 4;
     optional uint32 target_database_id = 5;
     optional int32 target_shard = 6;
@@ -131,6 +133,12 @@ message LogRecord {
     optional Checksum checksum = 10;
     optional DatabaseType postgres_version = 11;
     
+    repeated Experiment experiments = 12;
+    enum Experiment {
+        EXPERIMENT_UNSPECIFIED = 0;
+        TOMBSTONE_ALL_BLOCKS_IN_RANGE = 1;
+    }
+    
     oneof record {
         bytes postgres_record = 4 [ctype = CORD];
         GenericLogRecord generic_record = 5;
@@ -157,6 +165,11 @@ message Header {
     optional BuildInfo client_build_info = 6;
     map<string, bool> ucp_experiments = 7;
     optional VMClientInfo vm_client_info = 8;
+    
+    enum UcpExperiment {
+        UCP_EXPERIMENT_UNSPECIFIED = 0;
+        REDUCE_DOGFISH_ARCHIVER_CHECKPOINT_FREQUENCY = 1;
+    }
 }
 
 message RiegeliLogRecordBatches {
@@ -311,10 +324,10 @@ message ReadDirResponse {
 
 message ShardReplicaHeartbeatRequest {
     optional Header header = 1;
-    optional uint64 input_buffer_trim_lsn = 2;
-    optional uint64 low_watermark_lsn = 3;
+    optional uint64 input_buffer_trim_lsn = 2 [deprecated = true];
+    optional uint64 low_watermark_lsn = 3 [deprecated = true];
     optional uint64 max_seal_through_lsn = 4;
-    repeated uint64 shard_snapshot_lsns = 5 [packed = true];
+    repeated uint64 shard_snapshot_lsns = 5;
 }
 
 message ShardReplicaHeartbeatResponse {
@@ -331,6 +344,7 @@ message ShardReplicaPingResponse {
 
 message ShardReplicaPingRequest {
     optional Header header = 1;
+    optional google.protobuf.Timestamp ping_timestamp = 2;
 }
 
 message FillGapRequest {
@@ -441,6 +455,8 @@ message StatusCodeDetails {
     enum Source {
         SOURCE_UNKNOWN = 0;
         KEK = 1;
+        BACKUP = 2;
+        KMS_SERVICE_ACCOUNT = 3;
     }
     
     extend .proto2.bridge.MessageSet {

@@ -119,6 +119,7 @@ message LimitEntry {
         TOTAL_CLIENTS_PER_FILE = 7;
         LOCAL_UNIQUE_FILES_PER_USER = 11;
         REMOTE_UNIQUE_FILES_PER_USER = 12;
+        LOCAL_UNIQUE_NON_EXISTENT_FILES_PER_USER = 13;
     }
     
     optional string status_string = 3;

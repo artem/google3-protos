@@ -1,0 +1,23 @@
+syntax = "editions";
+
+package experiments;
+
+message PropertyDefinition {
+    optional string name = 1;
+    
+    optional PropertyValueType type = 2;
+    enum PropertyValueType {
+        INVALID = 0;
+        BOOL = 1;
+        INT64 = 2;
+        FLOAT64 = 3;
+        STRING = 4;
+        STRING_SET = 5;
+        INT64_SET = 6;
+        VERSION = 7;
+    }
+    
+    repeated PropertyValueType arg_types = 3;
+    optional string location = 4;
+    repeated string injection_points = 5;
+}

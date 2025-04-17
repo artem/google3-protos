@@ -1,17 +1,16 @@
-syntax = "proto3";
+syntax = "editions";
 
 package pgraph.attributes;
 
 import "privacy/compliance_controls/proto/core_platform_service.proto";
 import "privacy/data_governance/attributes/proto/approval.proto";
+import "privacy/data_governance/attributes/proto/search.proto";
 import "privacy/pgraph/proto/attributes/data_content.proto";
 
 option java_multiple_files = true;
 
 message Dma52Scope {
-    oneof _contains_data_in_scope {
-        bool contains_data_in_scope = 1;
-    }
+    optional bool contains_data_in_scope = 1;
 }
 
 message Approvals {
@@ -30,7 +29,7 @@ message Dma52AggregateComplianceControls {
 }
 
 message NoAdsAccess {
-    DataContent contains_data_in_scope = 1;
+    optional DataContent contains_data_in_scope = 1;
     
     repeated Reason reasons = 2;
     enum Reason {
@@ -42,7 +41,7 @@ message NoAdsAccess {
 }
 
 message BcidMlVerification {
-    SoftwareLevel bcid_policy_level = 1;
+    optional SoftwareLevel bcid_policy_level = 1;
     enum SoftwareLevel {
         LEVEL_UNKNOWN = 0;
         L0_UNPROTECTED_ARTIFACT = 1;
@@ -51,16 +50,22 @@ message BcidMlVerification {
         L3_CHANGES_AUTHORIZED = 300;
     }
     
-    VerificationStatus verification_status = 2;
+    optional VerificationStatus verification_status = 2;
     enum VerificationStatus {
         NOT_SPECIFIED = 0;
         PASSED = 1;
         FAILED = 2;
+        ERROR = 3;
     }
+    
+    optional string verification_summary = 3;
+    optional string policy_source_file = 4;
+    repeated string violations = 5;
+    optional string rejection_message = 6;
 }
 
 message BcidPolicyDetails {
-    Level bcid_policy_level = 1;
+    optional Level bcid_policy_level = 1;
     enum Level {
         BCID_LEVEL_UNSPECIFIED = 0;
         L0_DATA_PROTECTION_NOT_REQUIRED = 50;
@@ -73,9 +78,25 @@ message BcidPolicyDetails {
         NO_LEVEL = 9999;
     }
     
-    bool enforcement_enabled = 2;
-    bool configured_policy_exists = 3;
-    bool deny_all_jobs_configured = 4;
-    string policy_file_path = 5;
-    bool asserted_config_provenance_enabled = 6;
+    optional bool enforcement_enabled = 2;
+    optional bool configured_policy_exists = 3;
+    optional bool deny_all_jobs_configured = 4;
+    optional string policy_file_path = 5;
+    optional bool asserted_config_provenance_enabled = 6;
+}
+
+message AssistantSpeculativeWritesStatus {
+    optional privacy.data_governance.attributes.Search.DataSpecs.AssistantSpeculativeWritesStatus assistant_speculative_writes_status = 1;
+}
+
+message WorkspaceAIPrivacyScope {
+    optional bool contains_data_in_scope = 1;
+    
+    repeated Reason reasons = 2;
+    enum Reason {
+        REASON_UNSPECIFIED = 0;
+        IS_WORKSPACE_ASSOCIATED_NOT_EXEMPTED = 1;
+        IS_WORKSPACE_ASSOCIATED_NOT_FILTERED = 2;
+        CONTAINS_WORKSPACE_DATA_MIXED = 3;
+    }
 }

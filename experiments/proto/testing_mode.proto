@@ -1,0 +1,13 @@
+syntax = "proto2";
+
+package experiments.propagation;
+
+option go_package = "google.golang.org/genproto/experiments/propagation";
+option java_package = "com.google.experiments.propagation";
+
+enum TestingMode {
+    TESTING_MODE_UNSPECIFIED = 0;
+    TESTING_MODE_ALL_OFF = 1;
+    TESTING_MODE_ALL_ON = 2;
+    TESTING_MODE_LAUNCHES_WITH_TRAFFIC = 3;
+}

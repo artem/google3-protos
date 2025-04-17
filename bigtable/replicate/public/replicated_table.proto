@@ -1,51 +1,55 @@
-syntax = "proto2";
+syntax = "editions";
 
 package bigtable;
 
 import "bigtable/proto/bigtable.proto";
 import "bigtable/proto/bigtable_internal.proto";
 import "bigtable/proto/bti_request.proto";
+import "bigtable/proto/movereplica_internal.proto";
 
 option java_package = "com.google.bigtable.protos";
 
 message ReplicatedTableMetadata {
-    required string repl_table_spec = 1;
+    optional string repl_table_spec = 1;
     repeated string administrator = 2;
     repeated string writer = 3;
     repeated string puller = 4;
 }
 
 message ReplicaMetadata {
-    required string table_cell_and_key = 1;
-    required uint64 table_version = 2;
-    required bool active = 3;
-    required bool master = 4;
+    optional string table_cell_and_key = 1;
+    optional uint64 table_version = 2;
+    optional bool active = 3;
+    optional bool master = 4;
     optional bool has_logs = 5 [default = true];
     optional uint64 max_incarnation = 6;
     optional uint64 min_pull_incarnation = 7;
 }
 
 message ProxyConfig {
-    required string name = 1;
+    optional string name = 1;
     
-    repeated group ProxySet = 2 {
-        required string destination_cell = 3;
+    repeated ProxySet proxyset = 2;
+    message ProxySet {
+        optional string destination_cell = 3;
         repeated string source_cell = 4;
         repeated string proxy_cell = 5;
     }
 }
 
 message BTIR_ReplicatedTableMetadata {
-    required string repl_cell_name = 1;
-    required int64 repl_cell_id = 2;
-    required string repl_table_name = 3;
-    required int64 repl_table_id = 4;
-    required int64 next_repl_family_id = 5;
+    optional string repl_cell_name = 1;
+    optional int64 repl_cell_id = 2;
+    optional string repl_table_name = 3;
+    optional int64 repl_table_id = 4;
+    optional int64 next_repl_family_id = 5;
+    optional string global_lock = 35;
     optional ChubbyCompressed chubby_compressed = 22;
     
-    repeated group Family = 6 {
-        required string name = 7;
-        required int64 repl_family_id = 8;
+    repeated Family family = 6;
+    message Family {
+        optional string name = 7;
+        optional int64 repl_family_id = 8;
         optional int64 new_repl_family_id = 30;
         repeated ReplicaMetadata replica = 9;
         optional string family_lock = 10;
@@ -55,10 +59,11 @@ message BTIR_ReplicatedTableMetadata {
     optional string proxy_config = 13 [default = "default", deprecated = true];
     optional ProxyConfig proxy_configuration = 28;
     
-    repeated group FormerMaster = 15 {
-        required string cell = 16;
-        required uint64 table_version = 17;
-        required uint64 max_incarnation = 18;
+    repeated FormerMaster formermaster = 15;
+    message FormerMaster {
+        optional string cell = 16;
+        optional uint64 table_version = 17;
+        optional uint64 max_incarnation = 18;
     }
     
     repeated string administrator = 11;
@@ -67,10 +72,11 @@ message BTIR_ReplicatedTableMetadata {
     optional int32 version = 14;
     repeated SourceIncarnation live_incarnations = 21;
     
-    repeated group PartialReplicas = 23 {
-        required string source_id = 24;
-        required string start_row = 25;
-        required string limit_row = 26;
+    repeated PartialReplicas partialreplicas = 23;
+    message PartialReplicas {
+        optional string source_id = 24;
+        optional string start_row = 25;
+        optional string limit_row = 26;
     }
     
     optional bool use_per_replica_tiebreakers = 31 [default = false];
@@ -84,24 +90,7 @@ message BTIR_ReplicatedTableMetadata {
     
     repeated string unavailable_source_ids = 27;
     optional SpannerProxyConfig spanner_config = 29;
-    
-    repeated Move moved_replicas = 34;
-    message Move {
-        optional string from_replica_source_id = 1;
-        optional string to_replica_source_id = 2;
-        optional uint64 from_incarnation = 3;
-        optional uint64 to_incarnation = 4;
-        
-        optional Status status = 5 [default = UNSET];
-        enum Status {
-            UNSET = 0;
-            NOT_STARTED = 1;
-            STARTED = 2;
-            COMPLETED = 3;
-        }
-        
-        optional int64 created_at = 6;
-    }
+    repeated movereplica.Move moved_replicas = 34;
     
     enum Version {
         LEGACY = 0;
@@ -109,70 +98,71 @@ message BTIR_ReplicatedTableMetadata {
 }
 
 message BTIR_ReplicatedCellMetadata {
-    required int64 repl_cell_id = 1;
-    required int64 next_repl_table_id = 2;
+    optional int64 repl_cell_id = 1;
+    optional int64 next_repl_table_id = 2;
     repeated ProxyConfig proxy_config = 3 [deprecated = true];
     optional ChubbyCompressed chubby_compressed = 4;
 }
 
 message BTIR_SystemMetadata {
-    required int64 next_repl_cell_id = 1;
+    optional int64 next_repl_cell_id = 1;
 }
 
 message BTIR_FamilyHeader {
-    required string repl_cell_name = 1;
-    required int64 repl_cell_id = 2;
-    required string repl_table_name = 3;
-    required int64 repl_table_id = 4;
-    required string table_spec = 5;
-    required uint64 table_version = 6;
+    optional string repl_cell_name = 1;
+    optional int64 repl_cell_id = 2;
+    optional string repl_table_name = 3;
+    optional int64 repl_table_id = 4;
+    optional string table_spec = 5;
+    optional uint64 table_version = 6;
     repeated string family = 8;
     optional int64 generation = 9;
     
-    optional group PartialReplica = 10 {
-        required bytes start_row = 11;
-        required bytes limit_row = 12;
+    optional PartialReplica partialreplica = 10;
+    message PartialReplica {
+        optional bytes start_row = 11;
+        optional bytes limit_row = 12;
     }
 }
 
 message BTIR_CreateReplTableArgs {
-    required BTI_Request request = 1;
-    required ReplicatedTableMetadata repl_metadata = 2;
+    optional BTI_Request request = 1;
+    optional ReplicatedTableMetadata repl_metadata = 2;
     optional bool use_per_replica_tiebreakers = 3 [default = false];
 }
 
 message BTIR_DeleteReplTableArgs {
-    required BTI_Request request = 1;
-    required string repl_cell_name = 2;
-    required int64 repl_cell_id = 3;
-    required string repl_table_name = 4;
-    required int64 repl_table_id = 5;
+    optional BTI_Request request = 1;
+    optional string repl_cell_name = 2;
+    optional int64 repl_cell_id = 3;
+    optional string repl_table_name = 4;
+    optional int64 repl_table_id = 5;
     optional bool ok_to_delete_replication_config = 6 [default = false];
 }
 
 message BTIR_AddUnavailableReplicaArgs {
-    required BTI_Request request = 1;
-    required string repl_cell_name = 2;
-    required int64 repl_cell_id = 3;
-    required string repl_table_name = 4;
-    required int64 repl_table_id = 5;
-    required string unavailable_source_id = 6;
+    optional BTI_Request request = 1;
+    optional string repl_cell_name = 2;
+    optional int64 repl_cell_id = 3;
+    optional string repl_table_name = 4;
+    optional int64 repl_table_id = 5;
+    optional string unavailable_source_id = 6;
 }
 
 message BTIR_ReplicateFamilyArgs {
-    required BTI_Request request = 1;
-    required BTIR_FamilyHeader repl_header = 2;
+    optional BTI_Request request = 1;
+    optional BTIR_FamilyHeader repl_header = 2;
     optional bool enable_multi_master_ordering = 3 [default = false];
 }
 
 message BTIR_AddReplicaArgs {
-    required BTI_Request request = 1;
-    required BTIR_FamilyHeader repl_header = 2;
+    optional BTI_Request request = 1;
+    optional BTIR_FamilyHeader repl_header = 2;
     repeated FamilyDescription family = 3;
     
     repeated FamilyReplicaConfig family_replica_config = 17;
     message FamilyReplicaConfig {
-        required FamilyDescription family = 1;
+        optional FamilyDescription family = 1;
         optional int64 local_family_id = 2;
         optional LocalityGroup locality_group = 3;
         repeated LocalityGroup age_locality_group = 4;
@@ -180,7 +170,7 @@ message BTIR_AddReplicaArgs {
         optional int64 min_logical_clock = 18;
     }
     
-    required bool master = 4;
+    optional bool master = 4;
     optional bool family_is_complete = 16 [default = false];
     optional SpannerProxyConfig spanner_proxy_config = 5;
     optional bool allow_partial_replica = 18 [default = false];
@@ -190,8 +180,8 @@ message BTIR_AddReplicaArgs {
 }
 
 message BTIR_UpdateReplicaArgs {
-    required BTI_Request request = 1;
-    required BTIR_FamilyHeader repl_header = 2;
+    optional BTI_Request request = 1;
+    optional BTIR_FamilyHeader repl_header = 2;
     optional bool active = 3;
     optional bool master = 4;
     optional bool has_logs = 5;
@@ -203,27 +193,27 @@ message BTIR_UpdateReplicaArgs {
 }
 
 message BTIR_RemoveReplicaArgs {
-    required BTI_Request request = 1;
-    required BTIR_FamilyHeader repl_header = 2;
+    optional BTI_Request request = 1;
+    optional BTIR_FamilyHeader repl_header = 2;
     optional bool always_keep_replica_data = 3 [default = false];
     optional bool only_remove_single_replica = 4 [default = false];
 }
 
 message BTIR_UpdateGlobalMetadataArgs {
-    required BTI_Request request = 1;
-    required int64 chubby_generation = 2;
-    required BTIR_ReplicatedTableMetadata new_metadata = 3;
+    optional BTI_Request request = 1;
+    optional int64 chubby_generation = 2;
+    optional BTIR_ReplicatedTableMetadata new_metadata = 3;
     optional bool allow_fastpath_replica_config = 4 [default = false];
 }
 
 message BTIR_IncrementIncarnationArgs {
-    required BTI_Request request = 1;
-    required BTIR_FamilyHeader repl_header = 2;
+    optional BTI_Request request = 1;
+    optional BTIR_FamilyHeader repl_header = 2;
 }
 
 message BTIR_EnableMayProxyArgs {
-    required BTI_Request request = 1;
-    required BTIR_FamilyHeader repl_header = 2;
+    optional BTI_Request request = 1;
+    optional BTIR_FamilyHeader repl_header = 2;
 }
 
 message BTIR_AssignReplicaTiebreakerArgs {
@@ -232,21 +222,21 @@ message BTIR_AssignReplicaTiebreakerArgs {
 }
 
 message BTIR_UnreplicateTableArgs {
-    required BTI_Request request = 1;
-    required string table_spec = 2;
+    optional BTI_Request request = 1;
+    optional string table_spec = 2;
 }
 
 message BTIR_FamilyIDMigrationArgs {
-    required BTI_Request request = 1;
-    required string table_name = 2;
-    required uint64 table_version = 3;
-    required BTI_TableMetadata.BatchReplication.FamilyIDMigration.State family_id_migration_state = 4;
+    optional BTI_Request request = 1;
+    optional string table_name = 2;
+    optional uint64 table_version = 3;
+    optional BTI_TableMetadata.BatchReplication.FamilyIDMigration.State family_id_migration_state = 4;
 }
 
 message BTIR_GetFamilyIDMigrationStatusArgs {
-    required BTI_Request request = 1;
-    required string table_name = 2;
-    required uint64 table_version = 3;
+    optional BTI_Request request = 1;
+    optional string table_name = 2;
+    optional uint64 table_version = 3;
 }
 
 message BTIR_MoveReplicaInitRequest {

@@ -1,0 +1,115 @@
+syntax = "editions";
+
+package cns2.proto.error_extensions;
+
+import "net/proto2/bridge/proto/message_set.proto";
+
+message WrongCell {
+    extend .proto2.bridge.MessageSet {
+        optional WrongCell message_set_extension = 423092684;
+    }
+}
+
+message OperationTooOld {
+    extend .proto2.bridge.MessageSet {
+        optional OperationTooOld message_set_extension = 446519125;
+    }
+}
+
+message ReplayProtected {
+    optional fixed64 operation_id = 1;
+    
+    extend .proto2.bridge.MessageSet {
+        optional ReplayProtected message_set_extension = 448388605;
+    }
+}
+
+message FileApiVisible {
+    extend .proto2.bridge.MessageSet {
+        optional FileApiVisible message_set_extension = 467723624;
+    }
+}
+
+message StoreCellNotFound {
+    extend .proto2.bridge.MessageSet {
+        optional StoreCellNotFound message_set_extension = 479632647;
+    }
+}
+
+message BackingFileStale {
+    extend .proto2.bridge.MessageSet {
+        optional BackingFileStale message_set_extension = 486956622;
+    }
+}
+
+message DestinationBackingFileAlreadyAccepted {
+    extend .proto2.bridge.MessageSet {
+        optional DestinationBackingFileAlreadyAccepted message_set_extension = 493908294;
+    }
+}
+
+message InvalidDataTransferExecutionLease {
+    extend .proto2.bridge.MessageSet {
+        optional InvalidDataTransferExecutionLease message_set_extension = 509837912;
+    }
+}
+
+message SnapshotTreeLockHeldByOtherDataTransfer {
+    extend .proto2.bridge.MessageSet {
+        optional SnapshotTreeLockHeldByOtherDataTransfer message_set_extension = 509837913;
+    }
+}
+
+message SnapshotTreeLockAlreadyReleased {
+    extend .proto2.bridge.MessageSet {
+        optional SnapshotTreeLockAlreadyReleased message_set_extension = 509837914;
+    }
+}
+
+message SnapshotTreeLockExpired {
+    extend .proto2.bridge.MessageSet {
+        optional SnapshotTreeLockExpired message_set_extension = 525002131;
+    }
+}
+
+message DirNotInSpecifiedAps {
+    extend .proto2.bridge.MessageSet {
+        optional DirNotInSpecifiedAps message_set_extension = 519138265;
+    }
+}
+
+message OperationAbortedDueToOngoingMigration {
+    extend .proto2.bridge.MessageSet {
+        optional OperationAbortedDueToOngoingMigration message_set_extension = 525000477;
+    }
+}
+
+message StoreCellNotAcceptingNewAnchorPoints {
+    extend .proto2.bridge.MessageSet {
+        optional StoreCellNotAcceptingNewAnchorPoints message_set_extension = 525001822;
+    }
+}
+
+message DataOwnedByPreTurndownStoreCell {
+    extend .proto2.bridge.MessageSet {
+        optional DataOwnedByPreTurndownStoreCell message_set_extension = 525001915;
+    }
+}
+
+message ClientThrottling {
+    extend .proto2.bridge.MessageSet {
+        optional ClientThrottling message_set_extension = 525002773;
+    }
+}
+
+message EventTooOld {
+    extend .proto2.bridge.MessageSet {
+        optional EventTooOld message_set_extension = 525002808;
+    }
+}
+
+message TruncateRollbackUnnecessary {
+    extend .proto2.bridge.MessageSet {
+        optional TruncateRollbackUnnecessary message_set_extension = 525003337;
+    }
+}

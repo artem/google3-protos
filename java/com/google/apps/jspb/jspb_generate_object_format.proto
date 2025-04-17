@@ -1,0 +1,17 @@
+syntax = "proto2";
+
+package jspb;
+
+import "net/proto2/proto/descriptor.proto";
+
+option cc_enable_arenas = true;
+option go_package = "google.golang.org/apps/jspb";
+option java_package = "com.google.apps.jspb";
+
+extend .proto2.MessageOptions {
+    optional bool generate_object_format_accessors_for_message = 448127178;
+}
+
+extend .proto2.FileOptions {
+    optional bool generate_object_format_accessors = 448127178;
+}

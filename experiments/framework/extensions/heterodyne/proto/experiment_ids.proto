@@ -1,0 +1,17 @@
+syntax = "proto2";
+
+package experiments.heterodyne;
+
+import "logs/proto/logs_annotations/logs_annotations.proto";
+import "storage/datapol/annotations/proto/semantic_annotations.proto";
+
+option objc_class_prefix = "EXH";
+option java_outer_classname = "ExperimentIdsProto";
+option java_package = "com.google.experiments.heterodyne";
+
+message ExperimentIds {
+    optional bytes clear_blob = 1;
+    optional string clear_blob_js = 4;
+    repeated bytes encrypted_blob = 2;
+    optional bool users_match = 3;
+}

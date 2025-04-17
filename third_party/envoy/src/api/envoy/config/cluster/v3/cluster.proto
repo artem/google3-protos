@@ -76,16 +76,16 @@ message Cluster {
     .envoy.config.core.v3.Http1ProtocolOptions http_protocol_options = 13 [deprecated = true];
     .envoy.config.core.v3.Http2ProtocolOptions http2_protocol_options = 14 [deprecated = true];
     map<string, google.protobuf.Any> typed_extension_protocol_options = 36;
-    google.protobuf.Duration dns_refresh_rate = 16;
-    google.protobuf.Duration dns_jitter = 58;
+    google.protobuf.Duration dns_refresh_rate = 16 [deprecated = true];
+    google.protobuf.Duration dns_jitter = 58 [deprecated = true];
     
-    RefreshRate dns_failure_refresh_rate = 44;
+    RefreshRate dns_failure_refresh_rate = 44 [deprecated = true];
     message RefreshRate {
         google.protobuf.Duration base_interval = 1;
         google.protobuf.Duration max_interval = 2;
     }
     
-    bool respect_dns_ttl = 39;
+    bool respect_dns_ttl = 39 [deprecated = true];
     
     DnsLookupFamily dns_lookup_family = 17;
     enum DnsLookupFamily {

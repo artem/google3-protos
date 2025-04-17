@@ -1,0 +1,20 @@
+syntax = "editions";
+
+package storage_l4;
+
+import "storage/l4/public/cache_name.proto";
+
+message WanCacheSettingsProto {
+    optional CacheNameProto cache_name = 1;
+    optional int64 logical_block_size = 2;
+    
+    optional DataResidencyRequirements data_residency_requirements = 3;
+    enum DataResidencyRequirements {
+        DATA_RESIDENCY_REQUIREMENTS_UNSPECIFIED = 0;
+        DATA_RESIDENCY_REQUIREMENTS_MET = 1;
+    }
+}
+
+message IgnoreWanCacheNameFlagProto {
+    
+}

@@ -2,7 +2,6 @@ syntax = "proto2";
 
 package net_bwenforcer;
 
-option cc_enable_arenas = true;
 option py_generic_services = true;
 option cc_generic_services = true;
 option java_multiple_files = true;

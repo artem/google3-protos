@@ -91,6 +91,8 @@ message HandshakerResult {
     optional bytes key_data = 3;
     optional AuthenticatedOptions authenticated_options = 4;
     optional HandshakeCipher handshake_cipher = 5;
+    optional bool allows_directpath = 6;
+    optional string transport_protocol = 7;
 }
 
 message HandshakerStatus {

@@ -1,0 +1,352 @@
+syntax = "proto3";
+
+package google.devtools.cloudprofiler.v2;
+
+import "google/api/annotations.proto";
+import "google/api/auditing.proto";
+import "google/api/authz.proto";
+import "google/api/client.proto";
+import "google/api/field_behavior.proto";
+import "google/api/policy.proto";
+import "google/api/resource.proto";
+import "google/api/visibility.proto";
+import "google/protobuf/duration.proto";
+import "google/protobuf/field_mask.proto";
+import "google/protobuf/timestamp.proto";
+import "google/type/datetime.proto";
+import "storage/datapol/annotations/proto/semantic_annotations.proto";
+
+option ruby_package = "Google::Cloud::Profiler::V2";
+option php_namespace = "Google\\Cloud\\Profiler\\V2";
+option csharp_namespace = "Google.Cloud.Profiler.V2";
+option java_multiple_files = true;
+option java_outer_classname = "ProfilerProto";
+option java_package = "com.google.devtools.cloudprofiler.v2";
+
+service ProfilerService {
+    rpc CreateProfile(CreateProfileRequest) returns (Profile);
+    rpc CreateOfflineProfile(CreateOfflineProfileRequest) returns (Profile);
+    rpc UpdateProfile(UpdateProfileRequest) returns (Profile);
+}
+
+service QueryService {
+    rpc ListProjects(ListProjectsRequest) returns (ListProjectsResponse);
+    rpc ListProfiledDeployments(ListProfiledDeploymentsRequest) returns (ListProfiledDeploymentsResponse);
+    rpc QueryProfiledDeployments(QueryProfiledDeploymentsRequest) returns (QueryProfiledDeploymentsResponse);
+    rpc QueryProfiles(QueryProfilesRequest) returns (QueryProfilesResponse);
+    rpc QueryProfileWeights(QueryProfileWeightsRequest) returns (QueryProfileWeightsResponse);
+    rpc QueryProfileTimeseries(QueryProfileTimeseriesRequest) returns (QueryProfileTimeseriesResponse);
+}
+
+service ExportService {
+    rpc ListProfiles(ListProfilesRequest) returns (ListProfilesResponse);
+}
+
+message CreateProfileRequest {
+    string parent = 4;
+    Deployment deployment = 1;
+    repeated ProfileType profile_type = 2;
+}
+
+message CreateOfflineProfileRequest {
+    string parent = 1;
+    Profile profile = 2;
+}
+
+message UpdateProfileRequest {
+    Profile profile = 1;
+    protobuf.FieldMask update_mask = 2;
+}
+
+message Profile {
+    string name = 1;
+    ProfileType profile_type = 2;
+    Deployment deployment = 3;
+    protobuf.Duration duration = 4;
+    bytes profile_bytes = 5;
+    map<string, string> labels = 6;
+    protobuf.Timestamp start_time = 7;
+}
+
+message Deployment {
+    string project_id = 1;
+    string target = 2;
+    map<string, string> labels = 3;
+}
+
+message Project {
+    string name = 1;
+}
+
+message ListProjectsRequest {
+    int32 page_size = 1;
+    string filter = 2;
+    string page_token = 3;
+}
+
+message ListProjectsResponse {
+    repeated Project projects = 1;
+    string next_page_token = 2;
+}
+
+message ListProfiledDeploymentsRequest {
+    string parent = 1;
+    string target_substring = 2;
+    ProfileType profile_type = 3;
+    protobuf.Timestamp start_time = 4;
+    protobuf.Timestamp end_time = 5;
+    int32 page_size = 6;
+    string page_token = 7;
+}
+
+message ListProfiledDeploymentsResponse {
+    repeated ProfiledDeployment profiled_deployments = 1;
+    string next_page_token = 2;
+}
+
+message QueryProfiledDeploymentsRequest {
+    string parent = 1;
+    string target_regexp = 2;
+    map<string, string> deployment_label_regexps = 4;
+    bool profile_type_aggregation_enabled = 5;
+    ProfileType profile_type = 10;
+    protobuf.Timestamp start_time = 6;
+    protobuf.Timestamp end_time = 7;
+    int32 page_size = 8;
+    string page_token = 9;
+}
+
+message QueryProfiledDeploymentsResponse {
+    repeated ProfiledDeployment profiled_deployments = 1;
+    string next_page_token = 2;
+}
+
+message QueryProfilesRequest {
+    string parent = 1;
+    string target = 2;
+    ProfileType profile_type = 3;
+    protobuf.Timestamp start_time = 4;
+    protobuf.Timestamp end_time = 5;
+    map<string, string> deployment_labels = 6;
+    map<string, string> profile_labels = 7;
+    WeightUnit weight_unit = 9;
+    int64 min_profile_weight = 10;
+    int64 max_profile_weight = 11;
+    bool want_profile_bytes = 8;
+    bool scale = 12;
+    bool retain_thread_prefix = 13;
+    bool include_mappings = 14;
+    bool include_line_numbers = 15;
+    bool include_labels = 16;
+    bool ignore_filenames = 19;
+    int32 num_profiles = 17;
+    bool deployment_size_scaled = 18;
+    bool include_versions_and_start_lines = 20;
+    
+    reserved 21 to max;
+}
+
+message ProfiledDeployment {
+    string name = 1;
+    string target = 2;
+    map<string, string> labels = 3;
+    ProfileType profile_type = 4;
+    protobuf.Timestamp create_time = 5;
+    protobuf.Timestamp min_time = 6;
+    protobuf.Timestamp max_time = 7;
+    repeated string metric_types = 8;
+    string default_metric_type = 9;
+    
+    reserved 10 to max;
+}
+
+message QueryProfilesResponse {
+    int32 num_profiles = 2;
+    double avg_instance_count = 6;
+    repeated Deployment deployments = 3;
+    repeated Insight insights = 5;
+    
+    oneof data {
+        ProfileData profile = 1;
+        bytes profile_bytes = 4;
+    }
+    
+    reserved 7 to max;
+}
+
+message ProfileData {
+    repeated int32 samples = 1;
+    repeated SampleMetric sample_metrics = 2;
+    string default_metric_type = 3;
+    TreeNodeArray tree_nodes = 4;
+    FunctionArray functions = 5;
+    SourceFileArray source_files = 6;
+    MappingArray mappings = 7;
+    repeated string comments = 8;
+    repeated StringLabelArray string_labels = 9;
+    repeated NumericLabelArray numeric_labels = 10;
+    int64 duration_micros = 11;
+    protobuf.Timestamp collection_start_time = 12;
+    
+    reserved 13 to max;
+}
+
+message SampleMetric {
+    string type = 1;
+    string unit = 2;
+    repeated double value = 4;
+}
+
+message TreeNodeArray {
+    repeated int32 parent = 1;
+    repeated int32 function = 2;
+    repeated int32 line_numbers = 3;
+    repeated Inlined inlined = 4;
+    repeated int32 mappings = 5;
+    repeated int32 function_start_lines = 6;
+    repeated int64 versions = 7;
+}
+
+message FunctionArray {
+    repeated string name = 1;
+    repeated int32 source_file = 2;
+}
+
+message SourceFileArray {
+    repeated string name = 1;
+}
+
+message MappingArray {
+    repeated string mappings = 1;
+}
+
+message StringLabelArray {
+    string key = 1;
+    repeated string string_table = 2;
+    repeated int32 value = 3;
+    
+    reserved 4 to max;
+}
+
+message NumericLabelArray {
+    string key = 1;
+    string unit = 2;
+    repeated bool missing_value = 3;
+    repeated double value = 4;
+    
+    reserved 5 to max;
+}
+
+message QueryProfileWeightsRequest {
+    string parent = 1;
+    string target = 2;
+    ProfileType profile_type = 3;
+    protobuf.Timestamp start_time = 4;
+    protobuf.Timestamp end_time = 5;
+    int32 num_intervals = 6;
+    map<string, string> deployment_labels = 7;
+    map<string, string> profile_labels = 8;
+}
+
+message QueryProfileWeightsResponse {
+    int64 num_profiles = 1;
+    WeightUnit weight_unit = 2;
+    string weight_metric = 3;
+    repeated ProfileWeightInterval intervals = 4;
+}
+
+message ProfileWeightInterval {
+    int64 num_profiles = 1;
+    int64 start_weight = 2;
+    int64 end_weight = 3;
+}
+
+message QueryProfileTimeseriesRequest {
+    string parent = 1;
+    string target = 2;
+    ProfileType profile_type = 3;
+    string metric_type = 4;
+    type.DateTime end_time = 5;
+    int32 data_point_count = 6;
+    map<string, string> deployment_labels = 7;
+    bool want_total = 8;
+    int32 function_count = 10;
+    string include_regexp = 11;
+    string exclude_regexp = 12;
+    protobuf.Duration interval_duration = 13;
+    ProfileTimeseriesIntervalType interval_type = 14;
+}
+
+message QueryProfileTimeseriesResponse {
+    WeightUnit unit = 1;
+    repeated ProfileTimeseriesDataPoint data_points = 2;
+    repeated FunctionTimeseriesDataPoints functions = 3;
+}
+
+message ProfileTimeseriesDataPoint {
+    protobuf.Timestamp start_time = 1;
+    protobuf.Duration duration = 2;
+    int32 profile_count = 3;
+    double metric_total = 4;
+    repeated Deployment deployments = 5;
+}
+
+message FunctionTimeseriesDataPoints {
+    string name = 1;
+    string source_file_name = 2;
+    repeated double values = 3;
+}
+
+message Insight {
+    string title = 1;
+    string description = 2;
+    string help_uri = 3;
+    string filter_regex = 4;
+    
+    reserved 5 to max;
+}
+
+message ListProfilesRequest {
+    string parent = 1;
+    int32 page_size = 2;
+    string page_token = 3;
+}
+
+message ListProfilesResponse {
+    repeated Profile profiles = 1;
+    string next_page_token = 2;
+    int32 skipped_profiles = 3;
+}
+
+enum ProfileType {
+    PROFILE_TYPE_UNSPECIFIED = 0;
+    CPU = 1;
+    WALL = 2;
+    HEAP = 3;
+    THREADS = 4;
+    CONTENTION = 5;
+    PEAK_HEAP = 6;
+    HEAP_ALLOC = 7;
+    THREADZ = 10000;
+}
+
+enum WeightUnit {
+    UNKNOWN_WEIGHT_UNIT = 0;
+    TIME_NANOS = 1;
+    MEMORY_BYTES = 2;
+    COUNT = 3;
+    MICROGCUS = 4;
+}
+
+enum ProfileTimeseriesIntervalType {
+    INTERVAL_TYPE_UNSPECIFIED = 0;
+    FIXED_DURATION = 1;
+    CALENDAR_DAY = 2;
+}
+
+enum Inlined {
+    INLINED_UNSPECIFIED = 0;
+    INLINED_NONE = 1;
+    INLINED_PARTIAL = 2;
+    INLINED_ALL = 3;
+}

@@ -1,0 +1,66 @@
+syntax = "proto3";
+
+package cloud.saasaccelerator.protos.agent;
+
+import "google/api/inclusion.proto";
+import "google/protobuf/any.proto";
+import "storage/datapol/annotations/proto/semantic_annotations.proto";
+
+option java_multiple_files = true;
+option java_outer_classname = "CommonProto";
+option java_package = "com.google.cloud.saasaccelerator.agent";
+
+message ConfigGroup {
+    string name = 1;
+    google.protobuf.Any config_payload = 2;
+    int64 version = 3;
+}
+
+message ConfigState {
+    string name = 1;
+    
+    oneof state {
+        ConfigComplete complete = 10;
+        ConfigInProgress in_progress = 11;
+        ConfigError error = 12;
+    }
+}
+
+message ConfigComplete {
+    int64 config_version = 1;
+    google.protobuf.Any data = 2;
+}
+
+message ConfigInProgress {
+    int64 accepted_version = 1;
+    int64 applied_version = 2;
+    google.protobuf.Any change_progress = 3;
+}
+
+message ConfigError {
+    int64 received_version = 1;
+    int64 applied_version = 2;
+    google.protobuf.Any data = 3;
+}
+
+message HealthMetric {
+    string name = 1;
+    HealthStatus status = 2;
+    google.protobuf.Any details = 3;
+    string scope = 4;
+    AggregationTarget aggregation_target = 5;
+}
+
+enum AggregationTarget {
+    TARGET_UNSPECIFIED = 0;
+    TARGET_ALL = 1;
+    TARGET_SCOPE = 2;
+    TARGET_NONE = 3;
+}
+
+enum HealthStatus {
+    UNKNOWN = 0;
+    HEALTHY = 1;
+    UNHEALTHY = 2;
+    TIMEOUT = 3;
+}

@@ -10,6 +10,7 @@ import "production/rpc/stubs/proto/deadline_policies.proto";
 import "production/rpc/stubs/proto/embedded_status_extraction.proto";
 import "production/rpc/stubs/proto/hedging.proto";
 import "production/rpc/stubs/proto/latency_based_deadline.proto";
+import "production/rpc/stubs/proto/pushback_signal.proto";
 import "util/task/status.proto";
 
 option java_outer_classname = "CanonicalStubProto";
@@ -43,6 +44,7 @@ message CanonicalStub {
     optional bool enable_client_side_throttling = 2;
     repeated util.StatusProto application_specific_throttled_status = 3;
     repeated string client_side_throttlers = 18;
+    optional int64 client_side_throttling_max_isolated_roles = 35 [default = 100];
     optional HedgingConfiguration hedging = 21;
     optional LatencyBasedDeadlinePolicy default_latency_based_deadline_policy = 31;
     optional bool enable_retries = 4;
@@ -56,6 +58,7 @@ message CanonicalStub {
     optional string transport = 15 [default = "Stubby"];
     optional RequestAggregator request_aggregator = 12;
     optional EmbeddedStatusExtractionConfiguration embedded_status_extraction = 28;
+    optional PushbackSignalConfiguration pushback_signal = 34;
     
     extensions 100 to max;
     

@@ -1,0 +1,89 @@
+syntax = "proto2";
+
+package com.google.android.gmscore.proto;
+
+import "google/api/inclusion.proto";
+import "logs/proto/logs_annotations/logs_annotations.proto";
+import "storage/datapol/annotations/proto/semantic_annotations.proto";
+
+option java_package = "com.google.android.gmscore.proto";
+
+message GmsCoreBuild {
+    optional int32 version_code = 1;
+    optional string version_name = 2;
+    optional GmsCoreBuildVariant variant = 3;
+    optional GmsCoreFormFactor form_factor = 4;
+}
+
+message GmsCoreBuildVariant {
+    optional GmsCoreBuildType build_type = 1;
+    enum GmsCoreBuildType {
+        BUILD_TYPE_UNKNOWN = 0;
+        BUILD_TYPE_PROD = 1;
+        BUILD_TYPE_INTERNAL = 2;
+        BUILD_TYPE_PRODLMP = 3;
+        BUILD_TYPE_THINGS = 4;
+        BUILD_TYPE_PRODMNC = 5;
+        BUILD_TYPE_WEARABLE = 6;
+        BUILD_TYPE_AUTO = 7;
+        BUILD_TYPE_ATV = 9;
+        BUILD_TYPE_PRODPIX = 10;
+        BUILD_TYPE_PRODPI = 11;
+        BUILD_TYPE_PRODGO = 12;
+        BUILD_TYPE_PRODQT = 13;
+        BUILD_TYPE_PRODNEXT = 15;
+        BUILD_TYPE_PRODRVC = 16;
+        BUILD_TYPE_BSTAR = 17;
+        BUILD_TYPE_PRODGOR = 18;
+        BUILD_TYPE_ATVR = 19;
+        BUILD_TYPE_PRODSC = 20;
+        BUILD_TYPE_PRODGOS = 21;
+        BUILD_TYPE_ATVS = 22;
+        BUILD_TYPE_WEARABLERVC = 23;
+        BUILD_TYPE_AUTORVC = 24;
+        BUILD_TYPE_WEARABLETM = 25;
+        BUILD_TYPE_XRSC = 26;
+        BUILD_TYPE_PRODVIC = 27;
+        BUILD_TYPE_ATVV = 28;
+        BUILD_TYPE_AUTOVIC = 29;
+    }
+    
+    optional GmsCoreArchitecture architecture = 2;
+    enum GmsCoreArchitecture {
+        ARCH_UNKNOWN = 0;
+        ARCH_NON_NATIVE = 1;
+        ARCH_ARMV5 = 2;
+        ARCH_ARMV7 = 4;
+        ARCH_ARM64 = 5;
+        ARCH_MIPS = 6;
+        ARCH_MIPS_64 = 7;
+        ARCH_X86 = 8;
+        ARCH_X86_64 = 9;
+        ARCH_RISCV64 = 10;
+    }
+    
+    optional GmsCoreScreenDensity screen_density = 3;
+    enum GmsCoreScreenDensity {
+        DENSITY_UNKNOWN = 0;
+        DENSITY_ALLDPI = 1;
+        DENSITY_LDPI = 2;
+        DENSITY_MDPI = 3;
+        DENSITY_TVDPI = 4;
+        DENSITY_HDPI = 5;
+        DENSITY_XHDPI = 7;
+        DENSITY_DPI400 = 8;
+        DENSITY_XXHDPI = 9;
+        DENSITY_XXXHDPI = 10;
+    }
+}
+
+enum GmsCoreFormFactor {
+    FORM_FACTOR_UNKNOWN = 0;
+    FORM_FACTOR_AUTO = 1;
+    FORM_FACTOR_BSTAR = 2;
+    FORM_FACTOR_PHONE = 3;
+    FORM_FACTOR_PHONE_GO = 4;
+    FORM_FACTOR_TV = 5;
+    FORM_FACTOR_WEARABLE = 6;
+    FORM_FACTOR_XR = 7;
+}

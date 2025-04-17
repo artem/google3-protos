@@ -13,6 +13,7 @@ import "util/task/status.proto";
 
 message ConnectionCapabilities {
     optional net_pony.SupportedFeatures pony_features = 1;
+    optional bool pony_transport_d_pad_tracing = 2 [default = false];
 }
 
 message ConnectRequest {
@@ -39,6 +40,7 @@ message ConnectRequest {
         optional uint32 qp_num = 1;
         optional bytes gid = 2;
         optional uint64 connection_handle = 3;
+        optional string acc_fqdn = 4;
     }
     
     optional bool query_pony_connectivity = 7;
@@ -69,7 +71,7 @@ message ConnectResponse {
     
     optional VerbsInfo verbs_info = 9;
     message VerbsInfo {
-        
+        optional string acc_fqdn = 4;
     }
     
     optional int32 inline_message_size = 6;

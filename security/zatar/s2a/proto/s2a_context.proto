@@ -1,0 +1,20 @@
+syntax = "editions";
+
+package s2a.proto;
+
+import "security/zatar/s2a/proto/common.proto";
+
+option java_multiple_files = true;
+option java_outer_classname = "S2AContextProto";
+option java_package = "com.google.net.grpc.s2a.handshaker";
+
+message S2AContext {
+    optional string application_protocol = 1;
+    optional TLSVersion tls_version = 2;
+    optional Ciphersuite ciphersuite = 3;
+    optional Identity peer_identity = 4;
+    optional Identity local_identity = 5;
+    optional bytes peer_cert_fingerprint = 6;
+    optional bytes local_cert_fingerprint = 7;
+    optional bool is_handshake_resumed = 8;
+}

@@ -3,6 +3,7 @@ syntax = "proto3";
 package google.api.servicecontrol.v1;
 
 import "frameworks/testing/rpcreplay/processors/rpc_replay_field_option.proto";
+import "google/api/inclusion.proto";
 import "google/api/servicecontrol/v1/log_entry.proto";
 import "google/api/servicecontrol/v1/metric_value.proto";
 import "google/api/servicecontrol/v1/quota_properties.proto";

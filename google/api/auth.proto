@@ -2,6 +2,7 @@ syntax = "proto3";
 
 package google.api;
 
+import "google/api/policy.proto";
 import "google/api/visibility.proto";
 
 option objc_class_prefix = "GAPI";
@@ -115,6 +116,7 @@ message UberProxyAuthRequirements {
     enum UberProxyAuthMode {
         DISABLED = 0;
         ENABLED = 1;
+        ENABLED_V2 = 2;
     }
     
     string uptick_dat_policy = 2;

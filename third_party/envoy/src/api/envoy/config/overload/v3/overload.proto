@@ -60,6 +60,7 @@ message ScaleTimersOverloadActionConfig {
         HTTP_DOWNSTREAM_CONNECTION_IDLE = 1;
         HTTP_DOWNSTREAM_STREAM_IDLE = 2;
         TRANSPORT_SOCKET_CONNECT = 3;
+        HTTP_DOWNSTREAM_CONNECTION_MAX = 4;
     }
 }
 

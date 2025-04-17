@@ -3,6 +3,7 @@ syntax = "proto3";
 package google.api.servicecontrol.v1;
 
 import "frameworks/testing/rpcreplay/processors/rpc_replay_field_option.proto";
+import "google/api/inclusion.proto";
 import "google/api/servicecontrol/v1/distribution.proto";
 import "google/protobuf/timestamp.proto";
 import "google/type/money.proto";
@@ -10,7 +11,6 @@ import "google/type/money.proto";
 option ruby_package = "Google::Cloud::ServiceControl::V1";
 option php_namespace = "Google\\Cloud\\ServiceControl\\V1";
 option csharp_namespace = "Google.Cloud.ServiceControl.V1";
-option cc_enable_arenas = true;
 option java_multiple_files = true;
 option java_outer_classname = "MetricValueSetProto";
 option java_package = "com.google.api.servicecontrol.v1";

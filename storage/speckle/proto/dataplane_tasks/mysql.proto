@@ -1,0 +1,74 @@
+syntax = "proto3";
+
+package speckle.dataplane.mysql;
+
+import "google/protobuf/duration.proto";
+import "storage/datapol/annotations/proto/semantic_annotations.proto";
+
+message MysqlUserProto {
+    string hash = 1;
+    bool grant_permissions = 2;
+}
+
+message MysqlCheckDatabaseServerRequest {
+    string docker_socket = 1;
+    int32 crash_loop_threshold = 2;
+}
+
+message MysqlSetReplicaRequest {
+    bool verify_gtid_match = 1;
+    int64 reset_binary_log_file_number_to = 2;
+    bool delete_archived_binlog_files_copied_from_primary = 3;
+}
+
+message MysqlStartReplicaRequest {
+    string fragment = 1;
+    bool master_on_premises = 2;
+}
+
+message MysqlStopReplicaRequest {
+    string fragment = 1;
+    bool master_on_premises = 2;
+}
+
+message MysqlPromoteReplicaRequest {
+    string fragment = 1;
+}
+
+message MysqlUpgradeReplicaRequest {
+    string fragment = 1;
+    string primary_db_type = 2;
+}
+
+message MysqlUpdateReadModeRequest {
+    ReadMode read_mode = 1;
+    enum ReadMode {
+        READ_MODE_UNSPECIFIED = 0;
+        READ_MODE_READ_WRITE = 1;
+        READ_MODE_SUPER_READ_ONLY = 2;
+    }
+}
+
+message MysqlWaitForReplicaToCatchUpWithPrimaryRequest {
+    oneof _timeout {
+        google.protobuf.Duration timeout = 1;
+    }
+}
+
+message MysqlSwitchoverToShadowVMRequest {
+    int64 wait_almost_catch_up_low_lag_threshold_seconds = 1;
+    int64 wait_almost_catch_up_high_lag_threshold_seconds = 2;
+}
+
+message MysqlScanAndArchiveBinlogRequest {
+    string log_bin = 1;
+    string archiving_bin = 2;
+}
+
+message MysqlReplicaStatusResult {
+    bool is_replica_status_empty = 1;
+    int64 io_thread_state_error_number = 2;
+    int64 sql_thread_state_error_number = 3;
+    bool io_thread_state_is_running = 4;
+    bool sql_thread_state_is_running = 5;
+}

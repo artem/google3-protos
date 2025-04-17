@@ -1,53 +1,52 @@
-syntax = "proto3";
+syntax = "editions";
 
 package server_authz;
 
-import "google/protobuf/wrappers.proto";
 import "security/authorization/server_authorization/public/policy/client_policy.proto";
 import "security/authorization/server_authorization/public/policy/target.proto";
+import "security/authorization/server_authorization/public/relax/client_policy_overrides.proto";
 import "security/credentials/proto/principal.proto";
+import "security/loas/l2/proto/instance.proto";
 
 option java_multiple_files = true;
 option java_package = "com.google.security.authorization.serverauthorization.arbiter.api";
 
 message WarmCacheRequest {
-    Target target = 1;
+    optional Target target = 1;
 }
 
 message WarmCacheResponse {
-    TargetType target_type = 1;
+    optional TargetType target_type = 1;
 }
 
 message AuthzRequest {
-    Target target = 1;
-    PeerInfo peer = 2;
-    UnrestrictedClientPolicy unrestricted_client_policy = 3;
-    RelaxingOverrides relaxing_overrides = 4;
+    optional Target target = 1;
+    optional PeerInfo peer = 2;
+    optional UnrestrictedClientPolicy unrestricted_client_policy = 3;
+    optional RelaxingOverrides relaxing_overrides = 4;
 }
 
 message AuthzResponse {
-    Decision decision = 1;
-    Decision audit_decision = 2;
-    TargetType target_type_for_authz_purposes = 3;
+    optional Decision decision = 1;
+    optional Decision audit_decision = 2;
+    optional TargetType target_type_for_authz_purposes = 3;
     repeated FailedOpen failed_open = 4;
-    bool service_check_enforced = 5;
+    optional bool service_check_enforced = 5;
     repeated CheckType checks_performed = 6;
+    optional bool primary_target_check_was_meaningful = 7;
 }
 
 message Decision {
-    Action action = 1;
-    Reason reason = 2;
-    string message_for_logging = 3;
+    optional Action action = 1;
+    optional Reason reason = 2;
+    optional string message_for_logging = 3;
 }
 
 message PeerInfo {
-    security.credentials.PrincipalProto principal = 1;
-    string security_realm = 2;
-    string machine_name = 3;
-}
-
-message RelaxingOverrides {
-    google.protobuf.BoolValue allow_requirement_to_approve_server_user = 1;
+    optional security.credentials.PrincipalProto principal = 1;
+    optional string security_realm = 2;
+    optional string machine_name = 3;
+    optional security_loas_l2.CloudVMInfo cloud_vm_info = 4;
 }
 
 enum Action {
@@ -72,6 +71,7 @@ enum Reason {
     USER_DETAILS_LOOKUP_FAILED = 12;
     UNSUPPORTED_TARGET_TYPE = 13;
     HOSTNAME_IS_UNKNOWN = 14;
+    CLOUD_PROJECT_MISMATCH = 15;
 }
 
 enum FailedOpen {
@@ -80,12 +80,16 @@ enum FailedOpen {
     SKIPPED_ALL_CHECKS_BECAUSE_ENVELOPE_COMMUNICATION_FAILED = 2;
     SKIPPED_SERVICE_CHECK_BECAUSE_AUTODETECTION_FAILED = 3;
     ACCEPTED_STALE_USERS_ACL = 4;
+    SERVICE_CHECK_SKIPPED_USER_BECAUSE_RELAXED_POLICY_OVERRIDE = 15;
     SERVICE_CHECK_SKIPPED_USER_BECAUSE_USERS_ACL_DOES_NOT_EXIST = 5;
     SERVICE_CHECK_SKIPPED_USER_BECAUSE_LOADING_USERS_ACL_FAILED = 6;
     SERVICE_CHECK_SKIPPED_USER_BECAUSE_USERS_ACL_NOT_POPULATED = 10;
     SERVICE_CHECK_SKIPPED_REALM_BECAUSE_REALMS_ACL_DOES_NOT_EXIST = 7;
     SERVICE_CHECK_SKIPPED_REALM_BECAUSE_LOADING_REALMS_ACL_FAILED = 8;
     SERVICE_CHECK_SKIPPED_REALM_BECAUSE_SERVER_IS_NOT_IN_ANY_REALM = 9;
+    SERVICE_CHECK_SKIPPED_USER_BECAUSE_USERS_ACL_IS_EMPTY = 16;
+    USER_CHECK_SKIPPED_BECAUSE_POLICY_OVERRIDE = 11;
+    SERVICE_CHECK_SKIPPED_CLOUD_PROJECT_BECAUSE_VM_INFO_NOT_POPULATED = 14;
 }
 
 enum DisabledReason {
@@ -100,4 +104,5 @@ enum CheckType {
     USER_CHECK = 1;
     REALM_CHECK = 2;
     HOSTNAME_CHECK = 3;
+    CLOUD_PROJECT_CHECK = 4;
 }

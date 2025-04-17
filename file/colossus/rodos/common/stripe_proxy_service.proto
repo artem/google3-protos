@@ -9,6 +9,7 @@ import "file/colossus/rodos/common/chunk_error.proto";
 import "file/colossus/rodos/common/colossus_locality.proto";
 import "file/colossus/rodos/common/d_resource_settings.proto";
 import "file/colossus/rodos/common/file_descriptor_info.proto";
+import "file/colossus/rodos/common/read_reply_details.proto";
 import "file/colossus/rodos/common/request_header.proto";
 import "file/colossus/rodos/common/stripe_metadata.proto";
 import "storage/d/proto/capability.proto";
@@ -16,7 +17,9 @@ import "storage/datapol/annotations/proto/semantic_annotations.proto";
 import "storage/k3/net/socket_address.proto";
 import "storage/l4/colossus/read_options.proto";
 import "storage/l4/colossus/write_options.proto";
+import "storage/l4/common/cache_block_digest.proto";
 import "storage/l4/common/d_priority.proto";
+import "storage/l4/common/key.proto";
 import "storage/l4/common/lookup_flavor.proto";
 import "storage/l4/public/cache_name.proto";
 import "tech/file/proto/types.proto";
@@ -44,7 +47,7 @@ message ReadStripeRequest {
         ColossusLocality colossus_locality = 26;
         int64 cfs_file_id = 3;
         int64 cfs_base_file_id = 25;
-        .colossus.FileEncoding file_encoding = 4;
+        .colossus.FileEncoding file_encoding = 4 [deprecated = true];
         FileDescriptorInfoProto fd_info = 28;
         .colossus.PlacementPolicy placement_policy = 5;
         string cfs_filename = 6;
@@ -70,23 +73,16 @@ message ReadStripeRequest {
         DResourceSettingsProto d_resource_settings = 24;
         L4Settings l4_settings = 20;
         storage_l4.CacheNameProto tiering_cache = 27;
-        
-        L4IntegrityMode l4_integrity_mode = 19;
-        enum L4IntegrityMode {
-            INTEGRITY_MODE_UNSET = 0;
-            INTEGRITY_MODE_RELAXED = 1;
-            INTEGRITY_MODE_STRICT = 2;
-            INTEGRITY_MODE_SKIP_AND_PURGE_L4 = 3;
-        }
-        
         storage_l4.ReadOptionsProto l4_read_options = 30;
+        repeated storage_l4.ColossusStripeKeyProto cache_blocks_to_sign = 32;
         bool enable_usec = 29;
+        int64 colossus_client_borg_job_uid = 33;
         
         oneof _chunk_index {
             int32 chunk_index = 13;
         }
         
-        reserved 11, 18, 23;
+        reserved 11, 18 to 19, 23;
     }
     
     message StripeMetadataError {
@@ -106,6 +102,16 @@ message ReadStripeResponse {
         uint32 data_checksum = 3;
         int64 total_bytes_read = 2;
         bool used_l4_data = 4;
+        ReadReplyDetails read_reply_details = 7;
+        
+        oneof digests_or_status {
+            CacheBlockDigestArray cache_block_digests = 5;
+            util.StatusProto cache_block_digest_error = 6;
+        }
+        
+        message CacheBlockDigestArray {
+            repeated storage_l4.CacheBlockDigest cache_block_digests = 1;
+        }
     }
     
     message MetadataRefreshRequest {
@@ -128,8 +134,6 @@ message WriteChunksRequest {
         int64 cfs_file_id = 3;
         int64 base_file_id = 18;
         string cfs_filename = 4;
-        .colossus.FileEncoding file_encoding = 5;
-        double file_ctime_seconds = 25;
         FileDescriptorInfoProto fd_info = 26;
         bool encrypted_by_application = 14;
         int64 physical_stripe_length = 19;
@@ -168,8 +172,13 @@ message WriteChunksRequest {
         L4Settings l4_settings = 16;
         int32 tiering_state = 27;
         storage_l4.WriteOptionsProto l4_write_options = 28;
+        int64 colossus_client_borg_job_uid = 33;
         
-        reserved 11, 15, 17, 22;
+        oneof _stripe_tiering_expiration_time_seconds {
+            double stripe_tiering_expiration_time_seconds = 30;
+        }
+        
+        reserved 5, 11, 15, 17, 22, 25;
     }
     
     message WriteRequest {
@@ -192,32 +201,28 @@ message WriteChunksResponse {
 message L4Settings {
     storage_l4.CacheNameProto cache_name = 1;
     int64 logical_block_size = 2;
-    bool final_read = 6;
     storage_l4.LookupFlavor lookup_flavor = 8;
     storage_l4.DPriority cache_io_priority = 9;
     
-    oneof _l4_resource_user {
-        string l4_resource_user = 7;
-    }
-    
-    reserved 3 to 5;
+    reserved 3 to 7;
 }
 
 message GetProxyingInfoRequest {
     RequestHeader header = 1;
-    string borg_user_for_firewall_check = 3;
     repeated string spindle_users_for_commitment = 2;
     tech.file.NetworkBucket network_resources = 4;
+    
+    reserved 3;
 }
 
 message GetProxyingInfoResponse {
-    bool user_firewalled_by_rule = 1;
-    
     repeated SpindleUserAndRodosCommitmentStatus spindle_users_and_rodos_commitment_statuses = 2;
     message SpindleUserAndRodosCommitmentStatus {
         string spindle_user = 1;
         bool has_rodos_commitment = 2;
     }
+    
+    reserved 1;
 }
 
 message StatRequest {
@@ -226,7 +231,6 @@ message StatRequest {
     bool colossus_cell_is_cfs2 = 3;
     ColossusLocality colossus_locality = 14;
     int64 cfs_file_id = 4;
-    .colossus.FileEncoding file_encoding = 8;
     FileDescriptorInfoProto fd_info = 15;
     .k3.SocketAddressProto chunk_location = 5;
     int64 chunk_volume_id = 9;
@@ -236,8 +240,9 @@ message StatRequest {
     DResourceSettingsProto d_resource_settings = 6;
     tech.file.NetworkBucket network_resources = 7;
     int32 tiering_state = 16;
+    L4Settings l4_settings = 17;
     
-    reserved 13;
+    reserved 8, 13;
 }
 
 message StatResponse {

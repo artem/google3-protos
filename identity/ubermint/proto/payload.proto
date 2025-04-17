@@ -7,6 +7,7 @@ import "identity/ubermint/proto/debug_label.proto";
 import "identity/ubermint/proto/fingerprint.proto";
 import "identity/ubermint/proto/history.proto";
 import "identity/ubermint/proto/idp_seal.proto";
+import "identity/ubermint/proto/roles.proto";
 import "identity/ubermint/proto/universe.proto";
 import "storage/datapol/annotations/proto/semantic_annotations.proto";
 
@@ -26,6 +27,7 @@ message UberMintPayload {
     optional google.protobuf.Timestamp extended_not_after = 11;
     repeated identity_ubermint.IdpSealWrapper seals = 13;
     optional SealEnforcementMode seal_enforcement_mode = 14;
+    optional GenericRoles roles = 15;
     
     oneof linked_um {
         bytes pum_id = 7;

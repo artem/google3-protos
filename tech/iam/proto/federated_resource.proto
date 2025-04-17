@@ -18,6 +18,7 @@ message FederatedResourceHierarchy {
 
 message FederatedResource {
     PolicyName policy_name = 1;
+    string resource_name = 6;
     
     oneof grant_policy {
         FederatedAttributeStatus grant_policy_status = 2;

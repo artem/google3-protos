@@ -18,7 +18,7 @@ message ScalarResource {
         HOST_IPV4 = 4;
         NVM = 5;
         HPN_BANDWIDTH = 6;
-        SWINETREK = 7;
+        SWINETREK = 7 [deprecated = true];
         ARGOS = 8;
         DIONYSUS = 44;
         FAMA = 56;
@@ -44,12 +44,13 @@ message ScalarResource {
         GPU_NVIDIA_B200 = 87;
         GPU_NVIDIA_B40_48TH = 93;
         GPU_NVIDIA_GB200 = 89;
+        GPU_NVIDIA_GH200 = 96;
         TIN_VP9 = 18;
         CAVIUM_HSM = 19;
         GNEISS = 20;
         GPU_TESLA_P4 = 21;
         GPU_TESLA_T4 = 22;
-        STARTREK = 24;
+        STARTREK = 24 [deprecated = true];
         USPS_SLEDGE = 25;
         USPS_ANDROMEDA = 26;
         USPS_ANDROMEDA_CANARY = 33;
@@ -103,6 +104,9 @@ message ScalarResource {
         ACU = 75;
         GHOSTLITE_POD = 76;
         GHOSTFISH = 92;
+        MILLIGXU = 98;
+        ULL_AP_ENDPOINT = 94;
+        PROD_AP_ENDPOINT = 95;
     }
     
     optional int64 value = 3 [jstype = JS_STRING];

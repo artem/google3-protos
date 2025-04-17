@@ -1,0 +1,20 @@
+syntax = "editions";
+
+package identity_ubermint;
+
+import "storage/datapol/annotations/proto/semantic_annotations.proto";
+
+option java_multiple_files = true;
+option java_outer_classname = "TrustBoundaryParamsProto";
+option java_package = "com.google.identity.ubermint.proto.platform.cloud";
+
+message TrustBoundaryParams {
+    optional TrustBoundaryEnforcementMode signer_enforcement_mode = 1;
+    enum TrustBoundaryEnforcementMode {
+        TRUST_BOUNDARY_ENFORCEMENT_MODE_UNSPECIFIED = 0;
+        TRUST_BOUNDARY_ENFORCEMENT_MODE_FAIL_OPEN = 1;
+        TRUST_BOUNDARY_ENFORCEMENT_MODE_FAIL_CLOSE = 2;
+    }
+    
+    optional TrustBoundaryEnforcementMode verifier_enforcement_mode = 2;
+}

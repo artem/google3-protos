@@ -9,6 +9,8 @@ option java_package = "com.google.privacy.datagovernance.attributes";
 message EssentialOnlyMode {
     message Data {
         repeated UsagePurpose usage_purposes = 1;
+        classification.Category.HasCategory logged_out_user_id = 2;
+        classification.Category.HasCategory eea_uk_ch_logged_out_user_id = 3;
     }
     
     message Process {

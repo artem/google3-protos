@@ -1,0 +1,22 @@
+syntax = "editions";
+
+package s2a.proto.v2;
+
+import "third_party/s2a_proto/s2a/proto/v2/common.proto";
+
+option java_multiple_files = true;
+option java_outer_classname = "S2AContextProto";
+option java_package = "com.google.s2a.proto.v2";
+
+message S2AContext {
+    optional string leaf_cert_spiffe_id = 1;
+    repeated string leaf_cert_uris = 2;
+    repeated string leaf_cert_dnsnames = 3;
+    repeated string peer_certificate_chain_fingerprints = 4;
+    optional Identity local_identity = 9;
+    optional bytes local_leaf_cert_fingerprint = 6;
+    optional bytes peer_leaf_certificate_der = 7;
+    map<string, string> attributes = 8;
+    
+    reserved 5;
+}

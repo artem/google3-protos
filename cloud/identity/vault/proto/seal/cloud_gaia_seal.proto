@@ -2,6 +2,7 @@ syntax = "editions";
 
 package identity_cloud;
 
+import "cloud/identity/vault/proto/seal/public_key.proto";
 import "storage/datapol/annotations/proto/semantic_annotations.proto";
 
 option java_multiple_files = true;
@@ -19,6 +20,8 @@ message CloudGaiaSeal {
         IDP_SEAL_V1 = 2;
         IDP_SEAL_V2 = 3;
     }
+    
+    repeated PublicKey gluon_keys = 6;
     
     oneof trust_boundary_spec {
         bool is_global = 3;

@@ -6,6 +6,7 @@ import "privacy/data_governance/attributes/proto/classification.proto";
 import "privacy/data_governance/attributes/proto/ml_lineage.proto";
 import "privacy/data_governance/attributes/proto/processing_type.proto";
 import "privacy/data_governance/attributes/proto/purpose.proto";
+import "privacy/pattributes/public/proto/semantic_purpose.proto";
 
 option java_multiple_files = true;
 option java_package = "com.google.privacy.datagovernance.attributes";
@@ -26,6 +27,8 @@ message ProcessingDefaultsAnnotationsOverlay {
         repeated ProcessingPurpose processing_purpose = 9;
         optional Custom custom = 101;
         repeated ProcessingType processing_type = 12;
+        optional .pattributes.SemanticPurpose semantic_purpose = 13;
+        repeated .pattributes.SemanticPurpose deferred_semantic_purposes = 14;
     }
     
     message ProcessProductAssociation {

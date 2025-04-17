@@ -8,8 +8,6 @@ message Partition {
     optional string name = 1;
     optional .k3.BorgJobPortProto job_location = 8;
     optional string bns = 2 [deprecated = true];
-    optional double folder_affinity_time_window_size_ms = 4;
-    optional int32 folder_affinity_shard_size = 5;
     repeated string folder_prefix = 3;
     repeated string flat_file_prefix = 6;
     
@@ -18,6 +16,8 @@ message Partition {
         optional string start = 1;
         optional string end = 2;
     }
+    
+    reserved 4 to 5;
 }
 
 message PartitionConfig {

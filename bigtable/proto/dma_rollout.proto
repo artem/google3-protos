@@ -20,6 +20,7 @@ message DmaRolloutConfig {
     repeated PolicyParameters policy_parameters = 10;
     message PolicyParameters {
         optional .ptoken.PolicyId policy_id = 4;
+        optional .ptoken.PolicyId.Enum policy_id_enum = 8;
         optional int32 audit_only_rollout_percentage = 1;
         optional .ptoken.policy_rollouts.RequestContextEnforceableModeConfig.RequestContextEnforceableMode online_request_enforceable_mode = 5 [default = NOT_ENFORCEABLE];
         optional .ptoken.policy_rollouts.RequestContextEnforceableModeConfig.RequestContextEnforceableMode offline_request_enforceable_mode = 6 [default = NOT_ENFORCEABLE];
@@ -29,6 +30,10 @@ message DmaRolloutConfig {
     }
     
     optional bool skip_default_id_for_multi_prod_column_family = 11;
+    optional bool item_level_checker_disable_side_ptokens_override = 14;
+    optional bool item_level_disable_default_side_ptokens_for_non_proto_mpcf_override = 15;
+    optional bool item_level_checker_use_side_ptokens_override = 13 [deprecated = true];
+    optional bool item_level_mint_side_ptoken_from_mpcf_default_override = 12 [deprecated = true];
     
     reserved 2, 3, 7, 9;
 }

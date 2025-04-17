@@ -1,0 +1,22 @@
+syntax = "editions";
+
+package bigtable;
+
+import "net/proto2/contrib/custom_printer/proto/custom_printer.proto";
+import "storage/datapol/annotations/proto/semantic_annotations.proto";
+
+option java_multiple_files = true;
+
+message ProgressProto {
+    optional bytes restart_token = 1 [ctype = CORD];
+    
+    optional RowRange completed_range = 2;
+    message RowRange {
+        optional bytes start = 1 [ctype = CORD];
+        optional bytes limit = 2 [ctype = CORD];
+    }
+}
+
+message RestartToken {
+    extensions 33 to max;
+}

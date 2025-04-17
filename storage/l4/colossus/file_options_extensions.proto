@@ -38,6 +38,7 @@ message L4ResourceUserProto {
 message WriteTieringSettingsProto {
     map<string, string> eviction_census_tags = 1;
     optional string force_ssd_quota_user = 3;
+    optional string force_ssd_resource_user = 4;
     optional google.protobuf.Duration force_admission_with_ttl = 2;
 }
 

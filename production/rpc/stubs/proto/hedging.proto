@@ -18,7 +18,7 @@ message HedgingConfiguration {
     }
     
     optional double shortest_hedging_delay_seconds = 3 [default = 0.001];
-    optional bool enable_latency_monitoring = 4 [default = false];
+    optional bool enable_latency_monitoring = 4 [default = false, deprecated = true];
 }
 
 message HedgingRequestOptions {

@@ -1,0 +1,37 @@
+syntax = "editions";
+
+package experiments.heterodyne;
+
+import "logs/proto/logs_annotations/logs_annotations.proto";
+
+option objc_class_prefix = "EXH";
+option java_outer_classname = "EnumsProto";
+option java_package = "com.google.experiments.heterodyne";
+
+message FetchReason {
+    enum Type {
+        UNSPECIFIED = 0;
+        PERIODIC = 1;
+        ADAPTIVE = 2;
+        GCM_PUSH = 3;
+        APPLICATION_PUSH = 4;
+        APPLICATION_PUSH_RETRY = 11;
+        NEW_USER = 5;
+        NEW_APPLICATION = 6;
+        NEW_REGISTER_VERSION = 7;
+        NEW_REGISTER_OTHER = 8;
+        MOBDOG = 9 [deprecated = true];
+        RETRY_AFTER = 10;
+        NEW_USER_SYNC = 12;
+        NEW_APPLICATION_SYNC = 13;
+        NEW_REGISTER_VERSION_SYNC = 14;
+        NEW_REGISTER_OTHER_SYNC = 15;
+        NEW_APP_PROPERTIES = 16;
+        GMSCORE_SAFEBOOT = 17;
+        CHECK_IN = 18 [deprecated = true];
+        FORCE_SYNC = 19;
+        FLAG_CORRUPTION = 20;
+        FLAG_OVERRIDE = 21;
+        MOBILE_UTILITIES = 22;
+    }
+}

@@ -31,6 +31,12 @@ message DataProductAssociation {
 
 message DataProductAssociationRestriction {
     repeated int32 product_id = 1;
+    
+    InfraProductIdBehavior infra_product_id_behavior = 2;
+    enum InfraProductIdBehavior {
+        UNSPECIFIED = 0;
+        ALLOW_ALL_INFRA_PRODUCT_IDS = 1;
+    }
 }
 
 message ProcessProductAssociation {

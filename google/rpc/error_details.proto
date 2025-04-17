@@ -31,6 +31,15 @@ message QuotaFailure {
     message Violation {
         string subject = 1;
         string description = 2;
+        string api_service = 3;
+        string quota_metric = 4;
+        string quota_id = 5;
+        map<string, string> quota_dimensions = 6;
+        int64 quota_value = 7;
+        
+        oneof _future_quota_value {
+            int64 future_quota_value = 8;
+        }
     }
 }
 
@@ -48,6 +57,8 @@ message BadRequest {
     message FieldViolation {
         string field = 1;
         string description = 2;
+        string reason = 3;
+        LocalizedMessage localized_message = 4;
     }
 }
 

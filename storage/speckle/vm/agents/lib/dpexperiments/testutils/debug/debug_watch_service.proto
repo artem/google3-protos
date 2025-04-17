@@ -1,0 +1,36 @@
+syntax = "editions";
+
+package storage_speckle_vm_agents_lib_dpexperiments_testutils;
+
+import "experiments/proto/propagation.proto";
+import "storage/datapol/annotations/proto/semantic_annotations.proto";
+
+service DebugWatchService {
+    rpc DebugWatch(DebugWatchRequest) returns (stream DebugWatchResponse);
+    rpc DebugPush(DebugPushRequest) returns (DebugPushResponse);
+    rpc ListListeners(ListListenersRequest) returns (ListListenersResponse);
+}
+
+message DebugWatchRequest {
+    optional string listener_id = 1;
+}
+
+message DebugWatchResponse {
+    optional experiments.propagation.MendelDebugInput debug_input = 1;
+}
+
+message DebugPushRequest {
+    optional experiments.propagation.MendelDebugInput debug_input = 1;
+}
+
+message DebugPushResponse {
+    repeated string listeners = 1;
+}
+
+message ListListenersRequest {
+    
+}
+
+message ListListenersResponse {
+    repeated string listeners = 1;
+}

@@ -2,6 +2,8 @@ syntax = "proto3";
 
 package google.api.servicecontrol.v1;
 
+import "google/api/inclusion.proto";
+
 option ruby_package = "Google::Cloud::ServiceControl::V1";
 option php_namespace = "Google\\Cloud\\ServiceControl\\V1";
 option csharp_namespace = "Google.Cloud.ServiceControl.V1";

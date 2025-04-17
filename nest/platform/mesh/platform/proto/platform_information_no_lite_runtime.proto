@@ -1,0 +1,14 @@
+syntax = "proto3";
+
+package smart_home_mesh.platform;
+
+enum OsType {
+    OS_TYPE_UNKNOWN = 0;
+    OS_TYPE_ANDROID = 3;
+    OS_TYPE_ANDROID_TV = 5;
+    OS_TYPE_CAST_OS = 1;
+    OS_TYPE_FUCHSIA = 2;
+    OS_TYPE_NEST_LINUX = 6;
+    OS_TYPE_PARTNER_LINUX = 4;
+    OS_TYPE_IOS = 7;
+}

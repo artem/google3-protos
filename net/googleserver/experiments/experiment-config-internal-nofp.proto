@@ -1,0 +1,31 @@
+syntax = "editions";
+
+package experiments;
+
+import "experiments/mendel/compiler/proto/flag_phase.proto";
+import "experiments/mendel/compiler/proto/risk_tolerance.proto";
+import "net/googleserver/experiments/experiment-config.proto";
+
+option java_multiple_files = true;
+option java_package = "com.google.net.googleserver.experiments";
+
+message InternalExperimentFlagDefinition {
+    optional bool disjoint_modifiers = 1;
+    repeated string layer_names = 2;
+    optional string proto_path = 3;
+    optional bool is_client_flag = 4;
+    optional FlagPhase flag_phase = 5;
+    optional bool is_launch_flag = 6;
+}
+
+message InternalModifierMessage {
+    optional RiskTolerance risk_tolerance = 1;
+}
+
+extend ExperimentFlagDefinition {
+    optional InternalExperimentFlagDefinition internal_experiment_flag_definition = 19;
+}
+
+extend ModifierMessage {
+    optional InternalModifierMessage internal_modifier_message = 15;
+}

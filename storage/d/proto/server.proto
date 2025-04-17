@@ -10,10 +10,9 @@ import public "storage/d/proto/file-access-hint.proto";
 import public "storage/d/proto/header.proto";
 import public "storage/d/proto/health.proto";
 import public "storage/d/proto/storage-partition.proto";
+import "storage/d/proto/pb-strong-int-ext.proto";
 import "storage/d/proto/request-sampler.proto";
 import "storage/datapol/annotations/proto/semantic_annotations.proto";
-
-option cc_enable_arenas = true;
 
 service StorageD {
     rpc Statfs(StatfsRequest) returns (ServerStats);
@@ -195,10 +194,6 @@ message VolumeStats {
     optional fixed64 label = 2;
     optional string device_name = 27;
     optional int64 disk_size_bytes = 3 [deprecated = true];
-    optional int64 disk_used_bytes = 5 [deprecated = true];
-    optional int64 available_bytes = 4 [deprecated = true];
-    optional int64 used_bytes = 16 [deprecated = true];
-    optional int64 num_files = 24 [deprecated = true];
     optional VolumeSpaceUsageStats space_usage_stats = 30;
     optional int32 read_operation_latency_ms = 9;
     optional int32 read_bandwidth_kbps = 17;
@@ -209,17 +204,16 @@ message VolumeStats {
     repeated DiskCostPerUser disk_cost_per_user = 25 [deprecated = true];
     optional Health health = 14;
     optional int32 info_bits = 29;
-    optional string volume_name = 26 [deprecated = true];
     
-    reserved 6, 7, 8, 10, 11, 12, 15, 20, 21, 22;
+    reserved 6, 7, 8, 10, 11, 12, 15, 20, 21, 22, 4, 5, 16, 24, 26;
     
     enum Fields {
         VOL_LABEL = 1;
         VOL_DISK_SIZE_BYTES = 2;
-        VOL_DISK_USED_BYTES = 4;
+        DEPRECATED_VOL_DISK_USED_BYTES = 4;
         DEPRECATED_VOL_DISK_USED_TRANSIENT_BYTES = 8;
-        VOL_AVAILABLE_BYTES = 16;
-        VOL_USED_BYTES = 32;
+        DEPRECATED_VOL_AVAILABLE_BYTES = 16;
+        DEPRECATED_VOL_USED_BYTES = 32;
         DEPRECATED_VOL_QUEUE_DELAY_MS_MINUTE = 64;
         DEPRECATED_VOL_QUEUE_DELAY_MS_HOUR = 128;
         DEPRECATED_VOL_QUEUE_DELAY_MS_START = 256;
@@ -235,11 +229,11 @@ message VolumeStats {
         VOL_HEALTH_BITS = 262144;
         VOL_HEALTH_VERSION = 524288;
         DEPRECATED_VOL_WRITEBACK_TIME = 1048576;
-        VOL_NUM_FILES = 2097152;
+        DEPRECATED_VOL_NUM_FILES = 2097152;
         VOL_NUM_FILES_PER_USER = 4194304;
         DEPRECATED_VOL_DISK_COST_PER_USER = 8388608;
         VOL_DISK_COST_PER_USER_PER_PRIORITY = 16777216;
-        VOL_VOLUME_NAME = 33554432;
+        DEPRECATED_VOL_VOLUME_NAME = 33554432;
         VOL_DEVICE_NAME = 67108864;
         VOL_VOLUME_ID = 134217728;
         VOL_INFO_BITS = 268435456;
@@ -537,7 +531,19 @@ message OpenRequest {
 }
 
 message AllocatorInfo {
-    optional string name = 1;
+    optional string name = 1 [deprecated = true];
+    
+    optional Allocator allocator = 2;
+    enum Allocator {
+        UNKNOWN = 0;
+        HDD_HOT = 1;
+        HDD_COLD = 2;
+        SSD_HOT = 3;
+        SSD_COLD = 4;
+        OTHER = 5;
+        L4_HOT = 6;
+        L4_COLD = 7;
+    }
 }
 
 message ReadRequest {
@@ -655,6 +661,16 @@ message RmaDeallocRequest {
     optional RequestHeader header = 1;
     optional string path = 2;
     optional Capability capability = 3;
+    
+    optional Reason reason = 4 [default = UNKNOWN];
+    enum Reason {
+        UNKNOWN = 0;
+        CLIENT_INITIATED = 1;
+        CONNECTION_CLOSED = 2;
+        CREATE_DPAD_FAILURE = 3;
+        PONY_INITIATED = 4;
+        RMA_ALLOC_ERROR_INJECTED = 5;
+    }
 }
 
 message RmaDeallocReply {
@@ -763,7 +779,6 @@ message ReconstructFilesRequest {
     repeated ReconstructFilesSource sources = 2;
     repeated ReconstructFilesTarget targets = 3;
     optional bool fail_if_targets_exists = 4;
-    optional bool pull_tail = 12;
     optional AccessPermissions targets_permissions = 5;
     optional int64 targets_mtime = 6;
     optional bool targets_immutable = 7;
@@ -776,13 +791,14 @@ message ReconstructFilesRequest {
     optional bool is_hail_mary = 16;
     optional AllocatorInfo allocator_info = 17;
     
-    reserved 8;
+    reserved 8, 12;
 }
 
 message ReconstructFilesReply {
     optional ReplyHeader header = 2;
-    repeated StatInfo infos = 1;
     repeated StatInfoResult results = 3;
+    
+    reserved 1;
 }
 
 message SyncRequest {

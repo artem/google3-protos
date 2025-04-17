@@ -1,0 +1,22 @@
+syntax = "editions";
+
+package identity_cloud;
+
+import "storage/datapol/annotations/proto/semantic_annotations.proto";
+
+option java_multiple_files = true;
+option java_outer_classname = "PublicKeyProto";
+option java_package = "com.google.cloud.identity.vault.proto.seal";
+
+message PublicKey {
+    optional KeyType key_type = 1;
+    enum KeyType {
+        KEY_TYPE_UNSPECIFIED = 0;
+        RSA_2048 = 1;
+        ECDSA_P256 = 2;
+        DILITHIUM_2 = 3;
+        DILITHIUM_3 = 4;
+    }
+    
+    optional bytes key_material = 2;
+}

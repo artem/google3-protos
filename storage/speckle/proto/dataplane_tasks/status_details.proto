@@ -1,0 +1,12 @@
+syntax = "editions";
+
+package speckle.dataplane;
+
+import "google/rpc/error_details.proto";
+import "net/proto2/bridge/proto/message_set.proto";
+import "storage/datapol/annotations/proto/semantic_annotations.proto";
+import "third_party/boundary_proxy/proto_compare/annotation.proto";
+
+extend .proto2.bridge.MessageSet {
+    optional google.rpc.LocalizedMessage external_error_message = 241252677;
+}

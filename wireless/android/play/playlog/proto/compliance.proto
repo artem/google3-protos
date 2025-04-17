@@ -1,0 +1,33 @@
+syntax = "proto2";
+
+package wireless_android_play_playlog;
+
+import "google/internal/identity/signedoutstate/v1/signed_out_state_container.proto";
+import "privacy/context/external/proto/external_privacy_context.proto";
+import "storage/datapol/annotations/proto/semantic_annotations.proto";
+
+option objc_class_prefix = "CADP";
+option java_package = "com.google.wireless.android.play.playlog.proto";
+
+message ComplianceData {
+    optional privacy.context.external.ExternalPrivacyContext privacy_context = 1;
+    
+    optional ProductIdOrigin product_id_origin = 2 [default = NOT_SET];
+    enum ProductIdOrigin {
+        NOT_SET = 0;
+        CPS_APP_PROCESS_GLOBAL_PROVIDER = 1;
+        NON_CPS_APP_PROCESS_GLOBAL_PROVIDER = 2;
+        LOGGER_OVERRIDE_PROVIDER = 3;
+        LOGGER_DEFERRING_PROVIDER = 4;
+        EVENT_OVERRIDE = 5;
+        EVENT_DEFERRING = 6;
+        LOG_SOURCE_MAPPED = 7;
+        SERVER_INFRASTRUCTURE = 8;
+        LOG_REQUEST_SETTER_WEB = 9;
+        PRIVACY_CONTEXT_RESOLVER = 10;
+    }
+    
+    optional google.internal.identity.signedoutstate.v1.SignedOutState signed_out_state = 3;
+    
+    extensions 4;
+}

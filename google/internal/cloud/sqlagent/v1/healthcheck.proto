@@ -1,0 +1,77 @@
+syntax = "proto3";
+
+package google.internal.cloud.sqlagent.v1;
+
+import "google/internal/cloud/sqlagent/v1/enums.proto";
+import "google/protobuf/duration.proto";
+import "google/protobuf/timestamp.proto";
+import "storage/datapol/annotations/proto/semantic_annotations.proto";
+import "storage/speckle/proto/db_heartbeat.proto";
+
+option java_multiple_files = true;
+option java_outer_classname = "HealthCheckProto";
+option java_package = "com.google.internal.cloud.sqlagent.v1";
+
+message VmHealthState {
+    protobuf.Timestamp generation_time = 1;
+    string vm_name = 2;
+    string vm_zone = 3;
+    protobuf.Timestamp last_heartbeat_time = 4;
+    HeartbeatMonitorStatus heartbeat_monitor_status = 5;
+    protobuf.Timestamp replication_heartbeat_time = 6 [deprecated = true];
+    FailoverSlaveState failover_standby_state = 7;
+    repeated HealthStateWithInterval health_state_with_intervals = 8;
+    DatabaseState database_state = 9;
+    repeated .speckle.DbHeartbeat db_heartbeats = 14;
+    
+    oneof _vm_instance_id {
+        string vm_instance_id = 12;
+    }
+    
+    oneof _seconds_behind_source {
+        int64 seconds_behind_source = 15;
+    }
+    
+    oneof _relay_log_empty {
+        bool relay_log_empty = 16;
+    }
+    
+    oneof _unclean_reboot_detect {
+        bool unclean_reboot_detect = 10 [deprecated = true];
+    }
+    
+    oneof _recreate_needed_because_of_unclean_reboot {
+        bool recreate_needed_because_of_unclean_reboot = 11;
+    }
+    
+    oneof _recreate_replicas_on_reduced_durability_primary_crash {
+        bool recreate_replicas_on_reduced_durability_primary_crash = 13;
+    }
+    
+    oneof _is_data_disk_attached {
+        bool is_data_disk_attached = 17;
+    }
+}
+
+message HealthCheckIntervals {
+    protobuf.Duration control_plane_heartbeat_interval = 1;
+    protobuf.Duration serving_role_lease_validity = 2;
+    protobuf.Duration db_read_interval = 3;
+    protobuf.Duration db_read_timeout = 4;
+}
+
+message HealthStateWithInterval {
+    HealthState health_state = 1;
+    protobuf.Timestamp start_time = 2;
+    protobuf.Timestamp end_time = 3;
+}
+
+message ReplicationHealthState {
+    oneof _replication_state {
+        ReplicationState replication_state = 1;
+    }
+    
+    oneof _seconds_behind_master {
+        int64 seconds_behind_master = 2;
+    }
+}

@@ -71,6 +71,7 @@ message StreamHeader {
 }
 
 message CensusContext {
+    optional string originator = 1;
     optional string tracking_tag = 2;
     optional string layer_local_tracking_tag = 3;
 }

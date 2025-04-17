@@ -1,0 +1,8 @@
+syntax = "editions";
+
+package storage_l4;
+
+message ResourceUserProto {
+    optional string user = 1;
+    optional string isolation_class = 2;
+}

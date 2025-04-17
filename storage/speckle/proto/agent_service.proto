@@ -1,0 +1,64 @@
+syntax = "editions";
+
+package speckle;
+
+import "apiserving/proto/api.proto";
+import "logs/eventid/eventid.proto";
+import "storage/datapol/annotations/proto/semantic_annotations.proto";
+import "storage/speckle/proto/agent_op.proto";
+import "storage/speckle/proto/agent_type.proto";
+
+option java_outer_classname = "Agent";
+
+service AgentService {
+    rpc Poll(PollRequest) returns (AgentTaskProto);
+}
+
+message AgentTaskProto {
+    optional string instance_name = 2 [deprecated = true];
+    optional OperationRequest operation_request = 3;
+    optional AgentType agent_type = 4;
+    optional string image = 5;
+    optional int64 seq_id = 6;
+    optional string sync_operation_id = 7;
+    optional string sync_operation_response_topic_project_id = 8;
+    optional string sync_operation_response_topic = 9;
+    optional string instance_uid = 10;
+    optional int64 timeout_millis = 11;
+    optional EventIdMessage event_id = 12;
+    optional bool use_vm_check = 13;
+    
+    oneof target {
+        AgentServiceTarget agent_service_target = 21;
+        PubsubTarget pubsub_target = 22;
+    }
+    
+    reserved 1;
+}
+
+message AgentServiceTarget {
+    optional string vm_name = 1;
+    optional string regional_vm_name = 2;
+}
+
+message PubsubTarget {
+    optional string topic = 1;
+}
+
+message PollRequest {
+    optional string instance_name = 1;
+    optional OperationResponse operation_response = 3;
+    optional string vm_name = 4;
+    optional bool operation_in_progress = 5;
+    optional string instance_uid = 6;
+    
+    reserved 2;
+}
+
+message DataplaneTaskPayload {
+    optional OperationRequest operation_request = 1;
+    optional string image = 2;
+    optional string sync_operation_id = 3;
+    optional string sync_operation_response_topic_project_id = 4;
+    optional string sync_operation_response_topic = 5;
+}

@@ -1,0 +1,118 @@
+syntax = "proto3";
+
+package speckle.dataplane.postgres;
+
+import "google/protobuf/duration.proto";
+import "storage/datapol/annotations/proto/semantic_annotations.proto";
+
+message PostgresSetReplicaRequest {
+    string replica_name = 1;
+    string slot_name = 2;
+    string recovery_path = 3 [deprecated = true];
+    string trigger_file = 4;
+    int32 uid = 5;
+    bool restart_database = 6;
+    bool reload_conf = 7;
+    bool restart_internal_service = 8;
+}
+
+message PostgresIndex {
+    bytes database_name = 1;
+    bytes table_regclass = 2;
+    bytes index_regclass = 3;
+}
+
+message ListPostgresIndex {
+    repeated PostgresIndex index = 1;
+}
+
+message PostgresStopReplicaRequest {
+    string dsn = 1 [deprecated = true];
+    bool master_on_premises = 2;
+    bool enable_ssl = 3;
+    bool enable_ssl_client_auth = 4;
+    string master_host = 5;
+    int32 master_port = 6;
+    string master_user = 7;
+    string master_password = 8;
+    bool enable_multiple_subscriptions = 9;
+    int32 max_subscription_count = 10;
+    bool enable_selective_db_migration = 11;
+}
+
+message PostgresStartReplicaRequest {
+    bool master_on_premises = 2;
+    bool enable_ssl = 3;
+    bool enable_ssl_client_auth = 4;
+    bool enable_multiple_subscriptions = 5;
+    int32 max_subscription_count = 6;
+    bool enable_selective_db_migration = 7;
+    
+    reserved 1;
+}
+
+message PostgresPromoteReplicaRequest {
+    Method promote_method = 1;
+    enum Method {
+        UNKNOWN_METHOD = 0;
+        REMOVE_RECOVERY_PATH = 1;
+        TRIGGER_FILE = 2;
+    }
+    
+    string recovery_path = 2 [deprecated = true];
+    string trigger_file = 3;
+    bool master_on_premises = 4;
+    string master_host = 5;
+    int32 master_port = 6;
+    string master_user = 7;
+    string master_password = 8;
+    bool enable_ssl = 9;
+    bool enable_ssl_client_auth = 10;
+    bool enable_selective_db_migration = 11;
+    
+    oneof _ssl_option {
+        SslOption ssl_option = 12;
+    }
+}
+
+message PostgresStartBackupResult {
+    string current_wal_file_name = 1;
+}
+
+message PostgresStopBackupResult {
+    string backup_label_file_content = 1;
+}
+
+message PostgresSwitchoverToShadowVMRequest {
+    int64 wait_almost_catch_up_low_lag_threshold_ms = 1;
+    int64 wait_almost_catch_up_high_lag_threshold_ms = 2;
+    int64 wait_almost_catch_up_flush_lag_threshold_ms = 3;
+    string application_name = 4;
+    bool restart_postgres_defroles_service = 5;
+}
+
+message PostgresWaitForReplicaToCatchUpWithPrimaryRequest {
+    string replica_name = 2;
+    string replica_ip = 3;
+    
+    oneof _timeout {
+        google.protobuf.Duration timeout = 1;
+    }
+}
+
+message PostgresUpdatePgBouncerConfigRequest {
+    string client_tls_sslmode = 1;
+    string pool_mode = 2;
+}
+
+message PostgresReplicaStatusResult {
+    bool replay_paused = 1;
+    string wal_receiver_status = 2;
+}
+
+enum SslOption {
+    SSL_OPTION_UNSPECIFIED = 0;
+    DISABLE = 1;
+    REQUIRE = 2;
+    VERIFY_CA = 3;
+}

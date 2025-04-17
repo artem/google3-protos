@@ -15,6 +15,7 @@ message PrivacyContextDeltaTraceInfo {
     optional bool primary_compliance_controls_gaia = 6;
     optional int32 processing_purpose = 7;
     optional int64 buganizer_approval_id = 8;
+    optional int64 eldar_approval_id = 27;
     optional bool dma52_cross_use_offered_together = 9;
     optional bool primary_compliance_controls_zwieback = 10;
     optional int32 promise_of_enforcement_return_policy = 11;
@@ -28,6 +29,9 @@ message PrivacyContextDeltaTraceInfo {
     optional int32 request_policy_rollout_enforcement_mode = 20;
     optional int32 policies_breakglass = 22;
     optional int64 borg_run_uid = 23;
+    optional int32 prev_semantic_purpose = 24;
+    optional int32 new_semantic_purpose = 25;
+    repeated int32 deferred_semantic_purposes = 26;
     
     optional Language language = 4;
     enum Language {
@@ -77,6 +81,13 @@ message PrivacyContextDeltaTraceInfo {
         REMOVE_REQUEST_POLICY_ENFORCEMENT_OPT_OUT_FILTERING = 34;
         SET_BORG_RUN_UID = 35;
         CLEAR_SOT_MAPPINGS = 36;
+        CLEAR_DMA52_POLICY_BREAKGLASS = 37;
+        SKIP_DEFAULT_DMA52_CROSS_USE_OFFERED_TOGETHER = 38;
+        CLEAR_POST_ACCESS_FILTERING = 39;
+        SET_SEMANTIC_PURPOSE = 40;
+        CLEAR_SEMANTIC_PURPOSE = 41;
+        DEFAULT_SEMANTIC_PURPOSE = 42;
+        CLEAR_BORG_RUN_UID = 43;
     }
     
     optional bool is_census_root_handle = 19;

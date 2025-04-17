@@ -4,6 +4,7 @@ package ptoken;
 
 import "google/protobuf/timestamp.proto";
 import "privacy/compliance_controls/proto/core_platform_service.proto";
+import "privacy/pattributes/public/proto/gaia_saa_state.proto";
 import "privacy/pattributes/public/proto/gaia_waa_state.proto";
 import "privacy/ptoken/public/core/common_personal_data_defs.proto";
 import "privacy/ptoken/public/core/ptoken_type.proto";
@@ -35,7 +36,13 @@ message CommonPersonalDataPTokenForMinting {
                 optional Dma52RevocationExemption dma52_revocation_exemption = 559;
                 optional bool data_origin_unknown = 597;
                 optional .pattributes.GaiaWebAndAppActivityState gaia_waa_state = 652;
+                optional .pattributes.GaiaSearchAndAssistantState gaia_saa_state = 772;
                 repeated int32 dual_observation_product_ids = 684;
+                optional google.protobuf.Timestamp event_date = 767;
+                optional uint64 smpc_hashed_event_key = 768;
+                optional bool explicit_smpc_is_recently_deleted_event = 769;
+                optional google.protobuf.Timestamp basic_must_hide_by_time = 122;
+                optional bool flogs_soft_delete_in_scope = 778;
             }
         }
     }

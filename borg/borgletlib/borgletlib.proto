@@ -4,7 +4,6 @@ package borg;
 
 import "borg/borgletlib/bofflet.proto";
 import "borg/borgletlib/dynamic_remote_package.proto";
-import "borg/borgletlib/task_problems.proto";
 import "borg/common/disk_alloc.proto";
 import "borg/common/fs_dirs.proto";
 import "borg/common/permissions.proto";
@@ -30,7 +29,6 @@ service BorgletClient {
     rpc GetContainerVars(ContainerVarsRequest) returns (ContainerVarsResponse);
     rpc SetApplicationInfo(SetApplicationInfoRequest) returns (SetApplicationInfoResponse);
     rpc RegisterMemBwNotification(RegisterMemBwNotificationRequest) returns (RegisterMemBwNotificationResponse);
-    rpc ReportTaskProblems(ReportTaskProblemsRequest) returns (ReportTaskProblemsResponse);
 }
 
 service OffloadBorgletClient {
@@ -115,6 +113,8 @@ message RunCommandInTaskReq {
         GUEST_ROOT = 2;
         GUEST_CONTAINER = 3;
     }
+    
+    optional string expected_borg_cell = 8;
 }
 
 message RunCommandInTaskResp {
@@ -232,13 +232,4 @@ message GetGpuIpvStateResponse {
         IPV_DISABLED = 2;
         IPV_UNINITIALIZED = 3;
     }
-}
-
-message ReportTaskProblemsRequest {
-    optional TaskProblems problems = 1;
-    optional string task_handle = 2;
-}
-
-message ReportTaskProblemsResponse {
-    
 }

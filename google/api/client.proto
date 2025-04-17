@@ -3,6 +3,7 @@ syntax = "proto3";
 package google.api;
 
 import "google/api/launch_stage.proto";
+import "google/api/policy.proto";
 import "google/api/visibility.proto";
 import "google/protobuf/duration.proto";
 import "net/proto2/proto/descriptor.proto";
@@ -75,6 +76,8 @@ message PythonSettings {
     ExperimentalFeatures experimental_features = 2;
     message ExperimentalFeatures {
         bool rest_async_io_enabled = 1;
+        bool protobuf_pythonic_types_enabled = 2;
+        bool unversioned_package_disabled = 3;
     }
 }
 
@@ -97,6 +100,7 @@ message RubySettings {
 
 message GoSettings {
     CommonLanguageSettings common = 1;
+    map<string, string> renamed_services = 2;
 }
 
 message MethodSettings {
@@ -115,6 +119,8 @@ message MethodSettings {
 
 message SelectiveGapicGeneration {
     repeated string methods = 1;
+    bool generate_omitted_as_internal = 2;
+    bool as_deny_list = 3;
 }
 
 enum ClientLibraryOrganization {

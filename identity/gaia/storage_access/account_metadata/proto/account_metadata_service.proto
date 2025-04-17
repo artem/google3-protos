@@ -192,7 +192,8 @@ message UpdateUserResponse {
 message DeactivateAccountRequest {
     optional int64 user_id = 1;
     optional int64 purging_exception_reason = 6;
-    optional UserContext user_context = 5;
+    optional UserContext user_context = 5 [deprecated = true];
+    optional ChangeNotificationOptions change_notification_options = 7;
     
     reserved 2, 3, 4;
 }

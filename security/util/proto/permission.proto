@@ -8,9 +8,11 @@ import "storage/datapol/annotations/proto/semantic_annotations.proto";
 option java_package = "com.google.security.util.genfiles";
 
 message AcctRestrictions {
-    repeated AcctDstRestriction dst_restrictions = 1 [deprecated = true];
-    optional AcctSrcRestriction src_restriction = 2 [deprecated = true];
     optional DestinationRestriction destination_restriction = 3 [lazy = true];
+    
+    reserved 1, 2;
+    
+    reserved "dst_restrictions", "src_restriction";
     
     extend .proto2.bridge.MessageSet {
         optional AcctRestrictions message_set_extension = 43674265;
@@ -37,26 +39,4 @@ message DestinationPermission {
     repeated .thinmint.ThinMintDescription application_thinmint_descriptions = 5 [deprecated = true];
     optional string description = 6;
     optional bool report_usage = 9;
-}
-
-message AcctDstRestriction {
-    optional DestType dst_type = 1;
-    enum DestType {
-        BORG = 0;
-        BABYSAT = 1;
-        CORP = 2;
-        BANDAID = 3;
-    }
-    
-    optional string dst_user = 2;
-    optional string dst_job = 3;
-    repeated string rpc_labels = 4;
-    repeated string rpc_services = 5;
-    repeated .thinmint.ThinMintDescription rpc_services_labels = 8;
-    repeated .thinmint.ThinMintDescription application_thinmint_descriptions = 9;
-    optional string description = 7;
-}
-
-message AcctSrcRestriction {
-    reserved 1, 2, 3, 4;
 }

@@ -37,7 +37,7 @@ message Capability {
     }
 }
 
-message InvalidCapabilityKeyDetails {
+message FailedCapabilityCheckDetails {
     optional Reason reason = 1;
     enum Reason {
         UNKNOWN_CAPABILITY_KEY = 0;
@@ -46,6 +46,6 @@ message InvalidCapabilityKeyDetails {
     }
     
     extend .proto2.bridge.MessageSet {
-        optional InvalidCapabilityKeyDetails message_set_extension = 525002189;
+        optional FailedCapabilityCheckDetails message_set_extension = 525002189;
     }
 }

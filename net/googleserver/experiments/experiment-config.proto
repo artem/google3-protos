@@ -1,0 +1,388 @@
+syntax = "proto2";
+
+import "ads/rasta/server/analyzer_service/rasta_analyzers_common.proto";
+import "ads/rasta/server/query_engine/rpc/dimension_common_config.proto";
+import "experiments/proto/date.proto";
+import "experiments/proto/range.proto";
+import "net/proto2/bridge/proto/message_set.proto";
+import "storage/datapol/annotations/proto/semantic_annotations.proto";
+import "storage/f1/proto/schema_visibility.proto";
+
+option java_package = "com.google.net.googleserver.experiments";
+
+message AdExperimentDisabledIds {
+    repeated int32 experiment_id = 1;
+}
+
+message ExperimentOverrideMessage {
+    optional int32 version = 1;
+    optional AdExperimentDisabledIds disabled_experiments = 2;
+    optional int32 snapshot_version = 21;
+    optional AdExperimentDisabledIds snapshot_disabled_experiments = 4;
+}
+
+message ExperimentFileDefinition {
+    required string file_logical_name = 1;
+    optional string file_name = 2;
+    required string file_type = 3;
+    optional string file_description = 4;
+    
+    optional group SSTableParams = 10 {
+        required Types type = 11;
+        enum Types {
+            MLOCKED = 0;
+        }
+    }
+}
+
+message ExperimentFileValue {
+    required string file_logical_name = 1;
+    required string file_name = 2;
+}
+
+message ExperimentFileValues {
+    required int32 experiment_id = 1;
+    repeated ExperimentFileValue overridden_files = 2;
+}
+
+message ExperimentLayerDefinition {
+    required string name = 1;
+    optional string location = 12;
+    required int32 id = 2;
+    optional string require_domain = 3 [default = "DefaultDomain"];
+    optional bool is_launch_layer = 4 [default = false];
+    optional string diversion_property = 11;
+    optional int32 modulus = 10 [default = 1000];
+    optional int32 diversion_type = 9 [default = -1];
+    optional bool use_latin_square_sampling = 13 [default = false];
+    
+    extensions 14, 100000 to max;
+    
+    reserved 5, 6, 7;
+}
+
+message ModifierConditionGroup {
+    option deprecated = true;
+    
+    optional MergeOperator merge_operator = 1 [default = AND];
+    enum MergeOperator {
+        OR = 0;
+        AND = 1;
+    }
+    
+    repeated group Condition = 2 {
+        required string function = 3;
+        repeated string args = 4;
+        optional bool negate_condition = 5 [default = false];
+    }
+    
+    repeated ModifierConditionGroup condition_group = 6;
+    
+    reserved 7;
+}
+
+message ModifierMessage {
+    optional string name = 1;
+    
+    repeated group Condition = 2 {
+        required string function = 3;
+        repeated string args = 4;
+        optional bool negate_condition = 5 [default = false];
+    }
+    
+    optional ConditionMergeOperator condition_merge_operator = 6 [default = AND];
+    enum ConditionMergeOperator {
+        OR = 0;
+        AND = 1;
+    }
+    
+    optional Operator value_operator = 7;
+    enum Operator {
+        OVERRIDE = 0;
+        MULTIPLY = 1;
+        ADD = 2;
+        PROTO_MERGE = 3;
+        IDENTITY = 4;
+        BIT_OR = 5;
+        BIT_AND = 6;
+    }
+    
+    optional string base_value = 8;
+    repeated ModifierMessage modifier = 9;
+    optional string refer_to_modifier_template = 11 [deprecated = true];
+    optional ModifierConditionGroup condition_group = 12;
+    optional int32 condition_index = 13 [default = -1];
+    repeated string tpc_scopes = 14;
+    
+    extensions 15, 100000 to max;
+}
+
+message ExperimentFlagDefinition {
+    required string name = 1;
+    
+    required Type type = 2;
+    enum Type {
+        INT = 0;
+        DOUBLE = 1;
+        BOOL = 2;
+        STRING = 3;
+        PROTO = 4;
+        PROTO_BINARY_BASE64 = 6;
+        EXPFILE = 5;
+    }
+    
+    optional string sub_type = 3;
+    optional string java_proto_type = 12;
+    required string description = 4;
+    optional string layer_name = 15 [deprecated = true];
+    
+    optional LayerMerging layer_merging = 5 [default = DISALLOW_MERGING];
+    enum LayerMerging {
+        UNMERGEABLE = 0;
+        DISALLOW_MERGING = 1;
+        ALLOW_MERGING = 2;
+        ALLOW_DISJOINT_MODIFIERS = 3;
+    }
+    
+    required string base_value = 6;
+    repeated ModifierMessage modifier = 7;
+    repeated ModifierMessage modifier_template = 8 [deprecated = true];
+    optional bool is_const = 9;
+    optional bool is_deprecated = 10;
+    optional bool is_dynamic = 16;
+    repeated string tags = 11;
+    optional bytes internal_codegen_data = 13;
+    optional int32 id = 14;
+    optional bool disable_missing_flag_safety_check = 17;
+    
+    extensions 19, 100000 to max;
+}
+
+message ExperimentFlags {
+    optional int32 experiment_id = 1;
+    optional string short_name = 4 [deprecated = true];
+    repeated ModifierMessage override_template = 2 [deprecated = true];
+    repeated ModifierMessage override = 3;
+}
+
+message CompiledInFlag {
+    repeated ModifierMessage modifier = 1;
+    repeated ModifierMessage modifier_template = 2 [deprecated = true];
+}
+
+message ExperimentMessage {
+    required int32 experiment_id = 1;
+    required string short_name = 2;
+    required int32 control_experiment_id = 3;
+    optional int32 preperiod_experiment_id = 28 [deprecated = true];
+    optional int32 postperiod_experiment_id = 29 [deprecated = true];
+    optional int32 slice_parent_experiment_id = 40;
+    optional int32 aggregate_experiment_id = 47;
+    optional bool is_aggregate_experiment = 48;
+    optional experiments.Date end_date = 4;
+    optional experiments.Date expected_launch_date = 36;
+    
+    required ExperimentStatus status = 5;
+    enum ExperimentStatus {
+        ACTIVE = 0;
+        INACTIVE = 1;
+        PREPERIOD = 2 [deprecated = true];
+        POSTPERIOD = 3 [deprecated = true];
+        UNKNOWN_STATUS = 4;
+        EXTERNAL = 5;
+        FORCEABLE = 6;
+    }
+    
+    optional int32 condition_index = 42 [default = -1];
+    optional ModifierConditionGroup condition_group = 39;
+    
+    repeated group Condition = 7 {
+        required string function = 8;
+        repeated string args = 9;
+        optional bool negate_condition = 10 [default = false];
+    }
+    
+    optional int32 condition_merge_operator = 11 [default = 1];
+    optional int32 requested_num_mods = 52;
+    repeated experiments.Range cookie_ranges = 13;
+    
+    optional CookieTypes cookie_type = 14 [default = COOKIE];
+    enum CookieTypes {
+        COOKIE = 0;
+        COOKIE_DAY = 1;
+        GAIA = 2 [deprecated = true];
+        ZWIEBACK = 3;
+        PREF = 4;
+        DOGFOOD_GAIA = 5;
+        DOGFOOD_COOKIE = 6;
+        DOGFOOD_PREF = 7;
+        REQUEST = 8;
+        GAIA_DAY = 9;
+        BLENDED_COOKIE = 10;
+        YT_VISITOR_ID = 11;
+        YT_UNIFIED = 12;
+        REFERER = 13;
+        D3_CUSTOMER_ID = 14;
+        ANDROID_ID = 15;
+        YT_VISITOR_ID_DAY = 16;
+        MONETA_CUSTOMER_ID = 17;
+        DASHER_UNIFIED_ID = 18;
+        YT_BANDAID_VIDEO_ID = 20;
+        YT_BANDAID_PLAYBACK_NONCE = 21;
+        DOCS_ID = 22;
+        YT_BANDAID_MACHINE_NAME_HASH = 23;
+        HANGOUT_ID = 24;
+        SOCIAL_CHANNEL_ID = 25;
+        CDP_BUYER_ID = 26;
+        HELP_ID = 27;
+        BLENDED_COOKIE_DAY = 28;
+        SOCIAL_CONVERSATION_ID = 29;
+        YT_UNIFIED_DAY = 30;
+        GAIA_WITH_FALLBACK = 31;
+        GAIA_DAY_WITH_FALLBACK = 32;
+        BISCOTTI_WITH_FALLBACK = 33;
+        BISCOTTI_DAY_WITH_FALLBACK = 34;
+        ANALYTICS_ORGANIZATION_ID = 35;
+        NAKSHA_UNIFIED_ID = 36;
+        MONETA_MEGABLOX_ID = 37;
+        PURE_GAIA_ID = 38;
+        DEPRECATED_GMAIL_GAIA_ID = 39;
+        SITES_ID = 40;
+        GAIA_PERMISSION_SERVER_COOKIE_ID = 41;
+        FIBER_ACCOUNT_ID = 42;
+        PLOGS_UNIFIED_ID = 43;
+        PLOGS_UNIFIED_ID_DAY = 44;
+        YT_REQUEST_VIDEO_ID = 45;
+        YT_PURE_UNIFIED = 46;
+        YT_PURE_UNIFIED_DAY = 47;
+        XPROPERTY_GAIA_WITH_OPT_OUT = 48;
+        XPROPERTY_GAIA_WITHOUT_OPT_OUT = 49;
+        XPROPERTY_DEVICE_ID_WITH_OPT_OUT = 51;
+        XPROPERTY_DEVICE_ID_WITH_FALLBACK = 52;
+        GFP_COOKIE = 50;
+    }
+    
+    optional float fraction_of_eligible_traffic = 6;
+    optional string layer = 15;
+    optional string define_domain = 16;
+    optional .proto2.bridge.MessageSet extra_data = 17;
+    required string owner_email = 18;
+    optional string experiment_group_name = 19;
+    required string description = 20;
+    
+    repeated group Documentation = 21 {
+        optional string description = 22;
+        optional string url = 23;
+    }
+    
+    optional group Links = 24 {
+        repeated string demo_url = 25;
+        optional string approver_url = 26;
+    }
+    
+    optional DiversionPoint diversion_point = 32 [default = FRONTEND_START];
+    enum DiversionPoint {
+        UNKNOWN_DIVERSION = 74;
+        START = 0;
+        END = 1;
+        FRONTEND_START = 2;
+        PRE_AUCTION = 3;
+        POST_SMARTASS_RESPONSE = 4;
+        POST_SMARTASS_FAILURE = 6;
+        MERGESERVER_START = 7;
+        POST_GEO = 8;
+        BOW_AD_POST_CONSTRUCT_MIXER_REQUEST = 58;
+        GFP_SHARD_START = 27;
+        GFP_RANKING_START = 10;
+        GMOB_MIXER_START = 42;
+        GMOB_SHARD_START = 43;
+        GMOB_AUCTION_DONE = 45;
+        GMOB_REDFOX_SUBSCRIBER_DATA_RECEIVED = 62;
+        LIVEFE_REQUEST_RECEIVED = 83;
+        LIVEFE_PRE_BOW_REQUEST = 84;
+        BOW_REQUEST_RECEIVED = 55;
+        BOW_PRE_SRA_BLOCK_CONSTRUCTION = 68;
+        BOW_AD_REQUEST_START = 56;
+        BOW_AD_PRE_CONSTRUCT_MIXER_REQUEST = 57;
+        BOW_VTC_START = 59;
+        EVENTFE_REQUEST_START = 65;
+        EVENTFE_REQUEST_RECEIVED = 66;
+        EVENTFE_RPC_SERVICE = 72;
+        UIS_BEFORE_ID_MAPPING = 80;
+        UIS_POST_COOKIE_PARSING = 76;
+        UIS_POST_CONSENT_LOOKUP = 69;
+        COMMON_SUPERMIXER_START = 81;
+        CAT2_AD_RETRIEVAL_START = 39;
+        SUPERMIXER_PUBLISHER_ID = 60;
+        SUPERMIXER_SIGNALS_DONE = 51;
+        DFP_SIGNALS_DONE = 79;
+        CAT2_MIXER_START = 52;
+        CAT2_MERGED_DOC_TARGETING_START = 53;
+        DOC_TARGETING_START = 41;
+        CAT2_TARGETING_START = 35;
+        SHARD_RESPONSE = 9;
+        CAT2_AD_TARGETING_DONE = 54;
+        ADX_TARGETING_START = 36;
+        ALL_TARGETING_DONE = 48;
+        RTB_TARGETING_START = 47;
+        DFP_AD_RETRIEVAL_START = 34;
+        AFD_PRE_START = 25;
+        AFD_START = 11;
+        AFD_MIXER_REQUEST = 12;
+        AFD_REQUEST_RECEIVED = 63;
+        AUCTION_DONE = 13;
+        DOC_TARGETING_DATA_MERGED = 28;
+        GPA_MIXER_START = 67;
+        GMAIL_ADS_ADSERVER_START = 70;
+        COOKIE_MATCHER_START = 71;
+        COOKIE_MATCHER_AFTER_UIS = 77;
+        USERDATA_WRITE_SERVICE_START = 73;
+        ULS_REQUEST_START = 78;
+        OVERLAPPING_BEI_FOR_CAT2_AND_PLAY = 82;
+        VIRAL_POST_DATA_LOOKUP = 64 [deprecated = true];
+        PRE_LOGGING = 75;
+    }
+    
+    optional string diversion_key = 45;
+    
+    repeated group Monitoring = 139 {
+        required string metric = 140;
+        optional float notify_below = 141;
+        optional float notify_above = 142;
+        optional bool disable = 143 [default = false];
+        optional string config_id = 144;
+        repeated ads_rasta_server_query_engine_dimension.Dimension dimensions = 145;
+        repeated ads_rasta_server_analyzer_service_common.AnalyzerParam analyzer_params = 146;
+    }
+    
+    optional int32 grid_id = 34 [default = -1];
+    optional bool is_auto_managed = 35 [default = false];
+    
+    optional TrafficAllocationScheme managed_traffic_allocation = 44 [default = NOT_MANAGED];
+    enum TrafficAllocationScheme {
+        NOT_MANAGED = 0;
+        MENDEL_RESERVATION = 1;
+        AUTO_TRAFFIC_ALLOCATION_V2 = 2;
+    }
+    
+    optional bool allow_manual_enrollment = 49;
+    optional bool allow_automatic_enrollment = 51;
+    optional int32 enrollment_parent_experiment_id = 50;
+    optional string beta_display = 37 [deprecated = true];
+    optional string beta_code = 38 [deprecated = true];
+    repeated string tags = 43;
+    optional float query_fraction = 999 [deprecated = true];
+    repeated int32 trigger_experiment_ids = 46;
+    repeated int32 holdback_experiment_ids = 53 [deprecated = true];
+    repeated int32 holdback_launch_experiment_ids = 54;
+    
+    extensions 100000 to max;
+    
+    reserved 30, 31, 33, 12, 27, 55;
+    
+    reserved "hostname_filter";
+    
+    extend .proto2.bridge.MessageSet {
+        optional ExperimentMessage message_set_extension = 25473820;
+    }
+}

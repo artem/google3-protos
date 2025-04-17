@@ -1,0 +1,208 @@
+syntax = "editions";
+
+package s2a.proto.v2;
+
+import "third_party/s2a_proto/s2a/proto/v2/common.proto";
+import "third_party/s2a_proto/s2a/proto/v2/s2a_context.proto";
+
+option java_multiple_files = true;
+option java_outer_classname = "S2AProto";
+option java_package = "com.google.s2a.proto.v2";
+
+service S2AService {
+    rpc SetUpSession(stream SessionReq) returns (stream SessionResp);
+}
+
+message AlpnPolicy {
+    optional bool enable_alpn_negotiation = 1;
+    repeated AlpnProtocol alpn_protocols = 2;
+}
+
+message AuthenticationMechanism {
+    optional Identity identity = 3;
+    
+    oneof mechanism_oneof {
+        string token = 2;
+    }
+    
+    reserved 1;
+}
+
+message Status {
+    optional uint32 code = 1;
+    optional string details = 2;
+}
+
+message GetTlsConfigurationReq {
+    optional ConnectionSide connection_side = 1;
+    optional string sni = 2;
+    optional bytes client_hello = 3;
+    optional TLSVersion tls_version = 4;
+    optional bytes random = 5;
+    optional bytes session_id = 6;
+    optional bytes cipher_suites = 7;
+    optional bytes compression_methods = 8;
+    optional bytes tls_extensions = 9;
+}
+
+message GetTlsConfigurationResp {
+    oneof tls_configuration {
+        ClientTlsConfiguration client_tls_configuration = 1;
+        ServerTlsConfiguration server_tls_configuration = 2;
+    }
+    
+    message ClientTlsConfiguration {
+        repeated string certificate_chain = 1;
+        optional TLSVersion min_tls_version = 2;
+        optional TLSVersion max_tls_version = 3;
+        repeated Ciphersuite ciphersuites = 6;
+        optional AlpnPolicy alpn_policy = 7;
+        optional string sni = 8;
+        
+        reserved 4, 5;
+    }
+    
+    message ServerTlsConfiguration {
+        repeated string certificate_chain = 1;
+        optional TLSVersion min_tls_version = 2;
+        optional TLSVersion max_tls_version = 3;
+        repeated Ciphersuite ciphersuites = 10;
+        optional bool tls_resumption_enabled = 6;
+        
+        optional RequestClientCertificate request_client_certificate = 7;
+        enum RequestClientCertificate {
+            UNSPECIFIED = 0;
+            DONT_REQUEST_CLIENT_CERTIFICATE = 1;
+            REQUEST_CLIENT_CERTIFICATE_BUT_DONT_VERIFY = 2;
+            REQUEST_CLIENT_CERTIFICATE_AND_VERIFY = 3;
+            REQUEST_AND_REQUIRE_CLIENT_CERTIFICATE_BUT_DONT_VERIFY = 4;
+            REQUEST_AND_REQUIRE_CLIENT_CERTIFICATE_AND_VERIFY = 5;
+        }
+        
+        optional uint32 max_overhead_of_ticket_aead = 9;
+        optional AlpnPolicy alpn_policy = 11;
+        
+        reserved 4, 5;
+    }
+}
+
+message OffloadPrivateKeyOperationReq {
+    optional PrivateKeyOperation operation = 1;
+    enum PrivateKeyOperation {
+        UNSPECIFIED = 0;
+        SIGN = 1;
+        DECRYPT = 2;
+    }
+    
+    optional SignatureAlgorithm signature_algorithm = 2;
+    
+    oneof in_bytes {
+        bytes raw_bytes = 4;
+        bytes sha256_digest = 5;
+        bytes sha384_digest = 6;
+        bytes sha512_digest = 7;
+    }
+    
+    reserved 3;
+}
+
+message OffloadPrivateKeyOperationResp {
+    optional bytes out_bytes = 1;
+}
+
+message OffloadResumptionKeyOperationReq {
+    optional ResumptionKeyOperation operation = 1;
+    enum ResumptionKeyOperation {
+        UNSPECIFIED = 0;
+        ENCRYPT = 1;
+        DECRYPT = 2;
+    }
+    
+    optional bytes in_bytes = 2;
+}
+
+message OffloadResumptionKeyOperationResp {
+    optional bytes out_bytes = 1;
+}
+
+message ValidatePeerCertificateChainReq {
+    optional VerificationMode mode = 1;
+    enum VerificationMode {
+        UNSPECIFIED = 0;
+        SPIFFE = 1;
+        CONNECT_TO_GOOGLE = 2;
+        INSECURE = 3;
+        VERIFY_HOSTNAME_FOR_SELF_SIGNED = 4;
+        TPC_PARTNER_SPACE = 5;
+        ENROLLZ_CERTIFICATE = 6;
+    }
+    
+    oneof peer_oneof {
+        ClientPeer client_peer = 2;
+        ServerPeer server_peer = 3;
+    }
+    
+    message ClientPeer {
+        repeated bytes certificate_chain = 1;
+    }
+    
+    message ServerPeer {
+        repeated bytes certificate_chain = 1;
+        optional string server_hostname = 2;
+        optional bytes serialized_unrestricted_client_policy = 3;
+    }
+}
+
+message ValidatePeerCertificateChainResp {
+    optional ValidationResult validation_result = 1;
+    enum ValidationResult {
+        UNSPECIFIED = 0;
+        SUCCESS = 1;
+        FAILURE = 2;
+    }
+    
+    optional string validation_details = 2;
+    optional S2AContext context = 3;
+}
+
+message SessionReq {
+    optional Identity local_identity = 7;
+    repeated AuthenticationMechanism authentication_mechanisms = 2;
+    
+    oneof req_oneof {
+        GetTlsConfigurationReq get_tls_configuration_req = 3;
+        OffloadPrivateKeyOperationReq offload_private_key_operation_req = 4;
+        OffloadResumptionKeyOperationReq offload_resumption_key_operation_req = 5;
+        ValidatePeerCertificateChainReq validate_peer_certificate_chain_req = 6;
+    }
+    
+    reserved 1;
+}
+
+message SessionResp {
+    optional Status status = 1;
+    
+    oneof resp_oneof {
+        GetTlsConfigurationResp get_tls_configuration_resp = 2;
+        OffloadPrivateKeyOperationResp offload_private_key_operation_resp = 3;
+        OffloadResumptionKeyOperationResp offload_resumption_key_operation_resp = 4;
+        ValidatePeerCertificateChainResp validate_peer_certificate_chain_resp = 5;
+    }
+}
+
+enum SignatureAlgorithm {
+    S2A_SSL_SIGN_UNSPECIFIED = 0;
+    S2A_SSL_SIGN_RSA_PKCS1_SHA256 = 1;
+    S2A_SSL_SIGN_RSA_PKCS1_SHA384 = 2;
+    S2A_SSL_SIGN_RSA_PKCS1_SHA512 = 3;
+    S2A_SSL_SIGN_ECDSA_SECP256R1_SHA256 = 4;
+    S2A_SSL_SIGN_ECDSA_SECP384R1_SHA384 = 5;
+    S2A_SSL_SIGN_ECDSA_SECP521R1_SHA512 = 6;
+    S2A_SSL_SIGN_RSA_PSS_RSAE_SHA256 = 7;
+    S2A_SSL_SIGN_RSA_PSS_RSAE_SHA384 = 8;
+    S2A_SSL_SIGN_RSA_PSS_RSAE_SHA512 = 9;
+    S2A_SSL_SIGN_ED25519 = 10;
+    S2A_SSL_SIGN_RSA_PKCS1_SHA1 = 11;
+    S2A_SSL_SIGN_RSA_PKCS1_MD5_SHA1 = 12;
+    S2A_SSL_SIGN_ECDSA_SHA1 = 13;
+}

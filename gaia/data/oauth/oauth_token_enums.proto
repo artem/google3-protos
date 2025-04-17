@@ -6,7 +6,6 @@ import "logs/proto/logs_annotations/logs_annotations.proto";
 import "storage/datapol/annotations/proto/semantic_annotations.proto";
 
 option objc_class_prefix = "GAIA";
-option cc_enable_arenas = true;
 option java_package = "com.google.gaia.client.proto";
 
 enum DelegationTypeEnum {

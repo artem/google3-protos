@@ -1,0 +1,26 @@
+syntax = "editions";
+
+package ubermint;
+
+import "identity/identifiers/proto/namespaced_identifier.proto";
+import "storage/datapol/annotations/proto/semantic_annotations.proto";
+
+option java_multiple_files = true;
+option java_outer_classname = "RolesProto";
+option java_package = "com.google.identity.ubermint";
+
+message GenericRoles {
+    repeated RoleMapping mapping = 1;
+}
+
+message RoleMapping {
+    repeated Role role = 1;
+    optional identity_identifiers.NamespacedIdProto gnid = 2;
+}
+
+enum Role {
+    ROLE_UNSPECIFIED = 0;
+    ROLE_EFFECTIVE_ENTITY = 1;
+    ROLE_ORIGINATOR = 2;
+    ROLE_AUTHENTICATED_ACCOUNT = 3;
+}

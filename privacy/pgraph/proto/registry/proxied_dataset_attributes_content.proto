@@ -3,6 +3,8 @@ syntax = "proto3";
 package pgraph;
 
 import "privacy/data_governance/attributes/proto/product_association.proto";
+import "privacy/data_governance/attributes/proto/search.proto";
+import "privacy/pgraph/proto/attributes/data_content.proto";
 import "privacy/pgraph/proto/attributes/policy_attributes.proto";
 import "privacy/pgraph/proto/attributes/proxied_data_attributes.proto";
 import "privacy/pgraph/proto/attributes/proxied_data_attributes_proto2.proto";
@@ -23,6 +25,15 @@ message ProxiedDatasetAttributesContent {
         .pgraph.attributes.Purposes dma52_limited_purposes = 5066;
         .pgraph.attributes.Dma52MlModelAccessStatus dma52_ml_model_access_status = 5075;
         privacy.data_governance.attributes.DataProductAssociationRestriction product_association_restriction = 5344;
+        privacy.data_governance.attributes.DualObservationProductAssociation dual_observation_product_association = 5372;
+        
+        oneof _contains_managed_accounts {
+            .pgraph.attributes.DataContent contains_managed_accounts = 5609;
+        }
+        
+        oneof _assistant_speculative_writes_status {
+            privacy.data_governance.attributes.Search.DataSpecs.AssistantSpeculativeWritesStatus assistant_speculative_writes_status = 6000;
+        }
     }
     
     Policy policy = 106;
@@ -30,12 +41,31 @@ message ProxiedDatasetAttributesContent {
         .pgraph.attributes.Dma52Scope dma52_scope = 5024;
         .pgraph.attributes.Dma52AggregateComplianceControls dma52_aggregate_compliance_controls = 5069;
         .pgraph.attributes.NoAdsAccess no_ads_access = 5194;
+        
+        oneof _ual_gcp_risk_assessment_in_scope {
+            bool ual_gcp_risk_assessment_in_scope = 5205;
+        }
+        
+        oneof _gdpr_scope {
+            bool gdpr_scope = 5261;
+        }
     }
     
     Storage storage = 107;
     message Storage {
         .pgraph.attributes.StorageDefaultProductAssociation default_product_association = 5027;
         .pgraph.attributes.PTokenRowLevelProductProvenance ptoken_row_level_product_provenance = 5070;
+        
+        oneof _used_for_personalization {
+            bool used_for_personalization = 5347;
+        }
+    }
+    
+    MlExperimental ml_experimental = 162;
+    message MlExperimental {
+        oneof _contains_eval_only_data {
+            .pgraph.attributes.DataContent contains_eval_only_data = 7000;
+        }
     }
     
     reserved 102;

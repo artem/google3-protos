@@ -1,0 +1,14 @@
+syntax = "proto2";
+
+package speckle;
+
+import "storage/datapol/annotations/proto/semantic_annotations.proto";
+
+message KernelParam {
+    optional string key = 1;
+    optional string value = 2;
+}
+
+message KernelParams {
+    repeated KernelParam kernel_param = 1;
+}

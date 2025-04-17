@@ -1,0 +1,18 @@
+syntax = "editions";
+
+package server_authz;
+
+import "google/protobuf/wrappers.proto";
+
+option java_multiple_files = true;
+
+message UserConstraintRelaxingOverrides {
+    optional bool allow_fail_open = 1;
+}
+
+message RelaxingOverrides {
+    optional google.protobuf.BoolValue allow_requirement_to_approve_server_user = 1;
+    optional UserConstraintRelaxingOverrides user_constraint_overrides = 3;
+    
+    reserved 2;
+}

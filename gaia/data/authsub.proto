@@ -11,6 +11,7 @@ import "gaia/data/oauth/reauth_proof_token.proto";
 import "gaia/data/oauth/scope_metadata.proto";
 import "gaia/data/oauth/token_creation_flow.proto";
 import "gaia/insclient/ins_clientinfo.proto";
+import "google/protobuf/timestamp.proto";
 import "identity/boq/federated/common/client/client_type.proto";
 import "identity/credentials/oauth/protos/credential_restriction.proto";
 import "identity/credentials/oauth/protos/token_binding_storage.proto";
@@ -124,7 +125,6 @@ message AuthSubTokenRecord {
     optional RecordMetadata metadata = 57;
     optional SupplementalTokenMetadata supplemental_metadata = 63;
     optional CloudGaiaMetadata cloud_gaia_metadata = 68;
-    optional string dasher_policy_audience = 69 [deprecated = true];
     optional ReauthProofTokenData reauth_proof_token = 73;
     optional bytes encrypted_hash = 76;
     
@@ -157,7 +157,7 @@ message AuthSubTokenRecord {
         identity_oauth.BindingKeyInfo binding_key_info = 86;
     }
     
-    reserved 7, 9 to 15, 17, 18, 20 to 25, 28, 31, 36, 38 to 40, 42, 49, 51, 60, 62, 70 to 72, 75, 81, 83, 91;
+    reserved 7, 9 to 15, 17, 18, 20 to 25, 28, 31, 36, 38 to 40, 42, 49, 51, 60, 62, 69 to 72, 75, 81, 83, 91;
 }
 
 message ScopeResourceMap {
@@ -226,14 +226,15 @@ message RecordMetadata {
         OAUTH_POLICY = 3;
         TEST_ACCOUNT = 4;
         SERVICE_ACCOUNT = 5;
-        USER_CONSENT_OR_EXISTING_GRANT = 12;
+        USER_CONSENT_OR_EXISTING_GRANT = 12 [deprecated = true];
         AUTO_APPROVAL_FIRST_PARTY = 6;
-        OAUTH_CLIENT_DELEGATION = 7;
+        OAUTH_CLIENT_DELEGATION = 7 [deprecated = true];
         AUTO_APPROVAL_D3_POLICY = 8;
         D3_POLICY_DOMAIN_WIDE_DELEGATION = 9;
         CLIENT_MANAGED = 10;
-        AUTO_APPROVAL_EXISTING_GRANT = 11;
+        AUTO_APPROVAL_EXISTING_GRANT = 11 [deprecated = true];
         OAUTH_USER_DELEGATION = 13;
+        LEGACY_NATIVE_ID_TOKEN_CONSENT = 14;
     }
     
     optional CreationService creation_service = 2;
@@ -310,7 +311,6 @@ message AuthSubTokenRecordMatchPrototype {
     repeated OAuthPolicy OAuthPolicy = 24;
     repeated string OAuthCallbackUrl = 25;
     optional bool ClientManagedRevocation = 12;
-    optional string dasher_policy_audience = 28 [deprecated = true];
     optional int64 ExpirationTime = 36;
     optional int32 TokenUsage = 9;
     optional string TokenPrefix = 20 [deprecated = true];
@@ -321,8 +321,27 @@ message AuthSubTokenRecordMatchPrototype {
     optional int64 revocation_time_sec = 39;
     optional DeviceManagerEnum device_manager = 40;
     optional ScopeValidityMetadata scope_validity_metadata = 41;
+    map<int32, ScopeCodeContext> scope_contexts = 42;
     
-    reserved 2, 5, 6, 8, 11, 16, 22, 29, 18, 30, 33, 34;
+    reserved 2, 5, 6, 8, 11, 16, 22, 28, 29, 18, 30, 33, 34;
+    
+    message ScopeCodeContext {
+        optional bool is_onetime_access_scope = 1;
+        optional ScopeExpirationTime min_expiration = 4;
+        optional ScopeExpirationTime max_expiration = 5;
+        
+        oneof expiration {
+            bool no_expiration = 2 [deprecated = true];
+            google.protobuf.Timestamp expiration_time = 3 [deprecated = true];
+        }
+    }
+    
+    message ScopeExpirationTime {
+        oneof expiration {
+            bool no_expiration = 1;
+            google.protobuf.Timestamp expiration_time = 2;
+        }
+    }
 }
 
 message AuthSubToken {
@@ -345,6 +364,6 @@ enum ClientManagedRevocationReason {
     FIRST_PARTY_NATIVE = 1 [deprecated = true];
     FIRST_PARTY_DELEGATION = 2;
     FIRST_PARTY_PASSWORD_PHONE = 3;
-    UNREGISTERED_THIRD_PARTY_ANDROID = 4;
+    UNREGISTERED_THIRD_PARTY_ANDROID = 4 [deprecated = true];
     FIBER_VOICE_MANAGED = 5;
 }

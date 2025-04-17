@@ -1,0 +1,10 @@
+syntax = "proto2";
+
+package speckle;
+
+import "storage/datapol/annotations/proto/semantic_annotations.proto";
+
+message VmEnvironmentProto {
+    optional bool enable_bigalloc = 1 [default = false];
+    optional bool enable_block_layer_merging = 2 [default = true];
+}

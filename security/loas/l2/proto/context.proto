@@ -2,9 +2,9 @@ syntax = "proto2";
 
 package security_loas_l2;
 
-import "borg/common/internal_confidential_mode_config.proto";
 import "google/protobuf/any.proto";
 import "security/loas/l2/proto/common.proto";
+import "security/loas/l2/proto/confidential_security_level.proto";
 import "security/loas/l2/proto/credstype.proto";
 import "security/loas/l2/proto/identity_types.proto";
 import "security/loas/l2/proto/instance.proto";
@@ -67,6 +67,9 @@ message InternalLoas2Context {
     optional MachineCertDigest machine_cert_digest = 21;
     optional DirectPathToken direct_path_token = 22;
     optional HandshakeCipher handshake_cipher = 23;
-    optional borg.InternalConfidentialModeConfig.SecurityLevel confidential_security_level = 24;
+    optional ConfidentialSecurityLevel confidential_security_level = 24;
     optional .thinmint.ThinMint instance_identity_thinmint = 26;
+    optional bool allows_directpath = 27;
+    optional string universe = 28;
+    optional string transport_protocol = 29;
 }

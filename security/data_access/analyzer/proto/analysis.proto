@@ -214,6 +214,18 @@ message FrisResourceTypeDistribution {
     optional int32 count = 2;
 }
 
+message ResourceTypeDistribution {
+    optional string full_path_name = 1;
+    optional int32 count = 2;
+    
+    optional ResourceType resource_type = 3;
+    enum ResourceType {
+        UNKNOWN = 0;
+        FRIS_RESOURCE_TYPE = 1;
+        APP_SPECIFIC_RESOURCE = 2;
+    }
+}
+
 message Signals {
     optional float breakglass = 1;
     optional float access_refused = 7;
@@ -303,7 +315,7 @@ message Signals {
     repeated string target_google_plus_page_url = 705 [deprecated = true];
     repeated string target_user_domain = 706 [deprecated = true];
     repeated TargetUserInfo target_user_info = 707;
-    repeated Trend related_trend = 709;
+    repeated Trend related_trend = 709 [deprecated = true];
     repeated EntityMention entity_mentions = 710;
     optional string tonic_policy = 901;
     optional string tonic_policy_family = 902;
@@ -340,6 +352,7 @@ message Signals {
     optional MonitoringData monitoring_data = 3013;
     repeated resourceidentification.ResolvedResource resolved_resource = 3015;
     repeated FrisResourceTypeDistribution fris_resource_type_distribution = 3016;
+    repeated ResourceTypeDistribution resource_type_distribution = 3017;
     
     reserved 3, 5, 6, 20, 23 to 27, 30, 39, 40, 59, 64, 100, 102, 106 to 110, 112, 200 to 201, 300 to 305, 307, 400, 402 to 404, 500 to 501, 708, 800 to 810, 900, 1000 to 1010, 1012 to 1015, 1100, 1104 to 1105, 2000 to 2002, 3000 to 3002;
     

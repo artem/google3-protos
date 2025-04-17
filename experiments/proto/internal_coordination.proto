@@ -1,0 +1,20 @@
+syntax = "editions";
+
+package experiments.coordination;
+
+import "experiments/proto/coordination.proto";
+
+option java_outer_classname = "ExperimentCoordinationInternal";
+option java_package = "com.google.experiments.coordination";
+
+message InternalMendelCoordinationProto {
+    repeated int32 trigger_id = 1;
+    optional int32 verification_code = 2;
+    repeated int32 conditionally_forced_trigger_id = 3;
+    repeated int32 absolutely_forced_trigger_id = 4;
+    repeated int32 manually_enrolled_trigger_id = 5;
+    
+    extend MendelCoordinationProto {
+        optional InternalMendelCoordinationProto internal_coordination_proto = 1;
+    }
+}

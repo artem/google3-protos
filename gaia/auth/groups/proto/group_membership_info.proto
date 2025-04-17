@@ -29,6 +29,8 @@ message GaiaGroupMembershipInfo {
             EXCHANGE_AUTH_CODE_FOR_COOKIES = 4;
             CHECK_AUTH_SUB_TOKEN = 5;
             LOOKUP_AUTH_SUB_TOKEN = 6;
+            OAUTH_AUTHORIZE = 7;
+            LOOKUP_ALTERNATE_SESSION = 8;
         }
         
         optional string loas_role = 2;

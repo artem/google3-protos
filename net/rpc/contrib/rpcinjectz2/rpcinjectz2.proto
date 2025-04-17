@@ -1,98 +1,187 @@
-syntax = "proto3";
+syntax = "editions";
 
-package net.rpc.rpcinjectz2;
+package rpcinjectz2;
 
-option java_package = "com.google.net.rpc.contrib.rpcinjectz2";
+import "google/protobuf/duration.proto";
+import "google/protobuf/timestamp.proto";
+
 option java_outer_classname = "RpcInjectz2Proto";
-
-enum RuleType {
-  CLIENT_SIDE = 0;
-  SERVER_SIDE = 1;
-}
-
-enum ActionType {
-  PASS_THROUGH = 0;
-  RETURN_RPC_ERROR = 1;
-  RETURN_APP_ERROR = 2;
-  RETURN_CANONICAL_ERROR = 3;
-}
-
-enum Position {
-  BACK = 0;
-  FRONT = 1;
-}
+option java_package = "com.google.net.rpc.contrib.rpcinjectz2";
 
 message Rule {
-  .net.rpc.rpcinjectz2.RuleType type = 1;
-  string rpc_target_regexp = 2;
-  string rpc_service_regexp = 3;
-  string rpc_method_regexp = 4;
-  string remote_user_regexp = 5;
-  int64 max_matches = 6;
-  repeated .net.rpc.rpcinjectz2.Action actions = 7;
-  string description = 8;
+    optional RuleType type = 1;
+    optional string rpc_target_regexp = 2;
+    optional string rpc_service_regexp = 3;
+    optional string rpc_method_regexp = 4;
+    optional string remote_user_regexp = 5;
+    optional string peer_cell_regexp = 10;
+    optional int64 max_matches = 6;
+    repeated Action actions = 7;
+    optional string description = 8;
+    optional string qos = 9;
+    optional string census_tag = 11;
+    optional string census_value_regex = 12;
+    optional CustomMatcherKey custom_matcher = 13;
+    optional bool gwfi_mask_set = 14;
+    repeated uint64 rpc_global_ids = 15;
+    optional bool stateful = 16;
+    optional google.protobuf.Timestamp start_time = 17;
+    optional google.protobuf.Timestamp end_time = 18;
+    optional string peer_realm_acl = 19;
+    repeated RequestFieldMatcher request_field_match = 20;
+    optional HashThreshold hash_threshold = 21;
+}
+
+message RequestFieldMatcher {
+    optional string proto_fully_qualified_name = 1;
+    optional string field_name = 2;
+    optional bool inverted = 3;
+    
+    oneof value_match {
+        string string_value = 10;
+        string regexp_value = 11;
+        bool bool_value = 12;
+        int32 int32_value = 13;
+        int64 int64_value = 14;
+        uint32 uint32_value = 15;
+        uint64 uint64_value = 16;
+        int32 enum_value = 17;
+        CompoundRequestFieldMatcher compound = 18;
+        bool check_is_set = 19;
+    }
+}
+
+message CompoundRequestFieldMatcher {
+    optional CompoundType type = 1;
+    repeated RequestFieldMatcher matcher = 2;
+}
+
+message HashThreshold {
+    optional float threshold = 1;
+    optional HashComponentSelector hash_component_selector = 2;
+}
+
+message HashComponentSelector {
+    optional bytes salt = 1;
+    optional bool rpc_service = 2;
+    optional bool rpc_method = 3;
+    optional bool remote_user = 4;
+    optional bool peer_cell = 5;
+    optional TimeSpec time = 6;
+}
+
+message TimeSpec {
+    optional string time_zone = 1;
+    optional google.protobuf.Duration offset = 9;
+    optional bool year = 2;
+    optional bool month = 3;
+    optional bool day_of_month = 4;
+    optional bool day_of_week = 5;
+    optional bool hour = 6;
+    optional bool minute = 7;
+    optional bool second = 8;
 }
 
 message Action {
-  int32 weight = 1;
-  .net.rpc.rpcinjectz2.ActionType type = 2;
-  int32 delay_ms = 3;
-  int32 min_delay_ms = 6;
-  int32 fake_error_status = 4;
-  string fake_error_message = 5;
+    optional int32 weight = 1;
+    optional ActionType type = 2;
+    optional int32 delay_ms = 3;
+    optional int32 min_delay_ms = 6;
+    optional int32 fake_error_status = 4;
+    optional string fake_error_message = 5;
+    optional string fake_error_space = 7;
 }
 
 message RuleStats {
-  int64 id = 1;
-  bool enabled = 2;
-  int64 matches = 3;
-  repeated int64 action_matches = 4;
+    optional int64 id = 1;
+    optional bool enabled = 2;
+    optional int64 matches = 3;
+    repeated int64 action_matches = 4;
+}
+
+message StatefulCreateRulesReq {
+    repeated Rule rules = 1;
+    repeated string targets = 2;
 }
 
 message CreateRuleReq {
-  .net.rpc.rpcinjectz2.Position position = 1;
-  .net.rpc.rpcinjectz2.Rule rule = 2;
+    optional Position position = 1;
+    optional Rule rule = 2;
 }
 
 message BatchCreateRulesReq {
-  .net.rpc.rpcinjectz2.Position position = 1;
-  repeated .net.rpc.rpcinjectz2.Rule rules = 2;
+    optional Position position = 1;
+    repeated Rule rules = 2;
 }
 
 message CreateRuleResp {
-  int64 id = 1;
+    optional int64 id = 1;
 }
 
 message BatchCreateRulesResp {
-  repeated int64 ids = 1;
+    repeated int64 ids = 1;
 }
 
 message DeleteRuleReq {
-  int64 id = 1;
+    optional int64 id = 1;
 }
 
 message DeleteRuleResp {
+    
 }
 
 message DeleteAllRulesReq {
+    
 }
 
 message DeleteAllRulesResp {
+    
 }
 
 message LookupRuleReq {
-  int64 id = 1;
+    optional int64 id = 1;
 }
 
 message LookupRuleResp {
-  .net.rpc.rpcinjectz2.Rule rule = 1;
-  .net.rpc.rpcinjectz2.RuleStats rule_stats = 2;
+    optional Rule rule = 1;
+    optional RuleStats rule_stats = 2;
 }
 
 message LookupAllRulesReq {
+    
 }
 
 message LookupAllRulesResp {
-  repeated .net.rpc.rpcinjectz2.LookupRuleResp rules = 1;
+    repeated LookupRuleResp rules = 1;
 }
 
+enum RuleType {
+    CLIENT_SIDE = 0;
+    SERVER_SIDE = 1;
+}
+
+enum CustomMatcherKey {
+    CUSTOM_MATCHER_KEY_UNSPECIFIED = 0;
+    TEST_ONLY_CUSTOM_MATCHER = 1;
+    CLOUD_IAM_CUSTOM_MATCHER = 2;
+    CHEMIST_CUSTOM_MATCHER = 3;
+}
+
+enum CompoundType {
+    COMPOUND_TYPE_UNDEFINED = 0;
+    COMPOUND_TYPE_ALL = 1;
+    COMPOUND_TYPE_ANY = 2;
+}
+
+enum ActionType {
+    PASS_THROUGH = 0;
+    RETURN_RPC_ERROR = 1;
+    RETURN_APP_ERROR = 2;
+    RETURN_CANONICAL_ERROR = 3;
+    RETURN_CUSTOM_ERROR = 4;
+}
+
+enum Position {
+    BACK = 0;
+    FRONT = 1;
+}

@@ -2,12 +2,13 @@ syntax = "proto2";
 
 package privacy.context;
 
-option cc_enable_arenas = true;
 option java_multiple_files = true;
 option java_package = "com.google.privacy.context.proto";
 
 message PrivacyAttributesSetter {
     optional fixed32 prequest_origin_associated_product_id_setter_job = 1;
+    optional fixed32 semantic_purpose_setter_job = 7;
+    optional fixed32 processing_purpose_setter_job = 8;
     
     oneof source {
         fixed32 prequest_origin_associated_product_id_setter_gfe_service = 2;
@@ -25,5 +26,6 @@ message PrivacyAttributesSetter {
         NON_BORG_JOB_RUN_ID = 1;
         COLAB_SESSION_ID = 2;
         FLUME_EXECUTION_ID = 3;
+        GENERIC_SUB_EXECUTION_ID = 4;
     }
 }

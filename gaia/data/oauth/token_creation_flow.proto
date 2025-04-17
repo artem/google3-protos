@@ -6,12 +6,10 @@ import "logs/proto/logs_annotations/logs_annotations.proto";
 import "storage/datapol/annotations/proto/semantic_annotations.proto";
 
 option objc_class_prefix = "GAIA";
-option cc_enable_arenas = true;
 option java_package = "com.google.gaia.client.proto";
 
 enum CreationFlowEnum {
     CREATIONFLOW_UNSPECIFIED = 0;
-    PER_DUSI_ANDROID_THIRD_PARTY_EXISTING_GRANT = 2;
     CHROME_OS = 3;
     CHROME_USERMENU = 4;
     CHROME_DICE = 5;
@@ -34,6 +32,7 @@ enum CreationFlowEnum {
     GIS_VWG = 29;
     PROGRAMMATIC_AUTH = 26;
     FEDCM = 28;
+    PER_DUSI_ANDROID_THIRD_PARTY_EXISTING_GRANT = 2 [deprecated = true];
     ANDROID_DAYDREAM = 10 [deprecated = true];
     APPLE_NATIVE = 11 [deprecated = true];
     ANDROID_DRAGONFLY = 13 [deprecated = true];

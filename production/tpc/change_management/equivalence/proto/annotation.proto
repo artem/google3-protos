@@ -4,10 +4,12 @@ package proto_equiv;
 
 import "net/proto2/proto/descriptor.proto";
 
+option go_package = "proto_equiv/annotation";
 option java_multiple_files = true;
 
 extend .proto2.FieldOptions {
     optional string transform = 218657202;
     optional bool dynamic_exclude = 535801280;
     repeated string any_allowed_types = 535801301;
+    repeated uint32 allowed_extensions = 535801440;
 }

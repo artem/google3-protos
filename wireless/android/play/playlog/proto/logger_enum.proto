@@ -1,0 +1,17 @@
+syntax = "editions";
+
+package wireless_android_play_playlog.logger_enum;
+
+import "third_party/java/protobuf/java_features.proto";
+
+option java_multiple_files = true;
+option java_outer_classname = "LoggerEnum";
+option java_package = "com.google.wireless.android.play.playlog.proto";
+
+enum LoggerId {
+    UNSPECIFIED_LOGGER = 0;
+    TEST_LOGGER_1 = 100000;
+    TEST_LOGGER_2 = 100001;
+    TEST_LOGGER_3 = 100002;
+    DEFAULTS = 100003;
+}

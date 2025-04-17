@@ -102,6 +102,14 @@ message Search {
             ASSISTANT_REQUEST_ACCEPTANCE_EXPLICIT_UNDEFINED = 5;
         }
         
+        AssistantSpeculativeWritesStatus assistant_speculative_writes_status = 9;
+        enum AssistantSpeculativeWritesStatus {
+            SPECULATIVE_UNSPECIFIED = 0;
+            SPECULATIVE_FILTERED = 1;
+            SPECULATIVE_ALLOWED = 2;
+            SPECULATIVE_TEMPORARILY_ALLOWED = 3;
+        }
+        
         classification.Category.HasCategory has_final_intent_health_fitness = 8;
     }
     

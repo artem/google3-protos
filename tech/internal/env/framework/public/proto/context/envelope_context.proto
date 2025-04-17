@@ -3,6 +3,7 @@ syntax = "editions";
 package tech.env.framework;
 
 import "gaia/auth/proto/unified_auth.proto";
+import "google/protobuf/struct.proto";
 import "net/proto2/bridge/proto/message_set.proto";
 import "security/credentials/proto/peer_identity.proto";
 import "storage/datapol/annotations/proto/semantic_annotations.proto";
@@ -25,7 +26,15 @@ message RequestContext {
 
 message Label {
     optional string key = 1;
-    optional string value = 2;
+    
+    oneof oneof_value {
+        string value = 2;
+        google.protobuf.Value any_value = 3;
+    }
+}
+
+message LabelList {
+    repeated Label labels = 1;
 }
 
 message ResponseContext {

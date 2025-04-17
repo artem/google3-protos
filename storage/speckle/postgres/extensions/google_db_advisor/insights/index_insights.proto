@@ -43,4 +43,12 @@ message IndexAdvice {
     repeated int64 impacted_query_hashes = 5;
     optional uint32 num_impacted_queries = 6;
     optional uint32 index_slot = 7;
+    optional IndexType index_type = 8;
+    optional string sql_query = 9;
+}
+
+enum IndexType {
+    INDEX_TYPE_UNSPECIFIED = 0;
+    INDEX_TYPE_BTREE = 1;
+    INDEX_TYPE_SCANN = 2;
 }

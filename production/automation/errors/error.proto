@@ -1,0 +1,130 @@
+syntax = "proto2";
+
+package automation.errors;
+
+import "google/api/inclusion.proto";
+import "google/protobuf/any.proto";
+import "google/protobuf/timestamp.proto";
+import "java/com/google/apps/jspb/jspb_generate_object_format.proto";
+import "net/proto2/bridge/proto/message_set.proto";
+import "util/task/codes.proto";
+
+option java_package = "com.google.protos.automation.errors.proto1api";
+
+message SpaceCode {
+    optional int32 code = 1;
+    optional string space = 2;
+}
+
+message TaskIdentity {
+    optional string bns_address = 1;
+    optional string host_address = 2;
+    repeated int32 host_port = 3;
+    optional string binary_path = 4;
+    optional string workflow_id = 5;
+    
+    optional CallMechanism mechanism = 6;
+    enum CallMechanism {
+        UNKNOWN_CALL_MECHANISM = 0;
+        COMMAND_LINE = 1;
+        RPC = 2;
+        ACTUATOR = 3;
+        CONTROL = 4;
+    }
+    
+    optional string rpc_method = 11;
+    optional .google.protobuf.Any input = 7;
+    repeated string argv = 8 [deprecated = true];
+    optional string cwd = 9;
+    optional int64 pid = 10;
+}
+
+message SourceInfo {
+    optional string file = 1;
+    optional int64 line = 2;
+    optional int64 changelist = 3;
+    optional bool modified = 4;
+    optional string build_label = 5;
+}
+
+message Link {
+    optional string url = 1;
+    optional string type = 2;
+}
+
+message Error {
+    optional TaskIdentity identity = 1;
+    optional util.error.Code code = 2 [default = UNKNOWN];
+    optional string summary = 3;
+    optional string message = 4;
+    optional string markdown_message = 12;
+    optional .google.protobuf.Timestamp timestamp = 5;
+    optional SourceInfo source_info = 6;
+    repeated Error causes = 7;
+    repeated Link links = 8;
+    map<string, string> variables = 9;
+    optional .google.protobuf.Any details = 10;
+    optional SpaceCode space_code = 11;
+    optional SignalLog signals = 13;
+    
+    extend .proto2.bridge.MessageSet {
+        optional Error message_set_extension = 97315663;
+    }
+}
+
+message SignalLog {
+    optional ComponentSignal component = 1;
+    optional CategorySignal category = 2;
+    repeated KnownIssueSignal known_issues = 3;
+}
+
+message ComponentSignal {
+    optional Component component = 1;
+    enum Component {
+        UNKNOWN = 0;
+        DRIVER = 1;
+        STRATEGIST = 2;
+        ENFORCER = 3;
+        CAS = 4;
+        ANNEALING_ROUTER = 5;
+        ASPECTSTORE = 6;
+        ROS = 7;
+        PRODSPEC = 8;
+        TARGET_SELECTION = 9;
+        LOCKING_SERVER = 10;
+        PLUGIN_UNKNOWN = 100;
+        PLUGIN_BORG = 101;
+        PLUGIN_GSLB = 102;
+        PLUGIN_CDPUSH = 103;
+        PLUGIN_FLEXALL = 104;
+        PLUGIN_GANPATI = 105;
+        PLUGIN_PLINY = 106;
+        PLUGIN_ANNEALING_MPM_TPC_REPLICATION_ASSET = 107;
+        PLUGIN_API_CONTROL_PLANE = 109;
+        PLUGIN_EXTERNAL_MEMBERSHIPS = 108;
+        DEP_UNKNOWN = 200;
+        DEP_PIPER = 201;
+        DEP_AUTOCAP = 202;
+        DEP_CDPUSH = 203;
+        DEP_SERVER_PLATFORM = 204;
+        DEP_BOUNDARY_PROXY = 205;
+        PLUGIN_GCCP = 300;
+        PLUGIN_ERROR_ACTION = 301;
+        OTHER_COMPONENT = 1000;
+    }
+}
+
+message CategorySignal {
+    optional Category category = 1;
+    enum Category {
+        UNSPECIFIED = 0;
+        SYSTEM = 1;
+        USER = 2;
+        SAFETY = 3;
+        OTHER = 100;
+    }
+}
+
+message KnownIssueSignal {
+    optional string link = 1;
+}

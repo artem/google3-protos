@@ -43,6 +43,7 @@ message MonitoringData {
         optional int64 with_fris_resource_types = 7;
         optional int64 with_fris_lookup = 8;
         optional int64 with_fris_module_lookup = 9;
+        optional int64 with_fris_success = 10;
     }
     
     optional TargetUserAttributes target_user_attributes = 7;

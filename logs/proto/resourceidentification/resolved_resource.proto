@@ -32,8 +32,9 @@ message Attributes {
         optional string cloud_folder_id = 5;
         optional string cloud_organization_id = 6;
         optional string cloud_billing_account_id = 7;
-        optional uint64 merchant_id = 11;
-        optional uint64 commerce_listing_id = 16;
+        optional string cloud_principal_id = 28;
+        optional uint64 merchant_id = 11 [jstype = JS_STRING];
+        optional uint64 commerce_listing_id = 16 [jstype = JS_STRING];
         optional int64 ads_customer_id = 8;
         optional int64 ads_customer_external_id = 20;
         optional int64 ads_search_advertiser_id = 21;
@@ -45,6 +46,7 @@ message Attributes {
         optional int64 ads_publisher_id = 15;
         optional int64 tag_account_id = 14;
         optional string youtube_channel_id = 13;
+        optional string youtube_content_owner_id = 27;
         optional int64 payments_customer_id = 17;
         optional int64 payments_billing_customer_number = 26;
         optional string geo_feature_id = 18;
@@ -87,6 +89,7 @@ message PrincipalIdentifier {
         string cloud_organization_name = 8;
         string cloud_organization_display_name = 16;
         string cloud_billing_account_id = 9;
+        string cloud_principal_id = 28;
         int64 ads_customer_id = 10;
         int64 ads_customer_external_id = 20;
         int64 ads_search_advertiser_id = 21;
@@ -97,9 +100,10 @@ message PrincipalIdentifier {
         int64 ads_network_id = 12;
         int64 ads_publisher_id = 15;
         int64 tag_account_id = 14;
-        uint64 merchant_id = 11;
-        uint64 commerce_listing_id = 17;
+        uint64 merchant_id = 11 [jstype = JS_STRING];
+        uint64 commerce_listing_id = 17 [jstype = JS_STRING];
         string youtube_channel_id = 13;
+        string youtube_content_owner_id = 27;
         int64 payments_customer_id = 18;
         int64 payments_billing_customer_number = 26;
         string geo_feature_id = 19;

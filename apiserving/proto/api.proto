@@ -1,0 +1,31 @@
+syntax = "proto2";
+
+package api;
+
+import "google/api/inclusion.proto";
+import "net/proto2/proto/descriptor.proto";
+
+option objc_class_prefix = "API";
+option java_package = "com.google.api.server.proto";
+
+message HttpConfig {
+    optional string get = 1;
+    optional string put = 2;
+    optional string post = 3;
+    optional string delete = 4;
+    optional string patch = 5;
+    optional string body = 7;
+}
+
+enum Format {
+    DATE_TIME = 1;
+    MAP_KEY = 2;
+}
+
+extend .proto2.MethodOptions {
+    optional HttpConfig http = 48698071;
+}
+
+extend .proto2.FieldOptions {
+    optional Format format = 48698071;
+}

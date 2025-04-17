@@ -22,6 +22,7 @@ enum Service {
     CNS2_EPHEMERAL_STORE_CELLS = 7;
     VCNS = 3;
     STORAGE_D = 4;
+    NC_B4 = 8;
 }
 
 enum DeploymentType {

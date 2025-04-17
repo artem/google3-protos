@@ -3,6 +3,7 @@ syntax = "editions";
 package xuniverse;
 
 import "google/protobuf/timestamp.proto";
+import "third_party/boundary_proxy/proto_compare/annotation.proto";
 
 message NotarizationMetadata {
     optional string origin_universe_id = 1;

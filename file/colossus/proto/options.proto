@@ -5,6 +5,7 @@ package colossus;
 import "file/colossus/proto/client_info.proto";
 import "file/colossus/proto/stack_trace.proto";
 import "google/protobuf/any.proto";
+import "storage/datapol/annotations/proto/semantic_annotations.proto";
 
 option java_package = "com.google.io.file.colossus";
 
@@ -13,6 +14,10 @@ message ColossusOpenOptions {
     optional bool honor_owner_during_creation = 2;
     optional StackTraceProto stack_trace = 3;
     optional bool enable_rma_writes = 4 [default = false];
+}
+
+message StripeFileOpenOptions {
+    optional fixed32 stripe_beginning_plaintext_crc32c = 1;
 }
 
 message SnapshotOptions {

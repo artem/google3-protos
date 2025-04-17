@@ -1,4 +1,4 @@
-syntax = "proto3";
+syntax = "editions";
 
 package storage_l4;
 
@@ -8,7 +8,6 @@ import "storage/d/proto/capability.proto";
 import "storage/l4/common/borg_strategy.proto";
 import "storage/l4/common/census_tag.proto";
 import "storage/l4/common/d_priority.proto";
-import "storage/l4/common/d_user_isolation_class.proto";
 import "storage/l4/common/encryption_type.proto";
 import "storage/l4/common/file_descriptor_info.proto";
 import "storage/l4/common/key.proto";
@@ -16,6 +15,7 @@ import "storage/l4/common/l4_admission_reason.proto";
 import "storage/l4/common/l4r_policy.proto";
 import "storage/l4/common/lookup_flavor.proto";
 import "storage/l4/common/resource_settings.proto";
+import "storage/l4/common/resource_user.proto";
 import "storage/l4/common/value_range.proto";
 import "storage/l4/core/version.proto";
 import "storage/l4/public/cache_name.proto";
@@ -25,220 +25,204 @@ service L4ReportingService {
 }
 
 message ReportingServiceRequestHeader {
-    Version version = 1;
-    BorgStrategy client_borg_strategy = 2;
-    
-    oneof _client_borg_job_uid {
-        int64 client_borg_job_uid = 3;
-    }
+    optional Version version = 1;
+    optional BorgStrategy client_borg_strategy = 2;
+    optional int64 client_borg_job_uid = 3;
+    optional int64 client_borg_task_uid = 4;
 }
 
 message ReportClientOperationsRequest {
-    ReportingServiceRequestHeader header = 1;
+    optional ReportingServiceRequestHeader header = 1;
     
-    repeated HddReadResult hdd_read_results = 2;
-    message HddReadResult {
+    repeated HddReadChunkReport hdd_chunk_reads = 2;
+    message HddReadChunkReport {
         repeated Lookup lookup_results = 1;
         message Lookup {
-            KeyProto key = 3;
-            bool hit = 2;
-            L4rPolicyProto policy = 4;
-            L4Admission.Reason admission_decision = 5;
-            ValueRange value_range = 6;
-            int64 cache_entry_size_hint = 7;
+            optional KeyProto key = 3;
+            repeated KeyProto replica_keys = 8;
+            optional bool hit = 2;
+            optional L4rPolicyProto policy = 4;
+            optional L4Admission.Reason admission_decision = 5;
+            optional ValueRange value_range = 6;
+            optional int64 cache_entry_size_hint = 7;
             
             reserved 1;
         }
         
-        google.protobuf.Timestamp lookup_completion_time = 2;
-        FileDescriptorInfoProto fd_info = 24;
-        Encryption.Type encryption_type = 7;
-        DPriority scheduled_d_priority = 8;
-        DPriority cache_io_priority = 30;
-        ResourceSettingsProto resource_settings = 10;
-        DUserIsolationClassProto charge_user_identity = 29;
-        google.protobuf.Duration used_spindles = 19;
-        google.protobuf.Timestamp stripe_creation_time = 20;
-        int64 size = 21;
-        bool stripe_finalized = 22;
-        CacheNameProto tiering_cache = 23;
+        optional google.protobuf.Timestamp lookup_completion_time = 2;
+        optional FileDescriptorInfoProto fd_info = 24;
+        optional Encryption.Type encryption_type = 7;
+        optional DPriority scheduled_d_priority = 8;
+        optional DPriority cache_io_priority = 30;
+        optional ResourceSettingsProto resource_settings = 10;
+        optional ResourceUserProto l4_resource_user = 29;
+        optional google.protobuf.Duration used_spindles = 19;
+        optional google.protobuf.Timestamp stripe_creation_time = 20;
+        optional int64 size = 21;
+        optional int64 network_bytes_read = 32;
+        optional bool stripe_finalized = 22;
+        optional CacheNameProto tiering_cache = 23;
         repeated CensusTag census_tags = 25;
-        bool performed_lookup = 27;
-        LookupFlavor lookup_flavor = 31;
-        double extra_cost_of_miss = 16;
-        L4rPolicyProto forced_cache_policy = 18;
-        int32 d_traffic_class = 26;
-        
-        oneof _replicated_read_id {
-            uint64 replicated_read_id = 28;
-        }
+        optional bool performed_lookup = 27;
+        optional uint64 replicated_read_id = 28;
+        optional LookupFlavor lookup_flavor = 31;
+        optional double extra_cost_of_miss = 16;
+        optional L4rPolicyProto forced_cache_policy = 18;
+        optional int32 d_traffic_class = 26;
         
         reserved 3 to 5, 9, 11 to 15, 17;
     }
     
     repeated HddWriteResult hdd_write_results = 3;
     message HddWriteResult {
-        repeated KeyProto keys = 1;
-        google.protobuf.Timestamp completion_time = 2;
-        FileDescriptorInfoProto fd_info = 18;
-        Encryption.Type encryption_type = 5;
-        ResourceSettingsProto resource_settings = 6;
-        DUserIsolationClassProto charge_user_identity = 19;
-        google.protobuf.Duration used_spindles = 12;
-        google.protobuf.Timestamp stripe_creation_time = 13;
-        int64 offset = 16;
-        int64 size = 14;
-        CacheNameProto tiering_cache = 15;
+        optional google.protobuf.Timestamp completion_time = 2;
+        optional FileDescriptorInfoProto fd_info = 18;
+        optional Encryption.Type encryption_type = 5;
+        optional ResourceSettingsProto resource_settings = 6;
+        optional ResourceUserProto l4_resource_user = 19;
+        optional int32 chunk_index = 7;
+        optional google.protobuf.Duration used_spindles = 12;
+        optional google.protobuf.Timestamp stripe_creation_time = 13;
+        optional int64 offset = 16;
+        optional int64 size = 14;
+        optional CacheNameProto tiering_cache = 15;
         repeated CensusTag census_tags = 22;
-        DPriority scheduled_d_priority = 17;
-        DPriority cache_io_priority = 21;
-        ChunkMetadata chunk_metadata = 23;
+        optional DPriority scheduled_d_priority = 17;
+        optional DPriority cache_io_priority = 21;
+        optional storage_d.Capability capability = 20;
+        optional ChunkMetadata chunk_metadata = 23;
+        optional bool is_prewarming = 24;
         
-        oneof _chunk_index {
-            int32 chunk_index = 7;
-        }
-        
-        oneof _capability {
-            storage_d.Capability capability = 20;
-        }
-        
-        oneof _is_prewarming {
-            bool is_prewarming = 24;
-        }
-        
-        reserved 3, 4, 8, 9, 10, 11;
+        reserved 1, 3, 4, 8, 9, 10, 11;
     }
     
     repeated SsdReadResult ssd_read_results = 4;
     message SsdReadResult {
-        google.protobuf.Timestamp completion_time = 11;
-        string filename = 13;
-        google.protobuf.Timestamp file_creation_time = 24;
-        string colossus_cell = 25;
-        int64 volume_id = 26;
-        uint64 chunk_id = 27;
-        FileDescriptorInfoProto fd_info = 15;
-        Encryption.Type encryption_type = 29;
-        ResourceSettingsProto resource_settings = 16;
-        DUserIsolationClassProto charge_user_identity = 17;
-        google.protobuf.Duration used_spindles = 6;
-        DPriority used_d_priority = 12;
-        DPriority cache_io_priority = 19;
-        int64 cfs_file_id = 21;
-        int64 cfs_base_file_id = 23;
-        int64 stripe_index = 22;
-        google.protobuf.Timestamp stripe_creation_time = 7;
-        bool stripe_finalized = 9;
-        int64 size = 8;
-        CacheNameProto tiering_cache = 10;
-        
-        oneof _tiering_expiration_time {
-            google.protobuf.Timestamp tiering_expiration_time = 18;
-        }
-        
-        oneof _offset {
-            int64 offset = 28;
-        }
+        optional google.protobuf.Timestamp completion_time = 11;
+        optional string filename = 13;
+        optional google.protobuf.Timestamp file_creation_time = 24;
+        optional string colossus_cell = 25;
+        optional int64 volume_id = 26;
+        optional uint64 chunk_id = 27;
+        optional FileDescriptorInfoProto fd_info = 15;
+        optional Encryption.Type encryption_type = 29;
+        optional ResourceSettingsProto resource_settings = 16;
+        optional ResourceUserProto l4_resource_user = 17;
+        optional google.protobuf.Duration used_spindles = 6;
+        optional DPriority used_d_priority = 12;
+        optional DPriority cache_io_priority = 19;
+        optional int64 cfs_file_id = 21;
+        optional int64 cfs_base_file_id = 23;
+        optional bool is_cfs2 = 30;
+        optional int64 stripe_index = 22;
+        optional google.protobuf.Timestamp stripe_creation_time = 7;
+        optional google.protobuf.Timestamp tiering_expiration_time = 18;
+        optional bool stripe_finalized = 9;
+        optional int64 offset = 28;
+        optional int64 size = 8;
+        optional CacheNameProto tiering_cache = 10;
         
         reserved 1 to 5, 14;
     }
     
     repeated SsdWriteResult ssd_write_results = 5;
     message SsdWriteResult {
-        google.protobuf.Timestamp completion_time = 10;
-        string filename = 13;
-        string colossus_cell = 22;
-        int64 volume_id = 23;
-        uint64 chunk_id = 24;
-        FileDescriptorInfoProto fd_info = 16;
-        Encryption.Type encryption_type = 28;
-        ResourceSettingsProto resource_settings = 17;
-        DUserIsolationClassProto charge_user_identity = 18;
-        google.protobuf.Duration used_spindles = 6;
-        DPriority used_d_priority = 11;
-        DPriority cache_io_priority = 20;
-        int64 cfs_file_id = 25;
-        int64 cfs_base_file_id = 26;
-        int64 stripe_index = 27;
-        google.protobuf.Timestamp stripe_creation_time = 7;
-        int64 offset = 14;
-        int64 size = 8;
-        CacheNameProto tiering_cache = 9;
-        
-        oneof _tiering_expiration_time {
-            google.protobuf.Timestamp tiering_expiration_time = 19;
-        }
+        optional google.protobuf.Timestamp completion_time = 10;
+        optional string filename = 13;
+        optional string colossus_cell = 22;
+        optional int64 volume_id = 23;
+        optional uint64 chunk_id = 24;
+        optional FileDescriptorInfoProto fd_info = 16;
+        optional Encryption.Type encryption_type = 28;
+        optional ResourceSettingsProto resource_settings = 17;
+        optional ResourceUserProto l4_resource_user = 18;
+        optional google.protobuf.Duration used_spindles = 6;
+        optional DPriority used_d_priority = 11;
+        optional DPriority cache_io_priority = 20;
+        optional int64 cfs_file_id = 25;
+        optional int64 cfs_base_file_id = 26;
+        optional bool is_cfs2 = 29;
+        optional int64 stripe_index = 27;
+        optional google.protobuf.Timestamp stripe_creation_time = 7;
+        optional google.protobuf.Timestamp tiering_expiration_time = 19;
+        optional int64 offset = 14;
+        optional int64 size = 8;
+        optional CacheNameProto tiering_cache = 9;
         
         reserved 1 to 5, 15, 21;
     }
     
     repeated StripeEvictable stripe_evictables = 9;
     message StripeEvictable {
-        Stripe stripe = 1;
-        google.protobuf.Timestamp completion_time = 2;
-        bool permanent = 3;
-        bool first_instance = 4;
+        optional Stripe stripe = 1;
+        optional google.protobuf.Timestamp completion_time = 2;
+        optional bool permanent = 3;
+        optional bool first_instance = 4;
     }
     
     repeated StripeEviction stripe_evictions = 7;
     message StripeEviction {
-        Stripe stripe = 1;
-        google.protobuf.Timestamp completion_time = 2;
+        optional Stripe stripe = 1;
+        optional google.protobuf.Timestamp completion_time = 2;
     }
     
     repeated StripeDeletion stripe_deletions = 8;
     message StripeDeletion {
-        Stripe stripe = 1;
-        google.protobuf.Timestamp completion_time = 2;
+        optional Stripe stripe = 1;
+        optional google.protobuf.Timestamp completion_time = 2;
     }
     
     repeated AuxiliaryHddReadReport auxiliary_hdd_read_reports = 10;
     message AuxiliaryHddReadReport {
-        Stripe stripe = 1;
-        google.protobuf.Timestamp completion_time = 2;
-        int64 byte_offset = 3;
-        int64 byte_size = 4;
-        google.protobuf.Duration spindles = 5;
-        DPriority d_priority = 6;
-        ResourceSettingsProto d_resource_settings = 7;
-        DPriority cache_io_priority = 8;
+        optional Stripe stripe = 1;
+        optional google.protobuf.Timestamp completion_time = 2;
+        optional int64 byte_offset = 3;
+        optional int64 byte_size = 4;
+        optional google.protobuf.Duration spindles = 5;
+        optional DPriority d_priority = 6;
+        optional ResourceSettingsProto d_resource_settings = 7;
+        optional DPriority cache_io_priority = 8;
     }
     
     repeated AuxiliaryHddWriteReport auxiliary_hdd_write_reports = 11;
     message AuxiliaryHddWriteReport {
-        Stripe stripe = 1;
-        google.protobuf.Timestamp completion_time = 2;
-        int64 byte_offset = 3;
-        int64 byte_size = 4;
-        google.protobuf.Duration spindles = 5;
-        DPriority d_priority = 6;
-        ResourceSettingsProto d_resource_settings = 7;
-        DPriority cache_io_priority = 8;
+        optional Stripe stripe = 1;
+        optional google.protobuf.Timestamp completion_time = 2;
+        optional int64 byte_offset = 3;
+        optional int64 byte_size = 4;
+        optional google.protobuf.Duration spindles = 5;
+        optional DPriority d_priority = 6;
+        optional ResourceSettingsProto d_resource_settings = 7;
+        optional DPriority cache_io_priority = 8;
     }
     
     reserved 6;
     
     message ChunkMetadata {
-        int64 volume_id = 1;
-        uint64 chunk_id = 2;
-        string colossus_cell = 3;
-        bool colossus_cell_is_cfs2 = 4;
-        string d_server_location = 5;
-        bool is_timelock = 6;
-        string colossus_filename = 7;
-        int64 physical_block_size = 8;
-        int64 cfs_file_id = 9;
-        int64 colossus_stripe_index = 10;
-        int64 cfs_base_file_id = 11;
+        optional int64 volume_id = 1;
+        optional uint64 chunk_id = 2;
+        optional string colossus_cell = 3;
+        optional bool colossus_cell_is_cfs2 = 4;
+        optional string d_server_location = 5;
+        optional bool is_timelock = 6;
+        optional string colossus_filename = 7;
+        optional int64 physical_block_size = 8;
+        optional int64 cfs_file_id = 9;
+        optional int64 colossus_stripe_index = 10;
+        optional int64 cfs_base_file_id = 11;
     }
     
     message Stripe {
-        string filename = 1;
-        int64 physical_stripe_size = 3;
-        google.protobuf.Timestamp creation_time = 4;
-        google.protobuf.Timestamp expiration_time = 5;
-        bool finalized = 6;
-        FileDescriptorInfoProto fd_info = 8;
+        optional int64 cfs_file_id = 9;
+        optional int64 cfs_base_file_id = 10;
+        optional int64 stripe_index = 11;
+        optional string filename = 1;
+        optional int64 physical_stripe_size = 3;
+        optional google.protobuf.Timestamp creation_time = 4;
+        optional google.protobuf.Timestamp expiration_time = 5;
+        optional bool finalized = 6;
+        optional FileDescriptorInfoProto fd_info = 8;
+        optional bool is_cfs2 = 12;
         
         reserved 2, 7;
     }

@@ -3,6 +3,7 @@ syntax = "proto2";
 package security.context;
 
 import "google/api/auditing.proto";
+import "google/api/inclusion.proto";
 import "google/api/policy.proto";
 import "google/iam/v1/policy.proto";
 import "privacy/data_governance/attributes/proto/annotations.proto";

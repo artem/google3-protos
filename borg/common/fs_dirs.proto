@@ -2,7 +2,6 @@ syntax = "proto2";
 
 package borg;
 
-option cc_enable_arenas = true;
 option java_outer_classname = "FsDirsProto";
 option java_package = "com.google.borg.rpc";
 

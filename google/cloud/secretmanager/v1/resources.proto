@@ -1,0 +1,126 @@
+syntax = "proto3";
+
+package google.cloud.secretmanager.v1;
+
+import "cloud/security/kms/boq/keytracking/proto/key_tracking_annotations.proto";
+import "google/api/auditing.proto";
+import "google/api/field_behavior.proto";
+import "google/api/policy.proto";
+import "google/api/resource.proto";
+import "google/api/visibility.proto";
+import "google/protobuf/duration.proto";
+import "google/protobuf/timestamp.proto";
+import "java/com/google/cloud/boq/clientapi/flows/api/data_governance.proto";
+import "storage/datapol/annotations/proto/semantic_annotations.proto";
+
+option ruby_package = "Google::Cloud::SecretManager::V1";
+option php_namespace = "Google\\Cloud\\SecretManager\\V1";
+option csharp_namespace = "Google.Cloud.SecretManager.V1";
+option objc_class_prefix = "GSM";
+option go_package = "google.golang.org/genproto/googleapis/cloud/secretmanager/v1;secretmanager";
+option java_multiple_files = true;
+option java_outer_classname = "ResourcesProto";
+option java_package = "com.google.cloud.secretmanager.v1";
+
+message Secret {
+    string name = 1;
+    Replication replication = 2;
+    protobuf.Timestamp create_time = 3;
+    map<string, string> labels = 4;
+    repeated Topic topics = 5;
+    string etag = 8;
+    Rotation rotation = 9;
+    map<string, int64> version_aliases = 11;
+    map<string, string> annotations = 13;
+    protobuf.Duration version_destroy_ttl = 14;
+    CustomerManagedEncryption customer_managed_encryption = 15;
+    map<string, string> tags = 16;
+    
+    oneof expiration {
+        protobuf.Timestamp expire_time = 6;
+        protobuf.Duration ttl = 7;
+    }
+}
+
+message SecretVersion {
+    string name = 1;
+    protobuf.Timestamp create_time = 2;
+    protobuf.Timestamp destroy_time = 3;
+    
+    State state = 4;
+    enum State {
+        STATE_UNSPECIFIED = 0;
+        ENABLED = 1;
+        DISABLED = 2;
+        DESTROYED = 3;
+    }
+    
+    ReplicationStatus replication_status = 5;
+    string etag = 6;
+    bool client_specified_payload_checksum = 7;
+    protobuf.Timestamp scheduled_destroy_time = 8;
+    CustomerManagedEncryptionStatus customer_managed_encryption = 9;
+}
+
+message Replication {
+    oneof replication {
+        Automatic automatic = 1;
+        UserManaged user_managed = 2;
+    }
+    
+    message Automatic {
+        CustomerManagedEncryption customer_managed_encryption = 1;
+    }
+    
+    message UserManaged {
+        repeated Replica replicas = 1;
+        message Replica {
+            string location = 1;
+            CustomerManagedEncryption customer_managed_encryption = 2;
+        }
+    }
+}
+
+message CustomerManagedEncryption {
+    string kms_key_name = 1;
+}
+
+message ReplicationStatus {
+    oneof replication_status {
+        AutomaticStatus automatic = 1;
+        UserManagedStatus user_managed = 2;
+    }
+    
+    message AutomaticStatus {
+        CustomerManagedEncryptionStatus customer_managed_encryption = 1;
+    }
+    
+    message UserManagedStatus {
+        repeated ReplicaStatus replicas = 1;
+        message ReplicaStatus {
+            string location = 1;
+            CustomerManagedEncryptionStatus customer_managed_encryption = 2;
+        }
+    }
+}
+
+message CustomerManagedEncryptionStatus {
+    string kms_key_version_name = 1;
+}
+
+message Topic {
+    string name = 1;
+}
+
+message Rotation {
+    protobuf.Timestamp next_rotation_time = 1;
+    protobuf.Duration rotation_period = 2;
+}
+
+message SecretPayload {
+    bytes data = 1 [ctype = CORD];
+    
+    oneof _data_crc32c {
+        int64 data_crc32c = 2;
+    }
+}

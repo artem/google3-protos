@@ -14,6 +14,7 @@ message PTokenOverlayForHomunculus {
             message Attributes {
                 optional PTokenType.Enum ptoken_type = 5;
                 optional int32 origin_associated_product_id = 371;
+                repeated uint64 ads_low_level_signal_privacy_modifiers_bitvector = 585;
             }
         }
     }

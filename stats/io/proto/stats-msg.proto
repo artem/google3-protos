@@ -1,36 +1,36 @@
-syntax = "proto2";
+syntax = "editions";
 
 package stats_io;
 
 message BasicStatMsg {
-    required int64 count = 1;
-    required int64 min_val = 2;
-    required int64 max_val = 3;
-    required int64 interval = 4;
+    optional int64 count = 1;
+    optional int64 min_val = 2;
+    optional int64 max_val = 3;
+    optional int64 interval = 4;
 }
 
 message MultiLevelStatMsg {
-    required int64 total = 5;
-    required int64 min_val = 6;
-    required int64 max_val = 7;
-    required int64 max_total = 8;
+    optional int64 total = 5;
+    optional int64 min_val = 6;
+    optional int64 max_val = 7;
+    optional int64 max_total = 8;
     repeated BasicStatMsg levels = 9;
 }
 
 message MultiLevelAvgStatMsg {
-    required MultiLevelStatMsg sum = 10;
-    required MultiLevelStatMsg count = 11;
+    optional MultiLevelStatMsg sum = 10;
+    optional MultiLevelStatMsg count = 11;
 }
 
 message MovingAverageStatMsg {
-    required int32 count = 12;
-    required int32 window = 13;
-    required int64 sum = 14;
+    optional int32 count = 12;
+    optional int32 window = 13;
+    optional int64 sum = 14;
 }
 
 message MultiLevelAvgStdevStatMsg {
-    required MultiLevelAvgStatMsg averages = 15;
-    required MultiLevelStatMsg sumsquares = 16;
+    optional MultiLevelAvgStatMsg averages = 15;
+    optional MultiLevelStatMsg sumsquares = 16;
 }
 
 message MultiLevelStatMapMsg {
@@ -39,9 +39,10 @@ message MultiLevelStatMapMsg {
     optional double export_scale_factor = 19 [default = 1];
     optional int32 top_n = 20;
     
-    repeated group MapEntry = 21 {
-        required string key = 22;
-        required MultiLevelStatMsg stat = 23;
+    repeated MapEntry mapentry = 21;
+    message MapEntry {
+        optional string key = 22;
+        optional MultiLevelStatMsg stat = 23;
     }
 }
 
@@ -51,8 +52,9 @@ message MultiLevelAvgStatMapMsg {
     optional double export_scale_factor = 26 [default = 1];
     optional int32 top_n = 27;
     
-    repeated group MapEntry = 28 {
-        required string key = 29;
-        required MultiLevelAvgStatMsg stat = 30;
+    repeated MapEntry mapentry = 28;
+    message MapEntry {
+        optional string key = 29;
+        optional MultiLevelAvgStatMsg stat = 30;
     }
 }

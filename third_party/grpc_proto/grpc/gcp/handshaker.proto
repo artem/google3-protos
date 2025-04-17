@@ -1,0 +1,110 @@
+syntax = "proto3";
+
+package grpc.gcp;
+
+import "third_party/grpc_proto/grpc/gcp/transport_security_common.proto";
+
+option go_package = "google.golang.org/grpc/credentials/alts/internal/proto/grpc_gcp";
+option java_multiple_files = true;
+option java_outer_classname = "HandshakerProto";
+option java_package = "io.grpc.alts.internal";
+
+service HandshakerService {
+    rpc DoHandshake(stream HandshakerReq) returns (stream HandshakerResp);
+}
+
+message Endpoint {
+    string ip_address = 1;
+    int32 port = 2;
+    NetworkProtocol protocol = 3;
+}
+
+message Identity {
+    map<string, string> attributes = 3;
+    
+    oneof identity_oneof {
+        string service_account = 1;
+        string hostname = 2;
+    }
+}
+
+message StartClientHandshakeReq {
+    HandshakeProtocol handshake_security_protocol = 1;
+    repeated string application_protocols = 2;
+    repeated string record_protocols = 3;
+    repeated Identity target_identities = 4;
+    Identity local_identity = 5;
+    Endpoint local_endpoint = 6;
+    Endpoint remote_endpoint = 7;
+    string target_name = 8;
+    RpcProtocolVersions rpc_versions = 9;
+    uint32 max_frame_size = 10;
+    string access_token = 11;
+}
+
+message ServerHandshakeParameters {
+    repeated string record_protocols = 1;
+    repeated Identity local_identities = 2;
+    
+    oneof _token {
+        string token = 3;
+    }
+}
+
+message StartServerHandshakeReq {
+    repeated string application_protocols = 1;
+    map<int32, ServerHandshakeParameters> handshake_parameters = 2;
+    bytes in_bytes = 3;
+    Endpoint local_endpoint = 4;
+    Endpoint remote_endpoint = 5;
+    RpcProtocolVersions rpc_versions = 6;
+    uint32 max_frame_size = 7;
+}
+
+message NextHandshakeMessageReq {
+    bytes in_bytes = 1;
+    uint32 network_latency_ms = 2;
+}
+
+message HandshakerReq {
+    oneof req_oneof {
+        StartClientHandshakeReq client_start = 1;
+        StartServerHandshakeReq server_start = 2;
+        NextHandshakeMessageReq next = 3;
+    }
+}
+
+message HandshakerResult {
+    string application_protocol = 1;
+    string record_protocol = 2;
+    bytes key_data = 3;
+    Identity peer_identity = 4;
+    Identity local_identity = 5;
+    bool keep_channel_open = 6;
+    RpcProtocolVersions peer_rpc_versions = 7;
+    uint32 max_frame_size = 8;
+}
+
+message HandshakerStatus {
+    uint32 code = 1;
+    string details = 2;
+}
+
+message HandshakerResp {
+    bytes out_frames = 1;
+    uint32 bytes_consumed = 2;
+    HandshakerResult result = 3;
+    HandshakerStatus status = 4;
+}
+
+enum HandshakeProtocol {
+    HANDSHAKE_PROTOCOL_UNSPECIFIED = 0;
+    TLS = 1;
+    ALTS = 2;
+}
+
+enum NetworkProtocol {
+    NETWORK_PROTOCOL_UNSPECIFIED = 0;
+    TCP = 1;
+    UDP = 2;
+}

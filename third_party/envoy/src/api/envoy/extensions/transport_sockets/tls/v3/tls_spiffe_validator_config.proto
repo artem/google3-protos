@@ -17,4 +17,6 @@ message SPIFFECertValidatorConfig {
         string name = 1;
         .envoy.config.core.v3.DataSource trust_bundle = 2;
     }
+    
+    .envoy.config.core.v3.DataSource trust_bundles = 2;
 }

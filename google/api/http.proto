@@ -30,6 +30,7 @@ message HttpRule {
     repeated AuthorizationRule authorizations = 15;
     bool allow_half_duplex = 16;
     bool derived = 17;
+    repeated CrossOriginValidation cross_origin_validation = 18;
     
     oneof pattern {
         string get = 2;
@@ -39,6 +40,14 @@ message HttpRule {
         string patch = 6;
         CustomHttpPattern custom = 8;
     }
+}
+
+message CrossOriginValidation {
+    repeated string allowed_origins = 1;
+    repeated string allowed_methods = 2;
+    repeated string allowed_headers = 3;
+    repeated int64 allowed_origin_pen_users = 4;
+    string legacy_path_prefix = 5;
 }
 
 message CustomHttpPattern {

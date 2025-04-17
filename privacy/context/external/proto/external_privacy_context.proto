@@ -1,0 +1,12 @@
+syntax = "proto2";
+
+package privacy.context.external;
+
+import "privacy/context/external/proto/external_prequest_context.proto";
+
+option objc_class_prefix = "PCEP";
+option java_multiple_files = true;
+
+message ExternalPrivacyContext {
+    optional ExternalPRequestContext prequest = 2;
+}

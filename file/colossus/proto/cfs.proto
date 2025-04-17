@@ -4,6 +4,7 @@ package colossus;
 
 import "file/colossus/proto/base.proto";
 import "file/colossus/proto/client_info.proto";
+import "file/colossus/proto/curator_signed_capability.proto";
 import "file/colossus/proto/public.proto";
 import "file/colossus/proto/stack_trace.proto";
 import "google/protobuf/duration.proto";
@@ -11,12 +12,12 @@ import "google/protobuf/timestamp.proto";
 import "security/panoptikeys/crypto_key_classes/crypto_key_classes_binding.proto";
 import "security/panoptikeys/crypto_key_params/crypto_key_params.proto";
 import "storage/datapol/annotations/proto/semantic_annotations.proto";
+import "storage/l4/core/version.proto";
 import "storage/l4/public/cache_name.proto";
 import "storage/util/int128/int128.proto";
 import "tech/file/proto/types.proto";
 import "util/task/status.proto";
 
-option cc_enable_arenas = true;
 option java_package = "com.google.io.file.colossus";
 
 message StripeChunk {
@@ -72,6 +73,7 @@ message RebalanceAnnotation {
         UNHEALTHY = 8;
         EVICTION = 9;
         LDD = 10;
+        DEAD = 11;
     }
     
     optional Event event = 2 [default = START];
@@ -112,6 +114,7 @@ message StripeWriteTieringInfo {
     }
     
     optional google.protobuf.Timestamp expiration_time = 2;
+    optional google.protobuf.Timestamp stripe_close_time = 3;
 }
 
 message StripeAnnotation {
@@ -137,6 +140,7 @@ message RebalanceType {
         TIERING_EVICTION = 9;
         PREEMPTIVE = 10;
         LDD = 11;
+        DEAD = 12;
     }
 }
 
@@ -179,7 +183,6 @@ message Stripe {
     optional fixed32 data_crc32c = 14;
     repeated fixed32 checksums = 4;
     optional int64 close_time = 3;
-    optional int64 close_time_secs_with_missing_chunks = 24 [deprecated = true];
     optional int64 oldest_broken_chunk_time_secs = 33;
     repeated StripeChunk chunks = 10;
     repeated int32 chunks_length_overhead = 17;
@@ -214,10 +217,10 @@ message Stripe {
     repeated MaintenanceOperationInfo maintenance_op_infos = 28;
     optional int32 decryption_failures_since_last_major_change = 29;
     optional RequestID last_decryption_failure_reporter = 31;
-    optional bool modified_by_rodos_reconstructor = 30;
+    optional bool modified_by_reconstructor = 30;
     optional bool using_wal_client_library = 32;
     
-    reserved 16, 19, 21;
+    reserved 16, 19, 21, 24;
 }
 
 message FileEncoding {
@@ -273,6 +276,7 @@ message PlacementPolicy {
     message WriteTieringInfo {
         optional storage_l4.CacheNameProto l4_cache_name = 5;
         optional tech.file.QuotaAccounting ssd_quota_accounting = 2;
+        optional tech.file.DiskTimeBucket ssd_ops_accounting = 9;
         optional tech.file.DiskTimeBucket eviction_bucket = 3;
         map<string, string> census_tags = 4;
         
@@ -285,6 +289,7 @@ message PlacementPolicy {
         }
         
         optional google.protobuf.Duration force_admission_with_ttl = 6;
+        optional storage_l4.Version.Type l4_client_version = 8;
         
         reserved 1;
     }
@@ -312,6 +317,7 @@ message DataPolicy {
     enum Entity {
         NORMAL = 0;
         METADATA = 1;
+        LOW_LATENCY = 2;
     }
     
     optional Access access_hdd = 2 [default = DEFAULT];
@@ -337,15 +343,13 @@ message FileEncryptionInfo {
     optional string master_key_name = 2;
     optional bytes master_key_hash = 3;
     optional bytes wrapped_key = 4;
-    optional bytes previous_wrapped_key = 14;
-    optional fixed32 previous_wrapped_key_crc32c = 18;
-    optional bytes backup_wrapped_key = 17;
+    optional bytes previous_wrapped_key = 14 [deprecated = true];
+    optional fixed32 previous_wrapped_key_crc32c = 18 [deprecated = true];
+    optional bytes backup_wrapped_key = 17 [deprecated = true];
     optional fixed32 wrapped_key_crc32c = 12;
     optional bytes encryption_key_hash = 13;
     optional bytes double_wrapped_key = 15;
     optional fixed32 double_wrapped_key_crc32c = 16;
-    optional bytes wrapped_checksum_key = 19;
-    optional fixed32 wrapped_checksum_key_crc32c = 20;
     repeated string owner = 5;
     optional string document_id = 6;
     optional int64 expiry = 8;
@@ -353,7 +357,7 @@ message FileEncryptionInfo {
     optional int32 encryption_key_length = 10;
     optional int32 key_type = 11;
     
-    reserved 7;
+    reserved 7, 19, 20;
 }
 
 message FileParameters {
@@ -638,23 +642,21 @@ message MetadataInfo {
         optional bytes encryption_key_hash = 4;
         optional bytes double_wrapped_key = 5;
         optional fixed32 double_wrapped_key_crc32c = 6;
-        optional bytes wrapped_checksum_key = 7;
-        optional fixed32 wrapped_checksum_key_crc32c = 8;
         optional int64 encryption_key_expiry = 9;
         optional tech.file.EncryptionMode encryption_mode = 10;
         optional int32 encryption_key_length = 11;
         optional int32 key_type = 12;
         
-        reserved 13;
+        reserved 7, 8, 13;
     }
     
     optional NamespaceID cns_id = 7;
     
     optional DroppedFields dropped_fields = 9;
     message DroppedFields {
-        optional bytes previous_wrapped_key = 1;
-        optional fixed32 previous_wrapped_key_crc32c = 2;
-        optional bytes backup_wrapped_key = 3;
+        optional bytes previous_wrapped_key = 1 [deprecated = true];
+        optional fixed32 previous_wrapped_key_crc32c = 2 [deprecated = true];
+        optional bytes backup_wrapped_key = 3 [deprecated = true];
         optional fixed64 operation_id = 4;
     }
 }
@@ -669,6 +671,7 @@ message FileDelegate {
     option no_standard_descriptor_accessor = true;
     optional FileDescriptor descriptor = 1;
     optional CFSCapability cfs_capability = 2;
+    optional CuratorSignedCapability curator_signed_capability = 5;
     optional KeystoreInstance keystore_affinity = 4;
     
     reserved 3;

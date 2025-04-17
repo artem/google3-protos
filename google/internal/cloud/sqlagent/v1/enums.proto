@@ -1,0 +1,45 @@
+syntax = "proto3";
+
+package google.internal.cloud.sqlagent.v1;
+
+import "storage/datapol/annotations/proto/semantic_annotations.proto";
+
+option java_multiple_files = true;
+option java_outer_classname = "EnumsProto";
+option java_package = "com.google.internal.cloud.sqlagent.v1";
+
+enum HeartbeatMonitorStatus {
+    UNKNOWN_HEARTBEAT_MONITOR_STATUS = 0;
+    RUNNING = 1;
+    IDLE = 2;
+}
+
+enum FailoverSlaveState {
+    FAILOVER_SLAVE_STATE_UNKNOWN = 0;
+    FAILOVER_SLAVE_READY = 1;
+    FAILOVER_SLAVE_SQL_THREAD_ERROR = 2;
+    FAILOVER_SLAVE_MAINTENANCE = 3;
+}
+
+enum HealthState {
+    HEALTH_STATE_UNKNOWN = 0;
+    HEALTH_STATE_HEALTHY = 1;
+    HEALTH_STATE_UNHEALTHY = 2;
+    HEALTH_STATE_TIMEOUT = 3;
+}
+
+enum DatabaseState {
+    DB_UNKNOWN = 0;
+    DB_NOT_RUNNING = 1;
+    DB_STARTING = 2;
+    DB_RUNNING = 3;
+    DB_CRASH_LOOP = 4;
+    DB_RECOVERY = 5;
+}
+
+enum ReplicationState {
+    REPLICATION_UNKNOWN_STATE = 0;
+    REPLICATION_RUNNING = 1;
+    REPLICATION_STOPPED = 2;
+    REPLICATION_ERROR = 3;
+}

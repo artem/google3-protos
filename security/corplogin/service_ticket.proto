@@ -1,0 +1,45 @@
+syntax = "editions";
+
+package security.corplogin;
+
+import "security/corplogin/authentication_data.proto";
+
+option java_outer_classname = "Ticket";
+option java_package = "com.google.security.corplogin.protos";
+
+message ServiceTicket {
+    optional int32 version = 1 [default = 3];
+    optional string user = 2;
+    optional int64 gaia_id = 3;
+    optional int64 prod_gaia_id = 13;
+    optional string service = 4;
+    optional bool is_for_https = 5;
+    repeated string group_member = 6;
+    repeated string group_non_member = 7;
+    optional int64 auth_ts = 8;
+    optional int32 auth_level = 9;
+    optional uint32 creation_delta = 10;
+    optional ExtraFields extra = 11;
+    optional string key_id = 12;
+    optional SignedAuthenticationData signed_authn_data = 14;
+}
+
+message Dusi {
+    optional string dusi = 1;
+    optional int64 timestamp_ms = 2;
+}
+
+message ExtraFields {
+    optional bool expired_pwd = 1;
+    optional string auth_type = 2;
+    optional Dusi dusi = 4;
+    optional string gmc_id = 5;
+    repeated Tag tags = 6;
+    
+    reserved 3;
+}
+
+enum Tag {
+    TAG_INVALID = 0;
+    TAG_ORIGIN_BOUND = 1;
+}

@@ -78,4 +78,5 @@ enum ClientConfigStatus {
     CLIENT_REQUESTED = 1;
     CLIENT_ACKED = 2;
     CLIENT_NACKED = 3;
+    CLIENT_RECEIVED_ERROR = 4;
 }

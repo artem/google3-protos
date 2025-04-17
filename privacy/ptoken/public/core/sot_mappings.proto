@@ -18,6 +18,7 @@ message SotMappings {
         optional int64 gaia_id = 1;
         optional bool is_primary = 5;
         optional .compliance_controls.GaiaComplianceControls compliance_controls = 2;
+        optional int64 actor_context_key = 6;
         
         oneof olympus_location_restriction {
             GeoLocationRestriction liable_olympus_location_restriction = 3;

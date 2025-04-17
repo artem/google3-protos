@@ -1,0 +1,13 @@
+syntax = "editions";
+
+package storage_d;
+
+import "net/proto2/proto/descriptor.proto";
+
+extend .proto2.FileOptions {
+    repeated string strong_int_cpp_header = 525000021;
+}
+
+extend .proto2.FieldOptions {
+    optional string strong_int_type = 535801383;
+}

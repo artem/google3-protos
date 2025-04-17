@@ -2,6 +2,7 @@ syntax = "editions";
 
 package colossus;
 
+import "storage/datapol/annotations/proto/semantic_annotations.proto";
 import "util/task/status.proto";
 
 message DataCorruptionRecord {
@@ -9,10 +10,12 @@ message DataCorruptionRecord {
     optional int64 file_id = 2;
     optional int64 stripe_index = 3;
     optional string chunk_path = 22;
+    optional int32 chunk_index = 24;
     optional int64 chunk_volume_id = 4;
     optional uint64 chunk_handle = 5;
     optional int64 offset = 6;
     optional int64 data_size = 7;
+    optional int32 corrupted_packet_index = 25;
     optional bytes data = 8 [ctype = CORD];
     optional uint32 data_crc32c = 9;
     optional uint32 expected_data_crc32c = 10;
@@ -27,4 +30,13 @@ message DataCorruptionRecord {
     optional uint32 expected_request_data_expected_crc32c = 21;
     map<int64, uint32> offset_to_checksum = 14;
     optional util.StatusProto status = 15;
+    
+    repeated ChunkInfo stripe_chunks = 23;
+    message ChunkInfo {
+        optional int32 index = 1;
+        optional int64 block_offset = 2;
+        optional bytes block_data = 3 [ctype = CORD];
+        optional uint32 block_crc = 4;
+        optional uint32 cumulative_crc = 5;
+    }
 }

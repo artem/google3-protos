@@ -16,6 +16,7 @@ import "google/protobuf/field_mask.proto";
 import "google/protobuf/timestamp.proto";
 import "google/rpc/context/attribute_context.proto";
 import "google/rpc/status.proto";
+import "google/type/expr.proto";
 import "logs/proto/data_access/asr/cloud_identity_service_account_resource.proto";
 import "net/proto2/proto/descriptor.proto";
 import "security/credentials/proto/authenticator.proto";
@@ -24,7 +25,6 @@ import "tech/iam/proto/iam.proto";
 import "tech/iam/proto/iam_enums.proto";
 import "tech/iam/proto/logging.proto";
 
-option cc_enable_arenas = true;
 option java_outer_classname = "IamService";
 option java_package = "com.google.tech.iam.proto";
 
@@ -121,6 +121,7 @@ message ClientCapabilities {
     enum PolicyType {
         POLICY_TYPE_UNSPECIFIED = 0;
         CUSTOM_ORG_POLICY = 1;
+        ACCESS_POLICIES_EARLY_ADOPTER = 2;
     }
     
     enum State {
@@ -166,6 +167,7 @@ message ClientFeature {
         NONE = 0;
         NEGATIVE_CACHING_RETRY_THRESHOLD = 2;
         CONDITION_CACHE_KEY = 3;
+        ESTUBS = 4;
     }
     
     ClientFeatureStatus status = 2;
@@ -332,6 +334,7 @@ message InternalRequestMetadata {
 
 message InternalRequestInfo {
     bool enable_orchestrator_protocol = 1;
+    google.protobuf.Any client_library_capabilities = 2;
 }
 
 message CheckPolicyRequest {
@@ -379,6 +382,7 @@ message InjectedDecisions {
 
 message InternalResponseInfo {
     google.protobuf.Any orchestrator_protocol_result = 1;
+    google.protobuf.Any partial_evaluation_payload = 2;
 }
 
 message CheckPolicyResponse {
@@ -759,6 +763,11 @@ message CheckOrgPolicyRequest {
     bool disable_org_policy_dry_run_logging = 8;
     PolicyName nearest_crm_node = 9;
     NextStateOfTags next_state_of_tags = 10;
+    OrgPolicyAdditionalConditionAttributes additional_condition_attributes = 11;
+}
+
+message OrgPolicyAdditionalConditionAttributes {
+    google.protobuf.Any attributes = 1;
 }
 
 message PolicyResponse {
@@ -776,6 +785,8 @@ message DebugInfo {
     bool has_new_eval_engine_been_used = 1;
     bool is_global_check_retried = 2;
     int64 project_number = 3;
+    google.type.Expr live_violated_condition = 4;
+    google.type.Expr dry_run_violated_condition = 5;
 }
 
 message CheckOrgPolicyResponse {

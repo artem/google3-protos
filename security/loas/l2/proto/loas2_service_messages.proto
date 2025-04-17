@@ -1,4 +1,4 @@
-syntax = "proto2";
+syntax = "editions";
 
 package security_loas_l2;
 
@@ -7,6 +7,8 @@ import "security/authorization/server_authorization/public/policy/target.proto";
 import "security/loas/l2/internal/certs/loas2_policy.proto";
 import "security/loas/l2/proto/crl_messages.proto";
 import "security/thinmint/proto/core/thinmint_core.proto";
+import "third_party/java/protobuf/java_features.proto";
+import "third_party/protobuf/cpp_features.proto";
 
 option java_package = "com.google.net.loas.l2.genfiles";
 

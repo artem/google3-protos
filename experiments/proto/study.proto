@@ -1,0 +1,14 @@
+syntax = "editions";
+
+package experiments;
+
+message Study {
+    optional string name = 1;
+    optional string location = 2;
+    repeated int32 experiment_ids = 3;
+    optional int64 team_id = 5;
+    optional string cluster = 7;
+    optional bool from_launchable = 6;
+    
+    extensions 4;
+}

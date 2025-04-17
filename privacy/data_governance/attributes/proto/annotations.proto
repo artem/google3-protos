@@ -8,6 +8,7 @@ import "privacy/data_governance/attributes/proto/apps.proto";
 import "privacy/data_governance/attributes/proto/assurant.proto";
 import "privacy/data_governance/attributes/proto/audio.proto";
 import "privacy/data_governance/attributes/proto/classification.proto";
+import "privacy/data_governance/attributes/proto/cloud.proto";
 import "privacy/data_governance/attributes/proto/common.proto";
 import "privacy/data_governance/attributes/proto/consumer_trust.proto";
 import "privacy/data_governance/attributes/proto/data_residency_handling.proto";
@@ -28,6 +29,7 @@ import "privacy/data_governance/attributes/proto/medical.proto";
 import "privacy/data_governance/attributes/proto/ml.proto";
 import "privacy/data_governance/attributes/proto/payments.proto";
 import "privacy/data_governance/attributes/proto/photos.proto";
+import "privacy/data_governance/attributes/proto/pii_and_content_sanitization.proto";
 import "privacy/data_governance/attributes/proto/primary_for_portability.proto";
 import "privacy/data_governance/attributes/proto/privacy_documentation.proto";
 import "privacy/data_governance/attributes/proto/processing_type.proto";
@@ -42,6 +44,7 @@ import "privacy/data_governance/attributes/proto/search.proto";
 import "privacy/data_governance/attributes/proto/third_party.proto";
 import "privacy/data_governance/attributes/proto/trusted_core_access.proto";
 import "privacy/data_governance/attributes/proto/youtube.proto";
+import "privacy/pattributes/public/proto/semantic_purpose.proto";
 
 option java_multiple_files = true;
 option java_package = "com.google.privacy.datagovernance.attributes.proto1api";
@@ -64,6 +67,7 @@ message Annotations {
         IntendedDataResidencyLocations intended_data_residency_locations = 14;
         DataProductAssociationRestriction product_association_restriction = 15;
         DualObservationProductAssociation dual_observation_product_association = 16;
+        repeated classification.Identifiers identifiers_redacted = 17;
         
         Custom custom = 101;
         message Custom {
@@ -86,7 +90,13 @@ message Annotations {
             Faroe.Data faroe = 17;
             Finance.Data finance = 18;
             ThirdParty.Data third_party = 19;
+            Cloud.Data cloud = 21;
+            PiiAndContentSanitization pii_and_content_sanitization = 22;
             Experimental.Data experimental = 101;
+            
+            oneof _ptoken {
+                PToken.Data ptoken = 20;
+            }
         }
         
         classification.Category category = 5;
@@ -165,6 +175,7 @@ message Annotations {
         ServiceType service_type = 10;
         ProcessProductAssociation product_association = 11;
         repeated ProcessingType processing_type = 12;
+        repeated .pattributes.SemanticPurpose deferred_semantic_purposes = 14;
         
         Custom custom = 101;
         message Custom {
@@ -175,6 +186,14 @@ message Annotations {
             DigitalMarketsAct.Process digital_markets_act = 5;
             PToken.Process ptoken = 6;
             ML.Process ml = 7;
+        }
+        
+        oneof _semantic_purpose {
+            .pattributes.SemanticPurpose semantic_purpose = 13;
+        }
+        
+        oneof _enable_write_observations_computation {
+            bool enable_write_observations_computation = 15;
         }
     }
     

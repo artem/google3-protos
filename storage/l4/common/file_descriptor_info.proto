@@ -2,7 +2,9 @@ syntax = "editions";
 
 package storage_l4;
 
-import "storage/l4/common/d_user_isolation_class.proto";
+import "storage/datapol/annotations/proto/semantic_annotations.proto";
+import "storage/l4/common/resource_user.proto";
+import "storage/l4/core/version.proto";
 import "storage/l4/public/cache_name.proto";
 
 message FileEncodingInfoProto {
@@ -16,8 +18,9 @@ message FileDescriptorInfoProto {
     optional FileEncodingInfoProto encoding = 1;
     optional double ctime_seconds = 2;
     optional bytes l4_extended_attribute = 3 [ctype = CORD];
-    optional DUserIsolationClassProto eviction_user = 4;
+    optional ResourceUserProto eviction_user = 4;
     optional CacheNameProto tiering_cache = 6;
+    optional Version.Type tiering_producer_version = 7;
     
     reserved 5;
 }

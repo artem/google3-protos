@@ -1,0 +1,100 @@
+syntax = "proto3";
+
+package google.internal.cloud.sqlagent.v1;
+
+import "google/api/annotations.proto";
+import "google/api/policy.proto";
+import "google/internal/cloud/sqlagent/v1/healthcheck.proto";
+import "google/internal/cloud/sqlagent/v1/vm_address.proto";
+import "storage/datapol/annotations/proto/semantic_annotations.proto";
+import "util/task/status.proto";
+
+option java_multiple_files = true;
+option java_outer_classname = "ServingRoleServiceProto";
+option java_package = "com.google.internal.cloud.sqlagent.v1";
+
+service ServingRoleService {
+    rpc GetServingRole(GetServingRoleRequest) returns (GetServingRoleResponse);
+}
+
+message GetServingRoleRequest {
+    string instance_name = 2;
+    string instance_uid = 3;
+    VmHealthState vm_state = 13;
+    VmHealthState other_vm_state = 14;
+    VmAddress vm_address = 15;
+    bool want_other_vm_address = 16;
+    
+    oneof _replication_health_state {
+        ReplicationHealthState replication_health_state = 17;
+    }
+    
+    reserved 1, 4 to 12;
+}
+
+message GetServingRoleResponse {
+    util.StatusProto status = 1;
+    
+    DeletedServingRole deleted_field2 = 2 [deprecated = true];
+    enum DeletedServingRole {
+        option deprecated = true;
+        DELETED_SERVING_ROLE0 = 0 [deprecated = true];
+        DELETED_SERVING_ROLE1 = 1 [deprecated = true];
+        DELETED_SERVING_ROLE2 = 2 [deprecated = true];
+        DELETED_SERVING_ROLE3 = 3 [deprecated = true];
+        DELETED_SERVING_ROLE4 = 4 [deprecated = true];
+        DELETED_SERVING_ROLE5 = 5 [deprecated = true];
+        DELETED_SERVING_ROLE6 = 6 [deprecated = true];
+        DELETED_SERVING_ROLE7 = 7 [deprecated = true];
+        DELETED_SERVING_ROLE8 = 8 [deprecated = true];
+        DELETED_SERVING_ROLE9 = 9 [deprecated = true];
+    }
+    
+    int64 server_time_millis = 3;
+    VmAddress other_vm_address = 4;
+    HealthCheckIntervals health_check_intervals = 5 [deprecated = true];
+    
+    VmRoles vm_roles = 6;
+    message VmRoles {
+        DeletedServingRole deleted_field1 = 1 [deprecated = true];
+        HaRole ha_role = 2;
+        ReplicaStatus replica_status = 3;
+        EphemeralRole ephemeral_role = 4;
+        ServingStatus serving_status = 5;
+    }
+    
+    int64 cluster_node_unhealthy_threshold_seconds = 7;
+    
+    enum HaRole {
+        HA_ROLE_UNSPECIFIED = 0;
+        HA_ROLE_NONE = 1;
+        HA_ROLE_PRIMARY = 2;
+        HA_ROLE_STANDBY = 3;
+        HA_ROLE_LEGACY_PRIMARY = 4;
+        HA_ROLE_LEGACY_STANDBY = 5;
+        HA_ROLE_CLUSTER_NODE = 6;
+    }
+    
+    enum ReplicaStatus {
+        REPLICA_STATUS_UNSPECIFIED = 0;
+        REPLICA_STATUS_NOT_REPLICA = 1;
+        REPLICA_STATUS_READ_REPLICA = 2;
+    }
+    
+    enum EphemeralRole {
+        EPHEMERAL_ROLE_UNSPECIFIED = 0;
+        EPHEMERAL_ROLE_NONE = 1;
+        EPHEMERAL_ROLE_REPLACEMENT_REPLICA = 2;
+        EPHEMERAL_ROLE_REPLACEMENT_VM = 3;
+        EPHEMERAL_ROLE_REPLACEMENT_VM_PREMATURE_HEALTHY = 4;
+        EPHEMERAL_ROLE_REPLACEMENT_REPLICA_PENDING_STARTUP = 5;
+        EPHEMERAL_ROLE_VM_PREMATURE_UNHEALTHY = 6;
+    }
+    
+    enum ServingStatus {
+        SERVING_STATUS_UNSPECIFIED = 0;
+        SERVING_STATUS_IS_SERVING = 1;
+        SERVING_STATUS_NOT_SERVING = 2;
+        SERVING_STATUS_CP_UNREACHABLE = 3;
+    }
+}

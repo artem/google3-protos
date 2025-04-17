@@ -2,9 +2,9 @@ syntax = "editions";
 
 package security_loas_l2;
 
-import "borg/common/internal_confidential_mode_config.proto";
 import "security/credentials/proto/principal.proto";
 import "security/loas/l2/proto/common.proto";
+import "security/loas/l2/proto/confidential_security_level.proto";
 import "security/loas/l2/proto/credstype.proto";
 import "security/loas/l2/proto/identity_types.proto";
 import "security/loas/l2/proto/instance.proto";
@@ -81,7 +81,7 @@ message UnauthenticatedProgramNameIdentity {
 }
 
 message ConfidentialModeIdentity {
-    optional borg.InternalConfidentialModeConfig.SecurityLevel confidential_security_level = 2;
+    optional ConfidentialSecurityLevel confidential_security_level = 2;
     
     reserved 1;
 }

@@ -1,0 +1,33 @@
+syntax = "proto2";
+
+package pb;
+
+import "net/proto2/proto/descriptor.proto";
+
+option go_package = "google.golang.org/protobuf/types/gofeaturespb";
+option java_outer_classname = "GoFeaturesProto";
+option java_package = "com.google.protobuf";
+
+message GoFeatures {
+    optional bool legacy_unmarshal_json_enum = 1;
+    
+    optional APILevel api_level = 2;
+    enum APILevel {
+        API_LEVEL_UNSPECIFIED = 0;
+        API_OPEN = 1;
+        API_HYBRID = 2;
+        API_OPAQUE = 3;
+    }
+    
+    optional StripEnumPrefix strip_enum_prefix = 3;
+    enum StripEnumPrefix {
+        STRIP_ENUM_PREFIX_UNSPECIFIED = 0;
+        STRIP_ENUM_PREFIX_KEEP = 1;
+        STRIP_ENUM_PREFIX_GENERATE_BOTH = 2;
+        STRIP_ENUM_PREFIX_STRIP = 3;
+    }
+}
+
+extend .proto2.FeatureSet {
+    optional GoFeatures go = 1002;
+}

@@ -53,6 +53,7 @@ enum OutputPrefixType {
     LEGACY = 2;
     RAW = 3;
     CRUNCHY = 4;
+    WITH_ID_REQUIREMENT = 5;
 }
 
 enum EcdsaSignatureEncoding {

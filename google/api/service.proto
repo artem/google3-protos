@@ -4,7 +4,9 @@ package google.api;
 
 import "google/api/actionable_errors.proto";
 import "google/api/analytics.proto";
+import "google/api/api_rules.proto";
 import "google/api/api_versioning.proto";
+import "google/api/aspect.proto";
 import "google/api/auditing.proto";
 import "google/api/auth.proto";
 import "google/api/backend.proto";
@@ -22,6 +24,7 @@ import "google/api/experimental/experimental.proto";
 import "google/api/filtering.proto";
 import "google/api/http.proto";
 import "google/api/iam.proto";
+import "google/api/inclusion.proto";
 import "google/api/indexed_resource.proto";
 import "google/api/label.proto";
 import "google/api/legacy.proto";
@@ -33,6 +36,8 @@ import "google/api/migration.proto";
 import "google/api/monitored_resource.proto";
 import "google/api/monitoring.proto";
 import "google/api/operation.proto";
+import "google/api/policy.proto";
+import "google/api/product_mapping.proto";
 import "google/api/quota.proto";
 import "google/api/resource.proto";
 import "google/api/sharing.proto";
@@ -108,6 +113,9 @@ message Service {
     Census census = 107;
     Operations operations = 108;
     string api_service_type = 109;
+    ProductMapping product_mapping = 110;
+    repeated ApiRules api_rules = 111;
+    repeated Aspect aspects = 112;
     protobuf.UInt32Value config_version = 20;
     
     reserved 14, 31, 41;

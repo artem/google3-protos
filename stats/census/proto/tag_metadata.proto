@@ -14,6 +14,7 @@ message TagMetadata {
     optional bool contains_pii = 3;
     optional string owner = 4;
     optional string description = 5;
+    optional bool is_legacy = 15;
     optional bool critical = 6;
     optional bool is_layer_local = 7;
     optional bool exclude_from_stats = 9 [default = false];

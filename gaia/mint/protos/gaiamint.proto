@@ -4,6 +4,7 @@ package gaia_mint;
 
 import "gaia/mint/protos/mint.proto";
 import "google/identity/type/mint_type.proto";
+import "identity/ubermint/proto/platform/cloud/trust_boundary_params.proto";
 import "security/credentials/proto/authenticator.proto";
 import "security/credentials/proto/credential_origin.proto";
 import "storage/datapol/annotations/proto/semantic_annotations.proto";
@@ -30,12 +31,12 @@ message GaiaMint {
     repeated InvalidGaiaMintUserCredential invalid_user = 7;
     optional CookieInfo cookie_info = 4;
     optional DatInfo dat_info = 5;
-    optional bool encrypted_channel = 10;
     optional security.credentials.CredentialOrigin credential_origin = 11;
     optional ScopeOptions scope_options = 12;
     optional bytes service_identity_attributes = 18;
     optional int32 dma52_hard_enforcement_enabled_up_to_rollout_bucket = 23;
+    optional identity_ubermint.TrustBoundaryParams trust_boundary_params = 24;
     optional bytes cloud_uber_mint_context = 20;
     
-    reserved 6, 8, 9, 14 to 17, 19, 22;
+    reserved 6, 8 to 10, 14 to 17, 19, 22;
 }

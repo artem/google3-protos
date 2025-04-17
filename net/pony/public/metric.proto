@@ -81,6 +81,19 @@ message PonyMetric {
         }
     }
     
+    optional CsigInformation csig_information = 11;
+    message CsigInformation {
+        optional SignalType signal_type = 1;
+        enum SignalType {
+            INVALID = 0;
+            ABW_ABSOLUTE = 1;
+            ABW_RELATIVE = 2;
+        }
+        
+        optional int32 signal_value = 2;
+        optional int32 locator_metadata = 3;
+    }
+    
     optional bytes raw_metadata = 7;
     
     reserved 3, 8;

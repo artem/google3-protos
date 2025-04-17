@@ -79,7 +79,7 @@ message Devconsole {
 message LegacyRule {
     string selector = 1;
     bool enable_esf_sherlog = 2;
-    bool enable_esf_fast_path = 3;
+    bool enable_esf_fast_path = 3 [deprecated = true];
     bool enable_esf_checksum = 4;
     bool disable_esf_user_agent_detection = 5;
 }

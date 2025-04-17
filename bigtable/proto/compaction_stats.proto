@@ -17,6 +17,7 @@ message CompactionStats {
     optional string justification = 11;
     optional double score = 12;
     optional double threshold = 13;
+    optional string urgency = 37;
     
     optional MemtableSize input_memtable_size = 36;
     message MemtableSize {

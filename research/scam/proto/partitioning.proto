@@ -23,8 +23,6 @@ message PartitioningConfig {
     
     optional TreeXHybridPartitioningConfig tree_x_hybrid = 46;
     optional string partitioner_prefix = 8;
-    optional int32 max_num_levels = 2 [default = 1];
-    optional int32 max_leaf_size = 11 [default = 1];
     optional int32 clustering_seed = 27 [default = 0];
     optional ProjectionConfig projection = 12;
     optional int32 num_children = 3 [default = 2];
@@ -101,6 +99,8 @@ message PartitioningConfig {
     optional bool partitioning_on_the_fly = 22 [default = false, deprecated = true];
     optional bool use_flume_kmeans = 32 [default = false, deprecated = true];
     optional int32 max_sample_size = 33 [default = 0x7fffffff, deprecated = true];
+    optional int32 max_num_levels = 2 [default = 1, deprecated = true];
+    optional int32 max_leaf_size = 11 [default = 1, deprecated = true];
     
     oneof SamplingFractionOrExpectedSize {
         float partitioning_sampling_fraction = 4 [default = 1];
@@ -192,4 +192,5 @@ message BottomUpTopLevelPartitioner {
     }
     
     optional float noise_shaping_threshold = 7 [default = nan];
+    optional BottomUpTopLevelPartitioner next_higher_level = 8;
 }

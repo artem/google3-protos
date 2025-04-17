@@ -6,4 +6,7 @@ import "research/scam/trees/kmeans_tree/kmeans_tree.proto";
 
 message SerializedKMeansTreePartitioner {
     optional SerializedKMeansTree kmeans_tree = 1;
+    optional SerializedKMeansTreePartitioner next_bottom_up_level = 6;
+    
+    reserved 2, 3, 4, 5;
 }

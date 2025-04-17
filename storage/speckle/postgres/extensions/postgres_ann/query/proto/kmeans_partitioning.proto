@@ -33,6 +33,7 @@ message KMeansPartitioningConfig {
     optional int32 tree_pre_reordering_num_neighbors = 19 [default = -1];
     optional bool use_static_kmr = 20 [default = false];
     optional double noise_shaping_threshold = 21 [default = nan];
+    optional float orthogonality_amplification_lambda = 22 [default = 1.5];
     
     reserved 14;
 }

@@ -1,0 +1,11 @@
+syntax = "editions";
+
+package experiments.heterodyne;
+
+import "net/proto2/proto/descriptor.proto";
+
+option objc_class_prefix = "EXH";
+
+extend .proto2.FieldOptions {
+    optional bool ignore_for_application_properties = 102879280;
+}

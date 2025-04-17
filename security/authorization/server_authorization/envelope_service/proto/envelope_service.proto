@@ -1,4 +1,4 @@
-syntax = "proto3";
+syntax = "editions";
 
 package server_authz;
 
@@ -8,19 +8,19 @@ option java_multiple_files = true;
 option java_package = "com.google.security.authorization.serverauthorization.envelopeservice.proto";
 
 message EnvelopeWarmCacheRequest {
-    WarmCacheRequest request = 2;
+    optional WarmCacheRequest request = 2;
     
     reserved 1;
 }
 
 message EnvelopeWarmCacheResponse {
-    WarmCacheResponse response = 1;
+    optional WarmCacheResponse response = 1;
 }
 
 message EnvelopeCheckRequest {
-    AuthzRequest request = 1;
+    optional AuthzRequest request = 1;
 }
 
 message EnvelopeCheckResponse {
-    AuthzResponse response = 1;
+    optional AuthzResponse response = 1;
 }

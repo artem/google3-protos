@@ -1,4 +1,4 @@
-syntax = "proto3";
+syntax = "editions";
 
 package storage_l4;
 
@@ -6,6 +6,6 @@ import "storage/d/proto/capability.proto";
 import "storage/l4/common/entry_location.proto";
 
 message EntryLocationAndCapabilityProto {
-    EntryLocationProto location = 1;
-    storage_d.Capability capability = 2;
+    optional EntryLocationProto location = 1;
+    optional storage_d.Capability capability = 2;
 }

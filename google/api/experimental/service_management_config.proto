@@ -42,4 +42,6 @@ message ServiceManagementConfig {
     }
     
     protobuf.Any proto_dep_info = 7;
+    
+    reserved 8;
 }

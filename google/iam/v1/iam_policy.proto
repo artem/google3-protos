@@ -11,7 +11,6 @@ import "storage/datapol/annotations/proto/semantic_annotations.proto";
 
 option php_namespace = "Google\\Cloud\\Iam\\V1";
 option csharp_namespace = "Google.Cloud.Iam.V1";
-option cc_enable_arenas = true;
 option go_package = "cloud.google.com/go/iam/apiv1/iampb;iampb";
 option java_multiple_files = true;
 option java_outer_classname = "IamPolicyProto";

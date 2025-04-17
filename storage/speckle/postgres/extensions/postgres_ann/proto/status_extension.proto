@@ -1,0 +1,14 @@
+syntax = "editions";
+
+package postgres.extensions.postgres_ann;
+
+import "net/proto2/bridge/proto/message_set.proto";
+import "storage/datapol/annotations/proto/semantic_annotations.proto";
+
+message StatusExtension {
+    optional bool enable_index_with_insufficient_data = 1 [default = false];
+    
+    extend .proto2.bridge.MessageSet {
+        optional StatusExtension message_set_extension = 10514;
+    }
+}

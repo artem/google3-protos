@@ -7,8 +7,6 @@ import "net/proto2/bridge/proto/message_set.proto";
 import "storage/d/proto/aio-details.proto";
 import "storage/d/proto/throttling-details.proto";
 
-option cc_enable_arenas = true;
-
 message RequestHeader {
     optional string acting_user = 1;
     optional string resource_user = 2;
@@ -44,6 +42,7 @@ message RequestHeader {
     optional SplintersMeta splinters = 13;
     optional bool dfile_unexpected_usage = 17;
     optional bool client_supports_error_device_busy = 18;
+    optional string bwe_delegated_user = 20;
     
     reserved 5 to 6, 10, 14 to 16;
 }
@@ -80,6 +79,7 @@ message SplintersMeta {
         reserved 2;
     }
     
+    optional int64 colossus_client_borg_job_uid = 10;
     optional int64 original_d_access_offset = 5;
     optional int64 original_d_access_size = 7;
     optional net_base.qos.TrafficClass traffic_class = 6;

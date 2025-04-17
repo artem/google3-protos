@@ -15,6 +15,7 @@ message SyncIAMGroupUserRequest {
     optional string database_username = 4;
     optional string database = 5;
     optional int32 database_session_id = 6;
+    optional string authenticated_user = 7;
 }
 
 message SyncIAMGroupUserResponse {

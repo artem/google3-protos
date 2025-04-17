@@ -1,0 +1,32 @@
+syntax = "editions";
+
+package cloud.experiments.pusher.proto;
+
+import "google/protobuf/timestamp.proto";
+
+option java_multiple_files = true;
+option java_outer_classname = "PushDataProto";
+option java_package = "com.google.cloud.experiments.pusher.proto";
+
+message MendelPush {
+    optional PushData snapshot_push = 1;
+    optional PushData disabled_ids_push = 2;
+    optional google.protobuf.Timestamp start_time = 3;
+}
+
+message GiraffePush {
+    map<string, PushData> pushes = 1;
+    optional google.protobuf.Timestamp start_time = 3;
+}
+
+message EmergencyPush {
+    optional PushData disabled_ids = 1;
+    optional google.protobuf.Timestamp start_time = 2;
+}
+
+message PushData {
+    optional bytes payload = 1;
+    optional string version_id = 2;
+    optional string pushdef_name = 3;
+    optional int64 cl_number = 4;
+}

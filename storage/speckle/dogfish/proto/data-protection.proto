@@ -99,7 +99,6 @@ message BackupInfo {
     optional uint64 backup_lsn = 1;
     optional string backup_id = 2;
     optional string backup_dir = 3;
-    optional string backup_staging_dir = 4;
     optional bool report_cmek_versions_for_pitr = 6;
     optional uint64 volume_backup_lsn = 7;
     optional uint64 chunk_size_bytes = 8;
@@ -107,7 +106,7 @@ message BackupInfo {
     optional bool is_gapless = 10 [deprecated = true];
     optional uint64 latest_canonical_checksum_lsn = 11;
     
-    reserved 5;
+    reserved 4, 5;
 }
 
 message StartBackupRequest {

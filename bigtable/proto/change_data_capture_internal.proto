@@ -5,6 +5,8 @@ package bigtable.cdc;
 import "bigtable/proto/bigtable_internal.proto";
 import "bigtable/proto/mutation_internal.proto";
 import "google/protobuf/duration.proto";
+import "google/protobuf/timestamp.proto";
+import "storage/datapol/annotations/proto/semantic_annotations.proto";
 
 option java_multiple_files = true;
 option java_package = "com.google.bigtable.cdc.protos";
@@ -98,6 +100,12 @@ message CdcUpdate {
         
         reserved 2;
     }
+    
+    repeated SourceDelay source_delays = 3;
+    message SourceDelay {
+        optional string source_id = 1;
+        optional google.protobuf.Duration delay = 2;
+    }
 }
 
 message StatusUpdate {
@@ -136,6 +144,8 @@ message Acknowledge {
 }
 
 message ReadChangeLogResponse {
+    optional google.protobuf.Timestamp send_time = 5;
+    
     oneof update {
         CdcUpdate stream_update = 1;
         StatusUpdate status_update = 2;

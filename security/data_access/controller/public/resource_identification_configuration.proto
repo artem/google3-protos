@@ -1,19 +1,18 @@
-syntax = "proto3";
+syntax = "editions";
 
 package security.data_access;
 
-option cc_enable_arenas = true;
 option java_multiple_files = true;
 option java_package = "com.google.security.data_access.controller.client";
 
 message ResourceIdentificationConfig {
-    bool enabled = 2;
-    ResourceIdentificationBackendConfig backend_config = 1;
-    ResourceSelection resources_for_access_controls = 3;
+    optional bool enabled = 2;
+    optional ResourceIdentificationBackendConfig backend_config = 1;
+    optional ResourceSelection resources_for_access_controls = 3;
 }
 
 message ResourceIdentificationBackendConfig {
-    string target_address = 1;
+    optional string target_address = 1;
 }
 
 enum ResourceSelection {

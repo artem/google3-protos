@@ -5,6 +5,7 @@ package google.api;
 import "google/api/label.proto";
 import "google/api/launch_stage.proto";
 import "google/api/monitoring_migration.proto";
+import "google/api/policy.proto";
 import "google/api/visibility.proto";
 import "google/protobuf/struct.proto";
 
