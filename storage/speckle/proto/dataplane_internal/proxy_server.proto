@@ -3,6 +3,7 @@ syntax = "editions";
 package storage.speckle.proto.dataplane_internal.proxy_server;
 
 import "storage/datapol/annotations/proto/semantic_annotations.proto";
+import "third_party/protobuf/cpp_features.proto";
 
 service ProxyServerInternal {
     rpc SyncIAMGroupUser(SyncIAMGroupUserRequest) returns (SyncIAMGroupUserResponse);
@@ -16,6 +17,7 @@ message SyncIAMGroupUserRequest {
     optional string database = 5;
     optional int32 database_session_id = 6;
     optional string authenticated_user = 7;
+    optional bool enable_delegate_user_creation = 8;
 }
 
 message SyncIAMGroupUserResponse {

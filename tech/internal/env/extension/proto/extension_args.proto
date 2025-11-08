@@ -23,4 +23,5 @@ message ExtensionSpec {
     optional bool lazy_load = 9;
     optional bool use_auto_btb = 10;
     repeated string allow_service = 11;
+    optional bool crash_tolerant = 12;
 }

@@ -24,3 +24,13 @@ message CustomOrgPolicyConstants {
         optional string custom_constraints = 2 [default = "customConstraints"];
     }
 }
+
+message GcpReauthRequiredConstants {
+    optional string reason = 1 [default = "GCP_REAUTH_REQUIRED"];
+    
+    message MetadataKeys {
+        optional string resource = 1 [default = "resource"];
+        optional string permission = 2 [default = "permission"];
+        optional string remediation_url = 3 [default = "remediation_url"];
+    }
+}

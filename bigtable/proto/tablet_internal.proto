@@ -5,6 +5,7 @@ package bigtable;
 import "bigtable/proto/bigtable.proto";
 import "bigtable/proto/bigtable_internal.proto";
 import "bigtable/proto/bounds_internal.proto";
+import "bigtable/proto/bytes_by_age.proto";
 import "bigtable/proto/encryption.proto";
 import "bigtable/proto/rowset.proto";
 import "bigtable/proto/size_profile.proto";
@@ -29,6 +30,7 @@ message SSTableMetaData {
     optional SizeProfileRecord profile = 8;
     optional LocalityGroup locality_group_settings = 25;
     optional SSTableBloomFilterInfo bloom_filter_info = 29;
+    optional BytesByAgeProto bytes_by_age = 30;
     
     reserved 1 to 7, 9 to 10, 17 to 21, 23, 24, 26 to 28;
     
@@ -183,6 +185,8 @@ message TabletMetaData {
         optional int64 effective_time_step = 153;
         optional int32 last_merge_index = 151 [default = -1];
         optional double average_minor_size = 154 [default = -1];
+        optional int32 max_compaction_groups = 178 [default = -1];
+        optional int32 target_compaction_groups = 179;
         
         reserved 4, 8;
     }
@@ -267,7 +271,6 @@ message TabletMetaData {
     optional google.protobuf.Duration major_compaction_cycle = 159;
     optional int64 split_size_bytes = 160;
     optional int64 ssd_split_size_bytes = 169;
-    optional bool use_new_offset_calculation = 175 [default = true, deprecated = true];
     
     optional MigrationState migration_state = 161 [default = NONE, deprecated = true];
     enum MigrationState {
@@ -299,7 +302,7 @@ message TabletMetaData {
     optional int64 aged_out_bytes = 172;
     optional int64 last_minor_compaction_start_time_micros = 173;
     
-    reserved 9, 35, 48, 49, 50, 53, 132, 141, 148, 176;
+    reserved 9, 35, 48 to 50, 53, 132, 141, 148, 175 to 176;
 }
 
 message MetadataBootstrap {

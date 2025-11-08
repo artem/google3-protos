@@ -5,7 +5,7 @@ package storage_useccfs;
 import "storage/datapol/annotations/proto/semantic_annotations.proto";
 
 message UsecCfsOpenOptions {
-    optional bool enable_useccfs = 1;
+    optional bool enable_useccfs = 1 [deprecated = true];
 }
 
 message UsecCfsReadOptions {

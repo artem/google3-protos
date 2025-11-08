@@ -152,6 +152,13 @@ message AuthSubTokenRecord {
     optional ScopeResourceMap scope_resource_map = 90;
     optional ScopeValidityMetadata scope_validity_metadata = 92;
     
+    optional SessionGrantPurpose session_grant_purpose = 93;
+    enum SessionGrantPurpose {
+        SESSION_GRANT_PURPOSE_UNKNOWN = 0;
+        FOR_SESSION_AND_GRANT = 1;
+        FOR_GRANT_ONLY = 2;
+    }
+    
     oneof cryptauth_key {
         bytes iot_key_id = 61;
         identity_oauth.BindingKeyInfo binding_key_info = 86;
@@ -302,7 +309,6 @@ message AuthSubTokenRecordMatchPrototype {
     optional DeviceInfo Device = 14;
     repeated DeviceInfo Devices = 13;
     optional bool OfflineAccess = 10;
-    optional bool InBundle = 15;
     optional int64 ProjectNumber = 19;
     optional int64 DelegatingUser = 17;
     optional DelegationTypeEnum DelegationType = 26;
@@ -323,7 +329,7 @@ message AuthSubTokenRecordMatchPrototype {
     optional ScopeValidityMetadata scope_validity_metadata = 41;
     map<int32, ScopeCodeContext> scope_contexts = 42;
     
-    reserved 2, 5, 6, 8, 11, 16, 22, 28, 29, 18, 30, 33, 34;
+    reserved 2, 5, 6, 8, 11, 15, 16, 22, 28, 29, 18, 30, 33, 34;
     
     message ScopeCodeContext {
         optional bool is_onetime_access_scope = 1;

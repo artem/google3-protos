@@ -45,6 +45,7 @@ service CuratorInterface {
     rpc Split(Curator_SplitArg) returns (Curator_SplitResult);
     rpc Merge(Curator_MergeArg) returns (Curator_MergeResult);
     rpc ResolveStripe(Curator_ResolveStripeArg) returns (Curator_ResolveStripeResult);
+    rpc ReportQuirk(Curator_ReportQuirkArg) returns (Curator_ReportQuirkResult);
 }
 
 message Curator_LookupArg {
@@ -159,6 +160,7 @@ message Curator_CreateArg {
     optional bool raw_ciphertext_access = 32;
     optional bool require_encryption_mode = 46 [default = false];
     optional bool encrypted_per_file_plaintext_crc = 42;
+    optional bool per_file_plaintext_crc_parallel = 47;
     optional bool enable_ghac_encryption = 44;
     optional tech.file.QuotaAccounting quota_accounting = 33;
     optional string additional_readonly_capability_grantee = 34;
@@ -289,6 +291,7 @@ message Curator_SnapshotArg {
     optional bool ignore_cmeta_row_limit = 22 [default = false];
     optional bool raw_ciphertext_snapshot = 25 [default = false];
     optional bool bypass_snapshot_mutability_constraint = 26 [default = false];
+    optional bool drop_allow_nonfrozen_snapshot = 27 [default = false];
     
     extend .proto2.bridge.MessageSet {
         optional Curator_SnapshotArg message_set_extension = 14746149;
@@ -360,7 +363,8 @@ message Curator_MatchArg {
     optional bool recursive = 4;
     optional bool plain_match_files_only = 5 [default = false];
     optional uint32 match_type = 7;
-    optional uint64 stat_mask = 8;
+    
+    reserved 8;
     
     extend .proto2.bridge.MessageSet {
         optional Curator_MatchArg message_set_extension = 14746214;
@@ -420,6 +424,7 @@ message Curator_SetAttrArg {
     repeated google.protobuf.Any extended_attributes = 27;
     optional bool allow_non_frozen_snapshot = 30 [default = true];
     optional CfsConditionalOperation cfs_conditional_operation = 31;
+    optional int64 ctime = 32;
     
     reserved 14, 28, 29;
     
@@ -462,6 +467,7 @@ message Curator_OpenStripeArg {
     }
     
     optional bool intending_to_use_rodos = 15;
+    optional bool intending_to_use_rma_writes = 18;
     
     reserved 5, 11, 14, 16;
     
@@ -638,6 +644,7 @@ message ScanStats {
     optional UsageEntryWide overcharged_usage_wide = 21;
     map<int32, LddStatsSummary> ldd_stats_summary_by_entity = 26;
     optional HaaStatsSummary haa_stats_summary = 31;
+    map<string, TieredSsdByteSummary> tiered_eligible_ssd_bytes_by_owner = 32;
     
     reserved 1, 4, 10, 14, 23, 24, 25;
 }
@@ -650,7 +657,7 @@ message CoprocessorInfo {
 
 message CuratorInfo {
     required string instance = 1;
-    required int32 start_time = 2;
+    required int64 start_time = 2;
     required string url = 3;
     optional int32 current_version = 5;
     optional int32 min_supported_version = 6;
@@ -713,11 +720,6 @@ message DiskRemovalSummary {
     reserved 5;
 }
 
-message ServerRemainingBytes {
-    optional string server = 1;
-    map<uint64, int64> volume_to_remaining_bytes = 2;
-}
-
 message RemovalSummary {
     required bigtable.BTI_RowSetProto ranges = 1;
     repeated ServerRemovalSummary servers = 2;
@@ -726,16 +728,10 @@ message RemovalSummary {
 
 message InstanceStats {
     required int64 total_recoveries = 1;
-    optional int64 total_rebalances = 9;
     
     repeated group RecoveryStats = 2 {
         required int32 state = 3;
         repeated RecoveryStatsEntry stats = 4;
-    }
-    
-    repeated group RebalanceStats = 10 {
-        required int32 state = 11;
-        repeated RebalanceStatsEntry stats = 12;
     }
     
     repeated RPCStat rpc_stats = 6;
@@ -749,9 +745,8 @@ message InstanceStats {
     optional int64 acl_config_generation = 27;
     map<string, StuckStripeInfo> stuck_stripe_closes_by_owner = 28;
     optional int64 total_live_chunks_on_removed_devices = 29;
-    repeated ServerRemainingBytes removal_remaining_bytes = 30;
     
-    reserved 13, 15 to 18, 21, 24 to 26;
+    reserved 9 to 13, 15 to 18, 21, 24 to 26, 30;
     
     enum MaintenanceState {
         ACTIVE = 0;
@@ -796,6 +791,7 @@ message ProblemStripe {
     
     optional util.StatusProto last_status = 8;
     optional string last_trace = 9;
+    optional google.protobuf.Timestamp recovery_eligible_time = 10;
 }
 
 message Curator_GetProblemStripesArg {
@@ -977,4 +973,20 @@ message Curator_ResolveStripeArg {
 
 message Curator_ResolveStripeResult {
     optional Stripe stripe = 1;
+}
+
+message Curator_ReportQuirkArg {
+    optional ArgHeader header = 1;
+    optional string path = 2;
+    optional string quirk_name = 3;
+    
+    extend .proto2.bridge.MessageSet {
+        optional Curator_ReportQuirkArg message_set_extension = 525003929;
+    }
+}
+
+message Curator_ReportQuirkResult {
+    extend .proto2.bridge.MessageSet {
+        optional Curator_ReportQuirkResult message_set_extension = 525003930;
+    }
 }

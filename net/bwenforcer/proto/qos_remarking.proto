@@ -23,6 +23,7 @@ message BitmapQosMapperProto {
 
 message QosAllocation {
     net_base.qos.TrafficClassValue remarked_qos = 2;
+    bool force_remark_all_datapaths = 6;
     google.protobuf.Timestamp last_update_time = 3;
     bool suppress_enforcement = 4;
     

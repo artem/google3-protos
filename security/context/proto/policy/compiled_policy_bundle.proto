@@ -3,6 +3,7 @@ syntax = "proto2";
 package rpcsp;
 
 import "devtools/api/buildinfo/buildinfo.proto";
+import "google/api/inclusion.proto";
 import "google/protobuf/empty.proto";
 import "net/proto2/go/annotation/go_annotation.proto";
 import "security/context/proto/policy/policy_bundle_types.proto";
@@ -68,7 +69,7 @@ message PolicyCheckInfo {
 }
 
 message PolicyProvenance {
-    repeated string templates = 1;
+    repeated string templates = 1 [deprecated = true];
     optional PolicyCheckInfo policy_check_info = 7;
     
     oneof source {

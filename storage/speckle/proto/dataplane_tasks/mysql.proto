@@ -19,6 +19,7 @@ message MysqlSetReplicaRequest {
     bool verify_gtid_match = 1;
     int64 reset_binary_log_file_number_to = 2;
     bool delete_archived_binlog_files_copied_from_primary = 3;
+    bool skip_start_replication = 4;
 }
 
 message MysqlStartReplicaRequest {

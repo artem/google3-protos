@@ -24,6 +24,7 @@ message FlatSSTableBuilderOptionsProto {
     optional bool attribute_file = 5 [default = true, deprecated = true];
     optional bool record_creator = 10 [default = true];
     optional bool record_command_line = 6 [default = false];
+    optional string options = 12;
 }
 
 message FlatSSTableHeader {
@@ -33,5 +34,8 @@ message FlatSSTableHeader {
     optional int64 num_entries = 4;
     optional int64 top_index_start = 6 [default = 0];
     optional int64 top_index_size = 7;
+    optional int64 uncompressed_value_bytes = 9;
+    optional int64 uncompressed_key_bytes = 10;
+    optional string options = 8;
     optional Metadata metadata = 5;
 }

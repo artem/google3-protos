@@ -24,5 +24,4 @@ enum VerificationError {
     DAT_CREATE_FAILED = 3;
     DAT_FORMAT_INVALID = 4;
     OK = 5;
-    OK_FROM_PEER_TONIC = 6;
 }

@@ -19,18 +19,14 @@ message DiskLayer_ServerStats {
 message DiskLayer_DiskStats {
     optional int64 NO_LONGER_SET_storage_bytes_used = 4 [deprecated = true];
     optional int64 NO_LONGER_SET_storage_bytes_available = 5 [deprecated = true];
-    optional int64 bandwidth_kbps = 6;
-    optional int32 queue_delay_ms = 7;
-    optional int32 read_bandwidth_kbps = 8;
-    optional int32 write_bandwidth_kbps = 9;
-    optional int32 writeback_rate_kbps = 10;
-    optional int32 utilization = 11;
     optional storage_util.Int128 wide_bytes_available = 12;
     optional int64 NO_LONGER_SET_bytes_available = 1;
     optional storage_util.Int128 wide_bytes_used = 13;
     optional int64 NO_LONGER_SET_bytes_used = 2;
     optional storage_util.Int128 wide_bytes_used_foreign = 14;
     optional int64 NO_LONGER_SET_bytes_used_foreign = 3;
+    
+    reserved 6 to 11;
 }
 
 message DiskLayer_DiskStatus {
@@ -61,12 +57,10 @@ message DiskLayer_ServerStatus {
     message SpindleWeightInfo {
         optional int32 hdd_hot_weight = 1;
         optional int32 ssd_hot_weight = 3;
-        optional string hdd_hot_version = 2;
-        optional string ssd_hot_version = 4;
         optional int32 hdd_cold_weight = 5;
         optional int32 ssd_cold_weight = 6;
-        optional string hdd_cold_version = 7;
-        optional string ssd_cold_version = 8;
+        
+        reserved 2, 4, 7, 8;
     }
     
     optional string d_bucket = 13;

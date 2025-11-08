@@ -57,6 +57,7 @@ message Category {
         IMPORT_PUBLIC = 44;
         ONEOF_AVOID = 45;
         INT32_AVOID = 46;
+        UNSIGNED_INTEGER = 47;
     }
 }
 

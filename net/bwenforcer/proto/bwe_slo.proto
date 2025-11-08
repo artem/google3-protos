@@ -64,6 +64,7 @@ message UserAggregateSlo {
     optional bool enable_demand_spillover = 14 [default = true];
     optional bool enable_strict_prioritization = 22;
     optional bool enable_conditional_enforcement = 23;
+    optional bool prioritize_reservations = 24;
     optional string connectivity_type = 5 [default = "B4_BACKBONE"];
     repeated string additional_connectivity_types = 12;
     optional SloEndpoint src = 10;

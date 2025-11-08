@@ -16,6 +16,8 @@ option java_package = "io.envoyproxy.envoy.config.common.matcher.v3";
 message Matcher {
     OnMatch on_no_match = 3;
     message OnMatch {
+        bool keep_matching = 3;
+        
         oneof on_match {
             Matcher matcher = 1;
             .envoy.config.core.v3.TypedExtensionConfig action = 2;

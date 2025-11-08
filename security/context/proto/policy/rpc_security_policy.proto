@@ -123,6 +123,6 @@ message EnableConsentCheck {
 
 message CrossProductSharing {
     optional EnableConsentCheck enable_consent_check = 1;
-    optional int32 service_team_graph_product_id = 2;
+    optional int32 override_product_id = 2;
     repeated string exclude_peers = 3;
 }

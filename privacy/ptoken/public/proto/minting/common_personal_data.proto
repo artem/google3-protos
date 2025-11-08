@@ -7,6 +7,7 @@ import "net/proto2/go/annotation/go_annotation.proto";
 import "privacy/compliance_controls/proto/core_platform_service.proto";
 import "privacy/pattributes/public/proto/gaia_saa_state.proto";
 import "privacy/pattributes/public/proto/gaia_waa_state.proto";
+import "privacy/pattributes/public/proto/posi_enforcement_wave.proto";
 import "privacy/ptoken/public/core/common_personal_data_defs.proto";
 import "privacy/ptoken/public/core/ptoken_type.proto";
 import "storage/datapol/annotations/proto/semantic_annotations.proto";
@@ -41,4 +42,9 @@ message MintingAttributesCommonPersonalData {
     optional bool explicit_smpc_is_recently_deleted_event = 22;
     optional google.protobuf.Timestamp basic_must_hide_by_time = 23;
     optional bool flogs_soft_delete_in_scope = 24;
+    optional uint64 gaia_consent_bitset1_snapshot = 25;
+    optional uint32 posi_setter_hash = 26;
+    optional uint32 source_pipeline_guri_hash = 28;
+    optional .pattributes.PosiEnforcementWave posi_enforcement_wave = 27;
+    optional int32 posi_integration_id = 29;
 }

@@ -81,4 +81,5 @@ enum CustomSafeUrlScheme {
     GOOGLECHROMEACTION = 31;
     GOOGLECHROME = 32;
     GOOGLECHROMES = 33;
+    GOOGLEPHOTOS = 34;
 }

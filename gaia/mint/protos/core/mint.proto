@@ -2,6 +2,8 @@ syntax = "proto2";
 
 package gaia_mint;
 
+import "cloud/identity/keymanager/proto/mint_subordinate_certificate.proto";
+import "google/api/inclusion.proto";
 import "net/proto2/bridge/proto/message_set.proto";
 import "storage/datapol/annotations/proto/semantic_annotations.proto";
 
@@ -22,6 +24,7 @@ message MintWrapper {
     optional bytes uber_mint_payload = 13;
     optional string signer_realm_hint = 17;
     repeated int32 experiment_ids = 19 [packed = true];
+    optional cloud_identity.SubordinateCertificate subordinate_certificate = 21;
     
     reserved 1, 2, 8, 11, 12, 15, 16, 20;
     

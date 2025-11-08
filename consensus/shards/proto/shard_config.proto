@@ -49,6 +49,7 @@ message Epoch {
         ZONE_ISOLATED = 3;
         ZONE_ISOLATED_MINUS = 4;
         CLOUD_REGION = 5;
+        CLOUD_ZONE = 7;
         CONTINENT = 6;
     }
     

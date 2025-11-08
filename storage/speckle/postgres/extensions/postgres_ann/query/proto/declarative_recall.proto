@@ -1,0 +1,20 @@
+syntax = "editions";
+
+package postgres.extensions.postgres_ann;
+
+import "storage/datapol/annotations/proto/semantic_annotations.proto";
+
+message DeclRecallModel {
+    map<uint32, RecallModelItem> recall_map = 1;
+    
+    optional MultiplierModel multiplier_model = 2;
+    message MultiplierModel {
+        optional double param_exponent = 1;
+        optional double param_ln = 2;
+        optional double param_intercept = 3;
+    }
+    
+    message RecallModelItem {
+        optional double discount_factor = 1;
+    }
+}

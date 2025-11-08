@@ -52,6 +52,7 @@ message ReadChangeLogRequest {
     enum RetentionHorizonEnforcement {
         RETENTION_HORIZON_ENFORCEMENT_UNKNOWN = 0;
         WITHIN_RETENTION_HORIZON = 1;
+        WITHIN_RETENTION_HORIZON_RELAXED = 3;
         IGNORE_RETENTION_HORIZON = 2;
     }
     

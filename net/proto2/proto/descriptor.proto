@@ -22,6 +22,7 @@ message FileDescriptorProto {
     repeated string dependency = 3;
     repeated int32 public_dependency = 10;
     repeated int32 weak_dependency = 11;
+    repeated string option_dependency = 15;
     repeated DescriptorProto message_type = 4;
     repeated EnumDescriptorProto enum_type = 5;
     repeated ServiceDescriptorProto service = 6;
@@ -57,6 +58,7 @@ message DescriptorProto {
     }
     
     repeated string reserved_name = 10;
+    optional SymbolVisibility visibility = 11;
 }
 
 message ExtensionRangeOptions {
@@ -151,6 +153,7 @@ message EnumDescriptorProto {
     }
     
     repeated string reserved_name = 5;
+    optional SymbolVisibility visibility = 6;
 }
 
 message EnumValueDescriptorProto {
@@ -267,7 +270,7 @@ message FieldOptions {
     optional bool lazy = 5 [default = false];
     optional bool unverified_lazy = 15 [default = false];
     optional bool deprecated = 3 [default = false];
-    optional bool weak = 10 [default = false];
+    optional bool weak = 10 [default = false, deprecated = true];
     
     repeated UpgradedOption upgraded_option = 11;
     message UpgradedOption {
@@ -413,7 +416,7 @@ message MethodOptions {
     optional int64 client_max_tokens = 30 [default = 16000000];
     optional int64 server_max_tokens = 31 [default = 16000000];
     
-    optional TokenUnit legacy_token_unit = 28 [default = BYTE];
+    optional TokenUnit legacy_token_unit = 28 [default = BYTEGRACE];
     enum TokenUnit {
         MESSAGE = 0;
         BYTE = 1;
@@ -540,9 +543,23 @@ message FeatureSet {
         STYLE_LEGACY = 2;
     }
     
+    optional VisibilityFeature.DefaultSymbolVisibility default_symbol_visibility = 8;
+    
     extensions 1000 to 9994, 9995 to 9999, 10000;
     
     reserved 999;
+    
+    message VisibilityFeature {
+        reserved 1 to max;
+        
+        enum DefaultSymbolVisibility {
+            DEFAULT_SYMBOL_VISIBILITY_UNKNOWN = 0;
+            EXPORT_ALL = 1;
+            EXPORT_TOP_LEVEL = 2;
+            LOCAL_ALL = 3;
+            STRICT = 4;
+        }
+    }
 }
 
 message FeatureSetDefaults {
@@ -604,4 +621,10 @@ enum Edition {
     EDITION_99998_TEST_ONLY = 99998;
     EDITION_99999_TEST_ONLY = 99999;
     EDITION_MAX = 2147483647;
+}
+
+enum SymbolVisibility {
+    VISIBILITY_UNSET = 0;
+    VISIBILITY_LOCAL = 1;
+    VISIBILITY_EXPORT = 2;
 }

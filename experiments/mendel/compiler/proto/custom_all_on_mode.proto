@@ -1,0 +1,11 @@
+syntax = "editions";
+
+package experiments;
+
+option java_multiple_files = true;
+
+enum CustomAllOnMode {
+    CUSTOM_ALL_ON_MODE_UNSPECIFIED = 0;
+    CUSTOM_ENABLED = 1;
+    CUSTOM_DISABLED = 2;
+}

@@ -115,6 +115,7 @@ message FlowIdentity {
     optional string user_aggregate = 25;
     optional net_base.nsc.ServiceClass network_service_class = 26;
     optional FlowEncapType flow_encap_type = 27;
+    optional int32 rbig_id = 31;
     
     reserved 14, 20, 23, 3, 4;
     
@@ -137,8 +138,11 @@ message NetworkAllocatorAlgorithmData {
 message ServerUpdateInfo {
     optional string data_source_address = 1;
     optional google.protobuf.Timestamp prioritization_update_time = 2;
-    optional bool was_primary = 3;
     optional google.protobuf.Timestamp prioritization_run_time = 4;
+    
+    reserved 3;
+    
+    reserved "was_primary";
 }
 
 message SiteBrokerAlgorithmData {
@@ -172,6 +176,7 @@ message MultimodalLimitDistributionData {
     optional bool is_multimodal = 1 [default = false];
     optional double limit_scale_factor = 2 [default = 1];
     optional bool enable_task_p_monitoring = 3 [default = false];
+    optional int64 min_task_p_limit = 4 [default = 40000];
 }
 
 message BwStat {
@@ -190,6 +195,7 @@ message BwStat {
     optional SchedulerBusyStat scheduler_busy_stat = 39;
     optional int64 num_tasks = 21;
     optional int64 num_tasks_non_zero_usage = 43;
+    optional int64 num_tasks_throttled = 62;
     optional int64 num_tasks_usage_close_to_limit = 37;
     optional int64 num_tasks_high_scheduler_busy_time = 40;
     optional int64 num_tasks_high_parent_scheduler_busy_time = 45;
@@ -242,6 +248,11 @@ message FlowStat {
     optional BwStat latest = 1;
 }
 
+message FlowMetadata {
+    optional string src_cloud_zone = 1;
+    optional string dest_cloud_zone = 2;
+}
+
 message PerQosStat {
     optional net_base.qos.TrafficClass qos = 1;
     optional FlowStat stat = 2;
@@ -279,6 +290,7 @@ message Flow {
     optional DelegatedUser proto_delegated_tracked_user = 9;
     optional int32 delegated_netuid = 6;
     optional int32 user_p_info_index = 8;
+    optional FlowMetadata flow_metadata = 12;
     
     reserved 7;
 }

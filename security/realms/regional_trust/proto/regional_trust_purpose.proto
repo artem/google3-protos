@@ -1,0 +1,12 @@
+syntax = "editions";
+
+package security_realms;
+
+message RegionalTrustPurpose {
+    optional Enum purpose = 1;
+    enum Enum {
+        REGIONAL_TRUST_PURPOSE_UNSPECIFIED = 0;
+        LOAS = 1;
+        THINMINT = 2;
+    }
+}

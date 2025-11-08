@@ -106,7 +106,8 @@ message VersionInfoMessage {
     optional int64 acl_generation = 3;
     optional int64 lock_generation = 4;
     optional int32 lock_mode = 5;
-    optional bytes backend_fingerprint = 6;
+    
+    reserved 6;
 }
 
 message LockServerWire_NewSession_Arg {

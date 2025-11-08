@@ -2,6 +2,7 @@ syntax = "proto2";
 
 package ptoken;
 
+import "google/api/inclusion.proto";
 import "logs/proto/logs_annotations/logs_annotations.proto";
 import "net/proto2/proto/descriptor.proto";
 
@@ -92,20 +93,25 @@ enum BardUserHistorySetting {
 
 enum PolicyRolloutEnforcementMode {
     POLICY_ROLLOUT_ENFORCEMENT_MODE_UNSPECIFIED = 0;
-    DMA52_GLOBAL_RAMPUP = 1;
-    DMA52_EXPLICIT_OPT_IN = 2;
+    DMA52_GLOBAL_RAMPUP = 1 [deprecated = true];
+    DMA52_EXPLICIT_OPT_IN = 2 [deprecated = true];
     DMA52_OPT_OUT = 3;
     DMA52_OPT_OUT_FILTERING = 4;
     DMA52_DISCOVERY_OPT_IN = 5;
     DMA52_WAVE3_EARLY_ENFORCEMENT = 6;
-    DMA52_WAVE3_CLIENT_OPT_IN = 7;
-    DMA52_WAVE3_INTERNAL_OPT_IN = 8;
+    DMA52_WAVE3_OPT_IN = 8;
     OPT_IN_PURPOSE_CONSENT_WAVE1_DISCOVERY_OPT_IN = 9;
     OPT_IN_PURPOSE_CONSENT_OPT_OUT = 10;
     OPT_IN_PURPOSE_CONSENT_OPT_OUT_FILTERING = 11;
     OPT_IN_PURPOSE_CONSENT_WAVE1_EARLY_ENFORCEMENT = 12;
-    OPT_IN_PURPOSE_CONSENT_WAVE1_CLIENT_OPT_IN = 13;
-    OPT_IN_PURPOSE_CONSENT_WAVE1_INTERNAL_OPT_IN = 14;
+    OPT_IN_PURPOSE_CONSENT_WAVE1_OPT_IN = 14;
+    POSI_ENFORCEMENT_WAVE1_DISCOVERY_OPT_IN = 15;
+    POSI_ENFORCEMENT_OPT_OUT = 16;
+    POSI_ENFORCEMENT_OPT_OUT_FILTERING = 17;
+    POSI_ENFORCEMENT_WAVE1_EARLY_ENFORCEMENT = 18;
+    POSI_ENFORCEMENT_WAVE1_OPT_IN = 19;
+    DMA52_WAVE3_CLIENT_OPT_IN = 7 [deprecated = true];
+    OPT_IN_PURPOSE_CONSENT_WAVE1_CLIENT_OPT_IN = 13 [deprecated = true];
 }
 
 extend .proto2.EnumValueOptions {

@@ -1,0 +1,23 @@
+syntax = "editions";
+
+package production.rpc.stubs.proto;
+
+import "google/protobuf/timestamp.proto";
+import "production/rpc/stubs/proto/stub_configuration.proto";
+import "security/dataprotection/collection/public/collection_service.proto";
+
+option java_multiple_files = true;
+
+message ExtensibleStubsConfigEvent {
+    optional secure_collection.MessageSource message_source = 1;
+    optional google.protobuf.Timestamp event_timestamp = 2;
+    optional CanonicalStubConfiguration config = 3;
+    
+    optional Language language = 4;
+    enum Language {
+        UNSPECIFIED_LANGUAGE = 0;
+        CPP = 1;
+        JAVA = 2;
+        GO = 3;
+    }
+}

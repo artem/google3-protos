@@ -24,6 +24,7 @@ message PolicyEvaluationResults {
     optional int64 aom_product_association_restriction_row_allowed_count = 13;
     optional int64 aom_product_association_restriction_row_denied_count = 14;
     optional int64 aom_product_association_restriction_row_failed_precondition_count = 15;
+    optional bool targeted_dapper_sampling_signal = 16;
     
     extend .proto2.bridge.MessageSet {
         optional PolicyEvaluationResults message_set_extension = 525001346;

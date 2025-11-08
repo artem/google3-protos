@@ -2,6 +2,7 @@ syntax = "proto3";
 
 package google.api;
 
+import "google/api/inclusion.proto";
 import "google/api/launch_stage.proto";
 import "google/api/policy.proto";
 import "google/api/visibility.proto";
@@ -68,6 +69,7 @@ message CppSettings {
 
 message PhpSettings {
     CommonLanguageSettings common = 1;
+    string library_package = 2;
 }
 
 message PythonSettings {
@@ -115,12 +117,35 @@ message MethodSettings {
     }
     
     repeated string auto_populated_fields = 3;
+    BatchingConfigProto batching = 4;
 }
 
 message SelectiveGapicGeneration {
     repeated string methods = 1;
     bool generate_omitted_as_internal = 2;
     bool as_deny_list = 3;
+}
+
+message BatchingConfigProto {
+    BatchingSettingsProto thresholds = 1;
+    BatchingDescriptorProto batch_descriptor = 2;
+}
+
+message BatchingSettingsProto {
+    int32 element_count_threshold = 1;
+    int64 request_byte_threshold = 2;
+    protobuf.Duration delay_threshold = 3;
+    int32 element_count_limit = 4;
+    int32 request_byte_limit = 5;
+    int32 flow_control_element_limit = 6;
+    int32 flow_control_byte_limit = 7;
+    FlowControlLimitExceededBehaviorProto flow_control_limit_exceeded_behavior = 8;
+}
+
+message BatchingDescriptorProto {
+    string batched_field = 1;
+    repeated string discriminator_fields = 2;
+    string subresponse_field = 3;
 }
 
 enum ClientLibraryOrganization {
@@ -138,6 +163,13 @@ enum ClientLibraryDestination {
     CLIENT_LIBRARY_DESTINATION_UNSPECIFIED = 0;
     GITHUB = 10;
     PACKAGE_MANAGER = 20;
+}
+
+enum FlowControlLimitExceededBehaviorProto {
+    UNSET_BEHAVIOR = 0;
+    THROW_EXCEPTION = 1;
+    BLOCK = 2;
+    IGNORE = 3;
 }
 
 extend .proto2.ServiceOptions {

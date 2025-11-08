@@ -1,0 +1,13 @@
+syntax = "editions";
+
+package security.context;
+
+import "storage/datapol/annotations/proto/semantic_annotations.proto";
+
+option java_multiple_files = true;
+option java_outer_classname = "AAPDenialResolutionProto";
+option java_package = "com.google.security.context";
+
+message AAPDenialResolution {
+    optional string denial_id = 1;
+}

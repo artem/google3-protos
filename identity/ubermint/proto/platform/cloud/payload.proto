@@ -8,6 +8,7 @@ import "gaia/data/accounttype/account_type.proto";
 import "google/protobuf/struct.proto";
 import "google/protobuf/timestamp.proto";
 import "identity/auxiliarydata/gaia_mint_auxiliary_data.proto";
+import "identity/boq/cloud/ubermint/proto/byoid_reauth_state.proto";
 import "identity/boq/cloud/ubermint/proto/dasher_customer_id.proto";
 import "identity/boq/cloud/ubermint/proto/dma_info.proto";
 import "identity/boq/cloud/ubermint/proto/gaia_on_byoid.proto";
@@ -65,6 +66,8 @@ message CloudUberMintPayload {
     optional int64 seconds_since_last_auth = 48;
     optional identity_ubermint.TrustBoundaryParams trust_boundary_params = 49;
     optional google.cloud.identity.DeviceSignal device_signal = 50;
+    optional bytes hemera_session_info_pointer = 51;
+    optional identity_ubermint.ByoidReauthState byoid_reauth_state = 52;
     
     reserved 9, 10, 14, 21, 28;
 }

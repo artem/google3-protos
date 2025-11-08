@@ -2,6 +2,7 @@ syntax = "proto2";
 
 package ptoken;
 
+import "google/api/inclusion.proto";
 import "net/proto2/proto/descriptor.proto";
 
 option java_multiple_files = true;
@@ -39,6 +40,7 @@ message PTokenType {
         FITBIT_ACCOUNT_DATA = 38;
         FITBIT_HFD_USER = 69;
         FITBIT_TSS_DATA = 80;
+        FITBIT_GDD_DATA = 95;
         FOOTPRINTS_DATA = 40;
         FOOTPRINTS_SPEECH_DATA = 57;
         GEMINI_TRAFFIC_FOR_GROUNDING_DATA = 81;
@@ -85,12 +87,14 @@ message PTokenType {
         SEARCH_ANALYTICS_BETA = 28;
         SEARCH_G1_BENEFITS = 79;
         SUPERROOT_REQUEST = 43;
+        SYNTHETIC_SEARCH_REQUEST = 96;
         TORUS_DEVICE_DATA = 50;
         UGC_CONTRIBUTION_DATA = 83;
         VAULT_MATTER_DATA = 58;
         VERTEX_TRAFFIC_FOR_GROUNDING_DATA = 76;
         WEB_AND_APP_ACTIVITY = 22;
         WEB_DATA = 93;
+        WORKSPACE_AI_USER_DATA = 101;
         WORKSPACE_INTELLIGENCE_DATA = 47;
         WORKSPACE_USER_DATA = 59;
         YOUTUBE = 1;
@@ -101,8 +105,14 @@ message PTokenType {
         YOUTUBE_VISITOR_DATA = 29;
         YOUTUBE_FILE_DATA = 70;
         YOUTUBE_IMAGE_DATA = 71;
+        YOUTUBE_AUTHORING_ASSET_DATA = 98;
+        YOUTUBE_CHANNEL_SUB_ENTITY_DATA = 99;
+        YOUTUBE_PLAYLIST_SUB_ENTITY_DATA = 100;
         ZWIEBACK_DATA = 90;
         ADS_PERSONAL_DATA = 63;
+        ML_LINEAGE_DATA = 97;
+        SAWMILL_EVENT_DATA = 102;
+        PLAY_APP_ID_DATA = 103;
     }
 }
 

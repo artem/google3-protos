@@ -7,6 +7,8 @@ import "google/api/inclusion.proto";
 import "logs/proto/logs_annotations/logs_annotations.proto";
 import "logs/proto/security/credentials/loggable_end_user_credentials.proto";
 import "security/credentials/proto/authenticator.proto";
+import "security/credentials/proto/end_user_credentials.proto";
+import "security/credentials/proto/iam_request_attributes.proto";
 import "security/credentials/proto/principal.proto";
 import "storage/datapol/annotations/proto/semantic_annotations.proto";
 

@@ -1,0 +1,19 @@
+syntax = "proto3";
+
+package pattributes.wipeout;
+
+import "google/api/inclusion.proto";
+
+option java_multiple_files = true;
+option java_package = "com.google.privacy.pattributes.wipeout";
+
+message WipeoutService {
+    string name = 1;
+    
+    WipeoutServiceEnvironment environment = 2;
+    enum WipeoutServiceEnvironment {
+        WIPEOUT_SERVICE_ENV_UNSPECIFIED = 0;
+        WIPEOUT_SERVICE_ENV_PROD = 1;
+        WIPEOUT_SERVICE_ENV_DEV = 2;
+    }
+}

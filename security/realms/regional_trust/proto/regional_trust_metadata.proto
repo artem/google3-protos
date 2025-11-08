@@ -3,15 +3,23 @@ syntax = "editions";
 package security_realms;
 
 message RegionalTrustMetadata {
-    optional PolicyInstanceMetadata enforced_policy_metadata = 1;
+    optional string loas_mode = 3;
+    
+    optional RegionalTrustPolicyEnforcerMetadata loas_rtpe_metadata = 5;
+    message RegionalTrustPolicyEnforcerMetadata {
+        optional PolicyInstanceMetadata enforced_policy_metadata = 1;
+        optional PolicyInstanceMetadata darklaunch_policy_metadata = 2;
+    }
+    
+    optional RegionalTrustPolicyEnforcerMetadata thinmint_rtpe_metadata = 6;
+    optional string thinmint_mode = 7;
+    
+    reserved 1, 2, 4;
+    
     message PolicyInstanceMetadata {
         repeated string trusted_realm_acls = 1;
         repeated string trusted_universe_ids = 2;
         optional bool trusts_all_tpc_universes = 3;
         repeated string exempted_peer_roles = 4;
     }
-    
-    optional PolicyInstanceMetadata darklaunch_policy_metadata = 2;
-    optional string loas_mode = 3;
-    optional bool centrally_enabled = 4;
 }

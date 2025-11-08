@@ -89,14 +89,8 @@ message AssistantSpeculativeWritesStatus {
     optional privacy.data_governance.attributes.Search.DataSpecs.AssistantSpeculativeWritesStatus assistant_speculative_writes_status = 1;
 }
 
-message WorkspaceAIPrivacyScope {
-    optional bool contains_data_in_scope = 1;
-    
-    repeated Reason reasons = 2;
-    enum Reason {
-        REASON_UNSPECIFIED = 0;
-        IS_WORKSPACE_ASSOCIATED_NOT_EXEMPTED = 1;
-        IS_WORKSPACE_ASSOCIATED_NOT_FILTERED = 2;
-        CONTAINS_WORKSPACE_DATA_MIXED = 3;
-    }
+enum PolicyAllowsExplicitPrivacyIntentWrite {
+    ALLOWS_EXPLICIT_PRIVACY_INTENT_WRITE_UNSPECIFIED = 0;
+    ALLOWS_EXPLICIT_PRIVACY_INTENT_WRITE_YES = 1;
+    ALLOWS_EXPLICIT_PRIVACY_INTENT_WRITE_NO = 2;
 }

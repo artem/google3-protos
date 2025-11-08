@@ -1,0 +1,14 @@
+syntax = "editions";
+
+package coroner.collection;
+
+import "storage/datapol/annotations/proto/semantic_annotations.proto";
+import "third_party/protobuf/cpp_features.proto";
+
+option java_multiple_files = true;
+option java_package = "com.google.prod.crashanalysis";
+
+message AnnotationKeyValue {
+    optional string key = 1;
+    optional string value = 2;
+}

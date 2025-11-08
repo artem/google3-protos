@@ -2,6 +2,8 @@ syntax = "proto2";
 
 package security.context;
 
+import "google/api/inclusion.proto";
+
 option java_multiple_files = true;
 option java_outer_classname = "CredsAssertionProto";
 option java_package = "com.google.security.context.credentialassertion";

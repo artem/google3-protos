@@ -2,6 +2,7 @@ syntax = "proto2";
 
 package security.context;
 
+import "google/api/inclusion.proto";
 import "security/context/proto/policy/usage_restriction.proto";
 
 option java_multiple_files = true;

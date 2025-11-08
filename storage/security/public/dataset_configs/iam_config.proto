@@ -1,0 +1,72 @@
+syntax = "editions";
+
+package storage_security;
+
+import "google/protobuf/empty.proto";
+import "storage/datapol/annotations/proto/semantic_annotations.proto";
+import "storage/security/public/dataset_configs/cfs_role_name.proto";
+import "storage/security/public/dataset_configs/cns_role_name.proto";
+
+option java_multiple_files = true;
+
+message IamConfig {
+    optional IamPolicy live_policy = 1;
+    optional IamPolicy darklaunch_policy = 2;
+}
+
+message DirectoryIamConfig {
+    optional string path = 1;
+    optional IamConfig iam_config = 2;
+}
+
+message DefaultIamConfigs {
+    repeated DirectoryIamConfig configs = 1;
+}
+
+message IamPolicy {
+    repeated RoleBinding bindings = 1;
+}
+
+message RoleBinding {
+    optional Members members = 2;
+    optional PeerUserCondition peer_user = 3;
+    optional PeerSecurityRealmCondition peer_security_realm = 4;
+    optional UserAttributionCondition user_attribution = 5;
+    
+    oneof role {
+        CnsRoleName cns_role = 6;
+        CfsRoleName cfs_role = 7;
+    }
+    
+    reserved 1;
+}
+
+message Members {
+    repeated string prod_users = 1;
+    repeated string prod_groups = 2;
+    repeated string prod_authority_selectors = 3;
+    optional google.protobuf.Empty all = 4;
+}
+
+message PeerUserCondition {
+    repeated string prod_users = 1;
+    repeated string prod_groups = 2;
+}
+
+message PeerSecurityRealmCondition {
+    repeated string realms = 1;
+    optional google.protobuf.Empty persons_in_corp = 2;
+    optional google.protobuf.Empty local_realm = 3;
+    optional google.protobuf.Empty local_campus = 4;
+    optional google.protobuf.Empty local_metro = 5;
+    optional google.protobuf.Empty local_cloud_region = 6;
+    optional google.protobuf.Empty local_prod_region = 7;
+    optional google.protobuf.Empty default_covering_realms = 8;
+    optional google.protobuf.Empty crypto_core_covering_realms = 9;
+    optional google.protobuf.Empty data_center_tier6 = 10;
+}
+
+message UserAttributionCondition {
+    repeated string prod_users = 5;
+    repeated string prod_groups = 1;
+}

@@ -2,6 +2,7 @@ syntax = "proto2";
 
 package privacy.data_governance.attributes;
 
+import "google/api/inclusion.proto";
 import "storage/datapol/annotations/proto/semantic_annotations.proto";
 import "storage/datapol/annotations/proto/workspace_annotations.proto";
 

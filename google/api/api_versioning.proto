@@ -2,6 +2,7 @@ syntax = "proto3";
 
 package google.api;
 
+import "google/api/inclusion.proto";
 import "google/api/visibility.proto";
 import "net/proto2/proto/descriptor.proto";
 import "storage/datapol/annotations/proto/semantic_annotations.proto";
@@ -17,6 +18,13 @@ message ApiVersioning {
     repeated ApiVersionsRule rules = 1;
     repeated ApiVersion api_versions = 2;
     repeated Bundle bundles = 3;
+    
+    DarkLaunchMode dark_launch_mode = 5;
+    enum DarkLaunchMode {
+        DARK_LAUNCH_MODE_UNSPECIFIED = 0;
+        NONE = 1;
+        LOGS = 2;
+    }
     
     oneof _enabled {
         bool enabled = 4;

@@ -2,6 +2,8 @@ syntax = "editions";
 
 package monitoring.streamz;
 
+import "third_party/protobuf/cpp_features.proto";
+
 message PresetRootsConfig {
     repeated PresetRootConfig preset_root = 10;
     message PresetRootConfig {

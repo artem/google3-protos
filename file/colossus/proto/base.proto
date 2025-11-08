@@ -3,6 +3,7 @@ syntax = "editions";
 package colossus;
 
 import "file/colossus/cfs2/proto/folder_role.proto";
+import "file/colossus/proto/cfs_feature_mode.proto";
 import "net/proto2/bridge/proto/message_set.proto";
 import "security/context/proto/loggable_peer.proto";
 import "security/credentials/proto/authenticator.proto";
@@ -68,6 +69,7 @@ message ArgHeader {
     optional string user_facing_cell_name = 30;
     optional bool bypass_cell_virtualization = 32;
     optional string opname = 33;
+    optional CfsFeatureMode feature_mode = 34;
     
     oneof capabilities_realm_policy {
         string capabilities_realm = 21;

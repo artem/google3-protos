@@ -87,6 +87,7 @@ message DeviceBoundSessionMetadata {
         ENABLED_SHORTLIVED_SIDTS = 99;
         ENABLED_LONGLIVED_SIDTS = 100;
         ELIGIBLE_FOR_FULL_ENFORCEMENT = 101;
+        ORIGIN_TRIAL_ENABLED = 102;
     }
     
     enum SessionOrigin {
@@ -133,6 +134,7 @@ message UserSession {
     optional bool is_tombstone = 14;
     optional int32 access_code_id = 3;
     optional int32 oauth_login_id = 4;
+    optional string oauth_session_token_id = 19;
     optional bool oauth_session_upgraded = 11;
     optional bool invalidate_with_parent_token = 15;
     optional bool oauth_web_session = 12;

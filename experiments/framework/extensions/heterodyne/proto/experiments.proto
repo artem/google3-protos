@@ -7,6 +7,7 @@ import "experiments/framework/extensions/heterodyne/proto/enums.proto";
 import "java/com/google/apps/jspb/jspb_generate_object_format.proto";
 import "logs/proto/logs_annotations/logs_annotations.proto";
 import "storage/datapol/annotations/proto/semantic_annotations.proto";
+import "third_party/golang/protobuf/v2/src/google/protobuf/go_features.proto";
 import "wireless/android/play/playlog/proto/clientanalytics.proto";
 import "wireless/android/privacy/annotations/proto/collection_basis_annotations.proto";
 
@@ -193,6 +194,7 @@ message ExperimentsAndConfigsRequest {
         DESKTOP_SERVICES = 4300;
         GOOGLE_MAPS_PERCEPTION = 4400;
         STARGATE = 4500;
+        NESTCAM_PHOTON = 4600;
     }
 }
 

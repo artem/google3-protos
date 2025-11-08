@@ -29,6 +29,10 @@ message GetServingRoleRequest {
         ReplicationHealthState replication_health_state = 17;
     }
     
+    oneof _auto_scale_metrics {
+        AutoScaleMetricsProto auto_scale_metrics = 18;
+    }
+    
     reserved 1, 4 to 12;
 }
 

@@ -1,0 +1,25 @@
+syntax = "editions";
+
+package dist_proc.aggregation;
+
+import "dist_proc/aggregation/proto/aggregator.proto";
+import "dist_proc/aggregation/proto/unique-stats.proto";
+
+message HyperLogLogUniqueStateProto {
+    optional int32 num_buckets = 1;
+    repeated int32 data = 2;
+    
+    repeated IndexValue sparse_data = 3;
+    message IndexValue {
+        optional int32 index = 1;
+        optional int32 value = 2;
+    }
+}
+
+extend AggregatorStatsProto {
+    optional UniqueStatsProto hyperloglog_unique_stats = 109;
+}
+
+extend AggregatorStateProto {
+    optional HyperLogLogUniqueStateProto hyperloglog_unique_state = 109;
+}

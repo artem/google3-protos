@@ -14,7 +14,7 @@ message DmaRolloutConfig {
     optional int32 audit_only_rollout_percentage = 1 [deprecated = true];
     optional bool disable_enforcement = 4;
     optional DefaultPtokenFilterPolicy default_ptoken_filter_policy = 5 [default = FAMILY_POLICY_FAIL_REQUEST];
-    optional .ptoken.policy_rollouts.FractionalRolloutConfigurationProto fractional_rollout_config = 6;
+    optional .ptoken.policy_rollouts.FractionalRolloutConfigurationProto fractional_rollout_config = 6 [deprecated = true];
     optional bool use_defaults_when_missing_dataset_attributes = 8;
     
     repeated PolicyParameters policy_parameters = 10;
@@ -24,6 +24,7 @@ message DmaRolloutConfig {
         optional int32 audit_only_rollout_percentage = 1;
         optional .ptoken.policy_rollouts.RequestContextEnforceableModeConfig.RequestContextEnforceableMode online_request_enforceable_mode = 5 [default = NOT_ENFORCEABLE];
         optional .ptoken.policy_rollouts.RequestContextEnforceableModeConfig.RequestContextEnforceableMode offline_request_enforceable_mode = 6 [default = NOT_ENFORCEABLE];
+        optional int32 online_traffic_hard_launch_bucket_threshold = 9;
         optional int32 offline_traffic_hard_launch_percentage = 7;
         
         reserved 2, 3;

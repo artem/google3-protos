@@ -57,6 +57,9 @@ enum SemanticType {
     ST_RESERVED_12017 = 12017 [deprecated = true];
     ST_RESERVED_12018 = 12018 [deprecated = true];
     ST_RESERVED_12019 = 12019 [deprecated = true];
+    ST_RESERVED_12020 = 12020 [deprecated = true];
+    ST_RESERVED_12021 = 12021 [deprecated = true];
+    ST_RESERVED_12022 = 12022 [deprecated = true];
     ST_RESERVED_12023 = 12023 [deprecated = true];
     ST_RESERVED_12024 = 12024 [deprecated = true];
     ST_RESERVED_12025 = 12025 [deprecated = true];
@@ -72,9 +75,6 @@ enum SemanticType {
     ST_RESERVED_12035 = 12035 [deprecated = true];
     ST_RESERVED_12036 = 12036 [deprecated = true];
     ST_RESERVED_12038 = 12038 [deprecated = true];
-    ST_ACL_SCOPE = 12020;
-    ST_ACL_ENTRY = 12021;
-    ST_ACL = 12022;
     ST_PTOKEN = 12037;
 }
 

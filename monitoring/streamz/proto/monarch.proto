@@ -7,6 +7,7 @@ import "monitoring/streamz/api/data_model.proto";
 import "monitoring/streamz/api/hierarchical_isolation.proto";
 import "monitoring/streamz/proto/lazy_point_set.proto";
 import "net/base/qos.proto";
+import "third_party/protobuf/cpp_features.proto";
 import "util/task/status.proto";
 
 service MonarchCollector {

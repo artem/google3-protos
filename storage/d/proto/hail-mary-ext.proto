@@ -1,0 +1,9 @@
+syntax = "editions";
+
+package storage_d;
+
+import "storage/d/proto/server.proto";
+
+extend ReadRequest {
+    optional bool is_hail_mary_ext = 21;
+}

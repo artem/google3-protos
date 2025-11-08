@@ -2,6 +2,7 @@ syntax = "proto3";
 
 package privacy.data_governance.attributes;
 
+import "google/api/inclusion.proto";
 import "privacy/data_governance/attributes/proto/classification.proto";
 import "privacy/data_governance/attributes/proto/ml_lineage.proto";
 

@@ -25,6 +25,7 @@ import "net/proto2/bridge/proto/message_set.proto";
 import "net/proto2/contrib/custom_printer/proto/custom_printer.proto";
 import "net/rpc/empty-message.proto";
 import "storage/cmek_library/proto/unwrapped_resource_key.proto";
+import "storage/datapol/annotations/proto/semantic_annotations.proto";
 import "util/existencefilter/proto/existence_filter.proto";
 
 option java_package = "com.google.bigtable.protos";
@@ -388,6 +389,7 @@ message BTI_CP_UpdateMoveReplicaStatusArgs {
     optional movereplica.Move move = 2;
     optional BTIR_LogManager target_replication_log_position = 3;
     optional int64 downtime_start_logical_clock = 4;
+    optional bool unsafe_force = 5;
 }
 
 message BTI_CP_UpdateMoveReplicaStatusResult {
@@ -450,6 +452,25 @@ message BTI_CP_GetReplicationServingStateResult {
     optional bytes tablet_end_key = 2;
     optional bool serving_enabled = 3;
     optional int32 in_flight_pulls = 4;
+}
+
+message BTI_CP_GetProtoDescriptorSetRequest {
+    optional string identifier = 1;
+}
+
+message BTI_CP_GetProtoDescriptorSetResponse {
+    optional ProtoDescriptorSet proto_descriptor_set = 1;
+    optional int64 version = 2;
+}
+
+message BTI_CP_EstimateBytesAfterDateRequest {
+    optional int64 timestamp_micros = 1;
+    optional CellMetadata.CfsPartition storage_type = 2;
+    repeated bytes locality_groups = 3;
+}
+
+message BTI_CP_EstimateBytesAfterDateResponse {
+    map<fixed64, int64> sstable_bytes = 1;
 }
 
 message BTI_SecondaryWaitForArg {
@@ -779,7 +800,7 @@ message BTI_WatchRegionProto {
 message BTI_WatchRequestProto {
     optional BTI_WatchRegionProto region = 1;
     optional bytes read_expression = 2;
-    optional bool supports_large_rows = 4;
+    optional bool supports_large_rows = 4 [default = true, deprecated = true];
     
     reserved 3;
 }

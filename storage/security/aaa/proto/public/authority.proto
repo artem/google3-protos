@@ -28,5 +28,5 @@ message AuthorizationCache {
 
 message SerializedAuthority {
     optional UnprocressedAuthority tentative_authority = 1;
-    optional AuthorizationCache cache = 2;
+    optional AuthorizationCache cache = 2 [deprecated = true];
 }

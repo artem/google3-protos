@@ -16,6 +16,7 @@ import "research/scam/proto/partitioning.proto";
 import "research/scam/generalized_hash/protos/generalized_hashing.proto";
 import "research/scam/proto/all_pair.proto";
 import "research/scam/proto/chunked_hamming.proto";
+import "research/scam/proto/dense_stats.proto";
 import "research/scam/proto/evaluation.proto";
 import "research/scam/proto/incremental_updates.proto";
 import "research/scam/proto/inverted_index.proto";
@@ -64,6 +65,7 @@ message ScamConfig {
     optional AutoTuning auto_tuning = 38;
     optional ScoringExtensionConfig scoring_extension = 42;
     optional MemoryConsumptionEstimateConfig memory_consumption_estimation = 40;
+    optional DenseStatsConfig dense_stats = 45;
     optional string error_log_file = 41;
     optional ChunkedInvertedIndexConfig chunked_inverted_index = 16;
     optional LegacyInvertedIndexConfig legacy_inverted_index = 33;

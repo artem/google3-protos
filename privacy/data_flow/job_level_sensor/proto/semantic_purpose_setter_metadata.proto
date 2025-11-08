@@ -1,0 +1,24 @@
+syntax = "editions";
+
+package privacy.data_flow.job_level_sensor.proto;
+
+import "privacy/data_flow/job_level_sensor/proto/jls_report.proto";
+import "privacy/data_governance/attributes/proto/privacy_documentation.proto";
+import "privacy/data_governance/attributes/proto/purpose.proto";
+import "privacy/pattributes/public/proto/semantic_purpose.proto";
+
+option java_multiple_files = true;
+
+message SemanticPurposeSetterMetadata {
+    optional string borgjob = 1;
+    optional .pattributes.SemanticPurpose semantic_purpose = 2;
+    optional data_governance.attributes.PrivacyDocument approval = 3;
+    repeated .pattributes.SemanticPurpose deferred_semantic_purposes = 4;
+    repeated data_governance.attributes.ProcessingPurpose.Purpose v1_additional_purposes = 5;
+    optional bool is_default = 6;
+    optional .pattributes.SemanticPurpose prev_semantic_purpose = 7;
+    
+    extend JlsRecord {
+        optional SemanticPurposeSetterMetadata semantic_purpose_setter_metadata = 106;
+    }
+}

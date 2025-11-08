@@ -9,4 +9,6 @@ message UsecDWriteOptions {
     optional bytes user_info = 1 [ctype = CORD];
     optional fixed32 user_info_checksum = 2;
     map<int32, storage_d.UpdateXattr> xattrs = 3;
+    optional fixed32 data_checksum = 4;
+    optional storage_d.SplintersMeta splinters = 5;
 }

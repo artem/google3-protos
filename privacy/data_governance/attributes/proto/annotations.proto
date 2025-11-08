@@ -2,6 +2,7 @@ syntax = "proto3";
 
 package privacy.data_governance.attributes;
 
+import "google/api/inclusion.proto";
 import "privacy/data_governance/attributes/proto/ads.proto";
 import "privacy/data_governance/attributes/proto/annotations_version.proto";
 import "privacy/data_governance/attributes/proto/apps.proto";
@@ -45,6 +46,7 @@ import "privacy/data_governance/attributes/proto/third_party.proto";
 import "privacy/data_governance/attributes/proto/trusted_core_access.proto";
 import "privacy/data_governance/attributes/proto/youtube.proto";
 import "privacy/pattributes/public/proto/semantic_purpose.proto";
+import "privacy/pattributes/public/proto/wipeout/wipeout_service.proto";
 
 option java_multiple_files = true;
 option java_package = "com.google.privacy.datagovernance.attributes.proto1api";
@@ -124,6 +126,7 @@ message Annotations {
             int64 plan_id = 1;
             repeated string wipeout_processor = 2;
             ExemptReason exempt_reason = 3;
+            .pattributes.wipeout.WipeoutService wipeout_service = 4;
         }
         
         EncryptionProperties encryption = 3;

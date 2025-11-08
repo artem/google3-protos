@@ -2,6 +2,7 @@ syntax = "editions";
 
 package colossus;
 
+import "file/colossus/proto/cfs_feature_mode.proto";
 import "file/colossus/proto/stack_trace.proto";
 import "google/protobuf/timestamp.proto";
 
@@ -43,16 +44,7 @@ message SampledFileOpenCall {
     
     optional FeatureFlags feature_flags = 6;
     message FeatureFlags {
-        optional Mode mode = 1;
-        enum Mode {
-            UNSPECIFIED_MODE = 0;
-            COLOSSUS_TESTS = 1;
-            NON_PROD = 2;
-            EARLY_ADOPTER = 3;
-            DEFAULT = 4;
-            DISABLE_ALL = 6;
-            RANDOMLY_DISABLE = 7;
-        }
+        optional CfsFeatureMode mode = 1;
     }
     
     optional Sampler sampler = 7;

@@ -1,0 +1,10 @@
+syntax = "editions";
+
+package experiments;
+
+option java_multiple_files = true;
+
+enum RiskTolerance {
+    RISK_TOLERANCE_UNSPECIFIED = 0;
+    RISK_TOLERANT = 1;
+}

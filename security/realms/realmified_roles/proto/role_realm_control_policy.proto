@@ -3,6 +3,7 @@ syntax = "editions";
 package security_realms;
 
 import "security/credentials/proto/principal.proto";
+import "security/util/proto/permission.proto";
 
 message RoleRealmControlPolicy {
     optional security.credentials.PrincipalProto principal = 1;
@@ -10,14 +11,38 @@ message RoleRealmControlPolicy {
     optional CredentialControlRestrictions enforced_restrictions = 2;
     message CredentialControlRestrictions {
         optional SecurityRealmSet allowed_security_realms = 1;
+        optional RealmConfiguration realm_configuration = 2;
     }
     
     optional CredentialControlRestrictions provisional_restrictions = 3;
+    optional AcctRestrictions rpc_restrictions = 4;
+    
+    optional Metadata metadata = 5;
+    message Metadata {
+        optional string id = 1;
+    }
     
     message SecurityRealmSet {
         repeated string security_realms = 1;
         repeated SecurityRealmSet all_of = 2;
         repeated SecurityRealmSet any_of = 3;
+    }
+    
+    message LocationConfiguration {
+        repeated string acls = 1;
+    }
+    
+    message PropertyConfiguration {
+        repeated string acls = 1;
+    }
+    
+    message AllowedRealmConfiguration {
+        optional LocationConfiguration location = 1;
+        optional PropertyConfiguration property = 2;
+    }
+    
+    message RealmConfiguration {
+        repeated AllowedRealmConfiguration allowed_realm_configurations = 1;
     }
 }
 
@@ -25,5 +50,6 @@ message CredentialControlPolicyType {
     enum Enum {
         CREDENTIAL_CONTROL_POLICY_TYPE_UNSPECIFIED = 0;
         ALLOWED_SECURITY_REALMS = 1;
+        RPC_RESTRICTIONS = 2;
     }
 }

@@ -40,4 +40,6 @@ message RrcpEvaluationEvent {
             RRCP_MISSING_OR_INVALID = 5;
         }
     }
+    
+    optional int32 count = 7;
 }

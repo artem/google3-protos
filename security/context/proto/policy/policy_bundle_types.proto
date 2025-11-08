@@ -3,6 +3,7 @@ syntax = "proto2";
 package rpcsp;
 
 import "apps/security/rpcsecuritypolicy/presubmit/protos/analyzer_config.proto";
+import "google/api/inclusion.proto";
 import "net/proto2/contrib/validator/annotations.proto";
 
 option cc_enable_arenas = true;
@@ -66,6 +67,7 @@ enum Framework {
     FRAMEWORK_GO_STUBBY = 7;
     FRAMEWORK_CC_CUSTOM = 6;
     FRAMEWORK_GO_CUSTOM = 9;
+    FRAMEWORK_CC_PLAQUE = 12;
     FRAMEWORK_ESF_HTTP = 10;
     FRAMEWORK_CPE_BACKEND = 11;
     FRAMEWORK_PRESUBMIT = 8;

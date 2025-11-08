@@ -1,0 +1,14 @@
+syntax = "editions";
+
+package identity_ubermint;
+
+import "google/protobuf/timestamp.proto";
+import "storage/datapol/annotations/proto/semantic_annotations.proto";
+
+option java_multiple_files = true;
+option java_outer_classname = "ByoidReauthStateProto";
+option java_package = "com.google.identity.boq.cloud.ubermint.proto";
+
+message ByoidReauthState {
+    optional google.protobuf.Timestamp auth_time = 1;
+}

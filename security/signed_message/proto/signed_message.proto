@@ -1,0 +1,11 @@
+syntax = "editions";
+
+package signed_message;
+
+import "storage/datapol/annotations/proto/semantic_annotations.proto";
+
+message SignedMessage {
+    optional bytes prefix = 1;
+    optional bytes serialized_message = 2;
+    optional bytes signature = 3;
+}

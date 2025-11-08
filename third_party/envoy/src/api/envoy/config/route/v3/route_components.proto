@@ -5,6 +5,7 @@ package envoy.config.route.v3;
 import "third_party/envoy/src/api/envoy/config/core/v3/base.proto";
 import "third_party/envoy/src/api/envoy/config/core/v3/extension.proto";
 import "third_party/envoy/src/api/envoy/config/core/v3/proxy_protocol.proto";
+import "third_party/envoy/src/api/envoy/type/matcher/v3/filter_state.proto";
 import "third_party/envoy/src/api/envoy/type/matcher/v3/metadata.proto";
 import "third_party/envoy/src/api/envoy/type/matcher/v3/regex.proto";
 import "third_party/envoy/src/api/envoy/type/matcher/v3/string.proto";
@@ -151,6 +152,7 @@ message RouteMatch {
     }
     
     repeated .envoy.type.matcher.v3.MetadataMatcher dynamic_metadata = 13;
+    repeated .envoy.type.matcher.v3.FilterStateMatcher filter_state = 16;
     
     oneof path_specifier {
         string prefix = 1;

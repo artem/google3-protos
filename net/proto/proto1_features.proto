@@ -9,6 +9,18 @@ option java_package = "com.google.protobuf";
 
 message Proto1Features {
     optional bool legacy_packed = 3;
+    optional NestInFileClassFeature.NestInFileClass nest_in_file_class = 1;
+    
+    message NestInFileClassFeature {
+        reserved 1 to max;
+        
+        enum NestInFileClass {
+            NEST_IN_FILE_CLASS_UNKNOWN = 0;
+            NO = 1;
+            YES = 2;
+            LEGACY = 3;
+        }
+    }
 }
 
 extend .proto2.FeatureSet {

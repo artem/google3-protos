@@ -2,11 +2,13 @@ syntax = "proto2";
 
 package security.context;
 
+import "google/api/inclusion.proto";
 import "google/protobuf/duration.proto";
 import "google/protobuf/empty.proto";
 import "identity/ubermint/proto/universe.proto";
 import "privacy/data_governance/attributes/proto/annotations.proto";
 import "security/context/proto/policy/creds_condition.proto";
+import "security/context/proto/policy/cross_product_sharing.proto";
 import "security/context/proto/policy/policy_processing.proto";
 import "security/context/proto/policy/role_name.proto";
 import "security/context/proto/policy/usage_restriction.proto";
@@ -139,7 +141,7 @@ message BindingCondition {
         PeerUserCondition primary_peer_user = 12;
         ExcludePeerUserCondition exclude_peer_user = 15;
         ExcludePeerUserCondition exclude_primary_peer_user = 16;
-        PeerSecurityRealmCondition peer_security_realm = 4;
+        PeerSecurityRealmCondition peer_security_realm = 4 [deprecated = true];
         ExcludeInsecureUsersCondition exclude_insecure_users = 5;
         ExcludeProdAuthoritySelectorsCondition exclude_prod_authority_selectors = 17;
         ApplicationAuthorizationCheckCondition application_authorization_check = 8;
@@ -181,6 +183,7 @@ message PeerSecurityRealmCondition {
     optional google.protobuf.Empty local_prod_region = 8;
     optional google.protobuf.Empty default_covering_realms = 6;
     optional google.protobuf.Empty crypto_core_covering_realms = 10;
+    optional google.protobuf.Empty data_center_tier6 = 12;
     
     reserved 1;
 }
@@ -196,6 +199,7 @@ message SecurityRealmCondition {
     optional google.protobuf.Empty local_prod_region = 8;
     optional google.protobuf.Empty default_covering_realms = 6;
     optional google.protobuf.Empty crypto_core_covering_realms = 10;
+    optional google.protobuf.Empty data_center_tier6 = 12;
     
     reserved 1;
 }
@@ -267,7 +271,7 @@ message EndpointPolicyCondition {
     
     oneof condition_definition {
         PeerUserCondition peer_user = 2;
-        PeerSecurityRealmCondition peer_security_realm = 3;
+        PeerSecurityRealmCondition peer_security_realm = 3 [deprecated = true];
         CrossProductSharingCondition cross_product_sharing = 4;
         CredsCondition creds = 5;
         SecurityRealmCondition security_realm = 6;
@@ -283,9 +287,18 @@ message EndpointPolicyDarklaunchCondition {
 }
 
 message CrossProductSharingCondition {
-    optional google.protobuf.Empty enable_consent_check = 1;
-    optional int32 service_team_graph_product_id = 2;
-    optional PeerUserCondition exclude_peers = 3;
+    optional int32 override_product_id = 2;
+    
+    oneof check_type {
+        EnableConsentCheck enable_consent_check = 1;
+        cross_product_sharing.EnableGcpOriginCheck enable_gcp_origin_check = 4;
+    }
+    
+    reserved 3;
+    
+    message EnableConsentCheck {
+        optional PeerUserCondition exclude_peers = 1;
+    }
 }
 
 message ProxyServiceConfig {

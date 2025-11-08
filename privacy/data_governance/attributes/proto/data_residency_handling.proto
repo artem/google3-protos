@@ -2,6 +2,7 @@ syntax = "proto3";
 
 package privacy.data_governance.attributes;
 
+import "google/api/inclusion.proto";
 import "privacy/data_governance/attributes/proto/data_residency_location_restriction.proto";
 
 option java_multiple_files = true;

@@ -1,0 +1,15 @@
+syntax = "editions";
+
+package net_rpc;
+
+import "net/proto2/bridge/proto/message_set.proto";
+
+option java_package = "com.google.net.rpc.impl.proto";
+
+message RpcRetryMetaData {
+    optional int32 attempt_number = 1;
+    
+    extend .proto2.bridge.MessageSet {
+        optional RpcRetryMetaData message_set_extension = 525003838;
+    }
+}

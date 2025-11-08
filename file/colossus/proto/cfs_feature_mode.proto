@@ -1,0 +1,15 @@
+syntax = "editions";
+
+package colossus;
+
+option java_multiple_files = true;
+
+enum CfsFeatureMode {
+    CFS_FEATURE_MODE_UNSPECIFIED = 0;
+    CFS_FEATURE_MODE_COLOSSUS_TESTS = 1;
+    CFS_FEATURE_MODE_NON_PROD = 2;
+    CFS_FEATURE_MODE_EARLY_ADOPTER = 3;
+    CFS_FEATURE_MODE_DEFAULT = 4;
+    CFS_FEATURE_MODE_DISABLE_ALL = 6;
+    CFS_FEATURE_MODE_RANDOMLY_DISABLE = 7;
+}

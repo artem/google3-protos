@@ -17,6 +17,14 @@ message RpcProtocolVersions {
     Version min_rpc_version = 2;
 }
 
+message TransportProtocolPreferences {
+    repeated string transport_protocol = 1;
+}
+
+message NegotiatedTransportProtocol {
+    string transport_protocol = 1;
+}
+
 enum SecurityLevel {
     SECURITY_NONE = 0;
     INTEGRITY_ONLY = 1;

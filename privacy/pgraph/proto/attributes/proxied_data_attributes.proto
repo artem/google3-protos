@@ -4,6 +4,7 @@ package pgraph.attributes;
 
 import "privacy/data_governance/attributes/proto/ml.proto";
 import "privacy/data_governance/attributes/proto/purpose.proto";
+import "privacy/pgraph/proto/attributes/data_content.proto";
 
 option java_multiple_files = true;
 
@@ -13,4 +14,8 @@ message Purposes {
 
 message Dma52MlModelAccessStatus {
     optional privacy.data_governance.attributes.MlModel.Data.ModelAccessStatus value = 1;
+}
+
+message WorkspaceDataRegionsDataClassScope {
+    optional DataContent contains_phase1_in_scope_data_class = 1;
 }

@@ -26,4 +26,9 @@ message ReadReplyDetails {
     CostStats throughput_cost_stats = 8;
     CostStats low_latency_cost_stats = 9;
     CostStats ultra_low_latency_cost_stats = 10;
+    CostStats ssd_best_effort_cost_stats = 11;
+    CostStats ssd_best_effort_plus_cost_stats = 12;
+    CostStats ssd_throughput_cost_stats = 13;
+    CostStats ssd_low_latency_cost_stats = 14;
+    CostStats ssd_ultra_low_latency_cost_stats = 15;
 }

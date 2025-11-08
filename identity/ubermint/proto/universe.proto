@@ -33,4 +33,5 @@ enum UberMintPlatform {
     FITBIT = 7;
     BORG_NOTARY_ATTESTATION = 8;
     BORG_NOTARY_APPROVAL = 9;
+    BORG_NOTARY_ENDORSEMENT = 10;
 }

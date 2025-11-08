@@ -4,6 +4,7 @@ package xuniverse;
 
 import public "google/protobuf/timestamp.proto";
 import "google/protobuf/any.proto";
+import "production/tpc/change_management/equivalence/proto/annotation.proto";
 import "third_party/boundary_proxy/proto_compare/annotation.proto";
 
 message NotarizationPayloadWrapper {

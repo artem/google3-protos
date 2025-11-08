@@ -49,6 +49,7 @@ message ConnectionInfo {
     optional int32 completion_queue = 6;
     repeated net_base.qos.TrafficClass qoses = 7;
     optional bool encrypted = 8;
+    optional bool closed = 9;
 }
 
 message ConnectionTable {
@@ -142,6 +143,7 @@ message TraceState {
     optional DelayMetrics local_delays = 11;
     optional DelayMetrics remote_delays = 12;
     optional net_pony.PonyMetric.CsigInformation csig_info = 13;
+    optional net_pony.PonyMetric.TransportMetadataInformation transport_metadata_info = 14;
 }
 
 message OpInfo {

@@ -7,7 +7,7 @@ import "storage/datapol/annotations/proto/semantic_annotations.proto";
 
 message Grant {
     optional string group = 1;
-    optional int64 valid_after = 2;
+    optional int64 valid_after = 2 [deprecated = true];
     optional int64 valid_before = 3;
     optional int64 intent_timestamp_usec = 4;
     

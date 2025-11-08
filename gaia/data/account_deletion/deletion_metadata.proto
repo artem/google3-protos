@@ -1,0 +1,24 @@
+syntax = "proto2";
+
+package gaia_data;
+
+import "storage/datapol/annotations/proto/semantic_annotations.proto";
+
+option java_multiple_files = true;
+option java_package = "com.google.gaia.data.accountdeletion.proto";
+
+message DeleteAccountInfo {
+    optional string requester_role = 1;
+    optional DeletionReasonType deletion_reason = 2;
+    optional string deletion_description = 3;
+    optional int64 deletion_time_secs = 4;
+}
+
+enum DeletionReasonType {
+    REASON_UNSPECIFIED = 0;
+    REASON_END_USER_DELETION = 1;
+    REASON_ACCOUNT_STATE_MANAGEMENT = 2;
+    REASON_NON_IDP_CLEANUP = 3;
+    REASON_IDP_CLEANUP = 4;
+    REASON_INACTIVE_ACCOUNT_DELETION = 5;
+}

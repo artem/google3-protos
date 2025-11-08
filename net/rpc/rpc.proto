@@ -5,6 +5,7 @@ import "net/rpc/census-context.proto";
 import "net/rpc/stream.proto";
 import "perftools/tracing/proto/rpc_traced_request.proto";
 import "privacy/context/proto/privacy_context.proto";
+import "production/tpc/change_management/equivalence/proto/annotation.proto";
 import "security/loas/l2/internal/lib/psp/psp.proto";
 import "security/loas/l2/internal/securewrapper/loas2_multihop_integrity.proto";
 import "security/loas/l2/internal/securewrapper/multihop_clients/boundary_proxy.proto";

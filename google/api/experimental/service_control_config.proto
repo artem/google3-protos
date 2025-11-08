@@ -3,6 +3,7 @@ syntax = "proto3";
 package google.api;
 
 import "google/api/experimental/analytics_config.proto";
+import "google/api/inclusion.proto";
 import "google/api/visibility.proto";
 
 option objc_class_prefix = "GAPI";

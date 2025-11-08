@@ -8,6 +8,7 @@ import "production/resources/dataplatform/idx/time_series/public/proto/idx_time_
 import "storage/d/proto/health.proto";
 import "storage/datapol/annotations/proto/semantic_annotations.proto";
 import "storage/k3/borg/borg_job_port.proto";
+import "storage/security/public/dataset_configs/iam_config.proto";
 import "tech/file/proto/types.proto";
 
 option java_package = "com.google.io.file.colossus";
@@ -158,6 +159,8 @@ message PathAclConfig {
         PER_CELL_CONFIG = 1;
         GLOBAL_CONFIG = 2;
     }
+    
+    optional storage_security.IamConfig iam_config = 11;
 }
 
 message NamespacePathAdmin {
@@ -198,7 +201,8 @@ message CellParameter {
         CUSTODIAN = 256;
         FOLDER_CACHE = 512;
         TRANSCODER = 4096;
-        ALL = 8190;
+        METADATA_CACHE = 8192;
+        ALL = 16382;
     }
     
     optional double min = 7;
@@ -304,10 +308,6 @@ message NamespaceConfig {
     }
     
     reserved 2;
-}
-
-message ClientConfig {
-    repeated string always_bypass_proxy_cells = 1;
 }
 
 message StopRemovalsConfig {

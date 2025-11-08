@@ -3,12 +3,14 @@ syntax = "editions";
 package chubby;
 
 import "chubby/svelte/proto/load_shedding.proto";
+import "chubby/svelte/proto/subsetting.proto";
 
 option java_multiple_files = true;
 option java_package = "com.google.chubby.svelte.protocol";
 
 message ModifyWaitSetResponseInfo {
     optional LoadSheddingMode load_shedding_mode = 1;
+    optional ShuffleShardingResult shuffle_sharding_result = 2;
 }
 
 message AwaitChangeRequestInfo {

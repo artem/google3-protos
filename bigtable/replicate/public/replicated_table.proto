@@ -52,7 +52,7 @@ message BTIR_ReplicatedTableMetadata {
         optional int64 repl_family_id = 8;
         optional int64 new_repl_family_id = 30;
         repeated ReplicaMetadata replica = 9;
-        optional string family_lock = 10;
+        optional string family_lock = 10 [deprecated = true];
         optional bool multi_master_ordering = 19;
     }
     

@@ -2,6 +2,7 @@ syntax = "editions";
 
 package privacy.context;
 
+import "dataresidency/mapping/cloud/cloud_locations_enum.proto";
 import "net/proto2/bridge/proto/message_set.proto";
 import "privacy/ads/user_data_enforcement/data-usage.proto";
 import "privacy/context/proto/policy_breakglass.proto";
@@ -20,8 +21,6 @@ message PrivacyContextDefaultConfig {
     enum Source {
         SOURCE_UNSPECIFIED = 0;
         CONFIG_API = 1;
-        ENVIRONMENT = 2;
-        COMMAND_LINE_FLAG = 3;
         INTRINSIC = 50;
         ENV_ROLE_DEFAULT = 100;
         ENV_JOB_DEFAULT = 200;
@@ -46,6 +45,7 @@ message PrivacyContextDefaultConfig {
     optional Source post_access_filtering_source = 24;
     repeated data_governance.attributes.ProcessingPurpose.Purpose processing_purpose = 3;
     optional Source processing_purpose_source = 25;
+    optional .pattributes.SemanticPurpose mapped_semantic_purpose = 52;
     repeated ads.user_data_enforcement.DataUsage ads_processing_purpose = 7;
     optional Source ads_processing_purpose_source = 26;
     repeated .ptoken.PolicyRolloutEnforcementMode request_policy_rollout_enforcement_mode = 9;
@@ -56,6 +56,7 @@ message PrivacyContextDefaultConfig {
     optional Source allow_enforcement_without_consent_source = 29;
     optional fixed32 source_pipeline_guri_hash = 14;
     optional Source source_pipeline_guri_hash_source = 30;
+    optional Source origin_logical_location_source = 54;
     optional Source execution_id_source = 31;
     repeated .ptoken.LogicalPolicy.Enum request_policy_enforcement = 5;
     optional Source request_policy_enforcement_source = 32;
@@ -75,6 +76,13 @@ message PrivacyContextDefaultConfig {
     optional Source bitfield_set_source = 46;
     optional .pattributes.SemanticPurpose semantic_purpose = 47;
     optional Source semantic_purpose_source = 48;
+    repeated .pattributes.SemanticPurpose deferred_semantic_purposes = 49;
+    optional Source deferred_semantic_purposes_source = 50;
+    repeated data_governance.attributes.ProcessingPurpose.Purpose semantic_purpose_mapped_processing_purposes = 51;
+    
+    oneof origin_logical_location {
+        data_residency.mapping.cloud.CloudDataResidencyLocation origin_logical_cloud_location = 53;
+    }
     
     oneof execution_id {
         int64 borg_run_uid = 15;

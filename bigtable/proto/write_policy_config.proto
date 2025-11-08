@@ -1,0 +1,17 @@
+syntax = "proto2";
+
+package bigtable;
+
+import "privacy/ptoken/public/proto/policies/policy_id.proto";
+
+option java_multiple_files = true;
+option java_package = "com.google.bigtable.protos";
+
+message WritePolicyConfig {
+    repeated PolicyParameters policy_parameters = 1;
+    message PolicyParameters {
+        optional .ptoken.PolicyId.Enum policy_id = 1;
+        optional int32 aom_percent = 2;
+        optional int32 hard_enforcement_percent = 3;
+    }
+}

@@ -2,6 +2,7 @@ syntax = "editions";
 
 package assistant.api.core_types;
 
+import "google/api/inclusion.proto";
 import "logs/proto/logs_annotations/logs_annotations.proto";
 
 option objc_class_prefix = "ASTCT";

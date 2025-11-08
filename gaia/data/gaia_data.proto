@@ -1,6 +1,7 @@
 syntax = "editions";
 
 import "gaia/data/account_capabilities.proto";
+import "gaia/data/account_deletion/deletion_metadata.proto";
 import "gaia/data/bucket_version.proto";
 import "gaia/data/email_annotation.proto";
 import "gaia/data/experiment_group_info.proto";
@@ -46,6 +47,7 @@ message GaiaPurgedUserInfo {
     optional int64 CreationTime = 2;
     repeated int32 ServiceID = 4;
     optional int64 DeletionTime = 5;
+    optional gaia_data.DeleteAccountInfo DeleteAccountInfo = 15 [deprecated = true];
     optional int64 DisableTime = 6;
     optional string GmailOemDomain = 8;
     optional bool IsNonUser = 9;
@@ -191,6 +193,7 @@ message GaiaUserIndex {
     optional bool IsPrimaryEmailPublicId = 33;
     optional bool IsPrimaryEmailPrimaryId = 34;
     optional int64 DeletionDate = 3;
+    optional gaia_data.DeleteAccountInfo DeleteAccountInfo = 64;
     optional bool IsShadow = 41;
     optional bool HasShadow = 42;
     optional bool IsPrimaryEmailRecoveryDisabled = 55;

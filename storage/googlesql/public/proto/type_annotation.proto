@@ -17,6 +17,7 @@ message FieldFormat {
         TIMESTAMP_MICROS = 4;
         TIMESTAMP_NANOS = 5;
         TIMESTAMP_PICOS = 20;
+        TIMESTAMP = 21;
         DATE_DECIMAL = 6;
         TIME_MICROS = 7;
         DATETIME_MICROS = 8;

@@ -2,6 +2,7 @@ syntax = "proto3";
 
 package privacy.data_governance.attributes;
 
+import "google/api/inclusion.proto";
 import "privacy/data_governance/attributes/proto/classification.proto";
 import "privacy/data_governance/attributes/proto/privacy_documentation.proto";
 
@@ -111,6 +112,51 @@ message Search {
         }
         
         classification.Category.HasCategory has_final_intent_health_fitness = 8;
+        
+        PolicyMetadata policy_metadata = 10;
+        message PolicyMetadata {
+            SearchModelTrainingCompliance smpc_compliance = 1;
+            SearchModelTrainingDireCompliance smpc_dire_compliance = 2;
+            GoogleCommonCorpusFilterSet gcc_filter_set = 3;
+            SearchQueryAllowlistCompliance search_query_allowlist_compliance = 4;
+            SearchQueryAnonymizationCompliance search_query_anonymization_compliance = 5;
+            SearchKGRestrictedTrainingCompliance search_kg_restricted_training_compliance = 6;
+        }
+        
+        enum SearchModelTrainingCompliance {
+            SEARCH_SMPC_UNSPECIFIED = 0;
+            SEARCH_SMPC_COMPLIANT = 1;
+            SEARCH_SMPC_NON_COMPLIANT = 2;
+        }
+        
+        enum SearchModelTrainingDireCompliance {
+            SEARCH_SMPC_DIRE_UNSPECIFIED = 0;
+            SEARCH_SMPC_DIRE_COMPLIANT = 1;
+            SEARCH_SMPC_DIRE_NON_COMPLIANT = 2;
+        }
+        
+        enum GoogleCommonCorpusFilterSet {
+            GCC_COMPLIANT_FILTER_SET_UNSPECIFIED = 0;
+            GCC_COMPLIANT_FILTER_SET_ONE = 1;
+        }
+        
+        enum SearchQueryAllowlistCompliance {
+            SEARCH_QUERY_ALLOWLIST_UNSPECIFIED = 0;
+            SEARCH_QUERY_ALLOWLIST_COMPLIANT = 1;
+            SEARCH_QUERY_ALLOWLIST_NON_COMPLIANT = 2;
+        }
+        
+        enum SearchQueryAnonymizationCompliance {
+            SEARCH_QUERY_ANONYMIZATION_UNSPECIFIED = 0;
+            SEARCH_QUERY_ANONYMIZATION_COMPLIANT = 1;
+            SEARCH_QUERY_ANONYMIZATION_NON_COMPLIANT = 2;
+        }
+        
+        enum SearchKGRestrictedTrainingCompliance {
+            SEARCH_KG_RESTRICTED_TRAINING_UNSPECIFIED = 0;
+            SEARCH_KG_RESTRICTED_TRAINING_COMPLIANT = 1;
+            SEARCH_KG_RESTRICTED_TRAINING_NON_COMPLIANT = 2;
+        }
     }
     
     Storage storage = 2;

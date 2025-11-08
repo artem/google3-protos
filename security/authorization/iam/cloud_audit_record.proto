@@ -2,6 +2,7 @@ syntax = "proto3";
 
 package security_iam;
 
+import "google/api/inclusion.proto";
 import "google/api/monitored_resource.proto";
 import "google/cloud/audit/audit_log.proto";
 import "google/cloud/audit/recipient.proto";

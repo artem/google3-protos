@@ -12,6 +12,7 @@ import "file/colossus/rodos/common/file_descriptor_info.proto";
 import "file/colossus/rodos/common/read_reply_details.proto";
 import "file/colossus/rodos/common/request_header.proto";
 import "file/colossus/rodos/common/stripe_metadata.proto";
+import "file/colossus/rodos/common/write_reply_details.proto";
 import "storage/d/proto/capability.proto";
 import "storage/datapol/annotations/proto/semantic_annotations.proto";
 import "storage/k3/net/socket_address.proto";
@@ -47,7 +48,6 @@ message ReadStripeRequest {
         ColossusLocality colossus_locality = 26;
         int64 cfs_file_id = 3;
         int64 cfs_base_file_id = 25;
-        .colossus.FileEncoding file_encoding = 4 [deprecated = true];
         FileDescriptorInfoProto fd_info = 28;
         .colossus.PlacementPolicy placement_policy = 5;
         string cfs_filename = 6;
@@ -82,7 +82,7 @@ message ReadStripeRequest {
             int32 chunk_index = 13;
         }
         
-        reserved 11, 18 to 19, 23;
+        reserved 4, 11, 18 to 19, 23;
     }
     
     message StripeMetadataError {
@@ -194,6 +194,7 @@ message WriteChunksResponse {
     uint64 chunk_handle = 1;
     util.StatusProto status = 2;
     int32 aio_spindle_priority = 4;
+    WriteReplyDetails write_reply_details = 5;
     
     reserved 3;
 }

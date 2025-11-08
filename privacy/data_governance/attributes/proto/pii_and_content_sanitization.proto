@@ -2,6 +2,7 @@ syntax = "proto3";
 
 package privacy.data_governance.attributes;
 
+import "google/api/inclusion.proto";
 import "google/protobuf/timestamp.proto";
 import "privacy/data_governance/attributes/proto/classification.proto";
 
@@ -15,12 +16,12 @@ message SanitizationProcess {
     }
     
     message Syft {
-        oneof _inspect_template_path {
-            string inspect_template_path = 1;
+        oneof _inspect_template_id {
+            int32 inspect_template_id = 5;
         }
         
-        oneof _deidentify_template_path {
-            string deidentify_template_path = 2;
+        oneof _deidentify_template_id {
+            int32 deidentify_template_id = 6;
         }
         
         oneof _detection_timestamp {
@@ -29,6 +30,14 @@ message SanitizationProcess {
         
         oneof _transformation_timestamp {
             google.protobuf.Timestamp transformation_timestamp = 4;
+        }
+        
+        oneof _inspect_template_path {
+            string inspect_template_path = 1 [deprecated = true];
+        }
+        
+        oneof _deidentify_template_path {
+            string deidentify_template_path = 2 [deprecated = true];
         }
     }
     

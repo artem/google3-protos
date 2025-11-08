@@ -11,7 +11,16 @@ message NeighborSelectionOverride {
     optional float approx_epsilon_distance = 5;
     optional int32 num_single_shard_neighbors = 6;
     optional int32 per_crowding_attribute_num_neighbors = 7 [default = 0x7fffffff];
+    
+    repeated CrowdingDimension per_crowding_dimension_attribute_num_neighbors = 13;
+    message CrowdingDimension {
+        optional string dimension = 1;
+        optional int64 attribute = 2;
+        optional int32 num_neighbors = 3;
+    }
+    
     optional int32 per_crowding_attribute_pre_reordering_num_neighbors = 8 [default = 0x7fffffff];
+    optional int32 max_query_leaf_task_parallelism = 14 [default = 1];
     optional int32 tree_x_hybrid_leaves_searched_override = 9;
     repeated uint32 tree_x_hybrid_centers_to_search = 10 [packed = true];
     repeated float tree_x_hybrid_distances = 11 [packed = true];

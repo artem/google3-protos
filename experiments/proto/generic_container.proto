@@ -1,0 +1,9 @@
+syntax = "editions";
+
+package experiments;
+
+message GenericContainer {
+    optional string location = 1;
+    repeated int32 nc_indices = 2;
+    repeated int32 ro_indices = 3;
+}

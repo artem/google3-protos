@@ -5,6 +5,7 @@ package envoy.config.listener.v3;
 import "third_party/envoy/src/api/envoy/config/accesslog/v3/accesslog.proto";
 import "third_party/envoy/src/api/envoy/config/core/v3/address.proto";
 import "third_party/envoy/src/api/envoy/config/core/v3/base.proto";
+import "third_party/envoy/src/api/envoy/config/core/v3/config_source.proto";
 import "third_party/envoy/src/api/envoy/config/core/v3/extension.proto";
 import "third_party/envoy/src/api/envoy/config/core/v3/socket_option.proto";
 import "third_party/envoy/src/api/envoy/config/listener/v3/api_listener.proto";
@@ -41,6 +42,13 @@ message Listener {
     repeated AdditionalAddress additional_addresses = 33;
     string stat_prefix = 28;
     repeated FilterChain filter_chains = 3;
+    
+    FcdsConfig fcds_config = 36;
+    message FcdsConfig {
+        string name = 1;
+        .envoy.config.core.v3.ConfigSource config_source = 2;
+    }
+    
     .xds.type.matcher.v3.Matcher filter_chain_matcher = 32;
     google.protobuf.BoolValue use_original_dst = 4;
     FilterChain default_filter_chain = 25;

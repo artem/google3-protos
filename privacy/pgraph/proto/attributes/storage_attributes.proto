@@ -97,3 +97,7 @@ message StorageUnderlyingComponents {
         optional string guri = 1;
     }
 }
+
+message OrphanedMetadataOnly {
+    optional bool orphaned_metadata_only = 1;
+}

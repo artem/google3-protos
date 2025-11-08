@@ -99,6 +99,8 @@ message Decl {
             bool is_instance_function = 5;
             string doc = 6;
         }
+        
+        string doc = 2;
     }
 }
 

@@ -2,6 +2,7 @@ syntax = "proto3";
 
 package production_time;
 
+import "google/api/inclusion.proto";
 import "storage/datapol/annotations/proto/semantic_annotations.proto";
 
 option java_multiple_files = true;

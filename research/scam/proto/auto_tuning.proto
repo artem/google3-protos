@@ -25,6 +25,11 @@ message AutopilotTreeAH {
         BFLOAT16 = 2;
         INT8 = 3;
     }
+    
+    optional int64 partitioning_expected_sample_size = 5;
+    optional int64 num_leaf_partitions = 6;
+    optional float fraction_leaf_partitions = 8;
+    optional int64 first_n_leaf_partitions_for_assignment = 7;
 }
 
 message AutopilotConfig {

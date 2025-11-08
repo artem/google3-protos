@@ -2,6 +2,7 @@ syntax = "proto3";
 
 package data_residency.mapping.cloud;
 
+import "google/api/inclusion.proto";
 import "privacy/data_governance/attributes/proto/classification.proto";
 
 option java_multiple_files = true;
@@ -321,4 +322,5 @@ enum CloudDataResidencyLocation {
     PL = 310;
     QA = 311;
     ZA = 312;
+    SE = 313;
 }

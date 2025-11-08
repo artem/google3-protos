@@ -1,0 +1,21 @@
+syntax = "editions";
+
+package identity_config;
+
+import "logs/proto/logs_annotations/logs_annotations.proto";
+import "storage/datapol/annotations/proto/semantic_annotations.proto";
+
+option java_multiple_files = true;
+option java_outer_classname = "SessionPolicyIdProto";
+option java_package = "com.google.identity.config.proto";
+
+enum SessionPolicyId {
+    SESSION_POLICY_ID_UNSPECIFIED = 0;
+    TEST_SESSION_POLICY1 = 1;
+    TEST_SESSION_POLICY2 = 2;
+    TEST_ALLOWED_SIGNED_OUT_BEHAVIOR_WITH_INTERRUPTION_PARAMS = 4;
+    TEST_ALLOWED_SIGNED_OUT_BEHAVIOR_WITH_CUSTOM_URL = 5;
+    YTM_TEST = 3;
+    YOUTUBE_MWEB = 6;
+    YOUTUBE_MUSIC = 7;
+}

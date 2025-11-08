@@ -4,6 +4,7 @@ package google.logging.v2;
 
 import "google/api/auditing.proto";
 import "google/api/field_behavior.proto";
+import "google/api/inclusion.proto";
 import "google/api/monitored_resource.proto";
 import "google/api/policy.proto";
 import "google/api/resource.proto";
@@ -77,6 +78,7 @@ message LogEntry {
     repeated LogErrorGroup error_groups = 36;
     InternalMetadata internal_metadata = 32;
     AppHub apphub = 37;
+    AppHub apphub_destination = 38;
     
     oneof payload {
         protobuf.Any proto_payload = 2;

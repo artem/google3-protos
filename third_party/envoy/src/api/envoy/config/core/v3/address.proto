@@ -38,6 +38,7 @@ message SocketAddress {
     string address = 2;
     string resolver_name = 5;
     bool ipv4_compat = 6;
+    string network_namespace_filepath = 7;
     
     oneof port_specifier {
         uint32 port_value = 3;

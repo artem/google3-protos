@@ -12,6 +12,8 @@ message Censusz {
         optional string resource_name = 3;
         optional string measure_name = 4;
         repeated TagSelector tag_selectors = 5;
+        optional string target_schema_name = 6;
+        repeated LabelMapping label_mappings = 7;
     }
     
     optional LayerLocalTags layer_local_tags = 3;
@@ -136,6 +138,11 @@ message Censusz {
         optional string key = 1;
         optional string allowlist = 2;
         optional string blocklist = 3;
+    }
+    
+    message LabelMapping {
+        optional string key = 1;
+        optional string streamz_root_label = 2;
     }
     
     enum ViewType {

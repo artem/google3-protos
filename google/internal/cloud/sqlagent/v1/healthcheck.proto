@@ -75,3 +75,18 @@ message ReplicationHealthState {
         int64 seconds_behind_master = 2;
     }
 }
+
+message AutoScaleMetricsProto {
+    protobuf.Timestamp report_time = 1;
+    
+    repeated AutoScaleMetric metrics = 2;
+    message AutoScaleMetric {
+        oneof _name {
+            AutoScaleMetricName name = 1;
+        }
+        
+        oneof _value {
+            float value = 2;
+        }
+    }
+}

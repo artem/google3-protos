@@ -4,6 +4,7 @@ package monitoring.streamz.internal_status_with_fixed_message;
 
 import "net/proto2/bridge/proto/message_set.proto";
 import "storage/datapol/annotations/proto/semantic_annotations.proto";
+import "third_party/protobuf/cpp_features.proto";
 
 message StatusWithFixedMessagePayload {
     optional string fixed_message = 1;

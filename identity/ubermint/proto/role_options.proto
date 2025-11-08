@@ -1,0 +1,27 @@
+syntax = "editions";
+
+package ubermint.options;
+
+import "identity/identifiers/proto/namespaces.proto";
+import "identity/ubermint/proto/universe.proto";
+import "net/proto2/proto/descriptor.proto";
+import "storage/datapol/annotations/proto/semantic_annotations.proto";
+
+option java_multiple_files = true;
+option java_outer_classname = "RoleOptionsProto";
+option java_package = "com.google.identity.ubermint";
+
+message AllowedAuthentication {
+    optional identity_identifiers.Namespace gnid_namespace = 1;
+    optional UberMintPlatform platform = 2;
+    optional bool allow_prod_gaia_ids = 3;
+    optional bool allow_cloud_gaia_ids = 4;
+}
+
+message UberMintRoleValueOptions {
+    repeated AllowedAuthentication allowed_authentication = 1;
+}
+
+extend .proto2.EnumValueOptions {
+    optional UberMintRoleValueOptions role_value_options = 535801911;
+}

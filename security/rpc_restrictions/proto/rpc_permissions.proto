@@ -1,0 +1,29 @@
+syntax = "editions";
+
+package security_rpc_restrictions;
+
+import "security/rpc_restrictions/rpc_restrictions.proto";
+import "security/util/label_acl/rpc-label-acl-thinmint.proto";
+import "third_party/boundary_proxy/proto_compare/annotation.proto";
+
+option java_multiple_files = true;
+option java_package = "com.google.net.security.rpcrestrictions";
+
+message Permission {
+    optional PermissionNonCritical non_critical = 1;
+    optional security.RpcLabelAclRestriction service_method = 2;
+    optional security.RpcAllowLocalhostOnlyRestriction allow_only_localhost = 3;
+    optional RequireSameUserOverUDS require_same_user_uds = 4;
+    optional DirectPathAccessPolicy direct_path_access_policy = 5;
+    optional RequireSameMultinodeMachine require_same_multinode_machine = 6;
+    optional RequireServerSecurityRealm require_server_security_realm = 7;
+    optional RequireZammAcceptedCheck require_zamm_accepted_check = 16;
+    optional RequireGRPC require_grpc = 17;
+    optional RequireServerType require_server_type = 18;
+    optional RequireServerSecurityTags require_server_security_tags = 19;
+    optional RequireServerJob require_server_job = 20;
+}
+
+message PermissionNonCritical {
+    optional bool report_usage = 1;
+}

@@ -8,6 +8,7 @@ message ServerAnnouncement {
     optional bool ready_to_receive_writes_in_dformat = 3;
     optional int32 d_block_size = 4;
     optional bool no_padding_for_d_checksum = 5;
+    optional bool rma_writes_disabled = 6;
 }
 
 enum DescriptorSupport {

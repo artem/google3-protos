@@ -2,6 +2,8 @@ syntax = "editions";
 
 package tech.iam;
 
+import "third_party/protobuf/cpp_features.proto";
+
 option java_multiple_files = true;
 option java_outer_classname = "TestingProtoFile";
 option java_package = "com.google.tech.internal.iam.local.proto";

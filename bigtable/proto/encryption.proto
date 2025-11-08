@@ -4,9 +4,7 @@ package bigtable;
 
 import "bigtable/proto/bigtable.proto";
 import "bigtable/proto/bigtable_internal.proto";
-import "devtools/protoshop/public/parsing_options/parsing_options.proto";
 import "security/keystore/proto/keystore.proto";
-import "security/panoptikeys/crypto_key_classes/crypto_key_classes_binding.proto";
 import "storage/cmek_library/proto/wrapped_resource_key.proto";
 import "storage/datapol/annotations/proto/semantic_annotations.proto";
 import "util/task/status.proto";

@@ -1,0 +1,11 @@
+syntax = "editions";
+
+package bigtable;
+
+message BytesByAgeProto {
+    repeated Bucket bytes_by_age = 1;
+    message Bucket {
+        optional int64 upper_bound_micros = 1;
+        optional int64 size = 2;
+    }
+}

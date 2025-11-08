@@ -17,6 +17,8 @@ message CloudUniverseDnsNames {
     optional string cloud_run_domain = 11;
     optional string recovery_domain = 12;
     optional string internal_domain = 14;
+    optional string internal_domain_for_googlers = 15;
+    optional string support_domain = 16;
     optional bool is_final = 10;
     
     reserved 13;

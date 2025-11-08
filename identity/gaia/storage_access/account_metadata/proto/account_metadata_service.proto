@@ -2,7 +2,9 @@ syntax = "proto2";
 
 package gaia_storage_access;
 
+import "frameworks/testing/rpcreplay/processors/rpc_replay_field_option.proto";
 import "gaia/client/cloud_propagation.proto";
+import "gaia/data/account_deletion/deletion_metadata.proto";
 import "gaia/data/disable_metadata.proto";
 import "gaia/data/email_annotation.proto";
 import "gaia/data/testaccount_data.proto";
@@ -88,11 +90,18 @@ message UpdateAccountTypeResponse {
     reserved 1, 99;
 }
 
+message DeleteAccountInfoArguments {
+    optional string requester_role = 1;
+    optional gaia_data.DeletionReasonType deletion_reason = 2;
+    optional string deletion_description = 3;
+}
+
 message DeleteAccountRequest {
     optional int64 user_id = 1;
     optional GaiaNotificationSettings notification_settings = 2;
     optional gaia_client.CloudPropagation cloud_propagation = 3;
     optional ChangeNotificationOptions change_notification_options = 4;
+    optional DeleteAccountInfoArguments delete_account_info = 5;
     optional identity_backend.legacy.RecordedRpcSequence recorded_rpc_sequence = 102;
     
     extensions 214662212;
@@ -194,6 +203,7 @@ message DeactivateAccountRequest {
     optional int64 purging_exception_reason = 6;
     optional UserContext user_context = 5 [deprecated = true];
     optional ChangeNotificationOptions change_notification_options = 7;
+    optional DeleteAccountInfoArguments delete_account_info = 8;
     
     reserved 2, 3, 4;
 }

@@ -5,3 +5,7 @@ package colossus.restricted_features;
 message EncryptedPerFilePlaintextCrc {
     optional bool enabled = 1;
 }
+
+message PerFilePlaintextCrcParallel {
+    optional bool enabled = 1;
+}

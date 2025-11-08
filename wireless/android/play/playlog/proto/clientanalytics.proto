@@ -465,12 +465,7 @@ message BattlestarClientInfo {
         MANUFACTURER_AMD = 2;
     }
     
-    optional ForcedExperimentInfo forced_experiment_info = 9;
-    message ForcedExperimentInfo {
-        repeated string forced_experiment_tags = 1;
-    }
-    
-    reserved 3, 7;
+    reserved 3, 7, 9;
 }
 
 message DriveDesktopClientInfo {
@@ -626,11 +621,16 @@ message DesktopServicesClientInfo {
         DAEMON = 1;
         INSTALLER = 2;
         UNINSTALLER = 3;
+        OVERLAY = 4;
     }
     
     optional string build_version = 2;
     optional string build_type = 3;
     optional string omaha_channel = 4;
+}
+
+message WgaClientInfo {
+    optional string build_version = 1;
 }
 
 message ClientInfo {
@@ -678,6 +678,8 @@ message ClientInfo {
         CHROME_ENTERPRISE_COMPANION = 39;
         APPSHEET_CLIENT = 40;
         STARGATE = 41;
+        WGA = 42;
+        VERTEX_DEV_EXPRESS = 43;
     }
     
     optional string remote_host = 6;
@@ -701,6 +703,7 @@ message ClientInfo {
     optional PortablePhenotypeLibraryClientInfo portable_phenotype_library_client_info = 23;
     optional SparklightClientInfo sparklight_client_info = 18;
     optional VrClientInfo vr_client_info = 8;
+    optional WgaClientInfo wga_client_info = 29;
     optional WindowsClientInfo windows_client_info = 26;
     optional YetiClientInfo yeti_client_info = 15;
     optional BrowserInfo browser_info = 9;
@@ -865,7 +868,33 @@ message NestcamPhotonClientInfo {
         DEVICE_TYPE_QV1 = 1;
         DEVICE_TYPE_SQ = 2;
         DEVICE_TYPE_RQ = 3;
+        DEVICE_TYPE_EMULATOR = 4;
+        DEVICE_TYPE_C302 = 5;
+        DEVICE_TYPE_VEN = 6;
+        DEVICE_TYPE_SUN = 7;
+        DEVICE_TYPE_ANDROID = 8;
+        DEVICE_TYPE_NEW = 9;
+        DEVICE_TYPE_QV2 = 10;
+        DEVICE_TYPE_BQ = 11;
+        DEVICE_TYPE_LIN = 12;
+        DEVICE_TYPE_RHO = 13;
+        DEVICE_TYPE_UST = 14;
+        DEVICE_TYPE_PIC = 15;
+        DEVICE_TYPE_COR = 16;
     }
     
+    optional string sku = 4;
     optional string software_version = 3;
+    optional string software_version_number_string = 8;
+    
+    optional BuildChannel system_release_channel = 6;
+    enum BuildChannel {
+        BUILD_CHANNEL_UNKNOWN = 0;
+        BUILD_CHANNEL_ENG = 1;
+        BUILD_CHANNEL_BETA = 2;
+        BUILD_CHANNEL_PROD = 3;
+    }
+    
+    optional string virtual_release_channel = 7;
+    optional int64 software_version_number = 5 [deprecated = true];
 }

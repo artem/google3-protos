@@ -63,10 +63,6 @@ message RequireServerType {
 
 message RequireServerSecurityTags {
     repeated string security_tags = 1;
-    
-    extend .proto2.bridge.MessageSet {
-        optional RequireServerSecurityTags message_set_extension = 525003527;
-    }
 }
 
 message RequireServerJob {

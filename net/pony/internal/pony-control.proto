@@ -20,6 +20,7 @@ message SetupClientRequest {
     optional string endpoint_build_label = 8;
     optional string borg_bns_name = 9;
     optional string borg_cell = 48;
+    optional string borg_physical_cell = 67;
     optional string borg_job_name = 10;
     optional string borg_user_name = 11;
     optional int32 borg_taskid = 12 [default = 0];
@@ -41,6 +42,7 @@ message SetupClientRequest {
     optional bool exclusive = 62 [default = false];
     repeated proto.CompletionTx completion_txs = 55;
     repeated proto.CommandRx command_rxs = 56;
+    optional int32 global_queue_fd_index = 68 [default = -1];
     optional int32 shared_client_info_format_version = 41;
     optional proto.SharedStationQueueState shared_station_queue_state = 64;
     optional bool use_flash = 31 [default = false];
@@ -51,7 +53,6 @@ message SetupClientRequest {
     optional bool enable_delay_metric_completions = 46;
     optional bool appaloosa_steer_commands = 47 [default = true];
     optional bool enable_per_job_metrics = 50 [default = false];
-    optional bool enable_bamm2_rd_recv_with_timestamp_completion = 51 [default = false];
     optional int32 num_window_panes = 52 [default = 0];
     optional bool use_region_panes = 60 [default = false];
     
@@ -68,21 +69,10 @@ message SetupClientRequest {
     optional uint32 appaloosa_command_pages = 59 [default = 512];
     optional string client_details = 61;
     
-    reserved 2, 3, 4, 20, 21, 22, 25, 27, 28, 29, 32, 33, 35, 37, 38, 49;
+    reserved 2, 3, 4, 20, 21, 22, 25, 27, 28, 29, 32, 33, 35, 37, 38, 49, 51;
     
     extend usps.broker.rpc.BrokerMessage {
         optional SetupClientRequest ext = 86966204;
-    }
-}
-
-message UseNewEnginesRequest {
-    optional int32 version = 1 [default = 1];
-    repeated proto.CompletionTx completion_txs = 2;
-    repeated proto.CommandRx command_rxs = 3;
-    optional uint64 local_client_key = 4;
-    
-    extend usps.broker.rpc.BrokerMessage {
-        optional UseNewEnginesRequest ext = 525000019;
     }
 }
 
@@ -122,16 +112,6 @@ message SetupClientResponse {
     
     extend usps.broker.rpc.BrokerMessage {
         optional SetupClientResponse ext = 108988958;
-    }
-}
-
-message UseNewEnginesResponse {
-    optional int32 version = 1 [default = 1];
-    repeated int64 overflow_engine_notifier_fd = 2;
-    repeated int32 command_queue_to_engine = 3;
-    
-    extend usps.broker.rpc.BrokerMessage {
-        optional UseNewEnginesResponse ext = 525000020;
     }
 }
 
@@ -779,7 +759,6 @@ enum EndpointFlavor {
     EF_UNKNOWN = 0;
     EF_PIPE = 1;
     EF_VERBS = 2;
-    EF_DIORITE_RING = 3;
     EF_APERTURE_RING = 4;
     EF_HOST_RING = 5;
 }

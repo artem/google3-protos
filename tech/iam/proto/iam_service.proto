@@ -10,6 +10,7 @@ import "google/api/visibility.proto";
 import "google/cloud/audit/policy_violation_info.proto";
 import "google/iam/v1/options.proto";
 import "google/iam/v1/policy.proto";
+import "google/iam/v1/rule.proto";
 import "google/protobuf/any.proto";
 import "google/protobuf/duration.proto";
 import "google/protobuf/field_mask.proto";
@@ -499,6 +500,7 @@ message CanActAsServiceAccountRequest {
     }
     
     ServiceAccountAttachmentInfo sa_attachment_info = 8;
+    google.protobuf.Any darklaunch_extension = 9;
     
     oneof service_account {
         string service_account_ref = 2 [deprecated = true];

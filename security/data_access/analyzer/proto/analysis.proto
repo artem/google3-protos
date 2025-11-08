@@ -9,6 +9,7 @@ import "security/data_access/analyzer/proto/data_quality.proto";
 import "security/data_access/analyzer/proto/monitoring.proto";
 import "storage/datapol/annotations/proto/semantic_annotations.proto";
 import "storage/f1/proto/schema_visibility.proto";
+import "third_party/golang/protobuf/v2/src/google/protobuf/go_features.proto";
 
 option java_package = "com.google.security.data_access.analyzer.proto";
 

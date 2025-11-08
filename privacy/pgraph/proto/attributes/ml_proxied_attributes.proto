@@ -1,0 +1,120 @@
+syntax = "editions";
+
+package pgraph.attributes;
+
+option java_multiple_files = true;
+option java_package = "com.google.privacy.pgraph.attributes";
+
+message ModelFamily {
+    optional Family family = 1;
+    enum Family {
+        FAMILY_UNSPECIFIED = 0;
+        GEMINI_OTHER = 1;
+        GEMINI_V1 = 2;
+        GEMINI_V2 = 3;
+        GEMINI_V3 = 4;
+        GEMINI_V4 = 5;
+        GEMINI_COMPONENT_V2 = 6;
+        GEMINI_COMPONENT_V3 = 7;
+        GEMINI_COMPONENT_V4 = 8;
+        GEMINI_GEMMA_V1 = 9;
+        GEMINI_GEMMA_V2 = 10;
+        GEMINI_GEMMA_V3 = 11;
+        GEMINI_NANO_V1 = 12;
+        GEMINI_NANO_V2 = 13;
+        GEMINI_NANO_V3 = 14;
+        GEMINI_NANO_V4 = 24;
+        GEMINI_ASTRA_V2 = 15;
+        GEMINI_ASTRA_V3 = 16;
+        GEMINI_ASTRA_V4 = 25;
+        GEMINI_EMBEDDINGS_V2 = 17;
+        GEMINI_EMBEDDINGS_V3 = 18;
+        GEMINI_EMBEDDINGS_V4 = 19;
+        GEMINI_JARVIS = 20;
+        GEMINI_SIMA = 21;
+        GEMINI_GENIE = 22;
+        GEMINI_PIU_MODEL = 23;
+        GENMEDIA_OTHER = 1001;
+        GENMEDIA_VEO = 1002;
+        GENMEDIA_JUNO = 1003;
+        GENMEDIA_IRIS = 1004;
+        GENMEDIA_PHENAKI = 1005;
+        GENMEDIA_MIRO = 1006;
+        GENMEDIA_LUNA = 1007;
+        GENMEDIA_MUSICLM = 1008;
+        GENMEDIA_VOICELM = 1009;
+        GENMEDIA_RQM = 1010;
+    }
+}
+
+message DataUsageApprovalScope {
+    optional int32 relevant_product_id = 1;
+    repeated IntendedUsage intended_usages = 2;
+    repeated ModelFamily model_family = 3;
+}
+
+message DataUsageApprovalSummary {
+    optional DataUsageApprovalScope approval_scope = 1;
+    repeated string approval_guri = 2;
+    
+    repeated ContingencyMitigation met_contingency = 3;
+    message ContingencyMitigation {
+        optional DataUseContingency contingency = 1;
+        
+        repeated Mitigation mitigation = 2;
+        enum Mitigation {
+            MITIGATION_UNSPECIFIED = 0;
+            MITIGATION_GUARDIAN = 1;
+            MITIGATION_BORGJOB = 2;
+            MITIGATION_HUMAN_ATTESTATION = 3;
+        }
+    }
+    
+    repeated DataUseContingency unmet_contingency = 4;
+    repeated string no_approval_storage_entity = 5;
+}
+
+enum IntendedUsage {
+    INTENDED_USAGE_UNSPECIFIED = 0;
+    INTENDED_USAGE_TRAIN_MODEL_FOR_PREDICTION = 1;
+    INTENDED_USAGE_TRAIN_MODEL_FOR_CLASSIFICATION_RANKING = 2;
+    INTENDED_USAGE_TRAIN_MODEL_FOR_GENERATING_CONTENT = 3;
+    INTENDED_USAGE_TRAIN_MODEL_FOR_IDENTIFICATION = 4;
+    INTENDED_USAGE_TRAIN_MODEL_FOR_PHYSICAL_OR_MENTAL_HEALTH = 5;
+    INTENDED_USAGE_TRAIN_MODEL_FOR_BIOMETRIC_PROCESSING = 6;
+    INTENDED_USAGE_TRAIN_MODEL_FOR_CREATION_OF_SYNTHETIC_MEDIA = 7;
+    INTENDED_USAGE_TRAIN_MODEL_FOR_DETECTING_ATTRIBUTES_OF_FACIAL_TYPES = 8;
+    INTENDED_USAGE_TRAIN_MODEL_FOR_SPEECH_RECOGNITION = 9;
+    INTENDED_USAGE_TRAIN_MODEL_FOR_AUTO_DECISION_MAKING = 10;
+    INTENDED_USAGE_TRAIN_MODEL_FOR_SYSTEMATIC_PUBLIC_MONITORING = 11;
+    INTENDED_USAGE_TRAIN_MODEL_FOR_LOCATION_TRACKING = 12;
+    INTENDED_USAGE_TRAIN_MODEL_FOR_MULTIMODAL_ENCODING = 20;
+    INTENDED_USAGE_TRAIN_MODEL_FOR_AGENTIC_BEHAVIOR = 23;
+    INTENDED_USAGE_USE_FOR_PRETRAINING_OR_TRAINING = 21;
+    INTENDED_USAGE_USE_FOR_FINETUNING = 18;
+    INTENDED_USAGE_USE_FOR_EVALUATION = 17;
+    INTENDED_USAGE_USE_FOR_HUMAN_ANNOTATION = 19;
+    INTENDED_USAGE_USE_FOR_OTHER = 22;
+    INTENDED_USAGE_PUBLICATIONS = 13;
+    INTENDED_USAGE_INTERNAL_RESEARCH = 14;
+    INTENDED_USAGE_IN_PRODUCT = 15;
+    INTENDED_USAGE_OTHER = 16;
+}
+
+enum DataUseContingency {
+    DATA_USE_CONTINGENCY_UNSPECIFIED = 0;
+    FILTER_SPII = 1;
+    FILTER_CSAM = 2;
+    FILTER_DOMAIN_CRITICAL = 3;
+    FILTER_URL_PUBLIC_CRAWLABILITY = 6;
+    FILTER_URL_POLICY_VIOLATION = 7;
+    DEDUPLICATE = 4;
+    STORE_AND_PROCESS_IN_US_ONLY = 5;
+    OFFLINE_RC_BLOCKS_AND_CITES = 9;
+    OFFLINE_RC_BLOCKS_KEEP_CITES = 10;
+    SEARCH_DMA_ALLOWLIST = 11;
+    SEARCH_K30_ANONYMOUS_QUERIES = 12;
+    SEARCH_KG_RESTRICTIONS = 13;
+    SEARCH_SMPC = 14;
+    NONE_REQUIRED = 8;
+}

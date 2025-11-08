@@ -36,6 +36,7 @@ message RoleIdentity {
 message HostIdentity {
     optional string fqdn = 1;
     optional MachineCertDigest machine_cert_digest = 2;
+    optional bool is_hardened = 3;
 }
 
 message UnauthenticatedHostIdentity {
@@ -86,6 +87,10 @@ message ConfidentialModeIdentity {
     reserved 1;
 }
 
+message HardenedTaskIdentity {
+    optional bool is_hardened = 1;
+}
+
 extend Identity {
     optional RoleIdentity role_identity = 100;
     optional HostIdentity host_identity = 101;
@@ -97,4 +102,5 @@ extend Identity {
     optional UnauthenticatedProgramNameIdentity unauthenticated_program_name_identity = 107;
     optional InstanceIdentity instance_identity = 108;
     optional ConfidentialModeIdentity confidential_mode_identity = 109;
+    optional HardenedTaskIdentity hardened_task_identity = 110;
 }

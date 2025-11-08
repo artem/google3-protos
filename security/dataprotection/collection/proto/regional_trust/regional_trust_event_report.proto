@@ -1,0 +1,40 @@
+syntax = "editions";
+
+package security_realms;
+
+import "google/protobuf/timestamp.proto";
+import "security/dataprotection/collection/public/collection_service.proto";
+import "security/realms/regional_trust/proto/regional_trust_enforcement_context.proto";
+
+message RegionalTrustEventReport {
+    optional secure_collection.MessageSource message_source = 1;
+    optional google.protobuf.Timestamp event_timestamp = 2;
+    repeated RegionalTrustCheckEvent check_events = 3;
+    optional int32 dropped_check_events = 4;
+    optional bool on_exit = 5;
+}
+
+message RegionalTrustCheckEvent {
+    optional Result result = 1;
+    enum Result {
+        RESULT_UNKNOWN = 0;
+        DENIED = 1;
+    }
+    
+    optional int32 count = 2;
+    
+    optional PolicyInstanceType policy_instance_type = 3;
+    enum PolicyInstanceType {
+        POLICY_INSTANCE_TYPE_UNKNOWN = 0;
+        LIVE = 1;
+        DARKLAUNCH = 2;
+    }
+    
+    optional Peer peer = 4;
+    message Peer {
+        optional string realm = 1;
+        optional string role = 2;
+    }
+    
+    optional RegionalTrustEnforcementContext.Enum enforcement_context = 5;
+}

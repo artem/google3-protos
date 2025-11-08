@@ -4,6 +4,7 @@ package carabiner;
 
 import "google/protobuf/empty.proto";
 import "google/protobuf/timestamp.proto";
+import "security/signed_message/proto/signed_message.proto";
 import "storage/datapol/annotations/proto/semantic_annotations.proto";
 
 message Lifetime {
@@ -16,12 +17,6 @@ message RevocationId {
     oneof revocation_id {
         uint64 serial = 1;
     }
-}
-
-message SignedMessage {
-    optional bytes prefix = 1;
-    optional bytes serialized_message = 2;
-    optional bytes signature = 3;
 }
 
 message Domain {
@@ -60,7 +55,7 @@ message TrustBundle {
 
 message SubordinateAuthorityConfig {
     optional string root_identifier = 1;
-    optional SignedMessage subordinate = 2;
+    optional .signed_message.SignedMessage subordinate = 2;
     
     oneof signing_key {
         string root_keystore_keyset_name = 3;
@@ -74,6 +69,6 @@ message SubordinateAuthorityConfigSet {
 
 message Carabiner {
     optional string root_identifier = 1;
-    optional SignedMessage subordinate = 2;
-    optional SignedMessage payload = 3;
+    optional .signed_message.SignedMessage subordinate = 2;
+    optional .signed_message.SignedMessage payload = 3;
 }

@@ -2,6 +2,8 @@ syntax = "proto2";
 
 package tech.label;
 
+import "google/api/inclusion.proto";
+
 option java_outer_classname = "LabelProto";
 option java_package = "com.google.tech.label";
 

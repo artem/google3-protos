@@ -1,0 +1,56 @@
+syntax = "editions";
+
+package borg;
+
+import "google/protobuf/timestamp.proto";
+
+message XpuInfo {
+    optional Container container = 1;
+    message Container {
+        optional google.protobuf.Timestamp update_timestamp = 1;
+        optional double xpu_multiplier = 2;
+        optional double xpu_multiplier_platform = 3;
+        optional double xpu_multiplier_user = 4;
+        optional double membw_usage = 5;
+        optional double membw_limit = 6;
+        optional double membw_per_gcu = 7;
+    }
+    
+    optional Domain domain = 2;
+    message Domain {
+        optional google.protobuf.Timestamp update_timestamp = 1;
+        optional int32 id = 2;
+        optional double membw_usage = 3;
+        optional double membw_capacity = 4;
+    }
+    
+    optional Enforcement enforcement = 3;
+    message Enforcement {
+        optional google.protobuf.Timestamp update_timestamp = 1;
+        
+        optional State state = 2;
+        enum State {
+            UNDEFINED_STATE = 0;
+            NOT_THROTTLED = 1;
+            COOPERATIVE = 2;
+            HARDCAPPED = 3;
+        }
+        
+        optional Mode mode = 3;
+        enum Mode {
+            UNDEFINED_MODE = 0;
+            CPU = 1;
+        }
+        
+        optional Mechanism mechanism = 4;
+        enum Mechanism {
+            UNDEFINED_MECHANISM = 0;
+            CFS_BANDWIDTH = 1;
+        }
+        
+        optional double target_cpu_usage = 5;
+        optional google.protobuf.Timestamp cooperative_deadline = 6;
+    }
+    
+    optional XpuInfo parent_xpu_info = 4;
+}

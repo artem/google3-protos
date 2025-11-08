@@ -13,6 +13,7 @@ message VoxelValueProto {
         double double_value = 7;
         bytes string_value = 8;
         bytes int128_value = 10;
+        bytes uint128_value = 11;
         VoxelCompositeValueProto composite_value = 9;
     }
 }

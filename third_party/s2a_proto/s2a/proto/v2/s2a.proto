@@ -2,6 +2,7 @@ syntax = "editions";
 
 package s2a.proto.v2;
 
+import "third_party/golang/protobuf/v2/src/google/protobuf/go_features.proto";
 import "third_party/s2a_proto/s2a/proto/v2/common.proto";
 import "third_party/s2a_proto/s2a/proto/v2/s2a_context.proto";
 
@@ -163,6 +164,24 @@ message ValidatePeerCertificateChainResp {
     
     optional string validation_details = 2;
     optional S2AContext context = 3;
+    
+    optional ValidationFailureReason validation_failure_reason = 4;
+    enum ValidationFailureReason {
+        UNKNOWN_ERROR = 0;
+        VALIDATION_FAILURE = 1;
+        VALIDATION_NOT_PERFORMED = 2;
+        CERT_CHAIN_LENGTH_LIMIT_EXCEEDED = 3;
+        UNSUPPORTED_KEY_ALGORITHM = 4;
+        INVALID_RSA_KEY_SIZE = 5;
+        UNSUPPORTED_ELLIPTIC_CURVE_KEY = 6;
+        PKI_TOO_LARGE = 7;
+        VALIDATION_TIMED_OUT = 8;
+        VALIDATION_SEARCH_LIMIT_EXCEEDED = 9;
+        CLIENT_CERT_CHAIN_PARSE_FAILURE = 10;
+        MAX_NAME_CONSTRAINTS_EXCEEDED = 11;
+        CLIENT_CERT_CHAIN_INVALID_EKU = 12;
+        CONFIGURATION_RESOLVER_RESOLUTION_FAILURE = 13;
+    }
 }
 
 message SessionReq {

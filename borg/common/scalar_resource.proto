@@ -45,6 +45,7 @@ message ScalarResource {
         GPU_NVIDIA_B40_48TH = 93;
         GPU_NVIDIA_GB200 = 89;
         GPU_NVIDIA_GH200 = 96;
+        GPU_NVIDIA_GB300 = 100;
         TIN_VP9 = 18;
         CAVIUM_HSM = 19;
         GNEISS = 20;
@@ -70,6 +71,7 @@ message ScalarResource {
         MEMORY = 39;
         HUGETLBFS_1G = 43;
         HUGETLBFS_2M = 52;
+        MARKET_MILLIGCUS = 104;
         TASK_OR_ALLOC_INSTANCE_SLOT = 41;
         MACHINE_RESERVATION_SLOT = 47;
         NVME_VF_POOL = 53;
@@ -103,8 +105,13 @@ message ScalarResource {
         MILLIACU = 75;
         ACU = 75;
         GHOSTLITE_POD = 76;
+        GHOSTLITE_POD_HARDENED = 99;
         GHOSTFISH = 92;
+        GHOSTFISHLITE = 101;
+        GHOSTFISH_SAMPLING = 105;
         MILLIGXU = 98;
+        HD_IOPS = 102;
+        HD_THROUGHPUT_MIBS = 103;
         ULL_AP_ENDPOINT = 94;
         PROD_AP_ENDPOINT = 95;
     }

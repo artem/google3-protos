@@ -340,6 +340,7 @@ message ShardReplicaHeartbeatResponse {
 
 message ShardReplicaPingResponse {
     optional Header header = 1;
+    optional bool initiated_async_attach = 2;
 }
 
 message ShardReplicaPingRequest {
@@ -457,6 +458,7 @@ message StatusCodeDetails {
         KEK = 1;
         BACKUP = 2;
         KMS_SERVICE_ACCOUNT = 3;
+        READ_ONLY_SHARD_REPLICA = 4;
     }
     
     extend .proto2.bridge.MessageSet {

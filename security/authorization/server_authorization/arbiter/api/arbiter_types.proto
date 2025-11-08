@@ -6,6 +6,7 @@ import "security/authorization/server_authorization/public/policy/client_policy.
 import "security/authorization/server_authorization/public/policy/target.proto";
 import "security/authorization/server_authorization/public/relax/client_policy_overrides.proto";
 import "security/credentials/proto/principal.proto";
+import "security/loas/l2/proto/confidential_security_level.proto";
 import "security/loas/l2/proto/instance.proto";
 
 option java_multiple_files = true;
@@ -47,6 +48,8 @@ message PeerInfo {
     optional string security_realm = 2;
     optional string machine_name = 3;
     optional security_loas_l2.CloudVMInfo cloud_vm_info = 4;
+    optional bool is_hardened = 5;
+    optional security_loas_l2.ConfidentialSecurityLevel kevlar_level = 6;
 }
 
 enum Action {
@@ -72,6 +75,9 @@ enum Reason {
     UNSUPPORTED_TARGET_TYPE = 13;
     HOSTNAME_IS_UNKNOWN = 14;
     CLOUD_PROJECT_MISMATCH = 15;
+    UNHARDENED_NOT_AUTHORIZED = 16;
+    INSUFFICIENT_KEVLAR_LEVEL = 17;
+    ACL_SERVING_ERROR = 18;
 }
 
 enum FailedOpen {
@@ -88,6 +94,7 @@ enum FailedOpen {
     SERVICE_CHECK_SKIPPED_REALM_BECAUSE_LOADING_REALMS_ACL_FAILED = 8;
     SERVICE_CHECK_SKIPPED_REALM_BECAUSE_SERVER_IS_NOT_IN_ANY_REALM = 9;
     SERVICE_CHECK_SKIPPED_USER_BECAUSE_USERS_ACL_IS_EMPTY = 16;
+    SERVICE_CHECK_SKIPPED_BECAUSE_UNSUPPORTED_TARGET_TYPE = 17;
     USER_CHECK_SKIPPED_BECAUSE_POLICY_OVERRIDE = 11;
     SERVICE_CHECK_SKIPPED_CLOUD_PROJECT_BECAUSE_VM_INFO_NOT_POPULATED = 14;
 }
@@ -105,4 +112,6 @@ enum CheckType {
     REALM_CHECK = 2;
     HOSTNAME_CHECK = 3;
     CLOUD_PROJECT_CHECK = 4;
+    HARDENED_CHECK = 5;
+    KEVLAR_CHECK = 6;
 }

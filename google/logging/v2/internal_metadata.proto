@@ -75,6 +75,7 @@ message InternalMetadata {
     bool delayed_intentionally = 29;
     bool routed_to_non_billable_project = 31;
     protobuf.Timestamp tp_buffer_time = 32;
+    bool log_bucket_export_metrics_populated = 33;
     
     reserved 1, 2, 24, 7, 8;
 }
@@ -96,6 +97,7 @@ message LogBucketWithSinkInfo {
     bool cmek_enabled = 4;
     repeated SinkInfo sink_info = 6;
     bool from_project_sink = 10;
+    bool is_observability_bucket = 12;
     
     reserved 8, 5;
 }

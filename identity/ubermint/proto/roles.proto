@@ -3,6 +3,7 @@ syntax = "editions";
 package ubermint;
 
 import "identity/identifiers/proto/namespaced_identifier.proto";
+import "identity/ubermint/proto/role_options.proto";
 import "storage/datapol/annotations/proto/semantic_annotations.proto";
 
 option java_multiple_files = true;
@@ -23,4 +24,5 @@ enum Role {
     ROLE_EFFECTIVE_ENTITY = 1;
     ROLE_ORIGINATOR = 2;
     ROLE_AUTHENTICATED_ACCOUNT = 3;
+    ROLE_ACTING_ACCOUNT = 4;
 }

@@ -47,8 +47,9 @@ message BTI_MaterializedView {
     optional uint64 view_id = 1;
     optional MaterializedView view_config = 2;
     repeated uint64 stage_ids = 3;
-    optional uint64 version = 4;
     map<int64, SourceFamilies> table_version_to_source_families = 5;
+    
+    reserved 4;
     
     message SourceFamilies {
         repeated int64 column_families = 1;
@@ -57,11 +58,13 @@ message BTI_MaterializedView {
 
 message BTI_MaterializedViewTableState {
     optional uint64 view_id = 1;
+    optional int64 view_version = 4;
     
     repeated Stage stages = 2;
     message Stage {
         optional uint64 stage_id = 1;
         optional BTI_MaterializedViewStage.Type type = 2;
+        optional int64 stage_version = 4;
     }
     
     optional TableViewStatus status = 3;

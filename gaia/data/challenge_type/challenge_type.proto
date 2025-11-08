@@ -54,6 +54,7 @@ enum ChallengeType {
     OIDC = 52;
     PASSKEY = 53;
     PREREGISTERED_DIGITAL_IDENTITY_DOCUMENT = 54;
+    SELFIE = 55;
     DEVICE_ASSERTION = 25 [deprecated = true];
     AUTHZEN = 4 [deprecated = true];
     SAME_DEVICE_SCREENLOCK = 32 [deprecated = true];

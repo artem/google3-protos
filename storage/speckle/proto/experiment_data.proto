@@ -1,0 +1,16 @@
+syntax = "editions";
+
+package speckle;
+
+import "storage/datapol/annotations/proto/semantic_annotations.proto";
+
+message ExperimentData {
+    optional string flag = 1;
+    
+    oneof value {
+        bool bool_value = 2;
+        int64 long_value = 3;
+        double double_value = 4;
+        string string_value = 5;
+    }
+}

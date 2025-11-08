@@ -3,7 +3,7 @@ syntax = "editions";
 package crash_analysis.ipc;
 
 import "net/proto2/proto/descriptor.proto";
-import "production/crash_analysis/proto/core/crash_source.proto";
+import "production/crash_analysis/proto/crash_source.proto";
 
 message FieldIDOptions {
     optional coroner.collection.CrashSource crash_source = 1;
@@ -132,6 +132,8 @@ enum FieldID {
     CLIENT_REPORTED_IMAGE_START = 123;
     CLIENT_REPORTED_IMAGE_END = 124;
     DEFAULT_ORIGIN_PRODUCT_ID = 125;
+    CRASH_THREAD_NOTE = 127;
+    ALL_THREAD_NOTE = 126;
 }
 
 extend .proto2.EnumValueOptions {

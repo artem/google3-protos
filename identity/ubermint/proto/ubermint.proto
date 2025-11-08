@@ -2,6 +2,7 @@ syntax = "editions";
 
 package ubermint;
 
+import "cloud/identity/keymanager/proto/mint_subordinate_certificate.proto";
 import "storage/datapol/annotations/proto/semantic_annotations.proto";
 
 option java_multiple_files = true;
@@ -17,6 +18,7 @@ message UberMint {
     optional bytes darklaunch_signature = 32;
     optional int32 signature_version = 33;
     repeated UberMint linked_ubermints = 34;
+    optional cloud_identity.SubordinateCertificate subordinate_certificate = 35;
     
     reserved 5, 6 to 30;
 }

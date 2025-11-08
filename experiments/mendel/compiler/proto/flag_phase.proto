@@ -1,0 +1,14 @@
+syntax = "editions";
+
+package experiments;
+
+option java_multiple_files = true;
+option java_package = "com.google.experiments.mendel.compiler.proto";
+
+enum FlagPhase {
+    FLAG_PHASE_UNSPECIFIED = 0;
+    DRAFT = 1;
+    PRODUCTION_READY = 2;
+    DEPRECATED = 3;
+    BUGGY = 4;
+}

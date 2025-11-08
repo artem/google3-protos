@@ -101,10 +101,11 @@ message DiskStatsRequestSelector {
     repeated int32 DEPRECATED_disk_statuses = 2 [deprecated = true];
     optional string server_name_regexp = 3;
     repeated string server_names = 4;
-    repeated string versions = 5;
     repeated int32 server_config_states = 6;
     repeated int32 server_statuses = 7;
     optional string disk_partition = 8;
+    
+    reserved 5;
 }
 
 message DiskStatsRequest {
@@ -113,7 +114,6 @@ message DiskStatsRequest {
     optional AggregationDimension aggregator = 2 [default = SERVER];
     enum AggregationDimension {
         SERVER = 3;
-        SERVER_VERSION = 6;
         SERVER_LAYERED_STATE = 9;
     }
     
@@ -127,7 +127,6 @@ message DiskStatRecord {
     optional int32 server_count = 3;
     optional int32 server_ok_count = 13;
     optional int32 server_config_state = 4;
-    optional string server_version = 12;
     optional bool server_config_removable = 11;
     map<int64, bool> disk_config_removable = 15;
     optional FailureDomainServerState server_failure_domain_state = 14;
@@ -136,7 +135,7 @@ message DiskStatRecord {
     optional int32 num_cpus = 8;
     optional DiskLayer_DiskStats disk_stats = 9;
     
-    reserved 6, 10;
+    reserved 6, 10, 12;
 }
 
 message DiskStatsResult {
@@ -378,6 +377,7 @@ message LabeledChunkStateStats {
     optional string d_partition = 3;
     optional FileEncoding encoding = 4;
     optional string enclosure_group = 8;
+    optional string enclosure = 9;
     optional int64 count = 5;
     optional storage_util.Int128 total_bytes_128 = 7;
     
@@ -390,6 +390,7 @@ message LabeledStripeRecoveryStateStats {
     optional int64 num_missing_stripes = 3;
     optional int64 num_unavailable_stripes = 4;
     optional int64 num_watch_stripes = 5;
+    optional int64 num_total_stripes = 7;
     optional int64 num_recoverable_chunks = 6 [deprecated = true];
 }
 
@@ -397,6 +398,7 @@ message LabeledChunkRecoveryStatusStats {
     optional string d_partition = 1;
     optional string encoding = 2;
     optional string enclosure_group = 4;
+    optional string enclosure = 5;
     optional int64 num_recoverable_chunks = 3;
 }
 
@@ -597,6 +599,11 @@ message HaaStatsSummary {
     optional int64 haa_bytes_on_fast = 7;
     optional int64 haa_bytes_on_slow = 8;
     optional int64 non_haa_bytes_on_fast = 9;
+}
+
+message TieredSsdByteSummary {
+    optional int64 evictable_ssd_bytes = 1;
+    optional int64 unevictable_ssd_bytes = 2;
 }
 
 enum FailureDomainServerState {

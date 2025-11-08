@@ -71,6 +71,19 @@ message SmartService {
         optional int32 response_proto_recursion_limit = 25;
         optional bool encoder_synchronize_on_mutable_payload = 27;
         
+        optional BnsAddressResolutionLocation bns_address_resolution_location = 28;
+        enum BnsAddressResolutionLocation {
+            DEFAULT_LOCATION = 0;
+            IN_BNS_RESOLVED = 1;
+            IN_SUBCHANNEL = 2;
+        }
+        
+        optional SharedMemoryOptions shared_memory_options = 29;
+        message SharedMemoryOptions {
+            optional uint64 buffer_size = 1;
+            optional bool use_mmap = 2;
+        }
+        
         extensions 1000 to 524999999, 525000000 to max;
         
         reserved 8, 17;
@@ -103,6 +116,7 @@ message SmartService {
         optional string gslb_fallback_balancing_channel_policy = 11;
         optional bool use_gslb_fallback_channel = 9 [default = true];
         optional bool always_permit_fallback_channel = 12;
+        optional bool use_gslb_channel_cache = 14 [default = true];
         
         reserved 4;
     }
@@ -153,6 +167,7 @@ message SmartService {
     
     optional bool allow_no_target = 8 [default = false, deprecated = true];
     optional bool disable_channel_cache = 9;
+    optional string delegated_user = 10;
     
     message RpcSecurityOptions {
         optional string protocol = 1;

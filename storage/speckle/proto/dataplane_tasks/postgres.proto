@@ -3,6 +3,7 @@ syntax = "proto3";
 package speckle.dataplane.postgres;
 
 import "google/protobuf/duration.proto";
+import "google/protobuf/timestamp.proto";
 import "storage/datapol/annotations/proto/semantic_annotations.proto";
 
 message PostgresSetReplicaRequest {
@@ -11,6 +12,7 @@ message PostgresSetReplicaRequest {
     string recovery_path = 3 [deprecated = true];
     string trigger_file = 4;
     int32 uid = 5;
+    int32 gid = 9;
     bool restart_database = 6;
     bool reload_conf = 7;
     bool restart_internal_service = 8;
@@ -94,6 +96,8 @@ message PostgresSwitchoverToShadowVMRequest {
 message PostgresWaitForReplicaToCatchUpWithPrimaryRequest {
     string replica_name = 2;
     string replica_ip = 3;
+    bool running_in_replica = 4;
+    string last_wal_replay_lsn = 5;
     
     oneof _timeout {
         google.protobuf.Duration timeout = 1;
@@ -108,6 +112,16 @@ message PostgresUpdatePgBouncerConfigRequest {
 message PostgresReplicaStatusResult {
     bool replay_paused = 1;
     string wal_receiver_status = 2;
+}
+
+message PostgresCheckDatabaseServerRequest {
+    bool check_ready_for_switchover = 1;
+    bool log_promote_done_message = 2;
+}
+
+message PostgresCheckDatabaseServerResponse {
+    string last_wal_replay_lsn = 1;
+    google.protobuf.Timestamp check_done_time = 2;
 }
 
 enum SslOption {

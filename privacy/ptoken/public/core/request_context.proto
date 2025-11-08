@@ -3,6 +3,7 @@ syntax = "proto2";
 package ptoken;
 
 import "dataresidency/mapping/cloud/cloud_locations_enum.proto";
+import "google/api/inclusion.proto";
 import "privacy/ads/user_data_enforcement/data-usage.proto";
 import "privacy/context/proto/privacy_attributes_setter.proto";
 import "privacy/data_governance/attributes/proto/purpose.proto";
@@ -47,6 +48,8 @@ message PRequestContext {
     optional EpdEligibility signed_out_epd_eligibility = 34;
     optional .pattributes.SemanticPurpose semantic_purpose = 35;
     repeated .pattributes.SemanticPurpose deferred_semantic_purposes = 36 [packed = true];
+    optional bool youtube_is_incognito = 37;
+    repeated LogicalPolicy.Enum poe_enforced_store_policies = 38 [packed = true];
     optional privacy.context.PrivacyAttributesSetter privacy_attributes_setter = 100;
     optional bytes bitfield_value = 26;
     optional bytes bitfield_set = 27;

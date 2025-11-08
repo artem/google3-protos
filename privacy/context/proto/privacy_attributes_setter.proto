@@ -2,13 +2,16 @@ syntax = "proto2";
 
 package privacy.context;
 
+import "google/api/inclusion.proto";
+
 option java_multiple_files = true;
 option java_package = "com.google.privacy.context.proto";
 
 message PrivacyAttributesSetter {
     optional fixed32 prequest_origin_associated_product_id_setter_job = 1;
     optional fixed32 semantic_purpose_setter_job = 7;
-    optional fixed32 processing_purpose_setter_job = 8;
+    optional fixed32 posi_setter_job = 8;
+    optional fixed32 async_context_restorer = 9;
     
     oneof source {
         fixed32 prequest_origin_associated_product_id_setter_gfe_service = 2;

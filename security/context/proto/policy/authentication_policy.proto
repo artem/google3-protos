@@ -2,6 +2,7 @@ syntax = "proto2";
 
 package security.context;
 
+import "google/api/inclusion.proto";
 import "google/iam/v1/policy.proto";
 
 option java_multiple_files = true;

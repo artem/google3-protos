@@ -18,7 +18,15 @@ message IDXTimeSeriesMetadata {
     optional string legacy_key = 6;
 }
 
+message DeleteMarker {
+    
+}
+
 message TimeSeriesRecord {
     optional IDXTimeSeriesMetadata metadata = 1;
-    optional google.protobuf.Any value = 2;
+    
+    oneof content {
+        google.protobuf.Any value = 2;
+        DeleteMarker delete_marker = 3;
+    }
 }

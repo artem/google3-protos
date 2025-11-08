@@ -6,6 +6,7 @@ import "google/protobuf/timestamp.proto";
 import "privacy/compliance_controls/proto/core_platform_service.proto";
 import "privacy/pattributes/public/proto/gaia_saa_state.proto";
 import "privacy/pattributes/public/proto/gaia_waa_state.proto";
+import "privacy/pattributes/public/proto/posi_enforcement_wave.proto";
 import "privacy/ptoken/public/core/common_personal_data_defs.proto";
 import "privacy/ptoken/public/core/ptoken_type.proto";
 import "storage/datapol/annotations/proto/semantic_annotations.proto";
@@ -43,6 +44,11 @@ message CommonPersonalDataPTokenForMinting {
                 optional bool explicit_smpc_is_recently_deleted_event = 769;
                 optional google.protobuf.Timestamp basic_must_hide_by_time = 122;
                 optional bool flogs_soft_delete_in_scope = 778;
+                optional uint64 gaia_consent_bitset1_snapshot = 813;
+                optional uint32 posi_setter_hash = 843;
+                optional uint32 source_pipeline_guri_hash = 887;
+                optional .pattributes.PosiEnforcementWave posi_enforcement_wave = 844;
+                optional int32 posi_integration_id = 974;
             }
         }
     }

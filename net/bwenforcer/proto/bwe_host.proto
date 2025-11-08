@@ -49,6 +49,7 @@ message HostQosAllocation {
     }
     
     optional BitmapQosMapperProto bitmap_hash_mapper = 3;
+    optional bool force_remark_all_datapaths = 4;
     
     message HashRange {
         optional fixed64 start = 1;

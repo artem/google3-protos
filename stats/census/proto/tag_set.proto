@@ -2,6 +2,7 @@ syntax = "proto2";
 
 package stats_census;
 
+import "google/api/inclusion.proto";
 import "google/protobuf/timestamp.proto";
 import "stats/census/proto/tag_propagation.proto";
 import "storage/datapol/annotations/proto/semantic_annotations.proto";

@@ -4,8 +4,11 @@ package thinmint;
 
 import public "security/thinmint/proto/core/thinmint_core.proto";
 import "net/proto2/bridge/proto/message_set.proto";
+import "production/tpc/change_management/equivalence/proto/annotation.proto";
 import "security/credentials/proto/principal.proto";
+import "security/loas/l2/internal/securewrapper/multihop_clients/boundary_proxy.proto";
 import "storage/datapol/annotations/proto/semantic_annotations.proto";
+import "third_party/boundary_proxy/proto_compare/annotation.proto";
 
 option java_package = "com.google.protos.thinmint";
 

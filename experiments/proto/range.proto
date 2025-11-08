@@ -1,0 +1,11 @@
+syntax = "proto2";
+
+package experiments;
+
+option java_outer_classname = "RangeProto";
+option java_package = "com.google.experiments";
+
+message Range {
+    required int32 range_start = 1;
+    optional int32 range_end = 2 [default = -1];
+}

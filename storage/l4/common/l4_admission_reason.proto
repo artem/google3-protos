@@ -19,5 +19,6 @@ message L4Admission {
         NO_INSERT_NON_TEMPORAL = 42;
         NO_INSERT_OVER_SSD_CEILING = 37;
         NO_INSERT_COALESCED_MISS = 38;
+        NO_INSERT_IGNORED = 43;
     }
 }

@@ -68,8 +68,9 @@ message GaiaMintUserCredential {
     optional int64 package_id = 9;
     repeated GaiaServiceData service_data = 6;
     repeated GaiaKey unset_service_data = 18;
-    optional ClientUserInfo client_user_info = 10 [unverified_lazy = true];
+    optional ClientUserInfo client_user_info = 10;
     optional bool contains_gaia_groups = 12;
+    optional bool contains_experiment_relevant_groups = 39;
     optional int64 opl_id = 11;
     optional int64 auth_time_in_seconds = 13;
     optional uint32 seconds_since_last_auth = 26;

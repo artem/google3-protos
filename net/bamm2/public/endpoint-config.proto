@@ -28,7 +28,6 @@ message PonyExpressOptions {
     optional int32 minimum_engine_version = 23;
     optional int32 disconnect_completion_delay_ms = 25 [default = 100];
     optional int32 max_free_pony_streams = 26 [default = 1000];
-    optional bool enable_bamm2_rd_recv_with_timestamp_completion = 27 [default = false];
     optional int32 num_window_panes = 28 [default = 0];
     optional bool use_region_panes = 34;
     optional bool enable_borg_task_migration = 29 [default = false];
@@ -44,8 +43,9 @@ message PonyExpressOptions {
     optional bool enable_deferred_commands = 42;
     optional bool enable_steering = 43;
     optional bool enable_per_cq_stream_caching = 44;
+    optional bool enable_d_appliance_command_sharding = 45;
     
-    reserved 13, 14, 17, 24, 30;
+    reserved 13, 14, 17, 24, 30, 27;
 }
 
 message VerbsOptions {
@@ -90,6 +90,7 @@ message EndpointConfig {
     map<string, string> trim_module_flags = 28;
     optional net_pony.EndpointConfig.TrimOptions trim_options = 29;
     optional bool trim_track_connection_ids = 27 [default = false];
+    optional bool allow_remote_zero_copy_rx = 30 [default = false];
     
     reserved 9, 12;
 }
@@ -101,4 +102,5 @@ enum EndpointType {
     META = 4;
     TCP_ONLY = 5;
     VERBS_ONLY = 6;
+    MPU_ONLY = 7;
 }

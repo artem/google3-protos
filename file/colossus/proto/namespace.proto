@@ -91,7 +91,10 @@ message Namespace_Permissions {
     optional bytes data_governance_extended_attribute = 5 [ctype = CORD];
     optional bytes serialized_drz_config = 6 [ctype = CORD];
     optional bytes serialized_iam_config = 7 [ctype = CORD];
-    optional bytes serialized_par_config = 8 [ctype = CORD];
+    optional bytes serialized_beuc_config = 9 [ctype = CORD];
+    optional bytes serialized_dma52_config = 10 [ctype = CORD];
+    
+    reserved 8;
 }
 
 message Namespace_Credentials {
@@ -131,8 +134,6 @@ message Namespace_FileStat {
     optional int32 mode = 4;
     optional string owner = 5;
     optional string group = 6;
-    optional int32 data_members = 7;
-    optional int32 code_members = 8;
     optional FileEncoding encoding = 13;
     optional .file.FileProperties properties = 11;
     optional fixed32 plaintext_crc32c = 14;
@@ -143,7 +144,7 @@ message Namespace_FileStat {
         storage_util.Int128 __large_identifier = 16 [deprecated = true];
     }
     
-    reserved 9;
+    reserved 7, 8, 9;
 }
 
 message Namespace_BlobInfo {
@@ -237,6 +238,8 @@ message Namespace_RemoteFileMarker {
     
     message SoftDeletedRemoteFile {
         optional production_time.TrueTimestampProto gc_timestamp = 1;
+        repeated Namespace_Permissions permissions = 2;
+        optional bool parent_has_sticky_bit = 3;
     }
 }
 
@@ -259,6 +262,7 @@ message Namespace_AnchorPointSpaceAttributes {
         enum TieringPolicy {
             TIERING_POLICY_UNSPECIFIED = 0;
             TIERING_POLICY_GLOBAL = 1;
+            TIERING_POLICY_US_DATA = 2;
         }
     }
     
@@ -270,6 +274,7 @@ message Namespace_AnchorPointSpaceAttributes {
         optional PhysicalPlacement physical_placement = 3;
         message PhysicalPlacement {
             optional string store_cell = 1;
+            optional string name = 2;
         }
         
         optional string manager = 4;
@@ -300,7 +305,6 @@ message Namespace_IntermediateReplicatedDirectoryData {
 
 message Namespace_IntermediateReplicatedFileData {
     optional production_time.TrueTimestampProto event_timestamp = 4;
-    optional storage_util.Int128 parent_file_id = 5 [deprecated = true];
     optional storage_util.Int128 parent_directory_id = 8;
     optional string primary_store_file_path = 7;
     
@@ -309,7 +313,7 @@ message Namespace_IntermediateReplicatedFileData {
         FileTombstone file_tombstone = 2;
     }
     
-    reserved 3, 6;
+    reserved 3, 5, 6;
     
     reserved "snapshot_tree_id";
     
@@ -344,10 +348,9 @@ message Namespace_DirectoryData {
     optional Namespace_ComplianceInfo compliance_info = 21;
     optional Namespace_AnchorPointSpaceAttributes anchor_point_space_attributes = 23;
     optional bool is_secondary_replica = 25;
-    optional storage_util.Int128 file_id = 28 [deprecated = true];
     optional storage_util.Int128 directory_id = 29;
     
-    reserved 26, 27;
+    reserved 26, 27, 28;
 }
 
 message Namespace_FileData {
@@ -403,6 +406,7 @@ message Namespace_FileData {
     optional bytes ml_lineage_extended_attribute = 52 [ctype = CORD];
     optional bytes malachite_extended_attribute = 53 [ctype = CORD];
     optional bytes negba_finalization_extended_attribute = 54 [ctype = CORD];
+    optional bytes hydra_extended_attribute = 61 [ctype = CORD];
     optional tech.file.EncryptionMode encryption_mode = 33;
     optional bool is_anchor_point = 36 [default = false];
     optional Namespace_BackingFileMigrationInfo backing_file_migration_info = 38;
@@ -604,6 +608,7 @@ message Namespace_MatchEntries {
         optional uint64 show_mask = 5 [default = 3];
         optional uint64 want_mask = 6 [default = 1];
         repeated string extended_attributes_types = 7;
+        optional string target_store_cell_name = 8;
         
         enum ShowMask {
             SHOW_UNSPECIFIED = 0;
@@ -632,6 +637,7 @@ message Namespace_MatchEntries {
         repeated Namespace_FileStat file_stats = 2;
         repeated Namespace_FileData.FileType file_types = 3 [packed = true];
         repeated bytes open_capabilities = 4;
+        repeated bytes fully_processed_directories = 8;
         repeated bytes unprocessed_directories = 5;
         
         repeated PartiallyProcessedDirectory partially_processed_directory = 6;
@@ -785,9 +791,11 @@ message Namespace_OpenFile {
         optional StackTraceProto call_site = 15;
         optional bool generate_blobmint = 16;
         optional bool encrypted_per_file_plaintext_crc = 17;
+        optional bool per_file_plaintext_crc_parallel = 21;
         optional bool enable_ghac_encryption = 18;
         optional bool require_encryption_mode = 20;
-        optional bool eager_capability_renewal = 19;
+        optional bool proactive_capability_renewal = 19;
+        optional string target_store_cell_name = 22;
         
         reserved 8, 9, 12;
     }
@@ -844,6 +852,10 @@ message Namespace_OpenRemoteFile {
             optional Namespace_FileOptions file_options = 2;
             optional storage_util.Int128 new_cns_file_id = 3;
             optional Challenge challenge_response = 4;
+            optional bool require_encryption_mode = 5;
+            optional bool encrypted_per_file_plaintext_crc = 6;
+            optional bool per_file_plaintext_crc_parallel = 7;
+            optional bool enable_ghac_encryption = 8;
         }
         
         optional WriteTieringArgProto write_tiering_arg = 14;
@@ -945,6 +957,7 @@ message Namespace_StatFile {
         repeated string extended_attributes_types = 11;
         optional bool omit_full_default_encryption_properties = 10 [default = false];
         optional bool skip_dir_data_lookup_if_directory_entry = 13;
+        optional string target_store_cell_name = 14;
         
         oneof file_id_representation {
             int64 __file_id = 4 [default = 0, deprecated = true];
@@ -974,6 +987,7 @@ message Namespace_StatFile {
 message Namespace_LookupDirData {
     message Argument {
         optional string path = 1;
+        optional bool allow_secondary_reads = 2;
     }
     
     message Checkpoint {
@@ -1063,6 +1077,7 @@ message Namespace_Snapshot {
         optional bool rename = 3;
         optional bool overwrite_file = 6 [default = true];
         optional tech.file.SnapshotOptions snapshot_options = 9;
+        optional tech.file.RenameOptions rename_options = 11;
         optional FileParameters src_parameters = 7;
         optional FileParameters dst_parameters = 8;
         optional .thinmint.ThinMint keystore_thinmint = 10;
@@ -1288,8 +1303,6 @@ message Namespace_Commit {
         optional FileEncoding dir_encoding = 25;
         optional int32 column_flush_freq = 23 [default = 0x7fffffff];
         optional int32 test_abort_after_n_names = 24 [default = 0x7fffffff];
-        optional string OBSOLETE_src_gfs_prefix = 5;
-        optional string OBSOLETE_dst_gfs_prefix = 6;
         optional .thinmint.ThinMint keystore_thinmint = 27;
         optional tech.file.QuotaAccounting quota_accounting = 28;
         optional SnapshotOptions snapshot_options = 37;
@@ -1299,8 +1312,11 @@ message Namespace_Commit {
         optional Namespace_DirectoryMigrationInfo destination_parent_dir_migration_info = 35;
         optional Namespace_AnchorPointSpaceAttributes destination_parent_aps_attrs = 38;
         repeated Namespace_SecondaryReplica destination_parent_secondary_replicas = 39;
+        optional bool preserve_anchor_points = 40;
         
-        reserved 34;
+        reserved 5, 6, 34;
+        
+        reserved "OBSOLETE_src_gfs_prefix", "OBSOLETE_dst_gfs_prefix";
     }
     
     message Result {
@@ -2031,6 +2047,8 @@ message Namespace_NotifyDataMigrationStart {
         optional .thinmint.ThinMint destination_store_thinmint = 5;
         optional FileEncoding target_encoding = 6;
         optional tech.file.EncryptionProperties encryption_properties = 17;
+        optional string source_encoding = 18;
+        optional Namespace_Permissions permissions = 19;
         
         reserved 3, 7, 10;
     }
@@ -2288,6 +2306,7 @@ message Namespace_ScheduleDataMigration {
 message Namespace_ScanDmsIndex {
     message Argument {
         optional int32 anchor_point_depth = 1;
+        optional int64 post_remove_index_scan_start_micros = 2;
     }
     
     message Checkpoint {
@@ -2302,6 +2321,36 @@ message Namespace_ScanDmsIndex {
             optional string dir_path = 1;
             repeated string basenames = 2;
         }
+    }
+}
+
+message Namespace_CreateDirectoryReplicationEvent {
+    message Argument {
+        optional string path = 1;
+        optional Namespace_SecondaryReplica secondary_replica = 2;
+    }
+    
+    message Checkpoint {
+        
+    }
+    
+    message Result {
+        
+    }
+}
+
+message Namespace_CreateEntryReplicationEvent {
+    message Argument {
+        optional string path = 1;
+        optional Namespace_SecondaryReplica secondary_replica = 2;
+    }
+    
+    message Checkpoint {
+        
+    }
+    
+    message Result {
+        
     }
 }
 
@@ -2543,6 +2592,8 @@ message Namespace_Argument {
     optional Namespace_RecoverSoftDeletedFile.Argument recover_soft_deleted_file = 73;
     optional Namespace_PrepareSoftDeletedFileForRecovery.Argument prepare_soft_deleted_file_for_recovery = 74;
     optional Namespace_HardDeleteSoftDeletedFile.Argument hard_delete_soft_deleted_file = 75;
+    optional Namespace_CreateDirectoryReplicationEvent.Argument create_directory_replication_event = 77;
+    optional Namespace_CreateEntryReplicationEvent.Argument create_entry_replication_event = 78;
     optional Namespace_ClientOpTest.Argument client_op_test = 100;
     optional Namespace_ServerOpTest.Argument server_op_test = 101;
     optional Namespace_ShardTest.Argument shard_test = 102;
@@ -2552,7 +2603,7 @@ message Namespace_Argument {
     optional bool OBSOLETE_import = 22;
     optional bool OBSOLETE_delete_file = 9;
     
-    reserved 26, 62;
+    reserved 26, 62, 76;
     
     reserved "push_capability_key";
 }
@@ -2632,6 +2683,8 @@ message Namespace_Result {
     optional Namespace_RecoverSoftDeletedFile.Result recover_soft_deleted_file = 69;
     optional Namespace_PrepareSoftDeletedFileForRecovery.Result prepare_soft_deleted_file_for_recovery = 70;
     optional Namespace_HardDeleteSoftDeletedFile.Result hard_delete_soft_deleted_file = 71;
+    optional Namespace_CreateDirectoryReplicationEvent.Result create_directory_replication_event = 73;
+    optional Namespace_CreateEntryReplicationEvent.Result create_entry_replication_event = 74;
     optional Namespace_ClientOpTest.Result client_op_test = 100;
     optional Namespace_ServerOpTest.Result server_op_test = 101;
     optional Namespace_ShardTest.Result shard_test = 102;
@@ -2643,7 +2696,7 @@ message Namespace_Result {
     optional bool OBSOLETE_import = 22;
     optional bool OBSOLETE_delete_file = 9;
     
-    reserved 25, 60;
+    reserved 25, 60, 72;
     
     reserved "push_capability_key";
 }
@@ -2747,6 +2800,8 @@ message Namespace_CheckpointData {
     optional Namespace_RecoverSoftDeletedFile.Checkpoint recover_soft_deleted_file = 79;
     optional Namespace_PrepareSoftDeletedFileForRecovery.Checkpoint prepare_soft_deleted_file_for_recovery = 80;
     optional Namespace_HardDeleteSoftDeletedFile.Checkpoint hard_delete_soft_deleted_file = 81;
+    optional Namespace_CreateDirectoryReplicationEvent.Checkpoint create_directory_replication_event = 109;
+    optional Namespace_CreateEntryReplicationEvent.Checkpoint create_entry_replication_event = 110;
     optional Namespace_ClientOpTest.Checkpoint client_op_test = 100;
     optional Namespace_ServerOpTest.Checkpoint server_op_test = 101;
     optional Namespace_ShardTest.Checkpoint shard_test = 102;
@@ -2758,7 +2813,7 @@ message Namespace_CheckpointData {
     optional bool OBSOLETE_import = 24;
     optional bool OBSOLETE_delete_file = 10;
     
-    reserved 27, 70;
+    reserved 27, 70, 108;
     
     reserved "push_capability_key";
 }

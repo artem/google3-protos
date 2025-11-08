@@ -1,0 +1,21 @@
+syntax = "editions";
+
+package cloud_identity;
+
+import "google/api/inclusion.proto";
+import "storage/datapol/annotations/proto/semantic_annotations.proto";
+
+option java_multiple_files = true;
+option java_package = "com.google.cloud.identity.gluon.proto";
+
+message SubordinateCertificate {
+    optional string root_identifier = 1;
+    optional SignedMessage signed_authority = 2;
+    optional string keyset_name = 3;
+}
+
+message SignedMessage {
+    optional bytes prefix = 1;
+    optional bytes serialized_message = 2;
+    optional bytes signature = 3;
+}

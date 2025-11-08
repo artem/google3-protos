@@ -2,6 +2,7 @@ syntax = "proto2";
 
 package magiceye.dimensions;
 
+import "google/api/inclusion.proto";
 import "logs/proto/logs_annotations/logs_annotations.proto";
 import "net/proto2/proto/descriptor.proto";
 
@@ -311,6 +312,7 @@ message ProductGroup {
         GROUPS = 23;
         CLOUD_PRINT = 24;
         CLOUD_SEARCH = 26;
+        CLOUD = 180;
         EDITORS = 25;
         GSUITE_COMPANION = 136;
         JAMBOARD = 27;
@@ -418,6 +420,7 @@ message Product {
         GROUPS = 64;
         CLOUD_PRINT = 65;
         CLOUD_SEARCH = 252;
+        CLOUD_CONSOLE = 315;
         GSUITE_COMPANION = 249;
         JAMBOARD = 253;
         APPS_SCRIPT = 255;

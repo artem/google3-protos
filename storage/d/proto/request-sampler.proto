@@ -57,6 +57,12 @@ message SampledOp {
     optional uint64 dapper_global_id = 17;
     optional uint64 dapper_rpc_id = 18;
     
+    repeated Syscall syscall = 26;
+    message Syscall {
+        optional int64 offset = 1;
+        optional int64 length = 2;
+    }
+    
     reserved 16;
 }
 

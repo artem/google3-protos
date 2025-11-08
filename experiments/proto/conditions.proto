@@ -3,6 +3,7 @@ syntax = "editions";
 package experiments;
 
 import "experiments/proto/property.proto";
+import "third_party/golang/protobuf/v2/src/google/protobuf/go_features.proto";
 
 option java_outer_classname = "ConditionsProto";
 option java_package = "com.google.protos.experiments.proto1api";
@@ -31,6 +32,7 @@ message Rollout {
     optional bool value = 3;
     optional int32 location = 6;
     repeated RolloutOverride overrides = 4;
+    optional bool force_in_all_on_mode = 5;
 }
 
 message RolloutOverride {

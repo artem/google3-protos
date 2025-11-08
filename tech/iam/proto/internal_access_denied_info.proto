@@ -16,6 +16,7 @@ message InternalAccessDeniedInfo {
         PrincipalAccessBoundariesPolicy principal_access_boundaries_policy = 3;
         CustomOrgPolicy custom_org_policy = 4;
         VpcServiceControlServicePerimeterViolation service_perimeter_violation = 5;
+        AccessPolicy access_policy = 6;
     }
     
     message NotGranted {
@@ -32,6 +33,10 @@ message InternalAccessDeniedInfo {
     
     message CustomOrgPolicy {
         repeated CustomConstraintInfo denied_custom_constraint_info = 1;
+    }
+    
+    message AccessPolicy {
+        
     }
     
     message VpcServiceControlServicePerimeterViolation {

@@ -112,11 +112,13 @@ service BTI_Master {
     rpc AddProtoDescriptorSet(BTI_AddProtoDescriptorSetRequest) returns (BTI_AddProtoDescriptorSetResponse);
     rpc UpdateProtoDescriptorSet(BTI_UpdateProtoDescriptorSetRequest) returns (BTI_UpdateProtoDescriptorSetResponse);
     rpc GetProtoDescriptorSet(BTI_GetProtoDescriptorSetRequest) returns (BTI_GetProtoDescriptorSetResponse);
+    rpc GetAllProtoDescriptorSets(BTI_GetAllProtoDescriptorSetsRequest) returns (BTI_GetAllProtoDescriptorSetsResponse);
     rpc DeleteProtoDescriptorSet(BTI_DeleteProtoDescriptorSetRequest) returns (EmptyMessage);
     rpc GetProtoDescriptorSetVersion(BTI_GetProtoDescriptorSetVersionRequest) returns (BTI_GetProtoDescriptorSetVersionResponse);
     rpc AddMaterializedView(BTI_AddMaterializedViewRequest) returns (BTI_AddMaterializedViewResponse);
     rpc RemoveMaterializedView(BTI_RemoveMaterializedViewRequest) returns (EmptyMessage);
     rpc GetMaterializedView(BTI_GetMaterializedViewRequest) returns (BTI_GetMaterializedViewResponse);
+    rpc ListMaterializedViews(BTI_ListMaterializedViewsRequest) returns (BTI_ListMaterializedViewsResponse);
 }
 
 message BTI_UpdateCellRequest {
@@ -696,6 +698,15 @@ message BTI_GetProtoDescriptorSetResponse {
     optional int64 version = 2;
 }
 
+message BTI_GetAllProtoDescriptorSetsRequest {
+    optional BTI_Request request = 1;
+    optional uint64 table_version = 2;
+}
+
+message BTI_GetAllProtoDescriptorSetsResponse {
+    repeated BTI_GetProtoDescriptorSetResponse descriptor_and_version = 1;
+}
+
 message BTI_DeleteProtoDescriptorSetRequest {
     optional BTI_Request request = 1;
     optional uint64 table_version = 2;
@@ -722,6 +733,13 @@ message BTI_AddMaterializedViewRequest {
     optional Catalog catalog = 5;
     optional string output_locality_group = 6;
     optional MaterializedViewFeatures query_features = 8;
+    
+    optional FamilyAcl output_acls = 9;
+    message FamilyAcl {
+        repeated string administrator = 1;
+        repeated string writer = 2;
+        repeated string reader = 3;
+    }
 }
 
 message BTI_AddMaterializedViewResponse {
@@ -730,6 +748,7 @@ message BTI_AddMaterializedViewResponse {
 
 message BTI_RemoveMaterializedViewRequest {
     optional BTI_Request request = 1;
+    optional bool unsafe_force = 4;
     
     oneof view_identifier {
         uint64 view_id = 2;
@@ -749,6 +768,14 @@ message BTI_GetMaterializedViewRequest {
 message BTI_GetMaterializedViewResponse {
     optional BTI_MaterializedView view_config = 1;
     repeated BTI_MaterializedViewStage stages = 2;
+}
+
+message BTI_ListMaterializedViewsRequest {
+    optional BTI_Request request = 1;
+}
+
+message BTI_ListMaterializedViewsResponse {
+    repeated string view_specs = 1;
 }
 
 message BTI_NonloadableTablets {

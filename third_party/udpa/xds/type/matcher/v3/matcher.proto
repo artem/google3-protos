@@ -2,7 +2,6 @@ syntax = "proto3";
 
 package xds.type.matcher.v3;
 
-import "third_party/udpa/xds/annotations/v3/status.proto";
 import "third_party/udpa/xds/core/v3/extension.proto";
 import "third_party/udpa/xds/type/matcher/v3/string.proto";
 import "third_party/protoc_gen_validate/validate/validate.proto";
@@ -15,6 +14,8 @@ option java_package = "com.github.xds.type.matcher.v3";
 message Matcher {
     OnMatch on_no_match = 3;
     message OnMatch {
+        bool keep_matching = 3;
+        
         oneof on_match {
             Matcher matcher = 1;
             .xds.core.v3.TypedExtensionConfig action = 2;

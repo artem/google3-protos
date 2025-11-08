@@ -11,5 +11,6 @@ message PolicyGrouping {
         WAVE_1_AND_2_DMA52 = 1;
         WAVE_3_DMA52 = 2;
         WAVE1_OPT_IN_PURPOSE_CONSENT = 3;
+        WAVE1_POSI_ENFORCEMENT = 4;
     }
 }

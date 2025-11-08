@@ -1,0 +1,9 @@
+syntax = "editions";
+
+package crash_analysis;
+
+import "net/proto2/proto/descriptor.proto";
+
+extend .proto2.EnumValueOptions {
+    optional string display_value = 525000136;
+}

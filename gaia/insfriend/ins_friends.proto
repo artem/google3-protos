@@ -11,6 +11,7 @@ import "gaia/insclient/ins_client.proto";
 import "gaia/insclient/ins_clientinfo.proto";
 import "gaia/mint/protos/core/mint.proto";
 import "identity/auth/challenge/proto/password_service.proto";
+import "identity/config/proto/session_policy_id.proto";
 import "identity/gaia/storage_access/account_identifier/proto/account_identifier_service.proto";
 import "identity/gaia/storage_access/account_metadata/proto/account_metadata_service.proto";
 import "identity/gaia/storage_access/capability_token/proto/capability_token_service.proto";
@@ -69,7 +70,9 @@ message NewUserRequest {
     optional ClientData ClientData = 100;
     optional UserContext UserContext = 101;
     optional int64 PlaceholderGaiaId = 29;
+    optional int64 AllocatedGaiaId = 32;
     optional bytes AuxiliaryData = 30 [ctype = STRING_PIECE];
+    repeated identity_config.SessionPolicyId RestrictedSessionPolicyId = 31;
     
     reserved 8, 9, 12 to 14, 18, 105;
 }
@@ -144,10 +147,11 @@ message ChangePasswordRequest {
     optional bool CreateClientEncryptionKey = 15;
     optional bool CanHandle3pCookies = 13;
     optional bool CanHandle1pCookies = 16;
+    repeated identity_config.SessionPolicyId RestrictedSessionPolicyId = 19;
     optional ClientData ClientData = 100;
     optional UserContext UserContext = 101;
     
-    reserved 2, 4, 5, 9;
+    reserved 2, 4, 5, 9, 18;
 }
 
 message ChangePasswordResponse {
@@ -261,8 +265,11 @@ message DeleteAccountRequest {
     required int64 UserID = 1;
     optional GaiaNotificationSettings NotificationSettings = 2;
     optional gaia_client.CloudPropagation CloudPropagation = 3;
+    optional gaia_storage_access.DeleteAccountInfoArguments DeleteAccountInfo = 5;
     optional ClientData ClientData = 100;
     optional UserContext UserContext = 101;
+    
+    reserved 4, 102;
 }
 
 message DeleteAccountResponse {

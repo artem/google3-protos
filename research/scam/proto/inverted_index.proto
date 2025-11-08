@@ -137,6 +137,7 @@ message DynamicInvertedIndexConfig {
         VERY_SPARSE_MINIMIZE_TEMP_STORAGE = 1;
     }
     
+    optional bool strict_orthogonal_distances = 14 [default = false];
     optional InvertedIndexSmallEntryRemovalConfig small_entry_removal = 12;
     optional uint32 num_updates_between_garbage_collections = 4 [default = 100000, deprecated = true];
 }

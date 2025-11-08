@@ -2,6 +2,7 @@ syntax = "proto3";
 
 package google.api;
 
+import "google/api/inclusion.proto";
 import "google/api/tex.proto";
 import "google/api/visibility.proto";
 import "google/protobuf/wrappers.proto";
@@ -68,7 +69,7 @@ message DiscoveryConfig {
     string package_path = 8;
     bool enable_top_level_methods = 9;
     map<string, string> service_paths = 10;
-    bool skip_service_control_for_legacy_discovery_url = 11;
+    bool skip_service_control_for_legacy_discovery_url = 11 [deprecated = true];
     
     IconUrlOverrides icon_url_overrides = 12;
     message IconUrlOverrides {

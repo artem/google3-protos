@@ -3,14 +3,13 @@ syntax = "proto2";
 package colossus;
 
 import "file/colossus/proto/base.proto";
+import "file/colossus/proto/cfs_feature_mode.proto";
 import "file/colossus/proto/client_info.proto";
 import "file/colossus/proto/curator_signed_capability.proto";
 import "file/colossus/proto/public.proto";
 import "file/colossus/proto/stack_trace.proto";
 import "google/protobuf/duration.proto";
 import "google/protobuf/timestamp.proto";
-import "security/panoptikeys/crypto_key_classes/crypto_key_classes_binding.proto";
-import "security/panoptikeys/crypto_key_params/crypto_key_params.proto";
 import "storage/datapol/annotations/proto/semantic_annotations.proto";
 import "storage/l4/core/version.proto";
 import "storage/l4/public/cache_name.proto";
@@ -219,6 +218,8 @@ message Stripe {
     optional RequestID last_decryption_failure_reporter = 31;
     optional bool modified_by_reconstructor = 30;
     optional bool using_wal_client_library = 32;
+    optional bool intending_to_use_rma_writes = 36;
+    optional int64 metadata_generation = 37;
     
     reserved 16, 19, 21, 24;
 }
@@ -290,6 +291,8 @@ message PlacementPolicy {
         
         optional google.protobuf.Duration force_admission_with_ttl = 6;
         optional storage_l4.Version.Type l4_client_version = 8;
+        optional bool write_tiering_invalidated = 10;
+        optional google.protobuf.Timestamp write_tiering_invalidated_time = 11;
         
         reserved 1;
     }
@@ -380,6 +383,7 @@ message FileParameters {
     optional EncryptionExemption encryption_exemption = 25;
     optional bool placement_policy_partition_force_replace = 23 [default = true];
     optional tech.file.QuotaAccounting quota_accounting = 24;
+    optional string read_from = 29;
     
     oneof file_identifier {
         int64 id = 2 [default = 0];
@@ -563,6 +567,8 @@ message FileDescriptor {
         optional bool allow_nonfrozen_snapshot_of_frozen_file = 2 [default = true];
     }
     
+    optional CfsFeatureMode feature_mode = 42 [default = CFS_FEATURE_MODE_DEFAULT];
+    
     extensions 10000 to max;
     
     reserved 2, 10, 24, 26, 31, 33;
@@ -675,18 +681,6 @@ message FileDelegate {
     optional KeystoreInstance keystore_affinity = 4;
     
     reserved 3;
-}
-
-message FileIdMapping {
-    optional string filename = 1;
-    optional string extension = 2;
-    optional int64 last_seen = 3;
-    
-    optional Creator creator = 4 [default = CMETA_FILES_LOG];
-    enum Creator {
-        CMETA_FILES_LOG = 0;
-        CMETA_FILES_FSCK = 1;
-    }
 }
 
 message ColossusKeyWithMetadata {

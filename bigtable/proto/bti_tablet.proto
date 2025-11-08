@@ -2,6 +2,8 @@ syntax = "proto2";
 
 package bigtable;
 
+import "storage/datapol/annotations/proto/semantic_annotations.proto";
+
 option java_package = "com.google.bigtable.protos";
 
 message BTI_Tablet {

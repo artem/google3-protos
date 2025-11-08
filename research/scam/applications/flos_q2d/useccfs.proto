@@ -1,0 +1,10 @@
+syntax = "proto2";
+
+package research_scam;
+
+message UsecCfsConfig {
+    optional bool enabled = 1 [default = false];
+    optional int32 num_usec_cfs_readers = 2 [default = 8];
+    optional int32 read_batch_size = 3 [default = 256];
+    optional int32 completion_batch_size = 4 [default = 256];
+}

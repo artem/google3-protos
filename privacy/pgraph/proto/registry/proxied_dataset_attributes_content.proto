@@ -2,14 +2,17 @@ syntax = "proto3";
 
 package pgraph;
 
+import "privacy/data_governance/attributes/proto/classification.proto";
 import "privacy/data_governance/attributes/proto/product_association.proto";
 import "privacy/data_governance/attributes/proto/search.proto";
 import "privacy/pgraph/proto/attributes/data_content.proto";
+import "privacy/pgraph/proto/attributes/ml_proxied_attributes.proto";
 import "privacy/pgraph/proto/attributes/policy_attributes.proto";
 import "privacy/pgraph/proto/attributes/proxied_data_attributes.proto";
 import "privacy/pgraph/proto/attributes/proxied_data_attributes_proto2.proto";
 import "privacy/pgraph/proto/attributes/storage_attributes.proto";
 import "privacy/pgraph/proto/attributes/storage_attributes_proto2.proto";
+import "privacy/ptoken/public/proto/enforcement_behavior_spec.proto";
 import "privacy/ptoken/public/proto/extraction/extraction_spec.proto";
 
 option java_multiple_files = true;
@@ -26,9 +29,22 @@ message ProxiedDatasetAttributesContent {
         .pgraph.attributes.Dma52MlModelAccessStatus dma52_ml_model_access_status = 5075;
         privacy.data_governance.attributes.DataProductAssociationRestriction product_association_restriction = 5344;
         privacy.data_governance.attributes.DualObservationProductAssociation dual_observation_product_association = 5372;
+        .pgraph.attributes.WorkspaceDataRegionsDataClassScope workspace_data_regions_data_class_scope = 5612;
+        
+        oneof _semantic_context {
+            privacy.data_governance.attributes.classification.SemanticContext semantic_context = 5177;
+        }
+        
+        oneof _dma52_ads_tainted_dual_observation {
+            bool dma52_ads_tainted_dual_observation = 5493;
+        }
         
         oneof _contains_managed_accounts {
             .pgraph.attributes.DataContent contains_managed_accounts = 5609;
+        }
+        
+        oneof _contains_workspace_region_restricted_data {
+            .pgraph.attributes.DataContent contains_workspace_region_restricted_data = 5611;
         }
         
         oneof _assistant_speculative_writes_status {
@@ -40,7 +56,12 @@ message ProxiedDatasetAttributesContent {
     message Policy {
         .pgraph.attributes.Dma52Scope dma52_scope = 5024;
         .pgraph.attributes.Dma52AggregateComplianceControls dma52_aggregate_compliance_controls = 5069;
+        .ptoken.EnforcementBehaviorSpec enforcement_behavior_spec = 5162;
         .pgraph.attributes.NoAdsAccess no_ads_access = 5194;
+        
+        oneof _allows_explicit_privacy_intent_write {
+            .pgraph.attributes.PolicyAllowsExplicitPrivacyIntentWrite allows_explicit_privacy_intent_write = 5164;
+        }
         
         oneof _ual_gcp_risk_assessment_in_scope {
             bool ual_gcp_risk_assessment_in_scope = 5205;
@@ -63,6 +84,8 @@ message ProxiedDatasetAttributesContent {
     
     MlExperimental ml_experimental = 162;
     message MlExperimental {
+        repeated .pgraph.attributes.DataUsageApprovalSummary data_usage_approval_summary = 5915;
+        
         oneof _contains_eval_only_data {
             .pgraph.attributes.DataContent contains_eval_only_data = 7000;
         }

@@ -4,6 +4,7 @@ package security_loas_l2;
 
 import "gfe/membrane/thinmint_attestation/boundary_proxy_attestation_signature.proto";
 import "net/proto2/bridge/proto/message_set.proto";
+import "production/tpc/change_management/equivalence/proto/annotation.proto";
 import "security/thinmint/xuniverse/proto/core/notarization_wrapper.proto";
 import "third_party/boundary_proxy/proto_compare/annotation.proto";
 import public "google/protobuf/timestamp.proto";
@@ -26,6 +27,7 @@ enum MultihopIntegrityResult {
     SUCCEEDED = 1;
     FAILED = 2;
     SKIPPED = 3;
+    UNREGISTERED = 4;
 }
 
 enum MultihopIntegrityAction {
@@ -50,6 +52,7 @@ enum MultihopIntegrityFailedReason {
     FAILED_BECAUSE_MISSING_TPC_UNIVERSE = 6;
     FAILED_BECAUSE_PEER_MISMATCH = 7;
     FAILED_TO_FORMAT_STUBBY_PAYLOAD = 8;
+    FAILED_BECAUSE_RPC_CANCELLED = 9;
 }
 
 enum MultihopIntegritySkippedReason {

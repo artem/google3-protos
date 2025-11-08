@@ -56,6 +56,7 @@ message TransferRangeOwnershipArg {
     optional string folder_name = 2;
     optional FolderKeyProto transferred_parent_folder = 4;
     optional google.protobuf.Timestamp earliest_merge_timestamp = 5;
+    optional fixed32 last_verification_checksum = 6;
 }
 
 message TransferRangeOwnershipResult {

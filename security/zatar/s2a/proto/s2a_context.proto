@@ -3,6 +3,7 @@ syntax = "editions";
 package s2a.proto;
 
 import "security/zatar/s2a/proto/common.proto";
+import "third_party/golang/protobuf/v2/src/google/protobuf/go_features.proto";
 
 option java_multiple_files = true;
 option java_outer_classname = "S2AContextProto";

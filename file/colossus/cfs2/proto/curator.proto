@@ -38,6 +38,8 @@ message MetadataFile {
 
 message CuratorPaxosPayload {
     repeated MetadataFile files = 1;
+    optional int64 md1_latest_epoch = 16;
+    optional int64 md0_latest_epoch = 17;
     
     optional FolderState folder_state = 9 [default = UNKNOWN];
     enum FolderState {
@@ -75,6 +77,7 @@ message CuratorPaxosPayload {
         repeated FolderKeyProto parent_folders = 2;
         repeated FolderRangeKeyProto parent_folder_range_keys = 10;
         repeated FolderKeyProto transferred_parent_folders = 8;
+        repeated fixed32 parent_last_verification_checksums = 15;
         repeated FolderKeyProto child_folders = 3;
         repeated FolderRangeKeyProto child_folder_range_keys = 12;
         repeated PaxosGroup child_paxos_groups = 5;

@@ -2,6 +2,7 @@ syntax = "proto3";
 
 package google.api;
 
+import "google/api/inclusion.proto";
 import "google/api/visibility.proto";
 import "google/protobuf/struct.proto";
 import "net/proto2/proto/descriptor.proto";
@@ -34,7 +35,6 @@ message FieldPolicy {
     enum CustomOrgPolicyAccessibility {
         CUSTOM_ORG_POLICY_ACCESSIBILITY_UNSPECIFIED = 0;
         PUBLIC = 1;
-        RESTRICTED = 2;
     }
     
     string custom_org_policy = 17;
@@ -74,6 +74,7 @@ message MethodPolicy {
 message PolicyAspect {
     string kind = 1;
     protobuf.Struct spec = 2;
+    bool suppress_deterministic_encode = 3;
 }
 
 extend .proto2.FieldOptions {

@@ -25,6 +25,8 @@ message MachineCertificate {
     optional string fqdn = 2;
     optional MachineCertDigest corp_machine_cert_digest = 3;
     optional ZammSMTLoas3CertDigest zamm_smt_loas3_cert_digest = 4;
+    repeated string ipv6_addresses = 5;
+    optional bool is_hardened = 6;
     
     extensions 1;
     
@@ -96,6 +98,7 @@ message BorgTaskCertificate {
     optional bool resumable_instance_info = 9;
     optional string virtual_cell = 10;
     optional ConfidentialSecurityLevel confidential_security_level = 11;
+    optional bool is_hardened = 12;
     
     reserved 7, 8;
     
@@ -125,5 +128,19 @@ message SelfSignedCertificateComment {
     
     extend .proto2.bridge.MessageSet {
         optional SelfSignedCertificateComment message_set_extension = 45813468;
+    }
+}
+
+message RrcpRequiredRestriction {
+    reserved 1, 2;
+    
+    extend .proto2.bridge.MessageSet {
+        optional RrcpRequiredRestriction message_set_extension = 734131354;
+    }
+}
+
+message RrcpRequiredRestrictionV2 {
+    extend .proto2.bridge.MessageSet {
+        optional RrcpRequiredRestrictionV2 message_set_extension = 525004419;
     }
 }

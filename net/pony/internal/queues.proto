@@ -22,10 +22,11 @@ message CompletionRx {
     oneof impl {
         Pipe pipe = 1;
         Verbs verbs = 2;
-        DioriteRing diorite_ring = 3;
         ApertureRing aperture_ring = 4;
         HostRing host_ring = 5;
     }
+    
+    reserved 3;
     
     message Pipe {
         optional int32 notification_fd_index = 1;
@@ -37,16 +38,6 @@ message CompletionRx {
     
     message Verbs {
         
-    }
-    
-    message DioriteRing {
-        optional int32 backing_fd_index = 1;
-        optional uint64 backing_fd_offset = 2;
-        optional uint64 pages = 3;
-        optional uint64 head = 4;
-        optional uint64 tail = 5;
-        optional uint64 metadata_index = 6;
-        optional int32 notification_fd_index = 7;
     }
     
     message ApertureRing {
@@ -76,10 +67,11 @@ message CompletionTx {
     oneof impl {
         Pipe pipe = 1;
         Verbs verbs = 2;
-        DioriteRing diorite_ring = 3;
         ApertureRing aperture_ring = 4;
         HostRing host_ring = 5;
     }
+    
+    reserved 3;
     
     message Pipe {
         optional int32 notification_fd_index = 1;
@@ -93,19 +85,6 @@ message CompletionTx {
     
     message Verbs {
         
-    }
-    
-    message DioriteRing {
-        optional int32 backing_fd_index = 1;
-        optional uint64 backing_fd_offset = 2;
-        optional uint64 pages = 3;
-        optional uint64 head = 4;
-        optional uint64 tail = 5;
-        optional uint64 metadata_index = 6;
-        optional AccDmaMetadataBlock metadata_head = 7;
-        optional AccDmaMetadataBlock metadata_tail = 8;
-        optional uint64 remote_iova = 9;
-        optional int32 notification_fd_index = 10;
     }
     
     message ApertureRing {
@@ -137,10 +116,11 @@ message CommandRx {
     oneof impl {
         Pipe pipe = 1;
         Verbs verbs = 2;
-        DioriteRing diorite_ring = 3;
         ApertureRing aperture_ring = 4;
         HostRing host_ring = 5;
     }
+    
+    reserved 3;
     
     message Pipe {
         optional int32 backing_fd_index = 1;
@@ -152,18 +132,6 @@ message CommandRx {
     
     message Verbs {
         
-    }
-    
-    message DioriteRing {
-        optional int32 backing_fd_index = 1;
-        optional uint64 backing_fd_offset = 2;
-        optional uint64 pages = 3;
-        optional uint64 head = 4;
-        optional uint64 tail = 5;
-        optional uint64 metadata_index = 6;
-        optional AccDmaMetadataBlock metadata_head = 7;
-        optional AccDmaMetadataBlock metadata_tail = 8;
-        optional uint64 remote_iova = 9;
     }
     
     message ApertureRing {
@@ -190,10 +158,11 @@ message CommandTx {
     oneof impl {
         Pipe pipe = 1;
         Verbs verbs = 2;
-        DioriteRing diorite_ring = 3;
         ApertureRing aperture_ring = 4;
         HostRing host_ring = 5;
     }
+    
+    reserved 3;
     
     message Pipe {
         optional int32 backing_fd_index = 1;
@@ -205,15 +174,6 @@ message CommandTx {
     
     message Verbs {
         
-    }
-    
-    message DioriteRing {
-        optional int32 backing_fd_index = 1;
-        optional uint64 backing_fd_offset = 2;
-        optional uint64 pages = 3;
-        optional uint64 head = 4;
-        optional uint64 tail = 5;
-        optional uint64 metadata_index = 6;
     }
     
     message ApertureRing {
@@ -240,10 +200,11 @@ message SharedEndpointQueueState {
     oneof impl {
         Pipe pipe = 1;
         Verbs verbs = 2;
-        DioriteRing diorite_ring = 3;
         ApertureRing aperture_ring = 4;
         HostRing host_ring = 5;
     }
+    
+    reserved 3;
     
     message Pipe {
         
@@ -251,19 +212,6 @@ message SharedEndpointQueueState {
     
     message Verbs {
         
-    }
-    
-    message DioriteRing {
-        optional int32 metadata_fd_index = 1;
-        optional uint64 metadata_fd_offset = 2;
-        optional uint64 metadata_pages = 3;
-        optional uint64 command_backing_pages = 4;
-        optional uint64 completion_backing_pages = 5;
-        optional uint64 command_ring_capacity_in_bytes = 6;
-        optional uint64 completion_ring_capacity_in_bytes = 7;
-        optional uint64 message_capacity_in_bytes = 8;
-        optional uint64 next_command_metadata_index = 9;
-        optional uint64 next_completion_metadata_index = 10;
     }
     
     message ApertureRing {
@@ -295,14 +243,26 @@ message SharedEndpointQueueState {
     }
 }
 
+message SharedRingState {
+    optional int32 metadata_fd_index = 1;
+    optional uint64 metadata_fd_offset = 2;
+    optional uint64 metadata_pages = 3;
+    optional uint64 command_backing_pages = 4;
+    optional uint64 completion_backing_pages = 5;
+    optional uint64 command_ring_capacity_in_bytes = 6;
+    optional uint64 completion_ring_capacity_in_bytes = 7;
+    optional uint64 message_capacity_in_bytes = 8;
+}
+
 message SharedStationQueueState {
     oneof impl {
         Pipe pipe = 1;
         Verbs verbs = 2;
-        DioriteRing diorite_ring = 3;
         ApertureRing aperture_ring = 4;
         HostRing host_ring = 5;
     }
+    
+    reserved 3;
     
     message Pipe {
         
@@ -310,22 +270,6 @@ message SharedStationQueueState {
     
     message Verbs {
         
-    }
-    
-    message DioriteRing {
-        optional int32 metadata_fd_index = 1;
-        optional uint64 metadata_fd_offset = 2;
-        optional uint64 metadata_pages = 3;
-        optional uint64 metadata_remote_iova = 4;
-        optional uint64 command_backing_pages = 5;
-        optional uint64 completion_backing_pages = 6;
-        optional uint64 command_ring_capacity_in_bytes = 7;
-        optional uint64 completion_ring_capacity_in_bytes = 8;
-        optional uint64 message_capacity_in_bytes = 9;
-        optional AccDmaMetadataBlock command_heads_metadata = 10;
-        optional AccDmaMetadataBlock command_tails_metadata = 11;
-        optional AccDmaMetadataBlock completion_heads_metadata = 12;
-        optional AccDmaMetadataBlock completion_tails_metadata = 13;
     }
     
     message ApertureRing {
@@ -341,17 +285,13 @@ message SharedStationQueueState {
         optional int32 reverse_aperture_metadata_fd = 10;
         optional ApertureAccRangeInfo aperture_range_info = 11;
         optional uint64 aperture_mode = 12;
+        optional SharedRingState state = 13;
     }
     
     message HostRing {
-        optional int32 metadata_fd_index = 1;
-        optional uint64 metadata_fd_offset = 2;
-        optional uint64 metadata_pages = 3;
-        optional uint64 command_backing_pages = 4;
-        optional uint64 completion_backing_pages = 5;
-        optional uint64 command_ring_capacity_in_bytes = 6;
-        optional uint64 completion_ring_capacity_in_bytes = 7;
-        optional uint64 message_capacity_in_bytes = 8;
+        optional SharedRingState state = 9;
+        
+        reserved 1, 2, 3, 4, 5, 6, 7, 8;
     }
 }
 
@@ -359,20 +299,17 @@ message SharedEngineQueueConfig {
     oneof impl {
         Pipe pipe = 1;
         Verbs verbs = 2;
-        DioriteRing diorite_ring = 3;
         ApertureRing aperture_ring = 4;
         HostRing host_ring = 5;
     }
+    
+    reserved 3;
     
     message Pipe {
         
     }
     
     message Verbs {
-        
-    }
-    
-    message DioriteRing {
         
     }
     

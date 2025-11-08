@@ -13,7 +13,7 @@ message TraceRecord {
     required fixed64 global_id = 2;
     optional fixed64 global_id_hi = 44;
     optional fixed64 parent_span_id = 14;
-    optional fixed64 grandparent_span_id = 39;
+    optional fixed64 grandparent_span_id = 39 [deprecated = true];
     optional fixed64 process_id = 15;
     optional int32 trace_mask = 16 [default = 1];
     optional double sampling_probability = 32 [deprecated = true];
@@ -25,10 +25,10 @@ message TraceRecord {
     optional string stubby_name_with_package = 45;
     optional double local_start_time = 19 [deprecated = true];
     optional double local_end_time = 20 [deprecated = true];
-    optional fixed64 local_start_time_ns = 51;
-    optional fixed64 local_end_time_ns = 52;
+    optional sfixed64 local_start_time_ns = 51;
+    optional sfixed64 local_end_time_ns = 52;
     optional double local_stop_time = 31 [deprecated = true];
-    optional fixed64 local_stop_time_ns = 53;
+    optional sfixed64 local_stop_time_ns = 53;
     optional bool is_leaf = 26 [deprecated = true];
     optional int32 child_span_count = 38;
     optional bool error = 33 [deprecated = true];
@@ -46,7 +46,7 @@ message TraceRecord {
     optional uint64 initiator_id = 43;
     optional string resolved_initiator = 50;
     
-    optional SpanIdVersion span_id_version = 40 [default = SPAN_ID_VERSION_SAME_FOR_CLIENT_SERVER];
+    optional SpanIdVersion span_id_version = 40 [default = SPAN_ID_VERSION_SAME_FOR_CLIENT_SERVER, deprecated = true];
     enum SpanIdVersion {
         SPAN_ID_VERSION_SAME_FOR_CLIENT_SERVER = 0;
         SPAN_ID_VERSION_UNIQUE = 1;
@@ -67,7 +67,7 @@ message TraceRecord {
             optional string key = 27;
             optional perftools.tracing.SourceLocation source_location = 46;
             optional double timestamp = 12 [deprecated = true];
-            optional fixed64 timestamp_ns = 54;
+            optional sfixed64 timestamp_ns = 54;
             optional int32 thread_id = 37;
             optional string string_value = 13;
             optional int32 int32_value = 21;
@@ -75,18 +75,13 @@ message TraceRecord {
             optional double double_value = 23;
             optional .proto2.bridge.MessageSet message_value = 24;
             optional bool boolean_value = 30;
-            
-            repeated group SymbolizedStackFrame = 25 {
-                required int64 program_counter = 28;
-                optional string function_name = 29;
-            }
         }
     }
     
     optional bool skipped_annotations = 55;
     optional bool annotation_buffer_overflow = 56;
     
-    reserved 3 to 8, 35;
+    reserved 3 to 8, 25, 35, 58;
     
     extend .proto2.bridge.MessageSet {
         optional TraceRecord message_set_extension = 6076542;

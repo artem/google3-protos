@@ -2,6 +2,7 @@ syntax = "proto3";
 
 package privacy.data_governance.attributes;
 
+import "google/api/inclusion.proto";
 import "logs/proto/logs_annotations/logs_annotations.proto";
 import "privacy/ads/user_data_enforcement/data-usage.proto";
 import "privacy/data_governance/attributes/proto/classification.proto";
@@ -25,6 +26,7 @@ message ProcessingPurpose {
         REVENUE_GENERATION = 4;
         USER_SUPPORT = 5;
         CLOUD_PROCESSING_INFRASTRUCTURE = 22;
+        CLOUD_PROCESSING_INFRASTRUCTURE_VALIDATION = 33;
         ACCOUNT_MANAGEMENT = 24;
         USER_COMMUNICATIONS = 25;
         MODEL_TRAINING = 30;

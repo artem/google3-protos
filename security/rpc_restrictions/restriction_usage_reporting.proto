@@ -2,6 +2,7 @@ syntax = "proto2";
 
 package security_rpc_restrictions;
 
+import "security/rpc_restrictions/proto/rpc_permissions.proto";
 import "security/util/proto/permission.proto";
 
 option java_multiple_files = true;
@@ -9,7 +10,11 @@ option java_package = "com.google.protos.security_rpc_restrictions.proto1api";
 
 message PermissionUsageReport {
     optional string context_url = 1;
-    optional DestinationPermission matched_permission = 2;
     optional string service = 3;
     optional string method = 4;
+    
+    oneof match {
+        DestinationPermission matched_permission = 2;
+        Permission matched_permission_new = 5;
+    }
 }

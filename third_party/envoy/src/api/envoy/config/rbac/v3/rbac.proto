@@ -101,6 +101,7 @@ message Principal {
         .envoy.type.matcher.v3.FilterStateMatcher filter_state = 12;
         Principal not_id = 8;
         SourcedMetadata sourced_metadata = 13;
+        .envoy.config.core.v3.TypedExtensionConfig custom = 14;
     }
     
     message Set {

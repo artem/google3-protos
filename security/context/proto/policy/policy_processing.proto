@@ -2,6 +2,7 @@ syntax = "proto2";
 
 package rpcsp;
 
+import "google/api/inclusion.proto";
 import "google/iam/v1/rule.proto";
 import "google/protobuf/empty.proto";
 import "net/proto2/proto/descriptor.proto";
@@ -89,6 +90,7 @@ enum PolicyCheckName {
     CHECK_REQUIRE_RPC_SERVICES_FIELD = 19;
     CHECK_HTTPSP_MEETING_CORP_WEB_MANDATORY_CONTROL = 20;
     CHECK_NO_OVERLAPPING_HUMAN_PROD_BINDINGS = 21;
+    CHECK_SCAFFOLDING_FULLY_QUALIFIED_NAMES_CONSISTENCY = 22;
 }
 
 enum PolicyRewriteTarget {

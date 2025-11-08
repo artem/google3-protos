@@ -2,6 +2,7 @@ syntax = "proto2";
 
 package security.data_access;
 
+import "google/api/inclusion.proto";
 import "logs/proto/data_access/method_type.proto";
 import "logs/proto/data_access/tenant.proto";
 import "storage/datapol/annotations/proto/semantic_annotations.proto";

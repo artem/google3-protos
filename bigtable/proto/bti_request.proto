@@ -148,5 +148,17 @@ message BTI_Request {
         POST_RELEASE_26_8 = 2499;
         RELEASE_26_9 = 2501;
         POST_RELEASE_26_9 = 2509;
+        RELEASE_27_0 = 2511;
+        POST_RELEASE_27_0 = 2519;
+        RELEASE_27_1 = 2521;
+        POST_RELEASE_27_1 = 2529;
+        RELEASE_27_2 = 2531;
+        POST_RELEASE_27_2 = 2539;
+        RELEASE_27_3 = 2541;
+        POST_RELEASE_27_3 = 2549;
+        RELEASE_27_4 = 2551;
+        POST_RELEASE_27_4 = 2559;
+        RELEASE_27_5 = 2561;
+        POST_RELEASE_27_5 = 2569;
     }
 }

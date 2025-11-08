@@ -14,7 +14,7 @@ option java_outer_classname = "LocationProto";
 option java_package = "com.google.api";
 
 message SupportedLocation {
-    string location_id = 1 [deprecated = true];
+    string location_id = 1;
     string regions = 5;
     string zones = 6;
     string geos = 9;

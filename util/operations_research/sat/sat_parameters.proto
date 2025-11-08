@@ -117,6 +117,7 @@ message SatParameters {
     optional bool minimize_reduction_during_pb_resolution = 48 [default = false];
     optional bool count_assumption_levels_in_lbd = 49 [default = true];
     optional int32 presolve_bve_threshold = 54 [default = 500];
+    optional bool filter_sat_postsolve_clauses = 324 [default = false];
     optional int32 presolve_bve_clause_weight = 55 [default = 3];
     optional double probing_deterministic_time_limit = 226 [default = 1];
     optional double presolve_probing_deterministic_time_limit = 57 [default = 30];
@@ -131,6 +132,7 @@ message SatParameters {
     optional bool detect_table_with_cost = 216 [default = false];
     optional int32 table_compression_level = 217 [default = 2];
     optional bool expand_alldiff_constraints = 170 [default = false];
+    optional int32 max_alldiff_domain_size = 320 [default = 256];
     optional bool expand_reservoir_constraints = 182 [default = true];
     optional bool expand_reservoir_using_circuit = 288 [default = false];
     optional bool encode_cumulative_as_reservoir = 287 [default = false];
@@ -166,6 +168,7 @@ message SatParameters {
     optional bool share_binary_clauses = 203 [default = true];
     optional bool share_glue_clauses = 285 [default = false];
     optional bool minimize_shared_clauses = 300 [default = true];
+    optional double share_glue_clauses_dtime = 322 [default = 1];
     optional bool debug_postsolve_with_full_solver = 162 [default = false];
     optional int32 debug_max_num_presolve_operations = 151 [default = 0];
     optional bool debug_crash_on_bad_hint = 195 [default = false];
@@ -204,18 +207,22 @@ message SatParameters {
     optional bool use_hard_precedences_in_cumulative = 215 [default = false];
     optional bool exploit_all_precedences = 220 [default = false];
     optional bool use_disjunctive_constraint_in_cumulative = 80 [default = true];
+    optional int32 no_overlap_2d_boolean_relations_limit = 321 [default = 10];
     optional bool use_timetabling_in_no_overlap_2d = 200 [default = false];
     optional bool use_energetic_reasoning_in_no_overlap_2d = 213 [default = false];
     optional bool use_area_energetic_reasoning_in_no_overlap_2d = 271 [default = false];
     optional bool use_try_edge_reasoning_in_no_overlap_2d = 299 [default = false];
     optional int32 max_pairs_pairwise_reasoning_in_no_overlap_2d = 276 [default = 1250];
     optional int32 maximum_regions_to_split_in_disconnected_no_overlap_2d = 315 [default = 0];
+    optional bool use_linear3_for_no_overlap_2d_precedences = 323 [default = true];
     optional bool use_dual_scheduling_heuristics = 214 [default = true];
     optional bool use_all_different_for_circuit = 311 [default = false];
     optional int32 routing_cut_subset_size_for_binary_relation_bound = 312 [default = 0];
     optional int32 routing_cut_subset_size_for_tight_binary_relation_bound = 313 [default = 0];
-    optional int32 routing_cut_subset_size_for_exact_binary_relation_bound = 316 [default = 0];
+    optional int32 routing_cut_subset_size_for_exact_binary_relation_bound = 316 [default = 8];
+    optional int32 routing_cut_subset_size_for_shortest_paths_bound = 318 [default = 8];
     optional double routing_cut_dp_effort = 314 [default = 10000000];
+    optional int32 routing_cut_max_infeasible_path_length = 317 [default = 6];
     
     optional SearchBranching search_branching = 82 [default = AUTOMATIC_SEARCH];
     enum SearchBranching {
@@ -236,12 +243,12 @@ message SatParameters {
     optional bool use_probing_search = 176 [default = false];
     optional bool use_extended_probing = 269 [default = true];
     optional int32 probing_num_combinations_limit = 272 [default = 20000];
-    optional bool use_shaving_in_probing_search = 204 [default = true];
-    optional double shaving_search_deterministic_time = 205 [default = 0.001];
+    optional double shaving_deterministic_time_in_probing_search = 204 [default = 0.001];
+    optional double shaving_search_deterministic_time = 205 [default = 0.1];
     optional int64 shaving_search_threshold = 290 [default = 64];
     optional bool use_objective_lb_search = 228 [default = false];
     optional bool use_objective_shaving_search = 253 [default = false];
-    optional bool use_variables_shaving_search = 289 [default = false];
+    optional int32 variables_shaving_level = 289 [default = -1];
     optional int64 pseudo_cost_reliability_threshold = 123 [default = 100];
     optional bool optimize_with_core = 83 [default = false];
     optional bool optimize_with_lb_tree_search = 188 [default = false];
@@ -293,6 +300,7 @@ message SatParameters {
     optional bool use_lns = 283 [default = true];
     optional bool use_lns_only = 101 [default = false];
     optional int32 solution_pool_size = 193 [default = 3];
+    optional int32 alternative_pool_size = 325 [default = 1];
     optional bool use_rins_lns = 129 [default = true];
     optional bool use_feasibility_pump = 164 [default = true];
     optional bool use_lb_relax_lns = 255 [default = true];

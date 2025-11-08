@@ -5,10 +5,8 @@ package security.keymaster;
 import "google/protobuf/any.proto";
 import "security/keymaster/keymaster.proto";
 import "security/keymaster/tink.proto";
-import "security/panoptikeys/crypto_key_params/crypto_key_params.proto";
 import "storage/datapol/annotations/proto/semantic_annotations.proto";
 
-option cc_enable_arenas = true;
 option go_package = "keymaster";
 option java_multiple_files = true;
 option java_outer_classname = "UnusedKeyFormatOuterName";

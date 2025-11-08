@@ -1,0 +1,14 @@
+syntax = "editions";
+
+package security_realms;
+
+message RegionalTrustEnforcementContext {
+    optional Enum enforcement_context = 1;
+    enum Enum {
+        REGIONAL_TRUST_ENFORCEMENT_CONTEXT_UNKNOWN = 0;
+        LOAS_IN_THINMINT = 1;
+        LOAS_DIRECT = 2;
+        THINMINT = 3;
+        OFFLINE = 4;
+    }
+}

@@ -1,0 +1,12 @@
+syntax = "editions";
+
+package storage_security;
+
+option java_multiple_files = true;
+
+enum CfsRoleName {
+    CFS_UNSPECIFIED_ROLE_NAME = 0;
+    CFS_READER = 1;
+    CFS_CREATOR = 2;
+    CFS_WRITER = 3;
+}

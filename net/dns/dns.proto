@@ -2,6 +2,7 @@ syntax = "proto2";
 
 package net_dns;
 
+import "google/api/inclusion.proto";
 import "storage/datapol/annotations/proto/semantic_annotations.proto";
 
 option java_outer_classname = "Protocol";
@@ -247,7 +248,16 @@ message OPTEntry {
 message EDNSOptionEntry {
     required uint32 code = 1;
     required bytes payload = 2;
-    optional EDNSClientSubnetEntry client_subnet = 3;
+    
+    oneof option_data {
+        EDNSClientSubnetEntry client_subnet = 3;
+        EDNSOptionExtendedErrorEntry extended_error = 4;
+    }
+}
+
+message EDNSOptionExtendedErrorEntry {
+    optional int32 info_code = 1;
+    optional bytes extra_text = 2;
 }
 
 message EDNSClientSubnetEntry {

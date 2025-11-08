@@ -56,6 +56,7 @@ message CheckResponse {
         repeated string restricted_containers = 3;
         repeated string unrestricted_containers = 4;
         string api_key_uid = 5;
+        bool ignore_api_key_uid_as_credential_id = 6;
     }
     
     bytes service_control_token = 8;

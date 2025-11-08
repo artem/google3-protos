@@ -23,6 +23,8 @@ enum Service {
     VCNS = 3;
     STORAGE_D = 4;
     NC_B4 = 8;
+    NC_B2_EDGE = 9;
+    NC_VIRGO = 10;
 }
 
 enum DeploymentType {

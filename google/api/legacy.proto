@@ -2,6 +2,7 @@ syntax = "proto3";
 
 package google.api;
 
+import "google/api/inclusion.proto";
 import "google/api/visibility.proto";
 
 option objc_class_prefix = "GAPI";
@@ -18,7 +19,7 @@ message Legacy {
     string api_v1_name = 5;
     Devconsole devconsole = 6;
     repeated string excluded_versions_in_package_path = 11;
-    ControlPlaneMigration control_plane_migration = 13;
+    ControlPlaneMigration control_plane_migration = 13 [deprecated = true];
     bool hidden_from_list = 15;
     string bug_id = 16;
     map<string, TrustedTesterList> restricted_quota_bucket_trusted_testers = 17;

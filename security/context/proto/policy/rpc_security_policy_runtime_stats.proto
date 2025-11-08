@@ -144,6 +144,11 @@ message PolicyEvaluationResult {
     optional util.error.Code aac_status = 3;
 }
 
+message AuthzPermissionCheckResult {
+    optional string permission_name = 1;
+    optional PolicyEvaluationResult check_result = 2;
+}
+
 message RpcRequestEvalResult {
     optional bool darklaunch = 1;
     optional CredsPermission creds_permission = 2;
@@ -155,6 +160,7 @@ message RpcRequestEvalResult {
     optional PolicyEvaluationResult authz_check_result = 8;
     optional RpcSecurityPolicyVersion rpcsp_version = 9;
     optional RpcStatus rpc_result = 10;
+    repeated AuthzPermissionCheckResult authz_permission_results = 11;
 }
 
 message RpcSecurityEvent {

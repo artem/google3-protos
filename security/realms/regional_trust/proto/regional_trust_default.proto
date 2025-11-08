@@ -1,0 +1,11 @@
+syntax = "editions";
+
+package security_realms;
+
+import "security/realms/regional_trust/proto/regional_trust_exemption.proto";
+import "security/realms/regional_trust/proto/regional_trust_policy.proto";
+
+message RegionalTrustDefault {
+    optional RegionalTrustPolicy policy = 1;
+    optional RegionalTrustExemptions exemptions = 2;
+}

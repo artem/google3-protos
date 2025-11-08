@@ -19,18 +19,24 @@ message JlsRecord {
 
 message JlsReport {
     repeated JlsRecord static_data = 1;
-    repeated fixed64 static_ids = 2;
-    map<fixed64, RecordWithIds> dynamic_data = 3;
+    map<fixed64, DynamicRecordMetadata> dynamic_data = 3;
     
     oneof execution_id {
         int64 borg_run_uid = 6;
         int64 custom_execution_id = 7;
     }
     
-    reserved 4, 5;
+    reserved 2, 4, 5;
     
-    message RecordWithIds {
+    message FlowTransition {
+        optional fixed64 old_flow_id = 1;
+        optional fixed64 new_flow_id = 2;
+        repeated fixed64 pcids = 3 [deprecated = true];
+    }
+    
+    message DynamicRecordMetadata {
         optional JlsRecord record = 1;
-        repeated fixed64 ids = 2;
+        repeated fixed64 ids = 2 [deprecated = true];
+        repeated FlowTransition flow_transitions = 3;
     }
 }

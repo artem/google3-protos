@@ -22,6 +22,7 @@ message TagMetadata {
     optional bool track_tag_loss = 11 [default = false];
     optional bool allow_long_value = 14;
     repeated TagPropagation.AllowVia allow_propagation_via = 8;
+    repeated string links_to_shared_design_docs = 16;
     
     reserved 2, 12;
 }

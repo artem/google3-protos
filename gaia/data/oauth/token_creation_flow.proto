@@ -29,6 +29,8 @@ enum CreationFlowEnum {
     GIS_ONETAP = 23;
     GIS_BUTTON = 24;
     GIS_AUTHORIZATION = 25;
+    GIS_ONE_TAP_SITE_KIT = 30;
+    GIS_BUTTON_SITE_KIT = 31;
     GIS_VWG = 29;
     PROGRAMMATIC_AUTH = 26;
     FEDCM = 28;

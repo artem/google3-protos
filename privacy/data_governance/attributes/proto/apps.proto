@@ -2,6 +2,7 @@ syntax = "proto2";
 
 package privacy.data_governance.attributes;
 
+import "google/api/inclusion.proto";
 import "privacy/data_governance/attributes/proto/classification.proto";
 
 option java_multiple_files = true;
@@ -18,6 +19,11 @@ message Apps {
     message Data {
         repeated Product product = 1;
         optional DataType data = 2;
+    }
+    
+    message DataCollectedUnderSpecialTerms {
+        optional classification.Category.HasCategory consumer_labs = 1;
+        optional classification.Category.HasCategory enterprise_labs = 2;
     }
     
     enum Product {
@@ -73,16 +79,16 @@ message AppsCommon {
         DATA_CLASS_PRIMARY_CONTENT = 1;
         DATA_CLASS_TRANSFORMED_PRIMARY_CONTENT = 2;
         DATA_CLASS_CONTENT_DESCRIPTORS = 3;
-        DATA_CLASS_TRAFFIC_DATA = 4 [deprecated = true];
         DATA_CLASS_SENSITIVE_EVENTS = 4;
-        DATA_CLASS_ENTITY_RELATIONSHIPS = 5 [deprecated = true];
+        DATA_CLASS_TRAFFIC_DATA = 4 [deprecated = true];
         DATA_CLASS_USER_TO_USER_GRAPH = 5;
+        DATA_CLASS_ENTITY_RELATIONSHIPS = 5 [deprecated = true];
         DATA_CLASS_PERMISSIONS_AND_MEMBERSHIPS = 14;
         DATA_CLASS_COMPLEX_ADMIN_POLICIES = 6;
         DATA_CLASS_COMPLEX_USER_SETTINGS = 7;
         DATA_CLASS_METADATA = 8;
-        DATA_CLASS_INTERACTION_DATA = 9 [deprecated = true];
         DATA_CLASS_INTERACTION_EVENTS_AND_SUMMARIES = 9;
+        DATA_CLASS_INTERACTION_DATA = 9 [deprecated = true];
         DATA_CLASS_IDENTITIES = 10;
         DATA_CLASS_NON_IDENTIFIABLE_DERIVED_DATA = 11;
         DATA_CLASS_SIMPLE_SETTINGS = 12;

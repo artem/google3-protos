@@ -8,6 +8,12 @@ option java_package = "com.google.net.dns";
 message FileModuleParams {
     optional string filename = 1 [default = "/etc/hosts"];
     optional int32 ttl = 2 [default = 3600];
+    
+    repeated HostEntry additional_hosts = 3;
+    message HostEntry {
+        optional string hostname = 1;
+        optional string address = 2;
+    }
 }
 
 message RawModuleParams {

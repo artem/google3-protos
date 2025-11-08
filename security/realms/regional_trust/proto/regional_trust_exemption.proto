@@ -18,7 +18,6 @@ message RegionalTrustExemptions {
     
     enum ExemptionScope {
         EXEMPTION_SCOPE_UNSPECIFIED = 0;
-        GLOBAL_SERVICES = 1;
         CELL_JK_EXPERIMENT = 2;
         CROSS_REGIONAL_CHANGE_MANAGEMENT = 5;
         CROSS_REGIONAL_DATA_AND_ANALYTICS = 6;
@@ -26,5 +25,6 @@ message RegionalTrustExemptions {
         CROSS_REGIONAL_MONITORING = 3;
         CROSS_REGIONAL_NETWORKING = 4;
         CROSS_REGIONAL_STORAGE = 8;
+        D_PILOT = 9;
     }
 }

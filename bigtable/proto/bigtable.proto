@@ -5,10 +5,11 @@ package bigtable;
 import "bigtable/proto/cache_sizer_params.proto";
 import "bigtable/proto/change_data_capture.proto";
 import "bigtable/proto/dma_rollout.proto";
-import "bigtable/proto/materialized_views_config.proto";
 import "bigtable/proto/privacy_attributes.proto";
+import "bigtable/proto/remote_cache.proto";
 import "bigtable/proto/rowset.proto";
 import "bigtable/proto/schema_validator_spec.proto";
+import "bigtable/proto/write_policy_config.proto";
 import "google/protobuf/duration.proto";
 import "google/protobuf/timestamp.proto";
 import "net/proto2/bridge/proto/message_set.proto";
@@ -82,8 +83,10 @@ message FamilyDescription {
     optional string description = 7;
     optional string type = 8;
     optional Type data_type = 25;
+    optional PrivacyAttributes privacy_attributes = 22;
     optional bool stores_proto = 23;
     optional bool always_mint_ptoken = 24;
+    optional WritePolicyConfig write_policy_config = 27;
     optional int32 gclimit = 9 [default = -1];
     optional int64 gclife_micros = 10 [default = -1];
     optional string gcexpr = 18;
@@ -91,7 +94,6 @@ message FamilyDescription {
     optional int64 gcoffset_micros = 20;
     optional string owner = 17;
     optional PropertyMap userdata = 19;
-    optional PrivacyAttributes privacy_attributes = 22;
 }
 
 message BloomFilterSettings {
@@ -495,6 +497,8 @@ message PartitionMetadata {
         optional string accounting_user = 5;
         optional SsdOpsState ssd_ops_state = 6;
         optional bool ssd_ops_migration_active = 7;
+        optional double service_hdd_tax = 8;
+        optional double service_ssd_tax = 9;
     }
     
     optional bool cloud_kms_encryption_enabled = 49 [default = false];
@@ -511,6 +515,7 @@ message PartitionMetadata {
     
     optional bool ssd_to_ssd_data_column_override = 57 [default = false];
     optional DefaultPtokenFilterPolicy default_ptoken_filter_policy = 58 [default = FAMILY_POLICY_FAIL_REQUEST];
+    optional WritePolicyConfig write_policy_config = 61;
     
     reserved 10 to 12, 20 to 26;
     
@@ -608,6 +613,7 @@ message TableMetadata {
     repeated string backup_and_snapshot_administrator = 57;
     repeated string backup_and_snapshot_restorer = 58;
     optional bool offline_access_can_snapshot_table = 45 [default = false];
+    optional BatchReplication batch_replication = 68;
     optional bool disable_adaptive_stack_depth = 46 [default = false];
     optional int32 max_boa_ttl_hours = 47 [default = 336];
     optional string bandwidth_delegated_user = 48;
@@ -626,14 +632,15 @@ message TableMetadata {
     optional DmaRolloutConfig dma_rollout_config = 62;
     optional int32 min_num_tablets = 27 [deprecated = true];
     optional bool ssd_to_ssd_data_column_override_opt_out = 63 [default = false];
-    optional MaterializedViewsConfig materialized_views_config = 65;
+    optional bool has_materialized_views = 67;
+    optional RemoteCacheConfig remote_cache_config = 69;
     
     oneof crn_oneof {
         string cloud_resource_name = 51;
         uint64 cloud_resource_name_fingerprint = 60;
     }
     
-    reserved 11, 22, 25, 37, 42, 61;
+    reserved 11, 22, 25, 37, 42, 61, 65;
 }
 
 message Quota {
@@ -749,7 +756,6 @@ message CellMetadata {
     optional ChubbyCompressed chubby_compressed = 52;
     optional fixed32 _checksum = 53;
     optional fixed32 _crc_checksum = 67;
-    map<int32, KeystoreConfig> OBSOLETE_keystore_configs = 57;
     optional ChronicleConfig chronicle_config = 58;
     
     repeated CfsPartitionQuota cfs_partition_quota = 59;
@@ -835,7 +841,7 @@ message CellMetadata {
     
     optional CellLocationProxyConfig location_proxy_config = 65;
     
-    reserved 4, 5, 8 to 14, 26, 27, 32, 61, 63;
+    reserved 4, 5, 8 to 14, 26, 27, 32, 57, 61, 63;
     
     enum Version {
         BASE = 0;
@@ -847,10 +853,6 @@ message CellMetadata {
     enum FSRootType {
         FSROOT_NORMAL = 0;
         FSROOT_SAFE_BULKIMPORT = 1;
-    }
-    
-    enum KeystoreConfigType {
-        MINT_ATTENUATION = 0;
     }
     
     enum CfsPartition {
@@ -970,6 +972,12 @@ message CloudKMSEncryptionSettings {
 message ShredmillEncryptionSettings {
     optional string erasure_scope_id = 1;
     optional google.protobuf.Duration shredmill_key_ttl = 2;
+}
+
+message BatchReplication {
+    optional bool source = 1;
+    optional bool puller = 2;
+    optional string effingo_resource_mdb = 3;
 }
 
 enum EncryptionType {

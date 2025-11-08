@@ -4,6 +4,7 @@ package google.rpc;
 
 import "google/protobuf/duration.proto";
 import "storage/datapol/annotations/proto/semantic_annotations.proto";
+import "third_party/boundary_proxy/proto_compare/annotation.proto";
 
 option objc_class_prefix = "RPC";
 option go_package = "google.golang.org/genproto/googleapis/rpc/errdetails;errdetails";

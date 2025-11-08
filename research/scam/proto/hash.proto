@@ -2,6 +2,7 @@ syntax = "proto2";
 
 package research_scam;
 
+import "research/scam/applications/flos_q2d/useccfs.proto";
 import "research/scam/proto/chunked_hamming.proto";
 import "research/scam/proto/distance_measure.proto";
 import "research/scam/proto/projection.proto";
@@ -105,6 +106,13 @@ message BitSamplingHasherConfig {
     optional int32 num_bits = 1 [default = 3];
     optional bool use_entropy = 2 [default = false];
     optional ChunkedHammingConfig chunked_hamming = 3;
+    
+    optional FlashExactReorderingConfig flash_exact_reordering = 4;
+    message FlashExactReorderingConfig {
+        optional bool enabled = 1 [default = false];
+        optional string flash_files = 2;
+        optional UsecCfsConfig useccfs_config = 3;
+    }
 }
 
 message PcaHasherConfig {

@@ -21,6 +21,7 @@ message MemoryConsumptionEstimate {
     optional int64 inverted_index = 11;
     optional int64 crowding = 8;
     optional int64 restricts = 9;
+    optional int64 numeric_restricts = 16;
     map<string, int64> custom_restricts = 14;
     optional int64 restricts_cache = 13;
     optional int64 userinfo = 10;

@@ -2,6 +2,7 @@ syntax = "proto2";
 
 import "net/proto2/bridge/proto/message_set.proto";
 import "security/credentials/proto/principal.proto";
+import "security/rpc_restrictions/proto/rpc_permissions.proto";
 import "security/thinmint/proto/thinmint.proto";
 import "storage/datapol/annotations/proto/semantic_annotations.proto";
 
@@ -21,6 +22,7 @@ message AcctRestrictions {
 
 message DestinationRestriction {
     repeated DestinationPermission destination_permissions = 1;
+    repeated security_rpc_restrictions.Permission permissions = 3;
     optional string context_url = 2;
 }
 

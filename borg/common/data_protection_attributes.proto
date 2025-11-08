@@ -16,7 +16,7 @@ message DataProtectionAttributes {
     optional int32 default_product_id = 1;
     repeated privacy.data_governance.attributes.ProcessingPurpose.Purpose processing_purpose = 2 [packed = true];
     optional bool dma52_cross_use_offered_together = 3;
-    repeated .ptoken.LogicalPolicy.Enum request_policy_enforcement = 4 [packed = true];
+    repeated .ptoken.LogicalPolicy.Enum request_policy_enforcement = 4 [packed = true, deprecated = true];
     repeated .ptoken.LogicalPolicy.Enum enforce_upcoming_policies_nonprod = 17 [packed = true];
     optional bool enforce_all_upcoming_policies_nonprod = 18;
     optional bool enforce_wave3_dma52_prod_early = 19;

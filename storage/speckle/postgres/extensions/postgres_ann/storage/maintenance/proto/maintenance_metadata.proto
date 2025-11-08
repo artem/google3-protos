@@ -15,6 +15,13 @@ message SplitPartitionMetadata {
     optional TupleId new_partition = 3;
 }
 
+message MaintScanMetadata {
+    optional TupleId latest_scanned_partition = 1;
+    optional int64 last_maintenance_cycle = 2;
+    optional int64 latest_mutation_count = 3;
+}
+
 message IndexBuildMetadata {
     optional uint64 avg_rows_per_partition = 1;
+    optional uint64 total_index_rows = 2;
 }

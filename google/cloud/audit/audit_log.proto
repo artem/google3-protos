@@ -3,6 +3,7 @@ syntax = "proto3";
 package google.cloud.audit;
 
 import public "google/cloud/audit/policy_violation_info.proto";
+import "google/api/inclusion.proto";
 import "google/api/visibility.proto";
 import "google/cloud/audit/authorization_logging_options.proto";
 import "google/protobuf/any.proto";

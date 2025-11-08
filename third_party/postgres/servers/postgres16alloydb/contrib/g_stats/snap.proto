@@ -479,4 +479,59 @@ message Snapshot {
         optional int64 walwrite_time_us = 7;
         optional int64 walsync_time_us = 8;
     }
+    
+    repeated Checkpointer checkpointers = 38;
+    message Checkpointer {
+        optional int64 num_timed = 1;
+        optional int64 num_requested = 2;
+        optional int64 buffers_written = 3;
+        optional int64 stats_reset = 4;
+    }
+    
+    repeated IOStats io_stats = 39;
+    message IOStats {
+        optional string backend_type = 1;
+        optional string context = 2;
+        optional int64 writes = 3;
+        optional int64 extends = 4;
+        optional int64 stats_reset = 5;
+    }
+    
+    repeated QueryStats query_stats = 40;
+    message QueryStats {
+        optional int64 userid = 1;
+        optional int64 dbid = 2;
+        optional bool toplevel = 3;
+        optional string query = 4;
+        optional int64 queryid = 5;
+        optional int64 calls = 6;
+        optional double total_exec_time_ms = 7;
+        optional double mean_exec_time_ms = 8;
+        optional double stddev_exec_time_ms = 9;
+        optional int64 shared_blks_hit = 10;
+        optional int64 shared_blks_read = 11;
+        optional int64 shared_blks_dirtied = 12;
+        optional int64 shared_blks_written = 13;
+        optional int64 local_blks_hit = 14;
+        optional int64 local_blks_read = 15;
+        optional int64 local_blks_dirtied = 16;
+        optional int64 local_blks_written = 17;
+        optional int64 temp_blks_read = 18;
+        optional int64 temp_blks_written = 19;
+        optional double blk_read_time_ms = 20;
+        optional double blk_write_time_ms = 21;
+        optional double shared_blk_read_time_ms = 22;
+        optional double shared_blk_write_time_ms = 23;
+        optional double local_blk_read_time_ms = 24;
+        optional double local_blk_write_time_ms = 25;
+        optional double temp_blk_read_time_ms = 26;
+        optional double temp_blk_write_time_ms = 27;
+        optional int64 wal_records = 28;
+    }
+    
+    optional QueryStatsInfo query_stats_info = 41;
+    message QueryStatsInfo {
+        optional int64 dealloc = 1;
+        optional int64 stats_reset = 2;
+    }
 }

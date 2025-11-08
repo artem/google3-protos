@@ -45,11 +45,16 @@ message Attributes {
         optional int64 ads_network_id = 12;
         optional int64 ads_publisher_id = 15;
         optional int64 tag_account_id = 14;
+        optional int64 analytics_account_id = 29;
+        optional int64 analytics_property_id = 30;
+        optional string suite_org_id = 31;
         optional string youtube_channel_id = 13;
         optional string youtube_content_owner_id = 27;
+        optional string youtube_vanity_name = 33;
         optional int64 payments_customer_id = 17;
         optional int64 payments_billing_customer_number = 26;
         optional string geo_feature_id = 18;
+        optional string secops_customer_id = 32;
     }
     
     optional ResourceProduct resource_product = 2;
@@ -100,13 +105,18 @@ message PrincipalIdentifier {
         int64 ads_network_id = 12;
         int64 ads_publisher_id = 15;
         int64 tag_account_id = 14;
+        int64 analytics_account_id = 29;
+        int64 analytics_property_id = 30;
+        string suite_org_id = 31;
         uint64 merchant_id = 11 [jstype = JS_STRING];
         uint64 commerce_listing_id = 17 [jstype = JS_STRING];
         string youtube_channel_id = 13;
         string youtube_content_owner_id = 27;
+        string youtube_vanity_name = 33;
         int64 payments_customer_id = 18;
         int64 payments_billing_customer_number = 26;
         string geo_feature_id = 19;
+        string secops_customer_id = 32;
     }
 }
 
@@ -142,4 +152,5 @@ enum RelationType {
     UNDEFINED = 0;
     OWNER = 1;
     ASSOCIATED_PRINCIPAL = 2;
+    UNOWNED = 99;
 }

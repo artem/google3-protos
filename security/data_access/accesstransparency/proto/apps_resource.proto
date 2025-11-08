@@ -4,6 +4,7 @@ package security.data_access.accesstransparency;
 
 import "security/data_access/accesstransparency/proto/resource.proto";
 import "storage/datapol/annotations/proto/semantic_annotations.proto";
+import "third_party/golang/protobuf/v2/src/google/protobuf/go_features.proto";
 
 option java_package = "com.google.security.data_access.accesstransparency.proto";
 

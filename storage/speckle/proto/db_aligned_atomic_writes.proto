@@ -1,0 +1,9 @@
+syntax = "proto2";
+
+package speckle;
+
+import "storage/datapol/annotations/proto/semantic_annotations.proto";
+
+message DbAlignedAtomicWritesConfig {
+    optional bool db_aligned_atomic_writes = 1 [default = false];
+}

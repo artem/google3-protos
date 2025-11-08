@@ -9,4 +9,5 @@ option java_package = "com.google.prod.rpc.stubs.proto";
 
 message PushbackSignalConfiguration {
     optional int64 suspensions_count_threshold = 1 [default = 10000];
+    optional int64 per_namespace_suspensions_count_threshold = 2;
 }

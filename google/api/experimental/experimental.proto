@@ -9,6 +9,7 @@ import "google/api/experimental/mediation_config.proto";
 import "google/api/experimental/provisioning.proto";
 import "google/api/experimental/service_control_config.proto";
 import "google/api/experimental/service_management_config.proto";
+import "google/api/inclusion.proto";
 import "google/api/visibility.proto";
 
 option objc_class_prefix = "GAPI";
@@ -26,6 +27,8 @@ message Experimental {
     MediationConfig mediation = 10;
     string cargo_container_prefixes = 12;
     repeated string api_root_directories = 13;
+    bool boq_local_env = 14;
+    bool boq_testrealm_env = 15;
     
     reserved 3, 4, 6, 11;
 }

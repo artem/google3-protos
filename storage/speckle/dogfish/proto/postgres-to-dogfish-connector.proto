@@ -13,6 +13,7 @@ service PostgresToDogfishConnector {
     rpc ReadDir(ReadDirRequest) returns (ReadDirResponse);
     rpc RegisterSnapshot(RegisterSnapshotRequest) returns (RegisterSnapshotResponse);
     rpc DeregisterSnapshot(DeregisterSnapshotRequest) returns (DeregisterSnapshotResponse);
+    rpc ControlInfo(ControlInfoRequest) returns (ControlInfoResponse);
 }
 
 message PingRequest {
@@ -51,6 +52,7 @@ message CopyDirsFromDogfishResponse {
 message ReadOrPrefetchBlockInfo {
     optional RelFileId rel_file_id = 1;
     optional uint32 block = 2;
+    optional int32 buffer_id = 3;
 }
 
 message ReadOrPrefetchBlocksRequest {
@@ -68,12 +70,12 @@ message ReadOrPrefetchBlocksRequest {
         PREWARMER = 4;
     }
     
-    optional TransportMethod transport_method = 7;
-    enum TransportMethod {
+    optional PrefetchDestination prefetch_destination = 8;
+    enum PrefetchDestination {
         NONE = 0;
-        SYNC_IPC = 1;
-        ASYNC_IPC = 2;
-        SYNC_GRPC = 3;
+        SHARED_MEMORY_CACHE = 1;
+        CHILL_CACHE = 2;
+        SHARED_BUFFERS = 3;
     }
 }
 

@@ -39,6 +39,10 @@ message InjectedTestingParameters {
     optional bool healthcheck_fs_poller_ignore_file_write = 21;
     optional bool enable_zdt_verify_data_after_promote = 22;
     optional bool enable_zdt_debug_intrumentation = 23;
+    optional bool enable_mos_load_config_from_local = 24;
+    optional string override_mos_bigquery_project_id = 25;
+    optional string override_mos_bigquery_dataset_id = 26;
+    optional bool enable_test_logs = 27;
     
     reserved 3, 4, 6, 7;
 }

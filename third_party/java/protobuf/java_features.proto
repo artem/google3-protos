@@ -19,6 +19,20 @@ message JavaFeatures {
     
     optional bool large_enum = 3;
     optional bool use_old_outer_classname_default = 4;
+    optional NestInFileClassFeature.NestInFileClass nest_in_file_class = 5;
+    
+    reserved 6;
+    
+    message NestInFileClassFeature {
+        reserved 1 to max;
+        
+        enum NestInFileClass {
+            NEST_IN_FILE_CLASS_UNKNOWN = 0;
+            NO = 1;
+            YES = 2;
+            LEGACY = 3;
+        }
+    }
 }
 
 extend .proto2.FeatureSet {

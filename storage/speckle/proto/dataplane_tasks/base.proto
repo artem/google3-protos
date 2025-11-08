@@ -194,6 +194,7 @@ service DataPlaneOperations {
     rpc CheckZdtEligibility(CheckZdtEligibilityRequest) returns (google.longrunning.Operation);
     rpc ManageInstancePermissions(ManageInstancePermissionsRequest) returns (google.longrunning.Operation);
     rpc VerifyReplicationStatus(VerifyReplicationStatusRequest) returns (google.longrunning.Operation);
+    rpc ValidateSql(ValidateSqlRequest) returns (google.longrunning.Operation);
 }
 
 message CreateUserRequest {
@@ -231,6 +232,13 @@ message CheckDatabaseServerRequest {
     
     oneof check_database_details {
         mysql.MysqlCheckDatabaseServerRequest mysql_check_database_request = 4;
+        postgres.PostgresCheckDatabaseServerRequest postgres_check_database_request = 5;
+    }
+}
+
+message CheckDatabaseServerResponse {
+    oneof check_database_details {
+        postgres.PostgresCheckDatabaseServerResponse postgres_check_database_server_response = 1;
     }
 }
 
@@ -283,10 +291,15 @@ message CheckMajorVersionUpgradeViolationResult {
             INVALID_EXTENSION_VERSION = 2;
             DEPRECATED_FLAG = 3;
             UNSUPPORTED_EXTENSION = 4;
+            HIGH_RELATION_COUNT = 5;
+            HIGH_OBJECT_COUNT = 6;
         }
         
         string detail = 2;
+        bool externally_reportable = 3;
     }
+    
+    repeated ViolationCheckResult warnings = 2;
 }
 
 message ProvisionInstanceRequest {
@@ -715,8 +728,8 @@ message ExecuteSqlRequest {
 }
 
 message ExecuteSqlResult {
-    repeated Column columns = 1;
-    repeated Row rows = 2;
+    repeated Column columns = 1 [deprecated = true];
+    repeated Row rows = 2 [deprecated = true];
     repeated QueryResult results = 7;
     
     oneof _message {
@@ -906,11 +919,21 @@ message UserProto {
         DualPasswordType dual_password_type = 10;
     }
     
+    oneof _iam_status {
+        IamStatus iam_status = 11;
+    }
+    
     enum DualPasswordType {
         DUAL_PASSWORD_TYPE_UNSPECIFIED = 0;
         NO_MODIFY_DUAL_PASSWORD = 1;
         NO_DUAL_PASSWORD = 2;
         DUAL_PASSWORD = 3;
+    }
+    
+    enum IamStatus {
+        IAM_STATUS_UNSPECIFIED = 0;
+        INACTIVE = 1;
+        ACTIVE = 2;
     }
 }
 
@@ -1107,6 +1130,7 @@ message SetupReplicaLogicalReplicationRequest {
     SslOption ssl_option = 33;
     bool existing_data_ownership_check = 34;
     bool enable_update_subscriber_node_dsn = 35;
+    bool enable_secure_search_path_in_pg_dsn = 36;
 }
 
 message SetupReplicaLogicalReplicationResult {
@@ -1216,6 +1240,7 @@ message VerifyBackupLogicalCheckRequest {
     bool should_check_unique_key = 3;
     bool should_do_amcheck = 4;
     bool should_check_foreign_key = 5;
+    bool should_check_gin_gist = 6;
 }
 
 message HandleDBCacheRequest {
@@ -1403,6 +1428,7 @@ message VerifyConsistencyRequest {
     google.protobuf.Duration upload_interval = 14;
     string timezone = 15;
     int32 threads_per_core = 17;
+    string timezone_authority_data = 18;
 }
 
 message VerificationResult {
@@ -1422,6 +1448,7 @@ message VerificationResult {
         SMT = 11;
         INSTANCE_BASELINE_STATE = 12;
         SQLSERVER_XEVENTS_CONFIG = 13;
+        TIMEZONE_AUTHORITY_VALIDATION = 14;
     }
     
     string diff = 2;
@@ -1446,6 +1473,7 @@ message CompareFileChecksumsResult {
 message VerifyAfterSwitchoverRequest {
     string last_change_id = 1;
     string last_file_name = 2;
+    bool is_replica = 3;
 }
 
 message SetupHealthcheckGrpcFirewallRequest {
@@ -1623,6 +1651,8 @@ message ExternalMasterImportRequest {
     SSLSetting ssl_mode = 33 [deprecated = true];
     SslOption ssl_option = 34;
     bool reset_master_for_retry = 35;
+    repeated SelectedObject selected_objects = 36;
+    bool enable_selective_db_migration = 37;
     
     oneof _lock_wait_time {
         google.protobuf.Duration lock_wait_time = 16;
@@ -1738,6 +1768,10 @@ message ExternalMasterInfo {
         UNSUPPORTED_TABLES_WITH_REPLICA_IDENTITY = 70;
         UNSUPPORTED_SYSTEM_OBJECTS = 71;
         SELECTED_OBJECTS_NOT_EXIST_ON_SOURCE = 72;
+        PSC_ONLY_INSTANCE_WITH_NO_NETWORK_ATTACHMENT_URI = 73;
+        PROMPT_DELETE_EXISTING = 74;
+        WILL_DELETE_EXISTING = 75;
+        REPLICATE_WILD_DO_TABLE_NOT_WHOLE_DATABASES = 76;
     }
     
     string detail = 2;
@@ -1796,6 +1830,8 @@ message VerifyMigrationSettingsRequest {
     bool check_for_replica_identity = 35;
     bool existing_data_ownership_check = 36;
     SslOption ssl_option = 37;
+    bool enable_selective_db_migration = 38;
+    bool allow_delete_existing = 39;
 }
 
 message SelectedObject {
@@ -1835,6 +1871,9 @@ message EnableActiveDirectoryRequest {
     storage.speckle.proto.EncryptedSecret service_account_secret = 12;
     bool is_restore = 13;
     string global_primary_dns_name = 14;
+    ActiveDirectoryMode mode = 15;
+    repeated string dns_servers = 16;
+    string admin_credential_secret_name = 17;
     
     reserved 5;
 }
@@ -1911,6 +1950,10 @@ message CreateAvailabilityGroupRequest {
     
     oneof _primary_commit_mode {
         sqlserver.AvailabilityCommitMode primary_commit_mode = 7;
+    }
+    
+    oneof _primary_endpoint_url_override {
+        string primary_endpoint_url_override = 8;
     }
 }
 
@@ -1995,9 +2038,10 @@ message CheckReplicationResult {
 message MajorVersionUpgradeRequest {
     string old_csa_uri = 1;
     string new_csa_uri = 2;
-    bool update_pg_init_privs_table = 3;
+    bool update_pg_init_privs_table = 3 [deprecated = true];
     bool increase_docker_container_memory = 4;
     bool enable_old_csa_image_deletion = 5;
+    bool override_default_transaction_read_only = 6;
 }
 
 message MajorVersionUpgradeImageDownloadRequest {
@@ -2007,6 +2051,7 @@ message MajorVersionUpgradeImageDownloadRequest {
 message ConnProbeRequest {
     string target_ip = 1;
     bool probe_psc_path_from_addon_psc_bouncer = 2;
+    bool probe_psc_path_from_psc_outbound_bouncer = 3;
 }
 
 message ConnProbeResponse {
@@ -2092,8 +2137,13 @@ message SetHotStandbyModeRequest {
     string replica_name = 2;
     string trigger_file = 3;
     int32 uid = 4;
+    int32 gid = 7;
     bool restart_database = 5;
     google.protobuf.Duration timeout = 6;
+}
+
+message SetHotStandbyModeResponse {
+    google.protobuf.Timestamp set_read_only_time = 1;
 }
 
 message RevertHotStandbyModeRequest {
@@ -2663,6 +2713,34 @@ message VerifyReplicationStatusResponse {
     }
 }
 
+message ValidateSqlRequest {
+    string task_id = 1;
+    string database_name = 2;
+    string sql_statements = 3;
+    string user = 4;
+    string password = 5;
+    bool enable_schema_validation = 6;
+    bool iam_auth = 7;
+}
+
+message ValidateSqlResult {
+    SqlQueryValidationResult result = 1;
+    enum SqlQueryValidationResult {
+        SQL_QUERY_VALIDATION_RESULT_UNSPECIFIED = 0;
+        INVALID = 1;
+        VALID = 2;
+    }
+    
+    repeated ValidateSqlResultDetails details = 2;
+}
+
+message ValidateSqlResultDetails {
+    string code = 1;
+    string message = 2;
+    int64 line_number = 3;
+    int64 line_offset = 4;
+}
+
 enum SslMode {
     SSL_MODE_UNSPECIFIED = 0;
     ALLOW_UNENCRYPTED_AND_ENCRYPTED = 1;
@@ -2697,4 +2775,10 @@ enum SSLSetting {
     SSL_SETTING_DISABLE = 1;
     SSL_SETTING_REQUIRE = 2;
     SSL_SETTING_VERIFY_CA = 3;
+}
+
+enum ActiveDirectoryMode {
+    ACTIVE_DIRECTORY_MODE_UNSPECIFIED = 0;
+    MANAGED_ACTIVE_DIRECTORY = 1;
+    SELF_MANAGED_ACTIVE_DIRECTORY = 2;
 }

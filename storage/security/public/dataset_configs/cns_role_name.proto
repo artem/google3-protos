@@ -1,0 +1,17 @@
+syntax = "editions";
+
+package storage_security;
+
+option java_multiple_files = true;
+
+enum CnsRoleName {
+    CNS_UNSPECIFIED_ROLE_NAME = 0;
+    CNS_READER = 1;
+    CNS_WRITER = 2;
+    CNS_EUC_PRESENTER_FOR_READERS = 4;
+    CNS_EUC_PRESENTER_FOR_WRITERS = 5;
+    CNS_IMPERSONATOR_FOR_READERS = 6;
+    CNS_IMPERSONATOR_FOR_WRITERS = 7;
+    CNS_METADATA_VIEWER = 8;
+    CNS_OWNER = 3;
+}

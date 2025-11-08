@@ -1,0 +1,26 @@
+syntax = "editions";
+
+package g_distributed_query;
+
+import "storage/datapol/annotations/proto/semantic_annotations.proto";
+
+message PushoverQueryRequest {
+    optional string query_string = 1;
+    optional bytes transaction_snapshot = 2;
+    optional int64 query_lsn = 3;
+    optional int64 query_id = 4;
+    optional bytes guc_options = 5;
+}
+
+message DistributedQueryRequest {
+    optional QueryType query_type = 1;
+    optional bytes query_data = 2;
+}
+
+enum QueryType {
+    DISTRIBUTED_QUERY_UNDEFINED = 0;
+    DISTRIBUTED_QUERY_TEST = 1;
+    DISTRIBUTED_QUERY_VECTOR_INDEX_BUILD = 2;
+    DISTRIBUTED_QUERY_PUSHOVER_QUERY = 3;
+    DISTRIBUTED_QUERY_DISTRIBUTED_QUERY = 4;
+}

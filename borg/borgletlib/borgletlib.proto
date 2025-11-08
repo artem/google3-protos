@@ -29,6 +29,7 @@ service BorgletClient {
     rpc GetContainerVars(ContainerVarsRequest) returns (ContainerVarsResponse);
     rpc SetApplicationInfo(SetApplicationInfoRequest) returns (SetApplicationInfoResponse);
     rpc RegisterMemBwNotification(RegisterMemBwNotificationRequest) returns (RegisterMemBwNotificationResponse);
+    rpc RegisterDiscardableMemoryNotification(RegisterDiscardableMemoryNotificationRequest) returns (RegisterDiscardableMemoryNotificationResponse);
 }
 
 service OffloadBorgletClient {
@@ -84,6 +85,7 @@ message TaskStatusResp {
         optional bool ram_limit_can_grow = 2;
         optional int64 memory_bytes_potential = 3;
         optional int64 alloc_memory_bytes_potential = 4;
+        optional int64 max_ram = 5;
     }
     
     optional ResAlloc alloc_requested_container_limits = 36;
@@ -204,6 +206,14 @@ message RegisterMemBwNotificationRequest {
 }
 
 message RegisterMemBwNotificationResponse {
+    
+}
+
+message RegisterDiscardableMemoryNotificationRequest {
+    optional string task_handle = 1;
+}
+
+message RegisterDiscardableMemoryNotificationResponse {
     
 }
 

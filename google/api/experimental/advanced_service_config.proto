@@ -2,6 +2,8 @@ syntax = "proto2";
 
 package google.api;
 
+import "google/api/inclusion.proto";
+
 option objc_class_prefix = "GAPI";
 option java_multiple_files = true;
 option java_outer_classname = "ServiceFrameworkAdvancedProto";
@@ -25,6 +27,7 @@ message AdvancedServiceConfig {
     optional QuotaConfig quota = 16;
     optional IAMConfig iam_config = 17;
     repeated EasyApisConfig easyapis_config = 18;
+    optional ESFControlPlaneConfig esf_control_plane_config = 19;
     
     reserved 11;
 }
@@ -99,6 +102,7 @@ message UbermintConfig {
     optional string consumer_address = 1;
     optional string service_account_address = 2;
     optional string yawns_only_service_account_uberminter_address = 3;
+    optional string prod_global_service_account_address = 4;
 }
 
 message IAMConfig {
@@ -129,6 +133,13 @@ message SkipQuotaRule {
 message EasyApisConfig {
     optional string selector = 1;
     optional bool enable = 2;
+}
+
+message ESFControlPlaneConfig {
+    optional bool enable_dynamic_config_rollout = 1;
+    optional bool using_server_platform = 2;
+    optional string boq_or_pod_node_path = 3;
+    optional string prodspec_partition_name = 4;
 }
 
 enum CacheStrategy {

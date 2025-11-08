@@ -2,7 +2,6 @@ syntax = "proto2";
 
 package research_scam;
 
-import "google/api/inclusion.proto";
 import "research/scam/data_format/features.proto";
 import "research/scam/proto/packed_neighbors.proto";
 import "research/scam/proto/query_metadata.proto";
@@ -18,6 +17,7 @@ message NearestNeighbors {
         optional double distance = 4;
         optional bytes metadata = 5;
         optional int64 crowding_attribute = 6;
+        repeated int64 multi_dimensional_crowding_attribute = 8;
         optional GenericFeatureVector gfv = 7;
     }
     

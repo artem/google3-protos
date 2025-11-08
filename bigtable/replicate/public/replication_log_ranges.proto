@@ -96,11 +96,19 @@ message BTIR_CPWaterMarks {
         optional int64 replication_log_disk_use = 1;
         optional int64 cdc_disk_use = 2;
     }
+    
+    optional CollectionSource collection_source = 8 [default = UNSPECIFIED_RLM];
+    enum CollectionSource {
+        UNSPECIFIED_RLM = 0;
+        IN_MEMORY_RLM = 1;
+        LAST_COMPACTED_RLM = 2;
+    }
 }
 
 message BTIR_CPWaterMarksArg {
     optional bool is_lwm_request = 1;
     optional bool also_request_cdc_disk_usage = 2 [default = false];
+    optional bool read_from_last_compacted = 3 [default = false];
 }
 
 message BTIR_CP_PositionArg {

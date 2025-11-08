@@ -3,6 +3,7 @@ syntax = "proto2";
 package experiments.propagation;
 
 import "experiments/proto/testing_mode.proto";
+import "google/api/inclusion.proto";
 import "net/proto2/bridge/proto/message_set.proto";
 import "storage/datapol/annotations/proto/semantic_annotations.proto";
 import "third_party/boundary_proxy/proto_compare/annotation.proto";

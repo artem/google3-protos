@@ -9,4 +9,7 @@ message VMClientInfo {
     optional string cluster_id = 2;
     optional string instance_id = 3;
     optional string hostname = 4;
+    optional int64 project_number = 5;
+    optional string gce_instance_zone = 6;
+    optional string gce_instance_id = 7;
 }

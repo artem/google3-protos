@@ -41,10 +41,9 @@ message RequestHeader {
     optional int64 colossus_base_file_id = 19;
     optional SplintersMeta splinters = 13;
     optional bool dfile_unexpected_usage = 17;
-    optional bool client_supports_error_device_busy = 18;
     optional string bwe_delegated_user = 20;
     
-    reserved 5 to 6, 10, 14 to 16;
+    reserved 5 to 6, 10, 14 to 16, 18;
 }
 
 message Cid {
@@ -71,6 +70,7 @@ message SplintersMeta {
     repeated File files = 4;
     message File {
         optional int64 cfs_file_id = 1;
+        optional string colossus_cell = 10;
         optional int64 cfs_base_file_id = 9;
         optional bool is_cfs2_file = 4;
         optional bool is_timelock_file = 8;

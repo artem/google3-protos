@@ -3,6 +3,7 @@ syntax = "proto3";
 package google.iam.v1;
 
 import "google/api/auditing.proto";
+import "google/api/inclusion.proto";
 import "google/api/resource.proto";
 import "google/iam/v1/options.proto";
 import "google/iam/v1/policy.proto";

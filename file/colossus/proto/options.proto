@@ -26,6 +26,7 @@ message SnapshotOptions {
     optional int32 num_stripes_included_requested = 3 [default = -1];
     optional bool finalize = 4;
     optional bool is_protected = 5;
+    optional bool drop_allow_nonfrozen_snapshot = 7;
     repeated google.protobuf.Any extended_options = 6;
     
     extensions 361199046;
@@ -35,10 +36,17 @@ message StatOptions {
     optional uint64 stat_mask = 1;
     optional fixed64 min_expected_ciphertext_length = 2;
     
+    optional DecryptPerFileCrc decrypt_per_file_crc = 3;
+    message DecryptPerFileCrc {
+        optional int64 offset = 1;
+        optional fixed32 encrypted_plaintext_crc = 2;
+    }
+    
     enum Mask {
         STAT_NONE = 0;
         STAT_CLIENTS_INFO = 1;
         STAT_ENCRYPTION_SYNC_POINT = 2;
+        STAT_PER_FILE_PLAINTEXT_CRC = 4;
     }
 }
 

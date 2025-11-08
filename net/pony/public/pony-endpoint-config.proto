@@ -19,6 +19,7 @@ message EndpointConfig {
     optional string path = 1;
     optional uint32 command_pages = 3 [default = 256];
     optional uint32 completion_pages = 4 [default = 256];
+    optional bool global_queue_fd_enabled = 59 [default = false];
     optional string trim_wasm_binary_path = 46;
     map<string, string> trim_module_flags = 53;
     
@@ -72,6 +73,9 @@ message EndpointConfig {
         optional bool flash_skip_waiting_for_pending_read_cache_entry = 47 [default = false];
         optional uint32 retransmit_timeout_override_us = 40;
         optional bool enable_bamm2_steering = 45;
+        optional bool create_d_pad_buffer_pool = 48 [default = false];
+        optional int64 d_pad_buffer_pool_key_low = 49;
+        optional int64 d_pad_buffer_pool_key_high = 50;
         
         reserved 6, 22, 23, 24, 25, 27, 30;
         
@@ -123,7 +127,6 @@ message EndpointConfig {
     optional bool enable_delay_metric_completions = 39 [default = false];
     optional bool appaloosa_steer_commands = 40 [default = true];
     optional bool enable_per_job_metrics = 41 [default = false];
-    optional bool enable_bamm2_rd_recv_with_timestamp_completion = 42 [default = false];
     optional int32 num_window_panes = 43 [default = 0];
     optional bool use_region_panes = 51 [default = false];
     optional bool shard_completion_queues = 45 [default = false];
@@ -140,5 +143,5 @@ message EndpointConfig {
         OFFLOAD_MODE_FORCE = 2;
     }
     
-    reserved 6, 7, 9, 11, 13, 19, 20, 21, 22, 24, 27, 28, 30, 31, 35;
+    reserved 6, 7, 9, 11, 13, 19, 20, 21, 22, 24, 27, 28, 30, 31, 35, 42;
 }

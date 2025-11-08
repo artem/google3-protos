@@ -23,6 +23,7 @@ message CommonRequestPTokenForMinting {
                 optional bool vertex_traffic_for_grounding = 571;
                 optional bool gemini_traffic_for_grounding = 614;
                 optional bool has_gemini_logging_restrictions = 805;
+                optional bool aipex_personalized_data = 758;
             }
         }
     }

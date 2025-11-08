@@ -4,6 +4,7 @@ package storage_speckle_postgres_utils_misc;
 
 import "google/protobuf/timestamp.proto";
 import "storage/datapol/annotations/proto/semantic_annotations.proto";
+import "third_party/protobuf/cpp_features.proto";
 
 message VMSize {
     optional int32 cpu_count = 1;

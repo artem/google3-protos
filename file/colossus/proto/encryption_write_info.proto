@@ -3,12 +3,11 @@ syntax = "editions";
 package colossus;
 
 import "file/colossus/proto/cfs.proto";
-import "storage/datapol/annotations/proto/semantic_annotations.proto";
 
 option java_multiple_files = true;
 
 message EncryptionWriteInfo {
-    optional bytes partial_chunk_debug_info = 1;
-    optional uint32 partial_chunk_debug_info_crc = 2;
     optional DataOffsetInfo data_offset_info = 3;
+    
+    reserved 1, 2;
 }

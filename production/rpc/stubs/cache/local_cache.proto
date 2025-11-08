@@ -1,0 +1,16 @@
+syntax = "editions";
+
+package production.rpc.stubs.cache;
+
+import "production/rpc/stubs/cache/cache.proto";
+
+option java_package = "com.google.prod.rpc.stubs.cache.proto";
+
+message LocalCache {
+    optional uint64 bytes = 1 [default = 0];
+    optional uint64 maximum_time_to_live_seconds = 2 [default = 0, deprecated = true];
+    
+    extend Cache {
+        optional LocalCache local_cache_extension = 249672212;
+    }
+}

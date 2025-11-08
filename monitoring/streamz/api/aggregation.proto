@@ -7,6 +7,7 @@ import "monitoring/streamz/api/data_model.proto";
 import "monitoring/streamz/api/hierarchical_isolation.proto";
 import "net/base/qos.proto";
 import "storage/datapol/annotations/proto/semantic_annotations.proto";
+import "third_party/protobuf/cpp_features.proto";
 
 service StreamzAggregation {
     rpc BulkWrite(BulkAggregateWriteRequest) returns (BulkAggregateWriteResponse);

@@ -29,6 +29,7 @@ message LOAS2PolicyCustomization {
 message MasterPolicy {
     optional security.credentials.PrincipalProto master = 1;
     optional .proto2.bridge.MessageSet expected_assertions = 2;
+    optional .proto2.bridge.MessageSet optional_assertions = 17;
     optional AcctRestrictions most_permissive_restrictions = 3;
     repeated security.credentials.PrincipalProto.PrincipalScope whitelisted_scope = 4;
     repeated security.credentials.PrincipalProto whitelisted_role = 5;
@@ -40,6 +41,9 @@ message MasterPolicy {
     repeated UserType allowed_user_type_assertions = 13 [packed = true];
     optional bool allowed_to_set_is_person = 10;
     repeated ConfidentialSecurityLevel allowed_confidential_levels = 14 [packed = true];
+    optional bool allowed_to_set_is_hardened = 16;
     
     extensions 8;
+    
+    reserved 15;
 }

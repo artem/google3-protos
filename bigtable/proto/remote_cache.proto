@@ -1,0 +1,11 @@
+syntax = "editions";
+
+package bigtable;
+
+import "storage/datapol/annotations/proto/semantic_annotations.proto";
+
+message RemoteCacheConfig {
+    optional string name = 1;
+    optional string cliquemap_config_url = 2;
+    optional int64 incarnation = 3;
+}

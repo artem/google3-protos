@@ -1,0 +1,19 @@
+syntax = "proto2";
+
+package ptoken;
+
+import "storage/datapol/annotations/proto/semantic_annotations.proto";
+
+option java_multiple_files = true;
+option java_package = "com.google.privacy.ptoken.proto";
+
+message EnforcementBehaviorSpec {
+    optional ReadBehavior read_behavior = 1;
+    enum ReadBehavior {
+        READ_BEHAVIOR_UNSPECIFIED = 0;
+        FILTER_ON_POLICY_DENIAL = 1;
+        ERROR_ON_POLICY_DENIAL = 2;
+        ERROR_IF_FULLY_INACCESSIBLE = 3;
+        ERROR_UNLESS_FULLY_ACCESSIBLE = 4;
+    }
+}

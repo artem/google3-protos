@@ -2,6 +2,7 @@ syntax = "proto3";
 
 package google.api;
 
+import "google/api/inclusion.proto";
 import "google/api/visibility.proto";
 import "google/rpc/code.proto";
 import "net/proto2/proto/descriptor.proto";
@@ -16,8 +17,33 @@ option java_package = "com.google.api";
 
 message Errors {
     string domain = 1;
+    repeated FieldError common_field_errors = 4;
     repeated ErrorMessage error_messages = 2;
     string error_catalog_product_id = 3;
+}
+
+message ErrorParameter {
+    string name = 1;
+    
+    ParameterType parameter_type = 2;
+    enum ParameterType {
+        PARAMETER_TYPE_UNSPECIFIED = 0;
+        STRING = 1;
+        INTEGER = 2;
+        INT64 = 3;
+        DECIMAL = 4;
+        STRING_LIST = 5;
+    }
+    
+    string description = 3;
+    bool pii_safe = 4;
+}
+
+message FieldError {
+    string reason = 1;
+    repeated string fields = 2;
+    string description = 3;
+    string message = 4;
 }
 
 message ApiVersionSelector {
@@ -26,19 +52,21 @@ message ApiVersionSelector {
 }
 
 message ErrorMessage {
+    string reason = 13;
     string name = 1;
     string domain = 9990 [deprecated = true];
-    string reason = 13;
     string description = 14;
     int32 http_code = 2;
     rpc.Code canonical_code = 9;
     string message = 3;
     string localized_message = 4;
     repeated string fields = 5;
+    repeated ErrorParameter parameters = 16;
     string troubleshooting_link = 6;
     string api_versions = 7;
     repeated ApiVersionSelector api_version_selectors = 11;
     string name_suffix = 8 [deprecated = true];
     string internal_message = 10;
+    repeated FieldError field_errors = 15;
     repeated string additional_details = 12;
 }

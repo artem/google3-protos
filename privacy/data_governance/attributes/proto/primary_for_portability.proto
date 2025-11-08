@@ -2,6 +2,7 @@ syntax = "proto3";
 
 package privacy.data_governance.attributes;
 
+import "google/api/inclusion.proto";
 import "net/proto2/proto/descriptor.proto";
 import "privacy/data_governance/attributes/proto/classification.proto";
 

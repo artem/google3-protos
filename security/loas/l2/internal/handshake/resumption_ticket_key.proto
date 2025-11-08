@@ -27,6 +27,7 @@ message ResumptionTicketKeyIdentifier {
         optional bytes acct_restrictions_hash = 7;
         optional bytes cloud_vm_info_hash = 8;
         optional ConfidentialSecurityLevel confidential_security_level = 9;
+        optional bool is_hardened = 10;
         
         reserved 6;
     }

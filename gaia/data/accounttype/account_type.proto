@@ -117,7 +117,7 @@ message AccountType {
     optional bool play_books_partner_account = 118;
     optional bool placeholder_account = 122;
     
-    extensions 124;
+    extensions 124 to 126;
     
     reserved 29, 56, 92, 94, 96, 99, 108, 111;
 }

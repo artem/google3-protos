@@ -2,6 +2,7 @@ syntax = "proto3";
 
 package envoy.extensions.clusters.aggregate.v3;
 
+import "third_party/envoy/src/api/envoy/config/core/v3/config_source.proto";
 import "third_party/udpa/udpa/annotations/status.proto";
 import "third_party/udpa/udpa/annotations/versioning.proto";
 import "third_party/protoc_gen_validate/validate/validate.proto";
@@ -13,4 +14,9 @@ option java_package = "io.envoyproxy.envoy.extensions.clusters.aggregate.v3";
 
 message ClusterConfig {
     repeated string clusters = 1;
+}
+
+message AggregateClusterResource {
+    .envoy.config.core.v3.ConfigSource config_source = 1;
+    string resource_name = 2;
 }

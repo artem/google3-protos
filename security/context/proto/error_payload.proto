@@ -3,6 +3,7 @@ syntax = "editions";
 package security.context;
 
 import "net/proto2/bridge/proto/message_set.proto";
+import "security/context/proto/aap_denial_resolution.proto";
 import "security/context/proto/httpsp_denial_resolution.proto";
 import "security/context/proto/unmet_client_specified_requirements.proto";
 
@@ -12,6 +13,7 @@ option java_package = "com.google.security.context";
 
 message PolicyEnforcerErrorPayload {
     optional HttpSPDenialResolution httpsp_denial_resolution = 1;
+    optional AAPDenialResolution aap_denial_resolution = 3;
     optional UnmetClientSpecifiedRequirements unmet_client_specified_requirements = 2;
     
     extend .proto2.bridge.MessageSet {

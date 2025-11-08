@@ -9,10 +9,12 @@ import "google/api/inclusion.proto";
 import "google/api/policy.proto";
 import "google/iam/v1/policy.proto";
 import "google/protobuf/any.proto";
+import "google/protobuf/empty.proto";
 import "google/protobuf/struct.proto";
 import "google/protobuf/timestamp.proto";
 import "logs/proto/data_access/asr/cloud_iam_resource.proto";
 import "security/credentials/proto/creds_assertion.proto";
+import "security/credentials/proto/internal_iam_identity.proto";
 import "security/credentials/proto/justification.proto";
 import "security/credentials/proto/service_identity_attributes.proto";
 import "security/loas/l2/proto/credstype.proto";
@@ -129,7 +131,6 @@ message IAMContext {
     string authority_selector = 4;
     string authority_selector_verifier = 10;
     string token = 3;
-    string security_realm = 5;
     ApproverInfo approver_info = 7;
     JustificationInfo justification_info = 8;
     security_loas_l2.CredentialsType creds_type = 11;
@@ -141,6 +142,13 @@ message IAMContext {
     PrincipalInfo principal_info = 17;
     string authenticator_type = 18;
     security.credentials.EvaluatedCredsAssertionSet creds_assertions = 19;
+    
+    oneof security_realm_info {
+        string security_realm = 5;
+        security.credentials.PeerDelegationRealmTrustSet peer_delegation_realms = 21;
+        security.credentials.DataAccessTokenRealmTrustSet data_access_token_realms = 22;
+        google.protobuf.Empty asserted_user_realms = 23;
+    }
 }
 
 message Resource {
@@ -150,6 +158,7 @@ message Resource {
     map<string, string> labels = 4;
     google.protobuf.Any expected_next_state = 5;
     NextStateOfTags next_state_of_tags = 6;
+    repeated string locations = 7;
 }
 
 message NextStateOfTags {

@@ -1,0 +1,25 @@
+syntax = "editions";
+
+package pb;
+
+import "net/proto2/proto/descriptor.proto";
+
+message InternalOptionsForce {
+    enum Enum {
+        UNSPECIFIED = 0;
+        FORCE_ON = 1;
+        FORCE_OFF = 2;
+    }
+}
+
+message InternalFieldOptionsCpp {
+    
+}
+
+message InternalFieldOptions {
+    optional InternalFieldOptionsCpp cpp = 1;
+}
+
+extend .proto2.FieldOptions {
+    optional InternalFieldOptions internal_field_options = 535801550;
+}

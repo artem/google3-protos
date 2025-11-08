@@ -2,10 +2,8 @@ syntax = "proto2";
 
 package security;
 
-import "security/panoptikeys/crypto_key_params/crypto_key_params.proto";
 import "storage/datapol/annotations/proto/semantic_annotations.proto";
 
-option cc_enable_arenas = true;
 option java_package = "com.google.security.keymaster";
 
 message KeyMetadata {

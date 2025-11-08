@@ -53,6 +53,8 @@ message ReaderStatsProto {
         MIXED = 3;
     }
     
+    optional int64 gcu_nanos = 14;
+    
     reserved 12;
     
     extend .proto2.bridge.MessageSet {
@@ -126,6 +128,9 @@ message ActiveOpStatsProto {
     optional double recv_bytes = 5;
     optional double retries = 6;
     optional double errors = 7;
+    optional double active_loc_latency = 8;
+    optional double cache_poisons = 9;
+    optional double num_tablets = 10;
 }
 
 message ClientOpStatsProto {

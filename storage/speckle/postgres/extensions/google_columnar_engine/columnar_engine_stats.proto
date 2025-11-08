@@ -58,6 +58,7 @@ message ColumnarEngineContent {
     optional int64 local_storage_used_size = 8;
     optional float refresh_threshold_percentage = 9;
     optional int64 total_index_invalid_block_count = 10;
+    optional int64 total_index_block_count = 11;
 }
 
 message VectorIndexScanStats {

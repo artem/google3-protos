@@ -33,6 +33,11 @@ message TlsParameters {
     repeated string cipher_suites = 3;
     repeated string ecdh_curves = 4;
     repeated string signature_algorithms = 5;
+    
+    repeated CompliancePolicy compliance_policies = 6;
+    enum CompliancePolicy {
+        FIPS_202205 = 0;
+    }
 }
 
 message PrivateKeyProvider {

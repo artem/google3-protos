@@ -1,0 +1,23 @@
+syntax = "editions";
+
+package coroner.collection;
+
+import "production/crash_analysis/proto/display_value.proto";
+
+enum AsanErrorType {
+    ASAN_ERROR_TYPE_UNSPECIFIED = 0;
+    USE_AFTER_FREE = 1;
+    USE_AFTER_FREE_READ = 7;
+    USE_AFTER_FREE_WRITE = 8;
+    BUFFER_UNDERFLOW = 2;
+    BUFFER_UNDERFLOW_READ = 9;
+    BUFFER_UNDERFLOW_WRITE = 10;
+    BUFFER_OVERFLOW = 3;
+    BUFFER_OVERFLOW_READ = 11;
+    BUFFER_OVERFLOW_WRITE = 12;
+    DOUBLE_FREE = 4;
+    BUFFER_OVERFLOW_ON_DEALLOC = 5;
+    SIZED_DELETE_MISMATCH = 13;
+    INVALID_FREE = 14;
+    UNKNOWN_ASAN_ERROR = 6;
+}

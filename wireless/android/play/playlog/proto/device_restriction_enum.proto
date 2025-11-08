@@ -2,6 +2,7 @@ syntax = "proto2";
 
 package wireless_android_play_playlog;
 
+import "google/api/inclusion.proto";
 import "logs/proto/logs_annotations/logs_annotations.proto";
 
 option objc_class_prefix = "CADP";

@@ -1,0 +1,16 @@
+syntax = "editions";
+
+package production.rpc.stubs.hooks.proto;
+
+import "production/rpc/stubs/proto/stub_configuration.proto";
+
+option java_package = "com.google.prod.rpc.stubs.hooks.proto";
+
+message LocalCache {
+    optional uint64 bytes = 1 [default = 0];
+    optional uint64 maximum_time_to_live_seconds = 2 [default = 0];
+    
+    extend stubs.proto.CanonicalStubConfiguration {
+        optional LocalCache local_cache_extension = 148781868;
+    }
+}

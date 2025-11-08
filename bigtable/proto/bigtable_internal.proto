@@ -9,6 +9,7 @@ import "bigtable/proto/bigtable.proto";
 import "bigtable/proto/dma_rollout.proto";
 import "bigtable/proto/materialized_views_config_internal.proto";
 import "bigtable/proto/movereplica_internal.proto";
+import "bigtable/proto/remote_cache.proto";
 import "bigtable/proto/schema_validator_spec.proto";
 import "bigtable/proto/snapshot_internal.proto";
 import "bigtable/util/state_manager/state_manager.proto";
@@ -181,6 +182,7 @@ message PreLoadFixupStats {
     required double time_elapsed = 1;
     optional int64 num_sstable_references_removed = 2 [default = 0];
     optional string new_partition = 3;
+    optional string new_subpartition = 7;
     optional bool partition_cleared = 4 [default = false];
     optional bool quarantined = 5 [default = false];
     optional bool unquarantined = 6 [default = false];
@@ -220,6 +222,7 @@ message TabletErrors {
 message TabletPartitionInfo {
     required string partition = 1;
     required string details = 2;
+    optional string subpartition = 3;
 }
 
 message TabletQuarantineInfo {
@@ -278,7 +281,7 @@ message BTI_FamilyDescription {
         optional bool has_logs = 13 [default = true];
         optional uint64 max_incarnation = 14;
         optional uint64 min_pull_incarnation = 19;
-        optional int32 version = 18;
+        optional int32 version = 18 [deprecated = true];
         
         reserved 15;
         
@@ -341,7 +344,7 @@ message BTI_TableMetadata {
     repeated AclGroup acl_group = 65;
     optional security.context.AuditRequirements audit_requirements = 70;
     optional int64 next_family_id = 10 [default = 2];
-    optional bool uses_column_family_ids = 12;
+    optional bool uses_column_family_ids = 12 [deprecated = true];
     
     optional group ReplTableOp = 16 {
         required string repl_cell_name = 17;
@@ -357,7 +360,7 @@ message BTI_TableMetadata {
             required bytes limit_row = 84;
         }
         
-        optional string pending_global_config_update = 132;
+        optional bytes pending_global_config_update = 132;
     }
     
     optional float tablet_split_size = 25 [default = 1.0737418e+09];
@@ -416,7 +419,6 @@ message BTI_TableMetadata {
     optional double unused_last_cmek_reinstate_wall_time_seconds = 104;
     optional bool may_proxy = 52 [default = true];
     repeated SourceIncarnation proxy_source_epochs = 53;
-    optional bool use_stubby_delegation = 55 [default = false];
     optional int64 death_epoch_seconds = 58;
     optional bool do_not_delete = 59 [default = false];
     optional EncryptionSettings encryption_settings = 63;
@@ -514,6 +516,7 @@ message BTI_TableMetadata {
     
     optional BTI_MaterializedViewsConfig materialized_views_config = 128;
     optional int64 creation_time_microsecs = 131;
+    optional RemoteCacheConfig remote_cache_config = 133;
     
     oneof crn_oneof {
         string cloud_resource_name = 94;
@@ -525,7 +528,7 @@ message BTI_TableMetadata {
         SpannerMigrationConfig spanner_migration_config = 103;
     }
     
-    reserved 11, 24, 27, 36, 41, 51, 56, 64, 68, 75, 97, 102, 106, 119;
+    reserved 11, 24, 27, 36, 41, 51, 55, 56, 64, 68, 75, 97, 102, 106, 119;
 }
 
 message BTI_RecentTableEventRecord {

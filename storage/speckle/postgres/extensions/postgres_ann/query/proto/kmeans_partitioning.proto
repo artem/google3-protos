@@ -34,6 +34,9 @@ message KMeansPartitioningConfig {
     optional bool use_static_kmr = 20 [default = false];
     optional double noise_shaping_threshold = 21 [default = nan];
     optional float orthogonality_amplification_lambda = 22 [default = 1.5];
+    optional bool enable_declarative_recall = 23 [default = false];
+    optional int32 pca_min_dimensionality = 24 [default = 500];
+    optional string index_build_artifact_dir = 25;
     
     reserved 14;
 }

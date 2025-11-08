@@ -8,21 +8,23 @@ option java_multiple_files = true;
 option java_package = "com.google.privacy.context.proto1api";
 
 message PrivacyContextDeltaTraceInfo {
-    optional string label = 1 [deprecated = true];
     optional int32 product_id = 2;
     optional bool product_id_successful = 14;
     optional int32 prev_product_id = 3;
     optional bool primary_compliance_controls_gaia = 6;
     optional int32 processing_purpose = 7;
+    optional int32 injected_semantic_purpose = 28;
     optional int64 buganizer_approval_id = 8;
     optional int64 eldar_approval_id = 27;
     optional bool dma52_cross_use_offered_together = 9;
     optional bool primary_compliance_controls_zwieback = 10;
     optional int32 promise_of_enforcement_return_policy = 11;
+    optional int32 promise_of_enforcement_store_policy = 31;
     optional int32 request_policy_enforcement_policy = 12;
     optional int32 dma52_processing_type = 13;
     optional int32 ads_processing_purpose = 15;
-    optional bool post_access_filtering = 16;
+    optional bool post_access_filtering = 16 [deprecated = true];
+    optional int32 post_access_filtering_policy = 30;
     optional int32 compliance_controls_type = 17;
     optional bool compliance_controls_visitor = 18;
     optional bool compliance_controls_ads = 21;
@@ -32,6 +34,7 @@ message PrivacyContextDeltaTraceInfo {
     optional int32 prev_semantic_purpose = 24;
     optional int32 new_semantic_purpose = 25;
     repeated int32 deferred_semantic_purposes = 26;
+    optional int32 origin_logical_location = 29;
     
     optional Language language = 4;
     enum Language {
@@ -54,6 +57,7 @@ message PrivacyContextDeltaTraceInfo {
         SET_DMA52_CROSS_USE_OFFERED_TOGETHER = 7;
         SET_COMPLIANCE_CONTROLS_ZWIEBACK = 8;
         SET_PROMISE_OF_ENFORCEMENT_RETURN_POLICY = 9;
+        SET_PROMISE_OF_ENFORCEMENT_STORE_POLICY = 45;
         ADD_REQUEST_POLICY_ENFORCEMENT = 10;
         DEFAULT_REQUEST_POLICY_ENFORCEMENT = 11;
         SET_DMA52_PROCESSING_TYPE = 12;
@@ -88,9 +92,14 @@ message PrivacyContextDeltaTraceInfo {
         CLEAR_SEMANTIC_PURPOSE = 41;
         DEFAULT_SEMANTIC_PURPOSE = 42;
         CLEAR_BORG_RUN_UID = 43;
+        DEFAULT_ORIGIN_LOGICAL_LOCATION = 44;
     }
     
     optional bool is_census_root_handle = 19;
+    
+    reserved 1;
+    
+    reserved "label";
     
     extend .proto2.bridge.MessageSet {
         optional PrivacyContextDeltaTraceInfo message_set_extension = 518215928;

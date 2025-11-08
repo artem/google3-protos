@@ -3,6 +3,7 @@ syntax = "proto3";
 package envoy.config.core.v3;
 
 import "third_party/envoy/src/api/envoy/config/core/v3/extension.proto";
+import "third_party/envoy/src/api/envoy/type/matcher/v3/string.proto";
 import "third_party/envoy/src/api/envoy/type/v3/percent.proto";
 import "google/protobuf/duration.proto";
 import "google/protobuf/wrappers.proto";
@@ -98,6 +99,7 @@ message Http1ProtocolOptions {
     bool send_fully_qualified_url = 8;
     google.protobuf.BoolValue use_balsa_parser = 9;
     bool allow_custom_methods = 10;
+    repeated .envoy.type.matcher.v3.StringMatcher ignore_http_11_upgrade = 11;
 }
 
 message KeepaliveSettings {
@@ -142,6 +144,7 @@ message Http3ProtocolOptions {
     google.protobuf.BoolValue override_stream_error_on_invalid_http_message = 2;
     bool allow_extended_connect = 5;
     bool allow_metadata = 6;
+    bool disable_qpack = 7;
 }
 
 message SchemeHeaderTransformation {

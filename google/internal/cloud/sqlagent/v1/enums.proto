@@ -37,6 +37,12 @@ enum DatabaseState {
     DB_RECOVERY = 5;
 }
 
+enum AutoScaleMetricName {
+    AUTO_SCALE_METRIC_NAME_UNSPECIFIED = 0;
+    AVERAGE_CPU_UTILIZATION = 1;
+    AVERAGE_DB_CONNECTIONS = 2;
+}
+
 enum ReplicationState {
     REPLICATION_UNKNOWN_STATE = 0;
     REPLICATION_RUNNING = 1;

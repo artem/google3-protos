@@ -41,6 +41,7 @@ message ConnectRequest {
         optional bytes gid = 2;
         optional uint64 connection_handle = 3;
         optional string acc_fqdn = 4;
+        optional bool wait_for_client_prepare_qp = 5 [default = false];
     }
     
     optional bool query_pony_connectivity = 7;
@@ -72,6 +73,7 @@ message ConnectResponse {
     optional VerbsInfo verbs_info = 9;
     message VerbsInfo {
         optional string acc_fqdn = 4;
+        optional bool can_wait_for_client_prepare_qp = 5 [default = false];
     }
     
     optional int32 inline_message_size = 6;

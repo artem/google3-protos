@@ -2,6 +2,7 @@ syntax = "proto3";
 
 package google.logging.type;
 
+import "google/api/inclusion.proto";
 import "logs/proto/logs_annotations/logs_annotations.proto";
 
 option ruby_package = "Google::Cloud::Logging::Type";

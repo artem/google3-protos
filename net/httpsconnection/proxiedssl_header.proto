@@ -49,6 +49,8 @@ message TcpProxyHeaderProto {
     optional string tls_ja3_fingerprint = 36;
     optional string tls_ja4_fingerprint = 37;
     optional string tls_hex_encoded_client_hello = 38;
+    optional bool used_large_tls_key = 39;
+    optional string redirect_id = 40;
     
     reserved 1, 6, 17;
     

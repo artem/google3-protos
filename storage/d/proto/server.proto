@@ -246,10 +246,7 @@ message VolumeStats {
         VOL_BIT_DEPRECATED_COLD_VOLUME = 2 [deprecated = true];
         VOL_BIT_LOCKABLE_VOLUME = 4;
         VOL_BIT_IMMUTABLE_VOLUME = 8;
-        VOL_BIT_DEPRECATED_LOCKED_VOLUME = 16 [deprecated = true];
         VOL_BIT_INTERFACE_DFS = 32;
-        VOL_BIT_INTERFACE_NUFS = 64;
-        VOL_BIT_INTERFACE_BLOCK = 128;
         VOL_BIT_UNREPLICATED_DATA = 256;
     }
 }
@@ -292,6 +289,7 @@ message AtaioPerUser {
     optional StoragePartition storage_partition = 4;
     repeated AtaioAtPriority current_usage = 3;
     repeated AtaioAtPriority new_aio_usage = 5;
+    repeated AtaioAtPriority aio_usage_v3 = 6;
 }
 
 message AbstractCPUUsageAtPriority {
@@ -406,7 +404,6 @@ message ServerStats {
         SRV_SPINDLE_WEIGHT = 268435456;
         SRV_ALLOCATOR_WEIGHT_INFO = 536870912;
         SRV_ABSTRACT_CPU_USAGE_PER_USER = 1073741824;
-        DEPRECATED_SRV_WRITE_BANDWIDTH_USAGE_PER_USER = 560718538;
         DEPRECATED_SRV_STORAGE_PARTITIONS = 33554432;
     }
     
@@ -553,7 +550,6 @@ message ReadRequest {
     optional Capability capability = 4;
     required int64 length = 5;
     optional int64 offset = 6;
-    repeated int32 want_xattrs = 19 [packed = true];
     optional bool reject_if_file_corrupted = 8 [default = true];
     optional bool client_verifies_checksum = 10;
     optional bool reverify = 13;
@@ -571,10 +567,11 @@ message ReadRequest {
     optional int64 prefetch_length = 16;
     optional int64 prefetch_offset = 17;
     optional bool disallow_short_mutable_reads = 18;
-    optional bool is_hail_mary = 21;
     optional bool skip_checksum_computation = 22;
     
-    reserved 7, 9, 12;
+    extensions 21;
+    
+    reserved 7, 9, 12, 19;
 }
 
 message ReadReply {
@@ -582,10 +579,8 @@ message ReadReply {
     optional bytes data = 1 [ctype = CORD];
     optional bool buffer_cache_hit = 2;
     optional fixed32 data_checksum = 4;
-    map<int32, Xattr> xattrs = 7;
-    optional bool xattrs_not_loaded = 8;
     
-    reserved 5, 6;
+    reserved 5, 6, 7, 8;
 }
 
 message OverlappingWriteFailure {
@@ -712,7 +707,7 @@ message RemoveRequest {
     optional RequestHeader header = 1;
     repeated string paths = 2;
     repeated Capability capabilities = 4;
-    repeated int64 colossus_file_ids = 5;
+    repeated int64 colossus_file_ids = 5 [deprecated = true];
     
     reserved 3;
 }
@@ -778,7 +773,6 @@ message ReconstructFilesRequest {
     optional RequestHeader header = 1;
     repeated ReconstructFilesSource sources = 2;
     repeated ReconstructFilesTarget targets = 3;
-    optional bool fail_if_targets_exists = 4;
     optional AccessPermissions targets_permissions = 5;
     optional int64 targets_mtime = 6;
     optional bool targets_immutable = 7;
@@ -788,10 +782,9 @@ message ReconstructFilesRequest {
     optional int32 priority = 13;
     optional Encoding encoding = 14;
     repeated ReconstructFilesSource potential_sources = 15;
-    optional bool is_hail_mary = 16;
     optional AllocatorInfo allocator_info = 17;
     
-    reserved 8, 12;
+    reserved 4, 8, 12, 16;
 }
 
 message ReconstructFilesReply {

@@ -31,11 +31,15 @@ message DomainAwareShardingConfigSet {
 }
 
 message LegacySpecialSvelteShardingConfigSet {
-    repeated LegacySpecialSvelteShardingConfigParams params = 1;
+    optional LegacySpecialSvelteShardingConfigParams params = 1;
 }
 
 message NetworkControlShardingConfigSet {
     repeated NetworkControlShardingParams params = 1;
+}
+
+message NetworkControlNoSvelteShardingConfigSet {
+    optional NetworkControlNoSvelteShardingParams params = 1;
 }
 
 message VirtualCellClientShardingConfigSet {
@@ -44,6 +48,10 @@ message VirtualCellClientShardingConfigSet {
 
 message DomainAwareVirtualCellShardingConfigSet {
     repeated DomainAwareVirtualCellShardingParams params = 1;
+}
+
+message NcsOptionalityCellShardingConfigSet {
+    repeated NcsOptionalityCellShardingParams params = 1;
 }
 
 message AclMigrationClientShardingConfigSet {
@@ -117,6 +125,11 @@ message NetworkControlShardingParams {
     reserved 2;
 }
 
+message NetworkControlNoSvelteShardingParams {
+    optional ClientShardingConfigFilter client_sharding_config_filter = 1;
+    optional string nc_no_sveltes_regex = 2;
+}
+
 message VirtualCellClientShardingParams {
     optional ClientShardingConfigFilter client_sharding_config_filter = 1;
     
@@ -141,6 +154,16 @@ message DomainAwareVirtualCellShardingParams {
             string prod_zone = 2;
             string prod_region = 3;
         }
+    }
+}
+
+message NcsOptionalityCellShardingParams {
+    optional ClientShardingConfigFilter client_sharding_config_filter = 1;
+    
+    repeated CellInfo enabled_cells = 2;
+    message CellInfo {
+        optional string cell_name = 1;
+        optional string prod_region = 2;
     }
 }
 

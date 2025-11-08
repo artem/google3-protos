@@ -2,6 +2,7 @@ syntax = "proto3";
 
 package privacy.data_governance.attributes.classification;
 
+import "google/api/inclusion.proto";
 import "net/proto2/proto/descriptor.proto";
 
 option java_multiple_files = true;
@@ -32,6 +33,8 @@ message Category {
             USER_CONTEXTUAL_LOCATION = 4;
             NOT_A_USER_LOCATION = 5;
             USER_PLACE_OF_INTEREST = 7;
+            USER_HOME_LOCATION = 8;
+            USER_WORK_LOCATION = 9;
             LOCATION_OTHER = 6;
         }
         
@@ -89,6 +92,7 @@ message Category {
     UserClass user_class = 16;
     message UserClass {
         ManagedCategory managed = 1;
+        HasCategory any_managed_account = 2;
     }
     
     HasCategory smart_home = 17;

@@ -113,6 +113,7 @@ message Status {
     optional int32 code = 1;
     optional int32 errorcode = 2;
     optional string msg = 3;
+    optional string error_path = 4;
 }
 
 message Request {
@@ -353,7 +354,17 @@ message ReadDirResponse {
     repeated Stat stat = 2;
 }
 
+message VersionInfo {
+    optional int64 instance = 1;
+    optional int64 generation = 2;
+    optional int64 acl_generation = 3;
+    optional int64 lock_generation = 4;
+    optional int32 lock_mode = 5;
+}
+
 message DeleteRequest {
+    optional VersionInfo expected_version = 3;
+    
     oneof identity {
         FileHandle handle = 1;
         string filename = 2;

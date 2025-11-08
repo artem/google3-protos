@@ -1,0 +1,19 @@
+syntax = "proto3";
+
+package google.api;
+
+import "google/api/service.proto";
+import "google/api/visibility.proto";
+import "net/proto2/proto/descriptor.proto";
+
+option objc_class_prefix = "GAPI";
+option go_package = "google.golang.org/genproto/googleapis/api/serviceconfig;serviceconfig";
+option java_multiple_files = true;
+option java_outer_classname = "ServiceConfigSourceProto";
+option java_package = "com.google.api";
+
+message ServiceConfigSource {
+    repeated string experiments = 1;
+    .proto2.FileDescriptorSet file_descriptor_set = 2;
+    Service raw_service_config = 3;
+}

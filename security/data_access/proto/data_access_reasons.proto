@@ -53,4 +53,9 @@ message DataAccessReasons {
     repeated string soundboard_task_id = 41;
     repeated int64 play_bd_id = 42;
     repeated string pickle_ticket_id = 44;
+    repeated string connect_rescue_id = 45;
+    repeated int64 caseflow_id = 46;
+    repeated string qplus_sample_id = 47;
+    repeated string connect_engagements_project_id = 48;
+    repeated string ott_task_id = 49;
 }

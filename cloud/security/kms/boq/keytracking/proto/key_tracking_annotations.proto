@@ -1,0 +1,9 @@
+syntax = "editions";
+
+package keytracking;
+
+import "net/proto2/proto/descriptor.proto";
+
+extend .proto2.FieldOptions {
+    optional bool used_kms_key = 535801341;
+}

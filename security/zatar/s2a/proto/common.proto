@@ -2,6 +2,8 @@ syntax = "editions";
 
 package s2a.proto;
 
+import "third_party/golang/protobuf/v2/src/google/protobuf/go_features.proto";
+
 option java_multiple_files = true;
 option java_outer_classname = "CommonProto";
 option java_package = "com.google.net.grpc.s2a.handshaker";

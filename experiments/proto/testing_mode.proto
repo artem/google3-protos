@@ -2,6 +2,8 @@ syntax = "proto2";
 
 package experiments.propagation;
 
+import "google/api/inclusion.proto";
+
 option go_package = "google.golang.org/genproto/experiments/propagation";
 option java_package = "com.google.experiments.propagation";
 
@@ -10,4 +12,5 @@ enum TestingMode {
     TESTING_MODE_ALL_OFF = 1;
     TESTING_MODE_ALL_ON = 2;
     TESTING_MODE_LAUNCHES_WITH_TRAFFIC = 3;
+    TESTING_MODE_FULLY_RAMPED_LAUNCHES = 4;
 }

@@ -1,0 +1,13 @@
+syntax = "proto2";
+
+package operations_research.sat;
+
+message ArcLpValue {
+    optional int32 tail = 1;
+    optional int32 head = 2;
+    optional double lp_value = 3;
+}
+
+message RoutesSupportGraphProto {
+    repeated ArcLpValue arc_lp_values = 1;
+}

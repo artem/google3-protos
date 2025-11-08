@@ -4,7 +4,6 @@ package storage_cmek;
 
 import "devtools/protoshop/public/parsing_options/parsing_options.proto";
 import "google/protobuf/timestamp.proto";
-import "security/panoptikeys/crypto_key_classes/crypto_key_classes_binding.proto";
 import "storage/cmek_library/proto/resource_key_management_config.proto";
 import "storage/datapol/annotations/proto/semantic_annotations.proto";
 

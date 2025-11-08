@@ -12,11 +12,3 @@ message BuiltinViewCollection {
     optional int64 changelist = 1;
     repeated ViewProto view = 2;
 }
-
-message BuiltinViewsRequest {
-    
-}
-
-message BuiltinViewsResponse {
-    optional BuiltinViewCollection views = 1;
-}

@@ -3,7 +3,6 @@ syntax = "proto2";
 package devtools.protoshop.external;
 
 import "net/proto2/proto/descriptor.proto";
-import "security/panoptikeys/panoptikeys.proto";
 import "storage/datapol/annotations/proto/semantic_annotations.proto";
 
 option java_outer_classname = "ParsingOptionsProto";
@@ -40,7 +39,7 @@ message ParsingOptions {
         JSON = 3;
     }
     
-    optional security.panoptikeys.EncryptionCiphertextFormats encryption = 9;
+    reserved 9;
 }
 
 message AnnotationOptions {

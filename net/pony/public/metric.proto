@@ -94,6 +94,14 @@ message PonyMetric {
         optional int32 locator_metadata = 3;
     }
     
+    optional TransportMetadataInformation transport_metadata_info = 12;
+    message TransportMetadataInformation {
+        optional int32 num_retransmits = 1;
+        optional int32 qos = 2;
+        optional bool selective_acked = 3;
+        optional int32 inflight = 4;
+    }
+    
     optional bytes raw_metadata = 7;
     
     reserved 3, 8;

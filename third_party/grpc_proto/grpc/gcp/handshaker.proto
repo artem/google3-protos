@@ -40,6 +40,7 @@ message StartClientHandshakeReq {
     RpcProtocolVersions rpc_versions = 9;
     uint32 max_frame_size = 10;
     string access_token = 11;
+    TransportProtocolPreferences transport_protocol_preferences = 12;
 }
 
 message ServerHandshakeParameters {
@@ -59,6 +60,7 @@ message StartServerHandshakeReq {
     Endpoint remote_endpoint = 5;
     RpcProtocolVersions rpc_versions = 6;
     uint32 max_frame_size = 7;
+    TransportProtocolPreferences transport_protocol_preferences = 8;
 }
 
 message NextHandshakeMessageReq {
@@ -83,6 +85,7 @@ message HandshakerResult {
     bool keep_channel_open = 6;
     RpcProtocolVersions peer_rpc_versions = 7;
     uint32 max_frame_size = 8;
+    NegotiatedTransportProtocol transport_protocol = 9;
 }
 
 message HandshakerStatus {

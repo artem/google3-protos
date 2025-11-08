@@ -7,6 +7,7 @@ import "google/api/auditing.proto";
 import "google/api/authz.proto";
 import "google/api/client.proto";
 import "google/api/field_behavior.proto";
+import "google/api/inclusion.proto";
 import "google/api/policy.proto";
 import "google/api/resource.proto";
 import "google/api/visibility.proto";
@@ -124,6 +125,7 @@ message QueryProfiledDeploymentsResponse {
 message QueryProfilesRequest {
     string parent = 1;
     string target = 2;
+    bool is_target_regexp = 22;
     ProfileType profile_type = 3;
     protobuf.Timestamp start_time = 4;
     protobuf.Timestamp end_time = 5;
@@ -142,8 +144,9 @@ message QueryProfilesRequest {
     int32 num_profiles = 17;
     bool deployment_size_scaled = 18;
     bool include_versions_and_start_lines = 20;
+    string filter = 21;
     
-    reserved 21 to max;
+    reserved 23 to max;
 }
 
 message ProfiledDeployment {
@@ -240,12 +243,15 @@ message NumericLabelArray {
 message QueryProfileWeightsRequest {
     string parent = 1;
     string target = 2;
+    bool is_target_regexp = 9;
     ProfileType profile_type = 3;
     protobuf.Timestamp start_time = 4;
     protobuf.Timestamp end_time = 5;
     int32 num_intervals = 6;
     map<string, string> deployment_labels = 7;
     map<string, string> profile_labels = 8;
+    
+    reserved 10 to max;
 }
 
 message QueryProfileWeightsResponse {
@@ -264,6 +270,7 @@ message ProfileWeightInterval {
 message QueryProfileTimeseriesRequest {
     string parent = 1;
     string target = 2;
+    bool is_target_regexp = 15;
     ProfileType profile_type = 3;
     string metric_type = 4;
     type.DateTime end_time = 5;
@@ -275,6 +282,8 @@ message QueryProfileTimeseriesRequest {
     string exclude_regexp = 12;
     protobuf.Duration interval_duration = 13;
     ProfileTimeseriesIntervalType interval_type = 14;
+    
+    reserved 16 to max;
 }
 
 message QueryProfileTimeseriesResponse {

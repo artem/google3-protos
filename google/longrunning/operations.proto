@@ -4,6 +4,8 @@ package google.longrunning;
 
 import "google/api/annotations.proto";
 import "google/api/client.proto";
+import "google/api/field_behavior.proto";
+import "google/api/visibility.proto";
 import "google/protobuf/any.proto";
 import "google/protobuf/duration.proto";
 import "google/protobuf/empty.proto";
@@ -48,11 +50,13 @@ message ListOperationsRequest {
     string filter = 1;
     int32 page_size = 2;
     string page_token = 3;
+    bool return_partial_success = 5;
 }
 
 message ListOperationsResponse {
     repeated Operation operations = 1;
     string next_page_token = 2;
+    repeated string unreachable = 3;
 }
 
 message CancelOperationRequest {

@@ -10,6 +10,7 @@ option java_package = "com.google.bigtable.protos.proto1api";
 message PrivacyAttributes {
     optional .pgraph.DatasetAttributes dataset_attributes = 1;
     optional DefaultPtokenFilterPolicy default_ptoken_filter_policy = 2 [default = FAMILY_POLICY_FAIL_REQUEST];
+    optional bool reject_write_without_user_provided_ptoken = 3 [default = false];
 }
 
 enum DefaultPtokenFilterPolicy {

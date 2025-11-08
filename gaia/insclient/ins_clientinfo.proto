@@ -131,6 +131,7 @@ message DisableAccountInfo {
     optional int32 RecoveryAction = 4;
     optional int64 RecoveryActionExpiration = 5;
     optional string Description = 6;
+    optional int64 ProductID = 7;
 }
 
 message EnableAccountInfo {
@@ -139,6 +140,7 @@ message EnableAccountInfo {
     optional int32 RecoveryAction = 3;
     optional string Description = 4;
     optional int32 EnableReason = 5;
+    optional int64 ProductID = 6;
 }
 
 message UserContext {
@@ -329,6 +331,16 @@ message ClientData {
     
     optional int32 MaxTries = 13;
     optional bool SupportsCanonicalErrors = 17;
+    
+    optional RoutingType ClientRoutingType = 18;
+    enum RoutingType {
+        UNKNOWN = 0;
+        GSLB_DEFAULT = 1;
+        NON_GSLB = 2;
+        PARTITION_ID = 3;
+        COMPASS_DISPATCHER = 4;
+        COMPASS_CLIENT = 5;
+    }
     
     reserved 7, 8, 10;
 }

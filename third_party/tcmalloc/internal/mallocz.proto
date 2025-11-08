@@ -161,6 +161,12 @@ message SubreleaseStatsSeries {
     repeated FillerStatsDataPoint measurements = 6;
 }
 
+message HugePageCollapseStats {
+    optional int64 eligible = 1;
+    optional int64 attempted = 2;
+    optional int64 collapsed = 3;
+}
+
 message FillerStatsDataPoint {
     optional int64 epoch = 1;
     optional FillerStats at_minimum_demand = 3;
@@ -186,7 +192,6 @@ message FillerStats {
 }
 
 message SkippedSubrelease {
-    optional int64 skipped_subrelease_interval_ms = 1;
     optional int64 skipped_subrelease_short_interval_ms = 9;
     optional int64 skipped_subrelease_long_interval_ms = 10;
     optional int64 skipped_subrelease_pages = 2;
@@ -196,6 +201,10 @@ message SkippedSubrelease {
     optional int64 correctly_skipped_subrelease_count = 6;
     optional int64 pending_skipped_subrelease_count = 7;
     optional int64 next_peak_interval_ms = 8;
+    
+    reserved 1;
+    
+    reserved "skipped_subrelease_interval_ms";
 }
 
 message HugePageAllocatorInfo {
@@ -270,6 +279,7 @@ message HugePageAllocatorInfo {
     optional int64 num_released_process_background_actions_pages = 65;
     optional int64 num_released_soft_limit_exceeded_pages = 66;
     optional int64 num_released_hard_limit_exceeded_pages = 67;
+    optional HugePageCollapseStats filler_collapse_stats = 77;
     
     reserved 13, 14, 15, 40, 52;
     
@@ -353,6 +363,7 @@ message MalloczEntry {
     repeated TransferCacheEntry transfer_cache = 58;
     optional TransferCacheImplementationType transfer_cache_implementation = 61;
     repeated CPUCacheEntry cpu_cache = 25;
+    optional int64 physical_cores_used = 117;
     repeated PageHeapEntry page_heap = 26;
     repeated PageAllocatorEntry page_allocator = 49;
     optional GwpAsanStats gwp_asan = 46;
@@ -365,7 +376,6 @@ message MalloczEntry {
     optional bool tcmalloc_per_cpu_caches = 21;
     optional int64 tcmalloc_max_per_cpu_cache_size = 22;
     optional int64 tcmalloc_max_total_thread_cache_bytes = 23;
-    optional int64 tcmalloc_skip_subrelease_interval_ns = 56;
     optional int64 tcmalloc_skip_subrelease_short_interval_ns = 82;
     optional int64 tcmalloc_skip_subrelease_long_interval_ns = 83;
     optional int64 tcmalloc_cache_demand_release_short_interval_ns = 114;
@@ -381,6 +391,7 @@ message MalloczEntry {
     optional bool tcmalloc_release_pages_from_huge_region = 89;
     optional bool tcmalloc_use_wider_slabs = 93;
     optional bool tcmalloc_dense_trackers_sorted_on_spans_allocated = 111;
+    optional bool tcmalloc_sparse_trackers_coarse_longest_free_range = 118;
     repeated SizeClassCapacityEntry size_class_capacity = 67;
     optional int64 dynamic_per_cpu_slab_size = 94;
     repeated DynamicSlabEntry dynamic_slab = 72;
@@ -409,16 +420,15 @@ message MalloczEntry {
     optional SampledProfiles sampled_profiles = 55;
     optional int64 total_sampled_count = 84;
     optional SizeClassConfiguration size_class_config = 98;
-    optional int64 span_max_cache_size = 100;
-    optional int64 span_max_cache_array_size = 112;
     optional MadvisePreference madvise = 101;
     optional bool tcmalloc_resize_size_class_max_capacity = 108;
     optional int64 text_size_in_bytes = 113;
     optional int64 min_hot_access_hint = 116;
+    optional bool usermode_hugepage_collapse = 119;
     
-    reserved 65, 69, 75, 80, 81, 87, 66, 74, 88, 95, 96, 47, 53;
+    reserved 56, 65, 69, 75, 80, 81, 87, 66, 74, 88, 95, 96, 100, 112, 47, 53;
     
-    reserved "tcmalloc_shuffle_per_cpu_caches", "tcmalloc_prioritize_spans", "madvise_cold_regions_nohugepage", "tcmalloc_chunks_for_page_tracker_lists", "separate_allocs_for_few_and_many_objects_spans", "tcmalloc_resize_cpu_cache_size_classes", "tcmalloc_reclaim_idle_per_cpu_caches", "tcmalloc_resize_transfer_caches", "tcmalloc_filler_chunks_per_alloc", "tcmalloc_use_all_buckets_for_few_object_spans", "tcmalloc_configure_size_class_max_capacity", "hard_limit", "limit_hits", "other_info";
+    reserved "tcmalloc_skip_subrelease_interval_ns", "tcmalloc_shuffle_per_cpu_caches", "tcmalloc_prioritize_spans", "madvise_cold_regions_nohugepage", "tcmalloc_chunks_for_page_tracker_lists", "separate_allocs_for_few_and_many_objects_spans", "tcmalloc_resize_cpu_cache_size_classes", "tcmalloc_reclaim_idle_per_cpu_caches", "tcmalloc_resize_transfer_caches", "tcmalloc_filler_chunks_per_alloc", "tcmalloc_use_all_buckets_for_few_object_spans", "tcmalloc_configure_size_class_max_capacity", "span_max_cache_size", "span_max_cache_array_size", "hard_limit", "limit_hits", "other_info";
 }
 
 enum HugePageTrackerType {
@@ -471,6 +481,7 @@ enum SizeClassConfiguration {
     SIZE_CLASS_LOW_FRAG = 4;
     SIZE_CLASS_FEWER = 5;
     SIZE_CLASS_REUSE = 6;
+    SIZE_CLASS_REUSE_V2 = 7;
 }
 
 enum MadvisePreference {

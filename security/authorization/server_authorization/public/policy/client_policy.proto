@@ -6,6 +6,7 @@ import "google/protobuf/wrappers.proto";
 import "security/authorization/server_authorization/public/policy/target.proto";
 import "security/authorization/server_authorization/public/relax/client_policy_overrides.proto";
 import "security/credentials/proto/principal.proto";
+import "security/loas/l2/proto/confidential_security_level.proto";
 import "storage/datapol/annotations/proto/semantic_annotations.proto";
 
 option java_multiple_files = true;
@@ -15,6 +16,8 @@ message UnrestrictedClientPolicy {
     ServiceCheckOptions service_check_options = 1;
     UserConstraint user_constraint = 2;
     RealmConstraint realm_constraint = 3;
+    HardenedConstraint hardened_constraint = 7;
+    KevlarConstraint kevlar_constraint = 8;
     HostnameConstraint hostname_constraint = 4;
     TighteningOverrides tightening_overrides = 5;
     RelaxingOverrides relaxing_overrides = 6;
@@ -33,6 +36,14 @@ message UserConstraint {
 
 message RealmConstraint {
     RealmAclSet whitelisted_realm_acls = 1;
+}
+
+message HardenedConstraint {
+    google.protobuf.BoolValue require_hardened = 1;
+}
+
+message KevlarConstraint {
+    security_loas_l2.ConfidentialSecurityLevel minimum_kevlar_level = 1;
 }
 
 message RealmAclSet {

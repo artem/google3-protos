@@ -6,6 +6,7 @@ import "chubby/lib/proto/statinfo.proto";
 import "chubby/lib/proto/timestamp.proto";
 import "chubby/svelte/proto/common_interface.proto";
 import "chubby/svelte/proto/load_shedding.proto";
+import "chubby/svelte/proto/subsetting.proto";
 import "frameworks/platform/endpoints/rpc/options/generic_services.proto";
 import "google/protobuf/duration.proto";
 import "google/protobuf/timestamp.proto";
@@ -144,6 +145,7 @@ message SVModifyRequest {
     optional string lockservice_locality = 17;
     optional string physical_cell = 18;
     optional chubby.LoadShedding.Token load_shedding_token = 19;
+    optional chubby.ShuffleShardingClientInfo shuffle_sharding_client_info = 20;
     
     reserved 10;
     

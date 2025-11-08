@@ -1,0 +1,23 @@
+syntax = "editions";
+
+package monitoring.streamz;
+
+import "third_party/protobuf/cpp_features.proto";
+
+option java_multiple_files = true;
+option java_outer_classname = "MetadataProto";
+option java_package = "com.google.monitoring.streamz";
+
+message MetadataPb {
+    optional bool is_constant = 1;
+    optional bool is_cumulative = 2;
+    optional string denominator_metric = 3;
+    optional string deprecation = 4;
+    optional string description = 5;
+    optional bool is_for_eyes_only = 6;
+    optional bool is_gauge = 7;
+    optional bool is_public = 8;
+    optional string unit = 9;
+    optional bool is_timestamp = 10;
+    optional bool is_huge = 11;
+}

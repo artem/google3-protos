@@ -3,12 +3,6 @@ syntax = "proto2";
 package operations_research.glop;
 
 message GlopParameters {
-    optional LpAlgorithm underlying_method = 46 [default = REVISED_SIMPLEX];
-    enum LpAlgorithm {
-        REVISED_SIMPLEX = 0;
-        PRIMAL_DUAL_PATH_FOLLOWING_METHOD = 1;
-    }
-    
     optional ScalingAlgorithm scaling_method = 57 [default = EQUILIBRATION];
     enum ScalingAlgorithm {
         DEFAULT = 0;
@@ -87,6 +81,7 @@ message GlopParameters {
     optional double objective_upper_limit = 41 [default = inf];
     optional double degenerate_ministep_factor = 42 [default = 0.01];
     optional int32 random_seed = 43 [default = 1];
+    optional bool use_absl_random = 72 [default = false];
     optional int32 num_omp_threads = 44 [default = 1];
     optional bool perturb_costs_in_dual_simplex = 53 [default = false];
     optional bool use_dedicated_dual_feasibility_algorithm = 62 [default = true];
@@ -101,9 +96,4 @@ message GlopParameters {
     optional double max_valid_magnitude = 70 [default = 1e+30];
     optional double drop_magnitude = 71 [default = 1e-30];
     optional bool dual_price_prioritize_norm = 69 [default = false];
-    optional double ipm_duality_gap_tolerance = 47 [default = 1e-08];
-    optional double ipm_primal_feasibility_tolerance = 48 [default = 1e-06];
-    optional double ipm_dual_feasibility_tolerance = 49 [default = 1e-06];
-    optional double ipm_centering_parameter = 50 [default = 0.125];
-    optional double ipm_step_size_factor = 51 [default = 0.9375];
 }

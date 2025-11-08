@@ -1,4 +1,4 @@
-syntax = "proto2";
+syntax = "editions";
 
 package production.rpc.stubs.cache;
 
@@ -39,7 +39,7 @@ message CacheBehavior {
     
     optional CachedResponseExtensions cached_response_extensions = 6;
     message CachedResponseExtensions {
-        repeated int32 extension_ids = 1 [packed = true];
+        repeated int32 extension_ids = 1;
     }
     
     message RequestPredicate {
@@ -57,6 +57,16 @@ message CacheBehavior {
     
     message ResponseCachePolicy {
         optional double cache_expiration_seconds = 1;
+        
+        optional ExcludeTaint exclude_taint = 3;
+        message ExcludeTaint {
+            
+        }
+        
+        optional ExcludeEmptyOrZeroResults exclude_empty_or_zero_results = 4;
+        message ExcludeEmptyOrZeroResults {
+            optional string field_path = 1;
+        }
         
         optional AsyncRefresh async_refresh = 2;
         message AsyncRefresh {

@@ -3,7 +3,9 @@ syntax = "proto3";
 package data_residency.mapping;
 
 import "dataresidency/mapping/cloud/cloud_locations_enum.proto";
+import "dataresidency/mapping/gdm/gdm_locations_enum.proto";
 import "dataresidency/mapping/workspace/workspace_locations_enum.proto";
+import "google/api/inclusion.proto";
 import "privacy/data_governance/attributes/proto/classification.proto";
 
 option java_multiple_files = true;
@@ -18,6 +20,7 @@ message DataResidencyLocationEnum {
     oneof enum_value {
         workspace.WorkspaceDataResidencyLocation workspace_enum = 1;
         cloud.CloudDataResidencyLocation cloud_enum = 2;
+        gdm.GDMDataResidencyLocation gdm_enum = 3;
     }
 }
 
@@ -42,6 +45,7 @@ enum DataResidencyNamespace {
     TEST = 1;
     WORKSPACE = 2;
     CLOUD = 3;
+    GDM = 4;
 }
 
 enum DataResidencyLocationState {

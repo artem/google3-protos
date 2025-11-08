@@ -33,6 +33,14 @@ message SqlServerSetReplicaRequest {
     oneof _extra_firewall_rules {
         string extra_firewall_rules = 11;
     }
+    
+    oneof _db_add_cron_job_interval_override {
+        string db_add_cron_job_interval_override = 12;
+    }
+    
+    oneof _read_replica_endpoint_url_override {
+        string read_replica_endpoint_url_override = 13;
+    }
 }
 
 message SQLServerStartReplicaRequest {

@@ -29,7 +29,38 @@ message ShardConfigurationState {
     enum ShardReconfigurationProtocol {
         PROTOCOL_UNSPECIFIED = 0;
         MULTI_AGENT_FINALIZE = 1;
+        MULTI_AGENT_FINALIZE_V3 = 2;
     }
     
     optional google.protobuf.Timestamp target_proposed_at_timestamp = 6;
+    optional ReconfigurationV3Metadata reconfiguration_v3_metadata = 10;
+}
+
+message ReconfigurationV3Metadata {
+    optional int32 replica_to_add = 1;
+    repeated int32 proposed_target_set = 2;
+    optional ShardConfiguration proposed_target = 5;
+    
+    optional ReconfigurationV3State state = 3;
+    enum ReconfigurationV3State {
+        RECONFIG_V3_STATE_UNSPECIFIED = 0;
+        RECONFIG_V3_STATE_PRE_ADD_PHASE = 1;
+        RECONFIG_V3_STATE_ADD_PHASE = 2;
+        RECONFIG_V3_STATE_PRE_REMOVE_PHASE = 3;
+        RECONFIG_V3_STATE_PRE_REMOVE_RO_DRAINING_PHASE = 7;
+        RECONFIG_V3_STATE_PRE_REMOVE_START_RO_DRAINING_PHASE = 9;
+        RECONFIG_V3_STATE_PRE_REMOVE_APPLY_RO_DRAINING_PHASE = 10;
+        RECONFIG_V3_STATE_PRE_REMOVE_START_RO_PHASE = 11;
+        RECONFIG_V3_STATE_PRE_REMOVE_APPLY_RO_PHASE = 12;
+        RECONFIG_V3_STATE_PRE_REMOVE_RO_PHASE = 8;
+        RECONFIG_V3_STATE_REMOVE_PHASE = 4;
+        RECONFIG_V3_STATE_START_REMOVE_PHASE = 13;
+        RECONFIG_V3_STATE_APPLY_REMOVE_PHASE = 14;
+        RECONFIG_V3_STATE_ROLLBACK_ADD_PHASE = 5;
+        RECONFIG_V3_STATE_ROLLBACK_APPLY_WRITABLE_PHASE = 6;
+    }
+    
+    optional int64 expected_configuration_version = 4;
+    optional int64 expected_replica_read_only_version = 6;
+    optional int64 min_target_quorum_lsn = 7;
 }

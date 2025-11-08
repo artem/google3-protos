@@ -2,6 +2,7 @@ syntax = "editions";
 
 package storage_l4;
 
+import "file/colossus/proto/curator_signed_capability.proto";
 import "storage/l4/common/lookup_flavor.proto";
 import "storage/l4/common/upstream_cache.proto";
 
@@ -16,6 +17,7 @@ message ReadOptionsProto {
     
     optional LookupFlavor lookup_flavor = 4;
     optional UpstreamCache upstream_cache = 5;
+    optional .colossus.CuratorSignedCapability curator_signed_capability = 6;
     
     reserved 2, 3;
 }

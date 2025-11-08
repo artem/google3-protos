@@ -1,0 +1,81 @@
+syntax = "proto2";
+
+package dist_proc.aggregation;
+
+import "net/proto2/bridge/proto/message_set.proto";
+import "net/proto2/proto/descriptor.proto";
+
+message DefaultOpsType {
+    enum Id {
+        UNKNOWN = 0;
+        INT8 = 1;
+        INT16 = 2;
+        INT32 = 3;
+        INT64 = 4;
+        UINT8 = 5;
+        UINT16 = 6;
+        UINT32 = 7;
+        UINT64 = 8;
+        FLOAT = 9;
+        DOUBLE = 10;
+        BYTES_OR_UTF8_STRING = 11;
+        UTF16_STRING = 12 [deprecated = true];
+    }
+    
+    extend .proto2.EnumValueOptions {
+        optional Id unsigned_counterpart = 132643189;
+    }
+}
+
+message AggregatorStatsProto {
+    required int64 num_values = 1;
+    
+    extensions 108, 109, 111, 112, 113, 115, 116, 117, 120, 121;
+}
+
+message AggregatorStateProto {
+    required AggregatorType type = 1;
+    required int64 num_values = 2;
+    optional int32 encoding_version = 3 [default = 1];
+    optional int32 value_type = 4;
+    
+    extensions 100, 101, 102, 103, 104, 105, 106, 107, 108, 109, 110, 111, 112, 113, 114, 115, 116, 117, 118, 119, 120, 121, 122;
+    
+    extend .proto2.bridge.MessageSet {
+        optional AggregatorStateProto message_set_extension = 130046566;
+    }
+}
+
+message AggregatorValueStatsProto {
+    
+}
+
+enum AggregatorType {
+    AGGREGATOR_TYPE_UNSPECIFIED = 0;
+    SUM = 100;
+    RESERVOIR_SAMPLE = 101;
+    MP_QUANTILE = 102;
+    BOOTSTRAP_SUM = 103;
+    MAX = 104;
+    MIN = 105;
+    SET = 106;
+    WEIGHTED_SAMPLE = 107;
+    MINCOUNT_UNIQUE = 108;
+    HYPERLOGLOG_UNIQUE = 109;
+    CMS_MOST_FREQUENT = 110;
+    VARIANCE = 111;
+    HYPERLOGLOG_PLUS_UNIQUE = 112;
+    KLL_QUANTILES = 113;
+    FAST_AGMS_JOIN = 114;
+    KHYPERLOGLOG = 115;
+    WEIGHTED_VARIANCE = 116;
+    IBLT = 117;
+    HYPERLOGLOG_DIM_UNIQUE = 118;
+    HYPERMINHASH = 119;
+    D3A_UNIQUE = 120;
+    D4M_QUANTILES = 121;
+    FREQUENCY_COUNTING = 122;
+    XCF_UNIQUES_BY_FREQUENCY = 123;
+    XCF_ANON_WRAPPER = 124;
+    XCI_UNIQUES = 125;
+}

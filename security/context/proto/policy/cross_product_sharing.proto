@@ -1,0 +1,9 @@
+syntax = "editions";
+
+package cross_product_sharing;
+
+option java_multiple_files = true;
+
+message EnableGcpOriginCheck {
+    
+}

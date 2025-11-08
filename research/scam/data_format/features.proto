@@ -43,6 +43,8 @@ message GenericFeatureVector {
     optional Crowding crowding = 18;
     message Crowding {
         optional int64 crowding_attribute = 1;
+        repeated int64 multidimensional_crowding_attributes = 2 [packed = true];
+        repeated string multidimensional_crowding_dimensions = 3;
     }
     
     optional RestrictTokens restrict_tokens = 15;
@@ -71,6 +73,7 @@ message GenericFeatureVector {
     message InsertionTimestamps {
         optional google.protobuf.Timestamp insertion_timestamp = 1;
         optional google.protobuf.Timestamp metadata_insertion_timestamp = 2;
+        optional google.protobuf.Timestamp userinfo_insertion_timestamp = 3;
     }
     
     optional google.protobuf.Timestamp expiration_timestamp = 20;
@@ -79,6 +82,7 @@ message GenericFeatureVector {
     optional float weight = 8 [deprecated = true];
     repeated int32 tokens = 14 [packed = true, deprecated = true];
     optional bool internal_only_is_secondary_partition = 24 [default = false];
+    repeated float unprojected_feature_value_float = 27 [packed = true];
     
     extensions 1000 to max;
     

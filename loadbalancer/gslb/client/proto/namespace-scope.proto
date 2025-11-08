@@ -1,0 +1,12 @@
+syntax = "editions";
+
+package loadbalancer_gslb.client;
+
+message NamespaceScope {
+    enum Scope {
+        UNKNOWN = 0;
+        GLOBAL = 1;
+        PROD_REGIONAL = 2;
+        CLOUD_REGIONAL = 3;
+    }
+}

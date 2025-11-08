@@ -27,6 +27,8 @@ message Catalog {
 
 message MaterializedViewFeatures {
     optional bool enable_structured_keys = 1;
+    optional bool enable_unstable_functions = 2;
+    optional bool enable_map_only_queries = 3;
 }
 
 message MaterializedView {

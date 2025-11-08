@@ -14,7 +14,8 @@ message FakeGSSDConfig {
 }
 
 message GSSDConfig {
-    optional int64 device_fd = 2;
+    optional int64 device_primary_fd = 2;
+    optional int64 device_secondary_fd = 6;
     optional string device_path = 3;
     
     optional AIORequestDispatcherType dispatcher_type = 4;

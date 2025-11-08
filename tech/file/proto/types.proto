@@ -3,6 +3,7 @@ syntax = "proto2";
 package tech.file;
 
 import "frameworks/testing/rpcreplay/processors/rpc_replay_field_option.proto";
+import "google/api/inclusion.proto";
 import "google/protobuf/any.proto";
 import "net/base/qos.proto";
 import "security/thinmint/proto/core/thinmint_core.proto";

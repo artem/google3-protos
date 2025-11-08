@@ -1,0 +1,11 @@
+syntax = "editions";
+
+package google.api.management;
+
+option java_multiple_files = true;
+option java_package = "com.google.api.management";
+
+message ControlPlaneConfig {
+    optional string id = 1;
+    optional string service_name = 2;
+}

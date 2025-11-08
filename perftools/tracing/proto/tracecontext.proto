@@ -2,6 +2,8 @@ syntax = "proto2";
 
 package perftools.tracing;
 
+import "google/api/inclusion.proto";
+
 option cc_enable_arenas = true;
 option java_package = "com.google.tracing";
 

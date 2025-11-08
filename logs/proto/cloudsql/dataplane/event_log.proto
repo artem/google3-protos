@@ -5,6 +5,7 @@ package logs.proto.cloudsql.dataplane;
 import "logs/eventid/eventid.proto";
 import "privacy/ptoken/public/core/ptoken.proto";
 import "storage/datapol/annotations/proto/semantic_annotations.proto";
+import "third_party/protobuf/cpp_features.proto";
 
 message EventLogProto {
     optional Instance instance = 1;

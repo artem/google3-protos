@@ -4,6 +4,7 @@ package rpcinjectz2;
 
 import "google/protobuf/duration.proto";
 import "google/protobuf/timestamp.proto";
+import "third_party/golang/protobuf/v2/src/google/protobuf/go_features.proto";
 
 option java_outer_classname = "RpcInjectz2Proto";
 option java_package = "com.google.net.rpc.contrib.rpcinjectz2";
@@ -25,8 +26,8 @@ message Rule {
     optional bool gwfi_mask_set = 14;
     repeated uint64 rpc_global_ids = 15;
     optional bool stateful = 16;
-    optional google.protobuf.Timestamp start_time = 17;
-    optional google.protobuf.Timestamp end_time = 18;
+    optional .google.protobuf.Timestamp start_time = 17;
+    optional .google.protobuf.Timestamp end_time = 18;
     optional string peer_realm_acl = 19;
     repeated RequestFieldMatcher request_field_match = 20;
     optional HashThreshold hash_threshold = 21;
@@ -72,7 +73,7 @@ message HashComponentSelector {
 
 message TimeSpec {
     optional string time_zone = 1;
-    optional google.protobuf.Duration offset = 9;
+    optional .google.protobuf.Duration offset = 9;
     optional bool year = 2;
     optional bool month = 3;
     optional bool day_of_month = 4;

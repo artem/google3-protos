@@ -6,6 +6,7 @@ import "devtools/staticanalysis/pipeline/analyzers/proto_best_practices/proto/op
 import "experiments/proto/testing_mode.proto";
 import "google/protobuf/any.proto";
 import "java/com/google/apps/jspb/jspb.proto";
+import "third_party/golang/protobuf/v2/src/google/protobuf/go_features.proto";
 
 option java_outer_classname = "Debugging";
 option java_package = "com.google.experiments";
@@ -28,6 +29,8 @@ message MendelInternalDebugOutput {
     repeated NamedCondition named_conditions = 5;
     message NamedCondition {
         optional string name = 1;
+        optional string feature_name = 3;
+        optional string condition_name = 4;
         
         optional TruthValue value = 2;
         enum TruthValue {
@@ -75,11 +78,14 @@ message MendelInternalDebugOutput {
         }
         
         repeated PropertyValue arguments = 3;
+        optional bool is_diversion_prop = 4;
     }
     
     repeated Rollout rollouts = 7;
     message Rollout {
         optional string name = 1;
+        optional string feature_name = 4;
+        optional string rollout_name = 5;
         optional bool default_value = 2;
         optional bool overridden_value = 3;
     }
@@ -87,6 +93,8 @@ message MendelInternalDebugOutput {
     repeated ExperimentFlag flags = 8;
     message ExperimentFlag {
         optional string name = 1;
+        optional string feature_name = 9;
+        optional string flag_name = 10;
         
         oneof value {
             StateHelperValue unevaluated = 2;

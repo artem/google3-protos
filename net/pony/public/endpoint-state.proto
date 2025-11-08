@@ -41,6 +41,7 @@ message EndpointState {
     optional int32 endpoint_engine_team_size = 10;
     optional bool shard_completion_queues = 11;
     optional bool enable_use_new_engines = 12;
+    optional int32 global_queue_fd_index = 13;
     
     reserved 4;
 }

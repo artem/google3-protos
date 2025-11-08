@@ -1,0 +1,8 @@
+syntax = "editions";
+
+package dist_proc.aggregation;
+
+message UniqueStatsProto {
+    optional int64 estimated_cardinality = 1;
+    optional double expected_error = 2;
+}

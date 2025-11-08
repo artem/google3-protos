@@ -37,3 +37,38 @@ message InitialSubsettingConfig {
 message InitialSubsettingConfigSet {
     repeated InitialSubsettingConfig subsetting_configs = 1;
 }
+
+message ShuffleShardingConfigFilter {
+    oneof user_filter {
+        UserNameFilter user_name_filter = 1;
+        UserRatioFilter user_ratio_filter = 2;
+    }
+}
+
+message ShuffleShardingConfig {
+    optional ShuffleShardingConfigFilter filter = 1;
+    
+    oneof behavior {
+        int32 shard_size = 2;
+        bool no_sharding = 3;
+    }
+}
+
+message ShuffleShardingConfigSet {
+    repeated ShuffleShardingConfig shuffle_sharding_configs = 1;
+}
+
+message ShuffleShardingClientInfo {
+    optional int32 consecutive_redirect_count = 1;
+}
+
+message ShuffleShardingResult {
+    optional Status status = 1;
+    enum Status {
+        UNKNOWN = 0;
+        ACCEPTED = 1;
+        REDIRECTED = 2;
+    }
+    
+    repeated int32 shuffle_shard_server_ids = 2;
+}

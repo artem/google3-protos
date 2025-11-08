@@ -3,6 +3,7 @@ syntax = "proto3";
 package google.api;
 
 import "google/api/authz.proto";
+import "google/api/inclusion.proto";
 import "google/api/media.proto";
 import "google/api/visibility.proto";
 

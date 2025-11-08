@@ -101,6 +101,7 @@ message PartitioningConfig {
     optional int32 max_sample_size = 33 [default = 0x7fffffff, deprecated = true];
     optional int32 max_num_levels = 2 [default = 1, deprecated = true];
     optional int32 max_leaf_size = 11 [default = 1, deprecated = true];
+    optional int32 first_n_centroids = 5;
     
     oneof SamplingFractionOrExpectedSize {
         float partitioning_sampling_fraction = 4 [default = 1];
@@ -139,7 +140,7 @@ message QuerySpillingConfig {
     }
     
     optional float spilling_threshold = 2;
-    optional uint32 max_spill_centers = 3 [default = 0xffffffff];
+    optional uint32 max_spill_centers = 3 [default = 0x7fffffff];
 }
 
 message IncrementalTrainingConfig {

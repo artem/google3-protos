@@ -2,6 +2,7 @@ syntax = "proto3";
 
 package privacy.data_governance.attributes;
 
+import "google/api/inclusion.proto";
 import "google/protobuf/any.proto";
 
 option java_multiple_files = true;
@@ -32,5 +33,6 @@ enum ApprovalType {
     ANON_APPROVED = 8;
     ANON_APPROVED_FOR_DMA5_2 = 3;
     ASSISTANT_SPECULATIVE_WRITES_ALLOWED = 9;
-    ASSISTANT_SPECULATIVE_WRITES_TEMPORARILY_ALLOWED = 10;
+    ASSISTANT_SPECULATIVE_WRITES_TEMPORARILY_ALLOWED = 10 [deprecated = true];
+    WORKSPACE_OVERRIDES_APPROVED = 11;
 }

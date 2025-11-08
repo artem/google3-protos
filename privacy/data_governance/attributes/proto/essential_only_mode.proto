@@ -2,6 +2,7 @@ syntax = "proto3";
 
 package privacy.data_governance.attributes;
 
+import "google/api/inclusion.proto";
 import "privacy/data_governance/attributes/proto/classification.proto";
 
 option java_package = "com.google.privacy.datagovernance.attributes";
@@ -9,7 +10,7 @@ option java_package = "com.google.privacy.datagovernance.attributes";
 message EssentialOnlyMode {
     message Data {
         repeated UsagePurpose usage_purposes = 1;
-        classification.Category.HasCategory logged_out_user_id = 2;
+        classification.Category.HasCategory logged_out_user_id = 2 [deprecated = true];
         classification.Category.HasCategory eea_uk_ch_logged_out_user_id = 3;
     }
     

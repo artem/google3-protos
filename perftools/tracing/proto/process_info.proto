@@ -17,16 +17,6 @@ message ArtifactMapping {
     optional uint64 size = 3;
 }
 
-message BuildData {
-    option deprecated = true;
-    optional int64 timestamp = 1;
-    optional int32 changelist = 2;
-    optional string build_label = 3;
-    optional string build_depot_path = 4;
-    optional string target_name = 5;
-    optional string build_info = 6;
-}
-
 message ProcessInfo {
     optional fixed64 process_id = 1;
     optional double process_start_time = 13;
@@ -53,7 +43,6 @@ message ProcessInfo {
         optional int32 alloc_priority_when_scheduled = 29;
     }
     
-    optional BuildData build_data = 12 [deprecated = true];
     optional devtools.api.buildinfo.BuildInfo build_info = 17;
     optional string command_line = 21;
     repeated ArtifactMapping mappings = 22;
@@ -61,9 +50,9 @@ message ProcessInfo {
     
     extensions 200 to 300;
     
-    reserved 15;
+    reserved 12, 15;
     
-    reserved "preferred_job_name";
+    reserved "build_data", "preferred_job_name";
     
     extend .proto2.bridge.MessageSet {
         optional ProcessInfo message_set_extension = 6295415;

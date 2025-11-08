@@ -10,8 +10,14 @@ option java_package = "com.google.wireless.android.play.playlog.proto";
 
 enum LoggerId {
     UNSPECIFIED_LOGGER = 0;
-    TEST_LOGGER_1 = 100000;
-    TEST_LOGGER_2 = 100001;
-    TEST_LOGGER_3 = 100002;
+    TEST_LOGGER1 = 100000;
+    TEST_LOGGER2 = 100001;
+    TEST_LOGGER3 = 100002;
+    TEST_LOGGER4 = 100004;
     DEFAULTS = 100003;
+    TIKTOK_STREAMZ = 4;
+    MOBDOG = 5;
+    POPULOUS_LOW_PRIORITY = 6;
+    POPULOUS_HIGH_PRIORITY = 7;
+    CHARON = 8;
 }

@@ -1,0 +1,31 @@
+syntax = "editions";
+
+package bns;
+
+import "chubby/lib/proto/bnsresolver.proto";
+import "google/protobuf/duration.proto";
+
+option java_multiple_files = true;
+option java_package = "com.google.net.bns";
+
+message SequentialBackoffConfig {
+    optional google.protobuf.Duration max_delay = 1;
+    optional google.protobuf.Duration initial_delay = 2;
+    optional float backoff_base = 3 [default = 2];
+}
+
+message SubsettingConfig {
+    optional int32 subset_size = 1;
+}
+
+message ConnectionConfig {
+    optional SubsettingConfig subsetting_config = 1;
+    
+    oneof connection_strategy {
+        SequentialBackoffConfig sequential_backoff_config = 2;
+    }
+    
+    extend BNSMeta {
+        optional ConnectionConfig suggested_connection_config = 483000001;
+    }
+}

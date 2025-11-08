@@ -2,6 +2,7 @@ syntax = "editions";
 
 package identity_cloudgaia;
 
+import "google/protobuf/empty.proto";
 import "google/protobuf/timestamp.proto";
 import "storage/datapol/annotations/proto/semantic_annotations.proto";
 
@@ -13,8 +14,37 @@ message RealmifiedKeyset {
     optional bytes encoded_keyset = 2;
 }
 
+message Domain {
+    oneof domain {
+        google.protobuf.Empty global_scope = 1;
+        string security_realm = 2;
+    }
+}
+
+message RevocationId {
+    
+}
+
+message Lifetime {
+    optional google.protobuf.Timestamp issuance_time = 1;
+    optional google.protobuf.Timestamp expiration_time = 2;
+    repeated RevocationId revocation_ids = 3;
+}
+
+message Authority {
+    optional bytes serialized_keyset = 1;
+    optional Domain domain = 2;
+    optional Lifetime lifetime = 3;
+}
+
+message RootAuthority {
+    optional string identifier = 1;
+    optional Authority authority = 2;
+}
+
 message VerificationKeyPackage {
     repeated RealmifiedKeyset keysets = 1;
+    repeated RootAuthority root_authority = 4;
     optional google.protobuf.Timestamp creation_time = 2;
     optional string package_version = 3;
 }

@@ -4,6 +4,7 @@ package monitoring.streamz;
 
 import "google/protobuf/any.proto";
 import "monitoring/streamz/proto/distribution.proto";
+import "third_party/protobuf/cpp_features.proto";
 
 option java_multiple_files = true;
 option java_outer_classname = "DistributionProtoExemplarExtensions";

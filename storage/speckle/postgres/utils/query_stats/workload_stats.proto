@@ -18,6 +18,7 @@ message IndexScanStat {
 message VectorScanStats {
     repeated ExecutionLatency execution_latencies = 1;
     repeated uint64 adaptive_switches = 2;
+    repeated uint64 streaming_scan_count = 3;
 }
 
 message ExecutionLatency {
@@ -140,6 +141,8 @@ message ColumnarEngineStats {
     optional uint64 vectorized_join_avg_join_tree_depth = 32;
     optional uint64 invalid_externally_toasted_cu_scan_count = 33;
     optional uint64 vectorized_join_max_join_tree_depth = 34;
+    optional uint64 columnar_unit_spill_over_count = 35;
+    optional uint64 num_ce_knn_queries = 36;
 }
 
 message WorkloadStats {

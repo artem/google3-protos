@@ -2,6 +2,7 @@ syntax = "editions";
 
 package privacy.data_governance.attributes;
 
+import "google/api/inclusion.proto";
 import "privacy/data_governance/attributes/proto/classification.proto";
 import "privacy/data_governance/attributes/proto/ml_lineage.proto";
 import "privacy/data_governance/attributes/proto/processing_type.proto";
@@ -31,6 +32,11 @@ message ProcessingDefaultsAnnotationsOverlay {
         repeated .pattributes.SemanticPurpose deferred_semantic_purposes = 14;
     }
     
+    optional Data data = 1;
+    message Data {
+        optional DataCustom custom = 101;
+    }
+    
     message ProcessProductAssociation {
         optional int32 default_product_id = 1;
     }
@@ -46,5 +52,13 @@ message ProcessingDefaultsAnnotationsOverlay {
     message Custom {
         optional DmaProcess digital_markets_act = 5;
         optional MlProcess ml = 7;
+    }
+    
+    message DataCustom {
+        repeated ResidencyData residency = 3;
+    }
+    
+    message ResidencyData {
+        repeated string intended_data_locations = 4;
     }
 }

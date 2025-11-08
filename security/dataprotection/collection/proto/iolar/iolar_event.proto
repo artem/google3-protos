@@ -38,6 +38,7 @@ message PerPrincipalReport {
     optional bool is_aod_eligible = 2;
     optional int32 outcome = 3;
     optional int32 count = 4;
+    optional google.rpc.Code result = 7;
     
     repeated PrincipalResult principal_results = 6;
     message PrincipalResult {

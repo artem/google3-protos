@@ -5,6 +5,7 @@ package google.iam.v1;
 import public "google/api/auditing.proto";
 import public "google/iam/v1/rule.proto";
 import public "google/type/expr.proto";
+import "google/api/inclusion.proto";
 import "google/api/visibility.proto";
 import "storage/datapol/annotations/proto/semantic_annotations.proto";
 import "tech/iam/proto/logging.proto";

@@ -15,7 +15,7 @@ option java_outer_classname = "SubstitutionFormatStringProto";
 option java_package = "io.envoyproxy.envoy.config.core.v3";
 
 message JsonFormatOptions {
-    bool sort_properties = 1;
+    bool sort_properties = 1 [deprecated = true];
 }
 
 message SubstitutionFormatString {

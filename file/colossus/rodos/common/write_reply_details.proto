@@ -1,0 +1,25 @@
+syntax = "proto3";
+
+package rodos;
+
+message WriteReplyDetails {
+    int64 hdd_partition_bytes_written = 1;
+    int64 ssd_partition_bytes_written = 2;
+    
+    Stats hdd_best_effort_cost_stats = 6;
+    message Stats {
+        double cost = 1;
+        int64 bytes_written = 2;
+        int64 writes_completed = 3;
+    }
+    
+    Stats hdd_best_effort_plus_cost_stats = 7;
+    Stats hdd_throughput_cost_stats = 8;
+    Stats hdd_low_latency_cost_stats = 9;
+    Stats hdd_ultra_low_latency_cost_stats = 10;
+    Stats ssd_best_effort_cost_stats = 11;
+    Stats ssd_best_effort_plus_cost_stats = 12;
+    Stats ssd_throughput_cost_stats = 13;
+    Stats ssd_low_latency_cost_stats = 14;
+    Stats ssd_ultra_low_latency_cost_stats = 15;
+}

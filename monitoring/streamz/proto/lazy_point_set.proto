@@ -5,5 +5,5 @@ package monitoring.streamz;
 import "monitoring/streamz/api/data_model.proto";
 
 message LazyPointSet {
-    optional .streamz.PointSet point_set = 1 [unverified_lazy = true];
+    optional .streamz.PointSet point_set = 1;
 }

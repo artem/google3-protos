@@ -1,0 +1,46 @@
+syntax = "editions";
+
+package storage_speckle_postgres_utils_remote_execution;
+
+import "storage/datapol/annotations/proto/semantic_annotations.proto";
+
+message CPUUsage {
+    optional int64 user_time_jiffies = 1;
+    optional int64 nice_time_jiffies = 2;
+    optional int64 system_time_jiffies = 3;
+    optional int64 idle_time_jiffies = 4;
+    optional int64 io_wait_time_jiffies = 5;
+    optional int64 irq_time_jiffies = 6;
+    optional int64 soft_irq_time_jiffies = 7;
+    optional int64 steal_time_jiffies = 8;
+    optional int64 guest_time_jiffies = 9;
+    optional int64 guest_nice_time_jiffies = 10;
+}
+
+message TieredCacheStats {
+    optional int64 bufcachehits = 1;
+    optional int64 chillcachehits = 2;
+    optional int64 disk_reads = 3;
+    optional uint64 free_page_in_chill_cache = 4;
+}
+
+message PendingIOStats {
+    optional int64 inflight_read_count = 1;
+}
+
+message BackendStats {
+    optional int64 max_connection = 1;
+    optional uint64 active_backends = 2;
+}
+
+message MemoryStats {
+    optional uint64 available_size = 1;
+}
+
+message NodeStats {
+    optional CPUUsage cpu_usage = 1;
+    optional TieredCacheStats tiered_cache_stat = 2;
+    optional PendingIOStats pending_io_stat = 3;
+    optional MemoryStats memory_stat = 4;
+    optional BackendStats backend_stat = 5;
+}

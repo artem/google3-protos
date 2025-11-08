@@ -2,7 +2,9 @@ syntax = "proto3";
 
 package google.api;
 
+import "google/api/inclusion.proto";
 import "google/api/visibility.proto";
+import "storage/datapol/annotations/proto/semantic_annotations.proto";
 
 option objc_class_prefix = "GAPI";
 option cc_enable_arenas = true;
@@ -28,6 +30,7 @@ message UrlMap {
             LegacyGfeService legacy_gfe_service = 6;
             EasyApisRoutingConfig easyapis_routing_config = 8;
             RLSTarget rls = 9;
+            ScottyTarget scotty = 10;
         }
         
         reserved 4;
@@ -131,6 +134,16 @@ message HttpFrontendOptions {
         TCP_KEEPALIVE_DISABLED = 1;
         TCP_KEEPALIVE_FAST = 2;
     }
+}
+
+message ScottyTarget {
+    string target = 1;
+    string universe = 2;
+    string location = 3;
+    string partition = 4;
+    string sub_partition = 5;
+    string customer = 6;
+    BackendOptions backend_options = 7;
 }
 
 message RLSTarget {
