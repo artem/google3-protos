@@ -1,0 +1,34 @@
+syntax = "proto2";
+
+package privacy.rollouts;
+
+import "google/api/inclusion.proto";
+
+option java_multiple_files = true;
+option java_package = "com.google.privacy.rollouts";
+
+message LaunchGroup {
+    enum Enum {
+        LAUNCH_GROUP_UNSPECIFIED = 0;
+        OPT_IN_PURPOSE_CONSENT_WAVE1 = 1;
+        POSI_WAVE1 = 2;
+        DMA52_WAVE3 = 3;
+        CSD_WAVE1 = 4;
+    }
+}
+
+message Mode {
+    enum Enum {
+        MODE_UNSPECIFIED = 0;
+        DISCOVERY_OPT_IN = 1;
+        TESTING_EARLY_OPT_IN = 2;
+        HARD_ENFORCEMENT_OPT_IN = 3;
+        OPT_OUT = 4;
+        OPT_OUT_FILTERING = 5;
+    }
+}
+
+message RolloutSignal {
+    optional LaunchGroup.Enum launch_group = 1;
+    optional Mode.Enum mode = 2;
+}

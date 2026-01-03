@@ -3,6 +3,7 @@ syntax = "proto2";
 package gaia_cookie;
 
 import "frameworks/testing/rpcreplay/processors/rpc_replay_field_option.proto";
+import "gaia/data/session_metadata.proto";
 import "gaia/insclient/ins_clientinfo.proto";
 import "identity/accountcapabilities/proto/capability_transport.proto";
 import "logs/proto/gaia/dusi.proto";
@@ -73,11 +74,12 @@ message SessionDeviceBindingKeyInfo {
     optional bytes key_id = 1;
     optional int32 domain_id = 2;
     optional int64 timestamp_micros = 3;
+    optional int32 enforcement_state = 4;
 }
 
 message DeviceBoundSessionMetadata {
     repeated SessionDeviceBindingKeyInfo binding_key_info = 1;
-    optional int32 enforcement_state = 2;
+    optional int32 enforcement_state = 2 [deprecated = true];
     optional int32 session_origin = 3;
     
     enum BoundSessionEnforcementState {
@@ -88,6 +90,8 @@ message DeviceBoundSessionMetadata {
         ENABLED_LONGLIVED_SIDTS = 100;
         ELIGIBLE_FOR_FULL_ENFORCEMENT = 101;
         ORIGIN_TRIAL_ENABLED = 102;
+        ELIGIBLE_FOR_YT_BINDING_STANDALONE = 103;
+        ELIGIBLE_FOR_YT_BINDING_FEDERATION = 104;
     }
     
     enum SessionOrigin {
@@ -123,6 +127,7 @@ message CookieMetadata {
     optional fixed64 tls_channel_id = 7;
     optional int64 user_session_version_timestamp_micros = 9;
     optional string origin_domain_name = 10;
+    optional bytes workspace_signature = 11;
     
     reserved 2, 4;
 }
@@ -143,8 +148,10 @@ message UserSession {
     optional int32 session_type = 9;
     optional int32 custom_session_lifetime_sec = 10;
     repeated int32 invalid_reason = 7;
+    repeated int32 detailed_invalid_reason = 20 [packed = true];
     optional int64 expiration_time_micros = 16;
     repeated int64 restricted_session_policy_id = 18;
+    optional gaia_data.SignInSessionMetadata session_metadata = 21;
     
     reserved 6, 8;
     
@@ -159,6 +166,7 @@ message UserSession {
         ACCESS_CODE_REVOKED = 1;
         OAUTH_LOGIN_TOKEN_REVOKED = 2;
         VALID_SESSION_TIMESTAMP_IS_NEWER = 3;
+        DUSI_INVALIDATED = 6;
         SESSION_EXPIRED = 4;
     }
 }

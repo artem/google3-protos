@@ -1,0 +1,42 @@
+syntax = "editions";
+
+package proto2.contrib.parse_proto;
+
+import "net/proto2/proto/descriptor.proto";
+
+message ParseError {
+    optional Type error_type = 1;
+    enum Type {
+        OK = 0;
+        BAD_TAG = 1;
+        CANNOT_PARSE_FIELD = 2;
+        CANNOT_PARSE_MESSAGE_SET_ITEM = 3;
+        CANNOT_READ_CORD = 4;
+        CANNOT_READ_MESSAGE_FIELD = 5;
+        CANNOT_READ_MESSAGE_LENGTH = 6;
+        CANNOT_READ_STRING_FIELD = 7;
+        ILLEGAL_FIELD_TYPE = 8;
+        INVALID_UTF8 = 9;
+        LENGTH_EXCEEDS_LIMIT = 10;
+        MAX_RECURSION_LIMIT_REACHED = 11;
+        NOT_CONSUMED_ENTIRE_MESSAGE = 12;
+        UNKNOWN_EXTENSION = 13;
+        UNKNOWN_FIELD = 14;
+        REQUIRED_FIELD_MISSING = 15;
+        UNMATCHED_END_GROUP_TAG = 16;
+    }
+    
+    repeated FieldPath field_path = 2;
+    message FieldPath {
+        optional uint32 tag = 1;
+        optional FieldDescriptorProto field = 2;
+        optional uint32 field_index = 3;
+    }
+    
+    optional string full_field_path = 8;
+    optional int64 tag_position = 3;
+    optional int64 position = 4;
+    optional int64 length = 5;
+    optional int64 available = 6;
+    optional int64 total_available = 7;
+}

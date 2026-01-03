@@ -58,6 +58,10 @@ message AclMigrationClientShardingConfigSet {
     repeated AclMigrationClientShardingParams params = 1;
 }
 
+message ViglobalMigrationClientShardingConfigSet {
+    repeated ViglobalMigrationClientShardingParams params = 1;
+}
+
 message PhysicalCellClientShardingParams {
     optional ClientShardingConfigFilter client_sharding_config_filter = 1;
     
@@ -170,6 +174,18 @@ message NcsOptionalityCellShardingParams {
 message AclMigrationClientShardingParams {
     optional ClientShardingConfigFilter client_sharding_config_filter = 1;
     optional int32 migration_step = 2;
+}
+
+message ViglobalMigrationClientShardingParams {
+    optional ClientShardingConfigFilter client_sharding_config_filter = 1;
+    
+    optional RoutingType routing_type = 2 [default = ROUTING_TYPE_READ_AND_WRITE];
+    enum RoutingType {
+        ROUTING_TYPE_UNSPECIFIED = 0;
+        ROUTING_TYPE_READ_ONLY = 1;
+        ROUTING_TYPE_WRITE_ONLY = 2;
+        ROUTING_TYPE_READ_AND_WRITE = 3;
+    }
 }
 
 message ClientShardingConfigFilter {

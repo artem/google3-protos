@@ -13,6 +13,7 @@ import "storage/speckle/proto/gca.proto";
 import "storage/speckle/proto/health_agent.proto";
 import "storage/speckle/proto/kernel_param.proto";
 import "storage/speckle/proto/ssl_config.proto";
+import "storage/speckle/proto/storage_config.proto";
 import "storage/speckle/proto/testing_parameters.proto";
 import "storage/speckle/proto/vm_environment.proto";
 
@@ -69,9 +70,10 @@ message VmSqlServerParametersProto {
     optional bool start_in_recovery_mode = 15;
     optional int32 memory_limit_buffer_mb = 16;
     optional string hostname = 17;
-    optional bool mount_tmp_directory_to_container = 18;
+    optional bool mount_tmp_directory_to_container = 18 [deprecated = true];
     optional bool set_durability_flags = 19;
     optional bool enable_alternatewritethrough = 20;
+    optional string major_version = 21;
 }
 
 message VmServiceAgentParametersProto {
@@ -229,6 +231,7 @@ message VmParametersProto {
     optional bool chunk_large_binlog_events_for_pitr = 103 [default = false];
     optional bool launch_observability_agent = 104;
     optional bool enable_modern_observability_telemetry_collection_and_export = 144;
+    optional string modern_observability_stage = 157;
     optional bool enable_use_source_master_status_with_gtid = 105 [default = false];
     optional bool enable_skip_new_binlog = 106 [default = false];
     optional bool launch_health_agent = 107;
@@ -255,7 +258,6 @@ message VmParametersProto {
     optional bool ignore_queries_in_monitoring_agent = 128;
     optional bool enable_dp_experiments_using_live_config = 129;
     optional string dataplane_experiments_environment = 130;
-    optional bool enable_performance_schema_default_on_12_gb_ram = 131 [default = true];
     optional VmHealthAgentConfig health_agent_config = 132;
     optional SslParamsProto.CaMode server_ca_mode = 133;
     optional string primary_dns_name = 134;
@@ -275,6 +277,13 @@ message VmParametersProto {
     optional DbAlignedAtomicWritesConfig db_aligned_atomic_writes = 150;
     optional bool enable_apparmor_for_monitoring_agent = 151 [default = false];
     optional bool enable_migration_to_regional_instance_template = 152;
+    optional bool enable_apparmor_for_healthcheck_agent = 153 [default = false];
+    optional StorageAutoresizeConfig storage_auto_resize_config = 154;
+    optional bool enable_apparmor_for_proxy_server_agent = 155 [default = false];
+    optional bool enable_apparmor_for_logging_agent = 156 [default = false];
+    optional bool enable_apparmor_for_health_agent = 158 [default = false];
+    optional bool enable_apparmor_for_instance_agent = 160 [default = false];
+    optional bool accelerated_replica_mode = 159 [default = false];
     
-    reserved 7, 8, 9, 17, 83, 89, 95;
+    reserved 7, 8, 9, 17, 83, 89, 95, 131;
 }

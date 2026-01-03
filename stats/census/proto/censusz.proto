@@ -2,6 +2,8 @@ syntax = "editions";
 
 package stats_census;
 
+import "google/protobuf/timestamp.proto";
+
 message Censusz {
     optional bool is_census_enabled = 1;
     
@@ -127,6 +129,35 @@ message Censusz {
         optional string census_resourcez_views = 9;
         optional bool census_memory_accounting_enabled = 10;
         optional double census_log_harvest_interval_in_secs = 11;
+    }
+    
+    optional MemoryBudget memory_budget = 12;
+    message MemoryBudget {
+        optional bool enabled = 1;
+        optional double budget_mb = 2;
+        
+        optional RestrictionLevel current_restriction_level = 3;
+        enum RestrictionLevel {
+            RESTRICTION_LEVEL_UNSPECIFIED = 0;
+            RESTRICTION_LEVEL_NONE = 1;
+            RESTRICTION_LEVEL_MODERATE = 2;
+            RESTRICTION_LEVEL_SIGNIFICANT = 3;
+            RESTRICTION_LEVEL_EXTREME = 4;
+        }
+        
+        repeated RestrictionHistory restriction_history = 4;
+        message RestrictionHistory {
+            optional google.protobuf.Timestamp timestamp = 1;
+            optional string setter = 2;
+            optional RestrictionLevel restriction_level = 3;
+            optional int64 bytes_in_use = 4;
+        }
+        
+        repeated ComponentUsage component_usage = 5;
+        message ComponentUsage {
+            optional string component_name = 1;
+            optional Stats bytes_in_use = 2;
+        }
     }
     
     message Stats {

@@ -1,0 +1,18 @@
+syntax = "editions";
+
+package gaia_data;
+
+import "logs/proto/logs_annotations/logs_annotations.proto";
+import "storage/datapol/annotations/proto/semantic_annotations.proto";
+
+option java_package = "com.google.gaia.client.proto";
+
+enum AuthenticationMethodReference {
+    AMR_UNSPECIFIED = 0;
+    AMR_PASSWORD = 1;
+    AMR_MULTI_FACTOR = 2;
+    AMR_SMS = 3;
+    AMR_PHONE_CALL = 4;
+    AMR_PASSKEY = 5;
+    AMR_HARDWARE_KEY = 6;
+}

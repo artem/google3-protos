@@ -1,0 +1,13 @@
+syntax = "editions";
+
+package perftools.tracing;
+
+message AnnotationValue {
+    oneof value {
+        Int32List int32_list = 1;
+    }
+    
+    message Int32List {
+        repeated int32 value = 1;
+    }
+}

@@ -1,0 +1,13 @@
+syntax = "editions";
+
+package table;
+
+import "storage/table/public/read/replica_selection.proto";
+import "storage/table/public/row_schema.proto";
+
+option java_multiple_files = true;
+
+message LookupOptionsProto {
+    optional RowSchemaProto lookup_key_schema = 1;
+    optional ReplicaSelection preferred_replica = 2;
+}

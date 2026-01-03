@@ -24,7 +24,7 @@ enum FieldID {
     ALL_STACK_SYMBOL = 11;
     BUILD_INFO = 12;
     BUILD_TARGET = 13;
-    BUILD_VERSION_MAP = 14;
+    BUILD_VERSION_MAP = 14 [deprecated = true];
     BUILD_CHANGELIST = 15;
     NOTE = 16;
     ALL_THREAD_NAME = 17;

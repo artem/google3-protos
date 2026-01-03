@@ -1,0 +1,10 @@
+syntax = "editions";
+
+package thinmint;
+
+import "security/thinmint/notary/proto/notary_digest_type.proto";
+
+message NotaryDigest {
+    optional NotaryDigestType type = 1;
+    optional bytes digest_value = 2;
+}

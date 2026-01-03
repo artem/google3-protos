@@ -42,6 +42,8 @@ service SecretManagerService {
     rpc SetIamPolicy(iam.v1.SetIamPolicyRequest) returns (iam.v1.Policy);
     rpc GetIamPolicy(iam.v1.GetIamPolicyRequest) returns (iam.v1.Policy);
     rpc TestIamPermissions(iam.v1.TestIamPermissionsRequest) returns (iam.v1.TestIamPermissionsResponse);
+    rpc EnableManagedRotation(EnableManagedRotationRequest) returns (SecretVersion);
+    rpc RotateSecret(RotateSecretRequest) returns (SecretVersion);
 }
 
 message ListSecretsRequest {
@@ -69,6 +71,24 @@ message CreateSecretRequest {
 message AddSecretVersionRequest {
     string parent = 1;
     SecretPayload payload = 2;
+}
+
+message EnableManagedRotationRequest {
+    string parent = 1;
+    
+    oneof credentials {
+        CloudSQLSingleUserCredentials cloud_sql_single_user_credentials = 2;
+    }
+    
+    message CloudSQLSingleUserCredentials {
+        string instance_id = 1;
+        string username = 2;
+        string password = 3;
+    }
+}
+
+message RotateSecretRequest {
+    string parent = 1;
 }
 
 message GetSecretRequest {

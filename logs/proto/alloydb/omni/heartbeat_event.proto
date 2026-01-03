@@ -1,0 +1,38 @@
+syntax = "editions";
+
+package logs.proto.alloydb.omni;
+
+import "storage/datapol/annotations/proto/semantic_annotations.proto";
+
+option java_multiple_files = true;
+option java_outer_classname = "HeartbeatEventProto";
+
+message HeartbeatEvent {
+    optional string installation_id = 1;
+    
+    optional ProductInfo product_info = 2;
+    message ProductInfo {
+        optional string omni_version = 1;
+        optional int32 pg_major_version = 2;
+        
+        optional DistributionType distribution_type = 3;
+        enum DistributionType {
+            DISTRIBUTION_TYPE_UNSPECIFIED = 0;
+            DISTRIBUTION_TYPE_DEBIAN_CONTAINER = 1;
+            DISTRIBUTION_TYPE_UBI_CONTAINER = 2;
+        }
+    }
+    
+    optional HostInfo host_info = 3;
+    message HostInfo {
+        optional int32 num_cpus = 1;
+        optional int64 total_ram_bytes = 2;
+        optional int32 num_effective_cpus = 3;
+        optional int64 ram_limit_bytes = 4;
+    }
+    
+    optional DatabaseInfo database_info = 4;
+    message DatabaseInfo {
+        optional int64 postmaster_uptime_seconds = 1;
+    }
+}

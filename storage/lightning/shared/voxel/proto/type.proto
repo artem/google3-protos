@@ -15,6 +15,7 @@ message TypeProto {
         ProtoTypeProto proto_type = 5;
         EnumTypeProto enum_type = 6;
         MapTypeProto map_type = 7;
+        ExtensionTypeProto extension_type = 8;
     }
 }
 
@@ -46,4 +47,10 @@ message EnumTypeProto {
 message MapTypeProto {
     optional TypeProto key_type = 1;
     optional TypeProto value_type = 2;
+}
+
+message ExtensionTypeProto {
+    optional uint64 extension_namespace = 3;
+    
+    extensions 2;
 }

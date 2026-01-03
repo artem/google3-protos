@@ -3,6 +3,7 @@ syntax = "editions";
 package borg;
 
 import "google/protobuf/timestamp.proto";
+import "stats/histogram/proto/histogram.proto";
 
 message XpuInfo {
     optional Container container = 1;
@@ -14,6 +15,7 @@ message XpuInfo {
         optional double membw_usage = 5;
         optional double membw_limit = 6;
         optional double membw_per_gcu = 7;
+        optional stats.HistogramState membw_histogram = 8;
     }
     
     optional Domain domain = 2;

@@ -165,6 +165,7 @@ message SatParameters {
     optional int32 interleave_batch_size = 134 [default = 0];
     optional bool share_objective_bounds = 113 [default = true];
     optional bool share_level_zero_bounds = 114 [default = true];
+    optional bool share_linear2_bounds = 326 [default = false];
     optional bool share_binary_clauses = 203 [default = true];
     optional bool share_glue_clauses = 285 [default = false];
     optional bool minimize_shared_clauses = 300 [default = true];
@@ -196,6 +197,7 @@ message SatParameters {
     
     optional double propagation_loop_detection_factor = 221 [default = 10];
     optional bool use_precedences_in_disjunctive_constraint = 74 [default = true];
+    optional int32 transitive_precedences_work_limit = 327 [default = 1000000];
     optional int32 max_size_to_create_precedence_literals_in_disjunctive = 229 [default = 60];
     optional bool use_strong_propagation_in_disjunctive = 230 [default = false];
     optional bool use_dynamic_precedence_in_disjunctive = 263 [default = false];
@@ -286,6 +288,7 @@ message SatParameters {
     }
     
     optional int32 shared_tree_balance_tolerance = 305 [default = 1];
+    optional double shared_tree_split_min_dtime = 328 [default = 0.1];
     optional bool enumerate_all_solutions = 87 [default = false];
     optional bool keep_all_feasible_solutions_in_presolve = 173 [default = false];
     optional bool fill_tightened_domains_in_response = 132 [default = false];
@@ -300,6 +303,7 @@ message SatParameters {
     optional bool use_lns = 283 [default = true];
     optional bool use_lns_only = 101 [default = false];
     optional int32 solution_pool_size = 193 [default = 3];
+    optional int32 solution_pool_diversity_limit = 329 [default = 10];
     optional int32 alternative_pool_size = 325 [default = 1];
     optional bool use_rins_lns = 129 [default = true];
     optional bool use_feasibility_pump = 164 [default = true];

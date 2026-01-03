@@ -15,4 +15,8 @@ message Cloud {
             SECRET = 1;
         }
     }
+    
+    message Process {
+        bool is_gcp_infra = 1;
+    }
 }

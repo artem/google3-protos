@@ -10,7 +10,7 @@ option java_package = "com.google.prod.dependency.proto";
 message Dependencies {
     repeated Dependency dependency = 1;
     
-    extensions 1000 to max;
+    extensions 1000 to 529999999, 530000000 to max;
 }
 
 message Dependency {

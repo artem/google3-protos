@@ -1,0 +1,25 @@
+syntax = "editions";
+
+package tech.file;
+
+import "google/protobuf/timestamp.proto";
+
+message ArchimedesTestFeatures {
+    optional int32 number = 1;
+    optional string str = 2;
+}
+
+message ArchimedesGcsFeatures {
+    optional string policy_id = 1;
+    optional google.protobuf.Timestamp original_shard_creation_time = 2;
+    optional google.protobuf.Timestamp expected_end_of_life_time = 4;
+    
+    reserved 3;
+}
+
+message ArchimedesExtendedAttribute {
+    oneof features {
+        ArchimedesTestFeatures test_features = 1;
+        ArchimedesGcsFeatures gcs_features = 2;
+    }
+}

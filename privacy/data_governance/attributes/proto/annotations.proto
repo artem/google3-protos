@@ -10,7 +10,9 @@ import "privacy/data_governance/attributes/proto/assurant.proto";
 import "privacy/data_governance/attributes/proto/audio.proto";
 import "privacy/data_governance/attributes/proto/classification.proto";
 import "privacy/data_governance/attributes/proto/cloud.proto";
+import "privacy/data_governance/attributes/proto/cloud_admin_access.proto";
 import "privacy/data_governance/attributes/proto/common.proto";
+import "privacy/data_governance/attributes/proto/consent_for_sensitive_data.proto";
 import "privacy/data_governance/attributes/proto/consumer_trust.proto";
 import "privacy/data_governance/attributes/proto/data_residency_handling.proto";
 import "privacy/data_governance/attributes/proto/datapol.proto";
@@ -42,9 +44,11 @@ import "privacy/data_governance/attributes/proto/purpose.proto";
 import "privacy/data_governance/attributes/proto/residency.proto";
 import "privacy/data_governance/attributes/proto/retention.proto";
 import "privacy/data_governance/attributes/proto/search.proto";
+import "privacy/data_governance/attributes/proto/targeted_policy_sampling.proto";
 import "privacy/data_governance/attributes/proto/third_party.proto";
 import "privacy/data_governance/attributes/proto/trusted_core_access.proto";
 import "privacy/data_governance/attributes/proto/youtube.proto";
+import "privacy/pattributes/public/proto/rollout_config_attributes.proto";
 import "privacy/pattributes/public/proto/semantic_purpose.proto";
 import "privacy/pattributes/public/proto/wipeout/wipeout_service.proto";
 
@@ -94,6 +98,7 @@ message Annotations {
             ThirdParty.Data third_party = 19;
             Cloud.Data cloud = 21;
             PiiAndContentSanitization pii_and_content_sanitization = 22;
+            CloudAdminAccess cloud_admin_access = 23;
             Experimental.Data experimental = 101;
             
             oneof _ptoken {
@@ -133,6 +138,7 @@ message Annotations {
         PrimaryForPortability primary_for_portability = 4;
         StorageProductAssociation product_association = 5;
         FineGrainedProductAssociation fine_grained_product_association = 6;
+        repeated pgraph.attributes.ScopedRolloutConfig rollout_config = 8;
         
         Custom custom = 101;
         message Custom {
@@ -142,6 +148,7 @@ message Annotations {
             PToken.Storage ptoken = 4;
             ConsumerTrust.Storage consumer_trust = 5;
             Kansas.Storage kansas = 6;
+            repeated TargetedPolicySamplingCriteria targeted_policy_sampling_criteria = 7;
         }
         
         oneof _used_for_personalization {
@@ -189,6 +196,8 @@ message Annotations {
             DigitalMarketsAct.Process digital_markets_act = 5;
             PToken.Process ptoken = 6;
             ML.Process ml = 7;
+            Cloud.Process cloud = 8;
+            ConsentForSensitiveData.Process consent_for_sensitive_data = 9;
         }
         
         oneof _semantic_purpose {
@@ -197,6 +206,10 @@ message Annotations {
         
         oneof _enable_write_observations_computation {
             bool enable_write_observations_computation = 15;
+        }
+        
+        oneof _is_limited_manual_access {
+            bool is_limited_manual_access = 16;
         }
     }
     

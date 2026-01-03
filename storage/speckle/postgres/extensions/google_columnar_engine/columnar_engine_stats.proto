@@ -3,6 +3,7 @@ syntax = "editions";
 package storage_speckle_postgres_extensions_google_columnar_engine;
 
 import "storage/datapol/annotations/proto/semantic_annotations.proto";
+import "third_party/protobuf/cpp_features.proto";
 
 message RecommendationStat {
     optional string recommendation_algorithm = 1;
@@ -59,6 +60,8 @@ message ColumnarEngineContent {
     optional float refresh_threshold_percentage = 9;
     optional int64 total_index_invalid_block_count = 10;
     optional int64 total_index_block_count = 11;
+    map<string, int64> materialized_expression_usage_counts = 12;
+    map<string, int64> materialized_expressions_populated = 13;
 }
 
 message VectorIndexScanStats {

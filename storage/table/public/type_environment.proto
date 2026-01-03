@@ -1,0 +1,17 @@
+syntax = "proto2";
+
+package table;
+
+import "net/proto2/proto/descriptor.proto";
+
+option java_multiple_files = true;
+option java_outer_classname = "TypeEnvironmentProtos";
+option java_package = "com.google.storage.table.api";
+
+message TypeEnvironmentProto {
+    repeated DescriptorPoolProto pools = 1;
+    message DescriptorPoolProto {
+        optional int32 id = 1;
+        optional .proto2.FileDescriptorSet file_descriptor_set = 2;
+    }
+}

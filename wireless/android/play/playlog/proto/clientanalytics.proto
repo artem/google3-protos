@@ -5,10 +5,12 @@ package wireless_android_play_playlog;
 import "assistant/api/core_types/device_type.proto";
 import "assistant/api/core_types/surface.proto";
 import "experiments/framework/extensions/heterodyne/proto/experiment_ids.proto";
+import "google/api/inclusion.proto";
 import "google/protobuf/timestamp.proto";
 import "java/com/google/android/gmscore/proto/gmscore_build.proto";
 import "java/com/google/android/gmscore/proto/gmscore_device.proto";
 import "java/com/google/apps/jspb/jspb.proto";
+import "java/com/google/apps/jspb/jspb_disable_randomization.proto";
 import "java/com/google/apps/jspb/jspb_generate_object_format.proto";
 import "logs/proto/logs_annotations/logs_annotations.proto";
 import "logs/proto/wireless/android/play/playlog/accessibility/ios_accessibility_state.proto";
@@ -151,6 +153,7 @@ message AndroidClientInfo {
     optional string logging_id = 2 [deprecated = true];
     optional int64 device_id = 18;
     optional int32 sdk_version = 3;
+    optional int32 sdk_version_full = 38;
     
     repeated ExtensionVersion extension_version = 34;
     message ExtensionVersion {
@@ -405,6 +408,7 @@ message GoogleHomeClientInfo {
     optional string app_version = 2;
     optional string acp_version = 16;
     optional string opal_version = 18;
+    optional string fuchsia_version = 22;
     optional string virtual_release_channel = 17;
     optional string manufacturer = 3;
     optional string product_name = 4;
@@ -447,6 +451,7 @@ message BattlestarClientInfo {
         CLIENT = 4;
         INSTALLER = 5;
         HYPERVISOR = 6;
+        INSTALLER_PHENOTYPE = 7;
     }
     
     optional BattlestarMachineTier battlestar_machine_tier = 6;
@@ -464,6 +469,8 @@ message BattlestarClientInfo {
         MANUFACTURER_INTEL = 1;
         MANUFACTURER_AMD = 2;
     }
+    
+    optional int64 system_physical_memory_bytes = 10;
     
     reserved 3, 7, 9;
 }
@@ -871,8 +878,6 @@ message NestcamPhotonClientInfo {
         DEVICE_TYPE_EMULATOR = 4;
         DEVICE_TYPE_C302 = 5;
         DEVICE_TYPE_VEN = 6;
-        DEVICE_TYPE_SUN = 7;
-        DEVICE_TYPE_ANDROID = 8;
         DEVICE_TYPE_NEW = 9;
         DEVICE_TYPE_QV2 = 10;
         DEVICE_TYPE_BQ = 11;
@@ -881,6 +886,8 @@ message NestcamPhotonClientInfo {
         DEVICE_TYPE_UST = 14;
         DEVICE_TYPE_PIC = 15;
         DEVICE_TYPE_COR = 16;
+        DEVICE_TYPE_NQ = 17;
+        DEVICE_TYPE_KRAMER = 18;
     }
     
     optional string sku = 4;

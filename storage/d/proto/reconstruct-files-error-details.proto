@@ -1,0 +1,20 @@
+syntax = "editions";
+
+package storage_d;
+
+import "net/proto2/bridge/proto/message_set.proto";
+
+message ReconstructFilesErrorDetails {
+    optional Reason reason = 1;
+    enum Reason {
+        REASON_UNSPECIFIED = 0;
+        REASON_FREE_SPACE_THRESHOLD = 1;
+        REASON_REMOTE_OPS_MEM_LIMIT_PER_USER = 2;
+        REASON_REMOTE_OPS_MEM_LIMIT_PER_SERVER = 3;
+        REASON_SOURCE_READ_FAILURE = 4;
+    }
+    
+    extend .proto2.bridge.MessageSet {
+        optional ReconstructFilesErrorDetails message_set_extension = 525004261;
+    }
+}

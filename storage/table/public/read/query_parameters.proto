@@ -1,0 +1,22 @@
+syntax = "editions";
+
+package table;
+
+import "storage/table/public/typed_value.proto";
+
+option java_multiple_files = true;
+
+message NamedQueryParametersProto {
+    map<string, TypedValueProto> parameters = 1;
+}
+
+message PositionalQueryParametersProto {
+    repeated TypedValueProto parameters = 1;
+}
+
+message QueryParametersProto {
+    oneof parameters {
+        NamedQueryParametersProto named = 1;
+        PositionalQueryParametersProto positional = 2;
+    }
+}

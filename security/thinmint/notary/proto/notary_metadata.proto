@@ -1,0 +1,19 @@
+syntax = "editions";
+
+package thinmint;
+
+import "google/protobuf/timestamp.proto";
+import "security/credentials/proto/principal.proto";
+
+option java_outer_classname = "NotaryMetadataProto";
+option java_package = "com.google.protos.thinmint.notary";
+
+message NotaryMetadata {
+    optional security.credentials.PrincipalProto applicant = 1;
+    repeated security.credentials.PrincipalProto authorized_renewers = 2;
+    optional string security_realm = 3;
+    optional google.protobuf.Timestamp expiration_time = 4;
+    optional google.protobuf.Timestamp original_notarization_time = 5;
+    optional google.protobuf.Timestamp latest_notarization_time = 6;
+    repeated google.protobuf.Timestamp renewal_times = 7;
+}

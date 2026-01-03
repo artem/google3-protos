@@ -1,0 +1,8 @@
+syntax = "editions";
+
+package thinmint;
+
+enum NotaryDigestType {
+    NOTARY_DIGEST_TYPE_UNSPECIFIED = 0;
+    NOTARY_DIGEST_TYPE_SHA512 = 1;
+}

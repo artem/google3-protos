@@ -1,0 +1,80 @@
+syntax = "editions";
+
+package table;
+
+import "google/protobuf/timestamp.proto";
+import "net/rpc/rpc-authority.proto";
+import "privacy/ptoken/public/proto/read_query_policy_spec.proto";
+import "security/thinmint/proto/core/thinmint_core.proto";
+import "storage/table/public/context.proto";
+import "storage/table/public/options.proto";
+import "storage/table/public/read/enums.proto";
+import "storage/table/public/read/get_partition_options.proto";
+import "storage/table/public/read/get_table_metadata_options.proto";
+import "storage/table/public/read/location_selection.proto";
+import "storage/table/public/read/logical_partition_selection.proto";
+import "storage/table/public/read/lookup_options.proto";
+import "storage/table/public/read/query_parameters.proto";
+import "storage/table/public/read/read_statistics.proto";
+import "storage/table/public/read/replica_selection.proto";
+import "storage/table/public/read/table_read_token.proto";
+import "storage/table/public/type_environment.proto";
+import "tech/file/proto/types.proto";
+
+option java_outer_classname = "ReadOptionsProtos";
+option java_package = "com.google.storage.table";
+
+message UdfServerInfo {
+    repeated string udf_server_address = 1;
+}
+
+message ReadOptionsProto {
+    optional OptionsProto options = 31;
+    optional string table_factory_name = 1;
+    optional google.protobuf.Timestamp read_timestamp = 12;
+    optional google.protobuf.Timestamp deadline = 2;
+    optional google.protobuf.Timestamp prepare_read_deadline = 14;
+    optional string accounting_group = 8;
+    optional tech.file.Resources file_resources = 23;
+    optional .rpc.RpcAuthorityProto rpc_authority = 15;
+    repeated .thinmint.ThinMint thinmints = 3;
+    optional UdfServerInfo udf_server_info = 4;
+    optional bool return_proto_descriptor = 5;
+    repeated string define_table_stmts = 7;
+    optional bool fail_non_unionable_read = 9;
+    optional bool coalesce_row_mutations = 29;
+    optional PartitionHintsProto partition_hints = 10 [deprecated = true];
+    optional TableReadTokenProto incremental_read_start_token = 11;
+    optional TableReadTokenProto incremental_read_end_token = 17;
+    optional .ptoken.ReadQueryPolicySpec policy_spec = 13;
+    optional string default_timezone = 18;
+    optional GetPartitionOptionsProto get_partition_options = 19;
+    optional LogicalPartitionSelection logical_partition_selection = 20;
+    optional ReplicaSelection replica_selection = 21;
+    optional GetTableMetadataOptionsProto get_table_metadata_options = 22;
+    optional LocationSelection processing_locations = 24;
+    optional bool allow_best_effort_filters = 25 [default = false];
+    optional DataFormat data_format = 30;
+    optional QueryParametersProto query_parameters = 26;
+    optional LookupOptionsProto lookup_options = 32;
+    optional TypeEnvironmentProto type_environment = 27;
+    optional ContextProto context = 28 [deprecated = true];
+    optional bool enable_unified_read_stack = 33;
+    
+    optional Extension extension = 6;
+    message Extension {
+        extensions 999 to 524999999, 525000000 to max;
+    }
+    
+    repeated AccessMode enabled_access_modes = 16;
+}
+
+message ReadPartitionOptionsProto {
+    optional OptionsProto options = 1;
+    optional google.protobuf.Timestamp deadline = 2;
+    optional int64 memory_budget = 3;
+    optional ReplicaSelection preferred_replica = 4;
+    optional bool return_position = 5;
+    optional bool allow_unowned_values = 6;
+    optional ReadStatisticsProto read_statistics = 7;
+}

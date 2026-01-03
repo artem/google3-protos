@@ -63,6 +63,50 @@ message GetRevocationStatusResp {
     optional CrlState crl_state = 3;
 }
 
+message ReportRevocationChecksReq {
+    repeated Loas2RevocationId own_revocation_ids = 1;
+    
+    repeated RevocationCheckEntry revocation_check_entries = 2;
+    message RevocationCheckEntry {
+        optional Loas2RevocationId revocation_id = 1;
+        optional RevocationStatus revocation_status = 2;
+        optional CrlFileIdentifier crl_file_identifier = 3;
+    }
+    
+    message RevocationStatus {
+        optional bool is_revoked = 1;
+        optional bool is_enforced = 2;
+    }
+    
+    message CrlFileIdentifier {
+        optional string name = 1;
+        optional int64 timestamp_secs = 2;
+    }
+}
+
+message ReportRevocationChecksResp {
+    
+}
+
+message GetCrlFileVersionsReq {
+    
+}
+
+message GetCrlFileVersionsResp {
+    optional CrlFileVersion hygiene_crl_file_version = 1;
+    message CrlFileVersion {
+        optional string path = 1;
+        optional CityHash128 hash = 2;
+    }
+    
+    optional CrlFileVersion emergency_crl_file_version = 2;
+    
+    message CityHash128 {
+        optional uint64 high = 1;
+        optional uint64 low = 2;
+    }
+}
+
 message GetLoas2PolicyReq {
     
 }

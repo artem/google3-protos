@@ -23,11 +23,13 @@ message GenericFeatureVector {
         BINARY = 5;
     }
     
+    optional bool feature_value_is_int8_compressed = 29;
     optional bytes data_id_str = 2;
     repeated float feature_value_float = 4 [packed = true];
     repeated double feature_value_double = 5 [packed = true];
     repeated int64 feature_value_int64 = 3 [packed = true];
     optional bytes feature_value_string = 13;
+    optional bytes feature_value_int8 = 30;
     repeated uint64 feature_index = 6 [packed = true];
     
     optional FeatureNorm norm_type = 9 [default = NONE];

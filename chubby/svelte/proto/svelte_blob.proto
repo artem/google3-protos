@@ -1,0 +1,25 @@
+syntax = "editions";
+
+package chubby;
+
+import "google/protobuf/any.proto";
+
+option java_multiple_files = true;
+
+message SvelteBlob {
+    optional Header header = 1;
+    message Header {
+        optional string version = 1;
+        optional int64 size = 2;
+        optional google.protobuf.Any user_header = 3;
+    }
+    
+    optional bytes data = 2 [ctype = CORD];
+}
+
+message SvelteBlobPointer {
+    optional string path = 1;
+    optional SvelteBlob.Header header = 2;
+    optional int64 per_chunk_size = 3;
+    optional bytes inline_data = 4 [ctype = CORD];
+}

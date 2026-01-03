@@ -27,4 +27,5 @@ message CheckContext {
     string principal_email = 7;
     bool has_quota_unavailability_error = 8;
     string iam_principal = 9;
+    int64 auth_api_key_project_number = 10;
 }

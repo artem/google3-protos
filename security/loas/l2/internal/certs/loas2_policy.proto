@@ -5,6 +5,7 @@ package security_loas_l2;
 import "net/proto2/bridge/proto/message_set.proto";
 import "security/credentials/proto/principal.proto";
 import "security/loas/l2/proto/confidential_security_level.proto";
+import "security/loas/l2/proto/server_type.proto";
 import "security/loas/l2/proto/usertype.proto";
 import "security/util/proto/permission.proto";
 import "storage/datapol/annotations/proto/semantic_annotations.proto";
@@ -39,11 +40,11 @@ message MasterPolicy {
     optional bool allowed_to_set_user_type = 11;
     optional bool allowed_to_set_instance_info = 12;
     repeated UserType allowed_user_type_assertions = 13 [packed = true];
-    optional bool allowed_to_set_is_person = 10;
     repeated ConfidentialSecurityLevel allowed_confidential_levels = 14 [packed = true];
     optional bool allowed_to_set_is_hardened = 16;
+    repeated ServerType allowed_server_type_assertions = 18 [packed = true];
     
     extensions 8;
     
-    reserved 15;
+    reserved 10, 15;
 }

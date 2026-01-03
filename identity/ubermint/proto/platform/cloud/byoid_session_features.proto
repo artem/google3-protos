@@ -1,0 +1,15 @@
+syntax = "editions";
+
+package ubermint.cloud;
+
+import "cloud/identity/common/proto/creds/session_feature_flags.proto";
+import "identity/ubermint/proto/platform/cloud/byoid_extended_attributes.proto";
+import "storage/datapol/annotations/proto/semantic_annotations.proto";
+
+option java_multiple_files = true;
+option java_package = "com.google.identity.ubermint.cloud";
+
+message ByoidSessionFeatures {
+    optional google.cloud.identity.common.proto.creds.SessionFeatureFlags flags = 1;
+    optional ByoidExtendedAttributes byoid_extended_attributes = 2;
+}

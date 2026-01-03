@@ -2,6 +2,7 @@ syntax = "proto2";
 
 package security.data_access;
 
+import "google/api/inclusion.proto";
 import "google/protobuf/struct.proto";
 import "logs/eventid/eventid.proto";
 import "logs/proto/data_access/admin_access_control_authorization_info.proto";
@@ -10,6 +11,7 @@ import "logs/proto/data_access/applied_annotations.proto";
 import "logs/proto/data_access/iam_authorization_info.proto";
 import "logs/proto/data_access/ingest_info.proto";
 import "logs/proto/data_access/loggable_data_governance_annotations.proto";
+import "logs/proto/data_access/metadata/access_metadata.proto";
 import "logs/proto/resourceidentification/registry/fris_resource_types.proto";
 import "logs/proto/security/credentials/loggable_authenticator.proto";
 import "privacy/ptoken/public/core/ptoken.proto";
@@ -209,6 +211,7 @@ message DataAccessLogProto {
     optional LoggableDataGovernanceAnnotations data_governance_annotations = 55;
     repeated AppliedAnnotations applied_annotations = 58;
     optional string uberproxy_uuid = 57;
+    optional aap.AccessMetadata access_metadata = 59;
     optional .ptoken.PToken ptoken = 9099;
     
     reserved 48, 51;

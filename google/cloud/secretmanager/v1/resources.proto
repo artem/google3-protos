@@ -10,7 +10,8 @@ import "google/api/resource.proto";
 import "google/api/visibility.proto";
 import "google/protobuf/duration.proto";
 import "google/protobuf/timestamp.proto";
-import "java/com/google/cloud/boq/clientapi/flows/api/data_governance.proto";
+import "google/rpc/status.proto";
+import "java/com/google/cloud/boq/clientapi/flows/api/proto/data_governance.proto";
 import "storage/datapol/annotations/proto/semantic_annotations.proto";
 
 option ruby_package = "Google::Cloud::SecretManager::V1";
@@ -35,6 +36,12 @@ message Secret {
     protobuf.Duration version_destroy_ttl = 14;
     CustomerManagedEncryption customer_managed_encryption = 15;
     map<string, string> tags = 16;
+    
+    SecretType secret_type = 17;
+    enum SecretType {
+        SECRET_TYPE_UNSPECIFIED = 0;
+        CLOUD_SQL_DB_CREDENTIALS = 1;
+    }
     
     oneof expiration {
         protobuf.Timestamp expire_time = 6;
@@ -115,6 +122,15 @@ message Topic {
 message Rotation {
     protobuf.Timestamp next_rotation_time = 1;
     protobuf.Duration rotation_period = 2;
+    
+    ManagedRotationState managed_rotation_state = 3;
+    enum ManagedRotationState {
+        MANAGED_ROTATION_STATE_UNSPECIFIED = 0;
+        ACTIVE = 1;
+        INACTIVE = 2;
+    }
+    
+    rpc.Status managed_rotation_async_error = 4;
 }
 
 message SecretPayload {

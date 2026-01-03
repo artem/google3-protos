@@ -1,0 +1,39 @@
+syntax = "proto2";
+
+package table;
+
+import "storage/googlesql/public/type.proto";
+
+option java_multiple_files = true;
+option java_outer_classname = "TypeProtos";
+option java_package = "com.google.storage.table.api";
+
+message TypeProto {
+    optional .googlesql.TypeKind kind = 1;
+    
+    oneof extra {
+        ProtoOrEnumType proto_or_enum_type = 2;
+        TypeProto array_element_type = 3;
+        StructSchemaProto struct_schema = 4;
+        ExtendedTypeDescriptorProto extended_type_descriptor = 5;
+    }
+    
+    message ProtoOrEnumType {
+        optional string type_name = 1;
+        optional int32 pool_id = 2;
+    }
+}
+
+message ExtendedTypeDescriptorProto {
+    optional int32 descriptor_class_id = 1;
+    optional bytes state = 2;
+}
+
+message FieldProto {
+    optional string name = 1;
+    optional TypeProto type = 2;
+}
+
+message StructSchemaProto {
+    repeated FieldProto fields = 1;
+}

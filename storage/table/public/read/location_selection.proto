@@ -1,0 +1,23 @@
+syntax = "editions";
+
+package table;
+
+option java_outer_classname = "LocationSelectionProtos";
+option java_package = "com.google.storage.table";
+
+message LocationSelectionUnit {
+    optional Type type = 1;
+    enum Type {
+        TYPE_UNSPECIFIED = 0;
+        TYPE_DATA_LOCATION_POLICY_REGION = 1;
+        TYPE_CLUSTER = 2;
+        TYPE_METRO = 3;
+        TYPE_CONTINENT = 4;
+    }
+    
+    repeated string name_list = 2;
+}
+
+message LocationSelection {
+    repeated LocationSelectionUnit location_selection_units = 1;
+}

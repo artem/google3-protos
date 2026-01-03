@@ -18,6 +18,7 @@ import "research/scam/proto/all_pair.proto";
 import "research/scam/proto/chunked_hamming.proto";
 import "research/scam/proto/dense_stats.proto";
 import "research/scam/proto/evaluation.proto";
+import "research/scam/proto/graph.proto";
 import "research/scam/proto/incremental_updates.proto";
 import "research/scam/proto/inverted_index.proto";
 import "research/scam/proto/memory_consumption_estimate.proto";
@@ -52,6 +53,7 @@ message ScamConfig {
     optional DisjointRestrictToken disjoint_restrict_token = 31;
     optional AutopilotConfig autopilot = 43;
     optional EvaluationConfig evaluation = 11;
+    optional GraphSearchConfig graph_search_config = 46;
     optional TreeConfig tree = 14;
     optional AllPairSearchConfig all_pair = 15;
     optional OfflineDistributedConfig offline_distributed_config = 19;

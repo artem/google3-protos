@@ -323,4 +323,8 @@ enum CloudDataResidencyLocation {
     QA = 311;
     ZA = 312;
     SE = 313;
+    PROD_US_CID_1 = 314;
+    TH = 315;
+    PROD_KW_KWI_1 = 316;
+    PROD_US_ACT_1 = 317;
 }

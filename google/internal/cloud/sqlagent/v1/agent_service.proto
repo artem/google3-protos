@@ -130,6 +130,7 @@ message DelegateCreateIAMGroupFirstTimeUserRequest {
     string hostname = 5;
     repeated string membership_groups = 6;
     UserType usertype = 7;
+    string access_token = 8;
 }
 
 message DelegateCreateIAMGroupFirstTimeUserResponse {

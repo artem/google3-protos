@@ -2,8 +2,10 @@ syntax = "editions";
 
 package ptoken;
 
+import "privacy/pattributes/public/proto/search_ai_personalization_status.proto";
 import "privacy/ptoken/public/core/ptoken_type.proto";
 import "privacy/ptoken/public/core/request_context_defs.proto";
+import "storage/datapol/annotations/proto/semantic_annotations.proto";
 
 option java_multiple_files = true;
 option java_package = "com.google.privacy.ptoken.proto.minting";
@@ -16,6 +18,7 @@ message CommonRequestPTokenForMinting {
             optional Attributes attributes = 1;
             message Attributes {
                 optional PTokenType.Enum ptoken_type = 5;
+                optional bool debug_logging_restricted = 16;
                 optional EssentialUseConsentState essential_use_consent_state = 272;
                 optional UserSignInState user_sign_in_state = 307;
                 optional bool is_dark_launch_request = 331;
@@ -23,7 +26,11 @@ message CommonRequestPTokenForMinting {
                 optional bool vertex_traffic_for_grounding = 571;
                 optional bool gemini_traffic_for_grounding = 614;
                 optional bool has_gemini_logging_restrictions = 805;
+                optional bool is_eval_or_debug_search_traffic = 1006;
+                repeated .datapol.SemanticType redacted_datapol_annotations = 368;
                 optional bool aipex_personalized_data = 758;
+                optional bool search_ai_contains_workspace_personalized_data = 1069;
+                optional .pattributes.SearchAIPersonalizationStatus search_ai_personalization_status = 1070;
             }
         }
     }

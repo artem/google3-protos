@@ -18,10 +18,28 @@ message ShardAssignmentRule {
         SERVER_GROUP = 1;
         DEFAULT_WAITER_GROUP = 2;
         PHYSICAL_WAITER_GROUP = 3;
+        CUSTOM_STRATEGY = 5;
         ERROR = 4;
     }
     
     optional string error_message = 4;
+    
+    oneof custom_strategy {
+        ShuffleSharding shuffle_sharding = 5;
+    }
+    
+    message ShuffleSharding {
+        optional int32 num_vshards = 1;
+        optional int32 subset_size = 2;
+        
+        optional Key sharding_key = 3;
+        enum Key {
+            KEY_UNSPECIFIED = 0;
+            KEY_USER_FROM_BNS_PATH = 1;
+        }
+        
+        optional int32 backend_size = 4;
+    }
 }
 
 message SvelteClientShardingConfig {

@@ -4,6 +4,7 @@ package google.logging.v2;
 
 import "google/api/field_behavior.proto";
 import "google/api/field_info.proto";
+import "google/api/inclusion.proto";
 import "google/api/visibility.proto";
 import "google/logging/data_governance.proto";
 import "google/logging/v2/grouping_metadata.proto";

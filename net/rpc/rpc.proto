@@ -150,6 +150,7 @@ message RPC_Request {
     optional string package_name = 31;
     optional privacy.context.PrivacyContext privacy_context = 33;
     optional int32 criticality = 35 [default = -1];
+    optional int32 attempt_number = 36 [default = 0];
     
     reserved 29, 32, 34;
     
@@ -341,6 +342,7 @@ message RPC_ClientChannelOptions {
     optional bool psp_fast_open = 24;
     optional RPC_ClientLoadBalancingMetadata client_load_balancing_metadata = 25;
     optional bool retry_psp_transient_errors = 27;
+    optional bool fallback_on_next_psp_error = 28;
     
     reserved 12, 26;
     

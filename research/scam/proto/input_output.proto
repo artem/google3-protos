@@ -6,6 +6,7 @@ import "research/scam/data_format/features.proto";
 import "research/scam/proto/conductor.proto";
 import "research/scam/proto/incremental_updates.proto";
 import "research/vision/knn/input_handlers/input-handler-options.proto";
+import "storage/table/public/read/read_options.proto";
 
 option java_package = "com.google.research.scam";
 
@@ -72,6 +73,13 @@ message InputOutputConfig {
     optional string tokenized_database_wildcard = 14;
     optional string memory_consumption_estimate_filename = 24;
     
+    optional GraphSearchIoConfig graph_search_io_config = 30;
+    message GraphSearchIoConfig {
+        optional string graph_wildcard = 1;
+        optional string fixed_point_database_wildcard = 2;
+        optional string projection_matrix_filename = 3;
+    }
+    
     optional DataIdStrFormat data_id_str_format = 26;
     message DataIdStrFormat {
         optional uint32 fixed_len = 1;
@@ -106,8 +114,10 @@ message InputOutputConfig {
     message TableIOConfig {
         optional string table_name = 1;
         optional string embedding_column_name = 2;
-        optional GenericFeatureVector.FeatureType embedding_type = 4;
         optional string docid_column_name = 3;
+        optional GenericFeatureVector.FeatureType embedding_type = 4;
+        optional .table.ReadOptionsProto read_options = 5;
+        optional int32 prefix_dimensionality = 6;
     }
     
     message TeamsterConfig {

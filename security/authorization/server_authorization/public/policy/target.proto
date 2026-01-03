@@ -26,6 +26,8 @@ enum TargetType {
     GSLB = 9;
     GSLB_DNS = 10;
     LBNS = 17;
+    LS = 20;
+    MBNS = 21;
     UDS = 18;
     IP_PORT_ADDRESS = 11;
     HOST_PORT_ADDRESS = 12;

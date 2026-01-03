@@ -35,5 +35,81 @@ message MonitoringMigration {
         }
     }
     
+    SchemaInfo schema_info = 4;
+    message SchemaInfo {
+        string target_schema_name = 1;
+        
+        LoggedResourceType logged_resource_type = 2;
+        message LoggedResourceType {
+            string type = 1;
+        }
+        
+        repeated LabelTranslation label_translation = 3;
+        message LabelTranslation {
+            string external_label = 1;
+            string target_schema_label = 2;
+        }
+        
+        repeated ConstantValue constant_values = 4;
+        message ConstantValue {
+            string target_schema_label = 1;
+            TypedLabelValue value = 2;
+        }
+        
+        repeated HashedValue hashed_values = 5;
+        message HashedValue {
+            string target_schema_label = 1;
+            
+            Source hash_source = 2;
+            enum Source {
+                UNKNOWN = 0;
+                METRIC_TYPE = 1;
+            }
+        }
+        
+        repeated RecipeValue recipe_values = 6;
+        message RecipeValue {
+            string recipe_label = 1;
+            TypedLabelValue value = 2;
+            repeated string expansion_prefixes = 3;
+            repeated TypedLabelValue expansion_values = 4;
+        }
+        
+        SpecializedSchemaState specialized_schema_state = 7;
+        message SpecializedSchemaState {
+            MigrationStage stage = 1;
+            enum MigrationStage {
+                NONE = 0;
+                IN_PROGRESS = 1;
+            }
+            
+            repeated string present_target_schema_labels = 2;
+            repeated string absent_target_schema_labels = 3;
+            repeated string present_metric_prefixes = 4;
+            repeated string absent_metric_prefixes = 5;
+        }
+        
+        bool shared_resource = 8;
+        
+        message TypedLabelValue {
+            oneof value {
+                int64 int64_value = 1;
+                bool bool_value = 2;
+                string string_value = 3;
+            }
+        }
+    }
+    
+    AliasMetricInfo alias_metric_info = 5;
+    message AliasMetricInfo {
+        repeated string monarch_metric_name = 1;
+        repeated string resource_types = 3;
+        int64 project_override = 4;
+        
+        oneof _write_metric_name {
+            string write_metric_name = 2;
+        }
+    }
+    
     reserved 2;
 }

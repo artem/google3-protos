@@ -30,4 +30,10 @@ message ZipkinConfig {
     
     string collector_hostname = 6;
     bool split_spans_for_request = 7 [deprecated = true];
+    
+    TraceContextOption trace_context_option = 8;
+    enum TraceContextOption {
+        USE_B3 = 0;
+        USE_B3_WITH_W3C_PROPAGATION = 1;
+    }
 }

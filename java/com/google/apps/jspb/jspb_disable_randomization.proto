@@ -1,0 +1,12 @@
+syntax = "proto2";
+
+package jspb;
+
+import "net/proto2/proto/descriptor.proto";
+
+option go_package = "google.golang.org/apps/jspb";
+option java_package = "com.google.apps.jspb";
+
+extend .proto2.MessageOptions {
+    optional bool disable_test_randomization_in_apps_jspb_java = 448127181;
+}

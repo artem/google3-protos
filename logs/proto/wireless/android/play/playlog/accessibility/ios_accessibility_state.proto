@@ -2,6 +2,7 @@ syntax = "proto2";
 
 package wireless_android_play_playlog.accessibility;
 
+import "google/api/inclusion.proto";
 import "storage/datapol/annotations/proto/semantic_annotations.proto";
 
 option objc_class_prefix = "WAPPA";

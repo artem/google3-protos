@@ -1,0 +1,17 @@
+syntax = "proto2";
+
+package identity_backend;
+
+import "logs/proto/logs_annotations/logs_annotations.proto";
+import "storage/datapol/annotations/proto/semantic_annotations.proto";
+
+option java_multiple_files = true;
+option java_outer_classname = "LookupPolicyProto";
+option java_package = "com.google.identity.backend.common.proto";
+
+enum StalenessLevel {
+    STALENESS_LEVEL_UNSPECIFIED = 0;
+    STALENESS_NONE = 1;
+    STALENESS_MINIMAL = 2;
+    STALENESS_UNBOUNDED = 3;
+}

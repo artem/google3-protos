@@ -1,0 +1,308 @@
+syntax = "proto3";
+
+package grpc.channelz.v1;
+
+import "google/protobuf/any.proto";
+import "google/protobuf/duration.proto";
+import "google/protobuf/timestamp.proto";
+import "google/protobuf/wrappers.proto";
+
+option go_package = "google.golang.org/grpc/channelz/grpc_channelz_v1";
+option java_multiple_files = true;
+option java_outer_classname = "ChannelzProto";
+option java_package = "io.grpc.channelz.v1";
+
+service Channelz {
+    rpc GetTopChannels(GetTopChannelsRequest) returns (GetTopChannelsResponse);
+    rpc GetServers(GetServersRequest) returns (GetServersResponse);
+    rpc GetServer(GetServerRequest) returns (GetServerResponse);
+    rpc GetServerSockets(GetServerSocketsRequest) returns (GetServerSocketsResponse);
+    rpc GetChannel(GetChannelRequest) returns (GetChannelResponse);
+    rpc GetSubchannel(GetSubchannelRequest) returns (GetSubchannelResponse);
+    rpc GetSocket(GetSocketRequest) returns (GetSocketResponse);
+}
+
+message Channel {
+    ChannelRef ref = 1;
+    ChannelData data = 2;
+    repeated ChannelRef channel_ref = 3;
+    repeated SubchannelRef subchannel_ref = 4;
+    repeated SocketRef socket_ref = 5;
+}
+
+message Subchannel {
+    SubchannelRef ref = 1;
+    ChannelData data = 2;
+    repeated ChannelRef channel_ref = 3;
+    repeated SubchannelRef subchannel_ref = 4;
+    repeated SocketRef socket_ref = 5;
+}
+
+message ChannelConnectivityState {
+    State state = 1;
+    enum State {
+        UNKNOWN = 0;
+        IDLE = 1;
+        CONNECTING = 2;
+        READY = 3;
+        TRANSIENT_FAILURE = 4;
+        SHUTDOWN = 5;
+    }
+}
+
+message ChannelData {
+    ChannelConnectivityState state = 1;
+    string target = 2;
+    ChannelTrace trace = 3;
+    int64 calls_started = 4;
+    int64 calls_succeeded = 5;
+    int64 calls_failed = 6;
+    google.protobuf.Timestamp last_call_started_timestamp = 7;
+}
+
+message ChannelTraceEvent {
+    string description = 1;
+    
+    Severity severity = 2;
+    enum Severity {
+        CT_UNKNOWN = 0;
+        CT_INFO = 1;
+        CT_WARNING = 2;
+        CT_ERROR = 3;
+    }
+    
+    google.protobuf.Timestamp timestamp = 3;
+    
+    oneof child_ref {
+        ChannelRef channel_ref = 4;
+        SubchannelRef subchannel_ref = 5;
+    }
+}
+
+message ChannelTrace {
+    int64 num_events_logged = 1;
+    google.protobuf.Timestamp creation_timestamp = 2;
+    repeated ChannelTraceEvent events = 3;
+}
+
+message ChannelRef {
+    int64 channel_id = 1;
+    string name = 2;
+    
+    reserved 3, 4, 5, 6, 7, 8;
+}
+
+message SubchannelRef {
+    int64 subchannel_id = 7;
+    string name = 8;
+    
+    reserved 1, 2, 3, 4, 5, 6;
+}
+
+message SocketRef {
+    int64 socket_id = 3;
+    string name = 4;
+    
+    reserved 1, 2, 5, 6, 7, 8;
+}
+
+message ServerRef {
+    int64 server_id = 5;
+    string name = 6;
+    
+    reserved 1, 2, 3, 4, 7, 8;
+}
+
+message Server {
+    ServerRef ref = 1;
+    ServerData data = 2;
+    repeated SocketRef listen_socket = 3;
+}
+
+message ServerData {
+    ChannelTrace trace = 1;
+    int64 calls_started = 2;
+    int64 calls_succeeded = 3;
+    int64 calls_failed = 4;
+    google.protobuf.Timestamp last_call_started_timestamp = 5;
+}
+
+message Socket {
+    SocketRef ref = 1;
+    SocketData data = 2;
+    Address local = 3;
+    Address remote = 4;
+    Security security = 5;
+    string remote_name = 6;
+}
+
+message SocketData {
+    int64 streams_started = 1;
+    int64 streams_succeeded = 2;
+    int64 streams_failed = 3;
+    int64 messages_sent = 4;
+    int64 messages_received = 5;
+    int64 keep_alives_sent = 6;
+    google.protobuf.Timestamp last_local_stream_created_timestamp = 7;
+    google.protobuf.Timestamp last_remote_stream_created_timestamp = 8;
+    google.protobuf.Timestamp last_message_sent_timestamp = 9;
+    google.protobuf.Timestamp last_message_received_timestamp = 10;
+    google.protobuf.Int64Value local_flow_control_window = 11;
+    google.protobuf.Int64Value remote_flow_control_window = 12;
+    repeated SocketOption option = 13;
+}
+
+message Address {
+    oneof address {
+        TcpIpAddress tcpip_address = 1;
+        UdsAddress uds_address = 2;
+        OtherAddress other_address = 3;
+    }
+    
+    message TcpIpAddress {
+        bytes ip_address = 1;
+        int32 port = 2;
+    }
+    
+    message UdsAddress {
+        string filename = 1;
+    }
+    
+    message OtherAddress {
+        string name = 1;
+        google.protobuf.Any value = 2;
+    }
+}
+
+message Security {
+    oneof model {
+        Tls tls = 1;
+        OtherSecurity other = 2;
+    }
+    
+    message Tls {
+        bytes local_certificate = 3;
+        bytes remote_certificate = 4;
+        
+        oneof cipher_suite {
+            string standard_name = 1;
+            string other_name = 2;
+        }
+    }
+    
+    message OtherSecurity {
+        string name = 1;
+        google.protobuf.Any value = 2;
+    }
+}
+
+message SocketOption {
+    string name = 1;
+    string value = 2;
+    google.protobuf.Any additional = 3;
+}
+
+message SocketOptionTimeout {
+    google.protobuf.Duration duration = 1;
+}
+
+message SocketOptionLinger {
+    bool active = 1;
+    google.protobuf.Duration duration = 2;
+}
+
+message SocketOptionTcpInfo {
+    uint32 tcpi_state = 1;
+    uint32 tcpi_ca_state = 2;
+    uint32 tcpi_retransmits = 3;
+    uint32 tcpi_probes = 4;
+    uint32 tcpi_backoff = 5;
+    uint32 tcpi_options = 6;
+    uint32 tcpi_snd_wscale = 7;
+    uint32 tcpi_rcv_wscale = 8;
+    uint32 tcpi_rto = 9;
+    uint32 tcpi_ato = 10;
+    uint32 tcpi_snd_mss = 11;
+    uint32 tcpi_rcv_mss = 12;
+    uint32 tcpi_unacked = 13;
+    uint32 tcpi_sacked = 14;
+    uint32 tcpi_lost = 15;
+    uint32 tcpi_retrans = 16;
+    uint32 tcpi_fackets = 17;
+    uint32 tcpi_last_data_sent = 18;
+    uint32 tcpi_last_ack_sent = 19;
+    uint32 tcpi_last_data_recv = 20;
+    uint32 tcpi_last_ack_recv = 21;
+    uint32 tcpi_pmtu = 22;
+    uint32 tcpi_rcv_ssthresh = 23;
+    uint32 tcpi_rtt = 24;
+    uint32 tcpi_rttvar = 25;
+    uint32 tcpi_snd_ssthresh = 26;
+    uint32 tcpi_snd_cwnd = 27;
+    uint32 tcpi_advmss = 28;
+    uint32 tcpi_reordering = 29;
+}
+
+message GetTopChannelsRequest {
+    int64 start_channel_id = 1;
+    int64 max_results = 2;
+}
+
+message GetTopChannelsResponse {
+    repeated Channel channel = 1;
+    bool end = 2;
+}
+
+message GetServersRequest {
+    int64 start_server_id = 1;
+    int64 max_results = 2;
+}
+
+message GetServersResponse {
+    repeated Server server = 1;
+    bool end = 2;
+}
+
+message GetServerRequest {
+    int64 server_id = 1;
+}
+
+message GetServerResponse {
+    Server server = 1;
+}
+
+message GetServerSocketsRequest {
+    int64 server_id = 1;
+    int64 start_socket_id = 2;
+    int64 max_results = 3;
+}
+
+message GetServerSocketsResponse {
+    repeated SocketRef socket_ref = 1;
+    bool end = 2;
+}
+
+message GetChannelRequest {
+    int64 channel_id = 1;
+}
+
+message GetChannelResponse {
+    Channel channel = 1;
+}
+
+message GetSubchannelRequest {
+    int64 subchannel_id = 1;
+}
+
+message GetSubchannelResponse {
+    Subchannel subchannel = 1;
+}
+
+message GetSocketRequest {
+    int64 socket_id = 1;
+    bool summary = 2;
+}
+
+message GetSocketResponse {
+    Socket socket = 1;
+}

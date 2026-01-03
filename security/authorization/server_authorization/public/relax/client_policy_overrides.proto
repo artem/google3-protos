@@ -2,8 +2,6 @@ syntax = "editions";
 
 package server_authz;
 
-import "google/protobuf/wrappers.proto";
-
 option java_multiple_files = true;
 
 message UserConstraintRelaxingOverrides {
@@ -11,9 +9,8 @@ message UserConstraintRelaxingOverrides {
 }
 
 message RelaxingOverrides {
-    optional google.protobuf.BoolValue allow_requirement_to_approve_server_user = 1;
     optional UserConstraintRelaxingOverrides user_constraint_overrides = 3;
     optional bool fail_open_for_acl_serving_errors = 4;
     
-    reserved 2;
+    reserved 1, 2;
 }

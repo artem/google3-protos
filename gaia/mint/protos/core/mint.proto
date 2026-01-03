@@ -20,13 +20,12 @@ message MintWrapper {
     optional bytes uber_mint_keymaster_rsa_signature = 14;
     optional bytes tink_ecdsa_signature = 18;
     optional string gaiamint_server = 9;
-    optional string type_url = 10;
     optional bytes uber_mint_payload = 13;
     optional string signer_realm_hint = 17;
     repeated int32 experiment_ids = 19 [packed = true];
     optional cloud_identity.SubordinateCertificate subordinate_certificate = 21;
     
-    reserved 1, 2, 8, 11, 12, 15, 16, 20;
+    reserved 1, 2, 8, 10, 11, 12, 15, 16, 20;
     
     enum EncodingFormat {
         KEYMASTER_RSA = 1;

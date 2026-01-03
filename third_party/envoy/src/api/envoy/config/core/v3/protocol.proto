@@ -145,6 +145,7 @@ message Http3ProtocolOptions {
     bool allow_extended_connect = 5;
     bool allow_metadata = 6;
     bool disable_qpack = 7;
+    bool disable_connection_flow_control_for_streams = 8;
 }
 
 message SchemeHeaderTransformation {

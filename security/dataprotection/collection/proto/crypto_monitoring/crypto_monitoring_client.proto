@@ -1,0 +1,17 @@
+syntax = "editions";
+
+package security.dataprotection.collection.proto.crypto_monitoring;
+
+import "storage/datapol/annotations/proto/semantic_annotations.proto";
+
+option java_multiple_files = true;
+option java_outer_classname = "CryptoMonitoringClientProto";
+option java_package = "com.google.security.cryptomonitoring";
+
+enum CryptoMonitoringClient {
+    UNKNOWN_CLIENT = 0;
+    KEYMASTER_CLIENT = 1;
+    TINK_CLIENT = 2;
+    PGP_CLIENT = 3;
+    JWCRYPTO_CLIENT = 4;
+}

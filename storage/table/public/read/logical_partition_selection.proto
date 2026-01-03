@@ -1,0 +1,32 @@
+syntax = "editions";
+
+package table;
+
+import "storage/lightning/shared/voxel/proto/voxel_value.proto";
+
+message LogicalPartitionSelection {
+    repeated SinglePartitionSelection single_partition_selections = 1;
+    message SinglePartitionSelection {
+        repeated .voxel.VoxelValueProto values = 1;
+        optional string generation_name = 3;
+        
+        reserved 2;
+    }
+    
+    repeated PartitionRangeSelection partition_range_selections = 2;
+    message PartitionRangeSelection {
+        optional Boundary lower_bound = 1;
+        message Boundary {
+            repeated .voxel.VoxelValueProto values = 1;
+            optional bool is_exclusive = 2;
+        }
+        
+        optional Boundary upper_bound = 2;
+    }
+    
+    repeated EnumSelection enum_selections = 3;
+    enum EnumSelection {
+        INVALID = 0;
+        LATEST = 1;
+    }
+}

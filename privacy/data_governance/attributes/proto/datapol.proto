@@ -15,5 +15,12 @@ message DatapolAnnotations {
     optional .datapol.LocationQualifier location_qualifier = 3;
     repeated apps_annotations.SemanticType apps_semantic_types = 4 [packed = true];
     
+    optional UnannotatedFieldState unannotated_field = 6;
+    enum UnannotatedFieldState {
+        UNANNOTATED_FIELD_STATE_UNSPECIFIED = 0;
+        UNANNOTATED_FIELD = 1;
+        UNANNOTATED_FIELD_IN_VETTED_FILE = 2;
+    }
+    
     reserved 5;
 }

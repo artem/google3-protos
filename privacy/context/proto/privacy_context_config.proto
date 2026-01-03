@@ -5,7 +5,10 @@ package privacy.context;
 import "dataresidency/mapping/cloud/cloud_locations_enum.proto";
 import "net/proto2/bridge/proto/message_set.proto";
 import "privacy/ads/user_data_enforcement/data-usage.proto";
+import "privacy/context/proto/approved_attribute.proto";
 import "privacy/context/proto/policy_breakglass.proto";
+import "privacy/data_flow/job_level_sensor/proto/propagated_product_id_setter_metadata.proto";
+import "privacy/data_flow/job_level_sensor/proto/semantic_purpose_setter_metadata.proto";
 import "privacy/data_governance/attributes/proto/ddt.proto";
 import "privacy/data_governance/attributes/proto/purpose.proto";
 import "privacy/pattributes/public/proto/semantic_purpose.proto";
@@ -44,6 +47,7 @@ message PrivacyContextDefaultConfig {
     optional bool post_access_filtering = 8;
     optional Source post_access_filtering_source = 24;
     repeated data_governance.attributes.ProcessingPurpose.Purpose processing_purpose = 3;
+    repeated ApprovedAttribute approved_processing_purposes = 56;
     optional Source processing_purpose_source = 25;
     optional .pattributes.SemanticPurpose mapped_semantic_purpose = 52;
     repeated ads.user_data_enforcement.DataUsage ads_processing_purpose = 7;
@@ -79,6 +83,14 @@ message PrivacyContextDefaultConfig {
     repeated .pattributes.SemanticPurpose deferred_semantic_purposes = 49;
     optional Source deferred_semantic_purposes_source = 50;
     repeated data_governance.attributes.ProcessingPurpose.Purpose semantic_purpose_mapped_processing_purposes = 51;
+    
+    optional JlsDataCache jls_data_cache = 55;
+    message JlsDataCache {
+        optional data_flow.job_level_sensor.proto.PropagatedProductIdSetterMetadata product_id_setter_metadata = 1;
+        optional fixed64 product_id_setter_metadata_fingerprint = 2;
+        optional data_flow.job_level_sensor.proto.SemanticPurposeSetterMetadata semantic_purpose_setter_metadata = 3;
+        optional fixed64 semantic_purpose_setter_metadata_fingerprint = 4;
+    }
     
     oneof origin_logical_location {
         data_residency.mapping.cloud.CloudDataResidencyLocation origin_logical_cloud_location = 53;

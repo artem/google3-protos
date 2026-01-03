@@ -64,6 +64,7 @@ enum ChallengeType {
     KNOWLEDGE_ACCOUNT_CREATION_DATE = 24 [deprecated = true];
     ASSISTANT_APPROVAL = 46 [deprecated = true];
     OUTDATED_APP_WARNING = 47 [deprecated = true];
+    CONNECTED_ACCOUNT_AUTH = 56;
     TEST_ONLY = 1000;
 }
 

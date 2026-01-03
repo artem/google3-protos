@@ -1,0 +1,77 @@
+syntax = "proto2";
+
+package googlesql;
+
+import "google/protobuf/timestamp.proto";
+
+option cc_enable_arenas = true;
+option java_outer_classname = "GoogleSQLValue";
+option java_package = "com.google.storage.googlesql";
+
+message ValueProto {
+    oneof value {
+        int32 int32_value = 1;
+        int64 int64_value = 2;
+        uint32 uint32_value = 3;
+        uint64 uint64_value = 4;
+        bool bool_value = 5;
+        float float_value = 6;
+        double double_value = 7;
+        string string_value = 8;
+        bytes bytes_value = 9;
+        int32 date_value = 10;
+        int32 enum_value = 12;
+        Array array_value = 13;
+        Struct struct_value = 14;
+        bytes proto_value = 15 [ctype = CORD];
+        google.protobuf.Timestamp timestamp_value = 16;
+        bytes timestamp_pico_value = 29 [deprecated = true];
+        TimestampPicos timestamp_picos_value = 30;
+        Datetime datetime_value = 17;
+        int64 time_value = 18;
+        bytes geography_value = 19;
+        bytes numeric_value = 20;
+        bytes bignumeric_value = 21;
+        string json_value = 23;
+        bytes interval_value = 24;
+        bytes tokenlist_value = 25;
+        Range range_value = 26;
+        bytes uuid_value = 27;
+        Map map_value = 28;
+        bool __ValueProto__switch_must_have_a_default = 255;
+    }
+    
+    reserved 11, 22;
+    
+    message Array {
+        repeated ValueProto element = 1;
+    }
+    
+    message Struct {
+        repeated ValueProto field = 1;
+    }
+    
+    message Datetime {
+        optional int64 bit_field_datetime_seconds = 1;
+        optional int32 nanos = 2;
+    }
+    
+    message Range {
+        optional ValueProto start = 1;
+        optional ValueProto end = 2;
+    }
+    
+    message MapEntry {
+        optional ValueProto key = 1;
+        optional ValueProto value = 2;
+    }
+    
+    message Map {
+        repeated MapEntry entry = 1;
+    }
+    
+    message TimestampPicos {
+        optional int64 seconds = 1;
+        optional int64 picos = 2;
+    }
+}

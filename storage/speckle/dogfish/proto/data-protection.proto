@@ -73,6 +73,8 @@ message VerificationObjectRecord {
 message VerificationProgress {
     optional int64 num_keys = 1;
     optional int64 num_incremental_keys = 2;
+    optional int64 num_tombstones = 7;
+    optional int64 num_incremental_tombstones = 8;
     optional ChecksumInfo computed_checksum_info = 3;
     optional ObjectAndLsn last_object_verified = 6;
     optional bool done = 5;
@@ -89,6 +91,7 @@ message ChecksumInfo {
     optional uint32 incremental_file_blocks_checksum = 6;
     optional uint32 full_metadata_protos_checksum = 7;
     optional uint32 incremental_metadata_protos_checksum = 8;
+    optional uint64 num_blocks_checksummed = 9;
 }
 
 message ShardBackupMetadata {

@@ -1,0 +1,25 @@
+syntax = "proto2";
+
+package ptoken;
+
+import "privacy/compliance_controls/proto/core_platform_service.proto";
+import "privacy/ptoken/public/proto/enforcement_behavior_spec.proto";
+import "storage/datapol/annotations/proto/semantic_annotations.proto";
+
+option java_multiple_files = true;
+option java_package = "com.google.privacy.ptoken.proto";
+
+message ReadQueryPolicySpec {
+    optional bool enable_provenance_based_revocation_filtering = 4;
+    optional EnforcementBehaviorSpec enforcement_behavior_spec = 5;
+    
+    oneof dma52_filtering_mode {
+        bool dma52_consents_based_filter = 1;
+        bool dma52_same_cps_filter = 2;
+        Dma52ConsentedCpsFilter dma52_consented_cps_filter = 3;
+    }
+    
+    message Dma52ConsentedCpsFilter {
+        repeated .compliance_controls.CorePlatformService consented_cps = 1 [packed = true];
+    }
+}

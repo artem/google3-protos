@@ -9,6 +9,7 @@ import "security/loas/l2/proto/credstype.proto";
 import "security/loas/l2/proto/identity_types.proto";
 import "security/loas/l2/proto/instance.proto";
 import "security/loas/l2/proto/securitylevel.proto";
+import "security/loas/l2/proto/server_type.proto";
 import "security/loas/l2/proto/usertype.proto";
 import "security/thinmint/proto/core/thinmint_core.proto";
 import "security/util/proto/permission.proto";
@@ -74,4 +75,5 @@ message InternalLoas2Context {
     optional string transport_protocol = 29;
     optional bool is_hardened_host = 30;
     optional bool is_hardened_task = 31;
+    repeated ServerType server_types = 32 [packed = true];
 }

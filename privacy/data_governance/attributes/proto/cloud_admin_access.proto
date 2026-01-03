@@ -1,0 +1,21 @@
+syntax = "proto3";
+
+package privacy.data_governance.attributes;
+
+import "google/api/inclusion.proto";
+import "privacy/data_governance/attributes/proto/classification.proto";
+
+option java_multiple_files = true;
+option java_package = "com.google.privacy.datagovernance.attributes";
+
+message CloudAdminAccess {
+    oneof _data_format {
+        DataFormat data_format = 1;
+    }
+}
+
+enum DataFormat {
+    FORMAT_UNSPECIFIED = 0;
+    FORMAT_FULL = 1;
+    FORMAT_LOG = 2;
+}

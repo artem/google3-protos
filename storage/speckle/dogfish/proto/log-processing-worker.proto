@@ -79,6 +79,7 @@ message ProcessRecordResponse {
     map<string, int64> timing_breakdown_micros = 8;
     optional int64 total_handler_time_micros = 2;
     optional google.protobuf.Timestamp handler_start_timestamp = 7;
+    optional uint64 next_full_xid = 9;
     optional int64 total_generic_apply_time_micros = 3 [deprecated = true];
     optional int64 total_postgres_redo_time_micros = 4 [deprecated = true];
     optional int64 total_postgres_setup_time_micros = 5 [deprecated = true];

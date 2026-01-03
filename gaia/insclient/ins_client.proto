@@ -69,7 +69,7 @@ message CondUpdateServiceDataRequest {
     optional UserContext UserContext = 101;
     optional bool DeletedOK = 5;
     optional bool GetConditionBytes = 6 [default = false];
-    optional int32 CloudPropagationType = 7;
+    optional int32 CloudPropagationType = 7 [deprecated = true];
 }
 
 message CondUpdateServiceDataResponse {

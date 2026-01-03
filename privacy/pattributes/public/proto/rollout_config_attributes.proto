@@ -1,0 +1,14 @@
+syntax = "editions";
+
+package pgraph.attributes;
+
+import "google/api/inclusion.proto";
+import "privacy/rollouts/proto/rollout_config.proto";
+
+option java_multiple_files = true;
+option java_package = "com.google.privacy.pgraph.attributes";
+
+message ScopedRolloutConfig {
+    optional ptoken.policy_rollouts.PerPolicyRolloutConfig per_policy_rollout_configs = 1;
+    optional bool allow_enforcement_mode_downgrade = 2;
+}

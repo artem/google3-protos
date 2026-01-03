@@ -56,7 +56,7 @@ message ErrorMessage {
     string name = 1;
     string domain = 9990 [deprecated = true];
     string description = 14;
-    int32 http_code = 2;
+    int32 http_code = 2 [deprecated = true];
     rpc.Code canonical_code = 9;
     string message = 3;
     string localized_message = 4;
@@ -69,4 +69,5 @@ message ErrorMessage {
     string internal_message = 10;
     repeated FieldError field_errors = 15;
     repeated string additional_details = 12;
+    string visibility_restriction = 17;
 }

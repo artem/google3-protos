@@ -55,7 +55,8 @@ message VirtualHost {
     google.protobuf.Any retry_policy_typed_config = 20;
     HedgePolicy hedge_policy = 17;
     bool include_is_timeout_retry_header = 23;
-    google.protobuf.UInt32Value per_request_buffer_limit_bytes = 18;
+    google.protobuf.UInt32Value per_request_buffer_limit_bytes = 18 [deprecated = true];
+    google.protobuf.UInt64Value request_body_buffer_limit = 25;
     repeated RouteAction.RequestMirrorPolicy request_mirror_policies = 22;
     .envoy.config.core.v3.Metadata metadata = 24;
     
@@ -83,8 +84,9 @@ message Route {
     repeated .envoy.config.core.v3.HeaderValueOption response_headers_to_add = 10;
     repeated string response_headers_to_remove = 11;
     Tracing tracing = 15;
-    google.protobuf.UInt32Value per_request_buffer_limit_bytes = 16;
+    google.protobuf.UInt32Value per_request_buffer_limit_bytes = 16 [deprecated = true];
     string stat_prefix = 19;
+    google.protobuf.UInt64Value request_body_buffer_limit = 20;
     
     oneof action {
         RouteAction route = 2;
@@ -207,6 +209,7 @@ message RouteAction {
     bool append_x_forwarded_host = 38;
     google.protobuf.Duration timeout = 8;
     google.protobuf.Duration idle_timeout = 24;
+    google.protobuf.Duration flush_timeout = 42;
     .envoy.config.core.v3.TypedExtensionConfig early_data_policy = 40;
     RetryPolicy retry_policy = 9;
     google.protobuf.Any retry_policy_typed_config = 33;

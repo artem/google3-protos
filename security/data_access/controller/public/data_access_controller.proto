@@ -7,6 +7,7 @@ import "google/protobuf/duration.proto";
 import "logs/proto/data_access/access_phase.proto";
 import "logs/proto/data_access/admin_access_control_authorization_info.proto";
 import "logs/proto/data_access/data_access_log.proto";
+import "logs/proto/data_access/metadata/access_metadata.proto";
 import "logs/proto/data_access/method_type.proto";
 import "logs/proto/data_access/tenant.proto";
 import "net/proto2/proto/descriptor.proto";
@@ -102,6 +103,7 @@ message DataAccessContext {
     optional CloudPlatform cloud_platform = 13;
     optional string api_service_name = 14;
     optional TenantId tenant_id = 19;
+    optional aap.AccessMetadata access_metadata = 20;
     
     reserved 5;
 }

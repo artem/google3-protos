@@ -62,6 +62,10 @@ message ShuffleShardingClientInfo {
     optional int32 consecutive_redirect_count = 1;
 }
 
+message ShuffleShard {
+    repeated int32 ids = 1;
+}
+
 message ShuffleShardingResult {
     optional Status status = 1;
     enum Status {
@@ -70,5 +74,12 @@ message ShuffleShardingResult {
         REDIRECTED = 2;
     }
     
-    repeated int32 shuffle_shard_server_ids = 2;
+    optional ShardingBehavior sharding_behavior = 2;
+    enum ShardingBehavior {
+        BEHAVIOR_UNSPECIFIED = 0;
+        BEHAVIOR_SHARDED = 1;
+        BEHAVIOR_CLEAR_SHARD = 2;
+    }
+    
+    optional ShuffleShard shuffle_shard = 3;
 }

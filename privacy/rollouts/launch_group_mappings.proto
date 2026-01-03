@@ -1,0 +1,22 @@
+syntax = "editions";
+
+package privacy.rollouts;
+
+import "privacy/ptoken/public/core/request_context_defs.proto";
+import "privacy/ptoken/public/proto/policies/policy_id.proto";
+import "privacy/rollouts/proto/rollout_signal.proto";
+
+option java_multiple_files = true;
+option java_package = "com.google.privacy.rollouts.proto";
+
+message LaunchGroupMappings {
+    repeated LaunchGroupMapping launch_group_mappings = 1;
+    message LaunchGroupMapping {
+        optional RolloutSignal rollout_signal = 1;
+        repeated .ptoken.PolicyRolloutEnforcementMode request_signals = 2;
+        repeated .ptoken.PolicyId.Enum policy_ids = 3;
+        optional bool enable_code_api = 4;
+        optional bool enable_policy_enforcement_spec = 5;
+        optional bool enable_ddt_defaults = 6;
+    }
+}

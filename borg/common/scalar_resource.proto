@@ -71,6 +71,7 @@ message ScalarResource {
         MEMORY = 39;
         HUGETLBFS_1G = 43;
         HUGETLBFS_2M = 52;
+        PERSISTENT_MEMORY_1G = 106;
         MARKET_MILLIGCUS = 104;
         TASK_OR_ALLOC_INSTANCE_SLOT = 41;
         MACHINE_RESERVATION_SLOT = 47;

@@ -1,0 +1,17 @@
+syntax = "proto2";
+
+package rpc;
+
+import "net/proto2/bridge/proto/message_set.proto";
+
+message ProxyHeader {
+    optional string proxy_dest = 1;
+    optional string username = 2;
+    optional string build_target = 3;
+    optional int32 traffic_class = 4;
+    optional int64 cl = 5;
+    
+    extend .proto2.bridge.MessageSet {
+        optional ProxyHeader message_set_extension = 158188938;
+    }
+}

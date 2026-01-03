@@ -67,6 +67,7 @@ message Error {
     optional SpaceCode space_code = 11;
     optional SignalLog signals = 13;
     repeated int32 error_ids = 14 [packed = true];
+    optional string error_id_string = 15;
     
     extend .proto2.bridge.MessageSet {
         optional Error message_set_extension = 97315663;
@@ -110,6 +111,7 @@ message ComponentSignal {
         PLUGIN_REMOTE_DIFF = 113;
         PLUGIN_COLOSSUSPATH = 114;
         PLUGIN_CHUBBYPATH = 115;
+        PLUGIN_QUOTA_SERVER = 116;
         DEP_UNKNOWN = 200;
         DEP_PIPER = 201;
         DEP_AUTOCAP = 202;
@@ -121,6 +123,95 @@ message ComponentSignal {
         DEP_PLUGIN_SEQUENCER = 208;
         PLUGIN_GCCP = 300;
         PLUGIN_ERROR_ACTION = 301;
+        PLUGIN_ACL_ZANZIBAR_QUOTA = 400;
+        PLUGIN_ACPA = 401;
+        PLUGIN_ANDORRA_SPANNER = 402;
+        PLUGIN_APPENGINE = 403;
+        PLUGIN_AUTOALERTROUTE = 404;
+        PLUGIN_AUTOLEAF = 405;
+        PLUGIN_AUTOPILOT = 406;
+        PLUGIN_BASIC_CONFIG_SHARD = 407;
+        PLUGIN_BBMC = 408;
+        PLUGIN_BLOKUSCELL = 409;
+        PLUGIN_BOQ_NODE = 410;
+        PLUGIN_BORGCRON = 411;
+        PLUGIN_BTSPEC = 412;
+        PLUGIN_BUGANIZER = 413;
+        PLUGIN_CAPABILITIES = 414;
+        PLUGIN_CONFIG_FILE = 415;
+        PLUGIN_CONDUIT_FLUME_PIPELINES = 416;
+        PLUGIN_CONDUIT_LEAF_FILES = 417;
+        PLUGIN_CONDUIT_WORKGRAPH = 418;
+        PLUGIN_DAASCONFIG = 419;
+        PLUGIN_DEDICATED_MACHINES = 420;
+        PLUGIN_DREAMPIPE = 421;
+        PLUGIN_ELECTEDSET = 422;
+        PLUGIN_FILE_NAMESPACE = 423;
+        PLUGIN_FIRMWARE_DEVICES = 424;
+        PLUGIN_G3TERRAFORM = 425;
+        PLUGIN_GANPATICFG = 426;
+        PLUGIN_GLINDA = 427;
+        PLUGIN_GSLB_INVERTED = 428;
+        PLUGIN_GSTCONFIG = 429;
+        PLUGIN_HAMILTON = 430;
+        PLUGIN_IPDB = 431;
+        PLUGIN_JOBCHECKER = 432;
+        PLUGIN_KUBERNETES = 433;
+        PLUGIN_LIGHTWAVE = 434;
+        PLUGIN_MACSERVICE = 435;
+        PLUGIN_MANUAL_MOVE_ACTION = 436;
+        PLUGIN_MBNS_ENROLL = 437;
+        PLUGIN_MENHIR = 438;
+        PLUGIN_METAMON = 439;
+        PLUGIN_MILLWHEEL_CELL = 440;
+        PLUGIN_MILLWHEEL_PIPELINE = 441;
+        PLUGIN_MONARCH_CANARY = 442;
+        PLUGIN_MPM_LABEL = 443;
+        PLUGIN_MSTAGES = 444;
+        PLUGIN_MUPPET_TREE = 445;
+        PLUGIN_NAME_SERVICE = 446;
+        PLUGIN_NETROV = 447;
+        PLUGIN_NETWORK_CONTROL = 448;
+        PLUGIN_NETWORK_SWITCH = 449;
+        PLUGIN_NETWORKFLOWGROUP = 450;
+        PLUGIN_NETWORKTEDOMAIN = 451;
+        PLUGIN_NODE = 452;
+        PLUGIN_ONERPC = 453;
+        PLUGIN_OUTBOUNDACL = 454;
+        PLUGIN_PANTHEON = 455;
+        PLUGIN_PATH = 456;
+        PLUGIN_PLACER = 457;
+        PLUGIN_PLX = 458;
+        PLUGIN_POLEARM = 459;
+        PLUGIN_PROBER_SERVICE = 460;
+        PLUGIN_PUBSUB2 = 461;
+        PLUGIN_PUSH_CONFIG = 462;
+        PLUGIN_REMOTE_BORG_ENVIRONMENT = 463;
+        PLUGIN_REMOTE_BORG_JOB = 464;
+        PLUGIN_REMOTE_SPANNER_DATABASE = 465;
+        PLUGIN_RIGGING = 466;
+        PLUGIN_SEQUENCER = 467;
+        PLUGIN_SERVOMATIC = 468;
+        PLUGIN_SILKROADS = 469;
+        PLUGIN_SLM = 470;
+        PLUGIN_SPANNER_DATABASE_PLACEMENT = 471;
+        PLUGIN_SPANNER_SCHEMA_ROLLOUT = 472;
+        PLUGIN_SPANNERJOB = 473;
+        PLUGIN_SPLANNER = 474;
+        PLUGIN_SQL_PIPELINES = 475;
+        PLUGIN_STREAMING_FLUME = 476;
+        PLUGIN_STUBBYTEE_CONFIGURATION = 477;
+        PLUGIN_TECH_LOCK_INSTANCE = 478;
+        PLUGIN_TERRAFORM = 479;
+        PLUGIN_TF_HUB = 480;
+        PLUGIN_TURBINE_PIPELINE = 481;
+        PLUGIN_UNION = 482;
+        PLUGIN_UNISERVE = 483;
+        PLUGIN_VERTEX = 484;
+        PLUGIN_WARPPLANE = 485;
+        PLUGIN_SINK = 486;
+        PLUGIN_BUGANIZER_CHECK = 487;
+        PLUGIN_GSLB_LEGACY = 488;
         OTHER_COMPONENT = 1000;
     }
 }
@@ -135,6 +226,8 @@ message CategorySignal {
         DEPENDENCY = 4;
         OTHER = 100;
     }
+    
+    optional bool is_heuristic = 2;
 }
 
 message KnownIssueSignal {

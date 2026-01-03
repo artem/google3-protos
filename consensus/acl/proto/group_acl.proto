@@ -1,0 +1,11 @@
+syntax = "editions";
+
+package consensus.acl;
+
+import "consensus/acl/proto/isolation_shard.proto";
+
+option java_multiple_files = true;
+
+message GroupAcl {
+    repeated IsolationShard isolation_shards = 1;
+}

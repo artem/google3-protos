@@ -5,6 +5,7 @@ package envoy.config.trace.v3;
 import "third_party/envoy/src/api/envoy/config/core/v3/extension.proto";
 import "third_party/envoy/src/api/envoy/config/core/v3/grpc_service.proto";
 import "third_party/envoy/src/api/envoy/config/core/v3/http_service.proto";
+import "google/protobuf/wrappers.proto";
 import "third_party/udpa/udpa/annotations/migrate.proto";
 import "third_party/udpa/udpa/annotations/status.proto";
 
@@ -19,4 +20,5 @@ message OpenTelemetryConfig {
     string service_name = 2;
     repeated .envoy.config.core.v3.TypedExtensionConfig resource_detectors = 4;
     .envoy.config.core.v3.TypedExtensionConfig sampler = 5;
+    google.protobuf.UInt32Value max_cache_size = 6;
 }

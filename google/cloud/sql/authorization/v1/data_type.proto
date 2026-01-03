@@ -26,6 +26,7 @@ message InstancesLoginRequest {
         CLOUD_IAM_GROUP = 3;
         CLOUD_IAM_GROUP_USER = 4;
         CLOUD_IAM_GROUP_SERVICE_ACCOUNT = 5;
+        CLOUD_IAM_WORKFORCE_IDENTITY = 6;
     }
     
     string client_ip_address = 6;

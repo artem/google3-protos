@@ -1,0 +1,21 @@
+syntax = "editions";
+
+package rpc2.contrib;
+
+import "net/proto2/contrib/validator/annotations.proto";
+
+option java_multiple_files = true;
+
+message CellConfig {
+    repeated string cells = 1;
+    optional int32 percentage = 2;
+}
+
+message TargetConfig {
+    optional string target = 1;
+    repeated CellConfig cell_configs = 2;
+}
+
+message OneRpcRolloutConfig {
+    repeated TargetConfig target_configs = 1;
+}

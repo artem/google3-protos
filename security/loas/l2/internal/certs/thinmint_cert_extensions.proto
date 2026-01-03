@@ -9,6 +9,7 @@ import "security/loas/l2/proto/confidential_security_level.proto";
 import "security/loas/l2/proto/credstype.proto";
 import "security/loas/l2/proto/identity_types.proto";
 import "security/loas/l2/proto/instance.proto";
+import "security/loas/l2/proto/server_type.proto";
 import "security/loas/l2/proto/usertype.proto";
 import "storage/datapol/annotations/proto/semantic_annotations.proto";
 import "third_party/protobuf/cpp_features.proto";
@@ -99,8 +100,9 @@ message BorgTaskCertificate {
     optional string virtual_cell = 10;
     optional ConfidentialSecurityLevel confidential_security_level = 11;
     optional bool is_hardened = 12;
+    repeated ServerType server_types = 14;
     
-    reserved 7, 8;
+    reserved 7, 8, 13;
     
     extend .proto2.bridge.MessageSet {
         optional BorgTaskCertificate message_set_extension = 44454843;
@@ -132,6 +134,8 @@ message SelfSignedCertificateComment {
 }
 
 message RrcpRequiredRestriction {
+    option deprecated = true;
+    
     reserved 1, 2;
     
     extend .proto2.bridge.MessageSet {

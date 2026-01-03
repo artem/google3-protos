@@ -24,6 +24,7 @@ message RequestHeader {
         P3 = 3;
         BATCH = 3;
         P4 = 4;
+        THROUGHPUT_PLUS = 4;
         P5 = 5;
         P6 = 6;
         P7 = 7;

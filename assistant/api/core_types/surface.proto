@@ -39,6 +39,7 @@ message Surface {
         FITBIT_OS_WATCH_ANDROID = 51;
         FITBIT_OS_WATCH_IOS = 52;
         GOOGLE_HOME = 32;
+        GOOGLE_HOME_APP = 63;
         HEADPHONE = 43;
         HEADPHONE_ANDROID = 47;
         HEADPHONE_ANDROID_SCREENLESS = 59;

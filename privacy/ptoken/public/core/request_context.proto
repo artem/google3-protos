@@ -53,6 +53,7 @@ message PRequestContext {
     optional privacy.context.PrivacyAttributesSetter privacy_attributes_setter = 100;
     optional bytes bitfield_value = 26;
     optional bytes bitfield_set = 27;
+    optional uint64 cuot_policies_bitset = 39;
     
     oneof origin_logical_location {
         data_residency.mapping.cloud.CloudDataResidencyLocation origin_logical_cloud_location = 28;

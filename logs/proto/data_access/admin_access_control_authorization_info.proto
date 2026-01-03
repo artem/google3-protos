@@ -132,7 +132,7 @@ message AuthDecision {
 message AdminAccessControlAuthorizationInfo {
     optional AuthDecision decision = 3;
     
-    extensions 1, 2, 4, 5;
+    extensions 1, 2, 4, 5, 7;
     
     reserved 6;
 }

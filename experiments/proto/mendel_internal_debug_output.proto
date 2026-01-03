@@ -165,6 +165,8 @@ message MendelInternalDebugOutput {
         map<string, string> mendel_options = 1;
     }
     
+    optional string diversion_label = 17;
+    
     message StateHelperValue {
         
     }

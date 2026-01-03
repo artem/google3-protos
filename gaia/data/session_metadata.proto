@@ -1,0 +1,17 @@
+syntax = "editions";
+
+package gaia_data;
+
+import "gaia/data/oauth/session_strength_signals.proto";
+import "storage/datapol/annotations/proto/semantic_annotations.proto";
+
+option java_multiple_files = true;
+option java_package = "com.google.gaia.client.proto";
+
+message SignInSessionMetadata {
+    optional SessionStrengthSignals session_strength_signals = 1;
+}
+
+message SignInSessionMetadataUpdate {
+    optional SessionStrengthSignalsUpdate session_strength_signals = 1;
+}

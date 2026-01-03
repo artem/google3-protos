@@ -84,6 +84,15 @@ message BuildCl {
     }
 }
 
+message RpcSwitchHandshakeHash {
+    optional bytes digest = 1;
+    optional HashType hash_type = 2;
+    
+    extend AuthenticatedOptions {
+        optional RpcSwitchHandshakeHash rpc_switch_handshake_hash = 1018;
+    }
+}
+
 enum HandshakeCipher {
     NO_CIPHER = 0;
     TEST_CIPHER = 1;
@@ -121,12 +130,6 @@ enum CurveType {
     NO_CURVE = 0;
     TEST_CURVE = 1;
     CURVE25519 = 100;
-}
-
-enum NextProtocol {
-    PROTOCOL_RESERVED = 0;
-    GOOGLE_SECUREWRAPPER_AES128_GCM = 100;
-    GOOGLE_SECUREWRAPPER_AES128_CTR_VMAC128 = 101;
 }
 
 extend AuthenticatedOptions {

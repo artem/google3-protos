@@ -31,6 +31,7 @@ message Qualifier {
     optional bool is_actor = 17 [default = false];
     optional bool is_action_target = 18 [default = false];
     optional bool is_action_time = 19 [default = false];
+    optional bool is_internal_only = 20 [default = false];
 }
 
 message LocationQualifier {
@@ -64,6 +65,7 @@ enum SemanticType {
     ST_NOT_SPECIFIED = 0;
     ST_NOT_REQUIRED = 999;
     ST_PSEUDONYMOUS_ID = 1000;
+    ST_ISOLATED_PSEUDONYMOUS_ID = 1914;
     ST_ZWIEBACK_ID = 1001;
     ST_PREF_ID = 1002;
     ST_BISCOTTI_ID = 1003;
@@ -140,6 +142,7 @@ enum SemanticType {
     ST_USER_CONTENT = 1900;
     ST_USER_QUERY = 1901;
     ST_USER_QUERY_MODEL_RESPONSE = 1912;
+    ST_PERSONAL_DATA_CROSS_PA_SOURCE = 1913;
     ST_AUDIO = 1902;
     ST_MUSIC = 1903;
     ST_TEXT_TO_SPEECH = 1904;

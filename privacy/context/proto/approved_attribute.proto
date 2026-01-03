@@ -1,0 +1,17 @@
+syntax = "editions";
+
+package privacy.context;
+
+import "privacy/data_governance/attributes/proto/privacy_documentation.proto";
+import "privacy/data_governance/attributes/proto/purpose.proto";
+
+option java_multiple_files = true;
+option java_package = "com.google.privacy.context";
+
+message ApprovedAttribute {
+    optional data_governance.attributes.PrivacyDocumentation approval = 2;
+    
+    oneof attribute {
+        data_governance.attributes.ProcessingPurpose.Purpose processing_purpose = 1;
+    }
+}

@@ -1,0 +1,75 @@
+syntax = "proto3";
+
+package grpc.channelz.v2;
+
+import "third_party/grpc/src/proto/grpc/channelz/v2/property_list.proto";
+
+message Promise {
+    oneof promise {
+        Custom custom_promise = 1;
+        string unknown_promise = 2;
+        If if_promise = 3;
+        Loop loop_promise = 4;
+        Race race_promise = 5;
+        Seq seq_promise = 6;
+        Join join_promise = 7;
+        Map map_promise = 8;
+    }
+    
+    message Custom {
+        string type = 1;
+        PropertyList properties = 2;
+    }
+    
+    message If {
+        bool condition = 1;
+        string true_factory = 2;
+        string false_factory = 3;
+        Promise promise = 4;
+    }
+    
+    message Loop {
+        string loop_factory = 1;
+        Promise promise = 2;
+        bool yield = 3;
+    }
+    
+    message Race {
+        repeated Promise children = 1;
+    }
+    
+    message SeqStep {
+        string factory = 1;
+        Promise polling_promise = 2;
+    }
+    
+    message Seq {
+        CompositionKind kind = 1;
+        repeated SeqStep steps = 2;
+    }
+    
+    message JoinBranch {
+        string factory = 1;
+        
+        oneof state {
+            Promise polling_promise = 2;
+            string result = 3;
+        }
+    }
+    
+    message Join {
+        CompositionKind kind = 1;
+        repeated JoinBranch branches = 2;
+    }
+    
+    message Map {
+        Promise promise = 1;
+        string map_fn = 2;
+    }
+    
+    enum CompositionKind {
+        UNKNOWN = 0;
+        NORMAL = 1;
+        TRY = 2;
+    }
+}

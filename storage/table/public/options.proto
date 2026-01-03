@@ -1,0 +1,11 @@
+syntax = "editions";
+
+package table;
+
+import "storage/table/public/context.proto";
+
+message OptionsProto {
+    optional string table_factory_name = 1;
+    optional bool dry_run = 3;
+    optional ContextProto context = 2;
+}

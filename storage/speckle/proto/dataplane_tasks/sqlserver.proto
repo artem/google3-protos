@@ -41,6 +41,10 @@ message SqlServerSetReplicaRequest {
     oneof _read_replica_endpoint_url_override {
         string read_replica_endpoint_url_override = 13;
     }
+    
+    oneof _replica_is_forwarder {
+        bool replica_is_forwarder = 14;
+    }
 }
 
 message SQLServerStartReplicaRequest {
@@ -83,6 +87,30 @@ message SqlServerUpdateInsightsConfigRequest {
     int32 query_string_length = 5;
     int32 query_plans_per_minute = 6;
     int32 retention_period_in_days = 7;
+}
+
+message UncMappings {
+    repeated UncMapping unc_mappings = 1;
+}
+
+message UncMapping {
+    oneof _unc_path {
+        string unc_path = 1;
+    }
+    
+    oneof _gcs_path {
+        string gcs_path = 2;
+    }
+    
+    oneof _mode {
+        Mode mode = 3;
+    }
+    
+    enum Mode {
+        UNKNOWN = 0;
+        SNAPSHOT_READ = 1;
+        SNAPSHOT_WRITE = 2;
+    }
 }
 
 enum AvailabilityCommitMode {

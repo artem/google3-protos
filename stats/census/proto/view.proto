@@ -8,11 +8,17 @@ import "stats/census/proto/key_id.proto";
 option java_outer_classname = "CensusView";
 option java_package = "com.google.monitoring.census";
 
+message TestMatches {
+    repeated string matches = 1;
+    repeated string does_not_match = 2;
+}
+
 message TagSelectorProto {
     optional key_id_internal.KeyId key_id = 4;
     optional string tag_key = 1 [deprecated = true];
     optional string matches = 2;
     optional string does_not_match = 3;
+    optional TestMatches test_matches = 5;
 }
 
 message StreamzTargetSchemaProto {

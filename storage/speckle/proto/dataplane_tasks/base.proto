@@ -192,9 +192,16 @@ service DataPlaneOperations {
     rpc WaitWalFileArchivalToGcs(WaitWalFileArchivalToGcsRequest) returns (google.longrunning.Operation);
     rpc TakeLogBackup(TakeLogBackupRequest) returns (google.longrunning.Operation);
     rpc CheckZdtEligibility(CheckZdtEligibilityRequest) returns (google.longrunning.Operation);
+    rpc CheckCreateReplicaEligibility(CheckCreateReplicaEligibilityRequest) returns (google.longrunning.Operation);
     rpc ManageInstancePermissions(ManageInstancePermissionsRequest) returns (google.longrunning.Operation);
     rpc VerifyReplicationStatus(VerifyReplicationStatusRequest) returns (google.longrunning.Operation);
     rpc ValidateSql(ValidateSqlRequest) returns (google.longrunning.Operation);
+    rpc ResetPostgresQiV1Metrics(ResetPostgresQiV1MetricsRequest) returns (google.longrunning.Operation);
+    rpc SetUncMappings(SetUncMappingsRequest) returns (google.longrunning.Operation);
+    rpc PerformPitrRestoreDatabases(PerformPitrRestoreDatabasesRequest) returns (google.longrunning.Operation);
+    rpc EnableEntraId(EnableEntraIdRequest) returns (google.longrunning.Operation);
+    rpc DisableEntraId(DisableEntraIdRequest) returns (google.longrunning.Operation);
+    rpc UpdateEntraidCertificate(UpdateEntraidCertificateRequest) returns (google.longrunning.Operation);
 }
 
 message CreateUserRequest {
@@ -212,6 +219,8 @@ message UpdateUserRequest {
     UserProto user = 5;
     google.protobuf.Timestamp timestamp = 6;
     bool include_password_policy = 7;
+    repeated string database_roles = 8;
+    bool revoke_existing_roles = 9;
 }
 
 message ListUsersRequest {
@@ -541,6 +550,11 @@ message ExportShellRequest {
 
 message ExportShellResult {
     int64 bytes_uploaded = 1;
+    repeated ExportMetrics database_metrics = 2;
+}
+
+message ExportCompressionLevel {
+    int64 level = 1;
 }
 
 message ExportDirectoryRequest {
@@ -549,12 +563,37 @@ message ExportDirectoryRequest {
     string database_name = 3;
     string table_pattern = 4;
     bool schema_only = 5;
-    bool large_objects_as_table = 7;
     bool upload_files_during_dump = 6;
+    bool large_objects_as_table = 7;
+    bool use_golang_gcs_client = 8;
+    ExportCompressionType compression_type = 9;
+    ExportCompressionLevel compression_level = 10;
+    int64 large_object_chunk_size = 11;
+}
+
+message FileGroupMetrics {
+    int64 count = 1;
+    int64 total_bytes = 2;
+}
+
+message ExportMetrics {
+    int64 bytes_uploaded = 1;
+    int64 files_uploaded = 2;
+    int64 max_file_size = 3;
+    int64 upload_call_count = 4;
+    int64 upload_batches_count = 5;
+    google.protobuf.Duration dump_duration = 6;
+    google.protobuf.Duration upload_duration = 7;
+    FileGroupMetrics less_than_one_kb = 8;
+    FileGroupMetrics less_than_one_mb = 9;
+    FileGroupMetrics less_than_one_gb = 10;
+    FileGroupMetrics less_than_one_tb = 11;
+    FileGroupMetrics greater_than_one_tb = 12;
 }
 
 message ExportDirectoryResult {
     int64 bytes_uploaded = 1;
+    repeated ExportMetrics database_metrics = 2;
 }
 
 message ExportCsvRequest {
@@ -698,11 +737,23 @@ message ExecuteSqlRequest {
     }
     
     oneof _encrypted_access_token {
-        storage.speckle.proto.EncryptedSecret encrypted_access_token = 6;
+        storage.speckle.proto.EncryptedSecret encrypted_access_token = 6 [deprecated = true];
     }
     
     oneof _encrypted_euc {
         storage.speckle.proto.EncryptedSecret encrypted_euc = 12;
+    }
+    
+    oneof _password {
+        string password = 13;
+    }
+    
+    oneof _access_token {
+        string access_token = 14 [deprecated = true];
+    }
+    
+    oneof _euc {
+        string euc = 15;
     }
     
     oneof _output_format {
@@ -730,14 +781,26 @@ message ExecuteSqlRequest {
 message ExecuteSqlResult {
     repeated Column columns = 1 [deprecated = true];
     repeated Row rows = 2 [deprecated = true];
+    
+    repeated Message messages = 9;
+    message Message {
+        oneof _message {
+            string message = 1;
+        }
+        
+        oneof _severity {
+            string severity = 2;
+        }
+    }
+    
     repeated QueryResult results = 7;
     
     oneof _message {
-        string message = 3;
+        string message = 3 [deprecated = true];
     }
     
     oneof _partial_result {
-        bool partial_result = 4;
+        bool partial_result = 4 [deprecated = true];
     }
     
     oneof _formatted_rows {
@@ -905,6 +968,7 @@ message UserProto {
         CLOUD_IAM_GROUP = 3;
         CLOUD_IAM_GROUP_USER = 4;
         CLOUD_IAM_GROUP_SERVICE_ACCOUNT = 5;
+        CLOUD_IAM_WORKFORCE_IDENTITY = 6;
     }
     
     string asstring = 8;
@@ -974,6 +1038,7 @@ message ListExternalSourceObjectsRequest {
     bool ssl_client_auth = 7;
     bool ssl_mode_fallback_enabled = 8;
     SslOption ssl_option = 9;
+    bool enable_secure_search_path_in_pg_dsn = 10;
 }
 
 message DatabaseObjects {
@@ -1069,6 +1134,8 @@ message SetReplicaRequest {
     string primary_dns_name = 17;
     SSLSetting ssl_mode = 18 [deprecated = true];
     SslOption ssl_option = 19;
+    bool enable_selective_db_migration = 20;
+    repeated SelectedObject selected_objects = 21;
     
     oneof set_replica_details {
         mysql.MysqlSetReplicaRequest mysql_set_replica_request = 4;
@@ -1131,6 +1198,7 @@ message SetupReplicaLogicalReplicationRequest {
     bool existing_data_ownership_check = 34;
     bool enable_update_subscriber_node_dsn = 35;
     bool enable_secure_search_path_in_pg_dsn = 36;
+    bool enable_pg_ddl_replication = 37;
 }
 
 message SetupReplicaLogicalReplicationResult {
@@ -1217,6 +1285,7 @@ message BootstrapSslRequest {
     bool should_reload_conf = 11;
     bool force_require_x509 = 12;
     CaMode server_ca_mode = 35;
+    bool proxy_server_hot_reload = 36;
     
     reserved 5, 6;
 }
@@ -1241,6 +1310,7 @@ message VerifyBackupLogicalCheckRequest {
     bool should_do_amcheck = 4;
     bool should_check_foreign_key = 5;
     bool should_check_gin_gist = 6;
+    bool should_check_categorized_detail = 7;
 }
 
 message HandleDBCacheRequest {
@@ -1324,6 +1394,7 @@ message VerifyBackupLogicalCheckResult {
         }
         
         bool is_dry_run = 3;
+        repeated CategorizedLogicalCheckResult categorized_results = 11;
         
         oneof _error_msg {
             string error_msg = 4;
@@ -1384,6 +1455,112 @@ message VerifyBackupLogicalCheckResult {
         int64 disk_write_bytes = 8;
         int64 disk_usage_bytes = 9;
         int64 largest_table_size_bytes = 10;
+    }
+    
+    message CategorizedLogicalCheckResult {
+        repeated CheckFlags check_flags = 7;
+        message CheckFlags {
+            oneof _flag_name {
+                CheckFlagNames flag_name = 1;
+            }
+            
+            oneof _value {
+                bool value = 2;
+            }
+            
+            oneof _error_message {
+                string error_message = 3;
+            }
+        }
+        
+        oneof _check_name {
+            CheckName check_name = 1;
+        }
+        
+        oneof _error_object {
+            string error_object = 2;
+        }
+        
+        oneof _error {
+            ErrorType error = 3;
+        }
+        
+        oneof _error_sub_type {
+            ErrorSubType error_sub_type = 4;
+        }
+        
+        oneof _original_error_message {
+            string original_error_message = 5;
+        }
+        
+        oneof _error_detail {
+            string error_detail = 6;
+        }
+        
+        oneof _engine_meta {
+            EngineMeta engine_meta = 8;
+        }
+        
+        message PgMeta {
+            oneof _db_name {
+                string db_name = 1;
+            }
+            
+            oneof _schema_name {
+                string schema_name = 2;
+            }
+            
+            oneof _index_name {
+                string index_name = 3;
+            }
+        }
+        
+        message EngineMeta {
+            oneof _pg_meta {
+                PgMeta pg_meta = 1;
+            }
+        }
+        
+        enum CheckName {
+            UNKNOWN_CHECK = 0;
+            PG_AMCHECK = 1;
+            PG_RELHASINDEX = 2;
+        }
+        
+        enum ErrorType {
+            UNKNOWN_ERROR = 0;
+            UNCATEGORIZED_ERROR = 1;
+            COULD_NOT_QUERY_DATABASE = 2;
+            COULD_NOT_CONNECT_TO_DATABASE = 3;
+            COULD_NOT_CONNECT_TO_ADMIN_DATABASE = 4;
+            PG_XX000 = 100;
+            PG_XX001 = 101;
+            PG_XX002 = 102;
+            PG_E53200 = 103;
+            PG_INDEXES_ON_TABLES_WITH_RELHASINDEX_FALSE = 104;
+        }
+        
+        enum ErrorSubType {
+            UNKNOWN_SUBTYPE = 0;
+            UNCATEGORIZED_SUBTYPE = 1;
+            DATABASE_SYSTEM_IS_IN_RECOVERY_MODE = 2;
+            CONNECTION_REFUSED = 3;
+            PG_COULD_NOT_OPEN_RELATION = 100;
+            PG_LACKS_MATCHING_INDEX_TUPLE = 101;
+            PG_INVARIANT_VIOLATED_FOR_INDEX = 102;
+            PG_OUT_OF_SHARED_MEMORY = 103;
+            PG_NOT_A_VALID_DATA_DIRECTORY = 104;
+            PG_NOT_CURRENTLY_ACCEPTING_CONNECTIONS = 105;
+            PG_DATABASE_SYSTEM_IS_STARTING_UP = 106;
+        }
+        
+        enum CheckFlagNames {
+            UNKNOWN_FLAG = 0;
+            INDEX_HAS_POSTGIS_GEO_COLUMN = 1;
+            INDEX_HAS_REGEX_FUNC = 2;
+            INDEX_HAS_OP_WITH_REGEX_FUNC = 3;
+            INDEX_HAS_USER_DEFINED_FUNC_OR_OP = 4;
+        }
     }
 }
 
@@ -1653,6 +1830,7 @@ message ExternalMasterImportRequest {
     bool reset_master_for_retry = 35;
     repeated SelectedObject selected_objects = 36;
     bool enable_selective_db_migration = 37;
+    bool replica_overwrite_enabled = 38;
     
     oneof _lock_wait_time {
         google.protobuf.Duration lock_wait_time = 16;
@@ -1772,6 +1950,12 @@ message ExternalMasterInfo {
         PROMPT_DELETE_EXISTING = 74;
         WILL_DELETE_EXISTING = 75;
         REPLICATE_WILD_DO_TABLE_NOT_WHOLE_DATABASES = 76;
+        SELECTED_OBJECTS_REFERENCE_UNSELECTED_OBJECTS = 77;
+        SELECTED_OBJECTS_DISJOINT_WITH_EXISTING_DATABASES = 78;
+        SOURCE_IN_RECOVERY_MODE = 79;
+        MISSING_GTID_MODE_CONFIG = 80;
+        DO_NOT_RUN_IMPORT = 81;
+        PG_DDL_REPLICATION_INSUFFICIENT_PRIVILEGE = 82;
     }
     
     string detail = 2;
@@ -1832,6 +2016,8 @@ message VerifyMigrationSettingsRequest {
     SslOption ssl_option = 37;
     bool enable_selective_db_migration = 38;
     bool allow_delete_existing = 39;
+    bool enable_secure_search_path_in_pg_dsn = 40;
+    bool enable_pg_ddl_replication = 41;
 }
 
 message SelectedObject {
@@ -1972,6 +2158,10 @@ message DropAllAvailabilityGroupsRequest {
 message CreateSecondaryAvailabilityGroupRequest {
     string ag_name = 1;
     string ip = 2;
+    
+    oneof _endpoint_url {
+        string endpoint_url = 3;
+    }
 }
 
 message AddAvailabilityGroupListenerRequest {
@@ -2152,6 +2342,7 @@ message RevertHotStandbyModeRequest {
     string trigger_file = 3;
     int32 uid = 4;
     string private_lb_ip = 5;
+    string old_umbrella_private_lb_ip = 8;
     string public_lb_ip = 6;
     google.protobuf.Duration timeout = 7;
 }
@@ -2464,6 +2655,7 @@ message RejectDbTrafficRequest {
 message UnblockDbTrafficRequest {
     string task_id = 1;
     string private_lb_ip = 2;
+    string old_umbrella_private_lb_ip = 4;
     string public_lb_ip = 3;
 }
 
@@ -2473,6 +2665,7 @@ message ResetVmOnFailureRequest {
     string other_vm_ip = 3;
     string private_lb_ip = 4;
     string public_lb_ip = 5;
+    bool is_replica = 6;
 }
 
 message ResetVmOnFailureResult {
@@ -2610,6 +2803,7 @@ message SwitchWalFileRequest {
     bool reject_and_kill_user_connections = 2;
     string lb_ip = 3;
     string private_lb_ip = 4;
+    string old_umbrella_private_lb_ip = 7;
     string public_lb_ip = 5;
     
     oneof _timeout {
@@ -2688,8 +2882,16 @@ message CheckZdtEligibilityRequest {
     }
 }
 
+message CheckCreateReplicaEligibilityRequest {
+    
+}
+
 message ManageInstancePermissionsRequest {
     sqlserver.ManageInstancePermissionsAction read_replica_creation_deny_permissions = 1;
+}
+
+message SetUncMappingsRequest {
+    sqlserver.UncMappings unc_mappings = 1;
 }
 
 message VerifyReplicationStatusRequest {
@@ -2741,6 +2943,35 @@ message ValidateSqlResultDetails {
     int64 line_offset = 4;
 }
 
+message ResetPostgresQiV1MetricsRequest {
+    oneof _timeout {
+        google.protobuf.Duration timeout = 1;
+    }
+}
+
+message PerformPitrRestoreDatabasesRequest {
+    string task_id = 1;
+    google.protobuf.Timestamp pitr_target_time = 2;
+    google.protobuf.Timestamp base_image_time = 3;
+    repeated string database = 4;
+}
+
+message EnableEntraIdRequest {
+    string task_id = 1;
+    string tenant_id = 2;
+    string application_id = 3;
+}
+
+message DisableEntraIdRequest {
+    string task_id = 1;
+}
+
+message UpdateEntraidCertificateRequest {
+    string task_id = 1;
+    string entraid_cert_base64 = 2;
+    string entraid_pkey_base64 = 3;
+}
+
 enum SslMode {
     SSL_MODE_UNSPECIFIED = 0;
     ALLOW_UNENCRYPTED_AND_ENCRYPTED = 1;
@@ -2753,6 +2984,13 @@ enum CaMode {
     GOOGLE_MANAGED_INTERNAL_CA = 1;
     GOOGLE_MANAGED_CAS_CA = 2;
     CUSTOMER_MANAGED_CAS_CA = 3;
+}
+
+enum ExportCompressionType {
+    EXPORT_COMPRESSION_TYPE_DEFAULT = 0;
+    EXPORT_COMPRESSION_TYPE_NONE = 1;
+    EXPORT_COMPRESSION_TYPE_GZIP = 2;
+    EXPORT_COMPRESSION_TYPE_ZSTD = 3;
 }
 
 enum MendelFlagType {

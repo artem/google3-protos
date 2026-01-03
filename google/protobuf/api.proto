@@ -20,6 +20,7 @@ message Api {
     SourceContext source_context = 5;
     repeated Mixin mixins = 6;
     Syntax syntax = 7;
+    string edition = 8;
 }
 
 message Method {
@@ -29,7 +30,8 @@ message Method {
     string response_type_url = 4 [ctype = STRING_PIECE];
     bool response_streaming = 5;
     repeated Option options = 6;
-    Syntax syntax = 7;
+    Syntax syntax = 7 [deprecated = true];
+    string edition = 8 [deprecated = true];
 }
 
 message Mixin {

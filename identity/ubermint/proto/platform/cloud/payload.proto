@@ -12,8 +12,11 @@ import "identity/boq/cloud/ubermint/proto/byoid_reauth_state.proto";
 import "identity/boq/cloud/ubermint/proto/dasher_customer_id.proto";
 import "identity/boq/cloud/ubermint/proto/dma_info.proto";
 import "identity/boq/cloud/ubermint/proto/gaia_on_byoid.proto";
+import "identity/ubermint/proto/platform/cloud/byoid_extended_attributes.proto";
+import "identity/ubermint/proto/platform/cloud/byoid_session_features.proto";
 import "identity/ubermint/proto/platform/cloud/resource_info.proto";
 import "identity/ubermint/proto/platform/cloud/trust_boundary_params.proto";
+import "security/credentials/proto/credential_origin.proto";
 import "security/credentials/proto/request_reason.proto";
 import "storage/datapol/annotations/proto/semantic_annotations.proto";
 
@@ -68,6 +71,10 @@ message CloudUberMintPayload {
     optional google.cloud.identity.DeviceSignal device_signal = 50;
     optional bytes hemera_session_info_pointer = 51;
     optional identity_ubermint.ByoidReauthState byoid_reauth_state = 52;
+    optional string provider_name = 53;
+    optional ByoidExtendedAttributes byoid_extended_attributes = 54;
+    optional security.credentials.CredentialOrigin.McpAttributes mcp_attributes = 55;
+    optional ByoidSessionFeatures byoid_session_features = 56;
     
     reserved 9, 10, 14, 21, 28;
 }

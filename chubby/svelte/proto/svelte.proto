@@ -82,6 +82,7 @@ message SVFile {
         RESULT_REFUSED_DUE_TO_DRAIN = 11;
         RESULT_CLIENT_THROTTLED = 12;
         RESULT_CLIENT_DENIED = 13;
+        RESULT_SERVER_SHUFFLE_SHARDING_CORRECTION = 14;
     }
 }
 
@@ -146,6 +147,7 @@ message SVModifyRequest {
     optional string physical_cell = 18;
     optional chubby.LoadShedding.Token load_shedding_token = 19;
     optional chubby.ShuffleShardingClientInfo shuffle_sharding_client_info = 20;
+    optional bool cast_a_wider_net = 21;
     
     reserved 10;
     
@@ -251,6 +253,7 @@ message SVLoad {
     optional int32 num_client_file_pairs = 8;
     optional bool is_healthy = 9 [default = true];
     optional google.protobuf.Duration remaining_drop_duration = 10;
+    optional int32 svelte_task_index = 11;
 }
 
 message EndSessionRequest {

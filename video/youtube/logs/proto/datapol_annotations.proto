@@ -53,6 +53,7 @@ enum SemanticType {
     YOUTUBE_EVENT_ID = 10203;
     YOUTUBE_ST_URL = 10204;
     YOUTUBE_EFFECT_ID = 10205;
+    YOUTUBE_EXTERNAL_IMAGE_ID = 10021;
 }
 
 extend .proto2.FieldOptions {

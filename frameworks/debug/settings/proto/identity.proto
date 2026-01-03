@@ -23,6 +23,7 @@ message Identity {
         string youtube_visitor_id = 8;
         string nest_cast_device_id = 9;
         string test_instance_id = 12;
+        int64 accounts_debug_id = 13;
         AnonymousIdentity anonymous_id = 4 [deprecated = true];
     }
     

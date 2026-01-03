@@ -392,6 +392,7 @@ message GaiaFriendConst {
     optional string CaribouDomain = 1 [default = "gmail.com"];
     optional string GoogleMailDomain = 2 [default = "googlemail.com"];
     optional string ProdAccountDomain = 5 [default = "prod.google.com"];
+    optional string PhoneIdV3Domain = 8 [default = "id.gle"];
     optional string SidewinderDomain = 6 [default = "1ucrs.com"];
     optional string NSPrefixUnclaimed = 4 [default = "/cu/"];
     optional string NSPrefixPlaceholder = 7 [default = "/ph/"];
@@ -439,6 +440,12 @@ message CheckCanonicalEmailRequest {
         NONE = 0;
         GAIA_EMAIL = 1;
         CARIBOU_USERNAME = 2;
+        CANONICAL_USERNAME = 3;
+    }
+    
+    optional CheckOptions check_options = 4;
+    message CheckOptions {
+        optional int64 reserved_for_userid = 1;
     }
     
     optional ClientData ClientData = 100;

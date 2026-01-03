@@ -77,6 +77,8 @@ message GetServingRoleResponse {
         HA_ROLE_LEGACY_PRIMARY = 4;
         HA_ROLE_LEGACY_STANDBY = 5;
         HA_ROLE_CLUSTER_NODE = 6;
+        HA_ROLE_HA_CLUSTER_WRITER = 7;
+        HA_ROLE_HA_CLUSTER_FAILOVER = 8;
     }
     
     enum ReplicaStatus {

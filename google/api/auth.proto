@@ -44,7 +44,7 @@ message AuthenticationRule {
     UberProxyAuthRequirements uberproxy_auth = 13;
     bool allow_auth_server_fail_open = 14;
     UberMintPlatformConfig ubermint_platform_config = 15;
-    bool allow_api_keys_in_bearer = 16;
+    bool allow_auth_key_in_bearer = 16;
     
     reserved 6, 9;
 }

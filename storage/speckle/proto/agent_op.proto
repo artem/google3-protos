@@ -4,6 +4,7 @@ package speckle;
 
 import "google/api/policy.proto";
 import "storage/datapol/annotations/proto/semantic_annotations.proto";
+import "third_party/protobuf/cpp_features.proto";
 
 option java_outer_classname = "AgentOp";
 

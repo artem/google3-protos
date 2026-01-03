@@ -21,6 +21,7 @@ message SchemaVisibility {
 
 extend .proto2.FieldOptions {
     optional SchemaVisibility.Visibility visibility = 26721089 [default = PUBLIC];
+    optional bool scrub_from_database = 535801566 [default = false];
 }
 
 extend .proto2.EnumValueOptions {

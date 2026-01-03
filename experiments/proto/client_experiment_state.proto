@@ -35,6 +35,7 @@ message ClientFlag {
     message SerializedProtoValue {
         oneof value {
             string jspb_proto_value = 1;
+            bytes binary_proto_value = 2;
         }
     }
 }

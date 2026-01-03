@@ -65,6 +65,7 @@ message NetworkBucket {
 
 message MetadataBucket {
     optional string user = 1;
+    optional string isolation_class = 3;
     
     optional Priority priority = 2;
     enum Priority {
@@ -337,8 +338,6 @@ enum EncryptionMode {
     AES_GCM = 3;
     AES_SHA256_HMAC = 4;
     AES_XTS = 5;
-    AES_GCM_PER_STRIPE_CRC = 6;
-    AES_CTR_SHA256_HMAC_PER_STRIPE_CRC = 7;
     AES_GCM_PER_FILE_CRC = 8;
     AES_CTR_SHA256_HMAC_PER_FILE_CRC = 9;
     AES_GHAC_PER_FILE_CRC = 10;

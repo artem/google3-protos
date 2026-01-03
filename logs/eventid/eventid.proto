@@ -1,6 +1,5 @@
 syntax = "proto2";
 
-import "google/api/inclusion.proto";
 import "java/com/google/apps/jspb/jspb.proto";
 import "net/proto2/bridge/proto/message_set.proto";
 import "storage/datapol/annotations/proto/semantic_annotations.proto";

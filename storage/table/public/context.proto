@@ -1,0 +1,9 @@
+syntax = "editions";
+
+package table;
+
+message ContextProto {
+    optional string table_factory_name = 1;
+    
+    extensions 525000000 to max;
+}

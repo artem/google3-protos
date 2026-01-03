@@ -81,6 +81,7 @@ message HttpConnectionManager {
     .envoy.config.core.v3.SchemeHeaderTransformation scheme_header_transformation = 48;
     google.protobuf.UInt32Value max_request_headers_kb = 29;
     google.protobuf.Duration stream_idle_timeout = 24;
+    google.protobuf.Duration stream_flush_timeout = 59;
     google.protobuf.Duration request_timeout = 28;
     google.protobuf.Duration request_headers_timeout = 41;
     google.protobuf.Duration drain_timeout = 12;

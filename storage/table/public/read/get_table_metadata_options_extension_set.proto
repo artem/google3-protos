@@ -1,0 +1,7 @@
+syntax = "editions";
+
+package table;
+
+message GetTableMetadataOptionsExtensionSet {
+    extensions 1000 to 2000;
+}

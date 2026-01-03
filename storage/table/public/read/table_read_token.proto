@@ -1,0 +1,9 @@
+syntax = "editions";
+
+package table;
+
+message TableReadTokenProto {
+    optional string table_factory_name = 1;
+    
+    extensions 999 to max;
+}

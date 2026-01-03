@@ -10,6 +10,7 @@ import "privacy/data_governance/attributes/proto/annotations.proto";
 import "security/context/proto/policy/authentication_policy.proto";
 import "security/context/proto/policy/axt_level.proto";
 import "security/context/proto/policy/creds_assertion.proto";
+import "security/context/proto/policy/cross_product_sharing.proto";
 import "security/context/proto/policy/endpoint_policy.proto";
 import "security/context/proto/policy/http_extraction.proto";
 import "security/context/proto/policy/policy_processing.proto";
@@ -117,12 +118,17 @@ message EsfConfig {
     optional bool enable_peer_delegation = 3 [default = false];
 }
 
-message EnableConsentCheck {
-    
-}
-
 message CrossProductSharing {
-    optional EnableConsentCheck enable_consent_check = 1;
     optional int32 override_product_id = 2;
-    repeated string exclude_peers = 3;
+    
+    oneof check_type {
+        EnableConsentCheck enable_consent_check = 1;
+        cross_product_sharing.EnableGcpOriginCheck enable_gcp_origin_check = 4;
+    }
+    
+    reserved 3;
+    
+    message EnableConsentCheck {
+        repeated string exclude_peers = 1;
+    }
 }

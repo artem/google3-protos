@@ -1,0 +1,29 @@
+syntax = "editions";
+
+package ptoken.policy_rollouts;
+
+import "google/api/inclusion.proto";
+import "privacy/ptoken/public/client/integration_id.proto";
+import "privacy/ptoken/public/proto/policies/policy_id.proto";
+import "privacy/rollouts/proto/request_context_enforceable_mode_config.proto";
+
+option java_multiple_files = true;
+option java_package = "com.google.privacy.ptoken.policyrollouts";
+
+message RolloutThresholds {
+    optional int32 aom_percent = 3;
+    optional int32 hard_enforcement_bucket_threshold = 6;
+    optional int32 online_hard_enforcement_bucket_threshold = 4;
+    optional int32 offline_hard_enforcement_bucket_threshold = 5;
+}
+
+message PerPolicyRolloutConfig {
+    optional PolicyId.Enum policy_id = 1;
+    optional RequestContextEnforceableModeConfig.RequestContextEnforceableMode mode = 2;
+    optional RolloutThresholds thresholds = 6;
+}
+
+message RolloutConfig {
+    optional IntegrationId.Enum integration_id = 2;
+    repeated PerPolicyRolloutConfig per_policy_rollout_configs = 1;
+}

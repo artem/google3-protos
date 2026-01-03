@@ -11,7 +11,7 @@ message TraceContextProto {
     required fixed64 trace_id = 1 [jstype = JS_STRING];
     optional fixed64 trace_id_hi = 6 [jstype = JS_STRING];
     required fixed64 span_id = 2 [jstype = JS_STRING];
-    optional fixed64 parent_span_id = 4 [default = 0, deprecated = true];
+    optional fixed64 parent_span_id = 4 [default = 0];
     required fixed32 trace_mask = 3;
     optional double inverse_sampling_probability = 5;
     optional fixed64 initiator_id = 7 [default = 0, jstype = JS_STRING];

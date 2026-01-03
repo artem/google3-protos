@@ -1,0 +1,23 @@
+syntax = "editions";
+
+package security_realms;
+
+import "google/protobuf/empty.proto";
+
+message RegionalTrustPolicyChoice {
+    oneof policy_choice_oneof {
+        google.protobuf.Empty test_policy = 1;
+        CustomBundlePolicy custom_bundle_policy = 2;
+        string default_bundle_policy = 3;
+        string template_policy = 4;
+        google.protobuf.Empty lld_v1_policy = 5;
+        string lld_v0_policy = 6;
+        google.protobuf.Empty no_policy_specified = 7;
+        google.protobuf.Empty no_applicable_running_in = 8;
+    }
+    
+    message CustomBundlePolicy {
+        optional string file_path = 1;
+        optional string config_name = 2;
+    }
+}

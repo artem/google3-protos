@@ -1,0 +1,21 @@
+syntax = "editions";
+
+package ubermint.cloud;
+
+import "logs/proto/logs_annotations/logs_annotations.proto";
+import "storage/datapol/annotations/proto/semantic_annotations.proto";
+
+option java_multiple_files = true;
+option java_outer_classname = "ByoidExtendedAttributesProto";
+option java_package = "com.google.identity.ubermint.cloud";
+
+message ByoidExtendedAttributes {
+    optional bytes groups = 1;
+    
+    optional GroupFormat group_format = 2;
+    enum GroupFormat {
+        GROUP_FORMAT_UNSPECIFIED = 0;
+        GROUP_FORMAT_UNCOMPRESSED = 1;
+        GROUP_FORMAT_HEX = 2;
+    }
+}

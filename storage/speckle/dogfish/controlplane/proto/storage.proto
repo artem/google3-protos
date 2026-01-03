@@ -9,11 +9,33 @@ import "storage/speckle/dogfish/proto/data-protection.proto";
 import "storage/speckle/dogfish/proto/database-type.proto";
 import "third_party/java/protobuf/java_features.proto";
 import "third_party/protobuf/cpp_features.proto";
+import "util/task/status.proto";
 
 message VolumeSettings {
     optional bool wrap_record_in_input_buffer = 1 [default = false];
     optional int64 num_shards = 2 [default = 6];
     optional int64 chunk_size = 3 [default = 0xff40000];
+}
+
+message ZoneOperationEvent {
+    optional string zone = 1;
+    optional google.protobuf.Timestamp time = 2;
+    optional bool success = 3;
+    optional util.StatusProto error = 4;
+}
+
+message LroInfo {
+    optional Operation operation_type = 1;
+    enum Operation {
+        OPERATION_UNSPECIFIED = 0;
+        RESTORE = 1;
+        RESTORE_VERIFICATION = 2;
+        REPLAY_WAL = 3;
+    }
+    
+    optional string volume_id = 2;
+    optional google.protobuf.Timestamp start_time = 3;
+    repeated ZoneOperationEvent zone_operation_events = 4;
 }
 
 message DatabaseFlags {
@@ -147,6 +169,22 @@ message ReplicaReadOnlySettings {
     
     optional google.protobuf.Timestamp last_update_timestamp = 2;
     optional int64 version = 3;
+    optional string lro_token = 5;
+    optional State target_state = 6;
+    
+    optional ReplicaReadOnlyWorkflowState read_only_workflow_state = 7;
+    enum ReplicaReadOnlyWorkflowState {
+        REPLICA_READ_ONLY_WF_STATE_DEFAULT = 0;
+        REPLICA_READ_ONLY_WF_STATE_START_RO_DRAINING = 1;
+        REPLICA_READ_ONLY_WF_STATE_START_WRITABLE = 2;
+        REPLICA_READ_ONLY_WF_STATE_APPLY_RO_DRAINING = 3;
+        REPLICA_READ_ONLY_WF_STATE_START_RO = 4;
+        REPLICA_READ_ONLY_WF_STATE_APPLY_RO = 5;
+        REPLICA_READ_ONLY_WF_STATE_APPLY_WRITABLE_PENDING_DETACH = 6;
+        REPLICA_READ_ONLY_WF_STATE_APPLY_WRITABLE_PENDING_ATTACH = 7;
+    }
+    
+    optional int64 pending_detach_read_only_version = 8;
 }
 
 enum ShardState {

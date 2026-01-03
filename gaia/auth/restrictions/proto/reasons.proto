@@ -23,7 +23,7 @@ enum RestrictionReason {
     YOUTUBE_PERSONA = 10;
     GMB_ONLY_LISTING_ACCOUNT = 12;
     CHROME_ENTERPRISE_DEVICE = 15;
-    DASHER = 17;
+    DASHER = 17 [deprecated = true];
     YOUTUBE_CHANNEL_ACCOUNT = 19;
     COLLABORATOR_ACCOUNT = 20;
     KLOPFKLOPF_DEVICE = 21;
@@ -33,6 +33,7 @@ enum RestrictionReason {
     GOOGLE_DEV_PROFILE_ACCOUNT = 25;
     GRIFFIN = 26;
     MAPS_UGC_PROFILE_ACCOUNT = 34;
+    BACKEND_ONLY_MADISON = 38;
     YOUTUBE_HOUSE_CHANNEL_ACCOUNT = 27;
     UNDER_AGE_OF_CONSENT = 28;
     UNICORN_LEGACY = 29;
@@ -42,4 +43,5 @@ enum RestrictionReason {
     DASHER_ADDITIONAL_SERVICES_UTOS = 35 [deprecated = true];
     RETIRED_ABUSE_PROTECTION_PILOT = 36 [deprecated = true];
     RETAIL_DEMO_ACCOUNT = 37;
+    PHONE_ID_V3 = 39;
 }

@@ -20,6 +20,7 @@ message ProductFieldOptions {
         WORKSPACE = 2;
         ADS = 3;
         HEALTH = 4;
+        CORE = 5;
     }
 }
 

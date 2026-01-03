@@ -10,6 +10,7 @@ option java_package = "com.google.security.prodid";
 
 message GoogleMachineIdentityProto {
     optional string fqdn = 1;
+    repeated string alternative_fqdns = 11;
     optional security.credentials.PrincipalProto owner = 2;
     optional bool in_hwops_state = 3;
     repeated string security_realms = 4;

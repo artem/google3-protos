@@ -290,13 +290,13 @@ message CrossProductSharingCondition {
     optional int32 override_product_id = 2;
     
     oneof check_type {
-        EnableConsentCheck enable_consent_check = 1;
+        EnableConsentCheckCondition enable_consent_check = 1;
         cross_product_sharing.EnableGcpOriginCheck enable_gcp_origin_check = 4;
     }
     
     reserved 3;
     
-    message EnableConsentCheck {
+    message EnableConsentCheckCondition {
         optional PeerUserCondition exclude_peers = 1;
     }
 }

@@ -7,11 +7,11 @@ import "storage/datapol/annotations/proto/semantic_annotations.proto";
 message DeclRecallModel {
     map<uint32, RecallModelItem> recall_map = 1;
     
-    optional MultiplierModel multiplier_model = 2;
-    message MultiplierModel {
-        optional double param_exponent = 1;
-        optional double param_ln = 2;
-        optional double param_intercept = 3;
+    optional RerankingMultiplierModel reranking_multiplier_model = 2;
+    message RerankingMultiplierModel {
+        optional double param_exponent = 1 [default = 0];
+        optional double param_ln = 2 [default = 1];
+        optional double param_intercept = 3 [default = 1];
     }
     
     message RecallModelItem {

@@ -1,0 +1,22 @@
+syntax = "proto2";
+
+package table;
+
+import "storage/table/metadata/data_properties/order.proto";
+import "storage/table/public/type.proto";
+
+option java_multiple_files = true;
+option java_outer_classname = "RowSchemaProtos";
+option java_package = "com.google.storage.table.api";
+
+message ColumnProto {
+    optional string name = 1;
+    optional TypeProto type = 2;
+    optional Order order = 3;
+    optional string proto_path = 4;
+}
+
+message RowSchemaProto {
+    repeated ColumnProto columns = 1;
+    optional bool is_value_table = 2;
+}

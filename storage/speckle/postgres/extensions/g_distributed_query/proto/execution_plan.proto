@@ -10,6 +10,8 @@ message PushoverQueryRequest {
     optional int64 query_lsn = 3;
     optional int64 query_id = 4;
     optional bytes guc_options = 5;
+    optional int64 start_xact_time_ms = 6;
+    optional int64 start_stmt_time_ms = 7;
 }
 
 message DistributedQueryRequest {

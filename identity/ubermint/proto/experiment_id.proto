@@ -1,0 +1,17 @@
+syntax = "editions";
+
+package ubermint;
+
+import "storage/datapol/annotations/proto/semantic_annotations.proto";
+
+option java_multiple_files = true;
+option java_outer_classname = "ExperimentIdProto";
+option java_package = "com.google.identity.ubermint.proto";
+
+enum ExperimentId {
+    EXPERIMENT_ID_UNSPECIFIED = 0;
+    EXPERIMENT_ID_FOR_TESTING = 1000;
+    EXPERIMENT_ID_USE_SIGNATURE_VERIFIER_BUNDLE = 1;
+    EXPERIMENT_ID_USE_ONLY_FILE_VERIFICATION_KEY_ON_BORG = 2;
+    EXPERIMENT_ID_SUBORDINATE_CERTIFICATE_ENFORCEMENT_FAIL_CLOSE = 3;
+}

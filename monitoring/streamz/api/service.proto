@@ -25,6 +25,7 @@ message WriteRequest {
     repeated PointSet point_set = 2;
     optional HierarchicalIsolationRole isolation_role = 3;
     optional GeographicRestriction geographic_restriction = 4;
+    optional bool skip_tee = 5 [default = false];
 }
 
 message WriteResponse {

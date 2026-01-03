@@ -44,5 +44,9 @@ message ServiceManagementConfig {
     
     protobuf.Any proto_dep_info = 7;
     
+    oneof _api_service_build_package_path {
+        string api_service_build_package_path = 9;
+    }
+    
     reserved 8;
 }

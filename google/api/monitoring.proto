@@ -24,6 +24,7 @@ message Monitoring {
             FULL_AGGREGATION = 1;
             NO_AGGREGATION = 2;
             QUOTA_AGGREGATION = 3;
+            ALIAS_AGGREGATION = 4;
         }
         
         repeated QueryOptimization query_optimizations = 5;

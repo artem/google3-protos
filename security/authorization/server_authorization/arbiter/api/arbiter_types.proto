@@ -8,6 +8,7 @@ import "security/authorization/server_authorization/public/relax/client_policy_o
 import "security/credentials/proto/principal.proto";
 import "security/loas/l2/proto/confidential_security_level.proto";
 import "security/loas/l2/proto/instance.proto";
+import "security/loas/l2/proto/server_type.proto";
 
 option java_multiple_files = true;
 option java_package = "com.google.security.authorization.serverauthorization.arbiter.api";
@@ -50,6 +51,7 @@ message PeerInfo {
     optional security_loas_l2.CloudVMInfo cloud_vm_info = 4;
     optional bool is_hardened = 5;
     optional security_loas_l2.ConfidentialSecurityLevel kevlar_level = 6;
+    repeated security_loas_l2.ServerType server_types = 7;
 }
 
 enum Action {
@@ -97,6 +99,7 @@ enum FailedOpen {
     SERVICE_CHECK_SKIPPED_BECAUSE_UNSUPPORTED_TARGET_TYPE = 17;
     USER_CHECK_SKIPPED_BECAUSE_POLICY_OVERRIDE = 11;
     SERVICE_CHECK_SKIPPED_CLOUD_PROJECT_BECAUSE_VM_INFO_NOT_POPULATED = 14;
+    SERVICE_CHECK_LOAS_SERVER_TYPE_CHECK_FAILED = 18;
 }
 
 enum DisabledReason {

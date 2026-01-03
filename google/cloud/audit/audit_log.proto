@@ -52,6 +52,8 @@ message AuthenticationInfo {
     string service_account_delegation_session_id = 7;
     string principal_subject = 8;
     ServiceDelegationHistory service_delegation_history = 9;
+    protobuf.Struct loggable_short_lived_credential = 10;
+    OAuthInfo oauth_info = 11;
 }
 
 message AuthorizationInfo {
@@ -117,6 +119,10 @@ message ServiceAccountDelegationInfo {
     message ThirdPartyPrincipal {
         protobuf.Struct third_party_claims = 1;
     }
+}
+
+message OAuthInfo {
+    string oauth_client_id = 1;
 }
 
 message ServiceDelegationHistory {

@@ -89,6 +89,11 @@ message AttributeContext {
         protobuf.Struct claims = 4;
         repeated string access_levels = 5;
         
+        Oauth oauth = 7;
+        message Oauth {
+            string client_id = 1;
+        }
+        
         reserved 6;
     }
 }

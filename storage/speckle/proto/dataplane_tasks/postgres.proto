@@ -40,6 +40,7 @@ message PostgresStopReplicaRequest {
     bool enable_multiple_subscriptions = 9;
     int32 max_subscription_count = 10;
     bool enable_selective_db_migration = 11;
+    bool enable_secure_search_path_in_pg_dsn = 12;
 }
 
 message PostgresStartReplicaRequest {
@@ -49,6 +50,7 @@ message PostgresStartReplicaRequest {
     bool enable_multiple_subscriptions = 5;
     int32 max_subscription_count = 6;
     bool enable_selective_db_migration = 7;
+    bool enable_secure_search_path_in_pg_dsn = 8;
     
     reserved 1;
 }
@@ -71,6 +73,7 @@ message PostgresPromoteReplicaRequest {
     bool enable_ssl = 9;
     bool enable_ssl_client_auth = 10;
     bool enable_selective_db_migration = 11;
+    bool enable_secure_search_path_in_pg_dsn = 13;
     
     oneof _ssl_option {
         SslOption ssl_option = 12;
@@ -122,6 +125,12 @@ message PostgresCheckDatabaseServerRequest {
 message PostgresCheckDatabaseServerResponse {
     string last_wal_replay_lsn = 1;
     google.protobuf.Timestamp check_done_time = 2;
+}
+
+message PostgresResetPostgresQiV1MetricsRequest {
+    oneof _timeout {
+        google.protobuf.Duration timeout = 1;
+    }
 }
 
 enum SslOption {

@@ -49,6 +49,7 @@ message PTokenType {
         GMAIL_GAIA_DATA = 61;
         GPAY_USER_ACTIVITY = 17;
         GPAY_ACTOR_DATA = 65;
+        HOME_STRUCTURE_DATA = 107;
         HR_PERSON_DATA = 36;
         INCOGNITO_REQUEST = 66;
         KANSAS_SEARCH_DATA = 54;
@@ -71,6 +72,7 @@ message PTokenType {
         OOLONG_EVENT = 53;
         PANELIST_DATA = 92;
         PLAY_BOOKS_USER_VOLUME_DATA = 94;
+        PLAY_DEVICE_DATA = 106;
         PS1_AVOCADO_DATA = 33;
         PS1_CUSTOMER_DATA = 20;
         PS1_CUSTOMER_OWNED_OBJECT = 44;
@@ -88,6 +90,7 @@ message PTokenType {
         SEARCH_G1_BENEFITS = 79;
         SUPERROOT_REQUEST = 43;
         SYNTHETIC_SEARCH_REQUEST = 96;
+        TAMPR_ANALYSIS_DATA = 108;
         TORUS_DEVICE_DATA = 50;
         UGC_CONTRIBUTION_DATA = 83;
         VAULT_MATTER_DATA = 58;
@@ -112,7 +115,9 @@ message PTokenType {
         ADS_PERSONAL_DATA = 63;
         ML_LINEAGE_DATA = 97;
         SAWMILL_EVENT_DATA = 102;
-        PLAY_APP_ID_DATA = 103;
+        PLAY_APP_ID_DATA = 103 [deprecated = true];
+        PLAY_APP_DATA = 104;
+        BETTERBUG_BUG_DATA = 105;
     }
 }
 

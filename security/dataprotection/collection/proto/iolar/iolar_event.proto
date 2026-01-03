@@ -35,14 +35,10 @@ message PerAclReport {
 message PerPrincipalReport {
     optional string principal_name = 1;
     optional AclChecksReport.Namespace ns = 5 [default = GANPATI_PROD];
-    optional bool is_aod_eligible = 2;
+    optional bool is_aod_eligible = 2 [deprecated = true];
     optional int32 outcome = 3;
     optional int32 count = 4;
     optional google.rpc.Code result = 7;
     
-    repeated PrincipalResult principal_results = 6;
-    message PrincipalResult {
-        optional google.rpc.Code result = 1;
-        optional int32 count = 2;
-    }
+    reserved 6;
 }

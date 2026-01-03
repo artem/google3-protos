@@ -165,8 +165,11 @@ message EnumValueDescriptorProto {
 message ServiceDescriptorProto {
     optional string name = 1;
     repeated MethodDescriptorProto method = 2;
-    repeated StreamDescriptorProto stream = 4;
     optional ServiceOptions options = 3;
+    
+    reserved 4;
+    
+    reserved "stream";
 }
 
 message MethodDescriptorProto {
@@ -176,13 +179,6 @@ message MethodDescriptorProto {
     optional MethodOptions options = 4;
     optional bool client_streaming = 5 [default = false];
     optional bool server_streaming = 6 [default = false];
-}
-
-message StreamDescriptorProto {
-    optional string name = 1;
-    optional string client_message_type = 2;
-    optional string server_message_type = 3;
-    optional StreamOptions options = 4;
 }
 
 message FileOptions {
@@ -195,6 +191,7 @@ message FileOptions {
     optional string java_alt_api_package = 19;
     optional bool java_enable_dual_generate_mutable_api = 26 [default = false];
     optional string java_outer_classname = 8;
+    optional string java_outer_classname_proto1 = 51;
     optional bool java_multiple_files = 10 [default = false];
     optional bool java_string_check_utf8 = 27 [default = false];
     optional bool java_mutable_api = 28 [default = true, deprecated = true];
@@ -448,32 +445,6 @@ message MethodOptions {
     extensions 1000 to max;
     
     reserved 18;
-}
-
-message StreamOptions {
-    optional int64 client_initial_tokens = 1 [default = -1];
-    optional int64 server_initial_tokens = 2 [default = -1];
-    
-    optional TokenUnit token_unit = 3 [default = MESSAGE];
-    enum TokenUnit {
-        MESSAGE = 0;
-        BYTE = 1;
-        BYTEGRACE = 2;
-        AUTOMATIC = 3 [deprecated = true];
-    }
-    
-    optional MethodOptions.SecurityLevel security_level = 4 [default = NONE];
-    optional string security_label = 5;
-    optional int32 client_logging = 6 [default = 256];
-    optional int32 server_logging = 7 [default = 256];
-    optional double deadline = 8 [default = -1];
-    optional bool fail_fast = 9 [default = false];
-    optional bool end_user_creds_requested = 10 [default = false];
-    optional MethodOptions.LogLevel log_level = 11 [default = LOG_HEADER_AND_NON_PRIVATE_PAYLOAD_INTERNAL];
-    optional bool deprecated = 33 [default = false];
-    repeated UninterpretedOption uninterpreted_option = 999;
-    
-    extensions 1000 to max;
 }
 
 message UninterpretedOption {

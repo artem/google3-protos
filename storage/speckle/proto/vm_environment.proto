@@ -7,4 +7,11 @@ import "storage/datapol/annotations/proto/semantic_annotations.proto";
 message VmEnvironmentProto {
     optional bool enable_bigalloc = 1 [default = false];
     optional bool enable_block_layer_merging = 2 [default = true];
+    optional FileSystemFormat file_system_format = 3;
+}
+
+enum FileSystemFormat {
+    FILE_SYSTEM_FORMAT_UNSPECIFIED = 0;
+    EXT4 = 1;
+    XFS = 2;
 }

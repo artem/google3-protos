@@ -190,5 +190,7 @@ message Search {
                 POLICY_ACTION_EXPLICIT_PRIVACY_INTENT_ALLOWED = 2;
             }
         }
+        
+        bool xpa_storage_allowed_for_product_features = 4;
     }
 }

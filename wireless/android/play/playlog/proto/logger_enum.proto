@@ -2,6 +2,7 @@ syntax = "editions";
 
 package wireless_android_play_playlog.logger_enum;
 
+import "java/com/google/protobuf/contrib/j2cl/options/js_enum.proto";
 import "third_party/java/protobuf/java_features.proto";
 
 option java_multiple_files = true;
@@ -19,5 +20,10 @@ enum LoggerId {
     MOBDOG = 5;
     POPULOUS_LOW_PRIORITY = 6;
     POPULOUS_HIGH_PRIORITY = 7;
+    SOCIAL_AFFINITY = 11;
+    SOCIAL_AFFINITY_PHOTOS = 12;
     CHARON = 8;
+    CLIENT_ERROR_LOGGING = 9;
+    CLIENT_ERROR_LOGGING_UNMETERED_OR_DAILY = 13;
+    ALUMINIUM_CAMERA = 10;
 }

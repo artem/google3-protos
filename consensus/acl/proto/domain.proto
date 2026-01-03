@@ -1,0 +1,12 @@
+syntax = "editions";
+
+package consensus.acl;
+
+import "consensus/common/proto/domain.proto";
+import "net/proto2/contrib/protoconfig/public/protodefault.proto";
+
+option java_multiple_files = true;
+
+message Domain {
+    optional consensus.Domain domain = 1;
+}

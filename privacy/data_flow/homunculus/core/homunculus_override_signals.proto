@@ -3,6 +3,7 @@ syntax = "editions";
 package privacy.data_flow.homunculus.proto;
 
 import "privacy/context/proto/privacy_context_portability.proto";
+import "privacy/data_flow/homunculus/core/unilateral_access.proto";
 import "privacy/data_governance/attributes/proto/purpose.proto";
 
 option java_multiple_files = true;
@@ -42,6 +43,8 @@ message HomunculusOverrideData {
         optional string src_file_name = 1;
         optional string src_dir_path = 2;
     }
+    
+    optional unilateral_access.AuthorizedAccessOverrideData authorized_access_override_data = 12;
     
     reserved 2, 3;
 }

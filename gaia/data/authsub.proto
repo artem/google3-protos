@@ -10,6 +10,7 @@ import "gaia/data/oauth/oauth_token_enums.proto";
 import "gaia/data/oauth/reauth_proof_token.proto";
 import "gaia/data/oauth/scope_metadata.proto";
 import "gaia/data/oauth/token_creation_flow.proto";
+import "gaia/data/session_metadata.proto";
 import "gaia/insclient/ins_clientinfo.proto";
 import "google/protobuf/timestamp.proto";
 import "identity/boq/federated/common/client/client_type.proto";
@@ -158,6 +159,8 @@ message AuthSubTokenRecord {
         FOR_SESSION_AND_GRANT = 1;
         FOR_GRANT_ONLY = 2;
     }
+    
+    optional SignInSessionMetadata session_metadata = 94;
     
     oneof cryptauth_key {
         bytes iot_key_id = 61;
@@ -316,7 +319,6 @@ message AuthSubTokenRecordMatchPrototype {
     repeated string DeviceUserSessionId = 23;
     repeated OAuthPolicy OAuthPolicy = 24;
     repeated string OAuthCallbackUrl = 25;
-    optional bool ClientManagedRevocation = 12;
     optional int64 ExpirationTime = 36;
     optional int32 TokenUsage = 9;
     optional string TokenPrefix = 20 [deprecated = true];
@@ -329,7 +331,7 @@ message AuthSubTokenRecordMatchPrototype {
     optional ScopeValidityMetadata scope_validity_metadata = 41;
     map<int32, ScopeCodeContext> scope_contexts = 42;
     
-    reserved 2, 5, 6, 8, 11, 15, 16, 22, 28, 29, 18, 30, 33, 34;
+    reserved 2, 5, 6, 8, 11, 12, 15, 16, 22, 28, 29, 18, 30, 33, 34;
     
     message ScopeCodeContext {
         optional bool is_onetime_access_scope = 1;

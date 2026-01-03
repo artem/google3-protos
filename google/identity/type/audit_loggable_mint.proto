@@ -9,6 +9,6 @@ option java_package = "com.google.identity.type";
 
 message AuditLoggableMint {
     bytes serialized_mint_data = 1;
-    string type_url = 2;
+    string type_url = 2 [deprecated = true];
     int64 primary_id = 3;
 }

@@ -26,6 +26,7 @@ message ReadSchedulesRequest {
     }
     
     optional .streamz.HierarchicalIsolationRole isolation_role = 4;
+    repeated string patterns = 5;
 }
 
 message ReadSchedulesResponse {
@@ -66,6 +67,7 @@ message WriteRequest {
     }
     
     optional .streamz.HierarchicalIsolationRole isolation_role = 4;
+    optional bool skip_tee = 5 [default = false];
 }
 
 message WriteResponse {

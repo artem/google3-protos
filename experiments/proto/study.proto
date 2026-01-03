@@ -9,6 +9,8 @@ message Study {
     optional int64 team_id = 5;
     optional string cluster = 7;
     optional bool from_launchable = 6;
+    repeated int64 featureview_ids = 9;
+    optional bool uses_is_selected = 10;
     
-    extensions 4;
+    extensions 4, 8;
 }

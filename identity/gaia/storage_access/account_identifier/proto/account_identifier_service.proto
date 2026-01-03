@@ -38,6 +38,12 @@ message CheckCanonicalEmailRequest {
         NONE = 0;
         GAIA_EMAIL = 1;
         CARIBOU_USERNAME = 2;
+        CANONICAL_USERNAME = 3;
+    }
+    
+    optional CheckOptions check_options = 4;
+    message CheckOptions {
+        optional int64 reserved_for_userid = 1;
     }
     
     optional identity_backend.legacy.RecordedRpcSequence recorded_rpc_sequence = 102;

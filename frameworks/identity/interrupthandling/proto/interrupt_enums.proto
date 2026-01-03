@@ -2,6 +2,7 @@ syntax = "proto2";
 
 package identity_interrupthandling;
 
+import "google/api/inclusion.proto";
 import "logs/proto/logs_annotations/logs_annotations.proto";
 import "storage/datapol/annotations/proto/semantic_annotations.proto";
 

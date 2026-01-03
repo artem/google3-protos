@@ -1,0 +1,16 @@
+syntax = "editions";
+
+package thinmint;
+
+import "security/thinmint/notary/proto/notary_digest.proto";
+import "security/thinmint/notary/proto/notary_metadata.proto";
+
+message NotaryStampPayload {
+    optional NotaryDigest digest = 1;
+    optional NotaryMetadata metadata = 2;
+}
+
+message NotarySignedData {
+    optional bytes data = 1;
+    optional bytes signature = 2;
+}

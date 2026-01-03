@@ -8,6 +8,7 @@ import "google/protobuf/timestamp.proto";
 service MlAgentMonitor {
     rpc GetMetrics(MlAgentGetMetricsRequest) returns (MlAgentGetMetricsResponse);
     rpc GetModelCallCountMetrics(MlAgentGetModelCallCountMetricsRequest) returns (MlAgentGetModelCallCountMetricsResponse);
+    rpc GetErrorMetrics(MlAgentGetErrorMetricsRequest) returns (MlAgentGetErrorMetricsResponse);
 }
 
 message CumulativeDistributionMetric {
@@ -15,6 +16,13 @@ message CumulativeDistributionMetric {
     optional google.protobuf.Timestamp start_time = 2;
     optional google.protobuf.Timestamp end_time = 3;
     optional google.api.servicecontrol.v1.Distribution distribution = 4;
+}
+
+message ErrorMetric {
+    map<string, string> labels = 1;
+    optional google.protobuf.Timestamp start_time = 2;
+    optional google.protobuf.Timestamp end_time = 3;
+    optional int64 count = 4;
 }
 
 message CumulativeInt64Metric {
@@ -29,12 +37,24 @@ message Metric {
     repeated CumulativeDistributionMetric metric_data = 2;
 }
 
+message ErrorMetrics {
+    repeated ErrorMetric metric_data = 1;
+}
+
 message MlAgentGetMetricsRequest {
     
 }
 
 message MlAgentGetMetricsResponse {
     optional Metric metric = 1;
+}
+
+message MlAgentGetErrorMetricsRequest {
+    
+}
+
+message MlAgentGetErrorMetricsResponse {
+    optional ErrorMetrics metric = 1;
 }
 
 message MlAgentGetModelCallCountMetricsRequest {

@@ -29,7 +29,7 @@ extend .proto2.MessageOptions {
 }
 
 extend .proto2.FileOptions {
-    optional string js_namespace = 17702;
+    optional string js_namespace = 17702 [deprecated = true];
     optional bool generate_legacy_nullable_accessors = 448127176;
     optional bool generate_binary_format_methods_on_message = 448127179 [default = true];
 }

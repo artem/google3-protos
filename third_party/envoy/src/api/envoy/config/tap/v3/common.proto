@@ -66,6 +66,7 @@ message OutputConfig {
     google.protobuf.UInt32Value max_buffered_rx_bytes = 2;
     google.protobuf.UInt32Value max_buffered_tx_bytes = 3;
     bool streaming = 4;
+    google.protobuf.UInt32Value min_streamed_sent_bytes = 5;
 }
 
 message OutputSink {

@@ -8,6 +8,7 @@ import "net/proto2/bridge/proto/message_set.proto";
 import "storage/datapol/annotations/proto/semantic_annotations.proto";
 import "third_party/boundary_proxy/proto_compare/annotation.proto";
 
+option objc_class_prefix = "EPP";
 option go_package = "google.golang.org/genproto/experiments/propagation";
 option java_outer_classname = "ExperimentPropagation";
 option java_package = "com.google.experiments.propagation";
@@ -31,6 +32,13 @@ message MendelDebugInput {
         repeated string disable_exp_names = 12;
         repeated string disable_exp_tags = 13;
         optional TestingMode testing_mode = 15;
+        
+        optional MinBinaryBaselineClMode min_binary_baseline_cl_mode = 16;
+        enum MinBinaryBaselineClMode {
+            MIN_BINARY_BASELINE_CL_MODE_UNSPECIFIED = 0;
+            MIN_BINARY_BASELINE_CL_MODE_IGNORE = 1;
+            MIN_BINARY_BASELINE_CL_MODE_IGNORE_WHEN_UNSTAMPED = 2;
+        }
     }
     
     extend .proto2.bridge.MessageSet {

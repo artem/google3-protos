@@ -4,8 +4,9 @@ package bigtable;
 
 import "bigtable/proto/privacy_attributes.proto";
 import "privacy/ptoken/contrib/policy_rollouts/fractional_enforcement.proto";
-import "privacy/ptoken/contrib/policy_rollouts/request_context_enforceable_mode_config.proto";
 import "privacy/ptoken/public/proto/policies/policy_id.proto";
+import "privacy/rollouts/proto/request_context_enforceable_mode_config.proto";
+import "security/credentials/proto/authenticator.proto";
 
 option java_multiple_files = true;
 option java_package = "com.google.bigtable.protos";
@@ -26,6 +27,7 @@ message DmaRolloutConfig {
         optional .ptoken.policy_rollouts.RequestContextEnforceableModeConfig.RequestContextEnforceableMode offline_request_enforceable_mode = 6 [default = NOT_ENFORCEABLE];
         optional int32 online_traffic_hard_launch_bucket_threshold = 9;
         optional int32 offline_traffic_hard_launch_percentage = 7;
+        optional security.credentials.DataAccessReason disable_policy_evaluation_reason = 10;
         
         reserved 2, 3;
     }

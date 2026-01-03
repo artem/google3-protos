@@ -1,0 +1,14 @@
+syntax = "editions";
+
+package table;
+
+import "storage/datapol/annotations/proto/semantic_annotations.proto";
+import "storage/googlesql/public/value.proto";
+import "storage/table/public/type.proto";
+
+option java_multiple_files = true;
+
+message TypedValueProto {
+    optional TypeProto type = 1;
+    optional .googlesql.ValueProto value = 2;
+}

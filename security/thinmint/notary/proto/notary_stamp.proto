@@ -1,0 +1,10 @@
+syntax = "editions";
+
+package thinmint;
+
+option java_outer_classname = "NotaryStampProto";
+option java_package = "com.google.protos.thinmint.notary";
+
+message NotaryStamp {
+    optional bytes opaque_signed_data = 1;
+}

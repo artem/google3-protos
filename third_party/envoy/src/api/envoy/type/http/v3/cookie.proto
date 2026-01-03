@@ -15,4 +15,10 @@ message Cookie {
     string name = 1;
     google.protobuf.Duration ttl = 2;
     string path = 3;
+    repeated CookieAttribute attributes = 4;
+}
+
+message CookieAttribute {
+    string name = 1;
+    string value = 2;
 }

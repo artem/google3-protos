@@ -8,6 +8,15 @@ message HistogramEntry {
     optional int64 value = 3;
 }
 
+message SampledTrackerEntry {
+    optional int64 allocations = 1;
+    optional int64 longest_free_range = 2;
+    optional int64 objects = 3;
+    optional bool is_hugepage_backed = 4;
+    optional bool density = 5;
+    optional double reallocation_time_sec = 6;
+}
+
 message PrioritizationListOccupancy {
     optional int64 list_index = 1;
     optional int64 value = 2;
@@ -22,6 +31,7 @@ message FreelistEntry {
     repeated HistogramEntry span_util_histogram = 6;
     repeated PrioritizationListOccupancy prioritization_list_occupancy = 7;
     repeated HistogramEntry span_lifetime_histogram = 8;
+    repeated HistogramEntry same_span_stats = 9;
 }
 
 message TransferCacheEntry {
@@ -36,7 +46,9 @@ message TransferCacheEntry {
     optional int64 capacity = 9;
     optional int64 max_capacity = 10;
     optional int64 insert_object_misses = 11;
+    optional int64 remove_object_hits = 13;
     optional int64 remove_object_misses = 12;
+    optional int64 frontend_allocations = 14;
 }
 
 message CPUCacheEntry {
@@ -102,6 +114,7 @@ message HugePageTracker {
     repeated HistogramEntry swapped_histogram = 23;
     repeated HistogramEntry used_and_swapped_histogram = 24;
     repeated HistogramEntry used_and_unbacked_histogram = 25;
+    repeated SampledTrackerEntry sampled_trackers = 26;
     
     reserved 16;
     
@@ -161,10 +174,21 @@ message SubreleaseStatsSeries {
     repeated FillerStatsDataPoint measurements = 6;
 }
 
-message HugePageCollapseStats {
-    optional int64 eligible = 1;
-    optional int64 attempted = 2;
-    optional int64 collapsed = 3;
+message CollapseErrorStats {
+    optional CollapseErrorType type = 1;
+    optional int64 count = 2;
+}
+
+message HugePageTreatmentStats {
+    optional int64 collapse_eligible = 1;
+    optional int64 collapse_attempted = 2;
+    optional int64 collapse_succeeded = 3;
+    repeated CollapseErrorStats collapse_errors = 5;
+    optional int64 treated_pages_subreleased = 4;
+    optional int64 collapse_total_time_ms = 6;
+    optional int64 collapse_max_time_us = 7;
+    optional int64 collapse_backoff_delay = 8;
+    optional int64 collapse_intervals_skipped = 9;
 }
 
 message FillerStatsDataPoint {
@@ -236,6 +260,8 @@ message HugePageAllocatorInfo {
     optional bool use_huge_region_more_often = 57;
     optional int64 filler_previously_released_huge_pages = 58;
     optional int64 filler_previously_released_backed_huge_pages = 72;
+    repeated HistogramEntry sparsely_accessed_completed_lifetime_histogram = 78;
+    repeated HistogramEntry densely_accessed_completed_lifetime_histogram = 79;
     optional int64 filler_num_free_pages_swapped = 73;
     optional int64 filler_num_used_pages_swapped = 74;
     optional int64 filler_num_used_pages_unbacked = 75;
@@ -256,8 +282,6 @@ message HugePageAllocatorInfo {
     optional MinMaxCurrentStats huge_cache_usage_stats = 25;
     optional MinMaxCurrentStats huge_cache_offpeak_stats = 26;
     optional MinMaxCurrentStats huge_cache_cache_stats = 27;
-    optional int64 cache_num_hugepages_released = 68;
-    optional int64 cache_num_hugepages_released_due_to_limit = 69;
     optional DetailedStatSeries huge_cache_history = 38;
     optional int64 num_huge_address_map_treap_nodes_used = 28;
     optional int64 num_huge_address_map_treap_nodes_created = 29;
@@ -272,18 +296,16 @@ message HugePageAllocatorInfo {
     optional SkippedSubrelease filler_skipped_subrelease = 47;
     optional SubreleaseStatsSeries region_stats_timeseries = 61;
     optional SkippedSubrelease region_skipped_subrelease = 62;
-    optional SubreleaseStatsSeries cache_stats_timeseries = 70;
-    optional SkippedSubrelease cache_skipped_subrelease = 71;
     optional int64 num_released_total_pages = 63;
     optional int64 num_released_release_memory_to_system_pages = 64;
     optional int64 num_released_process_background_actions_pages = 65;
     optional int64 num_released_soft_limit_exceeded_pages = 66;
     optional int64 num_released_hard_limit_exceeded_pages = 67;
-    optional HugePageCollapseStats filler_collapse_stats = 77;
+    optional HugePageTreatmentStats filler_huge_page_treatment_stats = 77;
     
-    reserved 13, 14, 15, 40, 52;
+    reserved 13, 14, 15, 40, 68, 69, 70, 71, 52;
     
-    reserved "filler_free_pages_histogram", "filler_longest_free_range_histogram", "filler_allocations_histogram", "huge_cache_regret", "lifetime_based_allocator_stats";
+    reserved "filler_free_pages_histogram", "filler_longest_free_range_histogram", "filler_allocations_histogram", "huge_cache_regret", "cache_num_hugepages_released", "cache_num_hugepages_released_due_to_limit", "cache_stats_timeseries", "cache_skipped_subrelease", "lifetime_based_allocator_stats";
 }
 
 message PageAllocatorEntry {
@@ -386,12 +408,10 @@ message MalloczEntry {
     repeated TransferCacheEntry sharded_transfer_cache = 78;
     optional int64 active_sharded_transfer_caches = 79;
     optional bool tcmalloc_release_partial_alloc_pages = 86;
-    optional bool tcmalloc_huge_cache_demand_based_release = 109;
     optional bool tcmalloc_huge_region_demand_based_release = 99;
     optional bool tcmalloc_release_pages_from_huge_region = 89;
     optional bool tcmalloc_use_wider_slabs = 93;
     optional bool tcmalloc_dense_trackers_sorted_on_spans_allocated = 111;
-    optional bool tcmalloc_sparse_trackers_coarse_longest_free_range = 118;
     repeated SizeClassCapacityEntry size_class_capacity = 67;
     optional int64 dynamic_per_cpu_slab_size = 94;
     repeated DynamicSlabEntry dynamic_slab = 72;
@@ -425,10 +445,12 @@ message MalloczEntry {
     optional int64 text_size_in_bytes = 113;
     optional int64 min_hot_access_hint = 116;
     optional bool usermode_hugepage_collapse = 119;
+    optional bool release_free_swapped = 120;
+    optional int64 tcmalloc_num_priority_lists = 121;
     
-    reserved 56, 65, 69, 75, 80, 81, 87, 66, 74, 88, 95, 96, 100, 112, 47, 53;
+    reserved 56, 65, 69, 75, 80, 81, 109, 87, 66, 74, 88, 95, 96, 118, 100, 112, 47, 53;
     
-    reserved "tcmalloc_skip_subrelease_interval_ns", "tcmalloc_shuffle_per_cpu_caches", "tcmalloc_prioritize_spans", "madvise_cold_regions_nohugepage", "tcmalloc_chunks_for_page_tracker_lists", "separate_allocs_for_few_and_many_objects_spans", "tcmalloc_resize_cpu_cache_size_classes", "tcmalloc_reclaim_idle_per_cpu_caches", "tcmalloc_resize_transfer_caches", "tcmalloc_filler_chunks_per_alloc", "tcmalloc_use_all_buckets_for_few_object_spans", "tcmalloc_configure_size_class_max_capacity", "span_max_cache_size", "span_max_cache_array_size", "hard_limit", "limit_hits", "other_info";
+    reserved "tcmalloc_skip_subrelease_interval_ns", "tcmalloc_shuffle_per_cpu_caches", "tcmalloc_prioritize_spans", "madvise_cold_regions_nohugepage", "tcmalloc_chunks_for_page_tracker_lists", "separate_allocs_for_few_and_many_objects_spans", "tcmalloc_huge_cache_demand_based_release", "tcmalloc_resize_cpu_cache_size_classes", "tcmalloc_reclaim_idle_per_cpu_caches", "tcmalloc_resize_transfer_caches", "tcmalloc_filler_chunks_per_alloc", "tcmalloc_use_all_buckets_for_few_object_spans", "tcmalloc_configure_size_class_max_capacity", "tcmalloc_sparse_trackers_coarse_longest_free_range", "span_max_cache_size", "span_max_cache_array_size", "hard_limit", "limit_hits", "other_info";
 }
 
 enum HugePageTrackerType {
@@ -443,6 +465,14 @@ enum HugePageTrackerObjectType {
     UNKNOWN_OBJECTS = 0;
     SPARSELY_ACCESSED = 1;
     DENSELY_ACCESSED = 2;
+}
+
+enum CollapseErrorType {
+    ETYPE_OTHER = 0;
+    ETYPE_NOMEM = 1;
+    ETYPE_BUSY = 2;
+    ETYPE_INVAL = 3;
+    ETYPE_AGAIN = 4;
 }
 
 enum PageTagType {

@@ -1,0 +1,17 @@
+syntax = "editions";
+
+package consensus.acl;
+
+import "consensus/acl/proto/domain.proto";
+
+option java_multiple_files = true;
+
+message AclSvelteBlobHeader {
+    repeated IsolationShardFragmentPos isolation_shards = 1;
+    message IsolationShardFragmentPos {
+        optional int64 start_offset = 1;
+        optional int64 size = 2;
+    }
+    
+    optional Domain domain = 2;
+}

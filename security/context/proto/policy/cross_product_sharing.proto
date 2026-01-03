@@ -1,9 +1,12 @@
-syntax = "editions";
+syntax = "proto2";
 
 package cross_product_sharing;
+
+import "google/api/inclusion.proto";
+import "security/context/proto/policy/usage_restriction.proto";
 
 option java_multiple_files = true;
 
 message EnableGcpOriginCheck {
-    
+    repeated int32 allowed_non_gcp_product_ids = 1;
 }

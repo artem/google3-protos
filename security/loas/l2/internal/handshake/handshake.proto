@@ -92,7 +92,8 @@ message ClientInit {
     message ServerResumptionTicketData {
         optional bytes family_id = 1;
         optional bytes ticket = 2;
-        repeated string supported_next_protocols = 3;
+        
+        reserved 3;
     }
     
     repeated EphemeralParameter ephemeral_parameters = 8;

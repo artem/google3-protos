@@ -2,6 +2,7 @@ syntax = "proto3";
 
 package google.logging.v2;
 
+import "google/api/inclusion.proto";
 import "google/api/policy.proto";
 import "google/logging/data_governance.proto";
 import "storage/datapol/annotations/proto/semantic_annotations.proto";

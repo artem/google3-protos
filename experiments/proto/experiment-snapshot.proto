@@ -19,6 +19,24 @@ option java_package = "com.google.protos.experiments.proto1api";
 
 message ExperimentDisabledIds {
     repeated int32 experiment_id = 1;
+    
+    optional Metadata metadata = 2;
+    message Metadata {
+        optional GeneratedBy generated_by = 1;
+        optional Source source = 2;
+    }
+    
+    enum GeneratedBy {
+        GENERATED_BY_UNSPECIFIED = 0;
+        BOQ_AGGREGATION = 1;
+        AGGREGATE_DISABLED_EXPERIMENTS = 2;
+    }
+    
+    enum Source {
+        SOURCE_UNSPECIFIED = 0;
+        POD = 1;
+        BOQ = 2;
+    }
 }
 
 message ExperimentSnapshot {

@@ -1,0 +1,15 @@
+syntax = "editions";
+
+package table;
+
+import "storage/table/metadata/metadata_field.proto";
+import "storage/table/public/read/get_table_metadata_options_extension_set.proto";
+
+message GetTableMetadataOptionsProto {
+    optional MetadataFieldSetProto field_set = 1;
+    message MetadataFieldSetProto {
+        repeated MetadataField.Id fields = 1;
+    }
+    
+    optional GetTableMetadataOptionsExtensionSet extension_set = 2;
+}

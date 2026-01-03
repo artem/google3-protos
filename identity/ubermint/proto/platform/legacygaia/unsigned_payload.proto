@@ -11,7 +11,6 @@ message LegacyGaiaUberMintUnsignedPayload {
     optional string remote_host = 1;
     optional int64 primary_user_id = 2;
     optional int32 encoding_format = 5;
-    repeated int32 experiment_ids = 7;
     
-    reserved 3, 4, 6;
+    reserved 3, 4, 6, 7;
 }

@@ -1,0 +1,11 @@
+syntax = "editions";
+
+package privacy.data_flow.homunculus.unilateral_access;
+
+import "storage/datapol/annotations/proto/semantic_annotations.proto";
+
+option java_multiple_files = true;
+
+message AuthorizedAccessOverrideData {
+    optional string authorized_user = 1;
+}

@@ -1,0 +1,12 @@
+syntax = "editions";
+
+package google.cloud.identity.common.proto.creds;
+
+option java_multiple_files = true;
+option java_package = "com.google.cloud.identity.common.proto.creds";
+
+message SessionFeatureFlags {
+    optional bool scim_enabled = 1;
+    optional bool extended_groups_enabled = 2;
+    optional bool extended_session_length_enabled = 3;
+}

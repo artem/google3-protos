@@ -37,6 +37,7 @@ message CheckRequest {
     string override_billing_status_check = 11;
     bytes end_user_creds = 12;
     bool has_paired_v2_dark_launch = 13;
+    bytes euc_authenticator_cache_key = 14;
     
     reserved 6, 7, 8, 9;
 }

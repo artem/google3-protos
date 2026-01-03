@@ -1,0 +1,21 @@
+syntax = "editions";
+
+package table;
+
+import "google/protobuf/timestamp.proto";
+
+option java_outer_classname = "GetPartitionOptionsProtos";
+option java_package = "com.google.storage.table";
+
+message PartitionHintsProto {
+    optional int64 target_max_partition_count = 1;
+    optional int64 target_min_partition_count = 2;
+    optional int64 target_max_partition_bytes = 3;
+    optional int64 target_min_partition_bytes = 4;
+}
+
+message GetPartitionOptionsProto {
+    optional google.protobuf.Timestamp deadline = 1;
+    optional bool return_table_read_token = 2;
+    optional PartitionHintsProto partition_hints = 3;
+}

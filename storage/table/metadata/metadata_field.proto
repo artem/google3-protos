@@ -1,0 +1,37 @@
+syntax = "editions";
+
+package table;
+
+import "net/proto2/proto/descriptor.proto";
+
+message MetadataField {
+    enum Id {
+        INVALID_ID = 0;
+        TABLE_SCHEMA = 1;
+        TABLE_SCHEMA_PROTO_DESCRIPTOR = 2;
+        DATA_PROPERTY = 3;
+        CAPABILITIES = 4;
+        LOGICAL_PARTITIONING_PROPERTY = 5;
+        LOGICAL_PARTITIONS = 6;
+        LOGICAL_PARTITIONS_LABELS = 15;
+        MATERIALIZED_EXPRS = 7;
+        TABLE_STATS = 8;
+        DATASET_ATTRIBUTES = 9;
+        DATA_GOVERNANCE = 10;
+        REPLICA = 11;
+        TABLE_METADATA_EXTENSION_SET = 12;
+        LAST_UPDATE_TIME = 13;
+        MATERIALIZED_VIEWS = 14;
+        UST_SIGNALS = 16;
+        ACCESS_FILTER = 17;
+        ANONYMIZATION_INFO = 18;
+    }
+}
+
+message MetadataFieldAnnotation {
+    optional bool include_by_default = 1;
+    
+    extend .proto2.EnumValueOptions {
+        optional MetadataFieldAnnotation enum_options = 535801154;
+    }
+}

@@ -5,6 +5,10 @@ package security_realms;
 import "google/protobuf/timestamp.proto";
 import "security/dataprotection/collection/public/collection_service.proto";
 import "security/realms/regional_trust/proto/regional_trust_enforcement_context.proto";
+import "security/realms/regional_trust/proto/regional_trust_exemption.proto";
+import "security/realms/regional_trust/proto/regional_trust_policy.proto";
+import "security/realms/regional_trust/proto/regional_trust_policy_choice.proto";
+import "security/realms/regional_trust/proto/regional_trust_purpose.proto";
 
 message RegionalTrustEventReport {
     optional secure_collection.MessageSource message_source = 1;
@@ -12,6 +16,7 @@ message RegionalTrustEventReport {
     repeated RegionalTrustCheckEvent check_events = 3;
     optional int32 dropped_check_events = 4;
     optional bool on_exit = 5;
+    optional RegionalTrustInitializationEvent initialization_event = 6;
 }
 
 message RegionalTrustCheckEvent {
@@ -37,4 +42,30 @@ message RegionalTrustCheckEvent {
     }
     
     optional RegionalTrustEnforcementContext.Enum enforcement_context = 5;
+}
+
+message RegionalTrustInitializationEvent {
+    optional RegionalTrustPurpose.Enum purpose = 1;
+    
+    optional InitializationStatus status = 2;
+    enum InitializationStatus {
+        INITIALIZATION_STATUS_UNSPECIFIED = 0;
+        OK = 1;
+        SYSTEM_ERROR = 2;
+        USER_ERROR = 3;
+    }
+    
+    optional string self_realm = 3;
+    optional string self_universe = 4;
+    
+    optional PolicyInstanceInitialization live_policy_initialization = 5;
+    message PolicyInstanceInitialization {
+        optional RegionalTrustPolicyChoice policy_choice = 1;
+        optional RegionalTrustPolicy.PolicyInstance policy_instance = 2;
+        repeated RegionalTrustExemptions.ExemptionSet exemption_sets = 4;
+        
+        reserved 3;
+    }
+    
+    optional PolicyInstanceInitialization darklaunch_policy_initialization = 6;
 }

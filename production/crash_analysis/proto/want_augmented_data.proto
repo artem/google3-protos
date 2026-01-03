@@ -1,0 +1,9 @@
+syntax = "editions";
+
+package coroner.collection;
+
+enum WantAugmentedData {
+    WANT_AUGMENTED_DATA_UNSPECIFIED = 0;
+    SEND_AUGMENTED_DATA = 1;
+    DISCARD_AUGMENTED_DATA = 2;
+}

@@ -1,0 +1,33 @@
+syntax = "editions";
+
+package table;
+
+import "google/protobuf/timestamp.proto";
+
+message CustomCounterProto {
+    optional string name = 1;
+    optional int64 value = 2;
+    
+    optional AggregateType aggregate_type = 3;
+    enum AggregateType {
+        UNDEFINED = 0;
+        SUM = 1;
+        MAX = 2;
+    }
+}
+
+message ReadStatisticsProto {
+    optional int64 rows_returned = 1;
+    optional int64 row_mutations_returned = 10;
+    optional int64 row_transactions_returned = 13;
+    optional int64 data_tables_returned = 2;
+    optional int64 bytes_returned = 3;
+    optional int64 num_convert_steps_rows_to_vox = 8;
+    optional int64 num_convert_steps_vox_to_rows = 9;
+    optional google.protobuf.Timestamp read_start_timestamp = 6;
+    optional google.protobuf.Timestamp read_end_timestamp = 7;
+    optional int64 rows_scanned = 4;
+    optional int64 bytes_scanned = 5;
+    optional int64 metadata_bytes_scanned = 11;
+    repeated CustomCounterProto custom_counters = 12;
+}

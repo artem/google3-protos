@@ -13,12 +13,10 @@ message EnforcementConfig {
         repeated CredentialControlPolicyType.Enum darklaunched_policy_types = 3;
         repeated CredentialControlPolicyType.Enum enforced_policy_types = 4;
         
-        oneof binding_attribute {
-            security.credentials.PrincipalProto principal = 1;
-            string security_realm = 2;
-            security.credentials.PrincipalProto issuer = 5;
-        }
+        reserved 1, 2, 5;
     }
+    
+    optional int64 version = 2;
 }
 
 message BindingAttributesSet {

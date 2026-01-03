@@ -4,6 +4,9 @@ package signed_message;
 
 import "storage/datapol/annotations/proto/semantic_annotations.proto";
 
+option java_outer_classname = "SignedMessageProto";
+option java_package = "com.google.security.signedmessage";
+
 message SignedMessage {
     optional bytes prefix = 1;
     optional bytes serialized_message = 2;

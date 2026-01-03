@@ -8,6 +8,7 @@ import "security/loas/l2/proto/confidential_security_level.proto";
 import "security/loas/l2/proto/credstype.proto";
 import "security/loas/l2/proto/identity_types.proto";
 import "security/loas/l2/proto/instance.proto";
+import "security/loas/l2/proto/server_type.proto";
 import "security/loas/l2/proto/thin_mint_verification_key_trust_tier.proto";
 import "security/loas/l2/proto/usertype.proto";
 import "security/util/proto/permission.proto";
@@ -91,6 +92,10 @@ message HardenedTaskIdentity {
     optional bool is_hardened = 1;
 }
 
+message ServerTypeIdentity {
+    repeated ServerType server_types = 1;
+}
+
 extend Identity {
     optional RoleIdentity role_identity = 100;
     optional HostIdentity host_identity = 101;
@@ -103,4 +108,5 @@ extend Identity {
     optional InstanceIdentity instance_identity = 108;
     optional ConfidentialModeIdentity confidential_mode_identity = 109;
     optional HardenedTaskIdentity hardened_task_identity = 110;
+    optional ServerTypeIdentity server_type_identity = 111;
 }

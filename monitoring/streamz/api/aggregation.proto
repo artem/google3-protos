@@ -38,6 +38,8 @@ message BulkAggregateWriteRequest {
         MONITORING_PROBERS = 3;
         PROBER_SERVICE = 4;
     }
+    
+    optional bool skip_tee = 5 [default = false];
 }
 
 message BulkAggregateWriteResponse {

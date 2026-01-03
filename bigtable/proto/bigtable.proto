@@ -13,6 +13,7 @@ import "bigtable/proto/write_policy_config.proto";
 import "google/protobuf/duration.proto";
 import "google/protobuf/timestamp.proto";
 import "net/proto2/bridge/proto/message_set.proto";
+import "net/proto2/proto/descriptor.proto";
 import "security/context/proto/audit_requirements.proto";
 import "storage/datapol/annotations/proto/semantic_annotations.proto";
 
@@ -42,6 +43,22 @@ message SecurityRealmSet {
         ALLOW_ALL_TRAFFIC = 0;
         ALLOW_SELF = 1;
     }
+}
+
+message BtProtoDescriptorSet {
+    optional string identifier = 1;
+    optional .proto2.FileDescriptorSet descriptor_set = 2;
+}
+
+message ProtoDescriptorMetadata {
+    optional fixed64 identifier_fingerprint = 1;
+    optional int64 version = 2;
+    optional fixed64 checksum = 3;
+}
+
+message ProtoDescriptorSetWithVersion {
+    optional BtProtoDescriptorSet proto_descriptor = 1;
+    optional int64 version = 2;
 }
 
 message Type {
@@ -239,6 +256,7 @@ message SnapshotMetadata {
     optional int64 death_epoch_seconds = 12;
     optional string cloud_kms_key_reference_version = 15;
     optional int64 mutation_end_time_epoch_ns = 16;
+    repeated ProtoDescriptorSetWithVersion proto_descriptor_sets = 17;
     
     oneof creator {
         PolicyCreator policy = 4;
@@ -495,10 +513,12 @@ message PartitionMetadata {
         optional double base_metadata_servers_tax = 3;
         optional string partition_owner = 4;
         optional string accounting_user = 5;
-        optional SsdOpsState ssd_ops_state = 6;
-        optional bool ssd_ops_migration_active = 7;
         optional double service_hdd_tax = 8;
         optional double service_ssd_tax = 9;
+        
+        reserved 6, 7;
+        
+        reserved "ssd_ops_state", "ssd_ops_migration_active";
     }
     
     optional bool cloud_kms_encryption_enabled = 49 [default = false];
@@ -518,14 +538,6 @@ message PartitionMetadata {
     optional WritePolicyConfig write_policy_config = 61;
     
     reserved 10 to 12, 20 to 26;
-    
-    enum SsdOpsState {
-        SSD_OPS_STATE_UNSPECIFIED = 0;
-        INVISIBLE = 1;
-        DERIVED = 2;
-        DERIVED_ROUND_UP = 3;
-        SELF_MANAGED = 4;
-    }
 }
 
 message AutosizerParams {
@@ -634,6 +646,7 @@ message TableMetadata {
     optional bool ssd_to_ssd_data_column_override_opt_out = 63 [default = false];
     optional bool has_materialized_views = 67;
     optional RemoteCacheConfig remote_cache_config = 69;
+    repeated ProtoDescriptorMetadata proto_descriptor_metadata = 70;
     
     oneof crn_oneof {
         string cloud_resource_name = 51;
@@ -890,6 +903,7 @@ message InternalRetryPayload {
 }
 
 message SetArgs {
+    option deprecated = true;
     required bytes row = 1;
     
     repeated group Column = 2 {
@@ -906,6 +920,7 @@ message SetArgs {
 }
 
 message SetResult {
+    option deprecated = true;
     optional int64 micro_timestamp = 2;
     
     reserved 1, 3;

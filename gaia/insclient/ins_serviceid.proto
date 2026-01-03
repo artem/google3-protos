@@ -1,13 +1,14 @@
 syntax = "proto2";
 
 import "google/api/inclusion.proto";
+import "storage/datapol/annotations/proto/semantic_annotations.proto";
 
 option java_package = "com.google.gaia.client.proto";
 
 message INSServiceID {
     enum ServiceID {
         option deprecated = true;
-        MAX_SERVICE_ID_PLUS_ONE = 725 [deprecated = true];
+        MAX_SERVICE_ID_PLUS_ONE = 726 [deprecated = true];
         GAIA_INTERNAL = 0;
         ADS = 7;
         TRANSLATION_CONSOLE = 9;
@@ -21,7 +22,6 @@ message INSServiceID {
         BLOGGER = 19;
         BUZZ = 20;
         DYNAMITE = 569;
-        GOOGLE_BUZZ = 337;
         LOCAL_SELF_SERVE = 22;
         GAIA_FRONTEND = 24;
         ORKUT = 25;
@@ -45,7 +45,6 @@ message INSServiceID {
         WAREHOUSE = 56;
         PROSE_SUBSCRIBER = 57;
         XAPI = 58;
-        WEAVER = 61;
         FINANCE = 62;
         INS_TESTING = 1;
         BIG_ID_TEST_0 = 63;
@@ -57,37 +56,28 @@ message INSServiceID {
         MOBILE = 69;
         VOICE = 71;
         DASHER = 72;
-        NOTEBOOK = 74;
         WRITELY = 75;
         HAS_ACCEPTED_PAGES_TOS = 84;
-        KNOWLEDGE_SEARCH = 89;
         SIERRA_SANDBOX = 90;
         FOCUS = 95;
-        TOOLBAR_SYNC = 96;
         APPHOSTING = 99;
         DASHER_ACCOUNTS = 102;
         AD_MANAGER = 103;
         BRANDING = 106;
         JOTSPOT = 112;
-        WRITELY_TEST = 114;
         WEB_HISTORY_PROMO = 115;
         KEYHOLE = 117;
         YOUTUBE = 118;
         KR_AGE_ADULT = 137;
-        GEOWIKI = 139;
-        KNOL = 145;
         POSTINI = 146;
         GRANDCENTRAL = 147;
         PUBLISHED_DATASETS = 150;
         COUPONS = 154;
         TRANSLITERATION = 155;
         ANDROID = 156;
-        HEALTH = 161;
-        MARKETPLACE = 165;
         VIXEN = 169;
         FEEDBURNER = 171;
         APPHOSTING_ADMIN = 174;
-        WAVE = 177;
         YOUTUBE_ADS = 179;
         GTRANS = 182;
         DORY = 185;
@@ -96,7 +86,6 @@ message INSServiceID {
         CITATIONS = 196;
         PROFILES = 198;
         GAIA_GROUPS = 199;
-        SAFE_SEARCH = 201;
         DFA = 207;
         EXPLORER = 208;
         YOUTUBE_PARTNER_SYNDICATION = 209;
@@ -114,7 +103,6 @@ message INSServiceID {
         YOUTUBE_CMS = 247;
         RICHMEDIA = 252;
         DASHER_POLICY = 253;
-        MAGPIE = 262;
         SMS_AUTH = 270;
         AD_EXCHANGE_BILLING = 275;
         TV_ADS_PUBLISHER = 278;
@@ -122,23 +110,19 @@ message INSServiceID {
         LEGAL_DISCOVERY = 282;
         FUSION_TABLES = 284;
         DATA_SUMMARY = 286;
-        GOOGLE_FEEDBACK = 290;
         MULTILOGIN = 299;
         MAPS_API_PREMIER = 300;
         PIKEPLACE_USER = 304;
         MERCHANT_CENTER = 306;
         BIGSTORE = 314;
-        NEBULA_DEVELOPERS = 325;
         STRONGAUTH = 328;
         CLOUD_PRINT = 330;
         DEVELOPER_CONSOLE = 333;
-        URL_SHORTENER = 336;
         MOBILE_PERSONAL_FEEDS = 340;
         CHROME_OS = 341;
         GOOGLE_BACKUP = 342;
         ANDROID_PUSH = 343;
         ANDROID_MARKET = 344;
-        CADDY = 346;
         SKYJAM = 350;
         DORITOS = 354;
         GOOGLE_ME = 355;
@@ -146,7 +130,6 @@ message INSServiceID {
         CHROME_WEB_STORE = 357;
         ADMOB = 358;
         XBID = 360;
-        PLACES = 363;
         PAID_STORAGE = 365;
         GROUPS_INSIDE_DOMAIN = 366;
         GROUPS_OUTSIDE_DOMAIN = 367;
@@ -154,20 +137,15 @@ message INSServiceID {
         STRONGAUTH_INVITE = 373;
         WALLET = 377;
         APPS_SCRIPT = 383;
-        HAS_GOOGLE_PROFILE = 384;
-        HAS_PLUSONE = 386;
         SHADOW_DATA_MIGRATED = 389;
         TM_MERCHANT_FE = 394;
         ACCOUNT_CENTRAL = 396;
         GOOGLE_PLAY = 403;
         STRONGAUTH_REQUIRED = 408;
-        SAMEDAY_CUSTOMER = 409;
-        GERRIT_CODE_REVIEW = 413;
         MOBILE_TEST_TOOLS = 419;
         BILLING = 425;
         INSIGHT = 428;
         GFIBER = 433;
-        ACCOUNT_STATEMENT = 434;
         DRIVESYNC_INVITE = 436;
         CHROMEOS_LOGIN = 437;
         GEOSTORE_BATCH = 448;
@@ -176,14 +154,11 @@ message INSServiceID {
         BIZBUILDER = 456;
         PARTNER_FE = 460;
         IS_MADISON_ACCOUNT = 465;
-        GAIA_FILTER_REGRESSION_C18N = 466;
         MAPS_PRO = 470;
         ONETODAY = 472;
         CULTURAL = 473;
         MAPS_ENGINE = 475;
         CLOUD_CONSOLE = 477;
-        GOOGLE_ONE_POLICY = 483;
-        WALLET_TRANSFER = 484;
         HAS_MADISON_ACCOUNT = 485;
         REGISTRAR = 490;
         CHROME_MANAGEMENT = 491;
@@ -206,7 +181,6 @@ message INSServiceID {
         IS_AMS_HALF_CREATED = 534;
         IS_IN_FAMILY = 537;
         PHONE_ID_AUTH = 543;
-        YOUTUBE_ANALYTICS_STORAGE = 545;
         DEVICE_CENTRIC_AUTH = 547;
         MY_MAPS = 549;
         IS_EXTERNAL_TEST_ACCOUNT = 556;
@@ -216,7 +190,6 @@ message INSServiceID {
         IS_CLOUD_TEST_LAB_ACCOUNT = 564;
         WAS_UNICORN_CHILD_ACCOUNT = 565;
         MEMENTO = 566;
-        SPACES = 573;
         PHONE_IDENTIFIER_PREFERRED = 576;
         GEO_MADDEN = 579;
         YOUTUBE_CHANNEL_MADISON_ACCOUNT_OWNER = 580;
@@ -269,13 +242,9 @@ message INSServiceID {
         DMA52_EXPLICIT_EARLY_ENFORCEMENT = 662;
         DMA52_DISCOVERY_EARLY_ENFORCEMENT = 663;
         WORKFLOWS_FOR_WIPEOUT = 664;
+        GEMINI_FOR_VAULT = 665;
         TROGDOR = 23 [deprecated = true];
-        GDIAL = 123 [deprecated = true];
-        ANNOTATEWEB = 140 [deprecated = true];
-        GOOGLE_DESKTOP = 151 [deprecated = true];
-        WEBSITE_OPTIMIZER = 160 [deprecated = true];
         PEOPLESENSE = 168 [deprecated = true];
-        POWERMETER = 215 [deprecated = true];
         PROFESSIONALS = 234 [deprecated = true];
         AFFILIATE_NETWORK = 242 [deprecated = true];
         GOANNA_MOBILE = 254 [deprecated = true];
@@ -283,8 +252,6 @@ message INSServiceID {
         GAUSS = 267 [deprecated = true];
         PANORAMIO = 319 [deprecated = true];
         TEMP_PROFILE_DISABLED_BY_ADMIN = 385 [deprecated = true];
-        APPHOSTING_SID = 398 [deprecated = true];
-        MY_DEVICES = 417 [deprecated = true];
         GIRAFFE = 430 [deprecated = true];
         ENTERPRISE_ADWORDS = 480 [deprecated = true];
         HELPOUTS = 512 [deprecated = true];

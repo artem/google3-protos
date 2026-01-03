@@ -1,0 +1,9 @@
+syntax = "proto2";
+
+package protodefault;
+
+import "net/proto2/proto/descriptor.proto";
+
+extend .proto2.FieldOptions {
+    repeated string value = 169068017;
+}

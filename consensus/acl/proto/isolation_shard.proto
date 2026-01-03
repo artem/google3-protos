@@ -1,0 +1,34 @@
+syntax = "editions";
+
+package consensus.acl;
+
+option java_multiple_files = true;
+
+message IsolationShard {
+    optional SignedKey signed_key = 1;
+    message SignedKey {
+        optional bytes isolation_shard_key = 1;
+        optional bytes signature = 2;
+    }
+    
+    repeated bytes user_shards = 2;
+    
+    message Key {
+        optional string namespace_name = 1;
+        optional string group_name = 2;
+        optional int32 isolation_shard_id = 3;
+        repeated UserShardSignature user_shard_signatures = 5;
+        
+        reserved 4;
+    }
+    
+    message UserShardSignature {
+        optional int32 user_shard_id = 1;
+        optional bytes signature = 2;
+    }
+    
+    message UserShard {
+        optional int32 user_shard_id = 1;
+        repeated string users = 2;
+    }
+}

@@ -113,6 +113,10 @@ message Bootstrap {
         bool stats_flush_on_admin = 29;
     }
     
+    oneof stats_eviction {
+        google.protobuf.Duration stats_eviction_interval = 42;
+    }
+    
     reserved 10, 11;
     
     reserved "runtime";

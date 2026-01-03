@@ -142,6 +142,8 @@ message Ads {
             DT_ENGAGEMENT = 25;
             DT_LIFT = 26;
             DT_REPORT = 27;
+            DT_ADS_INTERACTION_DATA_FREE = 28;
+            DT_ADS_INTERACTION_DATA = 29;
         }
         
         repeated DataOrigin data_origin = 11;
@@ -171,6 +173,7 @@ message Ads {
             DO_GOOGLE_TV_ADS = 22;
             DO_PANELS_CPS_JOIN = 23;
             DO_PANELS_NO_CPS_JOIN = 24;
+            DO_GPAY_ADS = 25;
         }
     }
     

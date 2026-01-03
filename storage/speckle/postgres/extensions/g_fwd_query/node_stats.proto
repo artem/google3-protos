@@ -1,6 +1,6 @@
 syntax = "editions";
 
-package storage_speckle_postgres_utils_remote_execution;
+package storage_speckle_postgres_extensions_g_fwd_query;
 
 import "storage/datapol/annotations/proto/semantic_annotations.proto";
 
@@ -15,6 +15,9 @@ message CPUUsage {
     optional int64 steal_time_jiffies = 8;
     optional int64 guest_time_jiffies = 9;
     optional int64 guest_nice_time_jiffies = 10;
+    optional int32 num_physical_cores = 11;
+    optional int32 num_logical_cores = 12;
+    optional double cpu_load_avg = 13;
 }
 
 message TieredCacheStats {
@@ -43,4 +46,5 @@ message NodeStats {
     optional PendingIOStats pending_io_stat = 3;
     optional MemoryStats memory_stat = 4;
     optional BackendStats backend_stat = 5;
+    optional int64 stats_collection_time_ms = 6;
 }

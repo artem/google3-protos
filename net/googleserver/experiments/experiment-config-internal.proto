@@ -27,7 +27,9 @@ message InternalExperimentMessage {
     optional RiskTolerance risk_tolerance = 10;
     optional google.protobuf.Timestamp assignment_timestamp = 11;
     optional int64 min_binary_baseline_cl = 12;
-    optional bool is_pce = 14;
+    optional bool is_ut = 14;
+    optional int32 rollback_id = 15;
+    optional int32 rollback_control_id = 16;
     
     reserved 13;
 }

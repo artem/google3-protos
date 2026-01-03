@@ -9,6 +9,7 @@ import "borg/common/fs_dirs.proto";
 import "borg/common/permissions.proto";
 import "borg/common/res_alloc.proto";
 import "borg/common/task_stop_status.proto";
+import "net/proto2/bridge/proto/message_set.proto";
 import "net/rpc/empty-message.proto";
 import "storage/datapol/annotations/proto/semantic_annotations.proto";
 
@@ -30,6 +31,9 @@ service BorgletClient {
     rpc SetApplicationInfo(SetApplicationInfoRequest) returns (SetApplicationInfoResponse);
     rpc RegisterMemBwNotification(RegisterMemBwNotificationRequest) returns (RegisterMemBwNotificationResponse);
     rpc RegisterDiscardableMemoryNotification(RegisterDiscardableMemoryNotificationRequest) returns (RegisterDiscardableMemoryNotificationResponse);
+    rpc AcquireDaxDevices(AcquireDaxDevicesRequest) returns (AcquireDaxDevicesResponse);
+    rpc GetReservedDaxDevices(GetReservedDaxDevicesRequest) returns (GetReservedDaxDevicesResponse);
+    rpc ReleaseDaxDevices(ReleaseDaxDevicesRequest) returns (ReleaseDaxDevicesResponse);
 }
 
 service OffloadBorgletClient {
@@ -98,6 +102,14 @@ message UpdateHealthReq {
     required string handle = 1;
     optional string portname = 2;
     required bool disable = 3;
+}
+
+message RcitCommandAttestation {
+    optional RunCommandInTaskReq rcit_proxy_request = 1;
+    
+    extend .proto2.bridge.MessageSet {
+        optional RcitCommandAttestation message_set_extension = 525004707;
+    }
 }
 
 message RunCommandInTaskReq {
@@ -242,4 +254,39 @@ message GetGpuIpvStateResponse {
         IPV_DISABLED = 2;
         IPV_UNINITIALIZED = 3;
     }
+}
+
+message DevdaxReservationSpec {
+    map<int32, int64> gib_per_numa = 1;
+}
+
+message AcquireDaxDevicesRequest {
+    oneof reservation {
+        DevdaxReservationSpec reservation_spec = 1;
+        int64 total_gib = 2;
+    }
+}
+
+message AcquireDaxDevicesResponse {
+    optional string reservation_id = 1;
+}
+
+message GetReservedDaxDevicesRequest {
+    optional string reservation_id = 1;
+}
+
+message DevdaxList {
+    repeated string device_path = 1;
+}
+
+message GetReservedDaxDevicesResponse {
+    map<int32, DevdaxList> reserved_devices_per_numa = 1;
+}
+
+message ReleaseDaxDevicesRequest {
+    optional string reservation_id = 1;
+}
+
+message ReleaseDaxDevicesResponse {
+    
 }

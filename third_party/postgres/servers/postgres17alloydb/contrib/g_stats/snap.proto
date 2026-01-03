@@ -1,0 +1,537 @@
+syntax = "proto2";
+
+package third_party_postgres_servers_postgres17alloydb_contrib_g_stats;
+
+message Snapshot {
+    repeated CPUUsage cpu_usages = 1;
+    message CPUUsage {
+        optional int64 sum_time_secs = 1;
+        optional int64 user_time_secs = 2;
+        optional int64 nice_time_secs = 3;
+        optional int64 system_time_secs = 4;
+        optional int64 idle_time_secs = 5;
+        optional int64 io_wait_time_secs = 6;
+        optional int64 irq_time_secs = 7;
+        optional int64 soft_irq_time_secs = 8;
+        optional int64 steal_time_secs = 9;
+        optional int64 guest_time_secs = 10;
+        optional int64 guest_nice_time_secs = 11;
+    }
+    
+    repeated Database databases = 2;
+    message Database {
+        optional uint32 dat_id = 1;
+        optional string name = 2;
+        optional int32 num_backends = 3;
+        optional int64 commits = 4;
+        optional int64 rollbacks = 5;
+        optional int64 blks_read = 6;
+        optional int64 blks_hit = 7;
+        optional int64 blks_evicted = 8;
+        optional int64 index_splits = 9;
+        optional int64 indexonly_heap_fetches = 10;
+        optional int64 tup_returned = 11;
+        optional int64 tup_fetched = 12;
+        optional int64 tup_inserted = 13;
+        optional int64 tup_updated = 14;
+        optional int64 tup_hot_updated = 15;
+        optional int64 tup_deleted = 16;
+        optional int64 temp_files = 17;
+        optional int64 temp_bytes = 18;
+        optional int64 deadlocks = 19;
+        optional int64 stats_reset = 20;
+    }
+    
+    repeated Wait waits = 3;
+    message Wait {
+        optional int32 event_id = 1;
+        optional int32 class_id = 2;
+        optional string event = 3;
+        optional string wait_class = 4;
+        optional int64 num_waits = 5;
+        optional int64 elapsed_time_us = 6;
+    }
+    
+    repeated WaitHistogram wait_histograms = 4;
+    message WaitHistogram {
+        optional int32 event_id = 1;
+        optional int32 class_id = 2;
+        optional string event = 3;
+        optional int64 num_waits = 4;
+        optional int64 wait_1us = 5;
+        optional int64 wait_2us = 6;
+        optional int64 wait_4us = 7;
+        optional int64 wait_8us = 8;
+        optional int64 wait_16us = 9;
+        optional int64 wait_32us = 10;
+        optional int64 wait_64us = 11;
+        optional int64 wait_128us = 12;
+        optional int64 wait_256us = 13;
+        optional int64 wait_512us = 14;
+        optional int64 wait_1ms = 15;
+        optional int64 wait_2ms = 16;
+        optional int64 wait_4ms = 17;
+        optional int64 wait_8ms = 18;
+        optional int64 wait_16ms = 19;
+        optional int64 wait_32ms = 20;
+        optional int64 wait_64ms = 21;
+        optional int64 wait_128ms = 22;
+        optional int64 wait_256ms = 23;
+        optional int64 wait_512ms = 24;
+        optional int64 wait_1s = 25;
+        optional int64 wait_2s = 26;
+        optional int64 wait_4s = 27;
+        optional int64 wait_8s = 28;
+        optional int64 wait_16s = 29;
+        optional int64 wait_overflow = 30;
+    }
+    
+    repeated WaitBG waits_bg = 5;
+    message WaitBG {
+        optional int32 event_id = 1;
+        optional int32 class_id = 2;
+        optional string event = 3;
+        optional string wait_class = 4;
+        optional int64 num_waits = 5;
+        optional int64 elapsed_time_us = 6;
+    }
+    
+    repeated WaitBGHistogram wait_bg_histograms = 6;
+    message WaitBGHistogram {
+        optional int32 event_id = 1;
+        optional int32 class_id = 2;
+        optional string event = 3;
+        optional int64 num_waits = 4;
+        optional int64 wait_1us = 5;
+        optional int64 wait_2us = 6;
+        optional int64 wait_4us = 7;
+        optional int64 wait_8us = 8;
+        optional int64 wait_16us = 9;
+        optional int64 wait_32us = 10;
+        optional int64 wait_64us = 11;
+        optional int64 wait_128us = 12;
+        optional int64 wait_256us = 13;
+        optional int64 wait_512us = 14;
+        optional int64 wait_1ms = 15;
+        optional int64 wait_2ms = 16;
+        optional int64 wait_4ms = 17;
+        optional int64 wait_8ms = 18;
+        optional int64 wait_16ms = 19;
+        optional int64 wait_32ms = 20;
+        optional int64 wait_64ms = 21;
+        optional int64 wait_128ms = 22;
+        optional int64 wait_256ms = 23;
+        optional int64 wait_512ms = 24;
+        optional int64 wait_1s = 25;
+        optional int64 wait_2s = 26;
+        optional int64 wait_4s = 27;
+        optional int64 wait_8s = 28;
+        optional int64 wait_16s = 29;
+        optional int64 wait_overflow = 30;
+    }
+    
+    repeated Archiver archivers = 7;
+    message Archiver {
+        optional int64 archived_count = 1;
+        optional int64 failed_count = 2;
+    }
+    
+    repeated Bgwriter bgwriters = 8;
+    message Bgwriter {
+        optional int64 checkpoints_timed = 1;
+        optional int64 checkpoints_req = 2;
+        optional double checkpoint_write_time_ms = 3;
+        optional double checkpoint_sync_time_ms = 4;
+        optional int64 buffers_checkpoint = 5;
+        optional int64 buffers_clean = 6;
+        optional int64 maxwritten_clean = 7;
+        optional int64 buffers_backend = 8;
+        optional int64 buffers_backend_fsync = 9;
+        optional int64 buffers_alloc = 10;
+        optional int64 stats_reset = 11;
+    }
+    
+    repeated CgroupMemory cgroups_memory = 9;
+    message CgroupMemory {
+        optional int64 memory_usage_in_bytes = 1;
+        optional int64 memory_limit_in_bytes = 2;
+        optional int64 with_swap_usage_in_bytes = 3;
+        optional int64 with_swap_limit_in_bytes = 4;
+        optional int64 memory_failcnt = 5;
+        optional int64 swap_usage_in_bytes = 6;
+        optional int64 cache_usage_in_bytes = 7;
+        optional int64 major_faults = 8;
+    }
+    
+    repeated Cluster clusters = 10;
+    message Cluster {
+        optional string version = 1;
+        optional string cluster_name = 2;
+        optional string host_name = 3;
+        optional int64 startup_time_us = 4;
+        optional int64 wal_lsn = 5;
+    }
+    
+    repeated CPUInfo cpus_info = 11;
+    message CPUInfo {
+        optional string model = 1;
+        optional int32 sockets = 2;
+        optional int32 num_physical_cores = 3;
+        optional int32 num_logical_cores = 4;
+    }
+    
+    repeated DatabaseConflict database_conflicts = 12;
+    message DatabaseConflict {
+        optional uint32 dat_id = 1;
+        optional int64 lock = 2;
+        optional int64 snapshot = 3;
+        optional int64 buffer_pin = 4;
+        optional int64 deadlock = 5;
+    }
+    
+    repeated DBSize db_sizes = 13;
+    message DBSize {
+        optional uint32 dat_id = 1;
+        optional string name = 2;
+        optional string coll_name = 3;
+        optional int64 conn_limit = 4;
+        optional string tbspc_name = 5;
+        optional int64 db_size = 6;
+    }
+    
+    repeated DiskStat disk_stats = 14;
+    message DiskStat {
+        optional string device = 1;
+        optional int64 reads = 2;
+        optional int64 sectors_read = 3;
+        optional int64 read_time_ms = 4;
+        optional int64 writes = 5;
+        optional int64 sectors_written = 6;
+        optional int64 write_time_ms = 7;
+        optional int64 busy_time_ms = 8;
+        optional int64 weighted_io_time_ms = 9;
+        optional int64 discards_completed = 10;
+        optional int64 discard_time_ms = 11;
+        optional int64 flushes = 12;
+        optional int64 flush_time_ms = 13;
+    }
+    
+    repeated LoadAvg load_avgs = 15;
+    message LoadAvg {
+        optional int32 load_avg_1 = 1;
+        optional int32 load_avg_5 = 2;
+        optional int32 load_avg_15 = 3;
+    }
+    
+    repeated NetworkStat network_stats = 16;
+    message NetworkStat {
+        optional string device = 1;
+        optional int64 rx_bytes = 2;
+        optional int64 rx_errors = 3;
+        optional int64 rx_drops = 4;
+        optional int64 rx_fifo = 5;
+        optional int64 rx_frame = 6;
+        optional int64 tx_bytes = 7;
+        optional int64 tx_errors = 8;
+        optional int64 tx_drops = 9;
+        optional int64 tx_fifo = 10;
+        optional int64 tx_frame = 11;
+    }
+    
+    repeated OSStat os_stats = 17;
+    message OSStat {
+        optional int64 cpu_time_backend_micro = 1;
+        optional int64 cpu_time_background_micro = 2;
+        optional int64 user_time_us = 3;
+        optional int64 system_time_us = 4;
+        optional int64 minor_page_faults = 5;
+        optional int64 major_page_faults = 6;
+        optional int64 num_swaps = 7;
+        optional int64 num_signals = 8;
+        optional int64 voluntary_context_switches = 9;
+        optional int64 involuntary_context_switches = 10;
+    }
+    
+    repeated Parameter parameters = 18;
+    message Parameter {
+        optional string name = 1;
+        optional string value = 2;
+        optional string source = 3;
+        optional bool is_internal = 4;
+    }
+    
+    repeated PrefetchCache prefetch_caches = 19;
+    message PrefetchCache {
+        optional int32 buffers = 1;
+        optional int32 buffers_in_use = 2;
+        optional int32 buffers_pinned = 3;
+        optional int64 prefetch_requests = 4;
+        optional int64 prefetched_blocks = 5;
+        optional int64 read_requests = 6;
+        optional int64 read_requests_hit = 7;
+        optional int64 read_requests_miss = 8;
+        optional int64 evictions = 9;
+        optional int64 evictions_before_use = 10;
+        optional int64 invalidations = 11;
+        optional int64 out_of_buffers = 12;
+        optional int64 user_table_read_ahead_count = 13;
+    }
+    
+    repeated DogfishStreamzMetrics dogfish_streamz_metrics = 20;
+    message DogfishStreamzMetrics {
+        optional string metric_name = 1;
+        optional string metric_type = 2;
+        optional string labels = 3;
+        optional int64 int_val = 4;
+        optional bool bool_val = 5;
+        optional double float_val = 6;
+        optional string string_val = 7;
+    }
+    
+    repeated StoragePushback storage_pushbacks = 21;
+    message StoragePushback {
+        optional int64 storage_pushback_us = 1;
+    }
+    
+    repeated ProcessMemory processes_memory = 22;
+    message ProcessMemory {
+        optional int64 pid = 1;
+        optional string cmd_line = 2;
+        optional int64 vm_rss = 3;
+        optional int64 rss_anon = 4;
+    }
+    
+    repeated ProcessMemorySummary process_memory_summary = 23;
+    message ProcessMemorySummary {
+        optional int64 sum_vm_rss = 1;
+        optional int64 sum_rss_anon = 2;
+    }
+    
+    repeated Session sessions = 24;
+    message Session {
+        optional int64 sessions = 1;
+        optional int64 session_count = 2;
+        optional int64 session_create_time_us = 3;
+        optional int64 session_init_time_us = 4;
+        optional int64 session_cleanup_time_us = 5;
+    }
+    
+    repeated SharedMemory shared_memory = 25;
+    message SharedMemory {
+        optional string name = 1;
+        optional int64 size = 2;
+    }
+    
+    repeated SystemInfo systems_info = 26;
+    message SystemInfo {
+        optional string name = 1;
+        optional int64 value = 2;
+    }
+    
+    repeated SystemMemory systems_memory = 27;
+    message SystemMemory {
+        optional string name = 1;
+        optional int64 value = 2;
+    }
+    
+    repeated VacuumBlockingReasons vacuum_blocking_reasons = 28;
+    message VacuumBlockingReasons {
+        optional uint32 oldest_running_xact = 1;
+        optional uint32 oldest_prepared_xact = 2;
+        optional int32 oldest_replication_slot = 3;
+        optional uint32 oldest_replica_xact = 4;
+    }
+    
+    repeated VacuumDatabaseInfo vacuum_databases_info = 29;
+    message VacuumDatabaseInfo {
+        optional uint32 oid = 1;
+        optional uint32 xid = 2;
+    }
+    
+    repeated VacuumInfo vacuums_info = 30;
+    message VacuumInfo {
+        optional int64 num_analyze = 1;
+        optional int64 num_vacuum = 2;
+        optional int64 num_vacuum_large_table = 3;
+        optional int64 time_spent_in_vacuum_in_us = 4;
+        optional int64 time_spent_in_vacuum_index_in_us = 5;
+        optional int64 time_spent_in_vacuum_large_table_in_us = 6;
+        optional int64 time_spent_in_vacuum_large_table_index_in_us = 7;
+        optional int64 num_current_operations = 8;
+        optional int64 pin_skipped_pages = 9;
+        optional int64 frozen_skipped_pages = 10;
+        optional int64 mintxid_skipped_pages = 11;
+        optional int64 mintxid_skipped_cached_pages = 12;
+        optional int64 mintxid_skipped_uncached_pages = 13;
+        optional int64 index_scans_2 = 14;
+        optional int64 scanned_pages = 15;
+        optional int64 page_hit = 16;
+        optional int64 page_miss = 17;
+        optional int64 page_dirty = 18;
+        optional int64 num_mini_vacuum = 19;
+        optional int64 time_spent_in_mini_vacuum_in_us = 20;
+        optional int64 truncate_wait_time_us = 21;
+        optional uint32 oldest_current_xid = 22;
+        optional double percent_towards_wraparound = 23;
+        optional double percent_towards_emergency_autovac = 24;
+        optional int64 num_canceled_autovac = 25;
+        optional int64 num_failed_autovac = 26;
+        optional int64 num_total_vacuums_in_user_dbs = 27;
+        optional int64 num_autovacuums_in_user_dbs = 28;
+        optional int64 num_manual_vacuums_in_user_dbs = 29;
+        optional int64 num_autovacuums_on_g_alloydb = 30;
+        optional int64 num_manual_vacuums_on_g_alloydb = 31;
+    }
+    
+    repeated ChillCacheIntStats chill_cache_int_stats = 31;
+    message ChillCacheIntStats {
+        optional int64 reads = 1;
+        optional int64 writes = 2;
+        optional int64 hits = 3;
+        optional int64 getentrycalls = 4;
+        optional int64 retryforlru = 5;
+        optional int64 retrydueto_collision = 6;
+        optional int64 notfoundok = 7;
+        optional int64 invalidations = 8;
+        optional int64 bgwwrites = 9;
+        optional int64 validentries = 10;
+    }
+    
+    repeated ChillCachePrewarmStats chill_cache_prewarm_stats = 32;
+    message ChillCachePrewarmStats {
+        optional int64 prewarm_restore_blocks = 1;
+        optional int64 prewarm_restore_skipped_blocks = 2;
+        optional int64 prewarm_restore_start_time_ms = 3;
+        optional int64 prewarm_restore_end_time_ms = 4;
+        optional int32 prewarm_restore_strategy = 5;
+        optional int32 prewarm_restore_num_blobs = 6;
+        optional int32 prewarm_restore_num_keys = 7;
+        optional int64 prewarm_restore_num_dup_keys = 8;
+        optional int32 prewarm_restore_num_workers = 9;
+        optional int64 prewarm_checkpoint_id = 10;
+        optional int64 prewarm_checkpoint_start_time_ms = 11;
+        optional int64 prewarm_checkpoint_end_time_ms = 12;
+        optional int32 prewarm_checkpoint_num_blobs = 13;
+        optional int64 prewarm_checkpoint_num_keys = 14;
+        optional int32 prewarm_checkpoint_num_lru_walk_cycles = 15;
+        optional int32 prewarm_checkpoint_num_rows_purged = 16;
+        optional int64 prewarm_checkpoint_num_success = 17;
+        optional int32 prewarm_checkpoint_num_failed = 18;
+        optional int64 prewarm_checkpoint_chill_cache_size = 19;
+        optional int64 prewarm_checkpoint_sum_num_keys = 20;
+        optional int64 prewarm_checkpoint_sum_num_blobs = 21;
+        optional int64 prewarm_checkpoint_sum_time_consumption_ms = 22;
+        optional int64 prewarm_restore_num_keys_from_buffer_cache = 23;
+    }
+    
+    repeated TieredCacheStats tiered_cache_stats = 33;
+    message TieredCacheStats {
+        optional int64 totalreads = 1;
+        optional int64 bufcachehits = 2;
+        optional int64 dogfishreads = 3;
+        optional int64 filereads = 4;
+        optional int64 chillcachehits = 5;
+        optional int64 idx_scan_idx_page_total_reads = 6;
+        optional int64 idx_scan_idx_page_buf_cache_hits = 7;
+        optional int64 idx_scan_idx_page_dogfish_reads = 8;
+        optional int64 idx_scan_idx_page_chill_cache_hits = 9;
+        optional int64 idx_scan_heap_page_total_reads = 10;
+        optional int64 idx_scan_heap_page_buf_cache_hits = 11;
+        optional int64 idx_scan_heap_page_dogfish_reads = 12;
+        optional int64 idx_scan_heap_page_chill_cache_hits = 13;
+    }
+    
+    repeated UninitializedPageStats uninitialized_page_stats = 34;
+    message UninitializedPageStats {
+        optional int64 uninit_page_df_reads = 1;
+        optional int64 uninit_heap_page_df_reads = 2;
+        optional int64 uninit_btree_page_df_reads = 3;
+    }
+    
+    repeated ChillCacheVerifierStats chill_cache_verifier_stats = 35;
+    message ChillCacheVerifierStats {
+        optional int64 total_num_success = 1;
+        optional int64 total_num_failed = 2;
+        optional int64 cur_run_success = 3;
+        optional int64 cur_run_failed = 4;
+        optional int64 total_num_runs = 5;
+    }
+    
+    repeated ChillCacheVerifierPageStats chill_cache_verifier_page_stats = 36;
+    message ChillCacheVerifierPageStats {
+        optional int64 heap_pages_verified = 1;
+        optional int64 btree_pages_verified = 2;
+        optional int64 hash_pages_verified = 3;
+        optional int64 gin_pages_verified = 4;
+        optional int64 gist_pages_verified = 5;
+        optional int64 spgist_pages_verified = 6;
+        optional int64 brin_pages_verified = 7;
+    }
+    
+    repeated WalUsage wal_usages = 37;
+    message WalUsage {
+        optional int64 walrecords = 1;
+        optional int64 walfpi = 2;
+        optional int64 walbytes = 3;
+        optional int64 walbuffers_full = 4;
+        optional int64 walwrite = 5;
+        optional int64 walsync = 6;
+        optional int64 walwrite_time_us = 7;
+        optional int64 walsync_time_us = 8;
+    }
+    
+    repeated Checkpointer checkpointers = 38;
+    message Checkpointer {
+        optional int64 num_timed = 1;
+        optional int64 num_requested = 2;
+        optional int64 buffers_written = 3;
+        optional int64 stats_reset = 4;
+    }
+    
+    repeated IOStats io_stats = 39;
+    message IOStats {
+        optional string backend_type = 1;
+        optional string context = 2;
+        optional int64 writes = 3;
+        optional int64 extends = 4;
+        optional int64 stats_reset = 5;
+    }
+    
+    repeated QueryStats query_stats = 40;
+    message QueryStats {
+        optional int64 userid = 1;
+        optional int64 dbid = 2;
+        optional bool toplevel = 3;
+        optional string query = 4;
+        optional int64 queryid = 5;
+        optional int64 calls = 6;
+        optional double total_exec_time_ms = 7;
+        optional double mean_exec_time_ms = 8;
+        optional double stddev_exec_time_ms = 9;
+        optional int64 shared_blks_hit = 10;
+        optional int64 shared_blks_read = 11;
+        optional int64 shared_blks_dirtied = 12;
+        optional int64 shared_blks_written = 13;
+        optional int64 local_blks_hit = 14;
+        optional int64 local_blks_read = 15;
+        optional int64 local_blks_dirtied = 16;
+        optional int64 local_blks_written = 17;
+        optional int64 temp_blks_read = 18;
+        optional int64 temp_blks_written = 19;
+        optional double blk_read_time_ms = 20;
+        optional double blk_write_time_ms = 21;
+        optional double shared_blk_read_time_ms = 22;
+        optional double shared_blk_write_time_ms = 23;
+        optional double local_blk_read_time_ms = 24;
+        optional double local_blk_write_time_ms = 25;
+        optional double temp_blk_read_time_ms = 26;
+        optional double temp_blk_write_time_ms = 27;
+        optional int64 wal_records = 28;
+    }
+    
+    optional QueryStatsInfo query_stats_info = 41;
+    message QueryStatsInfo {
+        optional int64 dealloc = 1;
+        optional int64 stats_reset = 2;
+    }
+}

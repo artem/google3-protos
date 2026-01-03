@@ -18,4 +18,6 @@ message DistributedIndexBuildRequest {
     optional int32 maintenance_work_mem = 10;
     optional int32 max_parallel_maintenance_workers = 11;
     optional int32 max_parallel_workers = 12;
+    optional int32 num_cpu = 13;
+    optional int32 min_parallel_table_scan_size = 14;
 }

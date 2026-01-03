@@ -1,0 +1,86 @@
+syntax = "editions";
+
+package net.loadshedding.serverthrottler.flags;
+
+import "google/protobuf/any.proto";
+import "google/protobuf/empty.proto";
+import "net/proto2/contrib/validator/annotations.proto";
+
+option java_package = "com.google.net.loadshedding.serverthrottler.proto";
+
+message FlagDefinitionsAndOverrides {
+    repeated Flag flag = 1;
+    repeated Rollout rollout = 2;
+    repeated Study study = 3;
+    optional google.protobuf.Empty empty = 4;
+}
+
+message FlagDefinitions {
+    repeated Flag flag = 2;
+    
+    reserved 1;
+}
+
+message FlagOverrides {
+    repeated Rollout rollout = 2;
+    repeated Study study = 3;
+    
+    reserved 1;
+}
+
+message Flag {
+    optional string flag_name = 1;
+    optional google.protobuf.Any default_value = 2;
+    repeated EnforcedValue enforced_value = 3;
+}
+
+message EnforcedValue {
+    optional string enforced_value_name = 1;
+    optional DiversionCriteria limit_scope_to = 2;
+    
+    oneof value_oneof {
+        google.protobuf.Any new_flag_value = 3;
+        google.protobuf.Empty use_default_value = 4;
+    }
+}
+
+message Rollout {
+    optional string rollout_name = 1;
+    optional string flag_name = 2;
+    optional DiversionCriteria limit_scope_to = 3;
+    optional double rollout_fraction = 4;
+    optional google.protobuf.Any new_flag_value = 5;
+}
+
+message Study {
+    optional string study_name = 1;
+    optional DiversionCriteria limit_scope_to = 2;
+    repeated Experiment experiment = 3;
+}
+
+message Experiment {
+    optional string experiment_name = 1;
+    optional string flag_name = 2;
+    optional double experiment_fraction = 3;
+    optional google.protobuf.Any new_flag_value = 4;
+}
+
+message DiversionCriteria {
+    oneof condition_oneof {
+        PropertyCondition condition = 1;
+        AnyCondition any = 2;
+    }
+}
+
+message PropertyCondition {
+    optional bool is_in_borg = 1;
+    optional string borg_user_regex = 2;
+    optional string borg_job_regex = 3;
+    optional string borg_cell_regex = 4;
+    optional bool is_canary_task = 5;
+    optional string cluster_regex = 6;
+}
+
+message AnyCondition {
+    repeated PropertyCondition condition = 1;
+}

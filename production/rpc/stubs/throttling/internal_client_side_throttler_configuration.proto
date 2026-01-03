@@ -1,0 +1,15 @@
+syntax = "editions";
+
+package production.rpc.stubs.throttling;
+
+import "production/rpc/stubs/proto/stub_configuration.proto";
+
+option java_package = "com.google.prod.rpc.stubs.throttling";
+
+message InternalClientSideThrottlerConfiguration {
+    optional bool enable_ratio_free_mode = 1;
+    
+    extend proto.CanonicalStubConfiguration {
+        optional InternalClientSideThrottlerConfiguration extension = 1000;
+    }
+}

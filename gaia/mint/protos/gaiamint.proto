@@ -3,13 +3,10 @@ syntax = "editions";
 package gaia_mint;
 
 import "gaia/mint/protos/mint.proto";
-import "google/identity/type/mint_type.proto";
 import "identity/ubermint/proto/platform/cloud/trust_boundary_params.proto";
 import "security/credentials/proto/authenticator.proto";
 import "security/credentials/proto/credential_origin.proto";
 import "storage/datapol/annotations/proto/semantic_annotations.proto";
-import "third_party/java/protobuf/java_features.proto";
-import "third_party/protobuf/cpp_features.proto";
 
 option objc_class_prefix = "GMNT";
 option java_multiple_files = true;
@@ -23,7 +20,6 @@ message DatInfo {
 }
 
 message GaiaMint {
-    optional google.identity.type.MintType mint_type = 13;
     optional uint64 not_before_seconds = 1;
     optional uint64 not_after_seconds = 2;
     repeated int64 user_id = 21;
@@ -38,5 +34,5 @@ message GaiaMint {
     optional identity_ubermint.TrustBoundaryParams trust_boundary_params = 24;
     optional bytes cloud_uber_mint_context = 20;
     
-    reserved 6, 8 to 10, 14 to 17, 19, 22;
+    reserved 6, 8 to 10, 13, 14 to 17, 19, 22;
 }

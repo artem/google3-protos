@@ -381,6 +381,32 @@ message InjectedDecisions {
     }
 }
 
+message ExplicitAccessDeniedInfo {
+    oneof reason {
+        NotGranted not_granted = 1;
+        DenyPolicy deny_policy = 2;
+        PrincipalAccessBoundaryPolicy principal_access_boundary_policy = 3;
+    }
+    
+    message NotGranted {
+        
+    }
+    
+    message DenyPolicy {
+        
+    }
+    
+    message PrincipalAccessBoundaryPolicy {
+        
+    }
+}
+
+message DeniedPermissionInfo {
+    string permission = 1;
+    repeated ExplicitAccessDeniedInfo explicit_access_denied_infos = 2;
+    repeated ExplicitAccessDeniedInfo detailed_explicit_access_denied_infos = 3;
+}
+
 message InternalResponseInfo {
     google.protobuf.Any orchestrator_protocol_result = 1;
     google.protobuf.Any partial_evaluation_payload = 2;
@@ -567,11 +593,13 @@ message TestPermissionsRequest {
     repeated InjectedDecisions permissions_injected_decisions = 8;
     FederatedResourceHierarchy federated_resource_hierarchy = 9;
     InternalRequestInfo internal_request_info = 10;
+    DenyInformationLevel deny_information_level = 11;
 }
 
 message TestPermissionsResponse {
     repeated string permissions = 1;
     InternalResponseInfo internal_response_info = 2;
+    repeated DeniedPermissionInfo denied_permissions = 3;
 }
 
 message FindServiceAccountRequest {
@@ -636,13 +664,12 @@ message BulkCheckPolicyRequest {
         PolicyName name = 2;
         repeated string permissions = 3;
         PolicyNameOptions name_options = 4;
-        InjectedDecisions injected_decisions = 5 [deprecated = true];
         repeated InjectedDecisions permissions_injected_decisions = 7;
         FederatedResourceHierarchy federated_resource_hierarchy = 8;
         repeated ClientCapabilities.PolicyState policy_states = 9;
         ApiContext api = 10;
         
-        reserved 6;
+        reserved 5, 6;
     }
     
     RetryParams retry_params = 6;
@@ -741,6 +768,7 @@ message BulkTestPermissionsResponse {
     repeated Response responses = 1;
     message Response {
         repeated string permissions = 1;
+        repeated DeniedPermissionInfo denied_permissions = 2;
     }
     
     InternalResponseInfo internal_response_info = 2;
@@ -847,6 +875,12 @@ enum AccessType {
     IS_ALL_USERS = 1;
     IS_ALL_AUTHENTICATED_USERS = 2;
     IS_OTHER = 3;
+}
+
+enum DenyInformationLevel {
+    DENY_INFORMATION_LEVEL_UNSPECIFIED = 0;
+    DENY_INFORMATION_LEVEL_DEFAULT = 1;
+    DENY_INFORMATION_LEVEL_DETAILED = 2;
 }
 
 enum LifecycleState {

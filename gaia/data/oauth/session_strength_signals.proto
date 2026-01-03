@@ -1,0 +1,24 @@
+syntax = "editions";
+
+package gaia_data;
+
+import "gaia/data/oauth/authentication_method_reference.proto";
+import "google/protobuf/timestamp.proto";
+import "storage/datapol/annotations/proto/semantic_annotations.proto";
+
+option java_multiple_files = true;
+option java_package = "com.google.gaia.client.proto";
+
+message SessionStrengthSignals {
+    optional bool signals_available = 1;
+    
+    repeated AuthMethod auth_method = 2;
+    message AuthMethod {
+        optional AuthenticationMethodReference amr = 1;
+        optional google.protobuf.Timestamp auth_time = 2;
+    }
+}
+
+message SessionStrengthSignalsUpdate {
+    repeated AuthenticationMethodReference amr = 1;
+}

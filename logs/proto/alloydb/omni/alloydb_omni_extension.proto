@@ -1,0 +1,19 @@
+syntax = "editions";
+
+package logs.proto.alloydb.omni;
+
+import "logs/proto/alloydb/omni/heartbeat_event.proto";
+import "storage/datapol/annotations/proto/semantic_annotations.proto";
+
+option java_multiple_files = true;
+option java_outer_classname = "AlloyDbOmniExtensionProto";
+
+message AlloyDbOmniExtension {
+    optional EventType event_type = 1;
+    enum EventType {
+        EVENT_TYPE_UNSPECIFIED = 0;
+        EVENT_TYPE_HEARTBEAT = 1;
+    }
+    
+    optional HeartbeatEvent heartbeat_event = 2;
+}

@@ -1,0 +1,33 @@
+syntax = "proto3";
+
+package speckle;
+
+import "storage/datapol/annotations/proto/semantic_annotations.proto";
+
+option java_multiple_files = true;
+
+message StorageAutoresizeConfig {
+    oneof _lookback_window_mins {
+        int32 lookback_window_mins = 1;
+    }
+    
+    oneof _first_projection_window_mins {
+        int32 first_projection_window_mins = 2;
+    }
+    
+    oneof _trigger_threshold {
+        double trigger_threshold = 3;
+    }
+    
+    oneof _lower_bound_multiplier {
+        double lower_bound_multiplier = 4;
+    }
+    
+    oneof _second_resize_safety_margin_min {
+        double second_resize_safety_margin_min = 5;
+    }
+    
+    oneof _second_resize_safety_margin_max {
+        double second_resize_safety_margin_max = 6;
+    }
+}

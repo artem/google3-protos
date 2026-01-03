@@ -46,6 +46,7 @@ message GmsCoreBuildVariant {
         BUILD_TYPE_PRODVIC = 27;
         BUILD_TYPE_ATVV = 28;
         BUILD_TYPE_AUTOVIC = 29;
+        BUILD_TYPE_PRODSCMERGED = 30;
     }
     
     optional GmsCoreArchitecture architecture = 2;

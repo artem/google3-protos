@@ -1,0 +1,10 @@
+syntax = "editions";
+
+package security.ganpati.chubby_sync.notary_client;
+
+option java_outer_classname = "NotaryClientProto";
+option java_package = "com.google.security.ganpati.chubbysync.notaryclient";
+
+message NotaryAuthorities {
+    repeated string mdb_users = 1;
+}

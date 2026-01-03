@@ -191,7 +191,8 @@ message MPModelRequest {
     optional bool solver_time_limit_was_populated_by_server = 7 [default = false];
     optional int32 use_mpmodel_autoscale = 10;
     optional int32 populate_additional_solutions_up_to = 11 [default = 0];
-    optional CalibrationSolves calibration_solves = 12;
+    
+    reserved 12;
     
     enum AutoscaleModeBits {
         AUTOMATIC = 0;
@@ -199,12 +200,6 @@ message MPModelRequest {
         FORCE = 2;
         FORBID_CONSTRAINTS_UPSCALE = 4;
     }
-}
-
-message CalibrationSolves {
-    optional MPModelProto calibration_model = 1;
-    optional double calibration_period_seconds = 2;
-    optional double main_solve_effort_limit_as_num_calibration_solves = 3;
 }
 
 message MPSolution {
@@ -228,7 +223,8 @@ message MPSolutionResponse {
     repeated double dual_value = 4 [packed = true];
     repeated double reduced_cost = 6 [packed = true];
     repeated MPSolution additional_solutions = 8;
-    optional double main_solve_effort_as_num_calibration_solves = 9;
+    
+    reserved 9;
 }
 
 enum MPSolverResponseStatus {

@@ -336,11 +336,14 @@ message ShardReplicaHeartbeatResponse {
     optional uint64 first_buffered_backpointer_lsn = 3;
     optional uint64 seal_through_lsn = 4;
     optional uint64 checkpoint_lsn = 5;
+    optional int64 guarded_fileset_writer_generation = 6;
+    optional int64 read_only_version = 7;
 }
 
 message ShardReplicaPingResponse {
     optional Header header = 1;
     optional bool initiated_async_attach = 2;
+    optional bool is_write_log_record_allowed = 3 [default = true];
 }
 
 message ShardReplicaPingRequest {

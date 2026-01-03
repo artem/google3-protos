@@ -78,6 +78,7 @@ message SurfaceType {
         GBOARD = 24;
         GLASS = 9;
         GOOGLE_HOME = 6;
+        GOOGLE_HOME_APP = 60;
         HANGOUTS_CHATBOT = 19;
         IOS_ALLO = 15;
         IOS_GSA = 10;

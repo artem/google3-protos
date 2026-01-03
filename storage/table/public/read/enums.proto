@@ -1,0 +1,21 @@
+syntax = "proto2";
+
+package table;
+
+option java_outer_classname = "ReadProtos";
+option java_package = "com.google.storage.table";
+
+enum AccessMode {
+    ACCESS_MODE_DEFAULT = 0;
+    ACCESS_MODE_SERVICE = 1;
+    ACCESS_MODE_OFFLINE = 2;
+    ACCESS_MODE_OFFLINE_DIRECT = 3;
+    ACCESS_MODE_OFFLINE_ENVELOPE = 4;
+}
+
+enum DataFormat {
+    DATA_FORMAT_UNSPECIFIED = 0;
+    DATA_FORMAT_ROW = 1;
+    DATA_FORMAT_ROW_WITH_POSITION = 2;
+    DATA_FORMAT_ROW_MUTATION = 3;
+}

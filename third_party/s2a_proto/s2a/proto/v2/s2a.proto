@@ -151,6 +151,7 @@ message ValidatePeerCertificateChainReq {
         repeated bytes certificate_chain = 1;
         optional string server_hostname = 2;
         optional bytes serialized_unrestricted_client_policy = 3;
+        optional string raw_target_name = 4;
     }
 }
 

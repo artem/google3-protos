@@ -5,6 +5,7 @@ package privacy.context;
 import "dataresidency/mapping/cloud/cloud_locations_enum.proto";
 import "privacy/ads/user_data_enforcement/data-usage.proto";
 import "privacy/context/proto/privacy_attributes_setter.proto";
+import "privacy/context/proto/privacy_context_id.proto";
 import "privacy/data_governance/attributes/proto/ddt.proto";
 import "privacy/data_governance/attributes/proto/purpose.proto";
 import "privacy/pattributes/public/proto/semantic_purpose.proto";
@@ -33,11 +34,14 @@ message PrivacyContextPortability {
     optional .ptoken.EssentialUseConsentState essential_use_consent_state = 23;
     optional .pattributes.SemanticPurpose semantic_purpose = 24;
     repeated .pattributes.SemanticPurpose deferred_semantic_purposes = 25 [packed = true];
+    optional bool is_dark_launch_request = 27;
     optional bytes bitfield_value = 10;
     optional bytes bitfield_set = 11;
     optional .ptoken.SotMappings sot = 13;
     optional PrivacyAttributesSetter privacy_attributes_setter = 15;
     optional data_governance.attributes.DDTContext ddt = 22;
+    optional fixed64 jls_flow_id = 26;
+    optional PrivacyContextId privacy_context_id = 28;
     
     oneof origin_logical_location {
         data_residency.mapping.cloud.CloudDataResidencyLocation origin_logical_cloud_location = 9;

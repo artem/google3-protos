@@ -21,6 +21,7 @@ message GrpcChannelConfig {
         CloudChannel cloud_channel = 4;
         CloudALTSChannel cloud_alts_channel = 7;
         ProdToCloudChannel prod_to_cloud_channel = 5;
+        ProdToCloudProxyChannel prod_to_cloud_proxy_channel = 8;
     }
     
     message ProdChannel {
@@ -42,6 +43,11 @@ message GrpcChannelConfig {
         
     }
     
+    message KeepAliveOptions {
+        double time_seconds = 1;
+        double timeout_seconds = 2;
+    }
+    
     message CloudChannel {
         int32 max_header_list_size = 2;
         string server_name = 3;
@@ -56,6 +62,10 @@ message GrpcChannelConfig {
             AUTHENTICATION_TYPE_SSL = 2;
         }
         
+        string load_balancing_policy_name = 9;
+        string authority = 10;
+        KeepAliveOptions keep_alive_options = 11;
+        
         reserved 1, 6;
     }
     
@@ -68,6 +78,15 @@ message GrpcChannelConfig {
         server_authz.UnrestrictedClientPolicy server_authorization_policy = 1;
         int32 max_header_list_size = 2;
         int32 max_message_size = 3;
+    }
+    
+    message ProdToCloudProxyChannel {
+        TokenSource token_source = 1;
+        enum TokenSource {
+            TOKEN_SOURCE_UNSPECIFIED = 0;
+            TOKEN_SOURCE_AUTHORIZER = 1;
+            TOKEN_SOURCE_HACS = 2;
+        }
     }
     
     message GrpcSocketOptions {

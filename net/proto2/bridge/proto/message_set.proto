@@ -10,5 +10,5 @@ message MessageSet {
     option deprecated = true;
     option message_set_wire_format = true;
     
-    extensions 4 to 524999999, 525000000 to max;
+    extensions 4 to 524999999, 525000000 to 525099999, 525100000 to max;
 }

@@ -2,7 +2,7 @@ syntax = "editions";
 
 package coroner.collection;
 
-import public "production/crash_analysis/proto/annotation_key_value.proto";
+import "production/crash_analysis/proto/annotation_key_value.proto";
 import "storage/datapol/annotations/proto/semantic_annotations.proto";
 
 option java_multiple_files = true;

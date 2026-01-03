@@ -1,0 +1,19 @@
+syntax = "proto2";
+
+package aap;
+
+import "logs/proto/data_access/admin_access_control_authorization_info.proto";
+import "storage/datapol/annotations/proto/semantic_annotations.proto";
+
+option java_multiple_files = true;
+option java_package = "com.google.logs.proto.dataaccess.metadata";
+
+message AccessMetadata {
+    extensions 1000, 1001, 1002;
+    
+    reserved 1 to 999;
+}
+
+extend security.data_access.AdminAccessControlAuthorizationInfo {
+    optional AccessMetadata access_metadata = 7;
+}

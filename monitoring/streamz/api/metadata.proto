@@ -20,4 +20,5 @@ message MetadataPb {
     optional string unit = 9;
     optional bool is_timestamp = 10;
     optional bool is_huge = 11;
+    optional bool hide_data_from_eyes = 12;
 }

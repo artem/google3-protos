@@ -1,0 +1,55 @@
+syntax = "editions";
+
+package research_scam;
+
+import "research/scam/proto/exact_reordering.proto";
+import "research/scam/proto/projection.proto";
+import "third_party/protobuf/cpp_features.proto";
+
+message GraphSearchConfig {
+    optional GraphBuildingConfig graph_building = 2;
+    message GraphBuildingConfig {
+        optional int32 degree = 1 [default = 50];
+        optional int32 layer0_degree = 7 [default = 100];
+        optional bool bidirectional = 2 [default = true];
+        optional int32 num_layers = 3 [default = 3];
+        optional bool keep_pruned_connections = 5 [default = true];
+        optional float alpha = 8 [default = 1];
+        optional ProjectionConfig projection = 9;
+        
+        optional ApproxGraphBuildingConfig approx_graph_building = 6;
+        message ApproxGraphBuildingConfig {
+            optional int32 num_graph_construction_neighbors = 1 [default = 100];
+            optional bool two_pass_graph_building = 2 [default = false];
+            optional bool skip_alpha1_pass = 3 [default = false];
+        }
+    }
+    
+    optional int32 num_tmp_neighbors = 3 [default = -1];
+    optional ProjectionConfig projection = 7;
+    
+    optional QueryTimePcaProjectionMode query_time_pca_projection_mode = 9 [default = BFLOAT16_PCA];
+    enum QueryTimePcaProjectionMode {
+        FLOAT32_PCA = 0;
+        BFLOAT16_PCA = 1;
+        FIXED8_PCA = 2;
+    }
+    
+    optional bool topn_beam_search = 8 [default = false];
+    
+    oneof DatasetQuantization {
+        FixedPoint fixed8 = 4;
+        Bfloat16 bfloat16 = 5;
+        UseAsymmetricHashing ah = 6;
+    }
+    
+    message UseAsymmetricHashing {
+        optional bool enabled = 1 [default = false];
+    }
+}
+
+message NeighborGraphNode {
+    optional int32 layer_idx = 1 [default = 0];
+    optional uint32 datapoint_idx = 2;
+    repeated uint32 neighbor_idxs = 3;
+}

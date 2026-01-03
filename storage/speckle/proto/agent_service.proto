@@ -7,6 +7,7 @@ import "logs/eventid/eventid.proto";
 import "storage/datapol/annotations/proto/semantic_annotations.proto";
 import "storage/speckle/proto/agent_op.proto";
 import "storage/speckle/proto/agent_type.proto";
+import "third_party/protobuf/cpp_features.proto";
 
 option java_outer_classname = "Agent";
 

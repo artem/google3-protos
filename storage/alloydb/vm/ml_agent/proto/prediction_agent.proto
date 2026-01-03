@@ -63,6 +63,7 @@ enum ModelType {
     MODEL_TYPE_RERANKING = 3;
     MODEL_TYPE_MM_EMBEDDING = 4;
     MODEL_TYPE_LLM = 5;
+    MODEL_TYPE_TS_FORECASTING = 6;
 }
 
 enum AuthType {

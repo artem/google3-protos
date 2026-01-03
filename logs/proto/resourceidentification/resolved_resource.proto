@@ -2,6 +2,7 @@ syntax = "proto2";
 
 package security.data_access.resourceidentification;
 
+import "logs/proto/data_access/metadata/resource_metadata.proto";
 import "logs/proto/resourceidentification/gcp_native_info.proto";
 import "security/data_access/resourceidentification/proto/resource_product.proto";
 import "storage/datapol/annotations/proto/semantic_annotations.proto";
@@ -16,6 +17,7 @@ message ResolvedResource {
     optional Attributes attributes = 5;
     repeated Ancestor ancestry = 6;
     repeated Relation relations = 7;
+    optional aap.ResourceMetadata metadata = 8;
     
     reserved 1;
     
@@ -44,6 +46,9 @@ message Attributes {
         optional int64 ads_campaign_manager_advertiser_id = 25;
         optional int64 ads_network_id = 12;
         optional int64 ads_publisher_id = 15;
+        optional int64 ads_sales_crm_company_id = 34;
+        optional int64 ads_sales_crm_team_id = 35;
+        optional int64 ads_dsm_proposal_id = 38;
         optional int64 tag_account_id = 14;
         optional int64 analytics_account_id = 29;
         optional int64 analytics_property_id = 30;
@@ -55,6 +60,8 @@ message Attributes {
         optional int64 payments_billing_customer_number = 26;
         optional string geo_feature_id = 18;
         optional string secops_customer_id = 32;
+        optional int64 team_graph_team_id = 36;
+        optional string vector_account_id = 37;
     }
     
     optional ResourceProduct resource_product = 2;
@@ -104,6 +111,9 @@ message PrincipalIdentifier {
         int64 ads_campaign_manager_advertiser_id = 25;
         int64 ads_network_id = 12;
         int64 ads_publisher_id = 15;
+        int64 ads_sales_crm_company_id = 34;
+        int64 ads_sales_crm_team_id = 35;
+        int64 ads_dsm_proposal_id = 38;
         int64 tag_account_id = 14;
         int64 analytics_account_id = 29;
         int64 analytics_property_id = 30;
@@ -117,6 +127,8 @@ message PrincipalIdentifier {
         int64 payments_billing_customer_number = 26;
         string geo_feature_id = 19;
         string secops_customer_id = 32;
+        int64 team_graph_team_id = 36;
+        string vector_account_id = 37;
     }
 }
 
@@ -146,6 +158,7 @@ message LocallyResolvedResource {
     }
     
     optional Attributes attributes = 3;
+    optional aap.ResourceMetadata metadata = 4;
 }
 
 enum RelationType {

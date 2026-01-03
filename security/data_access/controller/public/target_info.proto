@@ -4,6 +4,8 @@ package security.data_access;
 
 import "logs/proto/data_access/app_specific_resources.proto";
 import "logs/proto/data_access/data_access_log.proto";
+import "logs/proto/data_access/metadata/access_metadata.proto";
+import "logs/proto/data_access/tenant.proto";
 import "logs/proto/resourceidentification/registry/fris_resource_types.proto";
 import "privacy/data_governance/attributes/proto/annotations.proto";
 import "security/credentials/proto/principal.proto";
@@ -28,6 +30,8 @@ message TargetInfo {
     }
     
     optional privacy.data_governance.attributes.Annotations data_governance_annotations = 9;
+    optional aap.AccessMetadata access_metadata = 10;
+    optional TenantId tenant_id = 11;
     
     extensions 7;
 }

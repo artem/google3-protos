@@ -1,0 +1,8 @@
+syntax = "editions";
+
+package security_loas_l2;
+
+enum ServerType {
+    SERVER_TYPE_UNSPECIFIED = 0;
+    SERVER_TYPE_CHUBBY = 1;
+}

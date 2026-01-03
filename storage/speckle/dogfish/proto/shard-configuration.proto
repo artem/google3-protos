@@ -56,11 +56,15 @@ message ReconfigurationV3Metadata {
         RECONFIG_V3_STATE_REMOVE_PHASE = 4;
         RECONFIG_V3_STATE_START_REMOVE_PHASE = 13;
         RECONFIG_V3_STATE_APPLY_REMOVE_PHASE = 14;
-        RECONFIG_V3_STATE_ROLLBACK_ADD_PHASE = 5;
+        RECONFIG_V3_STATE_ROLLBACK_START_RO_PHASE = 5;
         RECONFIG_V3_STATE_ROLLBACK_APPLY_WRITABLE_PHASE = 6;
+        RECONFIG_V3_STATE_ROLLBACK_APPLY_RO_PHASE = 15;
+        RECONFIG_V3_STATE_ROLLBACK_START_REMOVE_PHASE = 16;
+        RECONFIG_V3_STATE_ROLLBACK_APPLY_REMOVE_PHASE = 17;
     }
     
     optional int64 expected_configuration_version = 4;
     optional int64 expected_replica_read_only_version = 6;
     optional int64 min_target_quorum_lsn = 7;
+    optional string read_only_manager_lro_token = 8;
 }

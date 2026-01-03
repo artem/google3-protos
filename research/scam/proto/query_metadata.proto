@@ -20,11 +20,13 @@ message NeighborSelectionOverride {
     }
     
     optional int32 per_crowding_attribute_pre_reordering_num_neighbors = 8 [default = 0x7fffffff];
+    optional bool enable_sparse_restrict_allowlist = 16;
     optional int32 max_query_leaf_task_parallelism = 14 [default = 1];
     optional int32 tree_x_hybrid_leaves_searched_override = 9;
     repeated uint32 tree_x_hybrid_centers_to_search = 10 [packed = true];
     repeated float tree_x_hybrid_distances = 11 [packed = true];
     optional ScoringExtensionMetadata scoring_extension_metadata = 12;
+    optional int32 num_random_neighbors = 15;
 }
 
 message QueryMetadata {

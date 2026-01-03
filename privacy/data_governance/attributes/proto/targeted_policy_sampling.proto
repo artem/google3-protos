@@ -1,0 +1,20 @@
+syntax = "proto2";
+
+package privacy.data_governance.attributes;
+
+import "google/api/inclusion.proto";
+import "net/proto2/bridge/proto/message_set.proto";
+import "privacy/data_governance/attributes/proto/classification.proto";
+
+option java_multiple_files = true;
+option java_package = "com.google.privacy.datagovernance.attributes";
+
+message TargetedPolicySamplingCriteria {
+    optional int32 sampling_denominator = 1;
+    optional int32 policy = 2;
+    optional int32 verdict_reason_id = 3;
+    
+    extend .proto2.bridge.MessageSet {
+        optional TargetedPolicySamplingCriteria message_set_extension = 525004809;
+    }
+}

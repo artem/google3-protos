@@ -20,6 +20,7 @@ message HistogramOptionsState {
     optional int32 num_buckets = 8;
     repeated uint32 explicit_bounds = 9 [packed = true];
     repeated double real_valued_explicit_bounds = 10 [packed = true];
+    optional bool always_serialize_stats = 12 [default = false];
     
     enum BucketStyle {
         DECIMAL = 0;

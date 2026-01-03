@@ -143,6 +143,12 @@ message IAMContext {
     string authenticator_type = 18;
     security.credentials.EvaluatedCredsAssertionSet creds_assertions = 19;
     
+    InternalAttributes internal_attributes = 24;
+    message InternalAttributes {
+        string oauth_client_id = 1;
+        bool is_scim_user = 2;
+    }
+    
     oneof security_realm_info {
         string security_realm = 5;
         security.credentials.PeerDelegationRealmTrustSet peer_delegation_realms = 21;

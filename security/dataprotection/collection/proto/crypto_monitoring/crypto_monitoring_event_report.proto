@@ -4,6 +4,7 @@ package security.dataprotection.collection.proto.crypto_monitoring;
 
 import "google/protobuf/timestamp.proto";
 import "production/resources/dataplatform/idx/time_series/public/proto/idx_time_series_record.proto";
+import "security/dataprotection/collection/proto/crypto_monitoring/crypto_monitoring_client.proto";
 import "security/dataprotection/collection/public/collection_service.proto";
 import "storage/datapol/annotations/proto/semantic_annotations.proto";
 
@@ -16,10 +17,13 @@ message CryptoMonitoringEventReport {
     repeated CryptoMonitoringEvent events = 3;
     optional CollectorErrorReport error_report = 4;
     optional .idx.time_series.ingestion.proto.IDXTimeSeriesMetadata idx_internal_metadata = 5;
+    
+    reserved 6;
 }
 
 message CryptoMonitoringEvent {
     optional string name = 1;
+    optional CryptoMonitoringClient client = 4;
     map<string, bytes> fields = 2;
     optional int64 count = 3;
 }

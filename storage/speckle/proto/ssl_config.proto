@@ -61,6 +61,8 @@ message SslParamsProto {
     
     optional string server_ca_pool = 24;
     optional bytes encrypted_server_ca_pool = 25;
+    optional string min_tls_version = 26;
+    optional string max_tls_version = 27;
     
     reserved 6, 17, 18;
 }
